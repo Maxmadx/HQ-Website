@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<script>
+window.Squarespace = window.Squarespace || { load: function() {}, afterBodyLoad: function() {}, SQUARESPACE_CONTEXT: {} };
+window.Static = window.Static || { SQUARESPACE_CONTEXT: {} };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<base href="/">
+<meta charset="utf-8">
+<title>HQ Aviation — Helicopter Details</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="/assets/images/logos/hq/hq-aviation-logo-black.png"/>
+<link rel="stylesheet" href="/assets/css/helicopters.css">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #fff; color: #333; }
+
+.details-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.details-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin-bottom: 30px;
+  transition: color 0.2s;
+}
+.details-back:hover { color: #000; }
+.details-back svg { width: 20px; height: 20px; }
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 50px;
+}
+
+/* Gallery */
+.details-gallery {
+  position: relative;
+}
+.gallery-main {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: #f5f5f5;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+.gallery-main img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.gallery-thumbs {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+}
+.gallery-thumb {
+  width: 80px;
+  height: 60px;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  flex-shrink: 0;
+  transition: border-color 0.2s;
+}
+.gallery-thumb.active,
+.gallery-thumb:hover {
+  border-color: #cc0000;
+}
+.gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Gallery Arrows */
+.gallery-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-100%);
+  width: 44px;
+  height: 44px;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  transition: background 0.2s, transform 0.2s;
+  z-index: 10;
+}
+.gallery-arrow:hover {
+  background: #fff;
+  transform: translateY(-100%) scale(1.05);
+}
+.gallery-arrow svg { width: 24px; height: 24px; stroke: #333; }
+.gallery-arrow.prev { left: 15px; }
+.gallery-arrow.next { right: 15px; }
+
+/* Info */
+.details-info {
+  padding-top: 10px;
+}
+.details-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #000;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+.details-subtitle {
+  display: flex;
+  gap: 20px;
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 25px;
+}
+.details-subtitle span { display: flex; align-items: center; gap: 6px; }
+.details-price {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #cc0000;
+  margin-bottom: 25px;
+}
+.details-condition {
+  display: inline-block;
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 25px;
+}
+
+.details-description {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #444;
+  margin-bottom: 30px;
+}
+
+.details-highlights {
+  margin-bottom: 30px;
+}
+.details-highlights h4 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #999;
+  margin-bottom: 12px;
+}
+.details-highlights ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.details-highlights li {
+  background: #f5f5f5;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.details-specs {
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 30px;
+}
+.details-specs h4 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #999;
+  margin-bottom: 15px;
+}
+.specs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+.spec-row {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+.spec-row:last-child { border-bottom: none; }
+.spec-label { color: #666; font-size: 0.9rem; }
+.spec-value { font-weight: 600; color: #000; font-size: 0.9rem; }
+
+.details-cta {
+  display: flex;
+  gap: 15px;
+}
+.btn-primary {
+  flex: 1;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  padding: 16px 30px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.btn-primary:hover { background: #cc0000; }
+.btn-secondary {
+  flex: 1;
+  background: #fff;
+  color: #1a1a1a;
+  border: 2px solid #1a1a1a;
+  padding: 16px 30px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.btn-secondary:hover { background: #1a1a1a; color: #fff; }
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 100px 20px;
+  color: #666;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .details-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .details-title { font-size: 1.6rem; }
+  .details-price { font-size: 1.6rem; }
+  .specs-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="details-wrapper">
+  <a href="/used-aircraft-2" class="details-back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+    Back to Listings
+  </a>
+
+  <div id="helicopter-details" class="loading">
+    Loading helicopter details...
+  </div>
+</div>
+
+<script src="/assets/menu.js"></script>
+<script type="module">
+import { getHelicopterById } from '/assets/js/helicopters.js';
+
+const urlParams = new URLSearchParams(window.location.search);
+const helicopterId = urlParams.get('id');
+
+async function loadHelicopterDetails() {
+  const container = document.getElementById('helicopter-details');
+
+  if (!helicopterId) {
+    container.innerHTML = '<p>No helicopter specified. <a href="/used-aircraft-2">Browse listings</a></p>';
+    return;
+  }
+
+  const helicopter = await getHelicopterById(helicopterId);
+
+  if (!helicopter) {
+    container.innerHTML = '<p>Helicopter not found. <a href="/used-aircraft-2">Browse listings</a></p>';
+    return;
+  }
+
+  document.title = `HQ Aviation — ${helicopter.model}`;
+
+  const images = helicopter.images || [];
+  const primaryImage = images.find(img => img.isPrimary) || images[0] || { url: '/assets/images/used-aircraft/r44/r44-raven-ii-grrob.jpg', alt: helicopter.model };
+
+  const thumbsHtml = images.length > 1 ? images.map((img, i) => `
+    <div class="gallery-thumb ${i === 0 ? 'active' : ''}" data-index="${i}">
+      <img src="${img.url}" alt="${img.alt || helicopter.model}">
+    </div>
+  `).join('') : '';
+
+  const arrowsHtml = images.length > 1 ? `
+    <button class="gallery-arrow prev">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+    <button class="gallery-arrow next">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9 6 15 12 9 18"></polyline>
+      </svg>
+    </button>
+  ` : '';
+
+  const highlightsHtml = helicopter.highlights?.length ? `
+    <div class="details-highlights">
+      <h4>Highlights</h4>
+      <ul>${helicopter.highlights.map(h => `<li>${h}</li>`).join('')}</ul>
+    </div>
+  ` : '';
+
+  const specsHtml = helicopter.specs ? `
+    <div class="details-specs">
+      <h4>Specifications</h4>
+      <div class="specs-grid">
+        ${helicopter.specs.engine ? `<div class="spec-row"><span class="spec-label">Engine</span><span class="spec-value">${helicopter.specs.engine}</span></div>` : ''}
+        ${helicopter.specs.engineHours ? `<div class="spec-row"><span class="spec-label">Engine Hours</span><span class="spec-value">${helicopter.specs.engineHours.toLocaleString()}</span></div>` : ''}
+        ${helicopter.specs.engineTBO ? `<div class="spec-row"><span class="spec-label">Engine TBO</span><span class="spec-value">${helicopter.specs.engineTBO.toLocaleString()}</span></div>` : ''}
+        ${helicopter.totalHours ? `<div class="spec-row"><span class="spec-label">Total Hours</span><span class="spec-value">${helicopter.totalHours.toLocaleString()}</span></div>` : ''}
+      </div>
+    </div>
+  ` : '';
+
+  container.innerHTML = `
+    <div class="details-grid">
+      <div class="details-gallery">
+        <div class="gallery-main">
+          <img id="main-image" src="${primaryImage.url}" alt="${primaryImage.alt || helicopter.model}">
+        </div>
+        ${arrowsHtml}
+        <div class="gallery-thumbs">${thumbsHtml}</div>
+      </div>
+      <div class="details-info">
+        <h1 class="details-title">${helicopter.model}</h1>
+        <div class="details-subtitle">
+          <span>${helicopter.year}</span>
+          ${helicopter.registration ? `<span>${helicopter.registration}</span>` : ''}
+          ${helicopter.totalHours ? `<span>${helicopter.totalHours.toLocaleString()} hours</span>` : ''}
+        </div>
+        <div class="details-price">${helicopter.priceDisplay || 'POA'}</div>
+        ${helicopter.condition ? `<div class="details-condition">${helicopter.condition}</div>` : ''}
+        ${helicopter.description ? `<p class="details-description">${helicopter.description}</p>` : ''}
+        ${highlightsHtml}
+        ${specsHtml}
+        <div class="details-cta">
+          <a href="/contact" class="btn-primary">Enquire Now</a>
+          <a href="/contact" class="btn-secondary">Call Us</a>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Gallery functionality
+  if (images.length > 1) {
+    let currentIndex = 0;
+    const mainImg = document.getElementById('main-image');
+    const thumbs = document.querySelectorAll('.gallery-thumb');
+    const prevBtn = document.querySelector('.gallery-arrow.prev');
+    const nextBtn = document.querySelector('.gallery-arrow.next');
+
+    function showImage(index) {
+      if (index < 0) index = images.length - 1;
+      if (index >= images.length) index = 0;
+      currentIndex = index;
+      mainImg.src = images[index].url;
+      thumbs.forEach((t, i) => t.classList.toggle('active', i === index));
+    }
+
+    thumbs.forEach((thumb, i) => {
+      thumb.addEventListener('click', () => showImage(i));
+    });
+
+    prevBtn?.addEventListener('click', () => showImage(currentIndex - 1));
+    nextBtn?.addEventListener('click', () => showImage(currentIndex + 1));
+  }
+}
+
+loadHelicopterDetails();
+</script>
+</body>
+</html>

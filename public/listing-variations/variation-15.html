@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Variation 15: Wide Cinematic</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #000; color: #fff; }
+
+/* VARIATION 15: Wide Cinematic - Full-width sections, cinematic aspect ratio images */
+.back-link {
+  position: absolute;
+  top: 30px;
+  left: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  font-size: 0.9rem;
+  z-index: 100;
+  transition: color 0.2s;
+}
+.back-link:hover { color: #fff; }
+
+/* Hero Cinematic Section */
+.cinema-hero {
+  position: relative;
+  width: 100%;
+  height: 70vh;
+  min-height: 500px;
+  overflow: hidden;
+}
+.cinema-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cinema-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 80px 60px 60px;
+  background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 50%, transparent 100%);
+}
+.cinema-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 4rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  margin-bottom: 15px;
+}
+.cinema-subtitle {
+  font-size: 1.2rem;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 2px;
+}
+
+/* Full Width Section */
+.full-section {
+  width: 100%;
+  padding: 80px 60px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Price Band */
+.price-band {
+  background: linear-gradient(90deg, #cc0000 0%, #8b0000 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+.price {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 3rem;
+  font-weight: 800;
+}
+.price-cta {
+  display: flex;
+  gap: 20px;
+}
+
+/* Specs Band */
+.specs-band {
+  background: #0a0a0a;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+.spec-cinema {
+  text-align: center;
+  padding: 20px 40px;
+}
+.spec-cinema-value {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.spec-cinema-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: rgba(255,255,255,0.5);
+}
+
+/* Description Section */
+.description-section {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+}
+.section-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 30px;
+}
+.description {
+  font-size: 1.3rem;
+  line-height: 2;
+  color: rgba(255,255,255,0.7);
+  font-weight: 300;
+}
+
+/* Highlights Band */
+.highlights-band {
+  background: #111;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0;
+}
+.highlight-cinema {
+  padding: 40px 50px;
+  border-right: 1px solid rgba(255,255,255,0.1);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  transition: background 0.3s;
+}
+.highlight-cinema:last-child {
+  border-right: none;
+}
+.highlight-cinema:hover {
+  background: rgba(204, 0, 0, 0.2);
+}
+
+/* Second Image */
+.cinema-image-wide {
+  width: 100%;
+  aspect-ratio: 21/9;
+  overflow: hidden;
+}
+.cinema-image-wide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* CTA Section */
+.cta-section {
+  text-align: center;
+  padding: 100px 60px 120px;
+}
+.cta-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2rem;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 6px;
+  margin-bottom: 40px;
+  color: rgba(255,255,255,0.8);
+}
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+.btn {
+  padding: 22px 60px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+.btn-primary {
+  background: #cc0000;
+  color: #fff;
+  border: none;
+}
+.btn-primary:hover {
+  background: #ff1a1a;
+  transform: scale(1.05);
+}
+.btn-secondary {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+.btn-secondary:hover {
+  border-color: #fff;
+  background: rgba(255,255,255,0.1);
+}
+
+/* Picker */
+.variation-picker {
+  position: fixed; bottom: 20px; right: 20px;
+  background: rgba(0,0,0,0.9); color: #fff;
+  padding: 15px 20px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  z-index: 1000; font-size: 0.85rem;
+}
+.variation-picker select {
+  background: #222; color: #fff; border: 1px solid rgba(255,255,255,0.2);
+  padding: 8px 12px; border-radius: 4px; margin-left: 10px;
+  cursor: pointer;
+}
+.variation-label { font-weight: 600; }
+
+@media (max-width: 900px) {
+  .cinema-title { font-size: 2.5rem; letter-spacing: 2px; }
+  .price { font-size: 2rem; }
+  .spec-cinema-value { font-size: 1.8rem; }
+  .full-section { padding: 60px 30px; }
+  .highlight-cinema {
+    padding: 25px 30px;
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    width: 50%;
+    text-align: center;
+  }
+}
+@media (max-width: 600px) {
+  .cinema-hero { height: 50vh; }
+  .cinema-title { font-size: 1.8rem; }
+  .price-band { justify-content: center; text-align: center; }
+  .highlight-cinema { width: 100%; }
+  .cta-buttons { flex-direction: column; align-items: center; }
+}
+</style>
+</head>
+<body>
+
+<a href="/used-aircraft-2" class="back-link">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+  Back to Listings
+</a>
+
+<div class="cinema-hero">
+  <img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HQAV%2Fblue-r66-palo-verde-front-v4.png?alt=media&token=3084cb09-4600-47bd-adf8-873b980b541d" alt="Robinson R66 Turbine">
+  <div class="cinema-overlay">
+    <h1 class="cinema-title">Robinson R66 Turbine</h1>
+    <p class="cinema-subtitle">2018 | G-SAPA | Exceptional Condition</p>
+  </div>
+</div>
+
+<div class="full-section price-band">
+  <div class="price">£650,000</div>
+  <div class="price-cta">
+    <a href="/contact" class="btn btn-secondary">Request Info</a>
+  </div>
+</div>
+
+<div class="full-section specs-band">
+  <div class="spec-cinema">
+    <div class="spec-cinema-value">2018</div>
+    <div class="spec-cinema-label">Year</div>
+  </div>
+  <div class="spec-cinema">
+    <div class="spec-cinema-value">G-SAPA</div>
+    <div class="spec-cinema-label">Registration</div>
+  </div>
+  <div class="spec-cinema">
+    <div class="spec-cinema-value">1,240</div>
+    <div class="spec-cinema-label">Total Hours</div>
+  </div>
+  <div class="spec-cinema">
+    <div class="spec-cinema-value">RR300</div>
+    <div class="spec-cinema-label">Engine</div>
+  </div>
+</div>
+
+<div class="full-section description-section">
+  <h2 class="section-title">About This Aircraft</h2>
+  <p class="description">
+    For sale is a superb example of a Robinson R66 Turbine. This helicopter has 1,240 hours and 5 years remaining on the airframe. Features Robinson's dark continental blue metallic paint scheme. Maintained to the highest standards at an authorized Robinson service center, this aircraft is in exceptional condition throughout. The comprehensive avionics suite includes a Garmin G500H glass cockpit and GTN650 navigator, making it ideal for both private and commercial operations.
+  </p>
+</div>
+
+<div class="full-section highlights-band">
+  <div class="highlight-cinema">Pop-out Floats</div>
+  <div class="highlight-cinema">Garmin G500H</div>
+  <div class="highlight-cinema">GTN650</div>
+  <div class="highlight-cinema">SAS Autopilot</div>
+  <div class="highlight-cinema">Corrosion Protection</div>
+</div>
+
+<div class="cinema-image-wide">
+  <img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HQAV%2Fblue-r66-palo-verde-front-v4.png?alt=media&token=3084cb09-4600-47bd-adf8-873b980b541d" alt="Robinson R66 Turbine">
+</div>
+
+<div class="cta-section">
+  <h2 class="cta-title">Interested in This Aircraft?</h2>
+  <div class="cta-buttons">
+    <a href="/contact" class="btn btn-primary">Enquire Now</a>
+    <a href="/contact" class="btn btn-secondary">Schedule Viewing</a>
+  </div>
+</div>
+
+<script src="variation-nav.js"></script>
+</body>
+</html>

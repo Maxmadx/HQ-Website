@@ -1,0 +1,2021 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inspiration Board V2 | HQ Aviation Brand Identity</title>
+    <meta name="description" content="HQ Aviation component showcase applying the official brand identity">
+
+    <!-- Brand Fonts from brand-identity.json -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* =============================================
+           HQ AVIATION BRAND IDENTITY CSS
+           Based on brand-identity.json
+           ============================================= */
+
+        :root {
+            /* Core Colors */
+            --hq-primary: #1a1a1a;
+            --hq-background: #faf9f6;
+            --hq-background-alt: #ffffff;
+
+            /* Text Gradient Colors */
+            --hq-heading-1: #1a1a1a;
+            --hq-heading-2: #4a4a4a;
+            --hq-heading-3: #7a7a7a;
+            --hq-body: #666666;
+            --hq-muted: #888888;
+            --hq-subtle: #999999;
+
+            /* UI Colors */
+            --hq-border: #e8e6e2;
+            --hq-border-light: #e0e0e0;
+            --hq-divider: #c0bdb8;
+            --hq-hover-bg: #f5f5f2;
+            --hq-active-bg: #e8e6e2;
+            --hq-button-hover: #333333;
+
+            /* Dark Theme */
+            --hq-dark-bg: #1a1a1a;
+            --hq-dark-text: #ffffff;
+            --hq-dark-muted: rgba(255,255,255,0.5);
+            --hq-dark-border: rgba(255,255,255,0.3);
+
+            /* Accent for CTAs */
+            --hq-accent: #E04A2F;
+            --hq-accent-hover: #C93E25;
+
+            /* Typography */
+            --font-primary: 'Space Grotesk', -apple-system, sans-serif;
+            --font-mono: 'Share Tech Mono', monospace;
+            --font-secondary: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+            /* Spacing */
+            --section-padding: 6rem;
+            --container-max: 1200px;
+
+            /* Animation */
+            --ease-expressive: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-normal: 0.3s;
+            --duration-slow: 0.6s;
+
+            /* Shadows */
+            --shadow-card: 0 20px 60px rgba(0, 0, 0, 0.2);
+            --shadow-light: 0 5px 15px rgba(0, 0, 0, 0.1);
+
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+
+        /* Reset & Base */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-primary);
+            background: #0f0f0f;
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        /* Navigation Sidebar */
+        .insp-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            height: 100vh;
+            background: var(--hq-primary);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            overflow-y: auto;
+            z-index: 1000;
+            padding: 2rem 1.5rem;
+        }
+
+        .insp-nav__brand {
+            font-family: var(--font-primary);
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        .insp-nav__subtitle {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            color: var(--hq-subtle);
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .insp-nav__section { margin-bottom: 1.5rem; }
+
+        .insp-nav__section h3 {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--hq-accent);
+            margin-bottom: 0.75rem;
+        }
+
+        .insp-nav__section a {
+            display: block;
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            padding: 0.4rem 0;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: color var(--duration-normal) ease;
+        }
+
+        .insp-nav__section a:hover { color: #fff; }
+
+        /* Main Content */
+        .insp-main {
+            margin-left: 260px;
+            padding: 2rem;
+        }
+
+        /* Section Groups */
+        .insp-section {
+            margin-bottom: 4rem;
+        }
+
+        .insp-section__title {
+            font-family: var(--font-primary);
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            color: #fff;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--hq-accent);
+        }
+
+        /* Component Blocks */
+        .insp-block {
+            margin-bottom: 3rem;
+            background: var(--hq-primary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .insp-block__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: #252525;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .insp-block__header h3 {
+            font-family: var(--font-primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .insp-block__id {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            color: var(--hq-accent);
+            background: rgba(224,74,47,0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .insp-block__render {
+            background: var(--hq-background);
+            color: var(--hq-primary);
+        }
+
+        .insp-block__render--dark {
+            background: var(--hq-dark-bg);
+            color: var(--hq-dark-text);
+        }
+
+        /* =============================================
+           BRAND IDENTITY COMPONENTS
+           ============================================= */
+
+        /* Container */
+        .hq-container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Overline/Pre-text */
+        .hq-overline {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--hq-muted);
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .hq-overline--light { color: rgba(255,255,255,0.5); }
+        .hq-overline--accent { color: var(--hq-accent); }
+
+        /* Section Header */
+        .hq-section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hq-section-title {
+            font-family: var(--font-primary);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            line-height: 1.1;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            color: var(--hq-heading-1);
+        }
+
+        .hq-section-subtitle {
+            font-size: 1.1rem;
+            color: var(--hq-body);
+            margin-top: 1rem;
+            line-height: 1.8;
+        }
+
+        /* Gradient Headline Pattern */
+        .hq-gradient-headline span:nth-child(1) { color: var(--hq-heading-1); }
+        .hq-gradient-headline span:nth-child(2) { color: var(--hq-heading-2); }
+        .hq-gradient-headline span:nth-child(3) { color: var(--hq-heading-3); }
+
+        /* Buttons - Primary */
+        .hq-btn {
+            display: inline-block;
+            font-family: var(--font-primary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 1rem 2rem;
+            border: none;
+            cursor: pointer;
+            transition: all var(--duration-normal) ease;
+        }
+
+        .hq-btn--primary {
+            background: var(--hq-primary);
+            color: #fff;
+        }
+
+        .hq-btn--primary:hover {
+            background: var(--hq-button-hover);
+        }
+
+        .hq-btn--accent {
+            background: var(--hq-accent);
+            color: #fff;
+        }
+
+        .hq-btn--accent:hover {
+            background: var(--hq-accent-hover);
+        }
+
+        .hq-btn--outline {
+            background: transparent;
+            color: var(--hq-primary);
+            border: 2px solid var(--hq-primary);
+        }
+
+        .hq-btn--outline:hover {
+            background: var(--hq-primary);
+            color: #fff;
+        }
+
+        .hq-btn--ghost {
+            background: transparent;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .hq-btn--ghost:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        .hq-btn--lg {
+            padding: 1.25rem 2.5rem;
+            font-size: 0.85rem;
+        }
+
+        .hq-btn-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .hq-btn-group--center { justify-content: center; }
+
+        /* Badge */
+        .hq-badge {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            background: var(--hq-accent);
+            color: #fff;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+        }
+
+        /* Coordinates Display */
+        .hq-coordinates {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            color: var(--hq-subtle);
+        }
+
+        /* =============================================
+           HERO - PRODUCT SHOWCASE
+           ============================================= */
+        .hq-hero--product {
+            position: relative;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--section-padding) 2rem;
+            background: linear-gradient(180deg, var(--hq-background) 0%, #f0ede8 100%);
+            overflow: hidden;
+        }
+
+        .hq-hero--product .hq-hero__product-image {
+            position: relative;
+            z-index: 2;
+            margin-bottom: 2rem;
+        }
+
+        .hq-hero--product .hq-hero__product-image img {
+            max-width: 700px;
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 40px 80px rgba(0,0,0,0.15));
+        }
+
+        .hq-hero--product .hq-hero__content {
+            text-align: center;
+            position: relative;
+            z-index: 3;
+        }
+
+        .hq-hero__headline {
+            font-family: var(--font-primary);
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            color: var(--hq-heading-1);
+            margin: 0.5rem 0;
+        }
+
+        .hq-hero__tagline {
+            font-size: 1.1rem;
+            color: var(--hq-body);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .hq-hero__specs {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--hq-border);
+        }
+
+        .hq-spec {
+            text-align: center;
+        }
+
+        .hq-spec__value {
+            font-family: var(--font-mono);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--hq-heading-1);
+            display: block;
+        }
+
+        .hq-spec__label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--hq-subtle);
+        }
+
+        /* =============================================
+           MODEL SPOTLIGHT
+           ============================================= */
+        .hq-model-spotlight {
+            position: relative;
+            min-height: 700px;
+            display: flex;
+            align-items: center;
+            padding: var(--section-padding) 0;
+            background: linear-gradient(135deg, #f8f7f4 0%, #eae8e3 100%);
+            overflow: hidden;
+        }
+
+        .hq-model-spotlight__bg {
+            position: absolute;
+            right: -10%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60%;
+            z-index: 1;
+        }
+
+        .hq-model-spotlight__bg img {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 60px 100px rgba(0,0,0,0.2));
+        }
+
+        .hq-model-spotlight__content {
+            position: relative;
+            z-index: 2;
+            max-width: 500px;
+        }
+
+        .hq-model-spotlight__title {
+            font-family: var(--font-primary);
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            color: var(--hq-heading-1);
+            margin: 0.5rem 0 1rem;
+        }
+
+        .hq-model-spotlight__tagline {
+            font-size: 1.25rem;
+            color: var(--hq-body);
+            margin-bottom: 2rem;
+        }
+
+        .hq-model-spotlight__specs {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .hq-spec-pill {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            background: var(--hq-background-alt);
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-light);
+        }
+
+        .hq-spec-pill__value {
+            font-family: var(--font-mono);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--hq-heading-1);
+        }
+
+        .hq-spec-pill__label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--hq-subtle);
+        }
+
+        .hq-model-spotlight__actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .hq-model-spotlight__price {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--hq-subtle);
+        }
+
+        .hq-model-spotlight__price strong {
+            font-size: 1.5rem;
+            color: var(--hq-heading-1);
+            margin: 0 0.5rem;
+        }
+
+        /* =============================================
+           STATS SECTION
+           ============================================= */
+        .hq-stats {
+            padding: var(--section-padding) 2rem;
+        }
+
+        .hq-stats__grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+
+        .hq-stat-item {
+            text-align: center;
+        }
+
+        .hq-stat-item--large .hq-stat-item__number {
+            font-family: var(--font-mono);
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            color: #fff;
+            display: block;
+            line-height: 1;
+        }
+
+        .hq-stat-item__label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+            margin-top: 0.5rem;
+            display: block;
+        }
+
+        /* Simple Stats Row */
+        .hq-trust__stats {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+        }
+
+        .hq-stat-block {
+            text-align: center;
+        }
+
+        .hq-stat-block__value {
+            font-family: var(--font-mono);
+            font-size: 3rem;
+            font-weight: 700;
+            color: #fff;
+            display: block;
+            line-height: 1;
+        }
+
+        .hq-stat-block__label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+            margin-top: 0.5rem;
+            display: block;
+        }
+
+        /* =============================================
+           TESTIMONIALS
+           ============================================= */
+        .hq-testimonials__grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .hq-testimonial-card {
+            background: var(--hq-background-alt);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-light);
+        }
+
+        .hq-testimonial-card__stars {
+            color: #fbbf24;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .hq-testimonial-card__quote {
+            font-size: 1rem;
+            color: var(--hq-body);
+            line-height: 1.8;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+        }
+
+        .hq-testimonial-card__author {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--hq-subtle);
+            font-style: normal;
+        }
+
+        /* =============================================
+           HERO - TRUST / HERITAGE
+           ============================================= */
+        .hq-hero--trust {
+            position: relative;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+        }
+
+        .hq-hero--trust .hq-hero__bg {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+
+        .hq-hero--trust .hq-hero__bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hq-hero--trust .hq-hero__overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%);
+            z-index: 2;
+        }
+
+        .hq-hero--trust .hq-hero__content {
+            position: relative;
+            z-index: 3;
+            max-width: 700px;
+            padding: 2rem;
+        }
+
+        .hq-hero__trust-badge {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem 2rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: var(--radius-md);
+        }
+
+        .hq-hero__trust-years {
+            font-family: var(--font-mono);
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .hq-hero__trust-text {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+        }
+
+        .hq-hero--trust .hq-hero__headline {
+            color: #fff;
+            margin-bottom: 2rem;
+        }
+
+        .hq-hero__testimonial {
+            margin-bottom: 2rem;
+        }
+
+        .hq-hero__testimonial blockquote {
+            font-size: 1.25rem;
+            font-style: italic;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .hq-hero__testimonial cite {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            opacity: 0.7;
+        }
+
+        /* =============================================
+           QUOTE HERO
+           ============================================= */
+        .hq-quote--hero {
+            padding: var(--section-padding) 2rem;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hq-quote__text {
+            font-family: var(--font-primary);
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 500;
+            line-height: 1.4;
+            color: #fff;
+            margin-bottom: 2rem;
+        }
+
+        .hq-quote__author {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+            display: block;
+            margin-bottom: 2rem;
+        }
+
+        /* =============================================
+           SPLIT CONTENT
+           ============================================= */
+        .hq-content--split {
+            padding: var(--section-padding) 2rem;
+        }
+
+        .hq-content__split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hq-content__image img {
+            width: 100%;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+        }
+
+        .hq-content__text h2 {
+            font-family: var(--font-primary);
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--hq-heading-1);
+            margin: 0.5rem 0 1.5rem;
+        }
+
+        .hq-content__text p {
+            color: var(--hq-body);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .hq-content__cta {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* =============================================
+           COMPARISON TABLE
+           ============================================= */
+        .hq-comparison-table {
+            background: var(--hq-background-alt);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-light);
+        }
+
+        .hq-comparison-table__header {
+            display: grid;
+            grid-template-columns: 150px repeat(3, 1fr);
+            background: var(--hq-hover-bg);
+            border-bottom: 1px solid var(--hq-border);
+        }
+
+        .hq-comparison-table__header .hq-comparison-table__cell {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .hq-comparison-table__header .hq-comparison-table__cell img {
+            max-height: 80px;
+            margin-bottom: 0.5rem;
+        }
+
+        .hq-comparison-table__header .hq-comparison-table__cell h3 {
+            font-family: var(--font-primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .hq-comparison-table__row {
+            display: grid;
+            grid-template-columns: 150px repeat(3, 1fr);
+            border-bottom: 1px solid var(--hq-border);
+        }
+
+        .hq-comparison-table__row:last-child { border-bottom: none; }
+
+        .hq-comparison-table__cell {
+            padding: 1rem 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .hq-comparison-table__cell--label {
+            text-align: left;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--hq-subtle);
+            background: var(--hq-hover-bg);
+        }
+
+        .hq-comparison-table__cell--featured {
+            background: rgba(224,74,47,0.05);
+            font-weight: 600;
+        }
+
+        /* =============================================
+           FEATURED AIRCRAFT LAYOUT
+           ============================================= */
+        .hq-aircraft__featured-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .hq-aircraft-card {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            transition: transform var(--duration-normal) var(--ease-expressive);
+        }
+
+        .hq-aircraft-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .hq-aircraft-card--large {
+            background: var(--hq-background-alt);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-light);
+        }
+
+        .hq-aircraft-card__image {
+            position: relative;
+            padding: 2rem;
+            background: linear-gradient(180deg, var(--hq-hover-bg) 0%, var(--hq-background) 100%);
+        }
+
+        .hq-aircraft-card__image img {
+            width: 100%;
+            height: auto;
+        }
+
+        .hq-aircraft-card__image .hq-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+        }
+
+        .hq-aircraft-card__body {
+            padding: 2rem;
+        }
+
+        .hq-aircraft-card__make {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--hq-subtle);
+        }
+
+        .hq-aircraft-card__name {
+            font-family: var(--font-primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--hq-heading-1);
+            margin: 0.5rem 0;
+        }
+
+        .hq-aircraft-card__desc {
+            color: var(--hq-body);
+            line-height: 1.6;
+        }
+
+        .hq-aircraft__side-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .hq-aircraft-card--mini {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--hq-background-alt);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-light);
+        }
+
+        .hq-aircraft-card--mini .hq-aircraft-card__thumb {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+        }
+
+        .hq-aircraft-card--mini h4 {
+            font-size: 1rem;
+            margin: 0.25rem 0 0;
+        }
+
+        /* =============================================
+           INTERACTIVE FLEET EXPLORER
+           ============================================= */
+        .hq-fleet--interactive {
+            padding: var(--section-padding) 2rem;
+            background: var(--hq-background);
+        }
+
+        .hq-fleet__tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--hq-border);
+        }
+
+        .hq-fleet__tab {
+            font-family: var(--font-primary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            background: none;
+            border: none;
+            padding: 1rem 2rem;
+            color: var(--hq-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all var(--duration-normal) ease;
+        }
+
+        .hq-fleet__tab:hover {
+            color: var(--hq-heading-1);
+        }
+
+        .hq-fleet__tab.active {
+            color: var(--hq-heading-1);
+            border-bottom-color: var(--hq-primary);
+        }
+
+        .hq-fleet__display {
+            background: var(--hq-background-alt);
+            border-radius: var(--radius-lg);
+            padding: 3rem;
+            box-shadow: var(--shadow-light);
+        }
+
+        .hq-fleet__aircraft {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .hq-fleet__image img {
+            width: 100%;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.1));
+        }
+
+        .hq-fleet__info h3 {
+            font-family: var(--font-primary);
+            font-size: 2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .hq-fleet__info p {
+            color: var(--hq-body);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .hq-fleet__specs-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .hq-fleet__spec {
+            text-align: center;
+            padding: 1rem;
+            background: var(--hq-hover-bg);
+            border-radius: var(--radius-md);
+        }
+
+        .hq-fleet__spec-value {
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--hq-heading-1);
+            display: block;
+        }
+
+        .hq-fleet__spec-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--hq-subtle);
+        }
+
+        .hq-fleet__actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hq-stats__grid { grid-template-columns: repeat(2, 1fr); }
+            .hq-testimonials__grid { grid-template-columns: 1fr; }
+            .hq-content__split { grid-template-columns: 1fr; }
+            .hq-aircraft__featured-layout { grid-template-columns: 1fr; }
+            .hq-fleet__aircraft { grid-template-columns: 1fr; }
+            .hq-fleet__specs-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .insp-nav { display: none; }
+            .insp-main { margin-left: 0; }
+            .hq-model-spotlight__bg { display: none; }
+            .hq-comparison-table { overflow-x: auto; }
+            .hq-trust__stats { flex-direction: column; gap: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Sidebar -->
+    <nav class="insp-nav">
+        <div class="insp-nav__brand">HQ Aviation</div>
+        <div class="insp-nav__subtitle">Brand Identity V2</div>
+
+        <div class="insp-nav__section">
+            <h3>Product Showcase</h3>
+            <a href="#hero-product">Product Hero</a>
+            <a href="#model-spotlight">Model Spotlight</a>
+            <a href="#fleet-interactive">Fleet Explorer</a>
+            <a href="#comparison-table">Comparison Table</a>
+        </div>
+
+        <div class="insp-nav__section">
+            <h3>Trust & Credibility</h3>
+            <a href="#hero-trust">Heritage Hero</a>
+            <a href="#stats-animated">Animated Stats</a>
+            <a href="#stats-simple">Simple Stats</a>
+            <a href="#testimonials">Testimonials</a>
+        </div>
+
+        <div class="insp-nav__section">
+            <h3>Editorial</h3>
+            <a href="#quote-hero">Large Quote</a>
+            <a href="#featured-large">Featured Aircraft</a>
+            <a href="#split-content">Split Content</a>
+        </div>
+
+        <div class="insp-nav__section">
+            <h3>More Components</h3>
+            <a href="#pilot-pathway">Pilot Pathway</a>
+            <a href="#destinations">Destinations</a>
+            <a href="#expedition">Expedition</a>
+            <a href="#ownership">Ownership</a>
+            <a href="#events">Events</a>
+            <a href="#team">Team Grid</a>
+            <a href="#services">Services</a>
+            <a href="#footer">Footer</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="insp-main">
+        <!-- PRODUCT SHOWCASE SECTION -->
+        <section class="insp-section">
+            <h2 class="insp-section__title">Product & Showcase</h2>
+
+            <!-- Product Hero -->
+            <div class="insp-block" id="hero-product">
+                <div class="insp-block__header">
+                    <h3>Product Showcase - Aircraft as Hero</h3>
+                    <span class="insp-block__id">hero-product-showcase</span>
+                </div>
+                <div class="insp-block__render">
+                    <section class="hq-hero--product">
+                        <div class="hq-hero__product-image">
+                            <img src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-left-v4.png" alt="R66 Turbine">
+                        </div>
+                        <div class="hq-hero__content">
+                            <span class="hq-overline">New Aircraft</span>
+                            <h1 class="hq-hero__headline">Robinson R66 Turbine</h1>
+                            <p class="hq-hero__tagline">The world's best-selling turbine helicopter.</p>
+                            <div class="hq-btn-group hq-btn-group--center">
+                                <a href="#configure" class="hq-btn hq-btn--primary">Configure Yours</a>
+                                <a href="#quote" class="hq-btn hq-btn--outline">Request Quote</a>
+                            </div>
+                        </div>
+                        <div class="hq-hero__specs">
+                            <div class="hq-spec">
+                                <span class="hq-spec__value">300</span>
+                                <span class="hq-spec__label">SHP</span>
+                            </div>
+                            <div class="hq-spec">
+                                <span class="hq-spec__value">5</span>
+                                <span class="hq-spec__label">Seats</span>
+                            </div>
+                            <div class="hq-spec">
+                                <span class="hq-spec__value">350</span>
+                                <span class="hq-spec__label">NM Range</span>
+                            </div>
+                            <div class="hq-spec">
+                                <span class="hq-spec__value">140</span>
+                                <span class="hq-spec__label">Knots</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Model Spotlight -->
+            <div class="insp-block" id="model-spotlight">
+                <div class="insp-block__header">
+                    <h3>Model Spotlight - "This component looks absolutely beautiful"</h3>
+                    <span class="insp-block__id">fleet-model-spotlight</span>
+                </div>
+                <div class="insp-block__render">
+                    <section class="hq-model-spotlight">
+                        <div class="hq-model-spotlight__bg">
+                            <img src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-left-v4.png" alt="Robinson R66">
+                        </div>
+                        <div class="hq-container">
+                            <div class="hq-model-spotlight__content">
+                                <span class="hq-overline">New Aircraft</span>
+                                <h1 class="hq-model-spotlight__title">Robinson R66</h1>
+                                <p class="hq-model-spotlight__tagline">Turbine Performance. Robinson Reliability.</p>
+                                <div class="hq-model-spotlight__specs">
+                                    <div class="hq-spec-pill">
+                                        <span class="hq-spec-pill__value">5</span>
+                                        <span class="hq-spec-pill__label">Seats</span>
+                                    </div>
+                                    <div class="hq-spec-pill">
+                                        <span class="hq-spec-pill__value">120</span>
+                                        <span class="hq-spec-pill__label">Knots</span>
+                                    </div>
+                                    <div class="hq-spec-pill">
+                                        <span class="hq-spec-pill__value">350</span>
+                                        <span class="hq-spec-pill__label">NM Range</span>
+                                    </div>
+                                    <div class="hq-spec-pill">
+                                        <span class="hq-spec-pill__value">RR300</span>
+                                        <span class="hq-spec-pill__label">Engine</span>
+                                    </div>
+                                </div>
+                                <div class="hq-model-spotlight__actions">
+                                    <a href="#configure" class="hq-btn hq-btn--primary hq-btn--lg">Configure Yours</a>
+                                    <a href="#specs" class="hq-btn hq-btn--outline">Full Specifications</a>
+                                </div>
+                                <div class="hq-model-spotlight__price">
+                                    <span>From</span>
+                                    <strong>$1,290,000</strong>
+                                    <span>ex-factory</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Interactive Fleet -->
+            <div class="insp-block" id="fleet-interactive">
+                <div class="insp-block__header">
+                    <h3>Interactive Fleet Explorer</h3>
+                    <span class="insp-block__id">fleet-interactive</span>
+                </div>
+                <div class="insp-block__render">
+                    <section class="hq-fleet--interactive">
+                        <div class="hq-container">
+                            <div class="hq-section-header">
+                                <span class="hq-overline">Our Fleet</span>
+                                <h2 class="hq-section-title">Explore Our Aircraft</h2>
+                            </div>
+                            <div class="hq-fleet__tabs">
+                                <button class="hq-fleet__tab active">R66 Turbine</button>
+                                <button class="hq-fleet__tab">R44 Raven II</button>
+                                <button class="hq-fleet__tab">R22 Beta II</button>
+                                <button class="hq-fleet__tab">R88</button>
+                            </div>
+                            <div class="hq-fleet__display">
+                                <div class="hq-fleet__aircraft">
+                                    <div class="hq-fleet__image">
+                                        <img src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-front-v4.png" alt="R66">
+                                    </div>
+                                    <div class="hq-fleet__info">
+                                        <h3>Robinson R66 Turbine</h3>
+                                        <p>The pinnacle of personal aviation. 5-seat turbine helicopter with Rolls-Royce power.</p>
+                                        <div class="hq-fleet__specs-grid">
+                                            <div class="hq-fleet__spec">
+                                                <span class="hq-fleet__spec-value">300</span>
+                                                <span class="hq-fleet__spec-label">SHP</span>
+                                            </div>
+                                            <div class="hq-fleet__spec">
+                                                <span class="hq-fleet__spec-value">5</span>
+                                                <span class="hq-fleet__spec-label">Seats</span>
+                                            </div>
+                                            <div class="hq-fleet__spec">
+                                                <span class="hq-fleet__spec-value">140</span>
+                                                <span class="hq-fleet__spec-label">Knots</span>
+                                            </div>
+                                            <div class="hq-fleet__spec">
+                                                <span class="hq-fleet__spec-value">350</span>
+                                                <span class="hq-fleet__spec-label">NM Range</span>
+                                            </div>
+                                        </div>
+                                        <div class="hq-fleet__actions">
+                                            <a href="#r66" class="hq-btn hq-btn--primary">Configure Yours</a>
+                                            <a href="#quote" class="hq-btn hq-btn--outline">Request Quote</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <div class="insp-block" id="comparison-table">
+                <div class="insp-block__header">
+                    <h3>Comparison Table - "I love this comparison"</h3>
+                    <span class="insp-block__id">aircraft-comparison-table</span>
+                </div>
+                <div class="insp-block__render" style="padding: 4rem 2rem; background: var(--hq-background);">
+                    <div class="hq-container">
+                        <div class="hq-section-header">
+                            <span class="hq-overline">Compare Models</span>
+                            <h2 class="hq-section-title">Find Your Perfect Helicopter</h2>
+                        </div>
+                        <div class="hq-comparison-table">
+                            <div class="hq-comparison-table__header">
+                                <div class="hq-comparison-table__cell"></div>
+                                <div class="hq-comparison-table__cell">
+                                    <img src="/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png" alt="R22">
+                                    <h3>R22 Beta II</h3>
+                                </div>
+                                <div class="hq-comparison-table__cell">
+                                    <img src="/assets/images/new-aircraft/r44/raven-ii-front-alpha.png" alt="R44">
+                                    <h3>R44 Raven II</h3>
+                                </div>
+                                <div class="hq-comparison-table__cell hq-comparison-table__cell--featured">
+                                    <span class="hq-badge">Popular</span>
+                                    <img src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-front-v4.png" alt="R66">
+                                    <h3>R66 Turbine</h3>
+                                </div>
+                            </div>
+                            <div class="hq-comparison-table__row">
+                                <div class="hq-comparison-table__cell hq-comparison-table__cell--label">Seats</div>
+                                <div class="hq-comparison-table__cell">2</div>
+                                <div class="hq-comparison-table__cell">4</div>
+                                <div class="hq-comparison-table__cell hq-comparison-table__cell--featured">5</div>
+                            </div>
+                            <div class="hq-comparison-table__row">
+                                <div class="hq-comparison-table__cell hq-comparison-table__cell--label">Engine</div>
+                                <div class="hq-comparison-table__cell">Piston</div>
+                                <div class="hq-comparison-table__cell">Piston</div>
+                                <div class="hq-comparison-table__cell hq-comparison-table__cell--featured">Turbine</div>
+                            </div>
+                            <div class="hq-comparison-table__row">
+                                <div class="hq-comparison-table__cell hq-comparison-table__cell--label">Cruise Speed</div>
+                                <div class="hq-comparison-table__cell">96 kts</div>
+                                <div class="hq-comparison-table__cell">113 kts</div>
+                                <div class="hq-comparison-table__cell hq-comparison-table__cell--featured">140 kts</div>
+                            </div>
+                            <div class="hq-comparison-table__row">
+                                <div class="hq-comparison-table__cell hq-comparison-table__cell--label">Range</div>
+                                <div class="hq-comparison-table__cell">185 nm</div>
+                                <div class="hq-comparison-table__cell">300 nm</div>
+                                <div class="hq-comparison-table__cell hq-comparison-table__cell--featured">350 nm</div>
+                            </div>
+                            <div class="hq-comparison-table__row">
+                                <div class="hq-comparison-table__cell hq-comparison-table__cell--label">From Price</div>
+                                <div class="hq-comparison-table__cell">$340,000</div>
+                                <div class="hq-comparison-table__cell">$565,000</div>
+                                <div class="hq-comparison-table__cell hq-comparison-table__cell--featured">$1,290,000</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRUST & CREDIBILITY SECTION -->
+        <section class="insp-section">
+            <h2 class="insp-section__title">Trust & Credibility</h2>
+
+            <!-- Heritage Hero -->
+            <div class="insp-block" id="hero-trust">
+                <div class="insp-block__header">
+                    <h3>Heritage Focus - "I like the 30+ years experience credibility"</h3>
+                    <span class="insp-block__id">hero-trust-heritage</span>
+                </div>
+                <div class="insp-block__render">
+                    <section class="hq-hero--trust">
+                        <div class="hq-hero__bg">
+                            <img src="/assets/images/facility/busy-hangar.jpg" alt="HQ Aviation Hangar">
+                        </div>
+                        <div class="hq-hero__overlay"></div>
+                        <div class="hq-hero__content">
+                            <div class="hq-hero__trust-badge">
+                                <span class="hq-hero__trust-years">30+</span>
+                                <span class="hq-hero__trust-text">Years of Excellence</span>
+                            </div>
+                            <h1 class="hq-hero__headline">Trusted by Pilots<br>Worldwide</h1>
+                            <div class="hq-hero__testimonial">
+                                <blockquote>"The team at HQ Aviation made buying my R66 seamless."</blockquote>
+                                <cite>— James H., R66 Owner</cite>
+                            </div>
+                            <a href="#contact" class="hq-btn hq-btn--accent">Speak With Our Team</a>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Animated Stats -->
+            <div class="insp-block" id="stats-animated">
+                <div class="insp-block__header">
+                    <h3>Animated Counter Stats</h3>
+                    <span class="insp-block__id">stats-counter-animated</span>
+                </div>
+                <div class="insp-block__render insp-block__render--dark">
+                    <section class="hq-stats">
+                        <div class="hq-container">
+                            <div class="hq-stats__grid">
+                                <div class="hq-stat-item hq-stat-item--large">
+                                    <span class="hq-stat-item__number">34</span>
+                                    <span class="hq-stat-item__label">Years in Business</span>
+                                </div>
+                                <div class="hq-stat-item hq-stat-item--large">
+                                    <span class="hq-stat-item__number">500+</span>
+                                    <span class="hq-stat-item__label">Aircraft Sold</span>
+                                </div>
+                                <div class="hq-stat-item hq-stat-item--large">
+                                    <span class="hq-stat-item__number">1,200+</span>
+                                    <span class="hq-stat-item__label">Pilots Trained</span>
+                                </div>
+                                <div class="hq-stat-item hq-stat-item--large">
+                                    <span class="hq-stat-item__number">98%</span>
+                                    <span class="hq-stat-item__label">Customer Satisfaction</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Testimonials Grid -->
+            <div class="insp-block" id="testimonials">
+                <div class="insp-block__header">
+                    <h3>Testimonials Grid - 3-column cards</h3>
+                    <span class="insp-block__id">trust-testimonials-grid</span>
+                </div>
+                <div class="insp-block__render" style="padding: 4rem 2rem;">
+                    <div class="hq-container">
+                        <div class="hq-section-header">
+                            <span class="hq-overline">Testimonials</span>
+                            <h2 class="hq-section-title">What Our Clients Say</h2>
+                        </div>
+                        <div class="hq-testimonials__grid">
+                            <div class="hq-testimonial-card">
+                                <div class="hq-testimonial-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                                <blockquote class="hq-testimonial-card__quote">"Outstanding training school. Couldn't recommend more highly."</blockquote>
+                                <cite class="hq-testimonial-card__author">— Sarah T., PPL Student</cite>
+                            </div>
+                            <div class="hq-testimonial-card">
+                                <div class="hq-testimonial-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                                <blockquote class="hq-testimonial-card__quote">"The maintenance team is thorough and professional."</blockquote>
+                                <cite class="hq-testimonial-card__author">— Michael R., R44 Owner</cite>
+                            </div>
+                            <div class="hq-testimonial-card">
+                                <div class="hq-testimonial-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                                <blockquote class="hq-testimonial-card__quote">"Made buying my first helicopter an absolute pleasure."</blockquote>
+                                <cite class="hq-testimonial-card__author">— David K., R66 Owner</cite>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EDITORIAL SECTION -->
+        <section class="insp-section">
+            <h2 class="insp-section__title">Editorial & Content</h2>
+
+            <!-- Large Quote -->
+            <div class="insp-block" id="quote-hero">
+                <div class="insp-block__header">
+                    <h3>Large Quote Hero</h3>
+                    <span class="insp-block__id">hero-editorial-quote</span>
+                </div>
+                <div class="insp-block__render insp-block__render--dark">
+                    <div class="hq-quote--hero">
+                        <blockquote class="hq-quote__text">
+                            "Flying is not just about the destination—it's about the freedom to explore the world from a perspective few ever experience."
+                        </blockquote>
+                        <cite class="hq-quote__author">— Quentin Smith, Founder</cite>
+                        <div class="hq-quote__cta">
+                            <a href="#about" class="hq-btn hq-btn--ghost">Our Story</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Aircraft Large -->
+            <div class="insp-block" id="featured-large">
+                <div class="insp-block__header">
+                    <h3>Large Featured Aircraft Layout</h3>
+                    <span class="insp-block__id">aircraft-featured-large</span>
+                </div>
+                <div class="insp-block__render" style="padding: 4rem 2rem;">
+                    <div class="hq-container">
+                        <div class="hq-section-header">
+                            <span class="hq-overline">Our Fleet</span>
+                            <h2 class="hq-section-title">Featured Aircraft</h2>
+                        </div>
+                        <div class="hq-aircraft__featured-layout">
+                            <a href="#r66" class="hq-aircraft-card hq-aircraft-card--large">
+                                <div class="hq-aircraft-card__image">
+                                    <img src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-left-v4.png" alt="R66">
+                                    <span class="hq-badge">Featured</span>
+                                </div>
+                                <div class="hq-aircraft-card__body">
+                                    <span class="hq-aircraft-card__make">Robinson R66 Turbine</span>
+                                    <h3 class="hq-aircraft-card__name">The Ultimate in Personal Aviation</h3>
+                                    <p class="hq-aircraft-card__desc">300 SHP Rolls-Royce RR300 turbine engine. 5 seats. Glass cockpit available.</p>
+                                </div>
+                            </a>
+                            <div class="hq-aircraft__side-cards">
+                                <a href="#r44" class="hq-aircraft-card hq-aircraft-card--mini">
+                                    <img src="/assets/images/new-aircraft/r44/raven-ii-front-alpha.png" alt="R44" class="hq-aircraft-card__thumb">
+                                    <div>
+                                        <span class="hq-aircraft-card__make">Robinson</span>
+                                        <h4 class="hq-aircraft-card__name">R44 Raven II</h4>
+                                    </div>
+                                </a>
+                                <a href="#r22" class="hq-aircraft-card hq-aircraft-card--mini">
+                                    <img src="/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png" alt="R22" class="hq-aircraft-card__thumb">
+                                    <div>
+                                        <span class="hq-aircraft-card__make">Robinson</span>
+                                        <h4 class="hq-aircraft-card__name">R22 Beta II</h4>
+                                    </div>
+                                </a>
+                                <a href="#r88" class="hq-aircraft-card hq-aircraft-card--mini">
+                                    <img src="/assets/images/new-aircraft/r88/r88-jellybean-left.png" alt="R88" class="hq-aircraft-card__thumb">
+                                    <div>
+                                        <span class="hq-aircraft-card__make">Robinson</span>
+                                        <h4 class="hq-aircraft-card__name">R88 Twin</h4>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Split Content -->
+            <div class="insp-block" id="split-content">
+                <div class="insp-block__header">
+                    <h3>Split Content - Image Left</h3>
+                    <span class="insp-block__id">content-split-image-left</span>
+                </div>
+                <div class="insp-block__render">
+                    <section class="hq-content--split">
+                        <div class="hq-container">
+                            <div class="hq-content__split">
+                                <div class="hq-content__image">
+                                    <img src="/assets/images/team/helicopter-genius-quentin-smith-great-britain.webp" alt="World-Class Instruction">
+                                </div>
+                                <div class="hq-content__text">
+                                    <span class="hq-overline">About Our Training</span>
+                                    <h2>World-Class Instruction</h2>
+                                    <p>Our flight instructors bring decades of combined experience to every lesson. With backgrounds in commercial aviation, military service, and competition flying, they provide diverse perspectives and expert guidance.</p>
+                                    <p>We maintain small class sizes to ensure personalized attention, and our modern fleet of training aircraft are maintained to the highest standards.</p>
+                                    <div class="hq-content__cta">
+                                        <a href="#training" class="hq-btn hq-btn--primary">View Training Courses</a>
+                                        <a href="#team" class="hq-btn hq-btn--outline">Meet Our Team</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRAINING SECTION -->
+        <section class="insp-section">
+            <h2 class="insp-section__title">Training Components</h2>
+
+            <!-- Pilot Pathway -->
+            <div class="insp-block" id="pilot-pathway">
+                <div class="insp-block__header">
+                    <h3>Pilot Pathway - Student Journey</h3>
+                    <span class="insp-block__id">journey-pilot-pathway</span>
+                </div>
+                <div class="insp-block__render">
+                    <section style="background: var(--hq-hover-bg); padding: 4rem 2rem;">
+                        <div class="hq-container">
+                            <div class="hq-section-header">
+                                <span class="hq-overline">Flight Training</span>
+                                <h2 class="hq-section-title">Your Path to the Skies</h2>
+                                <p class="hq-section-subtitle">From first lesson to PPL(H) in as little as 3 months</p>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 3rem 0; position: relative;">
+                                <!-- Progress Line -->
+                                <div style="position: absolute; top: 20px; left: 10%; right: 10%; height: 4px; background: var(--hq-border);"></div>
+                                <div style="position: absolute; top: 20px; left: 10%; width: 35%; height: 4px; background: var(--hq-accent);"></div>
+
+                                <!-- Steps -->
+                                <div style="text-align: center; position: relative; z-index: 1; flex: 1;">
+                                    <div style="width: 40px; height: 40px; background: var(--hq-accent); border-radius: 50%; margin: 0 auto 1rem;"></div>
+                                    <span style="font-family: var(--font-primary); font-weight: 600; display: block;">Trial Flight</span>
+                                    <strong style="font-family: var(--font-mono); color: var(--hq-accent); font-size: 0.85rem;">£299</strong>
+                                    <p style="font-size: 0.75rem; color: var(--hq-subtle); margin-top: 0.25rem;">30-minute hands-on</p>
+                                </div>
+                                <div style="text-align: center; position: relative; z-index: 1; flex: 1;">
+                                    <div style="width: 40px; height: 40px; background: var(--hq-accent); border-radius: 50%; margin: 0 auto 1rem;"></div>
+                                    <span style="font-family: var(--font-primary); font-weight: 600; display: block;">First Solo</span>
+                                    <strong style="font-family: var(--font-mono); color: var(--hq-accent); font-size: 0.85rem;">~15 hours</strong>
+                                    <p style="font-size: 0.75rem; color: var(--hq-subtle); margin-top: 0.25rem;">Your first flight alone</p>
+                                </div>
+                                <div style="text-align: center; position: relative; z-index: 1; flex: 1;">
+                                    <div style="width: 40px; height: 40px; background: var(--hq-border); border-radius: 50%; margin: 0 auto 1rem; border: 3px solid var(--hq-accent);"></div>
+                                    <span style="font-family: var(--font-primary); font-weight: 600; display: block;">Skills Test</span>
+                                    <strong style="font-family: var(--font-mono); font-size: 0.85rem;">45 hours min</strong>
+                                    <p style="font-size: 0.75rem; color: var(--hq-subtle); margin-top: 0.25rem;">Demonstrate abilities</p>
+                                </div>
+                                <div style="text-align: center; position: relative; z-index: 1; flex: 1;">
+                                    <div style="width: 40px; height: 40px; background: var(--hq-border); border-radius: 50%; margin: 0 auto 1rem;"></div>
+                                    <span style="font-family: var(--font-primary); font-weight: 600; display: block;">PPL(H) License</span>
+                                    <strong style="font-family: var(--font-mono); font-size: 0.85rem;">Freedom</strong>
+                                    <p style="font-size: 0.75rem; color: var(--hq-subtle); margin-top: 0.25rem;">The world is yours</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: center; gap: 2rem; margin: 2rem 0; padding: 1rem 2rem; background: var(--hq-background-alt); border-radius: var(--radius-md);">
+                                <span style="font-size: 0.85rem;"><i class="fas fa-check" style="color: var(--hq-accent); margin-right: 0.5rem;"></i>Flexible scheduling</span>
+                                <span style="font-size: 0.85rem;"><i class="fas fa-check" style="color: var(--hq-accent); margin-right: 0.5rem;"></i>1-on-1 CAA approved instruction</span>
+                                <span style="font-size: 0.85rem; color: var(--hq-accent); font-weight: 600;"><i class="fas fa-check" style="margin-right: 0.5rem;"></i>Ground school included</span>
+                            </div>
+                            <div style="text-align: center; margin-top: 2rem;">
+                                <a href="#training" class="hq-btn hq-btn--accent">Book Your Trial Flight</a>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </section>
+
+        <!-- LIFESTYLE SECTION -->
+        <section class="insp-section">
+            <h2 class="insp-section__title">Lifestyle & Aspirational</h2>
+
+            <!-- Destinations Grid -->
+            <div class="insp-block" id="destinations">
+                <div class="insp-block__header">
+                    <h3>Where Will You Go? - "Absolutely amazing component"</h3>
+                    <span class="insp-block__id">lifestyle-destinations</span>
+                </div>
+                <div class="insp-block__render" style="padding: 4rem 2rem;">
+                    <div class="hq-container">
+                        <div class="hq-section-header">
+                            <span class="hq-overline">The World Awaits</span>
+                            <h2 class="hq-section-title">Where Will You Go?</h2>
+                            <p class="hq-section-subtitle">Skip the traffic. Land where others can't. Your helicopter, your freedom.</p>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 200px 200px; gap: 1rem; margin: 2rem 0;">
+                            <div style="grid-row: span 2; background: linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.6)), url('/assets/images/expeditions/north-pole.jpg') center/cover; border-radius: var(--radius-lg); display: flex; flex-direction: column; justify-content: flex-end; padding: 2rem; color: #fff;">
+                                <h3 style="font-family: var(--font-primary); font-weight: 700; text-transform: uppercase; margin: 0;">Scottish Highlands</h3>
+                                <span style="font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.8;">2hr 45min from London</span>
+                            </div>
+                            <div style="background: linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.6)), url('/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp') center/cover; border-radius: var(--radius-lg); display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem; color: #fff;">
+                                <h3 style="font-family: var(--font-primary); font-weight: 600; font-size: 1rem; margin: 0;">French Riviera</h3>
+                                <span style="font-family: var(--font-mono); font-size: 0.65rem; opacity: 0.8;">Direct to your yacht</span>
+                            </div>
+                            <div style="background: linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.6)), url('/assets/images/facility/busy-hangar.jpg') center/cover; border-radius: var(--radius-lg); display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem; color: #fff;">
+                                <h3 style="font-family: var(--font-primary); font-weight: 600; font-size: 1rem; margin: 0;">The Cotswolds</h3>
+                                <span style="font-family: var(--font-mono); font-size: 0.65rem; opacity: 0.8;">45min lunch trips</span>
+                            </div>
+                            <div style="background: linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.6)), url('/assets/images/team/helicopter-genius-quentin-smith-great-britain.webp') center/cover; border-radius: var(--radius-lg); display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem; color: #fff;">
+                                <h3 style="font-family: var(--font-primary); font-weight: 600; font-size: 1rem; margin: 0;">Cornwall Coast</h3>
+                                <span style="font-family: var(--font-mono); font-size: 0.65rem; opacity: 0.8;">Weekend escapes</span>
+                            </div>
+                            <div style="background: linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.6)), url('/assets/images/team/british-helicopter-team.webp') center/cover; border-radius: var(--radius-lg); display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem; color: #fff;">
+                                <h3 style="font-family: var(--font-primary); font-weight: 600; font-size: 1rem; margin: 0;">Swiss Alps</h3>
+                                <span style="font-family: var(--font-mono); font-size: 0.65rem; opacity: 0.8;">Ski resort transfers</span>
+                            </div>
+                        </div>
+                        <p style="text-align: center; font-style: italic; color: var(--hq-body); font-size: 1.25rem;">Life is too short for motorways.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expedition Showcase -->
+            <div class="insp-block" id="expedition">
+                <div class="insp-block__header">
+                    <h3>Expedition Showcase - "We definitely need this"</h3>
+                    <span class="insp-block__id">expedition-showcase</span>
+                </div>
+                <div class="insp-block__render">
+                    <section style="background: linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.7)), url('/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp') center/cover; color: #fff; padding: 6rem 2rem; text-align: center;">
+                        <div class="hq-container">
+                            <span class="hq-overline hq-overline--accent">Expeditions</span>
+                            <h2 style="font-family: var(--font-primary); font-size: clamp(2rem, 6vw, 3.5rem); font-weight: 700; text-transform: uppercase; margin: 1rem 0;">Adventure Awaits</h2>
+                            <p style="max-width: 600px; margin: 0 auto 2rem; opacity: 0.9; line-height: 1.8;">Join world-record holding pilots on extraordinary helicopter journeys. From Alpine crossings to Arctic expeditions.</p>
+                            <div style="display: flex; justify-content: center; gap: 4rem; margin: 3rem 0;">
+                                <div>
+                                    <strong style="font-family: var(--font-primary); font-size: 1.1rem; display: block;">Alps</strong>
+                                    <span style="font-family: var(--font-mono); font-size: 0.7rem; opacity: 0.7;">Next: March 2025</span>
+                                </div>
+                                <div>
+                                    <strong style="font-family: var(--font-primary); font-size: 1.1rem; display: block;">Scotland</strong>
+                                    <span style="font-family: var(--font-mono); font-size: 0.7rem; opacity: 0.7;">Next: February 2025</span>
+                                </div>
+                                <div>
+                                    <strong style="font-family: var(--font-primary); font-size: 1.1rem; display: block;">Iceland</strong>
+                                    <span style="font-family: var(--font-mono); font-size: 0.7rem; opacity: 0.7;">Next: June 2025</span>
+                                </div>
+                            </div>
+                            <a href="#expeditions" class="hq-btn hq-btn--accent hq-btn--lg">Explore Expeditions</a>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Ownership Benefits -->
+            <div class="insp-block" id="ownership">
+                <div class="insp-block__header">
+                    <h3>Ownership Benefits</h3>
+                    <span class="insp-block__id">lifestyle-ownership-benefits</span>
+                </div>
+                <div class="insp-block__render">
+                    <section style="background: var(--hq-hover-bg); padding: 4rem 2rem;">
+                        <div class="hq-container">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
+                                <div>
+                                    <span class="hq-overline">Helicopter Ownership</span>
+                                    <h2 style="font-family: var(--font-primary); font-size: clamp(1.5rem, 4vw, 2.5rem); font-weight: 700; text-transform: uppercase; line-height: 1.2; margin: 0.5rem 0 2rem;">More Than Transport.<br>A Way of Life.</h2>
+
+                                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                                        <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                                            <div style="width: 48px; height: 48px; background: var(--hq-background-alt); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                                <i class="fas fa-clock" style="color: var(--hq-accent);"></i>
+                                            </div>
+                                            <div>
+                                                <h3 style="font-family: var(--font-primary); font-weight: 600; margin: 0 0 0.25rem;">Time Freedom</h3>
+                                                <p style="color: var(--hq-body); font-size: 0.9rem; margin: 0; line-height: 1.6;">London to Edinburgh in 2.5 hours. Skip check-in queues, security lines, and delays.</p>
+                                            </div>
+                                        </div>
+                                        <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                                            <div style="width: 48px; height: 48px; background: var(--hq-background-alt); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                                <i class="fas fa-map-marker-alt" style="color: var(--hq-accent);"></i>
+                                            </div>
+                                            <div>
+                                                <h3 style="font-family: var(--font-primary); font-weight: 600; margin: 0 0 0.25rem;">Access Anywhere</h3>
+                                                <p style="color: var(--hq-body); font-size: 0.9rem; margin: 0; line-height: 1.6;">Land at 2,000+ airfields across Europe. Remote estates, private helipads, events.</p>
+                                            </div>
+                                        </div>
+                                        <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                                            <div style="width: 48px; height: 48px; background: var(--hq-background-alt); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                                <i class="fas fa-heart" style="color: var(--hq-accent);"></i>
+                                            </div>
+                                            <div>
+                                                <h3 style="font-family: var(--font-primary); font-weight: 600; margin: 0 0 0.25rem;">Pure Joy</h3>
+                                                <p style="color: var(--hq-body); font-size: 0.9rem; margin: 0; line-height: 1.6;">The view from 2,000 feet. The thrill of flight. Some things can't be measured in ROI.</p>
+                                            </div>
+                                        </div>
+                                        <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                                            <div style="width: 48px; height: 48px; background: var(--hq-background-alt); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                                <i class="fas fa-pound-sign" style="color: var(--hq-accent);"></i>
+                                            </div>
+                                            <div>
+                                                <h3 style="font-family: var(--font-primary); font-weight: 600; margin: 0 0 0.25rem;">Business Asset</h3>
+                                                <p style="color: var(--hq-body); font-size: 0.9rem; margin: 0; line-height: 1.6;">Tax-efficient ownership structures. An asset that pays for itself while you fly.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <a href="#ownership" class="hq-btn hq-btn--primary" style="margin-top: 2rem;">Explore Ownership Options</a>
+                                </div>
+                                <div>
+                                    <img src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-front-v4.png" alt="R66 Ownership" style="width: 100%; filter: drop-shadow(0 40px 60px rgba(0,0,0,0.15));">
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </section>
+
+        <!-- EVENTS & TEAM SECTION -->
+        <section class="insp-section">
+            <h2 class="insp-section__title">Events & Team</h2>
+
+            <!-- Upcoming Events -->
+            <div class="insp-block" id="events">
+                <div class="insp-block__header">
+                    <h3>Upcoming Events</h3>
+                    <span class="insp-block__id">events-upcoming</span>
+                </div>
+                <div class="insp-block__render" style="padding: 4rem 2rem;">
+                    <div class="hq-container">
+                        <div class="hq-section-header">
+                            <span class="hq-overline">Events</span>
+                            <h2 class="hq-section-title">Upcoming at HQ Aviation</h2>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem;">
+                            <a href="#" style="display: flex; align-items: center; gap: 2rem; background: var(--hq-hover-bg); padding: 1.5rem; border-radius: var(--radius-lg); text-decoration: none; color: inherit; transition: transform 0.3s ease;">
+                                <div style="text-align: center; min-width: 60px;">
+                                    <span style="font-family: var(--font-mono); font-size: 2rem; font-weight: 700; display: block; color: var(--hq-heading-1);">15</span>
+                                    <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--hq-subtle); letter-spacing: 0.1em;">JAN</span>
+                                </div>
+                                <div style="flex: 1;">
+                                    <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--hq-accent); text-transform: uppercase; letter-spacing: 0.1em;">Open Day</span>
+                                    <h3 style="font-family: var(--font-primary); font-weight: 600; margin: 0.25rem 0; font-size: 1.1rem;">Winter Open Day & Discovery Flight Offers</h3>
+                                    <p style="color: var(--hq-body); margin: 0; font-size: 0.85rem;">10am - 4pm • Denham Aerodrome • Free Entry</p>
+                                </div>
+                                <span class="hq-btn hq-btn--outline" style="flex-shrink: 0;">Register</span>
+                            </a>
+                            <a href="#" style="display: flex; align-items: center; gap: 2rem; background: var(--hq-hover-bg); padding: 1.5rem; border-radius: var(--radius-lg); text-decoration: none; color: inherit;">
+                                <div style="text-align: center; min-width: 60px;">
+                                    <span style="font-family: var(--font-mono); font-size: 2rem; font-weight: 700; display: block; color: var(--hq-heading-1);">28</span>
+                                    <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--hq-subtle); letter-spacing: 0.1em;">JAN</span>
+                                </div>
+                                <div style="flex: 1;">
+                                    <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--hq-accent); text-transform: uppercase; letter-spacing: 0.1em;">Webinar</span>
+                                    <h3 style="font-family: var(--font-primary); font-weight: 600; margin: 0.25rem 0; font-size: 1.1rem;">PPL vs CPL: Which Licence is Right For You?</h3>
+                                    <p style="color: var(--hq-body); margin: 0; font-size: 0.85rem;">7pm - 8:30pm • Online • Free</p>
+                                </div>
+                                <span class="hq-btn hq-btn--outline" style="flex-shrink: 0;">Join</span>
+                            </a>
+                            <a href="#" style="display: flex; align-items: center; gap: 2rem; background: var(--hq-hover-bg); padding: 1.5rem; border-radius: var(--radius-lg); text-decoration: none; color: inherit;">
+                                <div style="text-align: center; min-width: 60px;">
+                                    <span style="font-family: var(--font-mono); font-size: 2rem; font-weight: 700; display: block; color: var(--hq-heading-1);">10</span>
+                                    <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--hq-subtle); letter-spacing: 0.1em;">FEB</span>
+                                </div>
+                                <div style="flex: 1;">
+                                    <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--hq-accent); text-transform: uppercase; letter-spacing: 0.1em;">Expedition</span>
+                                    <h3 style="font-family: var(--font-primary); font-weight: 600; margin: 0.25rem 0; font-size: 1.1rem;">Scotland Fly-Out: Highland Adventure</h3>
+                                    <p style="color: var(--hq-body); margin: 0; font-size: 0.85rem;">4 days • All experience levels • Limited spots</p>
+                                </div>
+                                <span class="hq-btn hq-btn--accent" style="flex-shrink: 0;">Book</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Grid -->
+            <div class="insp-block" id="team">
+                <div class="insp-block__header">
+                    <h3>Team Grid - "The team grid is very good"</h3>
+                    <span class="insp-block__id">team-grid-4</span>
+                </div>
+                <div class="insp-block__render" style="padding: 4rem 2rem;">
+                    <div class="hq-container">
+                        <div class="hq-section-header">
+                            <span class="hq-overline">Our Team</span>
+                            <h2 class="hq-section-title">Meet the Experts</h2>
+                            <p class="hq-section-subtitle">Three decades of combined aviation experience</p>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem;">
+                            <div style="background: var(--hq-background-alt); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-light);">
+                                <div style="height: 250px; overflow: hidden;">
+                                    <img src="/assets/images/team/quentin-smith-world-record-holder-helicopter-aerobatics.webp" alt="Quentin Smith" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                <div style="padding: 1.5rem; text-align: center;">
+                                    <h3 style="font-family: var(--font-primary); font-weight: 600; margin: 0 0 0.25rem;">Quentin Smith</h3>
+                                    <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--hq-subtle); letter-spacing: 0.1em; text-transform: uppercase;">Founder & MD</span>
+                                </div>
+                            </div>
+                            <div style="background: var(--hq-background-alt); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-light);">
+                                <div style="height: 250px; overflow: hidden;">
+                                    <img src="/assets/images/team/british-helicopter-team.webp" alt="Mackie Alcantara" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                <div style="padding: 1.5rem; text-align: center;">
+                                    <h3 style="font-family: var(--font-primary); font-weight: 600; margin: 0 0 0.25rem;">Mackie Alcantara</h3>
+                                    <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--hq-subtle); letter-spacing: 0.1em; text-transform: uppercase;">Chief Flight Instructor</span>
+                                </div>
+                            </div>
+                            <div style="background: var(--hq-background-alt); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-light);">
+                                <div style="height: 250px; overflow: hidden;">
+                                    <img src="/assets/images/facility/hq-aviation-helicopter-hangar.webp" alt="David Cross" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                <div style="padding: 1.5rem; text-align: center;">
+                                    <h3 style="font-family: var(--font-primary); font-weight: 600; margin: 0 0 0.25rem;">David Cross</h3>
+                                    <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--hq-subtle); letter-spacing: 0.1em; text-transform: uppercase;">Chief Engineer</span>
+                                </div>
+                            </div>
+                            <div style="background: var(--hq-background-alt); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-light);">
+                                <div style="height: 250px; overflow: hidden;">
+                                    <img src="/assets/images/facility/busy-hangar.jpg" alt="Operations Team" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                <div style="padding: 1.5rem; text-align: center;">
+                                    <h3 style="font-family: var(--font-primary); font-weight: 600; margin: 0 0 0.25rem;">Alex & Nicola</h3>
+                                    <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--hq-subtle); letter-spacing: 0.1em; text-transform: uppercase;">Head of Operations</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA & FOOTER SECTION -->
+        <section class="insp-section">
+            <h2 class="insp-section__title">CTA & Footer</h2>
+
+            <!-- Centered CTA -->
+            <div class="insp-block" id="cta">
+                <div class="insp-block__header">
+                    <h3>Centered CTA - "The simple CTA is very good"</h3>
+                    <span class="insp-block__id">cta-simple-centered</span>
+                </div>
+                <div class="insp-block__render insp-block__render--dark">
+                    <section style="text-align: center; padding: 6rem 2rem; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+                        <h2 style="font-family: var(--font-primary); font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; text-transform: uppercase; color: #fff; margin-bottom: 1rem;">Ready to Take Flight?</h2>
+                        <p style="font-family: var(--font-primary); color: rgba(255,255,255,0.7); margin-bottom: 2rem; font-size: 1.1rem;">Contact our team to discuss your aviation needs.</p>
+                        <div class="hq-btn-group hq-btn-group--center">
+                            <a href="#contact" class="hq-btn hq-btn--accent hq-btn--lg">Get in Touch</a>
+                            <a href="tel:+441753868976" class="hq-btn hq-btn--ghost hq-btn--lg">Call Us</a>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Mega Footer -->
+            <div class="insp-block" id="footer">
+                <div class="insp-block__header">
+                    <h3>Mega Footer - Brand Identity Applied</h3>
+                    <span class="insp-block__id">footer-mega</span>
+                </div>
+                <div class="insp-block__render insp-block__render--dark">
+                    <footer style="background: #0a0a0a; padding: 4rem 2rem 2rem; color: #fff;">
+                        <div class="hq-container">
+                            <div style="display: grid; grid-template-columns: 2fr repeat(4, 1fr); gap: 2rem; margin-bottom: 3rem;">
+                                <div>
+                                    <h3 style="font-family: var(--font-primary); font-size: 1.5rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem;">HQ Aviation</h3>
+                                    <p style="font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.5); margin-bottom: 1.5rem;">THE ROBINSON SPECIALISTS SINCE 1990</p>
+                                    <a href="tel:+441753868976" style="display: block; color: var(--hq-accent); font-family: var(--font-mono); font-size: 1.25rem; margin-bottom: 0.5rem; text-decoration: none;">01753 868 976</a>
+                                    <a href="mailto:info@hqaviation.com" style="color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.9rem;">info@hqaviation.com</a>
+                                    <div style="margin-top: 1.5rem;">
+                                        <span class="hq-coordinates">51.5751°N / 0.5059°W</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 style="font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 1rem;">Aircraft</h4>
+                                    <ul style="list-style: none;">
+                                        <li style="margin-bottom: 0.5rem;"><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;">Robinson R22</a></li>
+                                        <li style="margin-bottom: 0.5rem;"><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem;">Robinson R44</a></li>
+                                        <li style="margin-bottom: 0.5rem;"><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem;">Robinson R66</a></li>
+                                        <li><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem;">Pre-Owned</a></li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 style="font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 1rem;">Training</h4>
+                                    <ul style="list-style: none;">
+                                        <li style="margin-bottom: 0.5rem;"><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem;">PPL(H) Course</a></li>
+                                        <li style="margin-bottom: 0.5rem;"><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem;">Type Ratings</a></li>
+                                        <li style="margin-bottom: 0.5rem;"><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem;">Trial Lessons</a></li>
+                                        <li><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem;">Night Ratings</a></li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 style="font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 1rem;">Services</h4>
+                                    <ul style="list-style: none;">
+                                        <li style="margin-bottom: 0.5rem;"><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem;">Maintenance</a></li>
+                                        <li style="margin-bottom: 0.5rem;"><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem;">Parts</a></li>
+                                        <li style="margin-bottom: 0.5rem;"><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem;">Inspections</a></li>
+                                        <li><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem;">Management</a></li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 style="font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 1rem;">Opening Hours</h4>
+                                    <p style="color: rgba(255,255,255,0.7); line-height: 1.8; font-size: 0.9rem;">
+                                        Mon - Fri: 8am - 6pm<br>
+                                        Saturday: 9am - 4pm<br>
+                                        Sunday: By appointment
+                                    </p>
+                                    <address style="color: rgba(255,255,255,0.5); font-style: normal; margin-top: 1rem; font-size: 0.85rem;">
+                                        Denham Aerodrome<br>Buckinghamshire UB9 5DF
+                                    </address>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                                <p style="font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.3);">© 2025 HQ AVIATION LTD. ALL RIGHTS RESERVED.</p>
+                                <nav style="display: flex; gap: 2rem;">
+                                    <a href="#" style="font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.5); text-decoration: none;">Privacy</a>
+                                    <a href="#" style="font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.5); text-decoration: none;">Terms</a>
+                                    <a href="#" style="font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.5); text-decoration: none;">Cookies</a>
+                                </nav>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            </div>
+        </section>
+
+        <!-- APPROVED QUOTES -->
+        <section class="insp-section">
+            <h2 class="insp-section__title">Approved Quotes</h2>
+
+            <div class="insp-block" id="quotes">
+                <div class="insp-block__header">
+                    <h3>Brand Quote Collection</h3>
+                    <span class="insp-block__id">approved-quotes</span>
+                </div>
+                <div class="insp-block__render" style="padding: 2rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+                        <div style="background: var(--hq-background-alt); padding: 1.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-light);">
+                            <blockquote style="font-family: var(--font-primary); font-size: 1.1rem; font-style: italic; color: var(--hq-heading-1); margin-bottom: 0.5rem;">"The sky is not the limit. It's home."</blockquote>
+                            <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--hq-subtle); text-transform: uppercase; letter-spacing: 0.1em;">Rise Above</span>
+                        </div>
+                        <div style="background: var(--hq-background-alt); padding: 1.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-light);">
+                            <blockquote style="font-family: var(--font-primary); font-size: 1.1rem; font-style: italic; color: var(--hq-heading-1); margin-bottom: 0.5rem;">"Life is too short for motorways."</blockquote>
+                            <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--hq-subtle); text-transform: uppercase; letter-spacing: 0.1em;">Live Unlimited</span>
+                        </div>
+                        <div style="background: var(--hq-background-alt); padding: 1.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-light);">
+                            <blockquote style="font-family: var(--font-primary); font-size: 1.1rem; font-style: italic; color: var(--hq-heading-1); margin-bottom: 0.5rem;">"Own the sky."</blockquote>
+                            <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--hq-subtle); text-transform: uppercase; letter-spacing: 0.1em;">Powerful</span>
+                        </div>
+                        <div style="background: var(--hq-background-alt); padding: 1.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-light);">
+                            <blockquote style="font-family: var(--font-primary); font-size: 1.1rem; font-style: italic; color: var(--hq-heading-1); margin-bottom: 0.5rem;">"A helicopter isn't transport. It's a time machine."</blockquote>
+                            <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--hq-subtle); text-transform: uppercase; letter-spacing: 0.1em;">Time Machine</span>
+                        </div>
+                        <div style="background: var(--hq-background-alt); padding: 1.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-light);">
+                            <blockquote style="font-family: var(--font-primary); font-size: 1.1rem; font-style: italic; color: var(--hq-heading-1); margin-bottom: 0.5rem;">"A family business that treats you like family."</blockquote>
+                            <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--hq-subtle); text-transform: uppercase; letter-spacing: 0.1em;">Family Business</span>
+                        </div>
+                        <div style="background: var(--hq-accent); padding: 1.5rem; border-radius: var(--radius-lg); color: #fff;">
+                            <blockquote style="font-family: var(--font-primary); font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">"Your turn to fly."</blockquote>
+                            <span style="font-family: var(--font-mono); font-size: 0.65rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.1em;">Key Message</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Smooth scroll for navigation links
+        document.querySelectorAll('.insp-nav__section a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href.startsWith('#')) {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+{
+  "helicopter_ownership_benefits": [
+    {
+      "category": "The Practical Advantage",
+      "items": [
+        {
+          "title": "Vertical Freedom",
+          "description": "The ultimate cheat code for travel. Land on your own property, yachts, lawns, beaches, or restaurants."
+        },
+        {
+          "title": "Weekend Maximization",
+          "description": "Bypass road gridlock and turn 4-hour drives into 45-minute flights, effectively extending your leisure time."
+        },
+        {
+          "title": "Total Control",
+          "description": "You leave exactly when you want. Depart from your door and arrive exactly where you need to be."
+        },
+        {
+          "title": "Unmatched Access",
+          "description": "Reach secluded locations inaccessible by any other vehicle, from private islands to deep wilderness."
+        }
+      ]
+    },
+    {
+      "category": "The Experience & Skill",
+      "items": [
+        {
+          "title": "The \"007\" Factor",
+          "description": "It is the coolest vehicle on earth. Arriving by helicopter is cinematic, commanding, and undeniably \"James Bond.\""
+        },
+        {
+          "title": "Mastery of Machine",
+          "description": "It satisfies the urge for technical perfection. Mastering the collective and cyclic displays your skills as a master at operating machinery."
+        },
+        {
+          "title": "3D Flight Dynamics",
+          "description": "Unlike airplanes that just go forward, you have total three-dimensional control—hovering, sliding sideways, and flying backward."
+        }
+      ]
+    },
+    {
+      "category": "The Lifestyle",
+      "items": [
+        {
+          "title": "Business Efficiency",
+          "description": "The ultimate productivity multiplier, allowing for multiple meetings in a single day."
+        },
+        {
+          "title": "Spontaneity",
+          "description": "The ability to decide on a trip and be in the air within the hour."
+        },
+        {
+          "title": "Hobby Enablement",
+          "description": "Direct access to golf courses or shooting grounds that have helipads."
+        },
+        {
+          "title": "Prestige & Networking",
+          "description": "It is a powerful tool for business or social settings."
+        },
+        {
+          "title": "Lasting Impact",
+          "description": "Create memories that last a lifetime."
+        },
+        {
+          "title": "The Ancestral Dream",
+          "description": "You pull up in your car to find the helicopter fueled, cleaned, and ready on the pad. You toss your bags in the boot and fly yourself to your destination with your passengers in a private bubble above the world—a feat our ancestors who looked up at the birds in wonder could only dream of."
+        }
+      ]
+    }
+  ]
+}

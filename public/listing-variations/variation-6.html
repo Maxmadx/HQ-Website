@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Variation 6: Sidebar Specs</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #fff; color: #1a1a1a; }
+
+/* VARIATION 6: Sidebar Specs - Main content left, sticky specs sidebar right */
+.back-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: #666; text-decoration: none; font-size: 0.9rem;
+  padding: 20px 40px;
+}
+
+.listing-container {
+  max-width: 1400px; margin: 0 auto; padding: 0 40px 80px;
+}
+
+.listing-layout {
+  display: grid; grid-template-columns: 1fr 380px;
+  gap: 50px; align-items: start;
+}
+
+/* Main Content */
+.main-content { }
+
+.gallery {
+  position: relative; border-radius: 12px;
+  overflow: hidden; margin-bottom: 40px;
+}
+.gallery img { width: 100%; aspect-ratio: 16/10; object-fit: cover; }
+.gallery-thumbs {
+  display: flex; gap: 10px; margin-top: 15px;
+}
+.gallery-thumb {
+  width: 100px; height: 70px; border-radius: 8px;
+  overflow: hidden; cursor: pointer; opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.gallery-thumb:hover, .gallery-thumb.active { opacity: 1; }
+.gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+.model-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.2rem; font-weight: 800;
+  text-transform: uppercase; margin-bottom: 20px;
+}
+
+.description {
+  font-size: 1.05rem; line-height: 1.8;
+  color: #444; margin-bottom: 40px;
+  padding-bottom: 40px; border-bottom: 1px solid #eee;
+}
+
+.section-header {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  margin-bottom: 25px;
+}
+
+.equipment-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+.equipment-item {
+  background: #f8f9fa; padding: 15px 20px;
+  border-radius: 8px; font-size: 0.9rem;
+  border: 1px solid #e9ecef;
+  display: flex; align-items: center; gap: 10px;
+}
+.equipment-item::before {
+  content: '+'; color: #2e7d32; font-weight: bold;
+}
+
+/* Sidebar */
+.sidebar {
+  position: sticky; top: 30px;
+  background: #f8f9fa; border-radius: 16px;
+  padding: 30px; border: 1px solid #e9ecef;
+}
+
+.sidebar-price {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2rem; font-weight: 800;
+  color: #cc0000; margin-bottom: 10px;
+}
+.sidebar-condition {
+  display: inline-block; background: #e8f5e9;
+  color: #2e7d32; padding: 6px 14px;
+  border-radius: 20px; font-size: 0.85rem;
+  font-weight: 600; margin-bottom: 25px;
+}
+
+.sidebar-divider {
+  height: 1px; background: #e0e0e0;
+  margin: 20px 0;
+}
+
+.sidebar-specs { margin-bottom: 25px; }
+.sidebar-spec {
+  display: flex; justify-content: space-between;
+  padding: 12px 0; border-bottom: 1px solid #e0e0e0;
+  font-size: 0.9rem;
+}
+.sidebar-spec:last-child { border-bottom: none; }
+.sidebar-spec-label { color: #666; }
+.sidebar-spec-value { font-weight: 600; }
+
+.sidebar-cta {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.btn {
+  width: 100%; padding: 16px; font-size: 0.9rem;
+  font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.5px; border-radius: 8px;
+  cursor: pointer; text-align: center; text-decoration: none;
+  transition: all 0.2s;
+}
+.btn-primary { background: #1a1a1a; color: #fff; border: none; }
+.btn-primary:hover { background: #cc0000; }
+.btn-secondary { background: #fff; color: #1a1a1a; border: 2px solid #1a1a1a; }
+.btn-secondary:hover { background: #1a1a1a; color: #fff; }
+
+.sidebar-contact {
+  margin-top: 20px; text-align: center;
+  font-size: 0.85rem; color: #666;
+}
+.sidebar-contact a { color: #1a1a1a; font-weight: 600; }
+
+.variation-picker {
+  position: fixed; bottom: 20px; right: 20px;
+  background: #1a1a1a; color: #fff;
+  padding: 15px 20px; border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 1000;
+}
+.variation-picker select {
+  background: #333; color: #fff; border: none;
+  padding: 8px 12px; border-radius: 4px; margin-left: 10px;
+}
+
+@media (max-width: 1000px) {
+  .listing-layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; }
+}
+</style>
+</head>
+<body>
+
+<a href="/used-aircraft-2" class="back-link">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+  Back to Listings
+</a>
+
+<div class="listing-container">
+  <div class="listing-layout">
+    <div class="main-content">
+      <div class="gallery">
+        <img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HQAV%2Fblue-r66-palo-verde-front-v4.png?alt=media&token=3084cb09-4600-47bd-adf8-873b980b541d" alt="Robinson R66">
+      </div>
+      <div class="gallery-thumbs">
+        <div class="gallery-thumb active"><img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HQAV%2Fblue-r66-palo-verde-front-v4.png?alt=media&token=3084cb09-4600-47bd-adf8-873b980b541d" alt=""></div>
+        <div class="gallery-thumb"><img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HELI%2Fhq-0209.jpg?alt=media" alt=""></div>
+        <div class="gallery-thumb"><img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HELI%2Fhq-0213.jpg?alt=media" alt=""></div>
+      </div>
+
+      <h1 class="model-title">Robinson R66 Turbine</h1>
+
+      <p class="description">
+        For sale is a superb example of a Robinson R66. This helicopter has 1240Hrs & 5 years remaining. The helicopter includes Robinson's dark continental blue metallic paint. The helicopter has been maintained to the highest of standards and as a result, is in very good condition.
+      </p>
+
+      <h2 class="section-header">Equipment & Features</h2>
+      <div class="equipment-grid">
+        <div class="equipment-item">Pop-out floats</div>
+        <div class="equipment-item">Extra Corrosion Protection</div>
+        <div class="equipment-item">Halon Fire Extinguisher</div>
+        <div class="equipment-item">5 Point Harness</div>
+        <div class="equipment-item">Heated Pitot Tube</div>
+        <div class="equipment-item">Auxiliary fuel system</div>
+        <div class="equipment-item">SAS Autopilot with EFIS</div>
+        <div class="equipment-item">Garmin G500H</div>
+        <div class="equipment-item">Garmin GTN650</div>
+        <div class="equipment-item">GTX345 Transponder</div>
+        <div class="equipment-item">Lithium Ion Battery</div>
+        <div class="equipment-item">USB ports</div>
+      </div>
+    </div>
+
+    <aside class="sidebar">
+      <div class="sidebar-price">£650,000</div>
+      <div class="sidebar-condition">Excellent Condition</div>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="sidebar-specs">
+        <div class="sidebar-spec"><span class="sidebar-spec-label">Year</span><span class="sidebar-spec-value">2018</span></div>
+        <div class="sidebar-spec"><span class="sidebar-spec-label">Registration</span><span class="sidebar-spec-value">G-SAPA</span></div>
+        <div class="sidebar-spec"><span class="sidebar-spec-label">Total Hours</span><span class="sidebar-spec-value">1,240</span></div>
+        <div class="sidebar-spec"><span class="sidebar-spec-label">Engine</span><span class="sidebar-spec-value">RR300</span></div>
+        <div class="sidebar-spec"><span class="sidebar-spec-label">Remaining</span><span class="sidebar-spec-value">5 Years</span></div>
+      </div>
+
+      <div class="sidebar-cta">
+        <a href="/contact" class="btn btn-primary">Enquire Now</a>
+        <a href="/contact" class="btn btn-secondary">Schedule Viewing</a>
+      </div>
+
+      <div class="sidebar-contact">
+        Or call us: <a href="tel:+441onal234567">+44 1onal 234567</a>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script src="variation-nav.js"></script>
+</body>
+</html>

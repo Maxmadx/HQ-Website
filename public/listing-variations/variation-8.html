@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Variation 8: Minimal Clean</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #fff; color: #1a1a1a; }
+
+/* VARIATION 8: Minimal Clean - Ultra clean, minimal design */
+.back-link {
+  display: block; padding: 30px 0;
+  max-width: 1100px; margin: 0 auto;
+  color: #999; text-decoration: none; font-size: 0.8rem;
+  text-transform: uppercase; letter-spacing: 2px;
+}
+
+.listing-container {
+  max-width: 1100px; margin: 0 auto; padding: 0 30px 100px;
+}
+
+.gallery {
+  margin-bottom: 60px;
+}
+.gallery img {
+  width: 100%; max-height: 65vh;
+  object-fit: cover;
+}
+
+.content-grid {
+  display: grid; grid-template-columns: 2fr 1fr;
+  gap: 80px;
+}
+
+.model-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.5rem; font-weight: 300;
+  letter-spacing: -1px; margin-bottom: 30px;
+}
+
+.meta-line {
+  font-size: 0.9rem; color: #999;
+  margin-bottom: 40px; letter-spacing: 0.5px;
+}
+.meta-line span { margin-right: 25px; }
+
+.description {
+  font-size: 1.1rem; line-height: 2;
+  color: #666; font-weight: 300;
+  margin-bottom: 50px;
+}
+
+.equipment-section {
+  border-top: 1px solid #eee; padding-top: 40px;
+}
+.section-label {
+  font-size: 0.7rem; text-transform: uppercase;
+  letter-spacing: 2px; color: #999;
+  margin-bottom: 20px;
+}
+.equipment-tags {
+  display: flex; flex-wrap: wrap; gap: 10px;
+}
+.equipment-tag {
+  border: 1px solid #e0e0e0; padding: 8px 16px;
+  font-size: 0.85rem; color: #666;
+}
+
+/* Right Column */
+.right-column { padding-top: 10px; }
+
+.price {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2rem; font-weight: 300;
+  margin-bottom: 10px;
+}
+.price-note {
+  font-size: 0.8rem; color: #999;
+  margin-bottom: 40px;
+}
+
+.specs-minimal { margin-bottom: 40px; }
+.spec-line {
+  display: flex; justify-content: space-between;
+  padding: 15px 0; border-bottom: 1px solid #f0f0f0;
+  font-size: 0.9rem;
+}
+.spec-label { color: #999; }
+.spec-value { }
+
+.cta-buttons { display: flex; flex-direction: column; gap: 10px; }
+.btn {
+  padding: 18px; font-size: 0.8rem;
+  font-weight: 500; text-transform: uppercase;
+  letter-spacing: 2px; cursor: pointer;
+  text-align: center; text-decoration: none;
+  transition: all 0.3s;
+}
+.btn-primary {
+  background: #1a1a1a; color: #fff; border: none;
+}
+.btn-primary:hover { background: #333; }
+.btn-secondary {
+  background: #fff; color: #1a1a1a;
+  border: 1px solid #e0e0e0;
+}
+.btn-secondary:hover { border-color: #1a1a1a; }
+
+.variation-picker {
+  position: fixed; bottom: 20px; right: 20px;
+  background: #1a1a1a; color: #fff;
+  padding: 15px 20px; border-radius: 8px; z-index: 1000;
+}
+.variation-picker select {
+  background: #333; color: #fff; border: none;
+  padding: 8px 12px; border-radius: 4px; margin-left: 10px;
+}
+
+@media (max-width: 900px) {
+  .content-grid { grid-template-columns: 1fr; gap: 50px; }
+  .model-title { font-size: 1.8rem; }
+}
+</style>
+</head>
+<body>
+
+<a href="/used-aircraft-2" class="back-link">← Back</a>
+
+<div class="listing-container">
+  <div class="gallery">
+    <img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HQAV%2Fblue-r66-palo-verde-front-v4.png?alt=media&token=3084cb09-4600-47bd-adf8-873b980b541d" alt="Robinson R66">
+  </div>
+
+  <div class="content-grid">
+    <div class="left-column">
+      <h1 class="model-title">Robinson R66 Turbine</h1>
+      <div class="meta-line">
+        <span>2018</span>
+        <span>G-SAPA</span>
+        <span>1,240 Hours</span>
+      </div>
+
+      <p class="description">
+        For sale is a superb example of a Robinson R66. This helicopter has 1240 hours and 5 years remaining. The helicopter includes Robinson's dark continental blue metallic paint. Maintained to the highest standards.
+      </p>
+
+      <div class="equipment-section">
+        <div class="section-label">Equipment</div>
+        <div class="equipment-tags">
+          <span class="equipment-tag">Pop-out floats</span>
+          <span class="equipment-tag">Garmin G500H</span>
+          <span class="equipment-tag">GTN650</span>
+          <span class="equipment-tag">SAS Autopilot</span>
+          <span class="equipment-tag">Corrosion Protection</span>
+          <span class="equipment-tag">Aux Fuel System</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="price">£650,000</div>
+      <div class="price-note">Excellent Condition</div>
+
+      <div class="specs-minimal">
+        <div class="spec-line"><span class="spec-label">Year</span><span class="spec-value">2018</span></div>
+        <div class="spec-line"><span class="spec-label">Registration</span><span class="spec-value">G-SAPA</span></div>
+        <div class="spec-line"><span class="spec-label">Hours</span><span class="spec-value">1,240</span></div>
+        <div class="spec-line"><span class="spec-label">Engine</span><span class="spec-value">RR300</span></div>
+      </div>
+
+      <div class="cta-buttons">
+        <a href="/contact" class="btn btn-primary">Enquire</a>
+        <a href="/contact" class="btn btn-secondary">Schedule Viewing</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="variation-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,464 @@
+/**
+ * HQ Aviation Card Components
+ * Premium card designs for various content types
+ */
+
+/* ============================================
+   BASE CARD
+   ============================================ */
+
+.hq-card {
+  position: relative;
+  background-color: var(--hq-white);
+  border-radius: var(--hq-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--hq-card-shadow);
+  transition:
+    transform var(--hq-duration-normal) var(--hq-ease-out),
+    box-shadow var(--hq-duration-normal) var(--hq-ease-out);
+}
+
+.hq-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--hq-card-shadow-hover);
+}
+
+.hq-card__link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* ============================================
+   AIRCRAFT CARD
+   Refined helicopter listing card
+   ============================================ */
+
+.hq-card-aircraft {
+  background-color: var(--hq-white);
+  border-radius: var(--hq-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--hq-card-shadow);
+  border: 1px solid var(--hq-sand);
+  transition:
+    transform var(--hq-duration-normal) var(--hq-ease-out),
+    box-shadow var(--hq-duration-normal) var(--hq-ease-out);
+}
+
+.hq-card-aircraft:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--hq-card-shadow-hover);
+}
+
+/* Aircraft Card Image */
+.hq-card-aircraft__image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background-color: var(--hq-cream);
+}
+
+.hq-card-aircraft__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--hq-duration-slow) var(--hq-ease-out);
+}
+
+.hq-card-aircraft:hover .hq-card-aircraft__img {
+  transform: scale(1.05);
+}
+
+/* Aircraft Badge */
+.hq-card-aircraft__badge {
+  position: absolute;
+  top: var(--hq-space-4);
+  right: var(--hq-space-4);
+  padding: var(--hq-space-2) var(--hq-space-3);
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-xs);
+  font-weight: var(--hq-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wider);
+  border-radius: var(--hq-radius-sm);
+  z-index: 10;
+}
+
+.hq-card-aircraft__badge--sold {
+  background-color: #CC0000;
+  color: var(--hq-white);
+}
+
+.hq-card-aircraft__badge--reserved {
+  background-color: var(--hq-warning);
+  color: var(--hq-white);
+}
+
+.hq-card-aircraft__badge--new {
+  background-color: var(--hq-success);
+  color: var(--hq-white);
+}
+
+.hq-card-aircraft__badge--featured {
+  background-color: var(--hq-accent);
+  color: var(--hq-white);
+}
+
+/* Aircraft Card Content */
+.hq-card-aircraft__content {
+  padding: var(--hq-space-5);
+}
+
+/* Aircraft Model Label */
+.hq-card-aircraft__model {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-xs);
+  font-weight: var(--hq-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wider);
+  color: var(--hq-accent);
+  margin-bottom: var(--hq-space-2);
+}
+
+/* Aircraft Title */
+.hq-card-aircraft__title {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-lg);
+  font-weight: var(--hq-weight-semibold);
+  color: var(--hq-black);
+  margin-bottom: var(--hq-space-3);
+  line-height: var(--hq-leading-snug);
+}
+
+/* Aircraft Specs */
+.hq-card-aircraft__specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hq-space-4);
+  margin-bottom: var(--hq-space-4);
+  padding-bottom: var(--hq-space-4);
+  border-bottom: 1px solid var(--hq-sand);
+}
+
+.hq-card-aircraft__spec {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hq-space-1);
+}
+
+.hq-card-aircraft__spec-label {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-xs);
+  font-weight: var(--hq-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wide);
+  color: var(--hq-muted);
+}
+
+.hq-card-aircraft__spec-value {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  font-weight: var(--hq-weight-semibold);
+  color: var(--hq-charcoal);
+}
+
+/* Aircraft Price */
+.hq-card-aircraft__price {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-xl);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-black);
+}
+
+.hq-card-aircraft__price--poa {
+  font-size: var(--hq-text-base);
+  color: var(--hq-slate);
+}
+
+/* ============================================
+   TRAINING CARD
+   Course and program cards
+   ============================================ */
+
+.hq-card-training {
+  background-color: var(--hq-white);
+  border-radius: var(--hq-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--hq-card-shadow);
+  transition:
+    transform var(--hq-duration-normal) var(--hq-ease-out),
+    box-shadow var(--hq-duration-normal) var(--hq-ease-out);
+}
+
+.hq-card-training:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--hq-card-shadow-hover);
+}
+
+.hq-card-training__image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background-color: var(--hq-cream);
+}
+
+.hq-card-training__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--hq-duration-slow) var(--hq-ease-out);
+}
+
+.hq-card-training:hover .hq-card-training__img {
+  transform: scale(1.05);
+}
+
+.hq-card-training__content {
+  padding: var(--hq-space-6);
+}
+
+.hq-card-training__tag {
+  display: inline-block;
+  padding: var(--hq-space-1) var(--hq-space-3);
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-xs);
+  font-weight: var(--hq-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wider);
+  color: var(--hq-accent);
+  background-color: var(--hq-accent-light);
+  border-radius: var(--hq-radius-sm);
+  margin-bottom: var(--hq-space-3);
+}
+
+.hq-card-training__title {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-xl);
+  font-weight: var(--hq-weight-semibold);
+  color: var(--hq-black);
+  margin-bottom: var(--hq-space-3);
+  line-height: var(--hq-leading-snug);
+}
+
+.hq-card-training__desc {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  color: var(--hq-slate);
+  line-height: var(--hq-leading-normal);
+  margin-bottom: var(--hq-space-4);
+}
+
+.hq-card-training__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--hq-space-4);
+  padding-top: var(--hq-space-4);
+  border-top: 1px solid var(--hq-sand);
+}
+
+.hq-card-training__meta-item {
+  display: flex;
+  align-items: center;
+  gap: var(--hq-space-2);
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  color: var(--hq-slate);
+}
+
+.hq-card-training__meta-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--hq-muted);
+}
+
+/* ============================================
+   TESTIMONIAL CARD
+   ============================================ */
+
+.hq-card-testimonial {
+  background-color: var(--hq-white);
+  border-radius: var(--hq-radius-lg);
+  padding: var(--hq-space-8);
+  box-shadow: var(--hq-card-shadow);
+}
+
+.hq-card-testimonial__quote {
+  font-family: var(--hq-font-display);
+  font-size: var(--hq-text-xl);
+  font-style: italic;
+  color: var(--hq-charcoal);
+  line-height: var(--hq-leading-relaxed);
+  margin-bottom: var(--hq-space-6);
+}
+
+.hq-card-testimonial__quote::before {
+  content: '"';
+  color: var(--hq-accent);
+}
+
+.hq-card-testimonial__quote::after {
+  content: '"';
+  color: var(--hq-accent);
+}
+
+.hq-card-testimonial__author {
+  display: flex;
+  align-items: center;
+  gap: var(--hq-space-4);
+}
+
+.hq-card-testimonial__avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--hq-radius-full);
+  object-fit: cover;
+  background-color: var(--hq-cream);
+}
+
+.hq-card-testimonial__info {
+  flex: 1;
+}
+
+.hq-card-testimonial__name {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-base);
+  font-weight: var(--hq-weight-semibold);
+  color: var(--hq-black);
+  margin-bottom: var(--hq-space-1);
+}
+
+.hq-card-testimonial__role {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  color: var(--hq-muted);
+}
+
+/* ============================================
+   SERVICE CARD
+   ============================================ */
+
+.hq-card-service {
+  background-color: var(--hq-white);
+  border-radius: var(--hq-radius-lg);
+  padding: var(--hq-space-8);
+  text-align: center;
+  box-shadow: var(--hq-card-shadow);
+  transition:
+    transform var(--hq-duration-normal) var(--hq-ease-out),
+    box-shadow var(--hq-duration-normal) var(--hq-ease-out);
+}
+
+.hq-card-service:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--hq-card-shadow-hover);
+}
+
+.hq-card-service__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto var(--hq-space-5);
+  background-color: var(--hq-accent-light);
+  border-radius: var(--hq-radius-lg);
+  color: var(--hq-accent);
+}
+
+.hq-card-service__icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.hq-card-service__title {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-lg);
+  font-weight: var(--hq-weight-semibold);
+  color: var(--hq-black);
+  margin-bottom: var(--hq-space-3);
+}
+
+.hq-card-service__desc {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  color: var(--hq-slate);
+  line-height: var(--hq-leading-normal);
+}
+
+/* ============================================
+   STAT CARD
+   ============================================ */
+
+.hq-card-stat {
+  text-align: center;
+  padding: var(--hq-space-6);
+}
+
+.hq-card-stat__value {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-4xl);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-accent);
+  margin-bottom: var(--hq-space-2);
+  line-height: 1;
+}
+
+.hq-card-stat__label {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  font-weight: var(--hq-weight-medium);
+  color: var(--hq-slate);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wide);
+}
+
+/* ============================================
+   FEATURE CARD (Horizontal)
+   ============================================ */
+
+.hq-card-feature {
+  display: flex;
+  gap: var(--hq-space-5);
+  padding: var(--hq-space-6);
+  background-color: var(--hq-white);
+  border-radius: var(--hq-radius-lg);
+  box-shadow: var(--hq-card-shadow);
+}
+
+.hq-card-feature__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background-color: var(--hq-accent-light);
+  border-radius: var(--hq-radius-md);
+  color: var(--hq-accent);
+}
+
+.hq-card-feature__icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.hq-card-feature__content {
+  flex: 1;
+}
+
+.hq-card-feature__title {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-base);
+  font-weight: var(--hq-weight-semibold);
+  color: var(--hq-black);
+  margin-bottom: var(--hq-space-2);
+}
+
+.hq-card-feature__desc {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  color: var(--hq-slate);
+  line-height: var(--hq-leading-normal);
+}

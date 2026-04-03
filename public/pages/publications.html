@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<script>
+window.Squarespace = window.Squarespace || { load: function() {}, afterBodyLoad: function() {}, SQUARESPACE_CONTEXT: {} };
+window.Static = window.Static || { SQUARESPACE_CONTEXT: {} };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<base href="/">
+<title>HQ Aviation &mdash; Publications</title>
+<link rel="icon" type="image/png" href="/assets/images/logos/hq/hq-aviation-logo-black.png"/>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #fff; color: #333; }
+.page-wrapper { width: 100%; max-width: 1200px; margin: 0 auto; padding: 60px 40px; }
+.page-header { text-align: center; margin-bottom: 50px; }
+.page-header h1 { font-size: 2.5rem; font-weight: 900; text-transform: uppercase; color: #000; margin-bottom: 15px; }
+.section { margin-bottom: 60px; }
+.section-title { font-size: 0.75rem; font-weight: 700; color: #ff0000; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 30px; }
+.pub-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.pub { position: relative; background: #f9f9f9; border: 1px solid #eee; transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); overflow: hidden; }
+.pub::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: #ff0000; transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
+.pub:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); background: #fff; border-color: #ff0000; }
+.pub:hover::before { transform: scaleX(1); }
+.pub-content { padding: 30px; }
+.pub-author { font-size: 0.75rem; font-weight: 700; color: #ff0000; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+.pub h3 { font-size: 1.2rem; font-weight: 900; text-transform: uppercase; color: #000; margin-bottom: 10px; }
+.pub p { font-size: 0.85rem; line-height: 1.6; color: #555; margin-bottom: 20px; }
+.pub-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 20px; border-top: 1px solid #eee; }
+.pub-price { font-weight: 700; color: #000; }
+.pub-btn { padding: 10px 20px; background: transparent; border: 2px solid #000; color: #000; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; transition: all 0.3s ease; text-decoration: none; }
+.pub-btn:hover { background: #000; color: #fff; }
+@media (max-width: 900px) { .pub-grid { grid-template-columns: 1fr; } .page-wrapper { padding: 40px 20px; } }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+  <div class="page-header">
+    <h1>Publications</h1>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Books by Captain Q</div>
+    <div class="pub-grid">
+      <div class="pub">
+        <div class="pub-content">
+          <div class="pub-author">By Quentin Smith</div>
+          <h3>The Helicopter Pilot's Handbook</h3>
+          <p>Comprehensive guide covering everything from first flight to advanced techniques. Essential reading for student pilots.</p>
+          <div class="pub-footer">
+            <span class="pub-price">£34.99</span>
+            <a href="/apparel" class="pub-btn">Buy</a>
+          </div>
+        </div>
+      </div>
+      <div class="pub">
+        <div class="pub-content">
+          <div class="pub-author">By Quentin Smith</div>
+          <h3>Helicopter Expeditions</h3>
+          <p>Stories and lessons from helicopter adventures around the world. Planning, preparation, and execution of epic journeys.</p>
+          <div class="pub-footer">
+            <span class="pub-price">£29.99</span>
+            <a href="/apparel" class="pub-btn">Buy</a>
+          </div>
+        </div>
+      </div>
+      <div class="pub">
+        <div class="pub-content">
+          <div class="pub-author">By Quentin Smith</div>
+          <h3>Mastering the Hover</h3>
+          <p>Dedicated guide to the art of hovering. Techniques, common mistakes, and practice exercises for perfection.</p>
+          <div class="pub-footer">
+            <span class="pub-price">£24.99</span>
+            <a href="/apparel" class="pub-btn">Buy</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Training Materials</div>
+    <div class="pub-grid">
+      <div class="pub">
+        <div class="pub-content">
+          <div class="pub-author">HQ Aviation Training</div>
+          <h3>PPL(H) Study Guide</h3>
+          <p>Complete study companion for the Private Pilot License exams. Covers all 9 subjects with practice questions.</p>
+          <div class="pub-footer">
+            <span class="pub-price">£49.99</span>
+            <a href="/apparel" class="pub-btn">Buy</a>
+          </div>
+        </div>
+      </div>
+      <div class="pub">
+        <div class="pub-content">
+          <div class="pub-author">HQ Aviation Training</div>
+          <h3>Navigation Workbook</h3>
+          <p>Practical exercises for helicopter navigation. Includes planning sheets and worked examples.</p>
+          <div class="pub-footer">
+            <span class="pub-price">£19.99</span>
+            <a href="/apparel" class="pub-btn">Buy</a>
+          </div>
+        </div>
+      </div>
+      <div class="pub">
+        <div class="pub-content">
+          <div class="pub-author">HQ Aviation Training</div>
+          <h3>Radio Telephony Guide</h3>
+          <p>Master aviation communications. Phraseology, procedures, and practice scripts for RT proficiency.</p>
+          <div class="pub-footer">
+            <span class="pub-price">£14.99</span>
+            <a href="/apparel" class="pub-btn">Buy</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/assets/menu.js"></script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Variation 4: Magazine Editorial</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #fafafa; color: #1a1a1a; }
+
+/* VARIATION 4: Magazine Editorial - Editorial layout with elegant typography */
+.back-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: #666; text-decoration: none; font-size: 0.85rem;
+  padding: 25px 50px; text-transform: uppercase; letter-spacing: 1px;
+}
+
+.article-header {
+  max-width: 800px; margin: 0 auto;
+  padding: 0 30px 50px; text-align: center;
+}
+.category-tag {
+  font-size: 0.75rem; text-transform: uppercase;
+  letter-spacing: 3px; color: #cc0000;
+  margin-bottom: 20px;
+}
+.article-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.5rem; font-weight: 700;
+  line-height: 1.1; margin-bottom: 25px;
+}
+.article-meta {
+  font-size: 1rem; color: #666;
+  display: flex; justify-content: center; gap: 30px;
+  padding-bottom: 30px; border-bottom: 1px solid #ddd;
+}
+
+.featured-image {
+  width: 100%; max-width: 1200px; margin: 0 auto 60px;
+  padding: 0 30px;
+}
+.featured-image img {
+  width: 100%; border-radius: 4px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+
+.article-content {
+  max-width: 700px; margin: 0 auto; padding: 0 30px;
+}
+
+.price-callout {
+  background: #fff; border-left: 4px solid #cc0000;
+  padding: 25px 30px; margin-bottom: 40px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+.price-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 5px; }
+.price-value { font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 800; color: #cc0000; }
+
+.lead-paragraph {
+  font-size: 1.3rem; line-height: 1.8; color: #333;
+  margin-bottom: 40px; font-weight: 300;
+}
+.lead-paragraph::first-letter {
+  font-family: 'Playfair Display', serif;
+  font-size: 4rem; float: left;
+  line-height: 1; margin-right: 12px;
+  margin-top: 5px; color: #cc0000;
+}
+
+.section-heading {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem; margin: 50px 0 25px;
+  padding-bottom: 15px; border-bottom: 1px solid #ddd;
+}
+
+.equipment-list {
+  column-count: 2; column-gap: 40px;
+  margin-bottom: 50px;
+}
+.equipment-list li {
+  padding: 10px 0; border-bottom: 1px solid #eee;
+  font-size: 0.95rem; break-inside: avoid;
+  list-style: none; position: relative;
+  padding-left: 20px;
+}
+.equipment-list li::before {
+  content: '—'; position: absolute; left: 0; color: #cc0000;
+}
+
+.specs-sidebar {
+  background: #fff; padding: 35px;
+  margin: 40px 0; border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+.specs-sidebar h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem; text-transform: uppercase;
+  letter-spacing: 2px; margin-bottom: 25px;
+  color: #999;
+}
+.spec-row {
+  display: flex; justify-content: space-between;
+  padding: 12px 0; border-bottom: 1px solid #eee;
+}
+.spec-row:last-child { border-bottom: none; }
+.spec-label { color: #666; }
+.spec-value { font-weight: 600; }
+
+.cta-box {
+  background: #1a1a1a; color: #fff;
+  padding: 40px; text-align: center;
+  margin-top: 60px; border-radius: 4px;
+}
+.cta-box h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem; margin-bottom: 20px;
+}
+.cta-box p { color: rgba(255,255,255,0.7); margin-bottom: 25px; }
+.btn {
+  display: inline-block; padding: 16px 40px;
+  background: #cc0000; color: #fff;
+  text-decoration: none; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1px;
+  border-radius: 4px; transition: background 0.2s;
+}
+.btn:hover { background: #a00; }
+
+.variation-picker {
+  position: fixed; bottom: 20px; right: 20px;
+  background: #1a1a1a; color: #fff;
+  padding: 15px 20px; border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 1000;
+}
+.variation-picker select {
+  background: #333; color: #fff; border: none;
+  padding: 8px 12px; border-radius: 4px; margin-left: 10px;
+}
+
+@media (max-width: 768px) {
+  .article-title { font-size: 2.2rem; }
+  .equipment-list { column-count: 1; }
+}
+</style>
+</head>
+<body>
+
+<a href="/used-aircraft-2" class="back-link">← Back to Listings</a>
+
+<header class="article-header">
+  <div class="category-tag">Featured Aircraft</div>
+  <h1 class="article-title">Robinson R66 Turbine</h1>
+  <div class="article-meta">
+    <span>Year: 2018</span>
+    <span>Registration: G-SAPA</span>
+    <span>Hours: 1,240</span>
+  </div>
+</header>
+
+<div class="featured-image">
+  <img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HQAV%2Fblue-r66-palo-verde-front-v4.png?alt=media&token=3084cb09-4600-47bd-adf8-873b980b541d" alt="Robinson R66">
+</div>
+
+<article class="article-content">
+  <div class="price-callout">
+    <div class="price-label">Asking Price</div>
+    <div class="price-value">£650,000</div>
+  </div>
+
+  <p class="lead-paragraph">
+    For sale is a superb example of a Robinson R66, representing the pinnacle of light turbine helicopter engineering. This exceptional aircraft has accumulated 1,240 hours and retains 5 years of remaining service life.
+  </p>
+
+  <p style="line-height:1.8; margin-bottom:30px; color:#444;">
+    The helicopter features Robinson's distinctive dark continental blue metallic paint and has been maintained to the highest possible standards throughout its operational history. As a result, it presents in very good condition and is ready for immediate operation.
+  </p>
+
+  <h2 class="section-heading">Equipment & Features</h2>
+  <ul class="equipment-list">
+    <li>Pop-out floats</li>
+    <li>Extra Corrosion Protection</li>
+    <li>Halon Fire Extinguisher</li>
+    <li>5 Point Harness installation</li>
+    <li>Heated Pitot Tube</li>
+    <li>Auxiliary fuel system (5 hours endurance)</li>
+    <li>Compass & Altitude indicator</li>
+    <li>SAS Autopilot with EFIS</li>
+    <li>Garmin G500H</li>
+    <li>Garmin GTN650 PAC</li>
+    <li>Garmin GTX345 Transponder</li>
+    <li>Lithium Ion Battery TB17</li>
+  </ul>
+
+  <div class="specs-sidebar">
+    <h3>Technical Specifications</h3>
+    <div class="spec-row"><span class="spec-label">Model</span><span class="spec-value">Robinson R66 Turbine</span></div>
+    <div class="spec-row"><span class="spec-label">Year of Manufacture</span><span class="spec-value">2018</span></div>
+    <div class="spec-row"><span class="spec-label">Registration</span><span class="spec-value">G-SAPA</span></div>
+    <div class="spec-row"><span class="spec-label">Total Airframe Hours</span><span class="spec-value">1,240</span></div>
+    <div class="spec-row"><span class="spec-label">Engine Type</span><span class="spec-value">Rolls-Royce RR300</span></div>
+    <div class="spec-row"><span class="spec-label">Remaining Service Life</span><span class="spec-value">5 Years</span></div>
+  </div>
+
+  <div class="cta-box">
+    <h3>Interested in this aircraft?</h3>
+    <p>Contact our sales team to arrange a viewing or request additional information.</p>
+    <a href="/contact" class="btn">Enquire Now</a>
+  </div>
+</article>
+
+<script src="variation-nav.js"></script>
+</body>
+</html>

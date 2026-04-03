@@ -1,0 +1,1310 @@
+{
+  "_meta": {
+    "title": "HQ Aviation — Experimentation Page Content Audit",
+    "description": "Comprehensive analysis of missing sections, subsections, content, and features from the /experimentation main page. Cross-referenced against all standalone pages in the repo and the websitenotes.pdf master checklist.",
+    "generated": "2026-03-21",
+    "sources": [
+      "src/pages/Experimentation.jsx (current main page)",
+      "websitenotes.pdf (20-page master checklist)",
+      "All standalone pages in src/pages/",
+      "src/App.jsx (route definitions)",
+      "src/components/Header.jsx (navigation structure)"
+    ]
+  },
+
+  "checklist_status": {
+    "description": "Status of every item from the websitenotes.pdf master checklist (page 1-2). Checked items are done, unchecked items are missing from the website entirely or from /experimentation.",
+    "completed": [
+      "Bespoke Adventures",
+      "London Helicopter Hangarage",
+      "Helicopter Sales"
+    ],
+    "missing_from_website": [
+      "Media",
+      "Store page",
+      "Helicopter Leaseback",
+      "Special Training",
+      "Part Sales",
+      "The Clubhouse",
+      "Publications",
+      "Special Ops: SuperYacht Ops & Private Owner Management",
+      "Pilot Provisioning",
+      "Job board (Careers)",
+      "Pricing Page"
+    ],
+    "partially_implemented": [
+      {
+        "item": "Maintenance page with our rebuilds",
+        "status": "Standalone FinalMaintenance.jsx exists, Experimentation.jsx has maintenance section but missing rebuild stats integration",
+        "standalone_route": "/maintenance"
+      },
+      {
+        "item": "Rebuilds",
+        "status": "Standalone Rebuilds.jsx exists, Experimentation.jsx has rebuild strip in sales section but less detailed",
+        "standalone_route": "/sales/rebuilds"
+      },
+      {
+        "item": "Blogs",
+        "status": "Blog.jsx and 17 blog posts exist, Experimentation.jsx has blog section with persona filtering",
+        "standalone_route": "/blog"
+      },
+      {
+        "item": "SFH (Self-Fly Hire)",
+        "status": "SelfFlyHire.jsx exists, Experimentation.jsx has SFH map section but missing detailed content",
+        "standalone_route": "/self-fly-hire"
+      },
+      {
+        "item": "HQ Trips",
+        "status": "Expedition pages exist but no dedicated HQ Trips calendar page",
+        "standalone_route": null
+      },
+      {
+        "item": "Our Fleet",
+        "status": "Fleet.jsx exists with 20 components, Experimentation.jsx references fleet in SFH section but no dedicated fleet showcase",
+        "standalone_route": "/fleet"
+      },
+      {
+        "item": "Training FAQ's",
+        "status": "TrainingFAQ.jsx exists standalone, not represented on Experimentation.jsx",
+        "standalone_route": "/training/faq"
+      },
+      {
+        "item": "What people say about us",
+        "status": "Testimonials.jsx exists with masonry layout, not represented on Experimentation.jsx",
+        "standalone_route": "/testimonials"
+      }
+    ]
+  },
+
+  "missing_sections": {
+    "description": "Complete list of sections/pages that exist as standalone pages or are mentioned in websitenotes.pdf but are NOT represented at all on the /experimentation main page.",
+
+    "01_testimonials_and_reviews": {
+      "priority": "HIGH",
+      "pdf_reference": "Page 1: 'What people say about us'; Page 5: 'On the what people say about us section have a create review section'; Page 6: 'Add testimonials to the website'; Page 7: Reviews from student pilots mockup",
+      "standalone_page": "Testimonials.jsx at /testimonials",
+      "what_exists_standalone": {
+        "masonry_grid_layout": true,
+        "featured_testimonial": true,
+        "submit_review_form": true,
+        "sample_testimonials": [
+          "Patrick Curran (Helicopter Owner)",
+          "Andy Boniface (Trial Lesson Student)",
+          "Luca Lapegna (Helicopter Owner)",
+          "Geoff Read (Pilot)",
+          "Maxim Kalyuzhny (Helicopter Owner)"
+        ]
+      },
+      "missing_from_experimentation": {
+        "section_summary": "No testimonials or social proof section exists on the main page",
+        "recommended_content": [
+          "Testimonial carousel or masonry wall showing 3-5 featured reviews",
+          "Star ratings display",
+          "Review submission CTA ('Share Your Experience')",
+          "Integration with Google Maps reviews as mentioned in PDF",
+          "Student pilot reviews (from PDF page 7 mockup)",
+          "Category-based reviews: Training, Ownership, Hire, Expeditions"
+        ],
+        "pdf_specific_notes": "PDF says: 'have a create review section and a person can create a review and we'll ask the HQ'ers to put a reviews there with the option to copy the review and put it on google maps'"
+      }
+    },
+
+    "02_pricing_page": {
+      "priority": "HIGH",
+      "pdf_reference": "Page 1: 'Pricing Page' (bold, unchecked); Page 5: 'For sure we need a pricing page, i would not be so happy if i wanted to join somewhere and i didnt know the price of stuff'",
+      "standalone_page": null,
+      "what_exists_standalone": null,
+      "missing_from_experimentation": {
+        "section_summary": "No pricing section or pricing summary exists anywhere on the main page",
+        "recommended_content": [
+          "Training pricing table (PPL from £15,000, Trial Lessons from £299, Type Ratings)",
+          "Self-fly hire rates per aircraft type per hour",
+          "Mission rate flying vs standard rate explanation",
+          "Happy hour flying rates",
+          "Maintenance service pricing tiers",
+          "Valet services pricing (Mini Valet, Full Valet, Deluxe Valet — from PDF page 18)",
+          "Ground school course pricing (£1,500 plus VAT — from PDF page 19)"
+                ],
+        "pdf_specific_notes": "PDF says: 'Talk about mission rate flying and happy hour flying. Supporting such a large fleet with client helicopters around the UK can mean our engineers need to be moved, helicopters must go to get custom avionics etc. This allows you access to flying at mission rate prices for these trips. A clear pricing table'",
+        "valet_pricing_from_pdf": {
+          "mini_valet": {
+            "includes": ["Exterior Wash", "Interior Vacuum", "Window Clean", "Soot Removal"],
+            "rates": {
+              "R22_R44": "£160",
+              "R66_B505_206_120": "£180",
+              "AS350_55_109_119": "£260",
+              "A139_169_902_or_similar": "£390"
+            }
+          },
+          "full_valet": {
+            "includes": ["Mini Valet", "Interior Detailing", "Leather & Upholstery Clean", "Window Polish"],
+            "rates": {
+              "R22_R44": "£220",
+              "R66_B505_206_120": "£300",
+              "AS350_55_109_119": "£400",
+              "A139_169_902_or_similar": "£600"
+            }
+          },
+          "deluxe_valet": {
+            "includes": ["Full Valet", "Exterior Hand Polish", "Headsets Cleaned", "Interior Sanitise"],
+            "rates": {
+              "R22_R44": "£360",
+              "R66_B505_206_120": "£450",
+              "AS350_55_109_119": "£600",
+              "A139_169_902_or_similar": "£900"
+            }
+          }
+        }
+      }
+    },
+
+    "03_helicopter_leaseback": {
+      "priority": "HIGH",
+      "pdf_reference": "Page 1: 'Helicopter Leaseback' (unchecked); Page 4: 'Leaseback program'; Page 16: detailed leaseback content",
+      "standalone_page": null,
+      "what_exists_standalone": {
+        "services_page_mention": "Services.jsx lists 'Leaseback programs' as a service but no dedicated section"
+      },
+      "missing_from_experimentation": {
+        "section_summary": "No leaseback program section exists on the main page",
+        "recommended_content": [
+          "Leaseback program overview and benefits",
+          "How it works: lease your helicopter to the flight school",
+          "Revenue generation for owners",
+          "Management agreement details",
+          "Flight type restrictions (training/hire or hire only)",
+          "Hourly minimums and who flies your helicopter",
+          "Insurance and maintenance included",
+          "Owner share program details"
+        ],
+        "pdf_specific_notes": "PDF says: 'Owning and maintaining a helicopter can sometimes be costly, so leasing hours to a flying school is a good way to recoup some of the fees. Subject to its suitability, you may like us to utilise your aircraft through our training organisation to give you some additional return towards the cost of aircraft ownership. We can also place restrictions upon what type of flights are carried out (training/hire or hire only), who flies your helicopter (hourly minimums) and also link this with a management agreement so you can be assured that your helicopter is being looked after as well as paying for itself.'"
+      }
+    },
+
+    "04_pilot_provisioning": {
+      "priority": "HIGH",
+      "pdf_reference": "Page 1: 'Pilot Provisioning' (unchecked); Pages 3-4: detailed breakdown",
+      "standalone_page": null,
+      "what_exists_standalone": null,
+      "missing_from_experimentation": {
+        "section_summary": "No pilot provisioning / crewing services section exists on the main page",
+        "recommended_content": [
+          "Pilot Services / Crewing section",
+          "Safety Pilot service description",
+          "Ferry Pilot service description"
+        ],
+        "subsections": {
+          "pilot_services_crewing": {
+            "description": "The specific act of supplying a qualified pilot to fly your aircraft if you do not fly it yourself.",
+            "content_from_pdf": "This is the specific act of supplying a qualified pilot to fly your aircraft if you do not fly it yourself."
+          },
+          "safety_pilot": {
+            "description": "A co-pilot for private pilots who lack confidence or experience for a specific flight.",
+            "content_from_pdf": "If you are a private pilot but lack the confidence or experience for a specific flight, they can provide a 'Safety Pilot' to sit alongside you and assist."
+          },
+          "ferry_pilot": {
+            "description": "Moving aircraft from one location to another for maintenance or relocation.",
+            "content_from_pdf": "If you simply need your aircraft moved from one location to another (e.g., for maintenance or relocation), this is the specific term for that service."
+          }
+        }
+      }
+    },
+
+    "05_special_ops": {
+      "priority": "MEDIUM",
+      "pdf_reference": "Page 1: 'Special Ops: SuperYacht Ops & Private Owner Management' (unchecked); Page 3: 'Special Ops: SuperYacht Ops'",
+      "standalone_page": null,
+      "what_exists_standalone": null,
+      "missing_from_experimentation": {
+        "section_summary": "No superyacht operations or private owner management section exists on the main page",
+        "recommended_content": [
+          "SuperYacht helicopter operations overview",
+          "Private owner aircraft management services",
+          "Operational logistics for yacht-based helicopters",
+          "Pilot provisioning for yacht ops",
+          "Maintenance coordination for owner-managed aircraft"
+        ]
+      }
+    },
+
+    "06_the_clubhouse": {
+      "priority": "MEDIUM",
+      "pdf_reference": "Page 1: 'The Clubhouse' (unchecked); Page 3: 'The Clubhouse page which is pictures of the facility'; Page 16: 'Community and Atmosphere: friendly, relaxed, and welcoming club atmosphere'",
+      "standalone_page": null,
+      "what_exists_standalone": {
+        "about_us_mention": "AboutUs.jsx mentions 'Clubhouse vibe' but no dedicated showcase"
+      },
+      "missing_from_experimentation": {
+        "section_summary": "No clubhouse/facility section exists on the main page beyond the editorial strips facility photos",
+        "recommended_content": [
+          "Facility photo gallery (the clubhouse, lounges, briefing rooms)",
+          "Community atmosphere description",
+          "Member benefits and social events",
+          "Pilot lounge and amenities",
+          "Hangar facility showcase",
+          "Pictures of the facility as mentioned in PDF"
+        ],
+        "pdf_specific_notes": "PDF says: 'The Clubhouse page which is pictures of the facility' and emphasizes the 'friendly, relaxed, and welcoming club atmosphere, which may be a significant draw for private owners who value a pleasant environment when they fly.'"
+      }
+    },
+
+    "07_store_page": {
+      "priority": "MEDIUM",
+      "pdf_reference": "Page 1: 'Store page' (unchecked); Page 2: 'Store page, has robinson products, pooleys our discovery flights'; Page 4: 'Gifts & Experiences Page'",
+      "standalone_page": null,
+      "what_exists_standalone": {
+        "header_nav_link": "Header.jsx has Store link in menu but no page exists"
+      },
+      "missing_from_experimentation": {
+        "section_summary": "No store/shop section exists on the main page",
+        "recommended_content": [
+          "Robinson branded products",
+          "Pooleys flight training supplies",
+          "PPL starter pack for sale",
+          "Discovery flight vouchers",
+          "Gift vouchers (physical cardboard vouchers as mentioned in PDF)",
+          "Tour of London gift packages",
+          "Trial lesson gift packages",
+          "Pilot equipment and accessories"
+        ],
+        "pdf_specific_notes": "PDF says: 'Store page, has robinson products, pooleys our discovery flights' and 'Gifts & Experiences Page (Tour of London, Trial Lessons — perfect gift with a physical voucher)' and 'Buy vouchers for a loved one, have it be a physical thing on a cardboard surface, something that they can keep forever'"
+      }
+    },
+
+    "08_publications": {
+      "priority": "MEDIUM",
+      "pdf_reference": "Page 1: 'Publications' (unchecked); Page 3: 'Publications. link to the publications HQ has appeared on, do outreach to other news outlets'",
+      "standalone_page": null,
+      "what_exists_standalone": null,
+      "missing_from_experimentation": {
+        "section_summary": "No press/publications section exists on the main page",
+        "recommended_content": [
+          "Links to publications HQ has appeared in",
+          "Press mentions and media coverage",
+          "Robinson Helicopter Company publications featuring HQ",
+          "News outlet profiles about Captain Q",
+          "Backlink generation through press features"
+        ],
+        "pdf_specific_notes": "PDF says: 'link to the publications HQ has appeared on, do outreach to other news outlets if they'd do a piece, strong for backlinks' and 'contact news sites to do profiles about Q Smith and get backlinks to hqaviation.com'"
+      }
+    },
+
+    "09_media_gallery": {
+      "priority": "MEDIUM",
+      "pdf_reference": "Page 1: 'Media' (unchecked); Page 2: 'Media where the photos that people supply us on HQ media can go on'; Page 10: social media integration; Page 12: video gallery",
+      "standalone_page": null,
+      "what_exists_standalone": {
+        "header_nav_link": "Header.jsx has 'Gallery & Media' link in menu but no page exists"
+      },
+      "missing_from_experimentation": {
+        "section_summary": "No media gallery or social media integration section exists on the main page. EditorialGrid exists but is not a community media gallery.",
+        "recommended_content": [
+          "Community photo gallery (user-submitted photos)",
+          "HQ YouTube video collection in one place",
+          "Instagram/Facebook feed integration (curated posts, not reels)",
+          "Adventure profiles with quotes from people",
+          "About Us video (Q talking over music, videos from adventures)",
+          "Video gallery with all HQ YouTube videos"
+        ],
+        "pdf_specific_notes": "PDF says: 'Have a page that says follow our instagram or Facebook and then there's a popup that says Open on Instagram / Facebook' and 'Video gallery, have all the HQ youtube videos in one place' and 'Do an About Us video with Q talking over and music, with videos from all the adventures, talking about the helicopter'"
+      }
+    },
+
+    "10_special_training": {
+      "priority": "MEDIUM",
+      "pdf_reference": "Page 1: 'Special Training' (unchecked); Page 3: autorotations course details",
+      "standalone_page": null,
+      "what_exists_standalone": {
+        "training_carousel_mention": "Experimentation.jsx training carousel has 6 slides but no Special Training/Advanced Autorotations",
+        "blog_post": "Autorotations.jsx blog post exists but no dedicated training page"
+      },
+      "missing_from_experimentation": {
+        "section_summary": "The training carousel covers Discovery Flight, PPL, CPL, Type Rating, Night Rating, Self-Fly Hire — but misses advanced/special training courses",
+        "recommended_content": [
+          "Advanced Autorotations course",
+          "Training with Captain Q (trained Tom Cruise)",
+          "Confined area training",
+          "Mountain flying training",
+          "London Heliroutes training",
+          "Safety courses"
+        ],
+        "pdf_specific_notes": "PDF says: 'Training with Q page, trained Tom Cruise etc. get really comfortable with autorotations course, (create a youtube video of my dad doing autorotations from any position, must already be comfortable with flying, a video of advanced autorotations, the concept of which is to be comfortable with autorotating, so comfortable you should be able to do it in your sleep, autos into confined areas)'"
+      }
+    },
+
+    "11_part_sales": {
+      "priority": "MEDIUM",
+      "pdf_reference": "Page 1: 'Part Sales' (unchecked); Page 3: 'Part Sales (put a picture of our part stores and description)'",
+      "standalone_page": null,
+      "what_exists_standalone": {
+        "maintenance_page_mention": "FinalMaintenance.jsx has PartsInventory component",
+        "services_mention": "Services.jsx lists 'Parts Supply (AOG service)'"
+      },
+      "missing_from_experimentation": {
+        "section_summary": "Maintenance section mentions '24/7 AOG & Parts' as a card but no dedicated part sales content or enquiry form",
+        "recommended_content": [
+          "Part stores photo and description",
+          "Enquiry form for Robinson parts availability",
+          "Relationship with Robinson factory for parts",
+          "AOG parts supply service",
+          "Parts inventory categories",
+          "Contact form for parts enquiries"
+        ],
+        "pdf_specific_notes": "PDF says: 'Part Sales (put a picture of our part stores and description, please call us or fill the form below to enquire about the availability of any Robinson parts, as one of the biggest service centres we have a constant in flux of parts and good relations with the factory, write briefly what you need and we'll get back to you with availability)'"
+      }
+    },
+
+    "12_job_board_careers": {
+      "priority": "LOW",
+      "pdf_reference": "Page 1: 'Job board (Careers)' (unchecked); Page 4: 'Put a job board on our website'",
+      "standalone_page": null,
+      "what_exists_standalone": {
+        "header_nav_link": "Header.jsx has 'Careers' link in contact section but no page exists"
+      },
+      "missing_from_experimentation": {
+        "section_summary": "No careers or job board section exists on the main page",
+        "recommended_content": [
+          "Current job openings at HQ Aviation",
+          "Application form or email link",
+          "Department descriptions (Engineering, Flight Training, Operations, Sales)",
+          "Benefits of working at HQ Aviation",
+          "Company culture showcase"
+        ]
+      }
+    },
+
+    "13_hq_trips_calendar": {
+      "priority": "HIGH",
+      "pdf_reference": "Page 1: 'HQ Trips' (unchecked); Page 2: detailed HQ Trips description",
+      "standalone_page": null,
+      "what_exists_standalone": {
+        "header_nav_link": "Header.jsx has 'HQ Trips' link under Exploration but no dedicated page",
+        "expeditions_mention": "FinalExpeditions.jsx has ExpeditionDepartureBoard but no calendar"
+      },
+      "missing_from_experimentation": {
+        "section_summary": "The expeditions section shows barcode destinations but no HQ Trips calendar or upcoming trips listing",
+        "recommended_content": [
+          "Calendar of upcoming HQ-organised trips",
+          "Bookable dates for skiing, helicamping, etc.",
+          "Past trips archive with photos",
+          "Register interest form for HQ trips",
+          "Deals with people in other countries to use their helicopters",
+          "Trip categories (skiing, helicamping, fly-to-lunch, etc.)"
+        ],
+        "pdf_specific_notes": "PDF says: 'HQ Trips on a calendar (people can book the date from the calendar, whether it's skiing, helicamping etc.) (maybe we do deals with people in other countries to use their helicopters once we get there). Also a list of the trips that we have done in the past (actually probable best just to have a form that says register interest in an HQ organised trip.'"
+      }
+    },
+
+    "14_tours_of_london": {
+      "priority": "MEDIUM",
+      "pdf_reference": "Page 6: 'Tours of London' section with detailed content",
+      "standalone_page": "HelicopterTourOfLondon.jsx at /helicopter-tour-of-london",
+      "what_exists_standalone": {
+        "full_page": true,
+        "interactive_ticket": true,
+        "image_gallery": true,
+        "faq_section": true,
+        "booking_cta": true
+      },
+      "missing_from_experimentation": {
+        "section_summary": "No London tours section or teaser exists on the main page",
+        "recommended_content": [
+          "London tour teaser card or section",
+          "'See London from a new perspective' tagline",
+          "Gift voucher promotion for tours",
+          "Link to full tour page",
+          "One hour flight marketing opportunity"
+        ],
+        "pdf_specific_notes": "PDF says: 'See London from a new perspective. Share the gift of flight vouchers. There may be an opportunity in marketing to people to just do a one hour flight.'"
+      }
+    },
+
+    "15_custom_paint_shop": {
+      "priority": "MEDIUM",
+      "pdf_reference": "Page 10: 'Custom Paint, talking about our paint shop, have the dreamwalker there'",
+      "standalone_page": null,
+      "what_exists_standalone": {
+        "maintenance_card": "Experimentation.jsx maintenance section has 'Paint & Refurbishment' card but minimal content"
+      },
+      "missing_from_experimentation": {
+        "section_summary": "Paint & Refurbishment exists as a single card in the maintenance grid but lacks detailed content about the paint shop",
+        "recommended_content": [
+          "Paint shop showcase with photos",
+          "The Dreamwalker featured aircraft",
+          "Customisation options (colours, interior materials)",
+          "Design consultation process",
+          "Gallery of completed paint jobs with before/after",
+          "Specification to delivery timeline"
+        ],
+        "pdf_specific_notes": "PDF says: 'Custom Paint, talking about our paint shop, have the dreamwalker there, designers working with clients to reach a specification of your choice, have the gallery with specification to delivery' and 'Customisation of colours and interior materials during rebuilds to personalise the aircraft for the owner'"
+      }
+    },
+
+    "16_tools_and_resources": {
+      "priority": "LOW",
+      "pdf_reference": "Page 4: 'Tools (helipaddy, windy etc. links)'",
+      "standalone_page": null,
+      "what_exists_standalone": null,
+      "missing_from_experimentation": {
+        "section_summary": "No tools/resources section exists on the main page",
+        "recommended_content": [
+          "Helipaddy link and description",
+          "Windy weather app link",
+          "Other useful pilot tools and resources",
+          "PPL study resources",
+          "CAA links and forms"
+        ]
+      }
+    },
+
+    "17_ground_school": {
+      "priority": "MEDIUM",
+      "pdf_reference": "Page 19: '5 Day PPL (A) and (H) Ground School Course' with full details",
+      "standalone_page": null,
+      "what_exists_standalone": {
+        "ppl_page_mention": "FinalPPL.jsx mentions Ground School as Phase 01 but no dedicated course page"
+      },
+      "missing_from_experimentation": {
+        "section_summary": "Training carousel has no ground school course listing. PPL section mentions ground school as a phase but not as a bookable standalone course.",
+        "recommended_content": [
+          "5 Day Ground School Course overview",
+          "Course fee: £1,500 plus VAT",
+          "What's included (full syllabus training, pre-reading material, practice exam papers, CAA exam fees, CX-3 flight computer rental, CAA charts, pilot equipment)",
+          "Available dates",
+          "Course runs first week of each month",
+          "Lead instructor profile (Jordane)",
+          "Both rotary and fixed wing students welcome",
+          "Guaranteed pass guarantee messaging"
+        ],
+        "pdf_specific_notes": "Detailed course description from PDF page 19 with full inclusions list and instructor bio"
+      }
+    },
+
+    "18_london_heliroutes": {
+      "priority": "MEDIUM",
+      "pdf_reference": "Page 20: 'The London Heliroutes' with full route description",
+      "standalone_page": null,
+      "what_exists_standalone": {
+        "blog_post": "LondonHeliLanes.jsx blog post exists covering the topic"
+      },
+      "missing_from_experimentation": {
+        "section_summary": "No heliroutes section exists on the main page. The training carousel and SFH map section don't cover London routes specifically.",
+        "recommended_content": [
+          "London Helicopter Routes overview",
+          "10 minutes from heart of London positioning",
+          "Route description (Isle of Dogs to Battersea via River Thames)",
+          "Radio frequencies and altitude restrictions",
+          "Heathrow Class D airspace requirements",
+          "Training recommendation (few lessons with instructor)",
+          "London landmark route highlights"
+        ],
+        "pdf_specific_notes": "PDF says: 'The London Helicopter Routes are defined flight paths which enable single engined helicopters to safely navigate over the most congested and built up area in the UK. All of the helicopter routes are situated within Heathrow's Class D airspace, therefore two way radio communication and clearances are required.'"
+      }
+    },
+
+    "19_hq_account_dashboard": {
+      "priority": "LOW",
+      "pdf_reference": null,
+      "standalone_page": "HQAccount.jsx at /hq-account",
+      "what_exists_standalone": {
+        "login_signup": true,
+        "flight_log": true,
+        "account_statistics": true,
+        "deposit_history": true,
+        "tabs": ["Flights", "Profile", "Certificates", "Bookings"]
+      },
+      "missing_from_experimentation": {
+        "section_summary": "No account/login CTA or member portal teaser exists on the main page",
+        "recommended_content": [
+          "Login/signup CTA in header or as a section",
+          "Member benefits overview",
+          "Flight log preview",
+          "'Track your progress' messaging"
+        ]
+      }
+    }
+  },
+
+  "missing_content_within_existing_sections": {
+    "description": "Content and details that are missing from sections that DO exist on /experimentation but are incomplete compared to their standalone pages or the PDF notes.",
+
+    "01_training_section": {
+      "current_state": "6-slide carousel covering Discovery Flight, PPL, CPL, Type Rating, Night Rating, Self-Fly Hire",
+      "missing_content": [
+        {
+          "item": "Ground School standalone course",
+          "details": "5-day course at £1,500+VAT, runs first week of each month. Full details in PDF page 19.",
+          "source": "websitenotes.pdf page 19"
+        },
+        {
+          "item": "Advanced Autorotations / Special Training",
+          "details": "Training with Captain Q, advanced autorotations course, confined area training",
+          "source": "websitenotes.pdf page 3"
+        },
+        {
+          "item": "London Heliroutes training",
+          "details": "Dedicated training for London helicopter routes, one of the best routes a helicopter pilot can fly",
+          "source": "websitenotes.pdf page 20"
+        },
+        {
+          "item": "PPL Starter Pack for sale",
+          "details": "Integrate with store to sell PPL starter kit and other training materials",
+          "source": "websitenotes.pdf page 10"
+        },
+        {
+          "item": "Instructor profiles with photos",
+          "details": "Pictures of instructors sitting down, map of training area",
+          "source": "websitenotes.pdf page 10"
+        },
+        {
+          "item": "Training FAQ teaser",
+          "details": "TrainingFAQ.jsx has 10 comprehensive FAQs — no teaser or link on main page",
+          "source": "TrainingFAQ.jsx"
+        },
+        {
+          "item": "Training pricing summary",
+          "details": "Training.jsx shows: Trial Lessons from £299, PPL from £15,000, CPL, Type Ratings, Night Ratings — not visible in carousel",
+          "source": "Training.jsx"
+        },
+        {
+          "item": "Video of a lesson",
+          "details": "YouTube link provided in PDF for lesson video content",
+          "source": "websitenotes.pdf page 6"
+        },
+        {
+          "item": "Training courses list",
+          "details": "Night Rating, R66 Turbine, R44, PPL courses not all individually represented",
+          "source": "websitenotes.pdf page 15-16"
+        }
+      ]
+    },
+
+    "02_self_fly_hire_section": {
+      "current_state": "Interactive UK map with range rings, 4 destinations, 2-step aircraft selection, journey comparison",
+      "missing_content": [
+        {
+          "item": "Detailed hire process",
+          "details": "Check-flight requirement, 28-day recency, no membership fees, no bulk payments upfront",
+          "source": "websitenotes.pdf page 16-17"
+        },
+        {
+          "item": "R66 Marine Turbine details",
+          "details": "G500H TXi touchscreen, GTN750, HeliSAS autopilot, long range auxiliary tank, pop-out floats, Bose A20 headsets, USB chargers",
+          "source": "websitenotes.pdf page 17"
+        },
+        {
+          "item": "Hire rates and pricing",
+          "details": "Charge for actual flying time only, bulk hour discounts",
+          "source": "websitenotes.pdf page 15"
+        },
+        {
+          "item": "R22 hire for training continuation",
+          "details": "Hour building and furthering flying experience, owners whose aircraft is in maintenance can borrow",
+          "source": "websitenotes.pdf page 16"
+        },
+        {
+          "item": "Comprehensive fleet availability",
+          "details": "Fleet.jsx has 20 components including FleetAvailability, FleetPricing — not integrated into SFH section",
+          "source": "Fleet.jsx"
+        },
+        {
+          "item": "Weekend and trip use cases",
+          "details": "Take friends/family away for the weekend, get there in fraction of road time",
+          "source": "websitenotes.pdf page 15"
+        }
+      ]
+    },
+
+    "03_expeditions_section": {
+      "current_state": "Cinematic section with globe, 'Explore The Unreachable', ExpeditionBarcode component, CTA link",
+      "missing_content": [
+        {
+          "item": "HQ Trips calendar integration",
+          "details": "Bookable calendar with skiing, helicamping, fly-to-lunch dates. Register interest form.",
+          "source": "websitenotes.pdf page 2"
+        },
+        {
+          "item": "Past expeditions archive",
+          "details": "Individual expedition profile pages with photos, quotes from participants, route details",
+          "source": "websitenotes.pdf page 3 and page 5"
+        },
+        {
+          "item": "Bespoke Adventures signup",
+          "details": "Sign up with questions, database of people who want adventures, ask Nick Jefferies",
+          "source": "websitenotes.pdf page 2"
+        },
+        {
+          "item": "Expedition categories",
+          "details": "Skiing, helicamping, fly-to-lunch, European tours, polar expeditions — not categorized on main page",
+          "source": "websitenotes.pdf page 2"
+        },
+        {
+          "item": "Captain Q expedition leader profile",
+          "details": "FinalExpeditions.jsx has Captain Q section but Experimentation only shows 'With Captain Quentin Smith' text",
+          "source": "FinalExpeditions.jsx"
+        },
+        {
+          "item": "Expedition video slider",
+          "details": "FinalExpeditions.jsx has ExpeditionVideoSlider component — not on main page",
+          "source": "FinalExpeditions.jsx"
+        }
+      ]
+    },
+
+    "04_sales_section": {
+      "current_state": "New aircraft cards (R88, R66, R44, R22), pre-owned carousel, rebuilt strip with detail view, Robinson Unmanned toggle",
+      "missing_content": [
+        {
+          "item": "Aircraft configuration/specification guidance",
+          "details": "Guide to configure and specify a new R22, R44, or R66 with optional equipment",
+          "source": "websitenotes.pdf page 10"
+        },
+        {
+          "item": "Demo flights at London showroom",
+          "details": "Demo flight booking capability",
+          "source": "websitenotes.pdf page 10"
+        },
+        {
+          "item": "Acquisition support for used aircraft",
+          "details": "HQ sources suitable used aircraft based on buyer criteria — not just listing pre-owned",
+          "source": "websitenotes.pdf page 10"
+        },
+        {
+          "item": "Off-market sales capability",
+          "details": "Register interest for off-market deals due to large fleet and network",
+          "source": "websitenotes.pdf page 2"
+        },
+        {
+          "item": "R22 buy-back program",
+          "details": "Buy old R22s low on years but high on hours through the school",
+          "source": "websitenotes.pdf page 4"
+        },
+        {
+          "item": "H500 / MD 500 listing",
+          "details": "AircraftH500.jsx exists as standalone but H500 not in new aircraft cards",
+          "source": "AircraftH500.jsx"
+        },
+        {
+          "item": "Financing and ownership programs",
+          "details": "Owner share program details, purchase guidance from first call to delivery",
+          "source": "websitenotes.pdf page 4"
+        }
+      ]
+    },
+
+    "05_maintenance_section": {
+      "current_state": "6-card grid (Inspections, Overhauls, Avionics, AOG/Parts, Paint, Ownership Services), team portraits (4), facility strip (5 items), ServiceSplitDots certification card",
+      "missing_content": [
+        {
+          "item": "Detailed rebuild statistics",
+          "details": "FinalMaintenance.jsx has extensive rebuild components with 100-hour stats, component tracking — not in maintenance section grid",
+          "source": "FinalMaintenance.jsx"
+        },
+        {
+          "item": "Maintenance schedule/booking",
+          "details": "FinalMaintenance.jsx has MaintenanceSchedule interactive booking component",
+          "source": "FinalMaintenance.jsx"
+        },
+        {
+          "item": "Valet services with pricing",
+          "details": "Mini Valet, Full Valet, Deluxe Valet with detailed pricing per aircraft type",
+          "source": "websitenotes.pdf page 18"
+        },
+        {
+          "item": "MRO facility sound bites",
+          "details": "'Sophisticated planning systems', 18 months ahead at 75% capacity, capacity buffer zone for ad hoc work",
+          "source": "websitenotes.pdf page 14"
+        },
+        {
+          "item": "Ground crew and landing slots",
+          "details": "Dedicated ground crew that organises landing slots",
+          "source": "websitenotes.pdf page 4"
+        },
+        {
+          "item": "Personnel per section",
+          "details": "Each section should show the personnel in charge: Operations (Nicola and Alex photos), Maintenance (Dave Cross photo)",
+          "source": "websitenotes.pdf page 4"
+        },
+        {
+          "item": "Guimbal Cabri G2 support",
+          "details": "Listed in ServiceSplitDots certification but not highlighted as a maintenance capability",
+          "source": "FinalMaintenance.jsx"
+        }
+      ]
+    },
+
+    "06_about_us_section": {
+      "current_state": "Company story, video placeholder, 'Why We Fly Helicopters' expandable section with 14 benefits, CTA link",
+      "missing_content": [
+        {
+          "item": "About Us video (autoplay muted)",
+          "details": "Q talking over music, with videos from all the adventures. Should autoplay on mute when website is loaded.",
+          "source": "websitenotes.pdf page 5 and 12"
+        },
+        {
+          "item": "Cover picture for video",
+          "details": "Need cover picture to replace Vimeo video embeds, looks neater",
+          "source": "websitenotes.pdf page 12"
+        },
+        {
+          "item": "Denham Aerodrome / Elstree location details",
+          "details": "AboutUs.jsx mentions Denham Aerodrome and 30+ years, but Experimentation about section is more generic",
+          "source": "AboutUs.jsx"
+        },
+        {
+          "item": "Captain Q achievements highlight",
+          "details": "CaptainQ.jsx has 4 major achievements (Guinness Record, 2x World Champion, World Circumnavigation, Both Poles) — only briefly referenced in hero",
+          "source": "CaptainQ.jsx"
+        },
+        {
+          "item": "Chief Engineer profile",
+          "details": "David Cross, 30+ years experience — mentioned in AboutUs.jsx but not in Experimentation about section",
+          "source": "AboutUs.jsx"
+        },
+        {
+          "item": "Tom Cruise training mention",
+          "details": "Rich people in London will love the opportunity to fly with the guy that taught Tom Cruise to fly",
+          "source": "websitenotes.pdf page 9"
+        },
+        {
+          "item": "Lifestyle magazine angle",
+          "details": "'Get into lifestyle magazines, the gentleman that flies his helicopter on the weekend'",
+          "source": "websitenotes.pdf page 5"
+        }
+      ]
+    },
+
+    "07_blog_section": {
+      "current_state": "Rich blog section with 4 personas (Learn to Fly, Own an Aircraft, Fly Somewhere, Go Further), category filtering, featured post + secondary grid",
+      "missing_content": [
+        {
+          "item": "Paywall/subscriber model",
+          "details": "PDF shows blog concept with 'Paywall posts to paying subscribers only, or create public posts to generate interest'",
+          "source": "websitenotes.pdf page 9"
+        },
+        {
+          "item": "Helipaddy content integration",
+          "details": "Take content from Helipaddy and others and get AI to rewrite it",
+          "source": "websitenotes.pdf page 2"
+        },
+        {
+          "item": "Mission page profiles",
+          "details": "Have a page for each of the missions that were conducted that can be referenced in other pages",
+          "source": "websitenotes.pdf page 5"
+        }
+      ]
+    },
+
+    "08_hero_section": {
+      "current_state": "4-section scroll hero (Intro, Excellence, Training, Expeditions) with parallax images, grid lines, SVG path animations",
+      "missing_content": [
+        {
+          "item": "Tim Tucker picture",
+          "details": "Use the Tim Tucker picture and edit it — for hero or about section imagery",
+          "source": "websitenotes.pdf page 10"
+        }
+      ]
+    }
+  },
+
+  "missing_navigation_and_routes": {
+    "description": "Routes that exist in Header.jsx navigation or App.jsx but have no corresponding page, or routes that should exist based on websitenotes.pdf.",
+
+    "routes_in_nav_without_pages": [
+      {
+        "route": "/flying",
+        "nav_location": "Header secondary nav",
+        "status": "No page exists — links to nothing"
+      },
+      {
+        "route": "/expeditions/calendar",
+        "nav_location": "Header menu and secondary nav",
+        "status": "No page exists — should be HQ Trips calendar"
+      },
+      {
+        "route": "/store",
+        "nav_location": "Header menu",
+        "status": "No page exists — should be Store page"
+      },
+      {
+        "route": "/store/gifts",
+        "nav_location": "Header menu",
+        "status": "No page exists — should be Gifts & Experiences"
+      },
+      {
+        "route": "/media",
+        "nav_location": "Header menu",
+        "status": "No page exists — should be Gallery & Media"
+      },
+      {
+        "route": "/contact/careers",
+        "nav_location": "Header menu",
+        "status": "No page exists — should be Job Board"
+      },
+      {
+        "route": "/contact/pricing",
+        "nav_location": "Header menu",
+        "status": "No page exists — should be Pricing Page"
+      },
+      {
+        "route": "/aircraft-sales/new/r88",
+        "nav_location": "Header menu",
+        "status": "Route exists in nav — AircraftR88.jsx exists but route /aircraft-sales/new/r88 not in App.jsx (only /aircraft/r88)"
+      },
+      {
+        "route": "/aircraft-sales/new/r66",
+        "nav_location": "Header menu",
+        "status": "Route exists in nav — AircraftR66.jsx exists but route /aircraft-sales/new/r66 not in App.jsx (only /aircraft/r66)"
+      },
+      {
+        "route": "/aircraft-sales/compare",
+        "nav_location": "Header menu",
+        "status": "No page exists — should be Compare Aircraft tool"
+      }
+    ],
+
+    "routes_needed_from_pdf": [
+      {
+        "route": "/pricing",
+        "description": "Comprehensive pricing page with training, hire, maintenance, valet rates",
+        "source": "websitenotes.pdf page 1, 5"
+      },
+      {
+        "route": "/services/leaseback",
+        "description": "Helicopter leaseback program details",
+        "source": "websitenotes.pdf page 1, 4, 16"
+      },
+      {
+        "route": "/services/pilot-provisioning",
+        "description": "Pilot crewing, safety pilot, ferry pilot services",
+        "source": "websitenotes.pdf page 1, 3-4"
+      },
+      {
+        "route": "/services/special-ops",
+        "description": "SuperYacht operations and private owner management",
+        "source": "websitenotes.pdf page 1, 3"
+      },
+      {
+        "route": "/services/valet",
+        "description": "Aircraft cleaning and detailing with pricing tiers",
+        "source": "websitenotes.pdf page 18"
+      },
+      {
+        "route": "/services/part-sales",
+        "description": "Robinson parts enquiry and availability",
+        "source": "websitenotes.pdf page 1, 3"
+      },
+      {
+        "route": "/the-clubhouse",
+        "description": "Facility photos and community atmosphere",
+        "source": "websitenotes.pdf page 1, 3"
+      },
+      {
+        "route": "/publications",
+        "description": "Press and media appearances",
+        "source": "websitenotes.pdf page 1, 3"
+      },
+      {
+        "route": "/training/ground-school",
+        "description": "5-day ground school course details and booking",
+        "source": "websitenotes.pdf page 19"
+      },
+      {
+        "route": "/training/heliroutes",
+        "description": "London Heliroutes training course",
+        "source": "websitenotes.pdf page 20"
+      },
+      {
+        "route": "/training/advanced",
+        "description": "Special training including autorotations with Captain Q",
+        "source": "websitenotes.pdf page 3"
+      },
+      {
+        "route": "/hq-trips",
+        "description": "Calendar of HQ-organised trips with booking",
+        "source": "websitenotes.pdf page 2"
+      }
+    ]
+  },
+
+  "missing_seo_keywords": {
+    "description": "Keywords from websitenotes.pdf page 13 that should be represented in content across the main page.",
+    "keywords": [
+      "Robinson Specialists",
+      "Robinson Branding",
+      "Robinson Approved Dealer & Service Center",
+      "Safety Courses",
+      "MRO",
+      "Global Industry-Renowned",
+      "Training Academy",
+      "Approved Training Organization (ATO)",
+      "Walk-in Walk-out Self-fly hire program",
+      "Fleet availability",
+      "Helicopter lessons London"
+    ],
+    "keyword_coverage_on_experimentation": {
+      "Robinson Specialists": "Partially covered in ServiceSplitDots certification card",
+      "Robinson Approved Dealer & Service Center": "Covered in ServiceSplitDots and DealerSplitDots",
+      "Safety Courses": "NOT covered anywhere on main page",
+      "MRO": "NOT explicitly used as keyword",
+      "Training Academy": "NOT explicitly used as keyword",
+      "Approved Training Organization (ATO)": "NOT mentioned on main page",
+      "Walk-in Walk-out Self-fly hire program": "NOT mentioned — SFH section exists but this specific phrase is missing",
+      "Fleet availability": "NOT explicitly covered — SFH map shows aircraft but not availability status",
+      "Helicopter lessons London": "NOT used as explicit keyword/phrase"
+    }
+  },
+
+  "missing_interactive_features": {
+    "description": "Interactive features mentioned in websitenotes.pdf or existing in standalone pages but not on /experimentation.",
+    "features": [
+      {
+        "feature": "Review submission form with Google Maps integration",
+        "description": "Users can create a review, option to copy to Google Maps",
+        "source": "websitenotes.pdf page 5",
+        "exists_on_experimentation": false
+      },
+      {
+        "feature": "Register interest form for off-market sales",
+        "description": "Registration for people interested in acquiring helicopters off-market",
+        "source": "websitenotes.pdf page 2",
+        "exists_on_experimentation": false
+      },
+      {
+        "feature": "Parts enquiry form",
+        "description": "Form to enquire about Robinson parts availability",
+        "source": "websitenotes.pdf page 3",
+        "exists_on_experimentation": false
+      },
+      {
+        "feature": "HQ Trips registration form",
+        "description": "Register interest in HQ organised trip",
+        "source": "websitenotes.pdf page 2",
+        "exists_on_experimentation": false
+      },
+      {
+        "feature": "Bespoke Adventures signup with questions",
+        "description": "Sign up form with questions to build database of adventure seekers",
+        "source": "websitenotes.pdf page 2",
+        "exists_on_experimentation": false
+      },
+      {
+        "feature": "Aircraft comparison tool",
+        "description": "Side-by-side comparison of aircraft models",
+        "source": "Header.jsx nav link to /aircraft-sales/compare",
+        "exists_on_experimentation": false
+      },
+      {
+        "feature": "R88 pre-registration",
+        "description": "'Be among the first' registration for the upcoming R88",
+        "source": "AircraftR88.jsx",
+        "exists_on_experimentation": false
+      },
+      {
+        "feature": "Contact form with department routing",
+        "description": "Contact.jsx has subject dropdown routing to departments",
+        "source": "Contact.jsx",
+        "exists_on_experimentation": false
+      },
+      {
+        "feature": "Flight discovery day booking",
+        "description": "DiscoveryFlight.jsx has booking CTAs — not linked from main page",
+        "source": "DiscoveryFlight.jsx",
+        "exists_on_experimentation": false
+      },
+      {
+        "feature": "Instagram/Facebook curated feed",
+        "description": "Selected posts (not reels) from social media",
+        "source": "websitenotes.pdf page 10",
+        "exists_on_experimentation": false
+      }
+    ]
+  },
+
+  "missing_content_paragraphs": {
+    "description": "Specific paragraphs, sound bites, and copy from websitenotes.pdf that should appear on the main page but are not currently used.",
+    "paragraphs": [
+      {
+        "id": "soundbite_mro_planning",
+        "text": "The MRO facility has had to implement 'sophisticated planning systems' that allow it to plan 18 months ahead at a 75 percent capacity — this allows a capacity buffer zone to handle ad hoc work.",
+        "recommended_section": "Maintenance",
+        "source": "websitenotes.pdf page 14"
+      },
+      {
+        "id": "soundbite_forward_planning",
+        "text": "In some segments, it is easier to project hours flown and forward planning is super critical. We've worked with our customers to plan ahead, investing in parts and components ahead of time.",
+        "recommended_section": "Maintenance",
+        "source": "websitenotes.pdf page 14"
+      },
+      {
+        "id": "discovery_flight_description",
+        "text": "Experience the excitement of helicopter flying with a day designed to inspire, challenge, and build your confidence. Whether you're considering our Modular Training Course or simply want to see what it's like to take the controls, this is the perfect introduction to the world of helicopter aviation.",
+        "recommended_section": "Training carousel — Discovery Flight slide",
+        "source": "websitenotes.pdf page 14"
+      },
+      {
+        "id": "discovery_flight_details",
+        "text": "The Flight Discovery Day offers an introduction to helicopter flying, providing genuine hands-on experience at the controls under the guidance of an experienced instructor. Designed to build confidence and give real insight into flight, the day includes safety briefings, either two hours of flying across two sessions or one hour split if necessary, as well as opportunities to refine your skills between flights.",
+        "recommended_section": "Training carousel — Discovery Flight slide",
+        "source": "websitenotes.pdf page 14"
+      },
+      {
+        "id": "discovery_flight_logbook",
+        "text": "The flight hours you complete on the day will be recorded in a logbook provided to you and count towards starting your Modular PPL(H) course.",
+        "recommended_section": "Training carousel — Discovery Flight slide",
+        "source": "websitenotes.pdf page 14"
+      },
+      {
+        "id": "discovery_flight_routes",
+        "text": "Depending on conditions, routes may include a landaway or a scenic flight over Leicestershire or Oxfordshire.",
+        "recommended_section": "Training carousel — Discovery Flight slide",
+        "source": "websitenotes.pdf page 14-15"
+      },
+      {
+        "id": "r44_charter_description",
+        "text": "The four-seat configuration provides a comfortable experience with excellent visibility, making every flight enjoyable. The R44 delivers excellent performance while remaining fuel-efficient. This adds to its affordable operating costs making it the economical choice, allowing us to provide high-quality charter services.",
+        "recommended_section": "Self-Fly Hire or Fleet section",
+        "source": "websitenotes.pdf page 15"
+      },
+      {
+        "id": "complete_helicopter_solution",
+        "text": "Heli Air provides the complete helicopter solution to its customers, focusing delivering the highest level of quality and value in all areas. Our unique 'in house' structure wraps our helicopter sales, training, engineering, charter and utility services into the complete helicopter solution for you.",
+        "recommended_section": "About Us or Services overview",
+        "source": "websitenotes.pdf page 15"
+      },
+      {
+        "id": "hire_description",
+        "text": "Becoming a helicopter pilot is a huge achievement. Private helicopter pilots who have trained with Heli Air are able to hire our helicopters at any time. We only charge for the amount of actual flying time that you do in them, and offer discounts if hours are purchased in large quantities. You could decide to take friends or family away for the weekend in the helicopter of your choice, and get there in a fraction of the time it would take by road.",
+        "recommended_section": "Self-Fly Hire section",
+        "source": "websitenotes.pdf page 15"
+      },
+      {
+        "id": "sfh_hire_process",
+        "text": "Hiring with ICE couldn't be easier — after you have completed a check-flight with one of our affiliated instructors, you will be able to hire the helicopter by booking in with our friendly operations team. No membership fees, and no bulk payments up front! We only ask that if you've gone 28 days without flying a helicopter, we can hop in for a quick check-flight with you just for safety before you next hire the helicopter.",
+        "recommended_section": "Self-Fly Hire section",
+        "source": "websitenotes.pdf page 16-17"
+      },
+      {
+        "id": "r66_sfh_details",
+        "text": "Fitted with the very latest G500H 10.6\" TXi touch screen MFD/PFD and the all new GTN750 coupled to a 2-axis HeliSAS autopilot & stabilisation system, the helicopter boasts comfort throughout all stages of flight for both pilots and passengers. It is also equipped with an additional long range auxiliary tank, making trips from London to Scotland possible without a fuel stop on the way!",
+        "recommended_section": "Self-Fly Hire — R66 details",
+        "source": "websitenotes.pdf page 17"
+      },
+      {
+        "id": "r66_safety_features",
+        "text": "Pilots will enjoy safety enhancements from the Traffic Awareness System and full synthetic vision, along with helicopter terrain awareness and built in airfield plates with 'safe taxi.' Pop-out floats are fitted for additional safety when making trips over water and bluetooth integration is also possible with the Bose A20 noise reduction headsets provided.",
+        "recommended_section": "Self-Fly Hire — R66 details",
+        "source": "websitenotes.pdf page 17"
+      },
+      {
+        "id": "leaseback_description",
+        "text": "Owning and maintaining a helicopter can sometimes be costly, so leasing hours to a flying school is a good way to recoup some of the fees. Subject to its suitability, you may like us to utilise your aircraft through our training organisation to give you some additional return towards the cost of aircraft ownership.",
+        "recommended_section": "New Leaseback section",
+        "source": "websitenotes.pdf page 16"
+      },
+      {
+        "id": "leaseback_restrictions",
+        "text": "We can also place restrictions upon what type of flights are carried out (training/hire or hire only), who flies your helicopter (hourly minimums) and also link this with a management agreement so you can be assured that your helicopter is being looked after as well as paying for itself.",
+        "recommended_section": "New Leaseback section",
+        "source": "websitenotes.pdf page 16"
+      },
+      {
+        "id": "r22_description",
+        "text": "The R22 is the world's most popular training aircraft due to its outstanding reliability, superior performance, exceptional value and low maintenance — it is trusted by helicopter schools throughout the world and was designed with simplicity in mind.",
+        "recommended_section": "Training or Fleet section",
+        "source": "websitenotes.pdf page 16"
+      },
+      {
+        "id": "sfh_variety",
+        "text": "We have a variety of aircraft available for you to self fly hire from us, perfect for PPL(H) holders going off on a local buzz as well as those hour building and furthering their flying experience. If you're an aircraft owner and your helicopter is away for maintenance, give us a call and borrow ours for the day!",
+        "recommended_section": "Self-Fly Hire section",
+        "source": "websitenotes.pdf page 16"
+      },
+      {
+        "id": "community_atmosphere",
+        "text": "Reviews often highlight the friendly, relaxed, and welcoming club atmosphere, which may be a significant draw for private owners who value a pleasant environment when they fly.",
+        "recommended_section": "Testimonials or Clubhouse section",
+        "source": "websitenotes.pdf page 16"
+      },
+      {
+        "id": "fleet_description",
+        "text": "Our fleet is always changing through our brokerage and sales capacity we are able to best match an aircraft to a customer, we have a strong fleet with various owned helicopters supplemented by the leaseback program. Often customers will appreciate buying their own aircraft and participating in our owner share program.",
+        "recommended_section": "Fleet or About section",
+        "source": "websitenotes.pdf page 4"
+      },
+      {
+        "id": "valet_description",
+        "text": "We provide exterior & interior aircraft cleaning and polishing from our conveniently located hangar at Elstree Aerodrome. Our expert team use the best products and tools to clean & polish your aircraft with the utmost care. We have the flexibility to tailor the service to the exact needs of each aircraft, offering services ranging from a standard wash to an extensive detailing service.",
+        "recommended_section": "Maintenance or new Valet section",
+        "source": "websitenotes.pdf page 18"
+      },
+      {
+        "id": "training_faq_intro",
+        "text": "Got questions? Flying should be seamless. To help you prepare for your journey with HQ Aviation, we've compiled answers to the questions we hear most often. Explore the topics below to learn more about our operations and services.",
+        "recommended_section": "Training section or FAQ teaser",
+        "source": "websitenotes.pdf page 20"
+      },
+      {
+        "id": "ground_school_details",
+        "text": "We are pleased to offer a 5 day ground school brush-up programme, where you are guaranteed to get through all nine theory exams without the stress of studying at home on your own. You won't be taught just how to pass but with us you will pass your ground school exams by being thoroughly taught the knowledge of the subjects in a fun, relaxed and engaging way. We are approved to teach both rotary & fixed wing students and specialise in small group courses.",
+        "recommended_section": "Training section — new Ground School slide",
+        "source": "websitenotes.pdf page 19"
+      },
+      {
+        "id": "voucher_gift",
+        "text": "Share the gift of flight vouchers. Buy vouchers for a loved one, have it be a physical thing on a cardboard surface, something that they can keep forever.",
+        "recommended_section": "Store section or gift CTA",
+        "source": "websitenotes.pdf page 6"
+      },
+      {
+        "id": "landing_slots",
+        "text": "We have a dedicated ground crew that will organise landing slots.",
+        "recommended_section": "Services or Hangarage section",
+        "source": "websitenotes.pdf page 4"
+      },
+      {
+        "id": "r22_buyback",
+        "text": "Through our school we'll buy your old R22s that are low on years but high on hours.",
+        "recommended_section": "Sales section or Leaseback section",
+        "source": "websitenotes.pdf page 4"
+      }
+    ]
+  },
+
+  "standalone_page_features_not_on_main": {
+    "description": "Significant features or components from standalone pages that have no representation on /experimentation.",
+    "features": [
+      {
+        "source_page": "Fleet.jsx",
+        "feature": "Fleet comparison tool (FleetComparison component)",
+        "description": "Side-by-side aircraft comparison — not on main page"
+      },
+      {
+        "source_page": "Fleet.jsx",
+        "feature": "Fleet availability indicators (FleetAvailability component)",
+        "description": "Real-time fleet status — not on main page"
+      },
+      {
+        "source_page": "Fleet.jsx",
+        "feature": "Fleet pricing cards (FleetPricing component)",
+        "description": "Hire rate cards — not on main page"
+      },
+      {
+        "source_page": "Fleet.jsx",
+        "feature": "Fleet history timeline (FleetTimeline — since 2010)",
+        "description": "Fleet evolution over time — not on main page"
+      },
+      {
+        "source_page": "FinalMaintenance.jsx",
+        "feature": "Process flow diagram (ProcessFlow component)",
+        "description": "Step-by-step maintenance process — not on main page"
+      },
+      {
+        "source_page": "FinalMaintenance.jsx",
+        "feature": "Equipment gallery (EquipmentGallery component)",
+        "description": "Scrolling tool showcase — not on main page"
+      },
+      {
+        "source_page": "FinalMaintenance.jsx",
+        "feature": "Emergency support section (EmergencySupport — 24/7)",
+        "description": "Dedicated AOG emergency section — only a card on main page"
+      },
+      {
+        "source_page": "FinalMaintenance.jsx",
+        "feature": "Certification badges (CertificationBadges — EASA/CAA)",
+        "description": "Visual badge display — ServiceSplitDots covers partially"
+      },
+      {
+        "source_page": "FinalExpeditions.jsx",
+        "feature": "Expedition video slider (ExpeditionVideoSlider)",
+        "description": "Video showcase of expeditions — not on main page"
+      },
+      {
+        "source_page": "FinalExpeditions.jsx",
+        "feature": "Expedition departure board (ExpeditionDepartureBoard)",
+        "description": "Airport-style departure display — removed from main page"
+      },
+      {
+        "source_page": "FinalExpeditions.jsx",
+        "feature": "Regional parallax showcases",
+        "description": "Region-by-region expedition details — not on main page"
+      },
+      {
+        "source_page": "HelicopterTourOfLondon.jsx",
+        "feature": "Interactive ticket component (LondonTourTicket)",
+        "description": "Bookable tour ticket UI — not referenced on main page"
+      },
+      {
+        "source_page": "HelicopterTourOfLondon.jsx",
+        "feature": "Tour FAQ section",
+        "description": "London tour questions and answers — not on main page"
+      },
+      {
+        "source_page": "HQAccount.jsx",
+        "feature": "Pilot dashboard with flight log",
+        "description": "Account management and flight tracking — no CTA on main page"
+      },
+      {
+        "source_page": "FinalWhyFlyAHelicopter.jsx",
+        "feature": "15 benefits of helicopter flying",
+        "description": "Comprehensive 'Why Fly' showcase — Experimentation has 14-item Why We Fly section but it's within About, not standalone"
+      },
+      {
+        "source_page": "Contact.jsx",
+        "feature": "Contact form with department routing",
+        "description": "Subject dropdown (Sales, Training, Maintenance, Expeditions, Hire) — no contact form on main page"
+      },
+      {
+        "source_page": "CaptainQ.jsx",
+        "feature": "Full Captain Q biography and achievements",
+        "description": "4 major achievements, expedition history, founder story — only brief mention in hero section"
+      },
+      {
+        "source_page": "Testimonials.jsx",
+        "feature": "Masonry testimonials wall with submit form",
+        "description": "Full testimonials page exists — zero representation on main page"
+      },
+      {
+        "source_page": "AircraftR88.jsx",
+        "feature": "R88 Coming Soon with pre-registration",
+        "description": "R88 card exists in sales grid but no pre-registration CTA"
+      },
+      {
+        "source_page": "AircraftH500.jsx",
+        "feature": "Hughes/MD 500 full page with history timeline",
+        "description": "Complete H500 page exists — not in new aircraft cards on main page"
+      }
+    ]
+  },
+
+  "summary": {
+    "total_missing_sections": 19,
+    "total_missing_content_items_within_existing_sections": 42,
+    "total_missing_routes": 22,
+    "total_missing_content_paragraphs": 23,
+    "total_missing_interactive_features": 10,
+    "total_missing_seo_keywords": 11,
+    "total_standalone_features_not_represented": 20,
+
+    "highest_priority_gaps": [
+      "Testimonials / What People Say About Us — zero presence on main page",
+      "Pricing Page — zero presence anywhere on site",
+      "Helicopter Leaseback — no dedicated section",
+      "Pilot Provisioning (Crewing, Safety Pilot, Ferry Pilot) — no section",
+      "HQ Trips Calendar — no calendar or booking",
+      "Store / Gifts & Experiences — no page exists",
+      "Contact Form — no contact form on main page",
+      "Fleet Showcase — Fleet.jsx has 20 components but main page only shows fleet in SFH context"
+    ],
+
+    "sections_existing_but_incomplete": [
+      "Training carousel — missing Ground School, Special Training, Heliroutes, pricing",
+      "Self-Fly Hire map — missing hire process details, R66 specs, pricing, 28-day check requirement",
+      "Expeditions — missing HQ Trips calendar, past trips archive, bespoke adventures signup",
+      "Sales — missing acquisition support, demo flights, H500, R22 buyback, off-market registration",
+      "Maintenance — missing valet pricing, detailed rebuild stats, booking, ground crew, personnel photos",
+      "About Us — missing video (autoplay muted), Captain Q achievements, Chief Engineer profile",
+      "Blog — missing paywall concept, Helipaddy content integration, mission profiles"
+    ]
+  }
+}

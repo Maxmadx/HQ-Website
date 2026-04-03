@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<script>
+window.Squarespace = window.Squarespace || { load: function() {}, afterBodyLoad: function() {}, SQUARESPACE_CONTEXT: {} };
+window.Static = window.Static || { SQUARESPACE_CONTEXT: {} };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<base href="/">
+<title>HQ Aviation &mdash; Expeditions</title>
+<link rel="icon" type="image/png" href="/assets/images/logos/hq/hq-aviation-logo-black.png"/>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #fff; color: #333; }
+.page-wrapper { width: 100%; max-width: 1200px; margin: 0 auto; padding: 60px 40px; }
+.page-header { text-align: center; margin-bottom: 50px; }
+.page-header h1 { font-size: 2.5rem; font-weight: 900; text-transform: uppercase; color: #000; margin-bottom: 15px; }
+.page-header p { font-size: 1rem; line-height: 1.6; color: #555; max-width: 700px; margin: 0 auto; }
+.intro-text { font-size: 1rem; line-height: 1.8; color: #333; max-width: 800px; margin: 0 auto 50px; text-align: center; }
+.expedition { position: relative; background: #f9f9f9; border: 1px solid #eee; margin-bottom: 30px; transition: all 0.3s; overflow: hidden; }
+.expedition::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: #ff0000; transform: scaleY(0); transform-origin: top; transition: transform 0.4s ease; }
+.expedition:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.05); background: #fff; border-color: #ff0000; }
+.expedition:hover::before { transform: scaleY(1); }
+.expedition-content { padding: 40px; }
+.expedition-location { font-size: 0.75rem; font-weight: 700; color: #ff0000; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+.expedition h2 { font-size: 2rem; font-weight: 900; text-transform: uppercase; color: #000; margin-bottom: 15px; }
+.expedition p { font-size: 0.9rem; line-height: 1.8; color: #555; margin-bottom: 25px; max-width: 700px; }
+.expedition-details { display: flex; gap: 30px; margin-bottom: 25px; }
+.detail { background: #fff; border: 1px solid #eee; padding: 15px 25px; }
+.detail-label { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+.detail-value { font-size: 1.2rem; font-weight: 700; color: #000; margin-top: 5px; }
+.card-btn { padding: 12px 30px; background: transparent; border: 2px solid #000; color: #000; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; transition: all 0.3s ease; text-decoration: none; display: inline-block; }
+.card-btn:hover { background: #000; color: #fff; }
+.cta-section { background: #000; color: #fff; padding: 60px 40px; text-align: center; }
+.cta-section h2 { font-size: 1.5rem; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; }
+.cta-section p { font-size: 0.9rem; color: #888; margin-bottom: 25px; }
+.cta-btn { padding: 15px 40px; background: transparent; border: 2px solid #fff; color: #fff; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; transition: all 0.3s ease; text-decoration: none; display: inline-block; }
+.cta-btn:hover { background: #fff; color: #000; }
+@media (max-width: 768px) { .expedition-details { flex-direction: column; gap: 10px; } .page-wrapper { padding: 40px 20px; } .cta-section { padding: 40px 20px; } }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+  <div class="page-header">
+    <h1>Expeditions</h1>
+    <p>Journey to extraordinary places by helicopter.</p>
+  </div>
+
+  <p class="intro-text">HQ Aviation organizes exclusive helicopter expeditions to remote and spectacular destinations. Led by Captain Q and our team of experienced pilots, these journeys combine world-class flying with once-in-a-lifetime experiences.</p>
+
+  <div class="expedition">
+    <div class="expedition-content">
+      <div class="expedition-location">Scotland, UK</div>
+      <h2>Scottish Highlands</h2>
+      <p>Five days exploring the dramatic landscapes of Scotland. Land at remote castles, fish pristine lochs, and experience true Highland hospitality. This expedition showcases the best of Scottish aviation.</p>
+      <div class="expedition-details">
+        <div class="detail">
+          <div class="detail-label">Duration</div>
+          <div class="detail-value">5 Days</div>
+        </div>
+        <div class="detail">
+          <div class="detail-label">Flying</div>
+          <div class="detail-value">12 Hours</div>
+        </div>
+        <div class="detail">
+          <div class="detail-label">From</div>
+          <div class="detail-value">£8,500</div>
+        </div>
+      </div>
+      <a href="/contact" class="card-btn">Enquire</a>
+    </div>
+  </div>
+
+  <div class="expedition">
+    <div class="expedition-content">
+      <div class="expedition-location">Norway</div>
+      <h2>Norwegian Fjords</h2>
+      <p>Witness the majesty of Norway's fjords from above. Glacier landings, Viking history, and some of Europe's most breathtaking scenery. An unforgettable Nordic adventure.</p>
+      <div class="expedition-details">
+        <div class="detail">
+          <div class="detail-label">Duration</div>
+          <div class="detail-value">7 Days</div>
+        </div>
+        <div class="detail">
+          <div class="detail-label">Flying</div>
+          <div class="detail-value">18 Hours</div>
+        </div>
+        <div class="detail">
+          <div class="detail-label">From</div>
+          <div class="detail-value">£12,500</div>
+        </div>
+      </div>
+      <a href="/contact" class="card-btn">Enquire</a>
+    </div>
+  </div>
+
+  <div class="expedition">
+    <div class="expedition-content">
+      <div class="expedition-location">Morocco</div>
+      <h2>Moroccan Atlas</h2>
+      <p>Cross the Atlas Mountains and explore the edge of the Sahara. Land at ancient kasbahs, experience Berber culture, and fly over some of North Africa's most stunning terrain.</p>
+      <div class="expedition-details">
+        <div class="detail">
+          <div class="detail-label">Duration</div>
+          <div class="detail-value">6 Days</div>
+        </div>
+        <div class="detail">
+          <div class="detail-label">Flying</div>
+          <div class="detail-value">15 Hours</div>
+        </div>
+        <div class="detail">
+          <div class="detail-label">From</div>
+          <div class="detail-value">£14,000</div>
+        </div>
+      </div>
+      <a href="/contact" class="card-btn">Enquire</a>
+    </div>
+  </div>
+
+  <div class="expedition">
+    <div class="expedition-content">
+      <div class="expedition-location">Switzerland</div>
+      <h2>Swiss Alps</h2>
+      <p>The ultimate mountain flying experience. Glacier landings, alpine restaurants accessible only by helicopter, and views of the Matterhorn that few ever see.</p>
+      <div class="expedition-details">
+        <div class="detail">
+          <div class="detail-label">Duration</div>
+          <div class="detail-value">4 Days</div>
+        </div>
+        <div class="detail">
+          <div class="detail-label">Flying</div>
+          <div class="detail-value">10 Hours</div>
+        </div>
+        <div class="detail">
+          <div class="detail-label">From</div>
+          <div class="detail-value">£9,500</div>
+        </div>
+      </div>
+      <a href="/contact" class="card-btn">Enquire</a>
+    </div>
+  </div>
+</div>
+
+<div class="cta-section">
+  <h2>Join Our Next Adventure</h2>
+  <p>Limited places available on each expedition. Register your interest today.</p>
+  <a href="/contact" class="cta-btn">Register Interest</a>
+</div>
+<script src="/assets/menu.js"></script>
+</body>
+</html>

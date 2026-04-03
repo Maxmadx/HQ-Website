@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<script>
+window.Squarespace = window.Squarespace || { load: function() {}, afterBodyLoad: function() {}, SQUARESPACE_CONTEXT: {} };
+window.Static = window.Static || { SQUARESPACE_CONTEXT: {} };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<base href="/">
+<title>HQ Aviation &mdash; Pricing</title>
+<link rel="icon" type="image/png" href="/assets/images/logos/hq/hq-aviation-logo-black.png"/>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #fff; color: #333; }
+
+/* Page Layout */
+.page-wrapper { width: 100%; max-width: 1100px; margin: 0 auto; padding: 60px 40px; }
+.page-header { text-align: center; margin-bottom: 50px; }
+.page-header h1 { font-size: 2.5rem; font-weight: 900; text-transform: uppercase; color: #000; margin-bottom: 10px; letter-spacing: -0.5px; }
+.page-header p { font-size: 14px; color: #666; max-width: 500px; margin: 0 auto; line-height: 1.6; }
+
+/* Section Styles */
+.section { margin-bottom: 70px; }
+.section-header { text-align: center; margin-bottom: 35px; }
+.section-label { font-size: 11px; font-weight: 700; color: #000; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.section-title { font-size: 1.8rem; font-weight: 800; color: #000; }
+
+/* Card Grid - Discovery Flight Style */
+.card-grid {
+  display: flex;
+  gap: 25px;
+  align-items: stretch;
+}
+
+.pricing-card {
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden;
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.pricing-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 30px 60px -15px rgba(0,0,0,0.15);
+}
+
+.pricing-card.featured {
+  border: 2px solid #000;
+  transform: scale(1.05);
+  z-index: 2;
+  box-shadow: 0 30px 60px -15px rgba(0,0,0,0.15);
+}
+
+.pricing-card.featured:hover {
+  transform: scale(1.05) translateY(-8px);
+}
+
+.feature-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #000;
+  color: #fff;
+  font-size: 10px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  z-index: 10;
+}
+
+.card-img-wrapper {
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #f9f9f9 0%, #fff 70%);
+}
+
+.card-img-wrapper img {
+  max-width: 85%;
+  max-height: 140px;
+  object-fit: contain;
+}
+
+.card-content {
+  padding: 25px;
+  text-align: center;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-type {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+.card-desc {
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 20px;
+}
+
+.price-display {
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.price-amount {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #000;
+}
+
+.price-unit {
+  font-size: 13px;
+  color: #888;
+  font-weight: 400;
+}
+
+.card-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+  text-align: left;
+}
+
+.card-features li {
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-features li:last-child {
+  border-bottom: none;
+}
+
+.card-features li::before {
+  content: "✓";
+  color: #000;
+  font-weight: bold;
+}
+
+.card-btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: auto;
+  border-radius: 30px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  display: block;
+  transition: all 0.3s;
+  background: #000;
+  color: #fff;
+  border: 2px solid #000;
+}
+
+.card-btn:hover {
+  background: #333;
+  border-color: #333;
+}
+
+.card-btn.outline {
+  background: transparent;
+  color: #000;
+}
+
+.card-btn.outline:hover {
+  background: #000;
+  color: #fff;
+}
+
+/* Block Packages */
+.block-grid {
+  display: flex;
+  gap: 20px;
+}
+
+.block-card {
+  flex: 1;
+  background: #000;
+  color: #fff;
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.block-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3);
+}
+
+.block-card h4 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 15px;
+  color: #888;
+}
+
+.block-price {
+  font-size: 2.2rem;
+  font-weight: 900;
+  margin-bottom: 5px;
+}
+
+.block-save {
+  font-size: 12px;
+  color: #666;
+}
+
+/* Self-Fly Hire Section */
+.hire-grid {
+  display: flex;
+  gap: 25px;
+}
+
+.hire-card {
+  flex: 1;
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08);
+  padding: 30px;
+  transition: all 0.3s;
+}
+
+.hire-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.12);
+}
+
+.hire-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.hire-aircraft {
+  font-size: 1.3rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.hire-requirement {
+  font-size: 11px;
+  color: #888;
+  background: #f5f5f5;
+  padding: 5px 10px;
+  border-radius: 15px;
+}
+
+.hire-price {
+  font-size: 2rem;
+  font-weight: 900;
+  margin-bottom: 20px;
+}
+
+.hire-price span {
+  font-size: 14px;
+  font-weight: 400;
+  color: #888;
+}
+
+/* Note Box */
+.note-box {
+  background: #f9f9f9;
+  border-radius: 15px;
+  padding: 25px;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.note-box strong {
+  color: #000;
+}
+
+/* Discovery Flights Component */
+#discovery-section {
+  background: linear-gradient(180deg, #f9f9f9 0%, #fff 100%);
+  border-radius: 30px;
+  padding: 50px 40px;
+  margin-bottom: 70px;
+}
+
+#discovery-section .section-header {
+  margin-bottom: 40px;
+}
+
+.flight-options-grid {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+  min-height: 520px;
+}
+
+.flight-card {
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden;
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.flight-card .img-wrapper {
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #f9f9f9 0%, #fff 70%);
+}
+
+.flight-card .card-img {
+  width: 100%;
+  max-height: 140px;
+  object-fit: contain;
+}
+
+.flight-card .card-content {
+  padding: 20px;
+  text-align: center;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.flight-card .aircraft-type {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+
+.flight-card .aircraft-desc {
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 15px;
+}
+
+.pricing-group { margin-bottom: 15px; }
+
+.pricing-row {
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  padding: 12px 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #444;
+}
+
+.pricing-row:hover { background: #f0f0f0; }
+.pricing-row.selected { background: #000; color: #fff; }
+.pricing-row.selected .price-tag { color: #fff; }
+.price-tag { font-weight: 700; }
+
+.book-btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: auto;
+  border-radius: 30px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+}
+
+.disabled-btn {
+  background: #eee;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+.active-btn {
+  background: #000;
+  color: #fff;
+}
+
+/* Featured center card */
+.card-r44 { order: 1; }
+.card-r66 { order: 3; }
+.card-r22 {
+  order: 2;
+  flex: 1.2;
+  transform: scale(1.05);
+  z-index: 2;
+  border: 2px solid #000;
+  box-shadow: 0 30px 60px -15px rgba(0,0,0,0.15);
+}
+
+.flight-options-grid.has-focus .card-r22 {
+  transform: scale(1);
+  border: 1px solid #f0f0f0;
+  flex: 1;
+  z-index: 1;
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08);
+}
+
+.flight-options-grid.has-focus .flight-card.focused-card {
+  flex: 1.2;
+  transform: scale(1.05);
+  border: 2px solid #000;
+  z-index: 10;
+  box-shadow: 0 40px 80px -20px rgba(0,0,0,0.2);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .card-grid, .block-grid, .hire-grid, .flight-options-grid {
+    flex-direction: column;
+  }
+  .pricing-card.featured,
+  .card-r22,
+  .flight-options-grid.has-focus .flight-card.focused-card {
+    transform: none;
+    flex: unset;
+  }
+  .card-r22 { order: unset; border: 2px solid #000; }
+  .page-wrapper { padding: 40px 20px; }
+  #discovery-section { padding: 30px 20px; border-radius: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+  <div class="page-header">
+    <h1>Training & Pricing</h1>
+    <p>Transparent pricing for all our flight training and helicopter experiences.</p>
+  </div>
+
+  <!-- Discovery Flights Section -->
+  <div id="discovery-section">
+    <div class="section-header">
+      <div class="section-label">Start Your Journey</div>
+      <div class="section-title">Discovery Flights</div>
+    </div>
+
+    <div class="flight-options-grid" id="cardGrid">
+      <div class="flight-card card-r44" data-card="r44">
+        <div class="img-wrapper">
+          <img src="/assets/images/new-aircraft/r44/raven-ii-front-alpha.png?format=1000w" alt="Robinson R44" class="card-img">
+        </div>
+        <div class="card-content">
+          <div class="aircraft-type">Robinson R44</div>
+          <div class="aircraft-desc">The 4-Seat Icon.</div>
+          <div class="pricing-group">
+            <div class="pricing-row selectable-time" onclick="selectTime(this, 'r44', 30)">
+              <span>30 MINS</span><span class="price-tag">£299</span>
+            </div>
+            <div class="pricing-row selectable-time" onclick="selectTime(this, 'r44', 60)">
+              <span>60 MINS</span><span class="price-tag">£495</span>
+            </div>
+          </div>
+          <button class="book-btn disabled-btn" id="btn-r44" onclick="goToCheckout()">SELECT TIME</button>
+        </div>
+      </div>
+
+      <div class="flight-card card-r22" data-card="r22">
+        <div class="feature-badge">RECOMMENDED</div>
+        <div class="img-wrapper">
+          <img src="/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png?format=1000w" alt="Robinson R22" class="card-img">
+        </div>
+        <div class="card-content">
+          <div class="aircraft-type">Robinson R22</div>
+          <div class="aircraft-desc">The 2-Seat Trainer.</div>
+          <div class="pricing-group">
+            <div class="pricing-row selectable-time" onclick="selectTime(this, 'r22', 30)">
+              <span>30 MINS</span><span class="price-tag">£249</span>
+            </div>
+            <div class="pricing-row selectable-time" onclick="selectTime(this, 'r22', 60)">
+              <span>60 MINS</span><span class="price-tag">£395</span>
+            </div>
+          </div>
+          <button class="book-btn disabled-btn" id="btn-r22" onclick="goToCheckout()">SELECT TIME</button>
+        </div>
+      </div>
+
+      <div class="flight-card card-r66" data-card="r66">
+        <div class="img-wrapper">
+          <img src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-front-v4.png?format=1000w" alt="Robinson R66" class="card-img">
+        </div>
+        <div class="card-content">
+          <div class="aircraft-type">Robinson R66</div>
+          <div class="aircraft-desc">Turbine Power.</div>
+          <div class="pricing-group">
+            <div class="pricing-row selectable-time" onclick="selectTime(this, 'r66', 30)">
+              <span>30 MINS</span><span class="price-tag">£399</span>
+            </div>
+            <div class="pricing-row selectable-time" onclick="selectTime(this, 'r66', 60)">
+              <span>60 MINS</span><span class="price-tag">£695</span>
+            </div>
+          </div>
+          <button class="book-btn disabled-btn" id="btn-r66" onclick="goToCheckout()">SELECT TIME</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Flight Training Section -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-label">Professional Training</div>
+      <div class="section-title">Flight Training Rates</div>
+    </div>
+
+    <div class="card-grid">
+      <div class="pricing-card">
+        <div class="card-img-wrapper">
+          <img src="/assets/images/new-aircraft/r44/raven-ii-front-alpha.png?format=500w" alt="R44 Raven II">
+        </div>
+        <div class="card-content">
+          <div class="card-type">PPL(H) Training</div>
+          <div class="card-desc">R44 Raven II</div>
+          <div class="price-display">
+            <div class="price-amount">£395 <span class="price-unit">/ hour</span></div>
+          </div>
+          <ul class="card-features">
+            <li>Dual instruction</li>
+            <li>Aircraft & fuel included</li>
+            <li>Landing fees at base</li>
+            <li>Insurance included</li>
+          </ul>
+          <a href="/flying" class="card-btn outline">Start Training</a>
+        </div>
+      </div>
+
+      <div class="pricing-card featured">
+        <div class="feature-badge">POPULAR</div>
+        <div class="card-img-wrapper">
+          <img src="/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png?format=500w" alt="R22">
+        </div>
+        <div class="card-content">
+          <div class="card-type">R22 Training</div>
+          <div class="card-desc">Budget-Friendly Option</div>
+          <div class="price-display">
+            <div class="price-amount">£295 <span class="price-unit">/ hour</span></div>
+          </div>
+          <ul class="card-features">
+            <li>Dual instruction</li>
+            <li>Aircraft & fuel included</li>
+            <li>Ideal for beginners</li>
+            <li>Insurance included</li>
+          </ul>
+          <a href="/flying" class="card-btn">Start Training</a>
+        </div>
+      </div>
+
+      <div class="pricing-card">
+        <div class="card-img-wrapper">
+          <img src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-front-v4.png?format=500w" alt="R66 Turbine">
+        </div>
+        <div class="card-content">
+          <div class="card-type">Turbine Training</div>
+          <div class="card-desc">R66 Turbine</div>
+          <div class="price-display">
+            <div class="price-amount">£595 <span class="price-unit">/ hour</span></div>
+          </div>
+          <ul class="card-features">
+            <li>Dual instruction</li>
+            <li>Aircraft & fuel included</li>
+            <li>Type rating courses</li>
+            <li>CPL training</li>
+          </ul>
+          <a href="/type-rating" class="card-btn outline">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Block Booking Section -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-label">Save More</div>
+      <div class="section-title">Block Booking Discounts</div>
+    </div>
+
+    <div class="block-grid">
+      <div class="block-card">
+        <h4>10 Hour Block</h4>
+        <div class="block-price">£3,750</div>
+        <div class="block-save">Save £200</div>
+      </div>
+      <div class="block-card">
+        <h4>20 Hour Block</h4>
+        <div class="block-price">£7,100</div>
+        <div class="block-save">Save £800</div>
+      </div>
+      <div class="block-card">
+        <h4>45 Hour PPL</h4>
+        <div class="block-price">£16,500</div>
+        <div class="block-save">Save £1,275</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Self-Fly Hire Section -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-label">Licensed Pilots</div>
+      <div class="section-title">Self-Fly Hire</div>
+    </div>
+
+    <div class="hire-grid">
+      <div class="hire-card">
+        <div class="hire-header">
+          <div class="hire-aircraft">R44 Raven II</div>
+          <div class="hire-requirement">Min 100hrs P1</div>
+        </div>
+        <div class="hire-price">£295 <span>/ hour</span></div>
+        <ul class="card-features">
+          <li>Wet hire (fuel included)</li>
+          <li>Insurance included</li>
+          <li>Checkout required</li>
+          <li>UK only</li>
+        </ul>
+        <a href="/self-fly-hire" class="card-btn outline">Enquire</a>
+      </div>
+
+      <div class="hire-card">
+        <div class="hire-header">
+          <div class="hire-aircraft">R66 Turbine</div>
+          <div class="hire-requirement">Min 200hrs P1</div>
+        </div>
+        <div class="hire-price">£495 <span>/ hour</span></div>
+        <ul class="card-features">
+          <li>Wet hire (fuel included)</li>
+          <li>Insurance included</li>
+          <li>Type rating required</li>
+          <li>European tours available</li>
+        </ul>
+        <a href="/self-fly-hire" class="card-btn outline">Enquire</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="note-box">
+    <strong>Note:</strong> All prices are subject to change. Away landing fees and overnight parking charged at cost. Contact us for a personalized quote for your training needs.
+  </div>
+</div>
+
+<script>
+// Discovery Flight Booking Script
+var selectedCard = null;
+var selectedTime = null;
+
+function selectTime(element, aircraft, minutes) {
+  // Remove selected from all rows in this card
+  var card = element.closest('.flight-card');
+  card.querySelectorAll('.selectable-time').forEach(function(row) {
+    row.classList.remove('selected');
+  });
+
+  // Add selected to clicked row
+  element.classList.add('selected');
+
+  // Update button
+  var btn = card.querySelector('.book-btn');
+  btn.classList.remove('disabled-btn');
+  btn.classList.add('active-btn');
+  btn.textContent = 'BOOK NOW';
+
+  // Store selection
+  selectedCard = aircraft;
+  selectedTime = minutes;
+
+  // Handle card focus animation
+  var grid = document.getElementById('cardGrid');
+  grid.classList.add('has-focus');
+
+  document.querySelectorAll('.flight-card').forEach(function(c) {
+    c.classList.remove('focused-card');
+  });
+  card.classList.add('focused-card');
+}
+
+function goToCheckout() {
+  if (selectedCard && selectedTime) {
+    window.location.href = '/discovery-flights';
+  }
+}
+</script>
+
+<script src="/assets/menu.js"></script>
+</body>
+</html>

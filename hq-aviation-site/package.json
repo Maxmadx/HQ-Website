@@ -1,0 +1,21 @@
+{
+  "name": "hq-aviation-site",
+  "version": "1.0.0",
+  "description": "HQ Aviation - Helicopter Sales, Training & Expeditions",
+  "scripts": {
+    "dev": "live-server src --port=3000 --open=/pages/index.html",
+    "start": "live-server src --port=3000",
+    "build": "echo 'Static site - no build required'"
+  },
+  "keywords": [
+    "helicopter",
+    "aviation",
+    "robinson",
+    "training"
+  ],
+  "author": "HQ Aviation",
+  "license": "PRIVATE",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

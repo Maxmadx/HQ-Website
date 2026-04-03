@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<script>
+window.Squarespace = window.Squarespace || { load: function() {}, afterBodyLoad: function() {}, SQUARESPACE_CONTEXT: {} };
+window.Static = window.Static || { SQUARESPACE_CONTEXT: {} };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<base href="/">
+<title>HQ Aviation &mdash; Maintenance & Rebuilds</title>
+<link rel="icon" type="image/png" href="/assets/images/logos/hq/hq-aviation-logo-black.png"/>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #fff; color: #333; }
+.page-wrapper { width: 100%; max-width: 1400px; margin: 0 auto; padding: 60px 40px; }
+.page-header { text-align: center; margin-bottom: 50px; }
+.page-header h1 { font-size: 2.5rem; font-weight: 900; text-transform: uppercase; color: #000; margin-bottom: 15px; }
+.page-header p { font-size: 1rem; line-height: 1.6; color: #555; max-width: 700px; margin: 0 auto; }
+.section { margin-bottom: 60px; }
+.section-title { font-size: 0.75rem; font-weight: 700; color: #ff0000; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 30px; }
+.card-grid { display: flex; flex-direction: row; gap: 20px; }
+.card { flex: 1; position: relative; background: #f9f9f9; border: 1px solid #eee; padding: 40px 30px; display: flex; flex-direction: column; transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); overflow: hidden; }
+.card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: #ff0000; transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
+.card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); background: #fff; border-color: #ff0000; }
+.card:hover::before { transform: scaleX(1); }
+.card h3 { font-size: 1.5rem; font-weight: 900; text-transform: uppercase; color: #000; margin-bottom: 15px; }
+.card p { font-size: 0.9rem; line-height: 1.6; color: #555; margin-bottom: 20px; }
+.card-btn { margin-top: auto; padding: 12px 30px; background: transparent; border: 2px solid #000; color: #000; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; transition: all 0.3s ease; text-decoration: none; display: inline-block; cursor: pointer; text-align: center; }
+.card-btn:hover, .card:hover .card-btn { background: #000; color: #fff; }
+.intro-text { font-size: 1rem; line-height: 1.8; color: #333; max-width: 900px; margin: 0 auto 50px; text-align: center; }
+@media (max-width: 1024px) { .card-grid { flex-direction: column; } .card { width: 100%; } .page-wrapper { padding: 40px 20px; } }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+  <div class="page-header">
+    <h1>Maintenance & Rebuilds</h1>
+    <p>Expert helicopter maintenance, overhauls, and complete rebuilds at our CAA Part 145 approved facility.</p>
+  </div>
+
+  <p class="intro-text">HQ Aviation provides comprehensive maintenance services for Robinson helicopters. Our factory-trained engineers ensure your aircraft receives the highest standard of care, from routine inspections to complete 12-year rebuilds.</p>
+
+  <div class="section">
+    <div class="section-title">Our Services</div>
+    <div class="card-grid">
+      <div class="card">
+        <h3>Scheduled Maintenance</h3>
+        <p>100-hour inspections, annual inspections, and all scheduled maintenance requirements handled by our experienced team of licensed engineers.</p>
+        <a href="/contact" class="card-btn">Enquire</a>
+      </div>
+      <div class="card">
+        <h3>Component Overhauls</h3>
+        <p>Complete overhaul services for engines, gearboxes, and critical components to factory specifications with full documentation.</p>
+        <a href="/contact" class="card-btn">Enquire</a>
+      </div>
+      <div class="card">
+        <h3>12-Year Rebuilds</h3>
+        <p>Full airframe rebuilds bringing your helicopter back to as-new condition. Comprehensive inspection, repair, and recertification.</p>
+        <a href="/contact" class="card-btn">Enquire</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Why HQ Aviation</div>
+    <div class="card-grid">
+      <div class="card">
+        <h3>Robinson Service Center</h3>
+        <p>Official Robinson Helicopter Company authorized service center with factory-trained engineers and direct parts supply.</p>
+        <a href="/robinsonapproved" class="card-btn">Learn More</a>
+      </div>
+      <div class="card">
+        <h3>Avionics Upgrades</h3>
+        <p>Modern glass cockpit installations, GPS upgrades, and autopilot systems fitted by certified avionics technicians.</p>
+        <a href="/contact" class="card-btn">Enquire</a>
+      </div>
+      <div class="card">
+        <h3>Quick Turnaround</h3>
+        <p>Efficient scheduling and extensive parts inventory means minimal downtime for your aircraft. Courtesy car available.</p>
+        <a href="/contact" class="card-btn">Enquire</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/assets/menu.js"></script>
+</body>
+</html>

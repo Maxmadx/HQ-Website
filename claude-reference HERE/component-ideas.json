@@ -1,0 +1,554 @@
+{
+  "componentIdeas": [
+    {
+      "id": "comp-001",
+      "name": "Video Hero",
+      "feature": "Full-screen background video of helicopters in flight with headline and primary call-to-action"
+    },
+    {
+      "id": "comp-002",
+      "name": "Services Overview",
+      "feature": "Four core services presented as clickable cards: Sales, Training, Maintenance, Expeditions"
+    },
+    {
+      "id": "comp-003",
+      "name": "Trust Badges Bar",
+      "feature": "Horizontal strip showing certifications: Robinson Authorized, CAA Approved, EASA Part-145"
+    },
+    {
+      "id": "comp-004",
+      "name": "Before & After Story",
+      "feature": "Customer transformation narrative from dreaming about flying to becoming a licensed pilot"
+    },
+    {
+      "id": "comp-005",
+      "name": "Fleet Showcase Carousel",
+      "feature": "Swipeable carousel featuring each aircraft model with key specs and starting price"
+    },
+    {
+      "id": "comp-006",
+      "name": "Why Choose Us",
+      "feature": "Key differentiators that set HQ apart from competitors presented as benefit statements"
+    },
+    {
+      "id": "comp-007",
+      "name": "Founder Story",
+      "feature": "Captain Q's journey and achievements establishing credibility and personal connection"
+    },
+    {
+      "id": "comp-008",
+      "name": "Stats Counter",
+      "feature": "Animated numbers showing years in business, aircraft sold, pilots trained, countries visited"
+    },
+    {
+      "id": "comp-009",
+      "name": "Testimonial Slider",
+      "feature": "Rotating customer quotes from aircraft buyers, training students, and expedition participants"
+    },
+    {
+      "id": "comp-010",
+      "name": "Limited Time Offer",
+      "feature": "Highlighted promotional banner for seasonal deals like discounted trial flights"
+    },
+    {
+      "id": "comp-011",
+      "name": "FAQ Accordion",
+      "feature": "Expandable questions and answers addressing common visitor concerns"
+    },
+    {
+      "id": "comp-012",
+      "name": "Social Proof Wall",
+      "feature": "Grid of Instagram photos and customer posts showing real HQ experiences"
+    },
+    {
+      "id": "comp-013",
+      "name": "Call-to-Action Split",
+      "feature": "Two-column CTA offering different paths: Book Trial Flight vs View Aircraft"
+    },
+    {
+      "id": "comp-014",
+      "name": "Location Highlight",
+      "feature": "Map and details about Denham Aerodrome emphasizing London proximity and accessibility"
+    },
+    {
+      "id": "comp-015",
+      "name": "As Seen In",
+      "feature": "Logo strip of media outlets and publications that have featured HQ Aviation"
+    },
+    {
+      "id": "comp-016",
+      "name": "Experience Levels",
+      "feature": "Content tailored to visitor type: Complete Beginner, Licensed Pilot, Aircraft Buyer"
+    },
+    {
+      "id": "comp-017",
+      "name": "Video Testimonial",
+      "feature": "Embedded video of a customer sharing their experience with HQ"
+    },
+    {
+      "id": "comp-018",
+      "name": "Price Anchor",
+      "feature": "Starting prices displayed prominently to set expectations: Trial flights from £299"
+    },
+    {
+      "id": "comp-019",
+      "name": "Comparison Table",
+      "feature": "Side-by-side comparison of aircraft models helping visitors understand options"
+    },
+    {
+      "id": "comp-020",
+      "name": "Newsletter Signup",
+      "feature": "Email capture with incentive like exclusive content or early expedition access"
+    },
+    {
+      "id": "comp-021",
+      "name": "Recent News",
+      "feature": "Latest updates, new aircraft arrivals, and company announcements"
+    },
+    {
+      "id": "comp-022",
+      "name": "Partner Logos",
+      "feature": "Trusted brands HQ works with: Robinson, Rolls-Royce, insurance providers"
+    },
+    {
+      "id": "comp-023",
+      "name": "Lifestyle Imagery",
+      "feature": "Aspirational photos showing the helicopter ownership lifestyle and destinations"
+    },
+    {
+      "id": "comp-024",
+      "name": "Quick Contact Strip",
+      "feature": "Persistent bar with phone number and WhatsApp for instant contact"
+    },
+    {
+      "id": "comp-025",
+      "name": "Upcoming Events",
+      "feature": "Next open day, webinar, or expedition departure with registration link"
+    },
+    {
+      "id": "comp-026",
+      "name": "Team Preview",
+      "feature": "Photos and brief roles of key team members to humanize the business"
+    },
+    {
+      "id": "comp-027",
+      "name": "Process Steps",
+      "feature": "Simple numbered steps explaining how to get started with training or buying"
+    },
+    {
+      "id": "comp-028",
+      "name": "Guarantee Statement",
+      "feature": "Risk-reversal messaging about satisfaction guarantees or flexible booking"
+    },
+    {
+      "id": "comp-029",
+      "name": "Exit Intent Popup",
+      "feature": "Special offer shown when visitor is about to leave the page"
+    },
+    {
+      "id": "comp-030",
+      "name": "Sticky CTA",
+      "feature": "Fixed button that follows scroll prompting main conversion action"
+    },
+    {
+      "id": "comp-031",
+      "name": "Training Pathway",
+      "feature": "Visual roadmap from first trial lesson through PPL to commercial license with time and cost indicators"
+    },
+    {
+      "id": "comp-032",
+      "name": "World Record Timeline",
+      "feature": "Chronological display of Captain Q's major achievements: circumnavigation, polar flights, aerobatic titles"
+    },
+    {
+      "id": "comp-033",
+      "name": "Gift Voucher Selector",
+      "feature": "Interactive cards showing trial lesson options at different price points: 30min £299, 45min £399, 60min £549"
+    },
+    {
+      "id": "comp-034",
+      "name": "R66 NxG Trim Showcase",
+      "feature": "Three-tier display of Southwood, Palo Verde, and Riviera trims with feature highlights for each level"
+    },
+    {
+      "id": "comp-035",
+      "name": "Expedition Destination Cards",
+      "feature": "Grid of adventure destinations: Iceland, Scottish Highlands, Greenland, Polar regions with imagery and dates"
+    },
+    {
+      "id": "comp-036",
+      "name": "Documentary Embed",
+      "feature": "Featured video player showcasing Captain Q documentary with play button overlay and duration indicator"
+    },
+    {
+      "id": "comp-037",
+      "name": "Training Fleet Display",
+      "feature": "Aircraft lineup showing R22, R44, R66 with registration numbers and per-hour training rates"
+    },
+    {
+      "id": "comp-038",
+      "name": "Hangarage Features",
+      "feature": "Benefits of storing aircraft at Denham: heated hangar, 24/7 security, fuel on-site, flight planning"
+    },
+    {
+      "id": "comp-039",
+      "name": "Medical Requirements",
+      "feature": "Clear explanation of Class 2 medical certificate requirements with age minimums and renewal info"
+    },
+    {
+      "id": "comp-040",
+      "name": "First Solo Celebration",
+      "feature": "Milestone moment showcase with photos of students after their first solo flight achievements"
+    },
+    {
+      "id": "comp-041",
+      "name": "Maintenance Intervals",
+      "feature": "Service schedule visualization: 50hr, 100hr, 300hr inspections and 12-year overhaul explained"
+    },
+    {
+      "id": "comp-042",
+      "name": "Book Preview",
+      "feature": "Captain Q's autobiography 'Around the World by Helicopter' with cover image, excerpt, and purchase link"
+    },
+    {
+      "id": "comp-043",
+      "name": "Expedition Inclusions",
+      "feature": "What's included breakdown: expert pilots, luxury accommodation, gourmet meals, photography, small groups"
+    },
+    {
+      "id": "comp-044",
+      "name": "Hours to License Counter",
+      "feature": "Visual representation of minimum 45 flight hours required for PPL with progress bar concept"
+    },
+    {
+      "id": "comp-045",
+      "name": "London Proximity Badge",
+      "feature": "Emphasis on Denham Aerodrome being just 20 minutes from Central London with transport options"
+    },
+    {
+      "id": "comp-046",
+      "name": "Instructor Profiles",
+      "feature": "Individual cards for flight instructors showing qualifications, flight hours, and specializations"
+    },
+    {
+      "id": "comp-047",
+      "name": "R88 Announcement",
+      "feature": "New flagship model spotlight: 8+ seats, twin turbine, premium features with availability notice"
+    },
+    {
+      "id": "comp-048",
+      "name": "Ground School Preview",
+      "feature": "Overview of 9 theory subjects required for PPL: Air Law, Navigation, Meteorology, etc."
+    },
+    {
+      "id": "comp-049",
+      "name": "Safety Record",
+      "feature": "Emphasis on safety culture, Robinson safety courses, and incident-free training record"
+    },
+    {
+      "id": "comp-050",
+      "name": "Ownership Journey",
+      "feature": "Steps from aircraft purchase through delivery, training, insurance, and ongoing support"
+    },
+    {
+      "id": "comp-051",
+      "name": "Type Rating Cards",
+      "feature": "Available type ratings displayed: R22, R44, R66 with requirements and duration for each"
+    },
+    {
+      "id": "comp-052",
+      "name": "Polar Achievement",
+      "feature": "Spotlight on Captain Q being first to fly helicopter to both North and South Poles"
+    },
+    {
+      "id": "comp-053",
+      "name": "Self-Fly Hire Rates",
+      "feature": "Rental pricing for qualified pilots: R22 £300/hr, R44 £450/hr, R66 £750/hr"
+    },
+    {
+      "id": "comp-054",
+      "name": "Trade-In Callout",
+      "feature": "Encouraging aircraft owners to trade in their current helicopter towards a new model"
+    },
+    {
+      "id": "comp-055",
+      "name": "Night Rating Feature",
+      "feature": "Highlight of advanced night flying qualification with requirements and benefits"
+    },
+    {
+      "id": "comp-056",
+      "name": "Expedition Route Map",
+      "feature": "Visual map showing flight paths for upcoming expedition with waypoints and overnight stops"
+    },
+    {
+      "id": "comp-057",
+      "name": "Parts & Supplies",
+      "feature": "Genuine Robinson parts availability with quick shipping and technical support"
+    },
+    {
+      "id": "comp-058",
+      "name": "Student Success Grid",
+      "feature": "Gallery of recent PPL graduates with photos, names, and time to completion"
+    },
+    {
+      "id": "comp-059",
+      "name": "Aircraft Management",
+      "feature": "Services for owners: maintenance scheduling, compliance, charter revenue, storage"
+    },
+    {
+      "id": "comp-060",
+      "name": "Callback Request",
+      "feature": "Simple form to request a phone call with preferred time slot selection"
+    },
+    {
+      "id": "comp-061",
+      "name": "Opening Hours",
+      "feature": "Clear display of operating hours for training, maintenance, and office with contact for each"
+    },
+    {
+      "id": "comp-062",
+      "name": "Award Showcase",
+      "feature": "Display of industry awards, aerobatic championship trophies, and Guinness World Records"
+    },
+    {
+      "id": "comp-063",
+      "name": "Financing Options",
+      "feature": "Aircraft purchase financing partnerships with estimated monthly payment examples"
+    },
+    {
+      "id": "comp-064",
+      "name": "Insurance Partners",
+      "feature": "Featured helicopter insurance providers HQ works with for new aircraft and training"
+    },
+    {
+      "id": "comp-065",
+      "name": "Top Gear Moment",
+      "feature": "Iconic clip reference of Captain Q landing helicopter on moving car with link to video"
+    },
+    {
+      "id": "comp-066",
+      "name": "Weather Window",
+      "feature": "Live or sample weather conditions at Denham Aerodrome for flight planning reference"
+    },
+    {
+      "id": "comp-067",
+      "name": "Career Pathways",
+      "feature": "Where pilot training can lead: commercial pilot, instructor, aerial work, corporate aviation"
+    },
+    {
+      "id": "comp-068",
+      "name": "Pre-Purchase Inspection",
+      "feature": "Service offering for buyers evaluating used helicopters with comprehensive checklist"
+    },
+    {
+      "id": "comp-069",
+      "name": "Land Away Experience",
+      "feature": "Premium trial lesson option: fly to countryside pub or landmark for lunch at £899"
+    },
+    {
+      "id": "comp-070",
+      "name": "Community Membership",
+      "feature": "HQ pilot community benefits: events, discounts, networking, exclusive expedition access"
+    },
+    {
+      "id": "comp-071",
+      "name": "Limited Slots Counter",
+      "feature": "Real-time display showing available training slots or expedition seats with urgency countdown"
+    },
+    {
+      "id": "comp-072",
+      "name": "Price Lock Banner",
+      "feature": "Time-sensitive deal banner encouraging visitors to lock in current pricing before rate changes"
+    },
+    {
+      "id": "comp-073",
+      "name": "Cost Breakdown Calculator",
+      "feature": "Interactive PPL cost estimator: flight hours × rate + ground school + exams + medical totaled"
+    },
+    {
+      "id": "comp-074",
+      "name": "Seasonal Availability Window",
+      "feature": "When special training and expeditions are available: mountain flying seasons, polar windows"
+    },
+    {
+      "id": "comp-075",
+      "name": "Aircraft Leaseback Revenue",
+      "feature": "For owners considering leaseback: estimated annual revenue potential based on aircraft type"
+    },
+    {
+      "id": "comp-076",
+      "name": "Deck Landing Certification",
+      "feature": "Specialized superyacht landing training program highlighting unique HQ capability"
+    },
+    {
+      "id": "comp-077",
+      "name": "Ferry Flight Services",
+      "feature": "International helicopter delivery service with route planning and overnight stop coordination"
+    },
+    {
+      "id": "comp-078",
+      "name": "Paint Customization Preview",
+      "feature": "Aircraft paint options: Accent Package £3,500 or Full Custom from £18,000 with visual examples"
+    },
+    {
+      "id": "comp-079",
+      "name": "Aerial Perspective Gallery",
+      "feature": "Full-bleed helicopter vantage point photography showing unique views only accessible by air"
+    },
+    {
+      "id": "comp-080",
+      "name": "Bucket List Achievement",
+      "feature": "Customer stories formatted as achieved life goals with destination photos and testimonials"
+    },
+    {
+      "id": "comp-081",
+      "name": "Superyacht Operations",
+      "feature": "Discrete inquiry section for yacht helicopter operations, executive transport, special missions"
+    },
+    {
+      "id": "comp-082",
+      "name": "Bespoke Adventure Builder",
+      "feature": "Custom trip designer: select destination, duration, accommodation tier for personalized quote"
+    },
+    {
+      "id": "comp-083",
+      "name": "Clubhouse Membership Tiers",
+      "feature": "Associate £150/yr, Pilot £350/yr, Premium £750/yr membership comparison with benefits"
+    },
+    {
+      "id": "comp-084",
+      "name": "Mountain Flying Hazards",
+      "feature": "Educational component on high-altitude challenges with HQ expertise positioning"
+    },
+    {
+      "id": "comp-085",
+      "name": "Racing Team Achievements",
+      "feature": "British Helicopter Racing Team medals, world championships, and aerobatic records display"
+    },
+    {
+      "id": "comp-086",
+      "name": "Regulatory Compliance Display",
+      "feature": "CAA, EASA, Robinson certifications with verification links and what each means"
+    },
+    {
+      "id": "comp-087",
+      "name": "Pilot Hour Breakdown",
+      "feature": "Detailed hour requirements by category: solo, dual, cross-country, night for each license"
+    },
+    {
+      "id": "comp-088",
+      "name": "Medical Assessment Guide",
+      "feature": "Class 2 medical deep-dive: what to expect, renewal timeline, common questions answered"
+    },
+    {
+      "id": "comp-089",
+      "name": "Insurance Requirements Explainer",
+      "feature": "What coverage is needed for ownership, training, hire with partner recommendations"
+    },
+    {
+      "id": "comp-090",
+      "name": "Aircraft Specs Dashboard",
+      "feature": "Interactive R22/R44/R66/R88 comparison: capacity, range, speed, price in filterable view"
+    },
+    {
+      "id": "comp-091",
+      "name": "Expedition Weather Patterns",
+      "feature": "Best times to visit each destination with seasonal weather data and recommendations"
+    },
+    {
+      "id": "comp-092",
+      "name": "Pre-Qualification Quiz",
+      "feature": "Multi-step questionnaire routing visitors to relevant content based on experience and goals"
+    },
+    {
+      "id": "comp-093",
+      "name": "Corporate Training Inquiry",
+      "feature": "Business team helicopter training form with group size, objectives, and timeline fields"
+    },
+    {
+      "id": "comp-094",
+      "name": "Aircraft Evaluation Request",
+      "feature": "Trade-in form for existing owners: current aircraft details, condition, desired upgrade"
+    },
+    {
+      "id": "comp-095",
+      "name": "Exam Preparation Resources",
+      "feature": "EASA examination structure, pass requirements, and available study materials through HQ"
+    },
+    {
+      "id": "comp-096",
+      "name": "Used Aircraft Inventory",
+      "feature": "Current pre-owned helicopter listings with photos, specs, hours, and pricing"
+    },
+    {
+      "id": "comp-097",
+      "name": "Instrument Rating Spotlight",
+      "feature": "IFR training program details: requirements, benefits, and career advantages"
+    },
+    {
+      "id": "comp-098",
+      "name": "Flight Planning Tools",
+      "feature": "Resources available to pilots: route planning, NOTAMs, fuel calculations, weight & balance"
+    },
+    {
+      "id": "comp-099",
+      "name": "Avionics Upgrade Options",
+      "feature": "Glass cockpit upgrades, GPS installations, and autopilot options for existing aircraft"
+    },
+    {
+      "id": "comp-100",
+      "name": "Refurbishment Services",
+      "feature": "Interior refresh, paint restoration, and full overhaul options with before/after examples"
+    },
+    {
+      "id": "comp-101",
+      "name": "AOC Operations",
+      "feature": "Air Operator Certificate services for commercial work: charter, aerial filming, surveys"
+    },
+    {
+      "id": "comp-102",
+      "name": "Helicopter vs Fixed Wing",
+      "feature": "Why choose helicopter training: unique capabilities, career paths, lifestyle benefits"
+    },
+    {
+      "id": "comp-103",
+      "name": "Currency Requirements",
+      "feature": "Stay current as a pilot: recency requirements, proficiency checks, renewal timeline"
+    },
+    {
+      "id": "comp-104",
+      "name": "Expedition Packing List",
+      "feature": "What to bring on helicopter adventures: gear recommendations, weight limits, essentials"
+    },
+    {
+      "id": "comp-105",
+      "name": "Photo Flight Packages",
+      "feature": "Aerial photography experiences over London landmarks, countryside, or custom routes"
+    },
+    {
+      "id": "comp-106",
+      "name": "Helicopter Charter Services",
+      "feature": "Private hire for events, business travel, or special occasions with aircraft options"
+    },
+    {
+      "id": "comp-107",
+      "name": "Robinson Safety Course",
+      "feature": "Factory-recommended safety training: what's covered, duration, and why it matters"
+    },
+    {
+      "id": "comp-108",
+      "name": "Student Logbook Preview",
+      "feature": "Sample training progression showing typical lesson structure and skill building"
+    },
+    {
+      "id": "comp-109",
+      "name": "Helicopter Anatomy",
+      "feature": "Educational component showing aircraft parts and systems for curious visitors"
+    },
+    {
+      "id": "comp-110",
+      "name": "Flight Simulator Access",
+      "feature": "Pre-training simulator sessions available for familiarization before first lesson"
+    }
+  ]
+}

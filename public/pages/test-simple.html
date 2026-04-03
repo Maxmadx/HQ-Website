@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+<script>
+// Local API shim - prevents errors when running locally
+window.Squarespace = window.Squarespace || {
+  load: function() {},
+  afterBodyLoad: function() {},
+  SQUARESPACE_CONTEXT: {}
+};
+window.Static = window.Static || { SQUARESPACE_CONTEXT: {} };
+window.Y = window.Y || { use: function() {} };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Font fallbacks for TypeKit fonts - using clean sans-serif for everything */
+  body, h1, h2, h3, h4, h5, h6, p, span, div, .sqs-block-content, .header-nav, .footer, .heading, .title {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+  }
+</style>
+  <base href="/">
+  <title>Simple Test Page</title>
+
+<style>
+/* Force content visible - override Squarespace hiding */
+.Loader { display: none !important; }
+.Main-content, .sqs-block-content, .sqs-layout, .sqs-row, .sqs-col-12 { 
+  opacity: 1 !important; 
+  visibility: visible !important; 
+  display: block !important;
+}
+body.* {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+img[] {
+  opacity: 1 !important;
+}
+</style>
+
+</head>
+<body>
+  <h1>Test Page</h1>
+  <p>If you can see this, basic pages work.</p>
+  <p><a href="/">Go Home</a></p>
+  <script src="/assets/menu.js"></script>
+</body>
+</html>

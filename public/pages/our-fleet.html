@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<script>
+window.Squarespace = window.Squarespace || { load: function() {}, afterBodyLoad: function() {}, SQUARESPACE_CONTEXT: {} };
+window.Static = window.Static || { SQUARESPACE_CONTEXT: {} };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<base href="/">
+<title>HQ Aviation &mdash; Our Fleet</title>
+<link rel="icon" type="image/png" href="/assets/images/logos/hq/hq-aviation-logo-black.png"/>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #fff; color: #333; }
+.page-wrapper { width: 100%; max-width: 1400px; margin: 0 auto; padding: 60px 40px; }
+.page-header { text-align: center; margin-bottom: 50px; }
+.page-header h1 { font-size: 2.5rem; font-weight: 900; text-transform: uppercase; color: #000; margin-bottom: 15px; }
+.page-header p { font-size: 1rem; line-height: 1.6; color: #555; max-width: 700px; margin: 0 auto; }
+.aircraft { position: relative; background: #f9f9f9; border: 1px solid #eee; margin-bottom: 30px; display: flex; transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); overflow: hidden; }
+.aircraft::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: #ff0000; transform: scaleY(0); transform-origin: top; transition: transform 0.4s ease; }
+.aircraft:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.05); background: #fff; border-color: #ff0000; }
+.aircraft:hover::before { transform: scaleY(1); }
+.aircraft-content { padding: 40px; flex: 1; }
+.aircraft-reg { font-size: 0.75rem; font-weight: 700; color: #ff0000; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+.aircraft h2 { font-size: 2rem; font-weight: 900; text-transform: uppercase; color: #000; margin-bottom: 15px; }
+.aircraft p { font-size: 0.9rem; line-height: 1.6; color: #555; margin-bottom: 25px; }
+.specs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
+.spec { background: #fff; border: 1px solid #eee; padding: 15px; text-align: center; }
+.spec-label { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+.spec-value { font-size: 1.1rem; font-weight: 700; color: #000; margin-top: 5px; }
+.card-btn { padding: 12px 30px; background: transparent; border: 2px solid #000; color: #000; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; transition: all 0.3s ease; text-decoration: none; display: inline-block; }
+.card-btn:hover { background: #000; color: #fff; }
+@media (max-width: 768px) { .aircraft { flex-direction: column; } .specs { grid-template-columns: repeat(2, 1fr); } .page-wrapper { padding: 40px 20px; } }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+  <div class="page-header">
+    <h1>Our Fleet</h1>
+    <p>A modern fleet of Robinson helicopters maintained to the highest standards.</p>
+  </div>
+
+  <div class="aircraft">
+    <div class="aircraft-content">
+      <div class="aircraft-reg">G-HQAV</div>
+      <h2>Robinson R44 Raven II</h2>
+      <p>Our primary training aircraft. The R44 Raven II is the world's best-selling helicopter, known for its reliability and excellent handling characteristics. Ideal for PPL(H) training and private hire.</p>
+      <div class="specs">
+        <div class="spec">
+          <div class="spec-label">Passengers</div>
+          <div class="spec-value">3</div>
+        </div>
+        <div class="spec">
+          <div class="spec-label">Cruise Speed</div>
+          <div class="spec-value">110 kts</div>
+        </div>
+        <div class="spec">
+          <div class="spec-label">Range</div>
+          <div class="spec-value">300 nm</div>
+        </div>
+        <div class="spec">
+          <div class="spec-label">Engine</div>
+          <div class="spec-value">Lycoming IO-540</div>
+        </div>
+      </div>
+      <a href="/r44-details" class="card-btn">View Details</a>
+    </div>
+  </div>
+
+  <div class="aircraft">
+    <div class="aircraft-content">
+      <div class="aircraft-reg">G-HQTB</div>
+      <h2>Robinson R66 Turbine</h2>
+      <p>Our turbine trainer and charter aircraft. The R66 offers turbine reliability with exceptional performance and a spacious cabin. Perfect for turbine transitions and longer-range operations.</p>
+      <div class="specs">
+        <div class="spec">
+          <div class="spec-label">Passengers</div>
+          <div class="spec-value">4</div>
+        </div>
+        <div class="spec">
+          <div class="spec-label">Cruise Speed</div>
+          <div class="spec-value">120 kts</div>
+        </div>
+        <div class="spec">
+          <div class="spec-label">Range</div>
+          <div class="spec-value">350 nm</div>
+        </div>
+        <div class="spec">
+          <div class="spec-label">Engine</div>
+          <div class="spec-value">RR300</div>
+        </div>
+      </div>
+      <a href="/r66" class="card-btn">View Details</a>
+    </div>
+  </div>
+
+  <div class="aircraft">
+    <div class="aircraft-content">
+      <div class="aircraft-reg">Coming Soon</div>
+      <h2>Robinson R88</h2>
+      <p>The newest addition to Robinson's lineup. Enhanced performance, modern avionics, and increased payload capacity for demanding operations. Contact us to register your interest.</p>
+      <div class="specs">
+        <div class="spec">
+          <div class="spec-label">Passengers</div>
+          <div class="spec-value">5</div>
+        </div>
+        <div class="spec">
+          <div class="spec-label">Cruise Speed</div>
+          <div class="spec-value">130 kts</div>
+        </div>
+        <div class="spec">
+          <div class="spec-label">Range</div>
+          <div class="spec-value">400 nm</div>
+        </div>
+        <div class="spec">
+          <div class="spec-label">Engine</div>
+          <div class="spec-value">Twin Turbine</div>
+        </div>
+      </div>
+      <a href="/r88" class="card-btn">View Details</a>
+    </div>
+  </div>
+</div>
+<script src="/assets/menu.js"></script>
+</body>
+</html>

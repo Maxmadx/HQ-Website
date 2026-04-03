@@ -1,0 +1,536 @@
+/**
+ * HQ Aviation Aircraft Pages Styles
+ * Aircraft detail pages and listings
+ */
+
+/* ============================================
+   AIRCRAFT DETAIL PAGE
+   ============================================ */
+
+.hq-aircraft-detail {
+  background-color: var(--hq-ivory);
+  padding-top: 80px; /* Account for fixed nav */
+}
+
+/* Aircraft Hero Section */
+.hq-aircraft-hero {
+  position: relative;
+  background-color: var(--hq-white);
+  padding: var(--hq-space-12) 0 var(--hq-space-16);
+}
+
+.hq-aircraft-hero__inner {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: var(--hq-space-12);
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .hq-aircraft-hero__inner {
+    grid-template-columns: 1fr;
+    gap: var(--hq-space-8);
+  }
+}
+
+/* Aircraft Gallery */
+.hq-aircraft-gallery {
+  position: relative;
+}
+
+.hq-aircraft-gallery__main {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--hq-radius-xl);
+  overflow: hidden;
+  background-color: var(--hq-cream);
+  margin-bottom: var(--hq-space-4);
+}
+
+.hq-aircraft-gallery__main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hq-aircraft-gallery__thumbs {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--hq-space-2);
+}
+
+@media (max-width: 640px) {
+  .hq-aircraft-gallery__thumbs {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.hq-aircraft-gallery__thumb {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--hq-radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity var(--hq-transition-fast);
+  border: 2px solid transparent;
+}
+
+.hq-aircraft-gallery__thumb:hover,
+.hq-aircraft-gallery__thumb--active {
+  opacity: 1;
+}
+
+.hq-aircraft-gallery__thumb--active {
+  border-color: var(--hq-accent);
+}
+
+.hq-aircraft-gallery__thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Aircraft Info Sidebar */
+.hq-aircraft-info {
+  position: sticky;
+  top: 100px;
+}
+
+.hq-aircraft-info__badge {
+  display: inline-block;
+  padding: var(--hq-space-2) var(--hq-space-4);
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-xs);
+  font-weight: var(--hq-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wider);
+  color: var(--hq-white);
+  background-color: var(--hq-success);
+  border-radius: var(--hq-radius-sm);
+  margin-bottom: var(--hq-space-4);
+}
+
+.hq-aircraft-info__model {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-sm);
+  font-weight: var(--hq-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wider);
+  color: var(--hq-accent);
+  margin-bottom: var(--hq-space-2);
+}
+
+.hq-aircraft-info__title {
+  font-family: var(--hq-font-display);
+  font-size: var(--hq-text-4xl);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-black);
+  margin-bottom: var(--hq-space-4);
+  line-height: var(--hq-leading-tight);
+}
+
+@media (max-width: 768px) {
+  .hq-aircraft-info__title {
+    font-size: var(--hq-text-3xl);
+  }
+}
+
+.hq-aircraft-info__subtitle {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-lg);
+  color: var(--hq-slate);
+  margin-bottom: var(--hq-space-6);
+}
+
+/* Quick Specs */
+.hq-aircraft-specs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--hq-space-4);
+  padding: var(--hq-space-6);
+  background-color: var(--hq-cream);
+  border-radius: var(--hq-radius-lg);
+  margin-bottom: var(--hq-space-6);
+}
+
+.hq-aircraft-specs__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hq-space-1);
+}
+
+.hq-aircraft-specs__label {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-xs);
+  font-weight: var(--hq-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wide);
+  color: var(--hq-muted);
+}
+
+.hq-aircraft-specs__value {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-lg);
+  font-weight: var(--hq-weight-semibold);
+  color: var(--hq-black);
+}
+
+/* Price */
+.hq-aircraft-price {
+  margin-bottom: var(--hq-space-6);
+}
+
+.hq-aircraft-price__label {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-xs);
+  font-weight: var(--hq-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wide);
+  color: var(--hq-muted);
+  margin-bottom: var(--hq-space-1);
+}
+
+.hq-aircraft-price__value {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-3xl);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-black);
+}
+
+/* CTA Buttons */
+.hq-aircraft-ctas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hq-space-3);
+}
+
+/* ============================================
+   AIRCRAFT DETAIL TABS
+   ============================================ */
+
+.hq-aircraft-tabs {
+  background-color: var(--hq-ivory);
+  padding: var(--hq-space-16) 0;
+}
+
+.hq-aircraft-tabs__nav {
+  display: flex;
+  gap: var(--hq-space-1);
+  border-bottom: 1px solid var(--hq-sand);
+  margin-bottom: var(--hq-space-8);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.hq-aircraft-tabs__btn {
+  padding: var(--hq-space-4) var(--hq-space-6);
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-sm);
+  font-weight: var(--hq-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wide);
+  color: var(--hq-slate);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    color var(--hq-transition-fast),
+    border-color var(--hq-transition-fast);
+}
+
+.hq-aircraft-tabs__btn:hover {
+  color: var(--hq-charcoal);
+}
+
+.hq-aircraft-tabs__btn--active {
+  color: var(--hq-accent);
+  border-bottom-color: var(--hq-accent);
+}
+
+.hq-aircraft-tabs__panel {
+  display: none;
+}
+
+.hq-aircraft-tabs__panel--active {
+  display: block;
+}
+
+/* ============================================
+   FULL SPECIFICATIONS TABLE
+   ============================================ */
+
+.hq-specs-table {
+  width: 100%;
+  background-color: var(--hq-white);
+  border-radius: var(--hq-radius-lg);
+  overflow: hidden;
+}
+
+.hq-specs-table__section {
+  border-bottom: 1px solid var(--hq-sand);
+}
+
+.hq-specs-table__section:last-child {
+  border-bottom: none;
+}
+
+.hq-specs-table__header {
+  padding: var(--hq-space-4) var(--hq-space-6);
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-sm);
+  font-weight: var(--hq-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wider);
+  color: var(--hq-charcoal);
+  background-color: var(--hq-cream);
+}
+
+.hq-specs-table__row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--hq-space-3) var(--hq-space-6);
+  border-bottom: 1px solid var(--hq-sand);
+}
+
+.hq-specs-table__row:last-child {
+  border-bottom: none;
+}
+
+.hq-specs-table__label {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  color: var(--hq-slate);
+}
+
+.hq-specs-table__value {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  font-weight: var(--hq-weight-medium);
+  color: var(--hq-black);
+  text-align: right;
+}
+
+/* ============================================
+   OPTIONS GRID
+   ============================================ */
+
+.hq-options-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--hq-space-4);
+}
+
+@media (max-width: 768px) {
+  .hq-options-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .hq-options-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hq-options-grid__item {
+  display: flex;
+  align-items: center;
+  gap: var(--hq-space-3);
+  padding: var(--hq-space-4);
+  background-color: var(--hq-white);
+  border-radius: var(--hq-radius-md);
+}
+
+.hq-options-grid__icon {
+  width: 24px;
+  height: 24px;
+  color: var(--hq-accent);
+  flex-shrink: 0;
+}
+
+.hq-options-grid__text {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  color: var(--hq-charcoal);
+}
+
+/* ============================================
+   USED AIRCRAFT LISTING PAGE
+   ============================================ */
+
+.hq-aircraft-listing {
+  background-color: var(--hq-ivory);
+  padding: var(--hq-space-12) 0;
+  min-height: 100vh;
+}
+
+.hq-aircraft-listing__header {
+  margin-bottom: var(--hq-space-8);
+}
+
+.hq-aircraft-listing__title {
+  font-family: var(--hq-font-display);
+  font-size: var(--hq-text-4xl);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-black);
+  margin-bottom: var(--hq-space-3);
+}
+
+.hq-aircraft-listing__count {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-base);
+  color: var(--hq-slate);
+}
+
+/* Filter Bar */
+.hq-aircraft-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hq-space-4);
+  padding: var(--hq-space-5);
+  background-color: var(--hq-white);
+  border-radius: var(--hq-radius-lg);
+  margin-bottom: var(--hq-space-8);
+  box-shadow: var(--hq-shadow-sm);
+}
+
+.hq-aircraft-filters__select {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Aircraft Grid */
+.hq-aircraft-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: var(--hq-space-8);
+}
+
+@media (max-width: 480px) {
+  .hq-aircraft-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   NEW AIRCRAFT MODELS PAGE
+   ============================================ */
+
+.hq-model-hero {
+  position: relative;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hq-model-hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hq-model-hero__bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hq-model-hero__content {
+  position: relative;
+  z-index: 2;
+  max-width: 600px;
+  padding: var(--hq-space-12);
+}
+
+.hq-model-hero__model {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-sm);
+  font-weight: var(--hq-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wider);
+  color: var(--hq-accent);
+  margin-bottom: var(--hq-space-4);
+}
+
+.hq-model-hero__title {
+  font-family: var(--hq-font-display);
+  font-size: var(--hq-text-5xl);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-white);
+  margin-bottom: var(--hq-space-4);
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+}
+
+.hq-model-hero__tagline {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-xl);
+  color: rgba(255, 255, 255, 0.9);
+  line-height: var(--hq-leading-relaxed);
+  margin-bottom: var(--hq-space-8);
+}
+
+/* Model Comparison */
+.hq-model-compare {
+  background-color: var(--hq-white);
+  padding: var(--hq-space-20) 0;
+}
+
+.hq-model-compare__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--hq-space-8);
+}
+
+@media (max-width: 1024px) {
+  .hq-model-compare__grid {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+}
+
+.hq-model-compare__card {
+  padding: var(--hq-space-8);
+  background-color: var(--hq-cream);
+  border-radius: var(--hq-radius-xl);
+  text-align: center;
+}
+
+.hq-model-compare__card--featured {
+  background-color: var(--hq-black);
+  color: var(--hq-white);
+}
+
+.hq-model-compare__name {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-xl);
+  font-weight: var(--hq-weight-bold);
+  margin-bottom: var(--hq-space-6);
+}
+
+.hq-model-compare__spec {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--hq-space-3) 0;
+  border-bottom: 1px solid var(--hq-sand);
+}
+
+.hq-model-compare__card--featured .hq-model-compare__spec {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.hq-model-compare__spec-label {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  color: inherit;
+  opacity: 0.7;
+}
+
+.hq-model-compare__spec-value {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  font-weight: var(--hq-weight-semibold);
+}

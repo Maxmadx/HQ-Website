@@ -1,0 +1,165 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getUserRole() {
+      return request.auth.token.role;
+    }
+
+    function hasRole(role) {
+      return isAuthenticated() && getUserRole() == role;
+    }
+
+    function hasAnyRole(roles) {
+      return isAuthenticated() && getUserRole() in roles;
+    }
+
+    function isSuperAdmin() {
+      return hasRole('super_admin');
+    }
+
+    function isAdmin() {
+      return hasAnyRole(['super_admin', 'admin']);
+    }
+
+    function isEditor() {
+      return hasAnyRole(['super_admin', 'admin', 'editor']);
+    }
+
+    function isViewer() {
+      return isAuthenticated();
+    }
+
+    // Helicopter listings - public read, editor+ write
+    match /helicopters/{helicopterId} {
+      allow read: if true;
+      allow create: if isEditor();
+      allow update: if isEditor();
+      allow delete: if isAdmin();
+    }
+
+    // Enquiries - public create, viewer+ read, editor+ write
+    match /enquiries/{enquiryId} {
+      allow create: if true;
+      allow read: if isViewer();
+      allow update: if isEditor();
+      allow delete: if isAdmin();
+    }
+
+    // Blog posts - public read for published, editor+ write
+    match /blogs/{blogId} {
+      allow read: if true;
+      allow create: if isEditor();
+      allow update: if isEditor();
+      allow delete: if isAdmin();
+    }
+
+    // Blog categories - public read, admin+ write
+    match /blog_categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Aircraft options (avionics/equipment per aircraft type) - editor+ read/write
+    match /aircraft_options/{optionId} {
+      allow read: if isEditor();
+      allow create: if isEditor();
+      allow update: if isEditor();
+      allow delete: if isAdmin();
+    }
+
+    // Users collection - viewer+ read, admin+ create, super admin manage
+    match /users/{userId} {
+      allow read: if isViewer();
+      allow create: if isSuperAdmin() ||
+        (isAdmin() && request.resource.data.role in ['editor', 'viewer']);
+      allow update: if isSuperAdmin() ||
+        (request.auth.uid == userId &&
+         !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'status']));
+      allow delete: if isSuperAdmin();
+    }
+
+    // Invites - public read (for token validation), admin+ write
+    match /invites/{inviteId} {
+      allow read: if true;
+      allow create: if isAdmin();
+      allow update: if isAdmin() ||
+        (request.resource.data.status == 'accepted' &&
+         resource.data.status == 'pending');
+      allow delete: if isAdmin();
+    }
+
+    // Media library - viewer+ read, editor+ write
+    match /media/{mediaId} {
+      allow read: if isViewer();
+      allow create: if isEditor();
+      allow update: if isEditor();
+      allow delete: if isAdmin();
+    }
+
+    // Contacts/CRM - viewer+ read, editor+ create/update, admin+ delete
+    match /contacts/{contactId} {
+      allow read: if isViewer();
+      allow create: if isEditor();
+      allow update: if isEditor();
+      allow delete: if isAdmin();
+
+      // Contact activities subcollection
+      match /activities/{activityId} {
+        allow read: if isViewer();
+        allow create: if isEditor();
+        allow update: if isEditor();
+        allow delete: if isAdmin();
+      }
+    }
+
+    // Audit logs - admin+ read, viewer+ create (for logging actions)
+    match /audit_logs/{logId} {
+      allow read: if isAdmin();
+      allow create: if isViewer();
+      allow update, delete: if false;
+    }
+
+    // Email templates - editor+ read, super admin write
+    match /email_templates/{templateId} {
+      allow read: if isEditor();
+      allow write: if isSuperAdmin();
+    }
+
+    // Settings - viewer+ read, super admin write
+    match /settings/{settingId} {
+      allow read: if isViewer();
+      allow write: if isSuperAdmin();
+    }
+
+    // Pricing sales - editor+ read/write, admin+ delete
+    match /pricing_sales/{saleId} {
+      allow read: if isEditor();
+      allow create: if isEditor();
+      allow update: if isEditor();
+      allow delete: if isAdmin();
+    }
+
+    // Social posts - viewer+ read, editor+ create/update, admin+ delete
+    match /social_posts/{postId} {
+      allow read: if isViewer();
+      allow create: if isEditor();
+      allow update: if isEditor();
+      allow delete: if isAdmin();
+
+      // Comments subcollection
+      match /comments/{commentId} {
+        allow read: if isViewer();
+        allow create: if isEditor();
+        allow update: if isEditor();
+        allow delete: if isAdmin();
+      }
+    }
+  }
+}

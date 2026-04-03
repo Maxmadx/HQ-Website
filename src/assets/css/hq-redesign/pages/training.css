@@ -1,0 +1,571 @@
+/**
+ * HQ Aviation Training Pages Styles
+ * Flight training courses and programs
+ */
+
+/* ============================================
+   TRAINING HERO
+   ============================================ */
+
+.hq-training-hero {
+  position: relative;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  background-color: var(--hq-black);
+  overflow: hidden;
+}
+
+.hq-training-hero__bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.6;
+}
+
+.hq-training-hero__bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hq-training-hero__content {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  padding: var(--hq-space-12) 0;
+}
+
+.hq-training-hero__overline {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-sm);
+  font-weight: var(--hq-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wider);
+  color: var(--hq-accent);
+  margin-bottom: var(--hq-space-4);
+}
+
+.hq-training-hero__title {
+  font-family: var(--hq-font-display);
+  font-size: var(--hq-text-5xl);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-white);
+  margin-bottom: var(--hq-space-5);
+  line-height: var(--hq-leading-tight);
+}
+
+@media (max-width: 768px) {
+  .hq-training-hero__title {
+    font-size: var(--hq-text-4xl);
+  }
+}
+
+.hq-training-hero__text {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-lg);
+  color: rgba(255, 255, 255, 0.85);
+  line-height: var(--hq-leading-relaxed);
+  margin-bottom: var(--hq-space-8);
+}
+
+/* ============================================
+   TRAINING PATHWAY
+   ============================================ */
+
+.hq-training-pathway {
+  background-color: var(--hq-ivory);
+  padding: var(--hq-space-24) 0;
+}
+
+.hq-training-pathway__header {
+  text-align: center;
+  margin-bottom: var(--hq-space-16);
+}
+
+/* Pathway Steps */
+.hq-pathway-steps {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .hq-pathway-steps {
+    flex-direction: column;
+    gap: var(--hq-space-8);
+  }
+}
+
+/* Connecting Line */
+.hq-pathway-steps::before {
+  content: '';
+  position: absolute;
+  top: 40px;
+  left: 80px;
+  right: 80px;
+  height: 2px;
+  background-color: var(--hq-sand);
+  z-index: 0;
+}
+
+@media (max-width: 768px) {
+  .hq-pathway-steps::before {
+    top: 0;
+    bottom: 0;
+    left: 40px;
+    right: auto;
+    width: 2px;
+    height: auto;
+  }
+}
+
+.hq-pathway-step {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  max-width: 200px;
+}
+
+@media (max-width: 768px) {
+  .hq-pathway-step {
+    flex-direction: row;
+    max-width: none;
+    text-align: left;
+    gap: var(--hq-space-5);
+  }
+}
+
+.hq-pathway-step__number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-2xl);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-white);
+  background-color: var(--hq-accent);
+  border-radius: var(--hq-radius-full);
+  margin-bottom: var(--hq-space-5);
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .hq-pathway-step__number {
+    margin-bottom: 0;
+    width: 60px;
+    height: 60px;
+    font-size: var(--hq-text-xl);
+  }
+}
+
+.hq-pathway-step__content {
+  flex: 1;
+}
+
+.hq-pathway-step__title {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-lg);
+  font-weight: var(--hq-weight-semibold);
+  color: var(--hq-black);
+  margin-bottom: var(--hq-space-2);
+}
+
+.hq-pathway-step__desc {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  color: var(--hq-slate);
+  line-height: var(--hq-leading-normal);
+}
+
+/* ============================================
+   COURSE CARDS
+   ============================================ */
+
+.hq-courses {
+  background-color: var(--hq-cream);
+  padding: var(--hq-space-24) 0;
+}
+
+.hq-courses__header {
+  text-align: center;
+  margin-bottom: var(--hq-space-12);
+}
+
+.hq-courses__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--hq-space-8);
+}
+
+@media (max-width: 1024px) {
+  .hq-courses__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .hq-courses__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Course Card */
+.hq-course-card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--hq-white);
+  border-radius: var(--hq-radius-xl);
+  overflow: hidden;
+  box-shadow: var(--hq-card-shadow);
+  transition:
+    transform var(--hq-duration-normal) var(--hq-ease-out),
+    box-shadow var(--hq-duration-normal) var(--hq-ease-out);
+}
+
+.hq-course-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--hq-card-shadow-hover);
+}
+
+.hq-course-card__image {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background-color: var(--hq-cream);
+}
+
+.hq-course-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--hq-duration-slow) var(--hq-ease-out);
+}
+
+.hq-course-card:hover .hq-course-card__img {
+  transform: scale(1.05);
+}
+
+.hq-course-card__badge {
+  position: absolute;
+  top: var(--hq-space-4);
+  left: var(--hq-space-4);
+  padding: var(--hq-space-1) var(--hq-space-3);
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-xs);
+  font-weight: var(--hq-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wider);
+  color: var(--hq-white);
+  background-color: var(--hq-accent);
+  border-radius: var(--hq-radius-sm);
+}
+
+.hq-course-card__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--hq-space-6);
+}
+
+.hq-course-card__license {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-xs);
+  font-weight: var(--hq-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wider);
+  color: var(--hq-accent);
+  margin-bottom: var(--hq-space-2);
+}
+
+.hq-course-card__title {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-xl);
+  font-weight: var(--hq-weight-semibold);
+  color: var(--hq-black);
+  margin-bottom: var(--hq-space-3);
+  line-height: var(--hq-leading-snug);
+}
+
+.hq-course-card__desc {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  color: var(--hq-slate);
+  line-height: var(--hq-leading-normal);
+  margin-bottom: var(--hq-space-5);
+  flex: 1;
+}
+
+/* Course Meta */
+.hq-course-card__meta {
+  display: flex;
+  gap: var(--hq-space-5);
+  padding-top: var(--hq-space-5);
+  border-top: 1px solid var(--hq-sand);
+}
+
+.hq-course-card__meta-item {
+  display: flex;
+  align-items: center;
+  gap: var(--hq-space-2);
+}
+
+.hq-course-card__meta-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--hq-muted);
+}
+
+.hq-course-card__meta-text {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  color: var(--hq-charcoal);
+}
+
+.hq-course-card__meta-text strong {
+  font-weight: var(--hq-weight-semibold);
+}
+
+/* ============================================
+   INSTRUCTOR PROFILES
+   ============================================ */
+
+.hq-instructors {
+  background-color: var(--hq-ivory);
+  padding: var(--hq-space-24) 0;
+}
+
+.hq-instructors__header {
+  text-align: center;
+  margin-bottom: var(--hq-space-12);
+}
+
+.hq-instructors__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--hq-space-8);
+}
+
+@media (max-width: 1024px) {
+  .hq-instructors__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .hq-instructors__grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+/* Instructor Card */
+.hq-instructor-card {
+  text-align: center;
+}
+
+.hq-instructor-card__image {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  margin: 0 auto var(--hq-space-5);
+  border-radius: var(--hq-radius-full);
+  overflow: hidden;
+  background-color: var(--hq-cream);
+}
+
+.hq-instructor-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hq-instructor-card__name {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-lg);
+  font-weight: var(--hq-weight-semibold);
+  color: var(--hq-black);
+  margin-bottom: var(--hq-space-1);
+}
+
+.hq-instructor-card__role {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  color: var(--hq-accent);
+  margin-bottom: var(--hq-space-3);
+}
+
+.hq-instructor-card__credentials {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  color: var(--hq-slate);
+  line-height: var(--hq-leading-normal);
+}
+
+/* ============================================
+   TRAINING FAQ ACCORDION
+   ============================================ */
+
+.hq-faq {
+  background-color: var(--hq-white);
+  padding: var(--hq-space-24) 0;
+}
+
+.hq-faq__header {
+  text-align: center;
+  margin-bottom: var(--hq-space-12);
+}
+
+.hq-faq__list {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hq-faq__item {
+  border-bottom: 1px solid var(--hq-sand);
+}
+
+.hq-faq__question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--hq-space-5) 0;
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-lg);
+  font-weight: var(--hq-weight-medium);
+  color: var(--hq-black);
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color var(--hq-transition-fast);
+}
+
+.hq-faq__question:hover {
+  color: var(--hq-accent);
+}
+
+.hq-faq__icon {
+  width: 24px;
+  height: 24px;
+  color: var(--hq-muted);
+  transition: transform var(--hq-duration-normal) var(--hq-ease-out);
+}
+
+.hq-faq__item--open .hq-faq__icon {
+  transform: rotate(180deg);
+}
+
+.hq-faq__answer {
+  display: none;
+  padding-bottom: var(--hq-space-5);
+}
+
+.hq-faq__item--open .hq-faq__answer {
+  display: block;
+}
+
+.hq-faq__answer-text {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-base);
+  color: var(--hq-slate);
+  line-height: var(--hq-leading-relaxed);
+}
+
+/* ============================================
+   DISCOVERY FLIGHT CTA
+   ============================================ */
+
+.hq-discovery-cta {
+  position: relative;
+  background-color: var(--hq-accent);
+  padding: var(--hq-space-16) 0;
+  overflow: hidden;
+}
+
+.hq-discovery-cta__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--hq-space-8);
+}
+
+@media (max-width: 768px) {
+  .hq-discovery-cta__inner {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.hq-discovery-cta__content {
+  max-width: 600px;
+}
+
+.hq-discovery-cta__title {
+  font-family: var(--hq-font-display);
+  font-size: var(--hq-text-3xl);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-white);
+  margin-bottom: var(--hq-space-3);
+}
+
+.hq-discovery-cta__text {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-lg);
+  color: rgba(255, 255, 255, 0.9);
+  line-height: var(--hq-leading-relaxed);
+}
+
+.hq-discovery-cta__price {
+  text-align: center;
+}
+
+.hq-discovery-cta__price-label {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-xs);
+  font-weight: var(--hq-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wider);
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: var(--hq-space-1);
+}
+
+.hq-discovery-cta__price-value {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-4xl);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-white);
+  margin-bottom: var(--hq-space-4);
+}
+
+.hq-discovery-cta__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--hq-space-4) var(--hq-space-8);
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-sm);
+  font-weight: var(--hq-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wide);
+  color: var(--hq-accent);
+  background-color: var(--hq-white);
+  border: none;
+  border-radius: var(--hq-radius-md);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform var(--hq-transition-fast);
+}
+
+.hq-discovery-cta__btn:hover {
+  transform: translateY(-2px);
+}

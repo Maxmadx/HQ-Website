@@ -1,0 +1,512 @@
+/**
+ * HQ Aviation Homepage Styles
+ * Tesla-inspired minimal hero with clean sections
+ */
+
+/* ============================================
+   HERO SECTION - VERSION A (Minimal Image Hero)
+   ============================================ */
+
+.hq-hero {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Hero Background Image */
+.hq-hero__background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hq-hero__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Subtle gradient overlay - bottom only for text legibility */
+.hq-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 10, 10, 0.15) 0%,
+    rgba(10, 10, 10, 0.25) 40%,
+    rgba(10, 10, 10, 0.5) 80%,
+    rgba(10, 10, 10, 0.7) 100%
+  );
+  z-index: 1;
+}
+
+/* Hero Content */
+.hq-hero__content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: var(--hq-space-6);
+  max-width: 900px;
+}
+
+/* Hero Headline - Large Playfair Display */
+.hq-hero__headline {
+  font-family: var(--hq-font-display);
+  font-size: var(--hq-text-hero);
+  font-weight: var(--hq-weight-bold);
+  line-height: var(--hq-leading-tight);
+  letter-spacing: var(--hq-tracking-tight);
+  color: var(--hq-white);
+  text-shadow: 0 2px 40px rgba(0, 0, 0, 0.3);
+  margin: 0 0 var(--hq-space-6) 0;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: hq-hero-fade-up 0.8s var(--hq-ease-out) 0.3s forwards;
+}
+
+@media (max-width: 1024px) {
+  .hq-hero__headline {
+    font-size: var(--hq-text-5xl);
+  }
+}
+
+@media (max-width: 768px) {
+  .hq-hero__headline {
+    font-size: var(--hq-text-4xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .hq-hero__headline {
+    font-size: var(--hq-text-3xl);
+  }
+}
+
+/* Hero Tagline */
+.hq-hero__tagline {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-lg);
+  font-weight: var(--hq-weight-normal);
+  color: rgba(255, 255, 255, 0.85);
+  line-height: var(--hq-leading-relaxed);
+  max-width: 600px;
+  margin: 0 auto var(--hq-space-8);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: hq-hero-fade-up 0.8s var(--hq-ease-out) 0.5s forwards;
+}
+
+@media (max-width: 768px) {
+  .hq-hero__tagline {
+    font-size: var(--hq-text-base);
+  }
+}
+
+/* Hero CTA Button */
+.hq-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--hq-space-2);
+  padding: var(--hq-space-4) var(--hq-space-8);
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-sm);
+  font-weight: var(--hq-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wide);
+  color: var(--hq-white);
+  background-color: var(--hq-accent);
+  border: none;
+  border-radius: var(--hq-radius-md);
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: hq-hero-fade-up 0.8s var(--hq-ease-out) 0.7s forwards;
+  transition:
+    background-color var(--hq-transition-fast),
+    transform var(--hq-transition-fast),
+    box-shadow var(--hq-transition-fast);
+}
+
+.hq-hero__cta:hover {
+  background-color: var(--hq-accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(224, 74, 47, 0.4);
+}
+
+/* Hero Scroll Indicator */
+.hq-hero__scroll {
+  position: absolute;
+  bottom: var(--hq-space-10);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--hq-space-3);
+  color: rgba(255, 255, 255, 0.7);
+  opacity: 0;
+  animation: hq-hero-fade-in 0.8s var(--hq-ease-out) 1s forwards;
+}
+
+.hq-hero__scroll-text {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-xs);
+  font-weight: var(--hq-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wider);
+}
+
+.hq-hero__scroll-arrow {
+  width: 20px;
+  height: 20px;
+  animation: hq-scroll-bounce 2s var(--hq-ease-out) infinite;
+}
+
+@keyframes hq-hero-fade-up {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hq-hero-fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hq-scroll-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
+/* ============================================
+   FEATURED AIRCRAFT SECTION
+   ============================================ */
+
+.hq-featured-aircraft {
+  background-color: var(--hq-ivory);
+  padding: var(--hq-space-24) 0;
+}
+
+.hq-featured-aircraft__header {
+  text-align: center;
+  margin-bottom: var(--hq-space-12);
+}
+
+.hq-featured-aircraft__overline {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-xs);
+  font-weight: var(--hq-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wider);
+  color: var(--hq-accent);
+  margin-bottom: var(--hq-space-3);
+}
+
+.hq-featured-aircraft__title {
+  font-family: var(--hq-font-display);
+  font-size: var(--hq-text-4xl);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-black);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .hq-featured-aircraft__title {
+    font-size: var(--hq-text-3xl);
+  }
+}
+
+.hq-featured-aircraft__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--hq-space-8);
+}
+
+@media (max-width: 1024px) {
+  .hq-featured-aircraft__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .hq-featured-aircraft__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Featured Aircraft Card */
+.hq-featured-aircraft__card {
+  background-color: var(--hq-white);
+  border-radius: var(--hq-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--hq-card-shadow);
+  transition:
+    transform var(--hq-duration-normal) var(--hq-ease-out),
+    box-shadow var(--hq-duration-normal) var(--hq-ease-out);
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.hq-featured-aircraft__card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--hq-card-shadow-hover);
+}
+
+.hq-featured-aircraft__image {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background-color: var(--hq-cream);
+}
+
+.hq-featured-aircraft__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--hq-duration-slow) var(--hq-ease-out);
+}
+
+.hq-featured-aircraft__card:hover .hq-featured-aircraft__img {
+  transform: scale(1.05);
+}
+
+.hq-featured-aircraft__body {
+  padding: var(--hq-space-5);
+}
+
+.hq-featured-aircraft__model {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-xs);
+  font-weight: var(--hq-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wider);
+  color: var(--hq-accent);
+  margin-bottom: var(--hq-space-2);
+}
+
+.hq-featured-aircraft__name {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-xl);
+  font-weight: var(--hq-weight-semibold);
+  color: var(--hq-black);
+  margin-bottom: var(--hq-space-3);
+}
+
+.hq-featured-aircraft__desc {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  color: var(--hq-slate);
+  line-height: var(--hq-leading-normal);
+}
+
+/* ============================================
+   SERVICES GRID SECTION
+   ============================================ */
+
+.hq-services {
+  background-color: var(--hq-cream);
+  padding: var(--hq-space-24) 0;
+}
+
+.hq-services__header {
+  text-align: center;
+  margin-bottom: var(--hq-space-12);
+}
+
+.hq-services__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--hq-space-6);
+}
+
+@media (max-width: 1024px) {
+  .hq-services__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .hq-services__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   TRUST / STATS SECTION
+   ============================================ */
+
+.hq-trust {
+  background-color: var(--hq-white);
+  padding: var(--hq-space-20) 0;
+}
+
+.hq-trust__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--hq-space-8);
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .hq-trust__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--hq-space-6);
+  }
+}
+
+.hq-trust__stat {
+  padding: var(--hq-space-6);
+}
+
+.hq-trust__value {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-4xl);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-accent);
+  margin-bottom: var(--hq-space-2);
+  line-height: 1;
+}
+
+@media (max-width: 768px) {
+  .hq-trust__value {
+    font-size: var(--hq-text-3xl);
+  }
+}
+
+.hq-trust__label {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  font-weight: var(--hq-weight-medium);
+  color: var(--hq-slate);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wide);
+}
+
+/* ============================================
+   TRAINING CTA SECTION
+   ============================================ */
+
+.hq-training-cta {
+  position: relative;
+  background-color: var(--hq-ivory);
+  padding: var(--hq-space-24) 0;
+  overflow: hidden;
+}
+
+.hq-training-cta__bg {
+  position: absolute;
+  right: -10%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50%;
+  height: 120%;
+  opacity: 0.1;
+}
+
+.hq-training-cta__content {
+  position: relative;
+  z-index: 1;
+  max-width: 600px;
+}
+
+.hq-training-cta__overline {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-xs);
+  font-weight: var(--hq-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wider);
+  color: var(--hq-accent);
+  margin-bottom: var(--hq-space-4);
+}
+
+.hq-training-cta__title {
+  font-family: var(--hq-font-display);
+  font-size: var(--hq-text-4xl);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-black);
+  margin-bottom: var(--hq-space-4);
+  line-height: var(--hq-leading-tight);
+}
+
+.hq-training-cta__text {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-lg);
+  color: var(--hq-slate);
+  line-height: var(--hq-leading-relaxed);
+  margin-bottom: var(--hq-space-8);
+}
+
+/* ============================================
+   TESTIMONIALS SECTION
+   ============================================ */
+
+.hq-testimonials {
+  background-color: var(--hq-cream);
+  padding: var(--hq-space-24) 0;
+}
+
+.hq-testimonials__header {
+  text-align: center;
+  margin-bottom: var(--hq-space-12);
+}
+
+.hq-testimonials__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--hq-space-8);
+}
+
+@media (max-width: 1024px) {
+  .hq-testimonials__grid {
+    grid-template-columns: 1fr;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
+
+/* ============================================
+   HOMEPAGE SPECIFIC SCROLL REVEAL
+   ============================================ */
+
+.hq-home-reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 0.6s var(--hq-ease-out),
+    transform 0.6s var(--hq-ease-out);
+}
+
+.hq-home-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger children */
+.hq-home-reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.5s var(--hq-ease-out),
+    transform 0.5s var(--hq-ease-out);
+}
+
+.hq-home-reveal-stagger.revealed > *:nth-child(1) { transition-delay: 0ms; }
+.hq-home-reveal-stagger.revealed > *:nth-child(2) { transition-delay: 100ms; }
+.hq-home-reveal-stagger.revealed > *:nth-child(3) { transition-delay: 200ms; }
+.hq-home-reveal-stagger.revealed > *:nth-child(4) { transition-delay: 300ms; }
+
+.hq-home-reveal-stagger.revealed > * {
+  opacity: 1;
+  transform: translateY(0);
+}

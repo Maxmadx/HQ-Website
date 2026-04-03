@@ -1,0 +1,139 @@
+[
+  {
+    "id": "gallery_aesthetic",
+    "name": "The Gallery Aesthetic",
+    "aka": "Quiet Luxury",
+    "core_identity": "The interface is invisible; the product is art. No clutter, no hard sells.",
+    "visual_characteristics": [
+      "Extreme whitespace",
+      "Tiny sans-serif typography",
+      "Full-bleed static imagery",
+      "Scroll-jacks (smooth scrolling)"
+    ],
+    "examples": [
+      "The Row",
+      "Aman",
+      "Céline",
+      "Gagosian",
+      "Leica",
+      "Aesop"
+    ]
+  },
+  {
+    "id": "cinematic_narrative",
+    "name": "The Cinematic Narrative",
+    "aka": "Immersive",
+    "core_identity": "Emotional engagement over information density. Selling a feeling or a dream.",
+    "visual_characteristics": [
+      "Auto-play full-screen video backgrounds",
+      "Dark mode or deep contrast",
+      "Slow pacing",
+      "Hidden navigation",
+      "Sound design"
+    ],
+    "examples": [
+      "Black Tomato",
+      "Singita",
+      "Pelorus",
+      "Rolls-Royce",
+      "Belmond",
+      "Goyard"
+    ]
+  },
+  {
+    "id": "editorial_grid",
+    "name": "The Editorial Grid",
+    "aka": "Curated Commerce",
+    "core_identity": "Looks like a digital magazine, functions like a warehouse.",
+    "visual_characteristics": [
+      "High-density grids",
+      "Mixed typography (serif headers, sans-serif body)",
+      "Shop the Look features",
+      "Structured chaos"
+    ],
+    "examples": [
+      "Net-a-Porter",
+      "MatchesFashion",
+      "The Webster",
+      "Manhattan Miami",
+      "Sotheby’s"
+    ]
+  },
+  {
+    "id": "neo_brutalism",
+    "name": "Neo-Brutalism",
+    "aka": "Avant-Garde",
+    "core_identity": "Intentionally raw, anti-design, and disruptive. Signals ties to art/street culture.",
+    "visual_characteristics": [
+      "Monospaced fonts",
+      "Exposed grid lines",
+      "Overlapping elements",
+      "Stark black and white",
+      "Unpolished aesthetic"
+    ],
+    "examples": [
+      "Ssense",
+      "Jil Sander",
+      "Highsnobiety"
+    ]
+  },
+  {
+    "id": "precision_engineering",
+    "name": "Precision Engineering",
+    "aka": "High-Performance",
+    "core_identity": "Competence, speed, and mathematical perfection.",
+    "visual_characteristics": [
+      "Metallic palettes (silver, dark greys)",
+      "Thin hairlines",
+      "Modular/boxy layouts",
+      "Interactive configurators",
+      "3D renders"
+    ],
+    "examples": [
+      "Rimowa",
+      "VistaJet",
+      "Porsche",
+      "Bugatti",
+      "Lucid",
+      "Audemars Piguet"
+    ]
+  },
+  {
+    "id": "heritage_storytelling",
+    "name": "Heritage Storytelling",
+    "aka": "Warm Luxury",
+    "core_identity": "Trust, history, and craftsmanship.",
+    "visual_characteristics": [
+      "Serif typography",
+      "Gold/cream color palettes",
+      "Intricate micro-interactions",
+      "Animated timelines",
+      "Paper-like textures"
+    ],
+    "examples": [
+      "Patek Philippe",
+      "Vacheron Constantin",
+      "Fortnum & Mason",
+      "Liberty London",
+      "Tiffany & Co.",
+      "Cartier"
+    ]
+  },
+  {
+    "id": "organic_softness",
+    "name": "Organic Softness",
+    "aka": "Tactile Wellness",
+    "core_identity": "Relaxation, nature, and human touch.",
+    "visual_characteristics": [
+      "Earth tones (sage, beige, terracotta)",
+      "Soft border radiuses",
+      "Fluid transitions",
+      "Matte-finish photography"
+    ],
+    "examples": [
+      "Six Senses",
+      "Loro Piana",
+      "Rosewood"
+    ]
+  }
+]

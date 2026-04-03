@@ -1,0 +1,318 @@
+/**
+ * HQ Aviation Button System
+ * Refined, premium button styles
+ */
+
+/* ============================================
+   BASE BUTTON
+   ============================================ */
+
+.hq-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--hq-space-2);
+  padding: var(--hq-space-3) var(--hq-space-6);
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-sm);
+  font-weight: var(--hq-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wide);
+  text-decoration: none;
+  border: 2px solid transparent;
+  border-radius: var(--hq-radius-md);
+  cursor: pointer;
+  transition:
+    color var(--hq-transition-fast),
+    background-color var(--hq-transition-fast),
+    border-color var(--hq-transition-fast),
+    transform var(--hq-transition-fast),
+    box-shadow var(--hq-transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hq-btn:focus-visible {
+  outline: 2px solid var(--hq-accent);
+  outline-offset: 2px;
+}
+
+.hq-btn:disabled,
+.hq-btn--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ============================================
+   PRIMARY BUTTON (Filled Orange CTA)
+   ============================================ */
+
+.hq-btn-primary,
+.hq-btn--primary {
+  color: var(--hq-white);
+  background-color: var(--hq-accent);
+  border-color: var(--hq-accent);
+}
+
+.hq-btn-primary:hover,
+.hq-btn--primary:hover {
+  background-color: var(--hq-accent-hover);
+  border-color: var(--hq-accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(224, 74, 47, 0.3);
+}
+
+.hq-btn-primary:active,
+.hq-btn--primary:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* ============================================
+   SECONDARY BUTTON (Outlined Dark)
+   ============================================ */
+
+.hq-btn-secondary,
+.hq-btn--secondary {
+  color: var(--hq-charcoal);
+  background-color: transparent;
+  border-color: var(--hq-charcoal);
+}
+
+.hq-btn-secondary:hover,
+.hq-btn--secondary:hover {
+  color: var(--hq-white);
+  background-color: var(--hq-charcoal);
+  transform: translateY(-2px);
+}
+
+.hq-btn-secondary:active,
+.hq-btn--secondary:active {
+  transform: translateY(0);
+}
+
+/* Light variant for dark backgrounds */
+.hq-btn-secondary--light {
+  color: var(--hq-white);
+  border-color: var(--hq-white);
+}
+
+.hq-btn-secondary--light:hover {
+  color: var(--hq-charcoal);
+  background-color: var(--hq-white);
+}
+
+/* ============================================
+   GHOST BUTTON (Transparent with hover fill)
+   ============================================ */
+
+.hq-btn-ghost {
+  color: var(--hq-charcoal);
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.hq-btn-ghost:hover {
+  background-color: var(--hq-cream);
+}
+
+.hq-btn-ghost:active {
+  background-color: var(--hq-sand);
+}
+
+/* Light variant for dark backgrounds */
+.hq-btn-ghost--light {
+  color: var(--hq-white);
+}
+
+.hq-btn-ghost--light:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================
+   TEXT LINK BUTTON
+   ============================================ */
+
+.hq-btn-text {
+  padding: var(--hq-space-2);
+  color: var(--hq-accent);
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.hq-btn-text:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* With arrow */
+.hq-btn-text--arrow {
+  gap: var(--hq-space-2);
+}
+
+.hq-btn-text--arrow::after {
+  content: '→';
+  display: inline-block;
+  transition: transform var(--hq-transition-fast);
+}
+
+.hq-btn-text--arrow:hover::after {
+  transform: translateX(4px);
+}
+
+/* ============================================
+   BUTTON SIZES
+   ============================================ */
+
+/* Small */
+.hq-btn--sm {
+  padding: var(--hq-space-2) var(--hq-space-4);
+  font-size: var(--hq-text-xs);
+}
+
+/* Large */
+.hq-btn--lg {
+  padding: var(--hq-space-4) var(--hq-space-8);
+  font-size: var(--hq-text-base);
+}
+
+/* Extra Large */
+.hq-btn--xl {
+  padding: var(--hq-space-5) var(--hq-space-10);
+  font-size: var(--hq-text-lg);
+}
+
+/* Full Width */
+.hq-btn--full {
+  width: 100%;
+}
+
+/* ============================================
+   BUTTON ICONS
+   ============================================ */
+
+.hq-btn__icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.hq-btn--lg .hq-btn__icon {
+  width: 20px;
+  height: 20px;
+}
+
+.hq-btn--sm .hq-btn__icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* Icon only button */
+.hq-btn--icon-only {
+  padding: var(--hq-space-3);
+  border-radius: var(--hq-radius-full);
+}
+
+.hq-btn--icon-only.hq-btn--sm {
+  padding: var(--hq-space-2);
+}
+
+.hq-btn--icon-only.hq-btn--lg {
+  padding: var(--hq-space-4);
+}
+
+/* ============================================
+   BUTTON GROUPS
+   ============================================ */
+
+.hq-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hq-space-4);
+}
+
+.hq-btn-group--center {
+  justify-content: center;
+}
+
+/* Stacked on mobile */
+@media (max-width: 480px) {
+  .hq-btn-group--stack-mobile {
+    flex-direction: column;
+  }
+
+  .hq-btn-group--stack-mobile .hq-btn {
+    width: 100%;
+  }
+}
+
+/* ============================================
+   LOADING STATE
+   ============================================ */
+
+.hq-btn--loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+}
+
+.hq-btn--loading::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: hq-btn-spin 0.6s linear infinite;
+}
+
+.hq-btn-primary.hq-btn--loading::after {
+  border-color: var(--hq-white);
+  border-right-color: transparent;
+}
+
+@keyframes hq-btn-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   PILL STYLE VARIANT
+   ============================================ */
+
+.hq-btn--pill {
+  border-radius: var(--hq-radius-full);
+}
+
+/* ============================================
+   SOCIAL/ICON BUTTONS
+   ============================================ */
+
+.hq-btn-social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: var(--hq-charcoal);
+  background-color: var(--hq-cream);
+  border: none;
+  border-radius: var(--hq-radius-full);
+  transition:
+    color var(--hq-transition-fast),
+    background-color var(--hq-transition-fast);
+}
+
+.hq-btn-social:hover {
+  color: var(--hq-white);
+  background-color: var(--hq-accent);
+}
+
+.hq-btn-social svg {
+  width: 20px;
+  height: 20px;
+}

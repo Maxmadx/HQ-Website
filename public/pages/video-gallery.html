@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<script>
+window.Squarespace = window.Squarespace || { load: function() {}, afterBodyLoad: function() {}, SQUARESPACE_CONTEXT: {} };
+window.Static = window.Static || { SQUARESPACE_CONTEXT: {} };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<base href="/">
+<title>HQ Aviation &mdash; Video Gallery</title>
+<link rel="icon" type="image/png" href="/assets/images/logos/hq/hq-aviation-logo-black.png"/>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #fff; color: #333; }
+.page-wrapper { width: 100%; max-width: 1200px; margin: 0 auto; padding: 60px 40px; }
+.page-header { text-align: center; margin-bottom: 50px; }
+.page-header h1 { font-size: 2.5rem; font-weight: 900; text-transform: uppercase; color: #000; margin-bottom: 15px; }
+.filters { display: flex; gap: 10px; justify-content: center; margin-bottom: 40px; flex-wrap: wrap; }
+.filter { background: #f9f9f9; border: 1px solid #eee; padding: 10px 20px; color: #333; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.3s; }
+.filter:hover, .filter.active { background: #000; color: #fff; border-color: #000; }
+.section { margin-bottom: 60px; }
+.section-title { font-size: 0.75rem; font-weight: 700; color: #ff0000; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 30px; }
+.featured { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 60px; }
+.featured-main { position: relative; background: #f9f9f9; border: 1px solid #eee; overflow: hidden; }
+.featured-main:hover { border-color: #ff0000; }
+.video-thumb { aspect-ratio: 16/9; background: #000; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.play-btn { width: 70px; height: 70px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: transform 0.3s; }
+.video-thumb:hover .play-btn { transform: scale(1.1); }
+.video-duration { position: absolute; bottom: 70px; right: 10px; background: #000; color: #fff; padding: 4px 10px; font-size: 0.8rem; }
+.video-info { padding: 25px; }
+.video-info h3 { font-size: 1.2rem; font-weight: 900; text-transform: uppercase; color: #000; margin-bottom: 10px; }
+.video-info p { font-size: 0.85rem; color: #555; line-height: 1.6; margin-bottom: 15px; }
+.video-meta { font-size: 0.8rem; color: #888; }
+.sidebar { display: flex; flex-direction: column; gap: 15px; }
+.sidebar-video { display: flex; gap: 15px; background: #f9f9f9; border: 1px solid #eee; cursor: pointer; transition: all 0.3s; }
+.sidebar-video:hover { border-color: #ff0000; background: #fff; }
+.sidebar-thumb { width: 120px; height: 80px; background: #000; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; }
+.sidebar-info { padding: 10px 10px 10px 0; }
+.sidebar-info h4 { font-size: 0.85rem; font-weight: 700; color: #000; margin-bottom: 5px; }
+.sidebar-info span { font-size: 0.75rem; color: #888; }
+.video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.video-card { position: relative; background: #f9f9f9; border: 1px solid #eee; cursor: pointer; transition: all 0.3s; overflow: hidden; }
+.video-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: #ff0000; transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; z-index: 1; }
+.video-card:hover { border-color: #ff0000; }
+.video-card:hover::before { transform: scaleX(1); }
+.video-card .video-thumb { aspect-ratio: 16/9; }
+.video-card .video-info { padding: 20px; }
+.video-card .video-info h3 { font-size: 1rem; }
+@media (max-width: 900px) { .featured { grid-template-columns: 1fr; } .sidebar { flex-direction: row; overflow-x: auto; } .sidebar-video { flex-direction: column; min-width: 200px; } .sidebar-thumb { width: 100%; height: 100px; } .video-grid { grid-template-columns: 1fr; } .page-wrapper { padding: 40px 20px; } }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+  <div class="page-header">
+    <h1>Video Gallery</h1>
+  </div>
+
+  <div class="filters">
+    <button class="filter active">All Videos</button>
+    <button class="filter">Training</button>
+    <button class="filter">Expeditions</button>
+    <button class="filter">Aircraft</button>
+    <button class="filter">Events</button>
+  </div>
+
+  <div class="section-title">Featured</div>
+  <div class="featured">
+    <div class="featured-main">
+      <div class="video-thumb">
+        <div class="play-btn">▶</div>
+      </div>
+      <span class="video-duration">12:34</span>
+      <div class="video-info">
+        <h3>Scottish Highlands Expedition 2023</h3>
+        <p>Join Captain Q on an epic 5-day helicopter adventure through Scotland's most dramatic landscapes.</p>
+        <div class="video-meta">15,432 views &bull; 2 months ago</div>
+      </div>
+    </div>
+    <div class="sidebar">
+      <div class="sidebar-video">
+        <div class="sidebar-thumb">▶</div>
+        <div class="sidebar-info">
+          <h4>R66 NXG First Look</h4>
+          <span>8:21 &bull; 12K views</span>
+        </div>
+      </div>
+      <div class="sidebar-video">
+        <div class="sidebar-thumb">▶</div>
+        <div class="sidebar-info">
+          <h4>Learning to Hover</h4>
+          <span>6:45 &bull; 28K views</span>
+        </div>
+      </div>
+      <div class="sidebar-video">
+        <div class="sidebar-thumb">▶</div>
+        <div class="sidebar-info">
+          <h4>London Skyline Tour</h4>
+          <span>4:12 &bull; 8K views</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">All Videos</div>
+  <div class="video-grid">
+    <div class="video-card">
+      <div class="video-thumb"><div class="play-btn">▶</div></div>
+      <div class="video-info">
+        <h3>Autorotation Training</h3>
+        <p>Master the essential emergency procedure</p>
+        <div class="video-meta">5,234 views</div>
+      </div>
+    </div>
+    <div class="video-card">
+      <div class="video-thumb"><div class="play-btn">▶</div></div>
+      <div class="video-info">
+        <h3>Confined Area Operations</h3>
+        <p>Techniques for landing in tight spaces</p>
+        <div class="video-meta">3,876 views</div>
+      </div>
+    </div>
+    <div class="video-card">
+      <div class="video-thumb"><div class="play-btn">▶</div></div>
+      <div class="video-info">
+        <h3>Pre-Flight Walkthrough</h3>
+        <p>Complete R44 pre-flight inspection guide</p>
+        <div class="video-meta">12,543 views</div>
+      </div>
+    </div>
+    <div class="video-card">
+      <div class="video-thumb"><div class="play-btn">▶</div></div>
+      <div class="video-info">
+        <h3>Channel Islands Trip</h3>
+        <p>Day trip to Jersey and Guernsey</p>
+        <div class="video-meta">7,821 views</div>
+      </div>
+    </div>
+    <div class="video-card">
+      <div class="video-thumb"><div class="play-btn">▶</div></div>
+      <div class="video-info">
+        <h3>Night Rating Training</h3>
+        <p>What to expect from your night rating</p>
+        <div class="video-meta">4,123 views</div>
+      </div>
+    </div>
+    <div class="video-card">
+      <div class="video-thumb"><div class="play-btn">▶</div></div>
+      <div class="video-info">
+        <h3>HQ Aviation Facility Tour</h3>
+        <p>Take a look around our Denham base</p>
+        <div class="video-meta">2,567 views</div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/assets/menu.js"></script>
+</body>
+</html>

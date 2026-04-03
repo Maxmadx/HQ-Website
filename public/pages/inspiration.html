@@ -1,0 +1,2018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HQ Aviation - Approved Components Inspiration Board</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+
+  <!-- Full CSS Stack (includes tokens with CSS variables) -->
+  <link rel="stylesheet" href="/assets/css/hq-redesign/main.css">
+
+  <style>
+    /* Inspiration Board Layout Styles */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body.inspiration-board {
+      font-family: var(--hq-font-primary);
+      background: #0f0f0f;
+      color: #fff;
+    }
+
+    /* Navigation Sidebar */
+    .inspiration-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 280px;
+      height: 100vh;
+      background: #1a1a1a;
+      border-right: 1px solid #333;
+      overflow-y: auto;
+      z-index: 1000;
+      padding: 1.5rem;
+    }
+    .inspiration-nav__title {
+      font-family: var(--hq-font-accent);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #333;
+    }
+    .inspiration-nav__section {
+      margin-bottom: 1.5rem;
+    }
+    .inspiration-nav__section h3 {
+      font-family: var(--hq-font-accent);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--hq-accent);
+      margin-bottom: 0.5rem;
+    }
+    .inspiration-nav__section a {
+      display: block;
+      color: #ccc;
+      text-decoration: none;
+      padding: 0.4rem 0;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+    .inspiration-nav__section a:hover {
+      color: #fff;
+    }
+
+    /* Main Content Area */
+    .inspiration-main {
+      margin-left: 280px;
+      padding: 2rem;
+    }
+
+    /* Component Section Groups */
+    .inspiration-section {
+      margin-bottom: 4rem;
+    }
+    .inspiration-section__title {
+      font-family: var(--hq-font-display);
+      font-size: 1.5rem;
+      color: #fff;
+      margin-bottom: 2rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--hq-accent);
+    }
+
+    /* Individual Component Blocks */
+    .inspiration-block {
+      margin-bottom: 3rem;
+      background: #1a1a1a;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .inspiration-block__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background: #252525;
+      border-bottom: 1px solid #333;
+    }
+    .inspiration-block__header h3 {
+      font-family: var(--hq-font-accent);
+      font-size: 1rem;
+      font-weight: 500;
+      color: #fff;
+    }
+    .inspiration-block__header .inspiration-block__id {
+      font-size: 0.75rem;
+      color: var(--hq-accent);
+      font-family: monospace;
+      background: rgba(224,74,47,0.1);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    /* Component Render Area - White background for proper component rendering */
+    .inspiration-block__render {
+      background: var(--hq-ivory);
+      color: var(--hq-black);
+    }
+    .inspiration-block__render--dark {
+      background: #0A0A0A;
+      color: #fff;
+    }
+
+    /* Quote Cards Grid */
+    .quotes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      padding: 1.5rem;
+      background: var(--hq-ivory);
+    }
+    .hq-quote-card {
+      background: var(--hq-white);
+      padding: 1.5rem;
+      border-radius: var(--hq-radius-lg);
+      box-shadow: var(--hq-card-shadow);
+    }
+    .hq-quote-card blockquote {
+      font-family: var(--hq-font-display);
+      font-size: 1.1rem;
+      font-style: italic;
+      color: var(--hq-charcoal);
+      margin-bottom: 0.5rem;
+    }
+    .hq-quote-use {
+      font-family: var(--hq-font-accent);
+      font-size: 0.75rem;
+      color: var(--hq-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Keyframe animations for hero elements */
+    @keyframes hq-fade-up {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes hq-fade-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes hq-bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+  </style>
+</head>
+<body class="inspiration-board">
+  <!-- Navigation Sidebar -->
+  <nav class="inspiration-nav">
+    <div class="inspiration-nav__title">Approved Components<br><small style="font-weight:normal;color:#888;">From Feedback Document</small></div>
+
+    <div class="inspiration-nav__section">
+      <h3>Product & Showcase</h3>
+      <a href="#hero-product-showcase">Product Showcase</a>
+      <a href="#fleet-model-spotlight">Model Spotlight</a>
+      <a href="#fleet-interactive">Interactive Fleet</a>
+      <a href="#aircraft-comparison-table">Comparison Table</a>
+    </div>
+
+    <div class="inspiration-nav__section">
+      <h3>Trust & Credibility</h3>
+      <a href="#hero-trust-heritage">Heritage Focus</a>
+      <a href="#stats-counter-animated">Animated Stats</a>
+      <a href="#trust-stats-simple">Simple Stats Row</a>
+      <a href="#trust-testimonials-grid">Testimonials Grid</a>
+      <a href="#testimonial-carousel">Testimonial Carousel</a>
+    </div>
+
+    <div class="inspiration-nav__section">
+      <h3>Editorial & Content</h3>
+      <a href="#hero-editorial-magazine">Magazine Style</a>
+      <a href="#hero-editorial-quote">Large Quote</a>
+      <a href="#aircraft-featured-large">Large Featured</a>
+      <a href="#content-split-image-left">Split Content</a>
+    </div>
+
+    <div class="inspiration-nav__section">
+      <h3>Layout & Navigation</h3>
+      <a href="#aircraft-carousel">Horizontal Scroll</a>
+      <a href="#cards-stacked">Stacked Cards</a>
+      <a href="#nav-breadcrumbs">Breadcrumbs</a>
+    </div>
+
+    <div class="inspiration-nav__section">
+      <h3>CTA & Conversion</h3>
+      <a href="#cta-simple-centered">Centered CTA</a>
+      <a href="#hero-minimal-centered">Centered Statement</a>
+      <a href="#footer-mega">Mega Footer</a>
+    </div>
+
+    <div class="inspiration-nav__section">
+      <h3>Team & About</h3>
+      <a href="#team-grid-4">Team Grid</a>
+      <a href="#team-leadership">Leadership Team</a>
+      <a href="#team-founder-spotlight">Founder Spotlight</a>
+    </div>
+
+    <div class="inspiration-nav__section">
+      <h3>Services</h3>
+      <a href="#tabbed-services">Tabbed Services</a>
+      <a href="#tabbed-specs">Tabbed Specs</a>
+      <a href="#features-icon-grid">Icon Feature Grid</a>
+      <a href="#maintenance-capabilities">Maintenance Capabilities</a>
+    </div>
+
+    <div class="inspiration-nav__section">
+      <h3>Gallery</h3>
+      <a href="#gallery-masonry">Masonry Grid</a>
+    </div>
+
+    <div class="inspiration-nav__section">
+      <h3>Training</h3>
+      <a href="#journey-pilot-pathway">Pilot Pathway</a>
+      <a href="#process-timeline">Process Timeline</a>
+    </div>
+
+    <div class="inspiration-nav__section">
+      <h3>Lifestyle</h3>
+      <a href="#lifestyle-destinations">Where Will You Go?</a>
+      <a href="#expedition-showcase">Expedition Showcase</a>
+      <a href="#lifestyle-ownership-benefits">Ownership Benefits</a>
+    </div>
+
+    <div class="inspiration-nav__section">
+      <h3>Events</h3>
+      <a href="#events-upcoming">Upcoming Events</a>
+    </div>
+
+    <div class="inspiration-nav__section">
+      <h3>Page Showcases</h3>
+      <a href="#showcase-training-environment">Training Experience</a>
+      <a href="#showcase-trial-experience">Trial Flight</a>
+      <a href="#showcase-cost-transparency">Cost Transparency</a>
+      <a href="#showcase-denham-location">Denham Location</a>
+      <a href="#opening-hours">Opening Hours</a>
+    </div>
+
+    <div class="inspiration-nav__section">
+      <h3>Approved Quotes</h3>
+      <a href="#quotes-section">View All Quotes</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="inspiration-main">
+
+    <!-- PRODUCT & SHOWCASE -->
+    <section class="inspiration-section">
+      <h2 class="inspiration-section__title">Product & Showcase Components</h2>
+
+      <div class="inspiration-block" id="hero-product-showcase">
+        <div class="inspiration-block__header">
+          <h3>Product Showcase - Aircraft as Hero</h3>
+          <span class="inspiration-block__id">hero-product-showcase</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-hero hq-hero--product">
+            <div class="hq-hero__bg hq-hero__bg--gradient-light"></div>
+            <div class="hq-hero__product-image">
+              <img src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-left-v4.png" alt="R66 Turbine">
+            </div>
+            <div class="hq-hero__content hq-hero__content--center hq-hero__content--dark">
+              <span class="hq-overline">New Aircraft</span>
+              <h1 class="hq-hero__headline">Robinson R66 Turbine</h1>
+              <p class="hq-hero__tagline">The world's best-selling turbine helicopter.</p>
+              <div class="hq-btn-group">
+                <a href="#configure" class="hq-btn hq-btn--dark">Configure Yours</a>
+                <a href="#quote" class="hq-btn hq-btn--outline-dark">Request Quote</a>
+              </div>
+            </div>
+            <div class="hq-hero__specs">
+              <div class="hq-spec"><span class="hq-spec__value">300</span><span class="hq-spec__label">SHP</span></div>
+              <div class="hq-spec"><span class="hq-spec__value">4</span><span class="hq-spec__label">Seats</span></div>
+              <div class="hq-spec"><span class="hq-spec__value">350</span><span class="hq-spec__label">NM Range</span></div>
+              <div class="hq-spec"><span class="hq-spec__value">140</span><span class="hq-spec__label">KTS</span></div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="fleet-model-spotlight">
+        <div class="inspiration-block__header">
+          <h3>Model Spotlight - "This component looks absolutely beautiful"</h3>
+          <span class="inspiration-block__id">fleet-model-spotlight</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-model-spotlight">
+            <div class="hq-model-spotlight__bg">
+              <img src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-left-v4.png" alt="Robinson R66">
+            </div>
+            <div class="hq-container">
+              <div class="hq-model-spotlight__content">
+                <span class="hq-overline hq-overline--light">New Aircraft</span>
+                <h1 class="hq-model-spotlight__title">Robinson R66</h1>
+                <p class="hq-model-spotlight__tagline">Turbine Performance. Robinson Reliability.</p>
+                <div class="hq-model-spotlight__specs">
+                  <div class="hq-spec-pill"><span class="hq-spec-pill__value">5</span><span class="hq-spec-pill__label">Seats</span></div>
+                  <div class="hq-spec-pill"><span class="hq-spec-pill__value">120</span><span class="hq-spec-pill__label">Knots</span></div>
+                  <div class="hq-spec-pill"><span class="hq-spec-pill__value">350</span><span class="hq-spec-pill__label">NM Range</span></div>
+                  <div class="hq-spec-pill"><span class="hq-spec-pill__value">RR300</span><span class="hq-spec-pill__label">Engine</span></div>
+                </div>
+                <div class="hq-model-spotlight__actions">
+                  <a href="#configure" class="hq-btn hq-btn--primary hq-btn--lg">Configure Yours</a>
+                  <a href="#specs" class="hq-btn hq-btn--ghost">Full Specifications</a>
+                </div>
+                <div class="hq-model-spotlight__price"><span>From</span><strong>$1,290,000</strong><span>ex-factory</span></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="fleet-interactive">
+        <div class="inspiration-block__header">
+          <h3>Interactive Fleet - "This looks amazing for explore our fleet" (Include Hughes 500 and AS355)</h3>
+          <span class="inspiration-block__id">fleet-interactive</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-fleet hq-fleet--interactive">
+            <div class="hq-container">
+              <div class="hq-section-header">
+                <span class="hq-overline">Our Fleet</span>
+                <h2 class="hq-section-title">Explore Our Aircraft</h2>
+              </div>
+              <div class="hq-fleet__explorer">
+                <div class="hq-fleet__tabs">
+                  <button class="hq-fleet__tab active" data-aircraft="r66">R66 Turbine</button>
+                  <button class="hq-fleet__tab" data-aircraft="r44">R44 Raven II</button>
+                  <button class="hq-fleet__tab" data-aircraft="r22">R22 Beta II</button>
+                  <button class="hq-fleet__tab" data-aircraft="h500">Hughes 500</button>
+                  <button class="hq-fleet__tab" data-aircraft="as355">AS355 Twin Squirrel</button>
+                </div>
+                <div class="hq-fleet__display">
+                  <div class="hq-fleet__aircraft active" data-aircraft="r66">
+                    <div class="hq-fleet__image"><img src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-front-v4.png" alt="R66"></div>
+                    <div class="hq-fleet__info">
+                      <h3>Robinson R66 Turbine</h3>
+                      <p>The pinnacle of personal aviation. 5-seat turbine helicopter with Rolls-Royce power.</p>
+                      <div class="hq-fleet__specs-grid">
+                        <div class="hq-fleet__spec"><span class="hq-fleet__spec-value">300</span><span class="hq-fleet__spec-label">SHP</span></div>
+                        <div class="hq-fleet__spec"><span class="hq-fleet__spec-value">5</span><span class="hq-fleet__spec-label">Seats</span></div>
+                        <div class="hq-fleet__spec"><span class="hq-fleet__spec-value">140</span><span class="hq-fleet__spec-label">Knots</span></div>
+                        <div class="hq-fleet__spec"><span class="hq-fleet__spec-value">350</span><span class="hq-fleet__spec-label">NM Range</span></div>
+                      </div>
+                      <div class="hq-fleet__actions">
+                        <a href="#r66" class="hq-btn hq-btn--primary">Configure Yours</a>
+                        <a href="#quote" class="hq-btn hq-btn--outline">Request Quote</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="aircraft-comparison-table">
+        <div class="inspiration-block__header">
+          <h3>Comparison Table - "I love this comparison"</h3>
+          <span class="inspiration-block__id">aircraft-comparison-table</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-aircraft hq-aircraft--comparison">
+            <div class="hq-container">
+              <div class="hq-section-header">
+                <span class="hq-overline">Compare Models</span>
+                <h2 class="hq-section-title">Find Your Perfect Helicopter</h2>
+              </div>
+              <div class="hq-comparison-table">
+                <div class="hq-comparison-table__header">
+                  <div class="hq-comparison-table__cell"></div>
+                  <div class="hq-comparison-table__cell"><img src="/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png" alt="R22"><h3>R22 Beta II</h3></div>
+                  <div class="hq-comparison-table__cell"><img src="/assets/images/used-aircraft/r44/r44-raven-ii-grrob.jpg" alt="R44"><h3>R44 Raven II</h3></div>
+                  <div class="hq-comparison-table__cell hq-comparison-table__cell--featured"><span class="hq-badge">Popular</span><img src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-front-v4.png" alt="R66"><h3>R66 Turbine</h3></div>
+                </div>
+                <div class="hq-comparison-table__row">
+                  <div class="hq-comparison-table__cell hq-comparison-table__cell--label">Seats</div>
+                  <div class="hq-comparison-table__cell">2</div>
+                  <div class="hq-comparison-table__cell">4</div>
+                  <div class="hq-comparison-table__cell hq-comparison-table__cell--featured">5</div>
+                </div>
+                <div class="hq-comparison-table__row">
+                  <div class="hq-comparison-table__cell hq-comparison-table__cell--label">Engine</div>
+                  <div class="hq-comparison-table__cell">Piston</div>
+                  <div class="hq-comparison-table__cell">Piston</div>
+                  <div class="hq-comparison-table__cell hq-comparison-table__cell--featured">Turbine</div>
+                </div>
+                <div class="hq-comparison-table__row">
+                  <div class="hq-comparison-table__cell hq-comparison-table__cell--label">Cruise Speed</div>
+                  <div class="hq-comparison-table__cell">96 kts</div>
+                  <div class="hq-comparison-table__cell">113 kts</div>
+                  <div class="hq-comparison-table__cell hq-comparison-table__cell--featured">140 kts</div>
+                </div>
+                <div class="hq-comparison-table__row">
+                  <div class="hq-comparison-table__cell hq-comparison-table__cell--label">Range</div>
+                  <div class="hq-comparison-table__cell">185 nm</div>
+                  <div class="hq-comparison-table__cell">300 nm</div>
+                  <div class="hq-comparison-table__cell hq-comparison-table__cell--featured">350 nm</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRUST & CREDIBILITY -->
+    <section class="inspiration-section">
+      <h2 class="inspiration-section__title">Trust & Credibility Components</h2>
+
+      <div class="inspiration-block" id="hero-trust-heritage">
+        <div class="inspiration-block__header">
+          <h3>Heritage Focus - "I like the 30+ years experience credibility"</h3>
+          <span class="inspiration-block__id">hero-trust-heritage</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-hero hq-hero--trust">
+            <div class="hq-hero__bg"><img src="/assets/images/facility/busy-hangar.jpg" alt="Hangar"></div>
+            <div class="hq-hero__overlay hq-hero__overlay--trust"></div>
+            <div class="hq-hero__content hq-hero__content--center">
+              <div class="hq-hero__trust-badge">
+                <span class="hq-hero__trust-years">30+</span>
+                <span class="hq-hero__trust-text">Years of Excellence</span>
+              </div>
+              <h1 class="hq-hero__headline">Trusted by Pilots<br>Worldwide</h1>
+              <div class="hq-hero__testimonial">
+                <blockquote>"The team at HQ Aviation made buying my R66 seamless."</blockquote>
+                <cite>— James H., R66 Owner</cite>
+              </div>
+              <a href="#contact" class="hq-btn hq-btn--primary">Speak With Our Team</a>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="stats-counter-animated">
+        <div class="inspiration-block__header">
+          <h3>Animated Counter Stats - "Numbers that increase are really cool"</h3>
+          <span class="inspiration-block__id">stats-counter-animated</span>
+        </div>
+        <div class="inspiration-block__render inspiration-block__render--dark">
+          <section class="hq-section hq-stats hq-stats--counter">
+            <div class="hq-container">
+              <div class="hq-stats__grid hq-stats__grid--4">
+                <div class="hq-stat-item hq-stat-item--large">
+                  <span class="hq-stat-item__number">34</span>
+                  <span class="hq-stat-item__label">Years in Business</span>
+                </div>
+                <div class="hq-stat-item hq-stat-item--large">
+                  <span class="hq-stat-item__number">500+</span>
+                  <span class="hq-stat-item__label">Aircraft Sold</span>
+                </div>
+                <div class="hq-stat-item hq-stat-item--large">
+                  <span class="hq-stat-item__number">1,200+</span>
+                  <span class="hq-stat-item__label">Pilots Trained</span>
+                </div>
+                <div class="hq-stat-item hq-stat-item--large">
+                  <span class="hq-stat-item__number">98%</span>
+                  <span class="hq-stat-item__label">Customer Satisfaction</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="trust-stats-simple">
+        <div class="inspiration-block__header">
+          <h3>Simple Stats Row - "I like the stats row here"</h3>
+          <span class="inspiration-block__id">trust-stats-simple</span>
+        </div>
+        <div class="inspiration-block__render inspiration-block__render--dark">
+          <section class="hq-section hq-trust hq-trust--stats-simple">
+            <div class="hq-container">
+              <div class="hq-trust__stats hq-trust__stats--4">
+                <div class="hq-stat-block">
+                  <span class="hq-stat-block__value">30+</span>
+                  <span class="hq-stat-block__label">Years Experience</span>
+                </div>
+                <div class="hq-stat-block">
+                  <span class="hq-stat-block__value">500+</span>
+                  <span class="hq-stat-block__label">Aircraft Sold</span>
+                </div>
+                <div class="hq-stat-block">
+                  <span class="hq-stat-block__value">1,200+</span>
+                  <span class="hq-stat-block__label">Pilots Trained</span>
+                </div>
+                <div class="hq-stat-block">
+                  <span class="hq-stat-block__value">50K+</span>
+                  <span class="hq-stat-block__label">Flight Hours</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="trust-testimonials-grid">
+        <div class="inspiration-block__header">
+          <h3>Testimonials Grid - "Quite good, 3-column testimonial cards"</h3>
+          <span class="inspiration-block__id">trust-testimonials-grid</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-trust hq-trust--testimonials-grid">
+            <div class="hq-container">
+              <div class="hq-section-header">
+                <span class="hq-overline">Testimonials</span>
+                <h2 class="hq-section-title">What Our Clients Say</h2>
+              </div>
+              <div class="hq-testimonials__grid">
+                <div class="hq-testimonial-card">
+                  <div class="hq-testimonial-card__stars">★★★★★</div>
+                  <blockquote class="hq-testimonial-card__quote">"Outstanding training school. Couldn't recommend more highly."</blockquote>
+                  <cite class="hq-testimonial-card__author">— Sarah T., PPL Student</cite>
+                </div>
+                <div class="hq-testimonial-card">
+                  <div class="hq-testimonial-card__stars">★★★★★</div>
+                  <blockquote class="hq-testimonial-card__quote">"The maintenance team is thorough and professional."</blockquote>
+                  <cite class="hq-testimonial-card__author">— Michael R., R44 Owner</cite>
+                </div>
+                <div class="hq-testimonial-card">
+                  <div class="hq-testimonial-card__stars">★★★★★</div>
+                  <blockquote class="hq-testimonial-card__quote">"Made buying my first helicopter an absolute pleasure."</blockquote>
+                  <cite class="hq-testimonial-card__author">— David K., R66 Owner</cite>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="testimonial-carousel">
+        <div class="inspiration-block__header">
+          <h3>Testimonial Carousel - "We need testimonials, still working on layout"</h3>
+          <span class="inspiration-block__id">testimonial-carousel</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-testimonial hq-testimonial--carousel">
+            <div class="hq-container">
+              <div class="hq-section-header">
+                <span class="hq-overline">What Our Clients Say</span>
+                <h2 class="hq-section-title">Customer Stories</h2>
+              </div>
+              <div class="hq-testimonial-carousel">
+                <div class="hq-testimonial-carousel__track">
+                  <div class="hq-testimonial-slide">
+                    <div class="hq-testimonial-card">
+                      <div class="hq-testimonial-card__stars">★★★★★</div>
+                      <p class="hq-testimonial-card__quote">"Excellent service from start to finish."</p>
+                      <div class="hq-testimonial-card__author">
+                        <strong>Sarah Williams</strong><br><span>PPL(H) Graduate</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="hq-testimonial-slide">
+                    <div class="hq-testimonial-card">
+                      <div class="hq-testimonial-card__stars">★★★★★</div>
+                      <p class="hq-testimonial-card__quote">"Bought my R44 from HQ last year. The maintenance service keeps everything running perfectly."</p>
+                      <div class="hq-testimonial-card__author">
+                        <strong>Mark Thompson</strong><br><span>R44 Owner</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="hq-testimonial-slide">
+                    <div class="hq-testimonial-card">
+                      <div class="hq-testimonial-card__stars">★★★★★</div>
+                      <p class="hq-testimonial-card__quote">"Professional team, competitive pricing, and genuine expertise."</p>
+                      <div class="hq-testimonial-card__author">
+                        <strong>David Chen</strong><br><span>Commercial Operator</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDITORIAL & CONTENT -->
+    <section class="inspiration-section">
+      <h2 class="inspiration-section__title">Editorial & Content Components</h2>
+
+      <div class="inspiration-block" id="hero-editorial-magazine">
+        <div class="inspiration-block__header">
+          <h3>Magazine Style - "Maybe for the blog/news or list of adventures"</h3>
+          <span class="inspiration-block__id">hero-editorial-magazine</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-hero hq-hero--magazine">
+            <div class="hq-hero__magazine-grid">
+              <div class="hq-magazine-header">
+                <span class="hq-magazine-issue">Since 1990</span>
+                <h1 class="hq-magazine-masthead">HQ Aviation</h1>
+                <span class="hq-magazine-tagline">The Art of Helicopter Excellence</span>
+              </div>
+              <div class="hq-magazine-feature">
+                <img src="/assets/images/expeditionss/helicopter-expeditions-quentin-smith.webp" alt="Featured">
+              </div>
+              <div class="hq-magazine-sidebar">
+                <div class="hq-magazine-story">
+                  <span class="hq-magazine-story__cat">Featured</span>
+                  <h2 class="hq-magazine-story__title">Adventures Beyond Horizons</h2>
+                  <p class="hq-magazine-story__excerpt">From Antarctic expeditions to Alpine crossings.</p>
+                  <a href="#" class="hq-magazine-story__link">Read More →</a>
+                </div>
+                <div class="hq-magazine-story">
+                  <span class="hq-magazine-story__cat">New Aircraft</span>
+                  <h2 class="hq-magazine-story__title">The R66 NxG Arrives</h2>
+                  <p class="hq-magazine-story__excerpt">Next generation turbine. Now available.</p>
+                  <a href="#" class="hq-magazine-story__link">Explore →</a>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="hero-editorial-quote">
+        <div class="inspiration-block__header">
+          <h3>Large Quote - "We need to include some large quotes"</h3>
+          <span class="inspiration-block__id">hero-editorial-quote</span>
+        </div>
+        <div class="inspiration-block__render inspiration-block__render--dark">
+          <section class="hq-section hq-section--dark hq-hero hq-hero--quote">
+            <div class="hq-container">
+              <div class="hq-quote hq-quote--hero">
+                <blockquote class="hq-quote__text">
+                  "Flying is not just about the destination—it's about the freedom to explore the world from a perspective few ever experience."
+                </blockquote>
+                <cite class="hq-quote__author">— Quentin Smith, Founder</cite>
+                <div class="hq-quote__cta">
+                  <a href="#about" class="hq-btn hq-btn--ghost">Our Story</a>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="aircraft-featured-large">
+        <div class="inspiration-block__header">
+          <h3>Large Featured - "I love the component of the large featured"</h3>
+          <span class="inspiration-block__id">aircraft-featured-large</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-aircraft hq-aircraft--featured-large">
+            <div class="hq-container">
+              <div class="hq-section-header">
+                <span class="hq-overline">Our Fleet</span>
+                <h2 class="hq-section-title">Featured Aircraft</h2>
+              </div>
+              <div class="hq-aircraft__featured-layout">
+                <a href="#r66" class="hq-aircraft-card hq-aircraft-card--large">
+                  <div class="hq-aircraft-card__image">
+                    <img src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-left-v4.png" alt="R66">
+                    <span class="hq-badge">Featured</span>
+                  </div>
+                  <div class="hq-aircraft-card__body">
+                    <span class="hq-aircraft-card__make">Robinson R66 Turbine</span>
+                    <h3 class="hq-aircraft-card__name">The Ultimate in Personal Aviation</h3>
+                    <p class="hq-aircraft-card__desc">300 SHP Rolls-Royce RR300 turbine engine. 5 seats. Glass cockpit available.</p>
+                  </div>
+                </a>
+                <div class="hq-aircraft__side-cards">
+                  <a href="#r44" class="hq-aircraft-card hq-aircraft-card--mini">
+                    <img src="/assets/images/used-aircraft/r44/r44-raven-ii-grrob.jpg" alt="R44" class="hq-aircraft-card__thumb">
+                    <div>
+                      <span class="hq-aircraft-card__make">Robinson</span>
+                      <h4 class="hq-aircraft-card__name">R44 Raven II</h4>
+                    </div>
+                  </a>
+                  <a href="#r22" class="hq-aircraft-card hq-aircraft-card--mini">
+                    <img src="/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png" alt="R22" class="hq-aircraft-card__thumb">
+                    <div>
+                      <span class="hq-aircraft-card__make">Robinson</span>
+                      <h4 class="hq-aircraft-card__name">R22 Beta II</h4>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="content-split-image-left">
+        <div class="inspiration-block__header">
+          <h3>Split Content (Image Left) - "This is a cool component"</h3>
+          <span class="inspiration-block__id">content-split-image-left</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-content hq-content--split">
+            <div class="hq-container">
+              <div class="hq-content__split" style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;">
+                <div class="hq-content__image">
+                  <img src="/assets/images/team/helicopter-genius-quentin-smith-great-britain.webp" alt="Training" style="width:100%;border-radius:12px;">
+                </div>
+                <div class="hq-content__text">
+                  <span class="hq-overline">About Our Training</span>
+                  <h2 style="font-size:2rem;margin:0.5rem 0 1rem;">World-Class Instruction</h2>
+                  <p style="color:#666;margin-bottom:1rem;">Our flight instructors bring decades of combined experience to every lesson. With backgrounds in commercial aviation, military service, and competition flying, they provide diverse perspectives and expert guidance.</p>
+                  <p style="color:#666;margin-bottom:2rem;">We maintain small class sizes to ensure personalized attention, and our modern fleet of training aircraft are maintained to the highest standards.</p>
+                  <div class="hq-content__cta">
+                    <a href="#training" class="hq-btn hq-btn--primary">View Training Courses</a>
+                    <a href="#instructors" class="hq-btn hq-btn--outline" style="color:#333;border-color:#333;">Meet Our Team</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- LAYOUT & NAVIGATION -->
+    <section class="inspiration-section">
+      <h2 class="inspiration-section__title">Layout & Navigation Components</h2>
+
+      <div class="inspiration-block" id="aircraft-carousel">
+        <div class="inspiration-block__header">
+          <h3>Horizontal Scroll Carousel - "I quite like this"</h3>
+          <span class="inspiration-block__id">aircraft-carousel</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-aircraft hq-aircraft--carousel">
+            <div class="hq-container">
+              <div class="hq-section-header" style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                  <span class="hq-overline">Our Fleet</span>
+                  <h2 class="hq-section-title">Featured Aircraft</h2>
+                </div>
+                <div class="hq-carousel-nav">
+                  <button style="width:40px;height:40px;border:1px solid #ddd;background:#fff;border-radius:50%;cursor:pointer;">←</button>
+                  <button style="width:40px;height:40px;border:1px solid #ddd;background:#fff;border-radius:50%;cursor:pointer;">→</button>
+                </div>
+              </div>
+            </div>
+            <div class="hq-aircraft__carousel" style="overflow-x:auto;padding:2rem 0;">
+              <div class="hq-aircraft__carousel-track" style="display:flex;gap:2rem;padding:0 2rem;">
+                <a href="#r66" style="flex:0 0 300px;background:#f5f5f5;border-radius:12px;padding:2rem;text-decoration:none;color:inherit;text-align:center;">
+                  <img src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-front-v4.png" alt="R66" style="max-height:150px;margin-bottom:1rem;">
+                  <span style="display:block;color:#888;font-size:0.75rem;">Robinson</span>
+                  <h3 style="margin:0.25rem 0 0;">R66 Turbine</h3>
+                </a>
+                <a href="#r44" style="flex:0 0 300px;background:#f5f5f5;border-radius:12px;padding:2rem;text-decoration:none;color:inherit;text-align:center;">
+                  <img src="/assets/images/used-aircraft/r44/r44-raven-ii-grrob.jpg" alt="R44" style="max-height:150px;margin-bottom:1rem;">
+                  <span style="display:block;color:#888;font-size:0.75rem;">Robinson</span>
+                  <h3 style="margin:0.25rem 0 0;">R44 Raven II</h3>
+                </a>
+                <a href="#r22" style="flex:0 0 300px;background:#f5f5f5;border-radius:12px;padding:2rem;text-decoration:none;color:inherit;text-align:center;">
+                  <img src="/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png" alt="R22" style="max-height:150px;margin-bottom:1rem;">
+                  <span style="display:block;color:#888;font-size:0.75rem;">Robinson</span>
+                  <h3 style="margin:0.25rem 0 0;">R22 Beta II</h3>
+                </a>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="cards-stacked">
+        <div class="inspiration-block__header">
+          <h3>Stacked Overlap Cards - Services section</h3>
+          <span class="inspiration-block__id">cards-stacked</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-cards hq-cards--stacked">
+            <div class="hq-container">
+              <h2 class="hq-section-title" style="text-align:center;margin-bottom:3rem;">Featured Services</h2>
+              <div class="hq-stacked-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;">
+                <div style="background:#f5f5f5;padding:2rem;border-radius:12px;">
+                  <h3>Pre-Purchase Inspections</h3>
+                  <p style="color:#666;margin:1rem 0;">Comprehensive evaluation of pre-owned aircraft before purchase. Our engineers will assess condition, compliance, and value.</p>
+                  <a href="#ppi" style="color:var(--hq-accent);">Learn More →</a>
+                </div>
+                <div style="background:#f5f5f5;padding:2rem;border-radius:12px;transform:translateY(-10px);">
+                  <h3>AOG Support</h3>
+                  <p style="color:#666;margin:1rem 0;">Aircraft on ground? Our 24/7 emergency support ensures minimal downtime with parts and engineers ready.</p>
+                  <a href="#aog" style="color:var(--hq-accent);">Contact →</a>
+                </div>
+                <div style="background:#f5f5f5;padding:2rem;border-radius:12px;">
+                  <h3>Aircraft Management</h3>
+                  <p style="color:#666;margin:1rem 0;">Full management services including scheduling, maintenance tracking, and regulatory compliance.</p>
+                  <a href="#management" style="color:var(--hq-accent);">Enquire →</a>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="nav-breadcrumbs">
+        <div class="inspiration-block__header">
+          <h3>Breadcrumb Navigation - "To be implemented"</h3>
+          <span class="inspiration-block__id">nav-breadcrumbs</span>
+        </div>
+        <div class="inspiration-block__render">
+          <nav class="hq-breadcrumbs" style="padding:1rem 2rem;background:#f5f5f5;">
+            <ol style="display:flex;gap:0.5rem;list-style:none;font-size:0.85rem;">
+              <li><a href="/" style="color:var(--hq-accent);text-decoration:none;">Home</a></li>
+              <li style="color:#999;">/</li>
+              <li><a href="/aircraft" style="color:var(--hq-accent);text-decoration:none;">Aircraft</a></li>
+              <li style="color:#999;">/</li>
+              <li><a href="/aircraft/r66" style="color:var(--hq-accent);text-decoration:none;">Robinson R66</a></li>
+              <li style="color:#999;">/</li>
+              <li style="color:#666;">G-HQAV</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRAINING -->
+    <section class="inspiration-section">
+      <h2 class="inspiration-section__title">Training Components</h2>
+
+      <div class="inspiration-block" id="journey-pilot-pathway">
+        <div class="inspiration-block__header">
+          <h3>Pilot Pathway - "I like the pathway for students"</h3>
+          <span class="inspiration-block__id">journey-pilot-pathway</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-section--cream hq-pathway" style="background:#f9f7f4;padding:4rem 0;">
+            <div class="hq-container">
+              <div class="hq-section-header">
+                <span class="hq-overline">Flight Training</span>
+                <h2 class="hq-section-title">Your Path to the Skies</h2>
+                <p style="color:#666;">From first lesson to PPL(H) in as little as 3 months</p>
+              </div>
+              <div class="hq-pathway__track" style="display:flex;justify-content:space-between;margin:3rem 0;position:relative;">
+                <div style="position:absolute;top:20px;left:10%;right:10%;height:4px;background:#ddd;"></div>
+                <div style="position:absolute;top:20px;left:10%;width:35%;height:4px;background:var(--hq-accent);"></div>
+                <div style="text-align:center;position:relative;z-index:1;">
+                  <div style="width:40px;height:40px;background:var(--hq-accent);border-radius:50%;margin:0 auto 1rem;"></div>
+                  <span style="font-weight:600;display:block;">Trial Flight</span>
+                  <strong style="color:var(--hq-accent);">£299</strong>
+                  <p style="font-size:0.85rem;color:#666;">30-minute hands-on</p>
+                </div>
+                <div style="text-align:center;position:relative;z-index:1;">
+                  <div style="width:40px;height:40px;background:var(--hq-accent);border-radius:50%;margin:0 auto 1rem;"></div>
+                  <span style="font-weight:600;display:block;">First Solo</span>
+                  <strong style="color:var(--hq-accent);">~15 hours</strong>
+                  <p style="font-size:0.85rem;color:#666;">Your first flight alone</p>
+                </div>
+                <div style="text-align:center;position:relative;z-index:1;">
+                  <div style="width:40px;height:40px;background:#ddd;border-radius:50%;margin:0 auto 1rem;border:3px solid var(--hq-accent);"></div>
+                  <span style="font-weight:600;display:block;">Skills Test</span>
+                  <strong>45 hours min</strong>
+                  <p style="font-size:0.85rem;color:#666;">Demonstrate abilities</p>
+                </div>
+                <div style="text-align:center;position:relative;z-index:1;">
+                  <div style="width:40px;height:40px;background:#ddd;border-radius:50%;margin:0 auto 1rem;"></div>
+                  <span style="font-weight:600;display:block;">PPL(H) License</span>
+                  <strong>Freedom</strong>
+                  <p style="font-size:0.85rem;color:#666;">The world is yours</p>
+                </div>
+              </div>
+              <div style="display:flex;justify-content:center;gap:2rem;margin:2rem 0;padding:1rem;background:#fff;border-radius:8px;">
+                <span>✓ Flexible scheduling</span>
+                <span>✓ 1-on-1 CAA approved instruction</span>
+                <span style="color:var(--hq-accent);font-weight:600;">✓ Ground school included</span>
+              </div>
+              <div style="text-align:center;margin-top:2rem;">
+                <a href="#training" class="hq-btn hq-btn--primary">Book Your Trial Flight</a>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="process-timeline">
+        <div class="inspiration-block__header">
+          <h3>Process Timeline - "Needs better styling but idea is good"</h3>
+          <span class="inspiration-block__id">process-timeline</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-process hq-process--timeline">
+            <div class="hq-container">
+              <div class="hq-section-header">
+                <span class="hq-overline">How It Works</span>
+                <h2 class="hq-section-title">Your Path to the Skies</h2>
+              </div>
+              <div class="hq-process__timeline" style="max-width:600px;margin:2rem auto;">
+                <div style="display:flex;gap:2rem;margin-bottom:2rem;align-items:flex-start;">
+                  <span style="font-size:2rem;font-weight:700;color:var(--hq-accent);">01</span>
+                  <div>
+                    <h3 style="margin:0 0 0.5rem;">Discovery Flight</h3>
+                    <p style="color:#666;">Experience flight firsthand with a 30-minute trial lesson. You'll take the controls and discover if helicopter flying is for you.</p>
+                  </div>
+                </div>
+                <div style="display:flex;gap:2rem;margin-bottom:2rem;align-items:flex-start;">
+                  <span style="font-size:2rem;font-weight:700;color:var(--hq-accent);">02</span>
+                  <div>
+                    <h3 style="margin:0 0 0.5rem;">Ground School</h3>
+                    <p style="color:#666;">Learn aviation theory with our comprehensive ground school covering meteorology, navigation, and regulations.</p>
+                  </div>
+                </div>
+                <div style="display:flex;gap:2rem;margin-bottom:2rem;align-items:flex-start;">
+                  <span style="font-size:2rem;font-weight:700;color:var(--hq-accent);">03</span>
+                  <div>
+                    <h3 style="margin:0 0 0.5rem;">Flight Training</h3>
+                    <p style="color:#666;">Build your skills through structured flight lessons with experienced instructors. Minimum 45 hours required for PPL(H).</p>
+                  </div>
+                </div>
+                <div style="display:flex;gap:2rem;align-items:flex-start;">
+                  <span style="font-size:2rem;font-weight:700;color:var(--hq-accent);">04</span>
+                  <div>
+                    <h3 style="margin:0 0 0.5rem;">Skills Test</h3>
+                    <p style="color:#666;">Demonstrate your proficiency to a CAA examiner and earn your Private Pilot License (Helicopters).</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIFESTYLE -->
+    <section class="inspiration-section">
+      <h2 class="inspiration-section__title">Lifestyle & Aspirational Components</h2>
+
+      <div class="inspiration-block" id="lifestyle-destinations">
+        <div class="inspiration-block__header">
+          <h3>Where Will You Go? - "Absolutely amazing component"</h3>
+          <span class="inspiration-block__id">lifestyle-destinations</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-destinations">
+            <div class="hq-container">
+              <div class="hq-section-header">
+                <span class="hq-overline">The World Awaits</span>
+                <h2 class="hq-section-title">Where Will You Go?</h2>
+                <p style="color:#666;">Skip the traffic. Land where others can't. Your helicopter, your freedom.</p>
+              </div>
+              <div class="hq-destinations__grid" style="display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:200px 200px;gap:1rem;margin:2rem 0;">
+                <div style="grid-row:span 2;background:linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.6)),url('/assets/images/gallery/flying/flying--1.jpg') center/cover;border-radius:12px;display:flex;flex-direction:column;justify-content:flex-end;padding:2rem;color:#fff;">
+                  <h3 style="margin:0;">Scottish Highlands</h3>
+                  <span>2hr 45min from London</span>
+                </div>
+                <div style="background:linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.6)),url('/assets/images/expeditionss/antartica.jpg') center/cover;border-radius:12px;display:flex;flex-direction:column;justify-content:flex-end;padding:1.5rem;color:#fff;">
+                  <h3 style="margin:0;font-size:1rem;">French Riviera</h3>
+                  <span style="font-size:0.85rem;">Direct to your yacht</span>
+                </div>
+                <div style="background:linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.6)),url('/assets/images/gallery/flying/flying-.jpg') center/cover;border-radius:12px;display:flex;flex-direction:column;justify-content:flex-end;padding:1.5rem;color:#fff;">
+                  <h3 style="margin:0;font-size:1rem;">The Cotswolds</h3>
+                  <span style="font-size:0.85rem;">45min lunch trips</span>
+                </div>
+                <div style="background:linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.6)),url('/assets/images/expeditionss/channel.jpg') center/cover;border-radius:12px;display:flex;flex-direction:column;justify-content:flex-end;padding:1.5rem;color:#fff;">
+                  <h3 style="margin:0;font-size:1rem;">Cornwall Coast</h3>
+                  <span style="font-size:0.85rem;">Weekend escapes</span>
+                </div>
+                <div style="background:linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.6)),url('/assets/images/expeditionss/antartica.jpg') center/cover;border-radius:12px;display:flex;flex-direction:column;justify-content:flex-end;padding:1.5rem;color:#fff;">
+                  <h3 style="margin:0;font-size:1rem;">Swiss Alps</h3>
+                  <span style="font-size:0.85rem;">Ski resort transfers</span>
+                </div>
+              </div>
+              <p style="text-align:center;font-style:italic;color:#666;font-size:1.25rem;">Life is too short for motorways.</p>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="expedition-showcase">
+        <div class="inspiration-block__header">
+          <h3>Expedition Showcase - "We definitely need this"</h3>
+          <span class="inspiration-block__id">expedition-showcase</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-expedition hq-expedition--showcase" style="background:linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.7)),url('/assets/images/expeditionss/helicopter-expeditions-quentin-smith.webp') center/cover;color:#fff;padding:6rem 2rem;text-align:center;">
+            <div class="hq-container">
+              <span class="hq-overline" style="color:var(--hq-accent);">Expeditions</span>
+              <h2 style="font-size:3rem;margin:1rem 0;">Adventure Awaits</h2>
+              <p style="max-width:600px;margin:0 auto 2rem;opacity:0.9;">Join world-record holding pilots on extraordinary helicopter journeys. From Alpine crossings to Arctic expeditions.</p>
+              <div style="display:flex;justify-content:center;gap:3rem;margin:2rem 0;">
+                <div><strong style="display:block;">Alps</strong><span style="opacity:0.7;font-size:0.85rem;">Next: March 2025</span></div>
+                <div><strong style="display:block;">Scotland</strong><span style="opacity:0.7;font-size:0.85rem;">Next: February 2025</span></div>
+                <div><strong style="display:block;">Iceland</strong><span style="opacity:0.7;font-size:0.85rem;">Next: June 2025</span></div>
+              </div>
+              <a href="#expeditions" class="hq-btn hq-btn--primary" style="font-size:1.1rem;padding:1rem 2rem;">Explore Expeditions</a>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="lifestyle-ownership-benefits">
+        <div class="inspiration-block__header">
+          <h3>Ownership Benefits - "I like the idea of having a benefit component"</h3>
+          <span class="inspiration-block__id">lifestyle-ownership-benefits</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-section--cream hq-ownership-benefits">
+            <div class="hq-container">
+              <div class="hq-ownership-benefits__layout">
+                <div class="hq-ownership-benefits__content">
+                  <span class="hq-overline">Helicopter Ownership</span>
+                  <h2 class="hq-section__title">More Than Transport.<br>A Way of Life.</h2>
+                  <div class="hq-ownership-benefits__list">
+                    <div class="hq-benefit">
+                      <div class="hq-benefit__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                      </div>
+                      <div>
+                        <h3>Time Freedom</h3>
+                        <p>London to Edinburgh in 2.5 hours. Skip check-in queues, security lines, and delays. Your schedule, your aircraft.</p>
+                      </div>
+                    </div>
+                    <div class="hq-benefit">
+                      <div class="hq-benefit__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                      </div>
+                      <div>
+                        <h3>Access Anywhere</h3>
+                        <p>Land at 2,000+ airfields across Europe. Remote estates, private helipads, events—arrive exactly where you need to be.</p>
+                      </div>
+                    </div>
+                    <div class="hq-benefit">
+                      <div class="hq-benefit__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                      </div>
+                      <div>
+                        <h3>Pure Joy</h3>
+                        <p>The view from 2,000 feet. The thrill of flight. The smiles from passengers. Some things can't be measured in ROI.</p>
+                      </div>
+                    </div>
+                    <div class="hq-benefit">
+                      <div class="hq-benefit__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                      </div>
+                      <div>
+                        <h3>Business Asset</h3>
+                        <p>Tax-efficient ownership structures. Potential charter revenue. An asset that pays for itself while you fly.</p>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="#ownership" class="hq-btn hq-btn--primary">Explore Ownership Options</a>
+                </div>
+                <div class="hq-ownership-benefits__image">
+                  <img src="/assets/images/used-aircraft/r66/r66s-italy.jpg" alt="Happy owner with R66">
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- EVENTS -->
+    <section class="inspiration-section">
+      <h2 class="inspiration-section__title">Events Components</h2>
+
+      <div class="inspiration-block" id="events-upcoming">
+        <div class="inspiration-block__header">
+          <h3>Upcoming Events - "Quite good to have upcoming events at HQ"</h3>
+          <span class="inspiration-block__id">events-upcoming</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-events hq-events--upcoming">
+            <div class="hq-container">
+              <div class="hq-section-header">
+                <span class="hq-overline">Events</span>
+                <h2 class="hq-section-title">Upcoming at HQ Aviation</h2>
+              </div>
+              <div class="hq-events__list" style="display:flex;flex-direction:column;gap:1rem;margin-top:2rem;">
+                <a href="#" style="display:flex;align-items:center;gap:2rem;background:#f5f5f5;padding:1.5rem;border-radius:12px;text-decoration:none;color:inherit;">
+                  <div style="text-align:center;min-width:60px;">
+                    <span style="font-size:2rem;font-weight:700;display:block;">15</span>
+                    <span style="font-size:0.75rem;color:#666;">JAN</span>
+                  </div>
+                  <div style="flex:1;">
+                    <span style="font-size:0.75rem;color:var(--hq-accent);text-transform:uppercase;">Open Day</span>
+                    <h3 style="margin:0.25rem 0;">Winter Open Day & Discovery Flight Offers</h3>
+                    <p style="color:#666;margin:0;font-size:0.85rem;">10am - 4pm • Denham Aerodrome • Free Entry</p>
+                  </div>
+                  <span class="hq-btn hq-btn--outline" style="color:#333;border-color:#333;">Register</span>
+                </a>
+                <a href="#" style="display:flex;align-items:center;gap:2rem;background:#f5f5f5;padding:1.5rem;border-radius:12px;text-decoration:none;color:inherit;">
+                  <div style="text-align:center;min-width:60px;">
+                    <span style="font-size:2rem;font-weight:700;display:block;">28</span>
+                    <span style="font-size:0.75rem;color:#666;">JAN</span>
+                  </div>
+                  <div style="flex:1;">
+                    <span style="font-size:0.75rem;color:var(--hq-accent);text-transform:uppercase;">Webinar</span>
+                    <h3 style="margin:0.25rem 0;">PPL vs CPL: Which Licence is Right For You?</h3>
+                    <p style="color:#666;margin:0;font-size:0.85rem;">7pm - 8:30pm • Online • Free</p>
+                  </div>
+                  <span class="hq-btn hq-btn--outline" style="color:#333;border-color:#333;">Join</span>
+                </a>
+                <a href="#" style="display:flex;align-items:center;gap:2rem;background:#f5f5f5;padding:1.5rem;border-radius:12px;text-decoration:none;color:inherit;">
+                  <div style="text-align:center;min-width:60px;">
+                    <span style="font-size:2rem;font-weight:700;display:block;">10</span>
+                    <span style="font-size:0.75rem;color:#666;">FEB</span>
+                  </div>
+                  <div style="flex:1;">
+                    <span style="font-size:0.75rem;color:var(--hq-accent);text-transform:uppercase;">Expedition</span>
+                    <h3 style="margin:0.25rem 0;">Scotland Fly-Out: Highland Adventure</h3>
+                    <p style="color:#666;margin:0;font-size:0.85rem;">4 days • All experience levels • Limited spots</p>
+                  </div>
+                  <span class="hq-btn hq-btn--primary">Book</span>
+                </a>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA & FOOTER -->
+    <section class="inspiration-section">
+      <h2 class="inspiration-section__title">CTA & Footer Components</h2>
+
+      <div class="inspiration-block" id="cta-simple-centered">
+        <div class="inspiration-block__header">
+          <h3>Centered CTA - "The simple CTA is very good"</h3>
+          <span class="inspiration-block__id">cta-simple-centered</span>
+        </div>
+        <div class="inspiration-block__render inspiration-block__render--dark">
+          <section class="hq-section hq-cta hq-cta--centered" style="text-align:center;padding:6rem 2rem;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);">
+            <h2 style="font-size:2.5rem;color:#fff;margin-bottom:1rem;">Ready to Take Flight?</h2>
+            <p style="color:#aaa;margin-bottom:2rem;">Contact our team to discuss your aviation needs.</p>
+            <div class="hq-btn-group hq-btn-group--center">
+              <a href="#contact" class="hq-btn hq-btn--primary" style="font-size:1.1rem;padding:1rem 2rem;">Get in Touch</a>
+              <a href="tel:+441753868976" class="hq-btn hq-btn--outline" style="color:#fff;border-color:#fff;font-size:1.1rem;padding:1rem 2rem;">Call Us</a>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="hero-minimal-centered">
+        <div class="inspiration-block__header">
+          <h3>Centered Statement - "I like the scroll element here"</h3>
+          <span class="inspiration-block__id">hero-minimal-centered</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-hero hq-hero--minimal-centered" style="min-height:500px;background:linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.6)),url('/assets/images/used-aircraft/r66/chris-r66-alps.jpg') center/cover;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;color:#fff;position:relative;">
+            <h1 style="font-size:4rem;margin:0;">Elevate Your Journey</h1>
+            <p style="font-size:1.25rem;opacity:0.9;margin:1rem 0 2rem;">Robinson helicopter specialists since 1990</p>
+            <a href="#aircraft" class="hq-btn hq-btn--primary" style="font-size:1.1rem;padding:1rem 2rem;">Explore Aircraft</a>
+            <div style="position:absolute;bottom:2rem;display:flex;flex-direction:column;align-items:center;opacity:0.7;">
+              <span style="font-size:0.75rem;margin-bottom:0.5rem;">Scroll</span>
+              <span style="font-size:1.5rem;">↓</span>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="footer-mega">
+        <div class="inspiration-block__header">
+          <h3>Mega Footer - "Yes we need a cool footer"</h3>
+          <span class="inspiration-block__id">footer-mega</span>
+        </div>
+        <div class="inspiration-block__render inspiration-block__render--dark">
+          <footer class="hq-footer hq-footer--mega" style="background:#0a0a0a;padding:4rem 2rem 2rem;color:#fff;">
+            <div class="hq-container">
+              <div style="display:grid;grid-template-columns:2fr repeat(4,1fr);gap:2rem;margin-bottom:3rem;">
+                <div>
+                  <h3 style="font-size:1.5rem;margin-bottom:0.5rem;">HQ Aviation</h3>
+                  <p style="color:#666;margin-bottom:1rem;">UK's Premier Robinson Helicopter Dealer</p>
+                  <a href="tel:+441753868976" style="display:block;color:var(--hq-accent);font-size:1.25rem;margin-bottom:0.5rem;text-decoration:none;">01753 868 976</a>
+                  <a href="mailto:info@hqaviation.com" style="color:#888;text-decoration:none;">info@hqaviation.com</a>
+                </div>
+                <div>
+                  <h4 style="margin-bottom:1rem;font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;color:#888;">Aircraft</h4>
+                  <ul style="list-style:none;">
+                    <li style="margin-bottom:0.5rem;"><a href="#" style="color:#888;text-decoration:none;">Robinson R22</a></li>
+                    <li style="margin-bottom:0.5rem;"><a href="#" style="color:#888;text-decoration:none;">Robinson R44</a></li>
+                    <li style="margin-bottom:0.5rem;"><a href="#" style="color:#888;text-decoration:none;">Robinson R66</a></li>
+                    <li><a href="#" style="color:#888;text-decoration:none;">Pre-Owned</a></li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 style="margin-bottom:1rem;font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;color:#888;">Training</h4>
+                  <ul style="list-style:none;">
+                    <li style="margin-bottom:0.5rem;"><a href="#" style="color:#888;text-decoration:none;">PPL(H) Course</a></li>
+                    <li style="margin-bottom:0.5rem;"><a href="#" style="color:#888;text-decoration:none;">Type Ratings</a></li>
+                    <li style="margin-bottom:0.5rem;"><a href="#" style="color:#888;text-decoration:none;">Trial Lessons</a></li>
+                    <li><a href="#" style="color:#888;text-decoration:none;">Night Ratings</a></li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 style="margin-bottom:1rem;font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;color:#888;">Services</h4>
+                  <ul style="list-style:none;">
+                    <li style="margin-bottom:0.5rem;"><a href="#" style="color:#888;text-decoration:none;">Maintenance</a></li>
+                    <li style="margin-bottom:0.5rem;"><a href="#" style="color:#888;text-decoration:none;">Parts</a></li>
+                    <li style="margin-bottom:0.5rem;"><a href="#" style="color:#888;text-decoration:none;">Inspections</a></li>
+                    <li><a href="#" style="color:#888;text-decoration:none;">Management</a></li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 style="margin-bottom:1rem;font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;color:#888;">Opening Hours</h4>
+                  <p style="color:#888;line-height:1.6;font-size:0.9rem;">
+                    Monday - Friday: 8am - 6pm<br>
+                    Saturday: 9am - 4pm<br>
+                    Sunday: By appointment
+                  </p>
+                  <address style="color:#888;font-style:normal;margin-top:1rem;font-size:0.9rem;">
+                    Denham Aerodrome<br>Buckinghamshire UB9 5DF
+                  </address>
+                </div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-top:2rem;border-top:1px solid rgba(255,255,255,0.1);">
+                <p style="color:#555;font-size:0.85rem;">© 2024 HQ Aviation Ltd. All rights reserved.</p>
+                <nav style="display:flex;gap:1.5rem;">
+                  <a href="#" style="color:#666;text-decoration:none;font-size:0.85rem;">Privacy Policy</a>
+                  <a href="#" style="color:#666;text-decoration:none;font-size:0.85rem;">Terms</a>
+                  <a href="#" style="color:#666;text-decoration:none;font-size:0.85rem;">Cookies</a>
+                </nav>
+              </div>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEAM & ABOUT -->
+    <section class="inspiration-section">
+      <h2 class="inspiration-section__title">Team & About Components</h2>
+
+      <div class="inspiration-block" id="team-grid-4">
+        <div class="inspiration-block__header">
+          <h3>Team Grid - "The team grid is very good"</h3>
+          <span class="inspiration-block__id">team-grid-4</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-team hq-team--grid" id="team">
+            <div class="hq-container">
+              <div class="hq-section-header">
+                <span class="hq-overline">Our Team</span>
+                <h2 class="hq-section-title">Meet the Experts</h2>
+                <p class="hq-section-subtitle">Three decades of combined aviation experience</p>
+              </div>
+              <div class="hq-team__grid">
+                <div class="hq-team-card">
+                  <div class="hq-team-card__image">
+                    <img src="/assets/images/team/quentin-smith-world-record-holder-helicopter-aerobatics.webp" alt="Quentin Smith">
+                    <div class="hq-team-card__overlay">
+                      <p>Founder & Chief Pilot with 30+ years experience. Led expeditions to 50+ countries. 7 World Records.</p>
+                      <div class="hq-team-card__social">
+                        <a href="#">LinkedIn</a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="hq-team-card__info">
+                    <h3 class="hq-team-card__name">Quentin Smith</h3>
+                    <span class="hq-team-card__role">Founder & Managing Director</span>
+                  </div>
+                </div>
+                <div class="hq-team-card">
+                  <div class="hq-team-card__image">
+                    <img src="/assets/images/team/british-helicopter-team.webp" alt="Mackie Alcantara">
+                    <div class="hq-team-card__overlay">
+                      <p>Chief Flight Instructor leading a team of 4 instructors. CAA examiner with thousands of instruction hours.</p>
+                    </div>
+                  </div>
+                  <div class="hq-team-card__info">
+                    <h3 class="hq-team-card__name">Mackie Alcantara</h3>
+                    <span class="hq-team-card__role">Chief Flight Instructor</span>
+                  </div>
+                </div>
+                <div class="hq-team-card">
+                  <div class="hq-team-card__image">
+                    <img src="/assets/images/facility/hq-aviation-helicopter-hangar.webp" alt="David Cross">
+                    <div class="hq-team-card__overlay">
+                      <p>Chief Engineer heading a team of 20 engineers. Factory-trained at Robinson HQ. Includes parts specialist and scheduling/support team.</p>
+                    </div>
+                  </div>
+                  <div class="hq-team-card__info">
+                    <h3 class="hq-team-card__name">David Cross</h3>
+                    <span class="hq-team-card__role">Chief Engineer</span>
+                  </div>
+                </div>
+                <div class="hq-team-card">
+                  <div class="hq-team-card__image">
+                    <img src="/assets/images/facility/hq-helicopter-hangarage-the-robinson-specialists-1.webp" alt="Alex & Nicola">
+                    <div class="hq-team-card__overlay">
+                      <p>Head of Operations with a team of 4. Keeping everything running smoothly - scheduling, client support, and administration.</p>
+                    </div>
+                  </div>
+                  <div class="hq-team-card__info">
+                    <h3 class="hq-team-card__name">Alex & Nicola</h3>
+                    <span class="hq-team-card__role">Head of Operations</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="team-leadership">
+        <div class="inspiration-block__header">
+          <h3>Leadership Team - "Yes important"</h3>
+          <span class="inspiration-block__id">team-leadership</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-leadership">
+            <div class="hq-container">
+              <div class="hq-section-header hq-section-header--center">
+                <span class="hq-overline">Our People</span>
+                <h2 class="hq-section__title">Leadership Team</h2>
+                <p class="hq-section__subtitle">Three decades of aviation excellence</p>
+              </div>
+              <div class="hq-leadership__grid" style="grid-template-columns: repeat(2, 1fr);">
+                <div class="hq-leader-card">
+                  <div class="hq-leader-card__image">
+                    <img src="/assets/images/team/quentin-smith-world-record-holder-helicopter-aerobatics.webp" alt="Quentin Smith">
+                  </div>
+                  <div class="hq-leader-card__content">
+                    <h3>Quentin Smith</h3>
+                    <span class="hq-leader-card__role">Founder & Managing Director</span>
+                    <p>Founded HQ Aviation in 1990. Former British Helicopter Champion. 15,000+ flight hours. Quentin's vision built the UK's leading Robinson dealership.</p>
+                  </div>
+                </div>
+                <div class="hq-leader-card">
+                  <div class="hq-leader-card__image">
+                    <img src="/assets/images/team/british-helicopter-team.webp" alt="Mackie Alcantara">
+                  </div>
+                  <div class="hq-leader-card__content">
+                    <h3>Mackie Alcantara</h3>
+                    <span class="hq-leader-card__role">Chief Flight Instructor</span>
+                    <p>Leads a team of 4 instructors. CAA examiner. Trained over 500 private and commercial pilots. The patient voice guiding the next generation of aviators.</p>
+                  </div>
+                </div>
+                <div class="hq-leader-card">
+                  <div class="hq-leader-card__image">
+                    <img src="/assets/images/facility/hq-aviation-helicopter-hangar.webp" alt="David Cross">
+                  </div>
+                  <div class="hq-leader-card__content">
+                    <h3>David Cross</h3>
+                    <span class="hq-leader-card__role">Chief Engineer</span>
+                    <p>Heads a team of 20 engineers. EASA Part-66 licensed. Factory-trained at Robinson HQ. One dedicated Robinson parts specialist. 3 people for scheduling and client support.</p>
+                  </div>
+                </div>
+                <div class="hq-leader-card">
+                  <div class="hq-leader-card__image">
+                    <img src="/assets/images/facility/hq-helicopter-hangarage-the-robinson-specialists-1.webp" alt="Alex & Nicola">
+                  </div>
+                  <div class="hq-leader-card__content">
+                    <h3>Alex & Nicola</h3>
+                    <span class="hq-leader-card__role">Head of Operations</span>
+                    <p>Lead a team of 4 coordinating all aspects of HQ operations. From scheduling to client support, they ensure everything runs smoothly.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="team-founder-spotlight">
+        <div class="inspiration-block__header">
+          <h3>Founder Spotlight - "Large founder feature with story"</h3>
+          <span class="inspiration-block__id">team-founder-spotlight</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-team hq-team--founder" id="team">
+            <div class="hq-team__founder-split">
+              <div class="hq-team__founder-image">
+                <img src="/assets/images/team/helicopter-genius-quentin-smith-great-britain.webp" alt="Quentin Smith">
+              </div>
+              <div class="hq-team__founder-content">
+                <span class="hq-overline">Our Story</span>
+                <h2 class="hq-section-title">A Passion That<br>Took Flight</h2>
+                <p class="hq-lead">In 1990, Quentin Smith transformed his love for aviation into HQ Aviation—now the UK's premier Robinson helicopter center.</p>
+                <blockquote class="hq-team__founder-quote">
+                  "Every person who walks through our doors shares one thing: the dream of flight. Our job is to make that dream a reality."
+                </blockquote>
+                <div class="hq-team__founder-stats">
+                  <div class="hq-stat-mini">
+                    <span class="hq-stat-mini__value">15,000+</span>
+                    <span class="hq-stat-mini__label">Flight Hours</span>
+                  </div>
+                  <div class="hq-stat-mini">
+                    <span class="hq-stat-mini__value">50+</span>
+                    <span class="hq-stat-mini__label">Countries Flown</span>
+                  </div>
+                  <div class="hq-stat-mini">
+                    <span class="hq-stat-mini__value">7</span>
+                    <span class="hq-stat-mini__label">World Records</span>
+                  </div>
+                </div>
+                <a href="#about" class="hq-btn hq-btn--dark">Read Full Story</a>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="inspiration-section">
+      <h2 class="inspiration-section__title">Services Components</h2>
+
+      <div class="inspiration-block" id="tabbed-services">
+        <div class="inspiration-block__header">
+          <h3>Tabbed Services - "Tabbed Services is neat"</h3>
+          <span class="inspiration-block__id">tabbed-services</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-tabbed hq-tabbed--services" id="services-tabs">
+            <div class="hq-container">
+              <div class="hq-section-header hq-section-header--center">
+                <span class="hq-overline">What We Offer</span>
+                <h2 class="hq-section-title">Our Services</h2>
+              </div>
+              <div class="hq-tabs">
+                <div class="hq-tabs__nav">
+                  <button class="hq-tabs__btn active" data-tab="sales">Sales</button>
+                  <button class="hq-tabs__btn" data-tab="training">Training</button>
+                  <button class="hq-tabs__btn" data-tab="maintenance">Maintenance</button>
+                  <button class="hq-tabs__btn" data-tab="parts">Parts</button>
+                </div>
+                <div class="hq-tabs__content">
+                  <div class="hq-tabs__panel active" id="tab-sales">
+                    <div class="hq-tabs__panel-split">
+                      <div class="hq-tabs__panel-text">
+                        <h3>Helicopter Sales</h3>
+                        <p>As an authorized Robinson dealer, we offer the complete range of new and pre-owned helicopters. From your first enquiry to delivery, our team provides expert guidance throughout the purchase process.</p>
+                        <ul class="hq-list hq-list--check">
+                          <li>New factory orders with full customization</li>
+                          <li>Quality pre-owned inventory</li>
+                          <li>Trade-in valuations</li>
+                          <li>Worldwide delivery</li>
+                        </ul>
+                        <a href="#aircraft" class="hq-btn hq-btn--primary">View Aircraft</a>
+                      </div>
+                      <div class="hq-tabs__panel-image">
+                        <img src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-front-v4.png" alt="R66 Helicopter">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="hq-tabs__panel" id="tab-training">
+                    <div class="hq-tabs__panel-split">
+                      <div class="hq-tabs__panel-text">
+                        <h3>Flight Training</h3>
+                        <p>Learn to fly with our CAA-approved training organization. From complete beginners to type ratings, our experienced instructors will guide you every step of the way.</p>
+                        <ul class="hq-list hq-list--check">
+                          <li>PPL(H) complete courses</li>
+                          <li>Type ratings (R22, R44, R66)</li>
+                          <li>Instructor ratings</li>
+                          <li>Night ratings</li>
+                        </ul>
+                        <a href="#training" class="hq-btn hq-btn--primary">View Courses</a>
+                      </div>
+                      <div class="hq-tabs__panel-image">
+                        <img src="/assets/images/team/british-helicopter-team.webp" alt="Training">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="tabbed-specs">
+        <div class="inspiration-block__header">
+          <h3>Tabbed Specifications - "The Tabbed Specifications is quite neat"</h3>
+          <span class="inspiration-block__id">tabbed-specs</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-tabbed hq-tabbed--specs" id="specs">
+            <div class="hq-container">
+              <h2 class="hq-section-title">R66 Turbine Specifications</h2>
+              <div class="hq-tabs hq-tabs--underline">
+                <div class="hq-tabs__nav">
+                  <button class="hq-tabs__btn active" data-tab="performance">Performance</button>
+                  <button class="hq-tabs__btn" data-tab="dimensions">Dimensions</button>
+                  <button class="hq-tabs__btn" data-tab="engine">Engine</button>
+                  <button class="hq-tabs__btn" data-tab="weights">Weights</button>
+                </div>
+                <div class="hq-tabs__content">
+                  <div class="hq-tabs__panel active" id="tab-performance">
+                    <div class="hq-specs-grid">
+                      <div class="hq-spec-item">
+                        <span class="hq-spec-item__label">Max Cruise Speed</span>
+                        <span class="hq-spec-item__value">110 kts</span>
+                      </div>
+                      <div class="hq-spec-item">
+                        <span class="hq-spec-item__label">Max Range</span>
+                        <span class="hq-spec-item__value">350 nm</span>
+                      </div>
+                      <div class="hq-spec-item">
+                        <span class="hq-spec-item__label">Hover Ceiling IGE</span>
+                        <span class="hq-spec-item__value">10,000 ft</span>
+                      </div>
+                      <div class="hq-spec-item">
+                        <span class="hq-spec-item__label">Rate of Climb</span>
+                        <span class="hq-spec-item__value">1,000 fpm</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="features-icon-grid">
+        <div class="inspiration-block__header">
+          <h3>Icon Feature Grid - "Interesting idea but needs improvement"</h3>
+          <span class="inspiration-block__id">features-icon-grid</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-features hq-features--grid" id="features">
+            <div class="hq-container">
+              <div class="hq-section-header">
+                <span class="hq-overline">Why Choose Us</span>
+                <h2 class="hq-section-title">The HQ Advantage</h2>
+              </div>
+              <div class="hq-features__grid">
+                <div class="hq-feature-item">
+                  <div class="hq-feature-item__icon">🏆</div>
+                  <h3 class="hq-feature-item__title">30+ Years Experience</h3>
+                  <p class="hq-feature-item__desc">Three decades as the UK's leading Robinson helicopter specialist.</p>
+                </div>
+                <div class="hq-feature-item">
+                  <div class="hq-feature-item__icon">✈️</div>
+                  <h3 class="hq-feature-item__title">Factory Authorized</h3>
+                  <p class="hq-feature-item__desc">Official Robinson dealer with factory-trained engineers.</p>
+                </div>
+                <div class="hq-feature-item">
+                  <div class="hq-feature-item__icon">🔧</div>
+                  <h3 class="hq-feature-item__title">EASA Part-145</h3>
+                  <p class="hq-feature-item__desc">Certified maintenance facility for all Robinson models.</p>
+                </div>
+                <div class="hq-feature-item">
+                  <div class="hq-feature-item__icon">📚</div>
+                  <h3 class="hq-feature-item__title">CAA Approved</h3>
+                  <p class="hq-feature-item__desc">Registered training organization with excellent pass rates.</p>
+                </div>
+                <div class="hq-feature-item">
+                  <div class="hq-feature-item__icon">🌍</div>
+                  <h3 class="hq-feature-item__title">Global Expeditions</h3>
+                  <p class="hq-feature-item__desc">Join world-record holding pilots on adventures worldwide.</p>
+                </div>
+                <div class="hq-feature-item">
+                  <div class="hq-feature-item__icon">🤝</div>
+                  <h3 class="hq-feature-item__title">Full Support</h3>
+                  <p class="hq-feature-item__desc">From purchase to maintenance to management—we're here.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="maintenance-capabilities">
+        <div class="inspiration-block__header">
+          <h3>Maintenance Capabilities - "Breakdown of everything we do for service"</h3>
+          <span class="inspiration-block__id">maintenance-capabilities</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-maintenance-services">
+            <div class="hq-container">
+              <div class="hq-section-header hq-section-header--center">
+                <span class="hq-overline">EASA Part-145 Approved</span>
+                <h2 class="hq-section__title">Complete Maintenance Solutions</h2>
+                <p class="hq-section__subtitle">Factory-trained engineers. Genuine parts. Full certification.</p>
+              </div>
+              <div class="hq-maintenance-services__grid">
+                <div class="hq-service-block">
+                  <div class="hq-service-block__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  </div>
+                  <h3>100-Hour Inspections</h3>
+                  <p>Comprehensive checks to keep you flying safely. Typically 2-3 day turnaround.</p>
+                  <span class="hq-service-block__price">From £2,400</span>
+                </div>
+                <div class="hq-service-block">
+                  <div class="hq-service-block__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                  </div>
+                  <h3>Annual Inspections</h3>
+                  <p>Full annual airworthiness review with CAA documentation.</p>
+                  <span class="hq-service-block__price">From £4,800</span>
+                </div>
+                <div class="hq-service-block">
+                  <div class="hq-service-block__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  </div>
+                  <h3>Component Overhaul</h3>
+                  <p>Blade, gearbox, and major component rebuilds to factory spec.</p>
+                  <span class="hq-service-block__price">Quote on request</span>
+                </div>
+                <div class="hq-service-block">
+                  <div class="hq-service-block__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                  </div>
+                  <h3>Parts Supply</h3>
+                  <p>Genuine Robinson parts. Large UK stock for rapid turnaround.</p>
+                  <span class="hq-service-block__price">Same-day UK dispatch</span>
+                </div>
+                <div class="hq-service-block">
+                  <div class="hq-service-block__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  </div>
+                  <h3>AOG Support</h3>
+                  <p>Aircraft on ground? Priority response to get you flying again.</p>
+                  <span class="hq-service-block__price">24/7 Available</span>
+                </div>
+                <div class="hq-service-block">
+                  <div class="hq-service-block__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                  </div>
+                  <h3>Tech Records</h3>
+                  <p>Complete logbook and documentation management services.</p>
+                  <span class="hq-service-block__price">Included</span>
+                </div>
+              </div>
+              <div class="hq-maintenance-services__certifications">
+                <img src="/assets/images/logos/certifications/easa1.png" alt="EASA Part-145">
+                <img src="/assets/images/logos/certifications/caa.jpg" alt="CAA Approved">
+                <img src="/assets/images/logos/certifications/logo_robinson_authorized_repair_center1.jpg" alt="Robinson Authorized">
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section class="inspiration-section">
+      <h2 class="inspiration-section__title">Gallery Components</h2>
+
+      <div class="inspiration-block" id="gallery-masonry">
+        <div class="inspiration-block__header">
+          <h3>Masonry Grid - "Pinterest-style varied heights"</h3>
+          <span class="inspiration-block__id">gallery-masonry</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-section hq-gallery hq-gallery--masonry" id="gallery">
+            <div class="hq-container">
+              <div class="hq-section-header">
+                <span class="hq-overline">Gallery</span>
+                <h2 class="hq-section-title">Adventures in Flight</h2>
+              </div>
+              <div class="hq-gallery__masonry">
+                <a href="#" class="hq-gallery-item hq-gallery-item--tall">
+                  <img src="/assets/images/used-aircraft/r66/chris-r66-alps.jpg" alt="Alps Flight">
+                  <div class="hq-gallery-item__caption">Alpine Expedition 2024</div>
+                </a>
+                <a href="#" class="hq-gallery-item">
+                  <img src="/assets/images/facility/busy-hangar.jpg" alt="Hangar">
+                  <div class="hq-gallery-item__caption">Our Facility</div>
+                </a>
+                <a href="#" class="hq-gallery-item">
+                  <img src="/assets/images/expeditionss/helicopter-expeditions-quentin-smith.webp" alt="Expedition">
+                  <div class="hq-gallery-item__caption">World Tour</div>
+                </a>
+                <a href="#" class="hq-gallery-item hq-gallery-item--wide">
+                  <img src="/assets/images/team/british-helicopter-team.webp" alt="Team">
+                  <div class="hq-gallery-item__caption">Training Team</div>
+                </a>
+                <a href="#" class="hq-gallery-item">
+                  <img src="/assets/images/legacy/dated/20251217_183027.jpg" alt="Sunset">
+                  <div class="hq-gallery-item__caption">Golden Hour</div>
+                </a>
+                <a href="#" class="hq-gallery-item hq-gallery-item--tall">
+                  <img src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-front-v4.png" alt="R66">
+                  <div class="hq-gallery-item__caption">R66 Showcase</div>
+                </a>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE SHOWCASES -->
+    <section class="inspiration-section">
+      <h2 class="inspiration-section__title">Page-Specific Showcase Components</h2>
+
+      <div class="inspiration-block" id="showcase-training-environment">
+        <div class="inspiration-block__header">
+          <h3>The HQ Training Experience - "Good but needs differentiators"</h3>
+          <span class="inspiration-block__id">showcase-training-environment</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-showcase hq-showcase--environment">
+            <div class="hq-container">
+              <div class="hq-showcase__header">
+                <span class="hq-showcase__eyebrow">Flight Training</span>
+                <h2 class="hq-showcase__title">Why Students<br><em>Choose HQ</em></h2>
+              </div>
+
+              <div class="hq-showcase__features-grid">
+                <div class="hq-showcase__feature-card hq-showcase__feature-card--large">
+                  <div class="hq-showcase__feature-img">
+                    <img src="/assets/images/team/british-helicopter-team.webp" alt="R22 Training">
+                  </div>
+                  <div class="hq-showcase__feature-content">
+                    <h3>1-to-1 Instruction</h3>
+                    <p>Every lesson is personal. Our experienced instructors adapt to your learning style, ensuring you progress at the right pace. No group sessions, no waiting—just focused flight time.</p>
+                  </div>
+                </div>
+
+                <div class="hq-showcase__feature-card">
+                  <div class="hq-showcase__feature-icon">
+                    <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 20l6 6 10-12" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                  </div>
+                  <h3>Modern Fleet</h3>
+                  <p>Train on well-maintained R22s and R44s with modern avionics. Our aircraft are maintained by our own EASA Part-145 engineers.</p>
+                </div>
+
+                <div class="hq-showcase__feature-card">
+                  <div class="hq-showcase__feature-icon">
+                    <svg viewBox="0 0 40 40"><path d="M20 4v16l12 8-12-8-12 8 12-8V4z" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                  </div>
+                  <h3>Flexible Scheduling</h3>
+                  <p>Weekend warrior or intensive course? We work around your life. Many students complete PPL(H) while maintaining full-time careers.</p>
+                </div>
+
+                <div class="hq-showcase__feature-card hq-showcase__feature-card--highlight">
+                  <div class="hq-showcase__feature-icon">
+                    <svg viewBox="0 0 40 40"><rect x="8" y="12" width="24" height="16" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 18h6M12 22h10" stroke="currentColor" stroke-width="1.5"/></svg>
+                  </div>
+                  <h3>Ground School Included</h3>
+                  <p>Theory exams don't have to be daunting. Our ground school sessions prepare you thoroughly for all nine required exams. <strong>Many schools charge extra—we include it.</strong></p>
+                </div>
+
+                <div class="hq-showcase__feature-card">
+                  <div class="hq-showcase__feature-icon">
+                    <svg viewBox="0 0 40 40"><path d="M20 8c-6 0-12 8-12 12s6 12 12 12 12-8 12-12-6-12-12-12z" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="20" cy="20" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                  </div>
+                  <h3>Post-License Support</h3>
+                  <p>Your relationship with HQ doesn't end at license. Ongoing mentorship, type ratings, and currency training available.</p>
+                </div>
+              </div>
+
+              <div class="hq-showcase__cta hq-showcase__cta--centered">
+                <a href="#training" class="hq-btn hq-btn--primary">View Training Courses</a>
+                <a href="tel:+441753868976" class="hq-btn hq-btn--outline">Call to Discuss</a>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="showcase-trial-experience">
+        <div class="inspiration-block__header">
+          <h3>Your Trial Flight - "I quite like the preflight to debrief component"</h3>
+          <span class="inspiration-block__id">showcase-trial-experience</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-showcase hq-showcase--trial">
+            <div class="hq-container">
+              <div class="hq-showcase__trial-header">
+                <span class="hq-showcase__eyebrow">Experience It First</span>
+                <h2 class="hq-showcase__title">Your First<br><em>Flight Awaits</em></h2>
+                <p class="hq-showcase__lead">Not sure if helicopter flying is for you? A trial flight is the perfect way to discover the magic—with no commitment required.</p>
+              </div>
+
+              <div class="hq-showcase__trial-timeline">
+                <div class="hq-showcase__trial-step">
+                  <span class="hq-showcase__trial-time">30 min</span>
+                  <div class="hq-showcase__trial-content">
+                    <h4>Pre-Flight Briefing</h4>
+                    <p>Meet your instructor, learn the basics, and ask any questions. We'll cover safety, controls, and what to expect.</p>
+                  </div>
+                </div>
+                <div class="hq-showcase__trial-step">
+                  <span class="hq-showcase__trial-time">30 min</span>
+                  <div class="hq-showcase__trial-content">
+                    <h4>Your Flight</h4>
+                    <p>You'll take the controls under supervision. Experience hovering, forward flight, and turns over beautiful Buckinghamshire.</p>
+                  </div>
+                </div>
+                <div class="hq-showcase__trial-step">
+                  <span class="hq-showcase__trial-time">15 min</span>
+                  <div class="hq-showcase__trial-content">
+                    <h4>Debrief & Discussion</h4>
+                    <p>Review your flight, discuss your potential, and if you're hooked—map out your training journey.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="hq-showcase__trial-cta">
+                <div class="hq-showcase__trial-price">
+                  <span class="hq-showcase__price-label">Trial Flight</span>
+                  <span class="hq-showcase__price-value">£299</span>
+                  <span class="hq-showcase__price-note">~75 minutes total experience</span>
+                </div>
+                <a href="#book-trial" class="hq-btn hq-btn--primary hq-btn--lg">Book Your Trial</a>
+                <p class="hq-showcase__trial-gift">Makes an unforgettable gift. <a href="#vouchers">Gift vouchers available →</a></p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="showcase-cost-transparency">
+        <div class="inspiration-block__header">
+          <h3>What It Really Costs - "Pricing page is important"</h3>
+          <span class="inspiration-block__id">showcase-cost-transparency</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-showcase hq-showcase--costs">
+            <div class="hq-container">
+              <div class="hq-showcase__header hq-showcase__header--centered">
+                <span class="hq-showcase__eyebrow">Transparent Pricing</span>
+                <h2 class="hq-showcase__title">What It <em>Really</em> Costs</h2>
+                <p class="hq-showcase__lead">No hidden fees. No surprises. Here's the full picture for your PPL(H).</p>
+              </div>
+
+              <div class="hq-showcase__cost-breakdown">
+                <div class="hq-showcase__cost-item">
+                  <div class="hq-showcase__cost-header">
+                    <h4>Flight Training</h4>
+                    <span class="hq-showcase__cost-range">£16,000 - £20,000</span>
+                  </div>
+                  <p>Minimum 45 hours required. Most students complete in 50-60 hours. R22 rate: approx £350/hour dual.</p>
+                </div>
+
+                <div class="hq-showcase__cost-item">
+                  <div class="hq-showcase__cost-header">
+                    <h4>Ground School</h4>
+                    <span class="hq-showcase__cost-range hq-showcase__cost-range--included">Included</span>
+                  </div>
+                  <p>Theory training for all 9 exams included in your training package. No extra charge.</p>
+                </div>
+
+                <div class="hq-showcase__cost-item">
+                  <div class="hq-showcase__cost-header">
+                    <h4>Exam Fees</h4>
+                    <span class="hq-showcase__cost-range">£500 - £800</span>
+                  </div>
+                  <p>CAA theory exam fees (9 exams) plus skills test fee. Prices set by CAA.</p>
+                </div>
+
+                <div class="hq-showcase__cost-item">
+                  <div class="hq-showcase__cost-header">
+                    <h4>Medical Certificate</h4>
+                    <span class="hq-showcase__cost-range">£200 - £300</span>
+                  </div>
+                  <p>Class 2 medical required. Arranged through CAA-approved medical examiners.</p>
+                </div>
+
+                <div class="hq-showcase__cost-total">
+                  <span>Typical Total Investment</span>
+                  <strong>£17,000 - £22,000</strong>
+                </div>
+              </div>
+
+              <div class="hq-showcase__cost-note">
+                <p><strong>Payment flexibility:</strong> Pay-as-you-fly available. Block booking discounts. Talk to us about structuring your training investment.</p>
+                <a href="#contact" class="hq-btn hq-btn--outline">Discuss Your Training Plan</a>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="showcase-denham-location">
+        <div class="inspiration-block__header">
+          <h3>Visit Us at Denham - "This page is not bad"</h3>
+          <span class="inspiration-block__id">showcase-denham-location</span>
+        </div>
+        <div class="inspiration-block__render">
+          <section class="hq-showcase hq-showcase--location">
+            <div class="hq-container">
+              <div class="hq-showcase__split">
+                <div class="hq-showcase__content">
+                  <span class="hq-showcase__eyebrow">Our Home</span>
+                  <h2 class="hq-showcase__title">Find Us at<br><em>Denham Aerodrome</em></h2>
+                  <p class="hq-showcase__text">Just 20 minutes from Central London, our purpose-built facility at Denham Aerodrome has been home to HQ Aviation since 1990. Whether you're visiting for a trial flight, collecting a new aircraft, or bringing yours in for service—you're always welcome.</p>
+
+                  <div class="hq-showcase__location-details">
+                    <div class="hq-showcase__location-item">
+                      <strong>Address</strong>
+                      <p>HQ Aviation<br>Denham Aerodrome<br>Tilehouse Lane<br>Denham, Buckinghamshire<br>UB9 5DF</p>
+                    </div>
+                    <div class="hq-showcase__location-item">
+                      <strong>Getting Here</strong>
+                      <p>5 mins from M40 Junction 1<br>20 mins from M25 Junction 16<br>Free parking on site</p>
+                    </div>
+                    <div class="hq-showcase__location-item">
+                      <strong>Opening Hours</strong>
+                      <p>Monday - Friday: 8am - 6pm<br>Saturday: 9am - 4pm<br>Sunday: By appointment</p>
+                    </div>
+                  </div>
+
+                  <div class="hq-showcase__location-contact">
+                    <a href="tel:+441753868976" class="hq-showcase__contact-link">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                      01753 868 976
+                    </a>
+                    <a href="mailto:info@hqaviation.com" class="hq-showcase__contact-link">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                      info@hqaviation.com
+                    </a>
+                  </div>
+                </div>
+
+                <div class="hq-showcase__visual">
+                  <div class="hq-showcase__map-container">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2480.8!2d-0.5!3d51.57!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sHQ+Aviation!5e0!3m2!1sen!2suk!4v1" allowfullscreen="" loading="lazy"></iframe>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="inspiration-block" id="opening-hours">
+        <div class="inspiration-block__header">
+          <h3>Opening Hours - "Make sure opening times are included"</h3>
+          <span class="inspiration-block__id">opening-hours</span>
+        </div>
+        <div class="inspiration-block__render inspiration-block__render--dark">
+          <section class="hq-section hq-section--dark hq-section--compact">
+            <div class="hq-container">
+              <div class="hq-hours-bar">
+                <div class="hq-hours-bar__location">
+                  <h3 class="hq-hours-bar__title">Visit Us at Denham</h3>
+                  <p class="hq-hours-bar__address">Denham Aerodrome, Buckinghamshire UB9 5DF</p>
+                </div>
+                <div class="hq-hours-bar__times">
+                  <div class="hq-hours-bar__day">
+                    <span class="hq-hours-bar__label">Mon - Fri</span>
+                    <span class="hq-hours-bar__value">8am - 6pm</span>
+                  </div>
+                  <div class="hq-hours-bar__day">
+                    <span class="hq-hours-bar__label">Saturday</span>
+                    <span class="hq-hours-bar__value">9am - 4pm</span>
+                  </div>
+                  <div class="hq-hours-bar__day">
+                    <span class="hq-hours-bar__label">Sunday</span>
+                    <span class="hq-hours-bar__value">By appointment</span>
+                  </div>
+                </div>
+                <a href="tel:+441753868976" class="hq-btn hq-btn--primary">Call 01753 868 976</a>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- APPROVED QUOTES -->
+    <section class="inspiration-section" id="quotes-section">
+      <h2>Approved Quotes (from component-feedback.md)</h2>
+
+      <div class="inspiration-block">
+        <div class="inspiration-block__header">
+          <h3>Approved Quote Collection</h3>
+          <span class="inspiration-block__id">quote-001, 002, 006, 010, 034, 041, 043, 051, 060, 067, 084, 100</span>
+        </div>
+        <div class="quotes-grid">
+          <div class="hq-quote-card"><blockquote>"The sky is not the limit. It's home."</blockquote><span class="hq-quote-use">quote-001: Rise Above - Approved</span></div>
+          <div class="hq-quote-card"><blockquote>"Where we're going, we don't need roads."</blockquote><span class="hq-quote-use">quote-002: No Roads - Approved</span></div>
+          <div class="hq-quote-card"><blockquote>"Rise above it all."</blockquote><span class="hq-quote-use">quote-006: Above It All - Approved</span></div>
+          <div class="hq-quote-card"><blockquote>"Life is too short for motorways."</blockquote><span class="hq-quote-use">quote-010: Live Unlimited - Approved</span></div>
+          <div class="hq-quote-card"><blockquote>"Cross it off the bucket list. Then make it your life."</blockquote><span class="hq-quote-use">quote-034: Bucket List - Maybe for bucket list angle</span></div>
+          <div class="hq-quote-card"><blockquote>"Own the sky."</blockquote><span class="hq-quote-use">quote-041: Own The Sky - Powerful</span></div>
+          <div class="hq-quote-card"><blockquote>"A helicopter isn't transport. It's a time machine."</blockquote><span class="hq-quote-use">quote-043: Time Machine - Journey is the fun part</span></div>
+          <div class="hq-quote-card"><blockquote>"Reimagine your weekends."</blockquote><span class="hq-quote-use">quote-051: Weekend Reimagined - Approved</span></div>
+          <div class="hq-quote-card"><blockquote>"New perspectives aren't found on the ground."</blockquote><span class="hq-quote-use">quote-060: New Perspective - Approved</span></div>
+          <div class="hq-quote-card"><blockquote>"A family business that treats you like family."</blockquote><span class="hq-quote-use">quote-067: Family Business - Strong point</span></div>
+          <div class="hq-quote-card"><blockquote>"The world's best-selling helicopters. For a reason."</blockquote><span class="hq-quote-use">quote-084: Best Seller - Approved</span></div>
+          <div class="hq-quote-card" style="background:var(--hq-accent);color:#fff;"><blockquote style="color:#fff;">"Your turn to fly."</blockquote><span class="hq-quote-use" style="color:rgba(255,255,255,0.8);">quote-100: Your Turn - KEY MESSAGE</span></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Smooth scroll for nav links
+    document.querySelectorAll('.inspiration-nav__section a').forEach(link => {
+      link.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (href.startsWith('#')) {
+          e.preventDefault();
+          const target = document.querySelector(href);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

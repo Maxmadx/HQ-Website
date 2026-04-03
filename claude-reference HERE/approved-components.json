@@ -1,0 +1,511 @@
+{
+  "approvedComponents": [
+    {
+      "id": "comp-009",
+      "name": "Testimonial Slider",
+      "feedback": null,
+      "status": "approved"
+    },
+    {
+      "id": "comp-015",
+      "name": "As Seen In",
+      "feedback": null,
+      "status": "approved"
+    },
+    {
+      "id": "comp-022",
+      "name": "Partner Logos",
+      "feedback": "Needs better icons but yes having our partners is cool, include Denham Aerodrome",
+      "status": "needs-work"
+    },
+    {
+      "id": "comp-005",
+      "name": "Fleet Showcase Carousel",
+      "feedback": "This is a nice component for the Robinson helicopters in the sale page, could use a little work but a good start. The R66 shouldn't appear in black with the word 'popular' - it should appear like any other",
+      "status": "needs-work",
+      "targetPage": "aircraft-sales"
+    },
+    {
+      "id": "comp-023",
+      "name": "Lifestyle Imagery",
+      "feedback": null,
+      "status": "approved"
+    },
+    {
+      "id": "comp-008",
+      "name": "Stats Counter",
+      "feedback": null,
+      "status": "approved"
+    },
+    {
+      "id": "comp-012",
+      "name": "Social Proof Wall",
+      "feedback": "We should have a 'Join Our Community' section with the Instagram, Facebook and YouTube socials",
+      "status": "needs-work"
+    },
+    {
+      "id": "comp-006",
+      "name": "Why Choose Us",
+      "feedback": "Not a pretty component but 'Why Choose Us' could be a valuable component",
+      "status": "needs-work"
+    },
+    {
+      "id": "comp-007",
+      "name": "Founder Story",
+      "feedback": "We need a founder section but it has to be really good, creative and beautiful",
+      "status": "needs-work",
+      "priority": "high"
+    },
+    {
+      "id": "comp-004",
+      "name": "Before & After Story",
+      "feedback": "This would be nice in the PPL(H) details page",
+      "status": "approved",
+      "targetPage": "training/ppl"
+    },
+    {
+      "id": "comp-026",
+      "name": "Team Preview",
+      "feedback": "We need to take a team photograph as well - have helicopters lined up and have all the employees in uniform lined up on multiple rows to also showcase how big our workforce is. Then we need the 'Our Team' component but this component is really ugly so we need to make some variations of this that look better",
+      "status": "needs-work",
+      "actionRequired": "Take team photograph with helicopters and uniformed employees"
+    },
+    {
+      "id": "comp-027",
+      "name": "Process Steps",
+      "feedback": "Add this to the PPL(H) details page and as you scroll one of the dots will fill with colour and text will appear in the middle describing each step",
+      "status": "needs-work",
+      "targetPage": "training/ppl",
+      "interactivity": "scroll-based animation with dot fill and text reveal"
+    },
+    {
+      "id": "comp-013",
+      "name": "Call-to-Action Split",
+      "feedback": "The 'Book a Trial Flight' component needs to appear in the discovery flight page. This component is ugly so it needs work but the sentiment is there",
+      "status": "needs-work",
+      "targetPage": "training/trial-lessons"
+    },
+    {
+      "id": "comp-014",
+      "name": "Location Highlight",
+      "feedback": "Instead of 'Free Parking' say 'On Site Parking'. Instead of 1990 write 2010",
+      "status": "needs-work",
+      "changes": {
+        "parking": "On Site Parking",
+        "year": "2010"
+      }
+    },
+    {
+      "id": "comp-011",
+      "name": "FAQ Accordion",
+      "feedback": "We've got to include common questions but they have to be specific to where you have navigated to. This UI is not very good though - I prefer one that I had developed. When it comes to it just ask me or add a note for me to give you the details about the UI I like",
+      "status": "needs-work",
+      "note": "ASK USER for preferred UI design details"
+    },
+    {
+      "id": "comp-021",
+      "name": "Recent News",
+      "feedback": "Important page",
+      "status": "approved",
+      "priority": "high"
+    },
+    {
+      "id": "comp-025",
+      "name": "Upcoming Events",
+      "feedback": null,
+      "status": "approved"
+    },
+    {
+      "id": "comp-032",
+      "name": "World Record Timeline",
+      "feedback": "This timeline will be great to have",
+      "status": "approved"
+    },
+    {
+      "id": "comp-035",
+      "name": "Expedition Destination Cards",
+      "feedback": "Get pictures from everyone in different places - Sardinia, Corsica, Scotland, Iceland, Greenland etc. Just go ham - Norway, get images from HQers",
+      "status": "needs-work",
+      "actionRequired": "Collect expedition photos from HQ team members",
+      "destinations": ["Sardinia", "Corsica", "Scotland", "Iceland", "Greenland", "Norway"]
+    },
+    {
+      "id": "comp-038",
+      "name": "Hangarage Features",
+      "feedback": "Yes hangarage is a good one to have like this. Make the full list of benefits, including proximity to Central London",
+      "status": "needs-work",
+      "mustInclude": ["proximity to Central London", "full benefits list"]
+    },
+    {
+      "id": "comp-047",
+      "name": "R88 Announcement",
+      "feedback": "Yes let's have a component like this for each type then, have the side profile though",
+      "status": "needs-work",
+      "variants": ["R22", "R44", "R66", "R88"],
+      "imageStyle": "side profile"
+    },
+    {
+      "id": "comp-048",
+      "name": "Ground School Preview",
+      "feedback": "Explanatory page - how getting your PPL works. Very good component",
+      "status": "approved",
+      "targetPage": "training/ppl"
+    },
+    {
+      "id": "comp-051",
+      "name": "Type Rating Cards",
+      "feedback": "Have a type rating component for R44, R66, H500, AS350, Bell 407",
+      "status": "needs-work",
+      "aircraftTypes": ["R44", "R66", "H500", "AS350", "Bell 407"]
+    },
+    {
+      "id": "comp-052",
+      "name": "Polar Achievement",
+      "feedback": "Pretty cool. Make one as well for Around the World and Aerobatic World Championships",
+      "status": "needs-work",
+      "variants": ["Polar Achievement", "Around the World", "Aerobatic World Championships"]
+    },
+    {
+      "id": "comp-053",
+      "name": "Self-Fly Hire Rates",
+      "feedback": "Yes include this in the self fly hire section",
+      "status": "approved",
+      "targetPage": "services/self-fly-hire"
+    },
+    {
+      "id": "quotes-collection",
+      "name": "Approved Quote Collection",
+      "quotes": ["quote-001", "quote-002", "quote-006", "quote-010", "quote-034", "quote-041", "quote-043", "quote-051", "quote-060", "quote-067", "quote-084", "quote-100"],
+      "feedback": null,
+      "status": "approved"
+    },
+    {
+      "id": "showcase-cost-transparency",
+      "name": "What It Really Costs",
+      "feedback": "Pricing page is important. Include pricing into PPL page and CPL page",
+      "status": "approved",
+      "targetPages": ["training/ppl", "training/cpl"]
+    },
+    {
+      "id": "footer-mega",
+      "name": "Mega Footer",
+      "feedback": "Yes we need a cool footer. We need a good footer",
+      "status": "needs-work",
+      "priority": "high"
+    },
+    {
+      "id": "lifestyle-ownership-benefits",
+      "name": "Ownership Benefits",
+      "feedback": "I like the idea of having a benefit component. Make a complete list of the benefits - door to door etc.",
+      "status": "needs-work",
+      "mustInclude": ["door to door", "complete benefits list"]
+    },
+    {
+      "id": "fleet-interactive",
+      "name": "Interactive Fleet Explorer",
+      "feedback": "This should be the component in Our Fleet",
+      "status": "approved",
+      "targetPage": "about-us/our-fleet"
+    },
+    {
+      "id": "fleet-model-spotlight",
+      "name": "Model Spotlight",
+      "feedback": "This component looks absolutely beautiful. Beautiful.",
+      "status": "approved",
+      "priority": "high"
+    },
+    {
+      "id": "comp-055",
+      "name": "Night Rating Feature",
+      "feedback": "Nice. Outline the requirements though",
+      "status": "needs-work",
+      "mustInclude": ["requirements outlined"]
+    },
+    {
+      "id": "comp-056",
+      "name": "Expedition Route Map",
+      "feedback": "Create one of these for all trips. Just go back in time and remember where the helicopter went. Have pinpoints and images all along the way and it animates",
+      "status": "needs-work",
+      "interactivity": "animated route with pinpoints and images",
+      "scope": "all trips"
+    },
+    {
+      "id": "comp-057",
+      "name": "Parts & Supplies",
+      "feedback": "This is a good start. The component on the right should be an enquiry document though with a phone number attached as an alternative",
+      "status": "needs-work",
+      "changes": {
+        "rightComponent": "enquiry form with phone number alternative"
+      }
+    },
+    {
+      "id": "comp-059",
+      "name": "Aircraft Management",
+      "feedback": null,
+      "status": "approved"
+    },
+    {
+      "id": "comp-066",
+      "name": "Weather Window",
+      "feedback": "This is cool if I can find a free tier API",
+      "status": "conditional",
+      "condition": "requires free tier weather API"
+    },
+    {
+      "id": "comp-067",
+      "name": "Career Pathways",
+      "feedback": "Put this in the CPL section however the UI here is disgusting, needs a lot of work",
+      "status": "needs-work",
+      "targetPage": "training/cpl",
+      "priority": "redesign"
+    },
+    {
+      "id": "comp-065",
+      "name": "Top Gear Moment",
+      "feedback": "I don't know in which section this would fit but it's a good component",
+      "status": "approved",
+      "note": "placement TBD"
+    },
+    {
+      "id": "comp-071",
+      "name": "Limited Slots Counter",
+      "feedback": "Awesome idea - '6 spots remaining for HQ Academy September Alumni'",
+      "status": "approved",
+      "exampleText": "6 spots remaining for HQ Academy September Alumni"
+    },
+    {
+      "id": "comp-072",
+      "name": "Price Lock Banner",
+      "feedback": "Good idea to take deposits from people at a set price, softens the blow of price increases. I wonder if the same thing could be done for maintenance",
+      "status": "approved",
+      "variants": ["training deposits", "maintenance deposits"]
+    },
+    {
+      "id": "comp-073",
+      "name": "Cost Breakdown Calculator",
+      "feedback": "Make this interactive and have lots of lines where the stuff is included like ground school, then in green next to it it should say 'included'",
+      "status": "needs-work",
+      "interactivity": "interactive calculator",
+      "styling": "green 'included' labels for bundled items"
+    },
+    {
+      "id": "comp-075",
+      "name": "Aircraft Leaseback Revenue",
+      "feedback": "I like this, very cool in the leaseback page",
+      "status": "approved",
+      "targetPage": "services/leaseback"
+    },
+    {
+      "id": "comp-077",
+      "name": "Ferry Flight Services",
+      "feedback": "Great component",
+      "status": "approved"
+    },
+    {
+      "id": "comp-084",
+      "name": "Mountain Flying Hazards",
+      "feedback": "Nice. So a 5 day course in Scotland",
+      "status": "approved",
+      "details": "5 day course in Scotland"
+    },
+    {
+      "id": "comp-081",
+      "name": "Superyacht Operations",
+      "feedback": "We need a special operations page but this one isn't good",
+      "status": "needs-work",
+      "priority": "redesign",
+      "targetPage": "services/special-operations"
+    },
+    {
+      "id": "comp-086",
+      "name": "Regulatory Compliance Display",
+      "feedback": null,
+      "status": "approved"
+    },
+    {
+      "id": "comp-087",
+      "name": "Pilot Hour Breakdown",
+      "feedback": "Good graphic for the PPL explanation",
+      "status": "approved",
+      "targetPage": "training/ppl"
+    },
+    {
+      "id": "comp-091",
+      "name": "Expedition Weather Patterns",
+      "feedback": "Limited supply - '2 aircraft remaining'. Register interest, ask questions etc. Basically a page with all our yearly trips and how many people have already booked to go on them, how many days it would be, a short description of them",
+      "status": "needs-work",
+      "features": ["availability counter", "register interest", "questions form", "booking status", "duration", "descriptions"]
+    },
+    {
+      "id": "comp-102",
+      "name": "Helicopter vs Fixed Wing",
+      "feedback": "I like it but not sure where we would put it. Don't make any omissions from the provided list",
+      "status": "approved",
+      "note": "placement TBD - do not omit"
+    },
+    {
+      "id": "adv-016",
+      "name": "Topographic Background",
+      "category": "adventure-texture",
+      "feedback": "These waves for our mountain training section is a really cool element",
+      "status": "approved",
+      "targetPage": "training/mountain-flying"
+    },
+    {
+      "id": "adv-017",
+      "name": "Polaroid Photo Frame",
+      "category": "adventure-component",
+      "feedback": "The polaroid frames with a little helicopter icon SVG trail that goes through them with pictures of helicopters from all destinations would be a really cool addition to our expeditions page. Have the helicopter fly down the page and it goes from one adventure to another",
+      "status": "needs-work",
+      "targetPage": "expeditions",
+      "enhancements": {
+        "addHelicopterTrail": true,
+        "animatedPath": "helicopter SVG flies between frames as you scroll",
+        "content": "destination photos from expeditions"
+      }
+    },
+    {
+      "id": "adv-001",
+      "name": "Expedition Flight Path",
+      "category": "adventure-component",
+      "feedback": "I like the grid component in the back",
+      "status": "approved",
+      "note": "Use the background grid pattern as a decorative element"
+    },
+    {
+      "id": "adv-004",
+      "name": "Compass Navigation Element",
+      "category": "adventure-component",
+      "feedback": "Have Denham stay stationary but a transition of the destination text and coordinates that cycle fast through the list of places we've taken helicopters to until the final one says 'Anywhere you can Dream Of'",
+      "status": "needs-work",
+      "enhancements": {
+        "originFixed": "Denham",
+        "destinationAnimation": "fast cycle through expedition destinations",
+        "finalDestination": "Anywhere you can Dream Of"
+      }
+    },
+    {
+      "id": "adv-012",
+      "name": "Pilot Briefing Card",
+      "category": "adventure-component",
+      "feedback": "We need a little component for taking registered interest in a trip",
+      "status": "needs-work",
+      "targetPage": "expeditions",
+      "enhancements": {
+        "addRegistrationForm": true,
+        "purpose": "register interest in trips"
+      }
+    },
+    {
+      "id": "adv-013",
+      "name": "Aviation Dividers",
+      "category": "adventure-component",
+      "feedback": "I like the runway style divider",
+      "status": "approved",
+      "variant": "runway-style"
+    },
+    {
+      "id": "adv-033",
+      "name": "Speed Tape",
+      "category": "adventure-component",
+      "feedback": "Cool idea to have a speed tape as you scroll, fun, but idk where we would use it so maybe not",
+      "status": "conditional",
+      "condition": "placement TBD - interesting concept but needs right context"
+    },
+    {
+      "id": "adv-041",
+      "name": "Passport Stamp",
+      "category": "adventure-component",
+      "feedback": "Passport stamps for the expeditions page is quite cool",
+      "status": "approved",
+      "targetPage": "expeditions"
+    },
+    {
+      "id": "adv-047",
+      "name": "Countdown Blocks",
+      "category": "adventure-component",
+      "feedback": "That's quite cool",
+      "status": "approved"
+    },
+    {
+      "id": "bg-001",
+      "name": "Floating Particles",
+      "category": "adventure-background",
+      "feedback": "Add more particles and make them look a little more like stars for the night flying rating",
+      "status": "needs-work",
+      "targetPage": "training/night-rating",
+      "enhancements": {
+        "increaseParticleCount": true,
+        "styleAsStars": true
+      }
+    },
+    {
+      "id": "bg-002",
+      "name": "Parallax Cloud Layers",
+      "category": "adventure-background",
+      "feedback": "Yes I like this component. As you start to scroll the clouds should quickly start to move to the left and to the right clearing the screen",
+      "status": "needs-work",
+      "enhancements": {
+        "scrollTrigger": true,
+        "animation": "clouds part left/right on scroll to reveal content"
+      }
+    },
+    {
+      "id": "dec-001",
+      "name": "Compass Rose Decorations",
+      "category": "adventure-decorative",
+      "feedback": "Incorporate a compass motif into the footer",
+      "status": "needs-work",
+      "targetPage": "footer",
+      "placement": "footer decoration"
+    },
+    {
+      "id": "dec-003",
+      "name": "Coordinate Grid Overlay",
+      "category": "adventure-decorative",
+      "feedback": "This is very cool for the 'where to find us' component",
+      "status": "approved",
+      "targetPage": "contact",
+      "placement": "location/find us section"
+    },
+    {
+      "id": "anim-006",
+      "name": "Typing / Typewriter Effect",
+      "category": "adventure-animation",
+      "feedback": "This would be really cool when enquiring about a discovery flight, when the inquiry is sent",
+      "status": "approved",
+      "targetPage": "training/trial-lessons",
+      "usage": "confirmation message after enquiry submission"
+    },
+    {
+      "id": "anim-010",
+      "name": "Staggered Animation Timing",
+      "category": "adventure-animation",
+      "feedback": "This I want as a reveal for card elements like the Our Team",
+      "status": "approved",
+      "usage": "scroll reveal animation for team cards and similar grid layouts",
+      "targetPage": "about-us/team"
+    }
+  ],
+  "adventureComponentsSummary": {
+    "totalAdventureComponents": 15,
+    "approved": 8,
+    "needsWork": 6,
+    "conditional": 1,
+    "categories": {
+      "textures": ["adv-016"],
+      "components": ["adv-001", "adv-004", "adv-012", "adv-013", "adv-017", "adv-033", "adv-041", "adv-047"],
+      "backgrounds": ["bg-001", "bg-002"],
+      "decorative": ["dec-001", "dec-003"],
+      "animations": ["anim-006", "anim-010"]
+    }
+  },
+  "summary": {
+    "totalApproved": 64,
+    "needsWork": 32,
+    "approved": 29,
+    "conditional": 2,
+    "highPriority": ["comp-007", "comp-021", "footer-mega", "fleet-model-spotlight"],
+    "needsRedesign": ["comp-067", "comp-081"]
+  }
+}

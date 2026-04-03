@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Variation 9: Dark Mode</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; }
+
+/* VARIATION 9: Dark Mode */
+.back-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: #888; text-decoration: none; font-size: 0.9rem;
+  padding: 25px 40px;
+}
+.back-link:hover { color: #fff; }
+
+.listing-container {
+  max-width: 1300px; margin: 0 auto; padding: 0 40px 80px;
+}
+
+.listing-grid {
+  display: grid; grid-template-columns: 1.2fr 1fr;
+  gap: 60px; align-items: start;
+}
+
+.gallery {
+  position: relative; border-radius: 16px;
+  overflow: hidden; background: #1a1a1a;
+}
+.gallery img { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+.gallery-nav {
+  position: absolute; bottom: 20px; left: 20px;
+  display: flex; gap: 10px;
+}
+.gallery-nav button {
+  width: 44px; height: 44px; background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.gallery-nav button:hover { background: rgba(255,255,255,0.2); }
+.gallery-thumbs {
+  display: flex; gap: 10px; margin-top: 15px;
+}
+.gallery-thumb {
+  width: 80px; height: 60px; border-radius: 8px;
+  overflow: hidden; cursor: pointer; opacity: 0.5;
+  border: 2px solid transparent; transition: all 0.2s;
+}
+.gallery-thumb:hover, .gallery-thumb.active { opacity: 1; border-color: #cc0000; }
+.gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+.details { padding-top: 10px; }
+.model-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.4rem; font-weight: 800;
+  text-transform: uppercase; margin-bottom: 15px;
+}
+.meta-row {
+  display: flex; gap: 20px; color: #888;
+  font-size: 0.9rem; margin-bottom: 30px;
+}
+.price {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.2rem; font-weight: 800;
+  color: #cc0000; margin-bottom: 15px;
+}
+.condition-badge {
+  display: inline-block; background: rgba(46, 125, 50, 0.2);
+  color: #4caf50; padding: 8px 16px;
+  border-radius: 6px; font-size: 0.85rem;
+  font-weight: 600; margin-bottom: 30px;
+  border: 1px solid rgba(46, 125, 50, 0.3);
+}
+.description {
+  font-size: 1rem; line-height: 1.8;
+  color: #aaa; margin-bottom: 35px;
+}
+.section-header {
+  font-size: 0.7rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 2px;
+  color: #666; margin-bottom: 15px;
+}
+.highlights {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 35px;
+}
+.highlight-tag {
+  background: #1a1a1a; border: 1px solid #333;
+  padding: 10px 16px; border-radius: 6px;
+  font-size: 0.85rem; color: #ccc;
+}
+.specs-grid {
+  background: #111; border-radius: 12px;
+  padding: 25px; margin-bottom: 35px;
+  border: 1px solid #222;
+}
+.spec-item {
+  display: flex; justify-content: space-between;
+  padding: 12px 0; border-bottom: 1px solid #222;
+}
+.spec-item:last-child { border-bottom: none; }
+.spec-label { color: #666; }
+.spec-value { font-weight: 600; color: #fff; }
+
+.cta-buttons { display: flex; gap: 15px; }
+.btn {
+  flex: 1; padding: 16px 25px; font-size: 0.9rem;
+  font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1px; border-radius: 8px;
+  cursor: pointer; text-align: center; text-decoration: none;
+  transition: all 0.2s;
+}
+.btn-primary {
+  background: #cc0000; color: #fff; border: none;
+}
+.btn-primary:hover { background: #e00; }
+.btn-secondary {
+  background: transparent; color: #fff;
+  border: 1px solid #444;
+}
+.btn-secondary:hover { border-color: #888; }
+
+.variation-picker {
+  position: fixed; bottom: 20px; right: 20px;
+  background: #222; color: #fff;
+  padding: 15px 20px; border-radius: 8px;
+  border: 1px solid #333; z-index: 1000;
+}
+.variation-picker select {
+  background: #333; color: #fff; border: 1px solid #444;
+  padding: 8px 12px; border-radius: 4px; margin-left: 10px;
+}
+
+@media (max-width: 900px) {
+  .listing-grid { grid-template-columns: 1fr; gap: 40px; }
+  .model-title { font-size: 1.8rem; }
+}
+</style>
+</head>
+<body>
+
+<a href="/used-aircraft-2" class="back-link">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+  Back to Listings
+</a>
+
+<div class="listing-container">
+  <div class="listing-grid">
+    <div class="gallery">
+      <img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HQAV%2Fblue-r66-palo-verde-front-v4.png?alt=media&token=3084cb09-4600-47bd-adf8-873b980b541d" alt="Robinson R66">
+      <div class="gallery-nav">
+        <button><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+        <button><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polyline points="9 6 15 12 9 18"></polyline></svg></button>
+      </div>
+    </div>
+
+    <div class="details">
+      <h1 class="model-title">Robinson R66 Turbine</h1>
+      <div class="meta-row">
+        <span>2018</span>
+        <span>G-SAPA</span>
+        <span>1,240 hours</span>
+      </div>
+      <div class="price">£650,000</div>
+      <div class="condition-badge">Excellent Condition</div>
+      <p class="description">
+        For sale is a superb example of a Robinson R66. This helicopter has 1240Hrs & 5 years remaining. Maintained to the highest standards and in very good condition.
+      </p>
+
+      <div class="section-header">Highlights</div>
+      <div class="highlights">
+        <span class="highlight-tag">Pop-out floats</span>
+        <span class="highlight-tag">Garmin G500H</span>
+        <span class="highlight-tag">GTN650</span>
+        <span class="highlight-tag">SAS Autopilot</span>
+      </div>
+
+      <div class="specs-grid">
+        <div class="spec-item"><span class="spec-label">Engine</span><span class="spec-value">RR300</span></div>
+        <div class="spec-item"><span class="spec-label">Total Hours</span><span class="spec-value">1,240</span></div>
+        <div class="spec-item"><span class="spec-label">Year</span><span class="spec-value">2018</span></div>
+        <div class="spec-item"><span class="spec-label">Registration</span><span class="spec-value">G-SAPA</span></div>
+      </div>
+
+      <div class="cta-buttons">
+        <a href="/contact" class="btn btn-primary">Enquire Now</a>
+        <a href="/contact" class="btn btn-secondary">Schedule Viewing</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="variation-nav.js"></script>
+</body>
+</html>
