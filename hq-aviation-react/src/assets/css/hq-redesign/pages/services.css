@@ -1,0 +1,604 @@
+/**
+ * HQ Aviation Services Pages Styles
+ * Maintenance, management, expeditions
+ */
+
+/* ============================================
+   SERVICES HERO
+   ============================================ */
+
+.hq-services-hero {
+  position: relative;
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  background-color: var(--hq-black);
+  overflow: hidden;
+}
+
+.hq-services-hero__bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+}
+
+.hq-services-hero__bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hq-services-hero__content {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  padding: var(--hq-space-12) 0;
+}
+
+.hq-services-hero__overline {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-sm);
+  font-weight: var(--hq-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wider);
+  color: var(--hq-accent);
+  margin-bottom: var(--hq-space-4);
+}
+
+.hq-services-hero__title {
+  font-family: var(--hq-font-display);
+  font-size: var(--hq-text-5xl);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-white);
+  margin-bottom: var(--hq-space-5);
+  line-height: var(--hq-leading-tight);
+}
+
+@media (max-width: 768px) {
+  .hq-services-hero__title {
+    font-size: var(--hq-text-4xl);
+  }
+}
+
+.hq-services-hero__text {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-lg);
+  color: rgba(255, 255, 255, 0.85);
+  line-height: var(--hq-leading-relaxed);
+}
+
+/* ============================================
+   CERTIFICATION BADGES
+   ============================================ */
+
+.hq-certifications {
+  background-color: var(--hq-white);
+  padding: var(--hq-space-12) 0;
+  border-bottom: 1px solid var(--hq-sand);
+}
+
+.hq-certifications__inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--hq-space-10);
+}
+
+.hq-certification {
+  display: flex;
+  align-items: center;
+  gap: var(--hq-space-4);
+}
+
+.hq-certification__badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background-color: var(--hq-cream);
+  border-radius: var(--hq-radius-full);
+}
+
+.hq-certification__badge-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.hq-certification__info {
+  display: flex;
+  flex-direction: column;
+}
+
+.hq-certification__title {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-sm);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-black);
+}
+
+.hq-certification__desc {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-xs);
+  color: var(--hq-slate);
+}
+
+/* ============================================
+   SERVICE FEATURES
+   ============================================ */
+
+.hq-service-features {
+  background-color: var(--hq-ivory);
+  padding: var(--hq-space-24) 0;
+}
+
+.hq-service-features__header {
+  text-align: center;
+  margin-bottom: var(--hq-space-12);
+}
+
+.hq-service-features__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--hq-space-8);
+}
+
+@media (max-width: 1024px) {
+  .hq-service-features__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .hq-service-features__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Feature Card */
+.hq-feature-card {
+  background-color: var(--hq-white);
+  border-radius: var(--hq-radius-xl);
+  padding: var(--hq-space-8);
+  box-shadow: var(--hq-card-shadow);
+  transition:
+    transform var(--hq-duration-normal) var(--hq-ease-out),
+    box-shadow var(--hq-duration-normal) var(--hq-ease-out);
+}
+
+.hq-feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--hq-card-shadow-hover);
+}
+
+.hq-feature-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background-color: var(--hq-accent-light);
+  border-radius: var(--hq-radius-lg);
+  margin-bottom: var(--hq-space-5);
+}
+
+.hq-feature-card__icon svg {
+  width: 32px;
+  height: 32px;
+  color: var(--hq-accent);
+}
+
+.hq-feature-card__title {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-lg);
+  font-weight: var(--hq-weight-semibold);
+  color: var(--hq-black);
+  margin-bottom: var(--hq-space-3);
+}
+
+.hq-feature-card__desc {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  color: var(--hq-slate);
+  line-height: var(--hq-leading-relaxed);
+}
+
+/* ============================================
+   PROCESS VISUALIZATION
+   ============================================ */
+
+.hq-process {
+  background-color: var(--hq-cream);
+  padding: var(--hq-space-24) 0;
+}
+
+.hq-process__header {
+  text-align: center;
+  margin-bottom: var(--hq-space-16);
+}
+
+/* Process Timeline */
+.hq-process-timeline {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Vertical Line */
+.hq-process-timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 40px;
+  width: 2px;
+  background-color: var(--hq-sand);
+}
+
+@media (max-width: 640px) {
+  .hq-process-timeline::before {
+    left: 20px;
+  }
+}
+
+.hq-process-step {
+  position: relative;
+  display: flex;
+  gap: var(--hq-space-8);
+  padding-bottom: var(--hq-space-10);
+}
+
+.hq-process-step:last-child {
+  padding-bottom: 0;
+}
+
+@media (max-width: 640px) {
+  .hq-process-step {
+    gap: var(--hq-space-5);
+  }
+}
+
+.hq-process-step__marker {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background-color: var(--hq-accent);
+  border-radius: var(--hq-radius-full);
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .hq-process-step__marker {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.hq-process-step__number {
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-2xl);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-white);
+}
+
+@media (max-width: 640px) {
+  .hq-process-step__number {
+    font-size: var(--hq-text-lg);
+  }
+}
+
+.hq-process-step__content {
+  flex: 1;
+  padding-top: var(--hq-space-4);
+}
+
+.hq-process-step__title {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-xl);
+  font-weight: var(--hq-weight-semibold);
+  color: var(--hq-black);
+  margin-bottom: var(--hq-space-2);
+}
+
+.hq-process-step__desc {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-base);
+  color: var(--hq-slate);
+  line-height: var(--hq-leading-relaxed);
+}
+
+/* ============================================
+   MAINTENANCE SERVICES LIST
+   ============================================ */
+
+.hq-services-list {
+  background-color: var(--hq-white);
+  padding: var(--hq-space-24) 0;
+}
+
+.hq-services-list__header {
+  text-align: center;
+  margin-bottom: var(--hq-space-12);
+}
+
+.hq-services-list__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--hq-space-6);
+}
+
+@media (max-width: 768px) {
+  .hq-services-list__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Service List Item */
+.hq-service-item {
+  display: flex;
+  gap: var(--hq-space-4);
+  padding: var(--hq-space-5);
+  background-color: var(--hq-cream);
+  border-radius: var(--hq-radius-lg);
+  transition: background-color var(--hq-transition-fast);
+}
+
+.hq-service-item:hover {
+  background-color: var(--hq-sand);
+}
+
+.hq-service-item__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background-color: var(--hq-white);
+  border-radius: var(--hq-radius-md);
+  flex-shrink: 0;
+}
+
+.hq-service-item__icon svg {
+  width: 24px;
+  height: 24px;
+  color: var(--hq-accent);
+}
+
+.hq-service-item__content {
+  flex: 1;
+}
+
+.hq-service-item__title {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-base);
+  font-weight: var(--hq-weight-semibold);
+  color: var(--hq-black);
+  margin-bottom: var(--hq-space-1);
+}
+
+.hq-service-item__desc {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  color: var(--hq-slate);
+}
+
+/* ============================================
+   EXPEDITIONS / MANAGEMENT GRID
+   ============================================ */
+
+.hq-expeditions {
+  background-color: var(--hq-ivory);
+  padding: var(--hq-space-24) 0;
+}
+
+.hq-expeditions__header {
+  text-align: center;
+  margin-bottom: var(--hq-space-12);
+}
+
+.hq-expeditions__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--hq-space-8);
+}
+
+@media (max-width: 768px) {
+  .hq-expeditions__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Expedition Card */
+.hq-expedition-card {
+  position: relative;
+  border-radius: var(--hq-radius-xl);
+  overflow: hidden;
+  min-height: 400px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.hq-expedition-card__bg {
+  position: absolute;
+  inset: 0;
+}
+
+.hq-expedition-card__bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--hq-duration-slow) var(--hq-ease-out);
+}
+
+.hq-expedition-card:hover .hq-expedition-card__bg-img {
+  transform: scale(1.05);
+}
+
+.hq-expedition-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 10, 0.9) 0%,
+    rgba(10, 10, 10, 0.5) 40%,
+    transparent 100%
+  );
+}
+
+.hq-expedition-card__content {
+  position: relative;
+  z-index: 2;
+  padding: var(--hq-space-8);
+  width: 100%;
+}
+
+.hq-expedition-card__tag {
+  display: inline-block;
+  padding: var(--hq-space-1) var(--hq-space-3);
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-xs);
+  font-weight: var(--hq-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--hq-tracking-wider);
+  color: var(--hq-accent);
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: var(--hq-radius-sm);
+  margin-bottom: var(--hq-space-4);
+}
+
+.hq-expedition-card__title {
+  font-family: var(--hq-font-display);
+  font-size: var(--hq-text-3xl);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-white);
+  margin-bottom: var(--hq-space-3);
+}
+
+.hq-expedition-card__desc {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-base);
+  color: rgba(255, 255, 255, 0.85);
+  line-height: var(--hq-leading-relaxed);
+  margin-bottom: var(--hq-space-5);
+}
+
+.hq-expedition-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hq-space-2);
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-sm);
+  font-weight: var(--hq-weight-semibold);
+  color: var(--hq-white);
+  text-decoration: none;
+  transition: gap var(--hq-transition-fast);
+}
+
+.hq-expedition-card__link:hover {
+  gap: var(--hq-space-3);
+}
+
+.hq-expedition-card__link-arrow {
+  width: 16px;
+  height: 16px;
+}
+
+/* ============================================
+   CONTACT CTA SECTION
+   ============================================ */
+
+.hq-service-contact {
+  background-color: var(--hq-black);
+  padding: var(--hq-space-20) 0;
+}
+
+.hq-service-contact__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--hq-space-16);
+  align-items: center;
+}
+
+@media (max-width: 1024px) {
+  .hq-service-contact__inner {
+    grid-template-columns: 1fr;
+    gap: var(--hq-space-10);
+    text-align: center;
+  }
+}
+
+.hq-service-contact__content {
+  max-width: 500px;
+}
+
+@media (max-width: 1024px) {
+  .hq-service-contact__content {
+    margin: 0 auto;
+  }
+}
+
+.hq-service-contact__title {
+  font-family: var(--hq-font-display);
+  font-size: var(--hq-text-4xl);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-white);
+  margin-bottom: var(--hq-space-4);
+  line-height: var(--hq-leading-tight);
+}
+
+.hq-service-contact__text {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-lg);
+  color: rgba(255, 255, 255, 0.8);
+  line-height: var(--hq-leading-relaxed);
+  margin-bottom: var(--hq-space-6);
+}
+
+.hq-service-contact__phone {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hq-space-3);
+  font-family: var(--hq-font-accent);
+  font-size: var(--hq-text-2xl);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-accent);
+  text-decoration: none;
+  transition: color var(--hq-transition-fast);
+}
+
+.hq-service-contact__phone:hover {
+  color: var(--hq-white);
+}
+
+.hq-service-contact__phone-icon {
+  width: 28px;
+  height: 28px;
+}
+
+/* Contact Form */
+.hq-service-contact__form {
+  background-color: var(--hq-white);
+  border-radius: var(--hq-radius-xl);
+  padding: var(--hq-space-10);
+}
+
+@media (max-width: 640px) {
+  .hq-service-contact__form {
+    padding: var(--hq-space-6);
+  }
+}
+
+.hq-service-contact__form-title {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-xl);
+  font-weight: var(--hq-weight-semibold);
+  color: var(--hq-black);
+  margin-bottom: var(--hq-space-6);
+  text-align: left;
+}

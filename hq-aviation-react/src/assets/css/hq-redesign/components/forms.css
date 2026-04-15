@@ -1,0 +1,372 @@
+/**
+ * HQ Aviation Form Styles
+ * Modern, refined form components with floating labels
+ */
+
+/* ============================================
+   FORM CONTAINER
+   ============================================ */
+
+.hq-form {
+  width: 100%;
+}
+
+.hq-form__row {
+  display: grid;
+  gap: var(--hq-space-4);
+  margin-bottom: var(--hq-space-4);
+}
+
+.hq-form__row--2col {
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 640px) {
+  .hq-form__row--2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   FLOATING LABEL INPUT GROUP
+   ============================================ */
+
+.hq-input-group {
+  position: relative;
+  margin-bottom: var(--hq-space-4);
+}
+
+.hq-input-group__input {
+  width: 100%;
+  padding: var(--hq-space-5) var(--hq-space-4) var(--hq-space-2);
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-base);
+  color: var(--hq-charcoal);
+  background-color: var(--hq-white);
+  border: 1px solid var(--hq-sand);
+  border-radius: var(--hq-radius-md);
+  transition:
+    border-color var(--hq-transition-fast),
+    box-shadow var(--hq-transition-fast);
+}
+
+.hq-input-group__input:focus {
+  outline: none;
+  border-color: var(--hq-accent);
+  box-shadow: 0 0 0 3px var(--hq-accent-light);
+}
+
+.hq-input-group__input::placeholder {
+  color: transparent;
+}
+
+.hq-input-group__label {
+  position: absolute;
+  top: 50%;
+  left: var(--hq-space-4);
+  transform: translateY(-50%);
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-base);
+  color: var(--hq-muted);
+  pointer-events: none;
+  transition:
+    top var(--hq-transition-fast),
+    transform var(--hq-transition-fast),
+    font-size var(--hq-transition-fast),
+    color var(--hq-transition-fast);
+}
+
+/* Floating label active state */
+.hq-input-group__input:focus + .hq-input-group__label,
+.hq-input-group__input:not(:placeholder-shown) + .hq-input-group__label {
+  top: var(--hq-space-2);
+  transform: translateY(0);
+  font-size: var(--hq-text-xs);
+  color: var(--hq-slate);
+}
+
+.hq-input-group__input:focus + .hq-input-group__label {
+  color: var(--hq-accent);
+}
+
+/* Textarea floating label */
+.hq-input-group--textarea .hq-input-group__label {
+  top: var(--hq-space-4);
+  transform: translateY(0);
+}
+
+.hq-input-group--textarea .hq-input-group__input:focus + .hq-input-group__label,
+.hq-input-group--textarea .hq-input-group__input:not(:placeholder-shown) + .hq-input-group__label {
+  top: var(--hq-space-1);
+}
+
+/* ============================================
+   STANDARD INPUT (Non-floating)
+   ============================================ */
+
+.hq-input {
+  width: 100%;
+  padding: var(--hq-space-3) var(--hq-space-4);
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-base);
+  color: var(--hq-charcoal);
+  background-color: var(--hq-white);
+  border: 1px solid var(--hq-sand);
+  border-radius: var(--hq-radius-md);
+  transition:
+    border-color var(--hq-transition-fast),
+    box-shadow var(--hq-transition-fast);
+}
+
+.hq-input:focus {
+  outline: none;
+  border-color: var(--hq-accent);
+  box-shadow: 0 0 0 3px var(--hq-accent-light);
+}
+
+.hq-input::placeholder {
+  color: var(--hq-muted);
+}
+
+/* Input sizes */
+.hq-input--sm {
+  padding: var(--hq-space-2) var(--hq-space-3);
+  font-size: var(--hq-text-sm);
+}
+
+.hq-input--lg {
+  padding: var(--hq-space-4) var(--hq-space-5);
+  font-size: var(--hq-text-lg);
+}
+
+/* ============================================
+   TEXTAREA
+   ============================================ */
+
+.hq-textarea {
+  width: 100%;
+  min-height: 140px;
+  padding: var(--hq-space-4);
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-base);
+  color: var(--hq-charcoal);
+  background-color: var(--hq-white);
+  border: 1px solid var(--hq-sand);
+  border-radius: var(--hq-radius-md);
+  resize: vertical;
+  transition:
+    border-color var(--hq-transition-fast),
+    box-shadow var(--hq-transition-fast);
+}
+
+.hq-textarea:focus {
+  outline: none;
+  border-color: var(--hq-accent);
+  box-shadow: 0 0 0 3px var(--hq-accent-light);
+}
+
+/* Floating label textarea */
+.hq-input-group__input.hq-textarea {
+  padding-top: var(--hq-space-6);
+}
+
+/* ============================================
+   SELECT
+   ============================================ */
+
+.hq-select {
+  width: 100%;
+  padding: var(--hq-space-3) var(--hq-space-10) var(--hq-space-3) var(--hq-space-4);
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-base);
+  color: var(--hq-charcoal);
+  background-color: var(--hq-white);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8.825L1.175 4 2.25 2.925 6 6.675l3.75-3.75L10.825 4z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--hq-space-4) center;
+  border: 1px solid var(--hq-sand);
+  border-radius: var(--hq-radius-md);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition:
+    border-color var(--hq-transition-fast),
+    box-shadow var(--hq-transition-fast);
+}
+
+.hq-select:focus {
+  outline: none;
+  border-color: var(--hq-accent);
+  box-shadow: 0 0 0 3px var(--hq-accent-light);
+}
+
+/* ============================================
+   CHECKBOX & RADIO
+   ============================================ */
+
+.hq-checkbox,
+.hq-radio {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--hq-space-3);
+  cursor: pointer;
+}
+
+.hq-checkbox__input,
+.hq-radio__input {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  border: 2px solid var(--hq-sand);
+  background-color: var(--hq-white);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition:
+    border-color var(--hq-transition-fast),
+    background-color var(--hq-transition-fast);
+}
+
+.hq-checkbox__input {
+  border-radius: var(--hq-radius-sm);
+}
+
+.hq-radio__input {
+  border-radius: var(--hq-radius-full);
+}
+
+.hq-checkbox__input:checked,
+.hq-radio__input:checked {
+  border-color: var(--hq-accent);
+  background-color: var(--hq-accent);
+}
+
+.hq-checkbox__input:checked {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23fff' d='M10.28 2.72a.75.75 0 0 1 0 1.06l-5.25 5.25a.75.75 0 0 1-1.06 0L1.72 6.78a.75.75 0 1 1 1.06-1.06l1.72 1.72 4.72-4.72a.75.75 0 0 1 1.06 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.hq-radio__input:checked {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Ccircle cx='4' cy='4' r='4' fill='%23fff'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.hq-checkbox__input:focus,
+.hq-radio__input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--hq-accent-light);
+}
+
+.hq-checkbox__label,
+.hq-radio__label {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-base);
+  color: var(--hq-charcoal);
+  line-height: var(--hq-leading-snug);
+}
+
+/* ============================================
+   FORM LABEL
+   ============================================ */
+
+.hq-label {
+  display: block;
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  font-weight: var(--hq-weight-medium);
+  color: var(--hq-charcoal);
+  margin-bottom: var(--hq-space-2);
+}
+
+.hq-label--required::after {
+  content: ' *';
+  color: var(--hq-accent);
+}
+
+/* ============================================
+   FORM HELP TEXT
+   ============================================ */
+
+.hq-help-text {
+  display: block;
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  color: var(--hq-muted);
+  margin-top: var(--hq-space-2);
+}
+
+/* ============================================
+   FORM ERROR STATE
+   ============================================ */
+
+.hq-input--error,
+.hq-textarea--error,
+.hq-select--error {
+  border-color: var(--hq-error);
+}
+
+.hq-input--error:focus,
+.hq-textarea--error:focus,
+.hq-select--error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.hq-error-text {
+  display: block;
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  color: var(--hq-error);
+  margin-top: var(--hq-space-2);
+}
+
+/* ============================================
+   FORM SUCCESS STATE
+   ============================================ */
+
+.hq-input--success,
+.hq-textarea--success {
+  border-color: var(--hq-success);
+}
+
+.hq-success-text {
+  display: block;
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-sm);
+  color: var(--hq-success);
+  margin-top: var(--hq-space-2);
+}
+
+/* ============================================
+   CONTACT FORM CARD
+   ============================================ */
+
+.hq-form-card {
+  background-color: var(--hq-white);
+  border-radius: var(--hq-radius-xl);
+  padding: var(--hq-space-10);
+  box-shadow: var(--hq-shadow-lg);
+}
+
+@media (max-width: 640px) {
+  .hq-form-card {
+    padding: var(--hq-space-6);
+  }
+}
+
+.hq-form-card__title {
+  font-family: var(--hq-font-display);
+  font-size: var(--hq-text-3xl);
+  font-weight: var(--hq-weight-bold);
+  color: var(--hq-black);
+  margin-bottom: var(--hq-space-3);
+}
+
+.hq-form-card__desc {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-base);
+  color: var(--hq-slate);
+  margin-bottom: var(--hq-space-8);
+}

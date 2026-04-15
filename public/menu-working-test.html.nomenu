@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HQ Menu - Working Test</title>
+</head>
+<body>
+  <h1>Menu Test - Hamburger in top right</h1>
+  <p>Click the hamburger (☰) button in the top right to test the menu.</p>
+  
+  <style>
+.hq-nav-toggle {
+  position: fixed !important;
+  top: 18px !important;
+  right: 20px !important;
+  z-index: 50001 !important;
+  width: 44px !important;
+  height: 44px !important;
+  background: #2c3e50 !important;
+  border: none !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.hq-nav-toggle:hover {
+  background: #34495e !important;
+}
+
+.hq-nav-toggle span {
+  display: block !important;
+  width: 22px !important;
+  height: 2.5px !important;
+  background: #fff !important;
+  border-radius: 2px !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  margin: 0 !important;
+}
+
+.hq-nav-toggle span + span {
+  margin-top: 5px !important;
+}
+
+.hq-nav-toggle.hq-nav-active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px) !important;
+}
+
+.hq-nav-toggle.hq-nav-active span:nth-child(2) {
+  opacity: 0 !important;
+}
+
+.hq-nav-toggle.hq-nav-active span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px) !important;
+}
+
+.hq-nav-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 49999 !important;
+  background: rgba(0, 0, 0, 0) !important;
+  pointer-events: none !important;
+  transition: background 0.3s ease !important;
+}
+
+.hq-nav-overlay.hq-nav-open {
+  background: rgba(0, 0, 0, 0.4) !important;
+  pointer-events: auto !important;
+}
+
+.hq-nav-menu {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  z-index: 50000 !important;
+  background: #ffffff !important;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.13) !important;
+  transform: translateY(-100%) !important;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  padding-top: 100px !important;
+  margin: 0 !important;
+  border: none !important;
+}
+
+.hq-nav-menu.hq-nav-open {
+  transform: translateY(0) !important;
+}
+
+.hq-nav-content {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 28px 30px 30px !important;
+}
+
+.hq-nav-section {
+  flex: 1 1 140px !important;
+  padding: 0 18px !important;
+  border-right: 1px solid #e8e8e8 !important;
+}
+
+.hq-nav-section-title {
+  margin: 0 0 10px 0 !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1.4px !important;
+  color: #3498db !important;
+  border-bottom: 2px solid #3498db !important;
+  padding-bottom: 8px !important;
+}
+
+.hq-nav-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.hq-nav-list a {
+  display: block !important;
+  padding: 5px 0 !important;
+  color: #2c3e50 !important;
+  text-decoration: none !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+
+.hq-nav-list a:hover {
+  color: #3498db !important;
+  padding-left: 5px !important;
+}
+  </style>
+</body>
+</html>

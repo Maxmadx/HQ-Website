@@ -1,0 +1,872 @@
+{
+  "system": {
+    "name": "HQ Aviation Fleet Management System",
+    "description": "Comprehensive aircraft fleet management, maintenance tracking, pilot certification, and regulatory compliance platform adapted from maritime vessel management principles",
+    "version": "1.0.0",
+    "adapted_from": "Sea-Flux Maritime Vessel Management System"
+  },
+  "modules": {
+    "aircraft_management": {
+      "name": "Aircraft Fleet Management",
+      "description": "Complete lifecycle management for helicopter and fixed-wing aircraft fleets",
+      "features": {
+        "aircraft_registry": {
+          "name": "Aircraft Registry",
+          "description": "Central database of all fleet aircraft with full specifications",
+          "fields": [
+            "registration_number",
+            "aircraft_type",
+            "manufacturer",
+            "model",
+            "serial_number",
+            "year_of_manufacture",
+            "engine_type",
+            "engine_serial_number",
+            "maximum_takeoff_weight",
+            "useful_load",
+            "fuel_capacity",
+            "range",
+            "cruise_speed",
+            "seating_capacity",
+            "home_base",
+            "owner",
+            "operator",
+            "insurance_policy",
+            "purchase_date",
+            "current_status"
+          ]
+        },
+        "flight_hours_tracking": {
+          "name": "Flight Hours Tracking",
+          "description": "Real-time tracking of airframe, engine, and component flight hours",
+          "metrics": [
+            "total_airframe_hours",
+            "engine_hours_since_new",
+            "engine_hours_since_overhaul",
+            "cycles_since_new",
+            "cycles_since_overhaul",
+            "rotor_hours",
+            "tail_rotor_hours",
+            "component_hours"
+          ]
+        },
+        "aircraft_documents": {
+          "name": "Aircraft Documentation",
+          "description": "Digital storage and tracking of all required aircraft documentation",
+          "document_types": [
+            {
+              "name": "Certificate of Airworthiness",
+              "authority": "CAA",
+              "renewal_period": "annual",
+              "mandatory": true
+            },
+            {
+              "name": "Certificate of Registration",
+              "authority": "CAA",
+              "renewal_period": "none",
+              "mandatory": true
+            },
+            {
+              "name": "Radio Station Licence",
+              "authority": "Ofcom",
+              "renewal_period": "5 years",
+              "mandatory": true
+            },
+            {
+              "name": "Aircraft Insurance Certificate",
+              "authority": "Insurer",
+              "renewal_period": "annual",
+              "mandatory": true
+            },
+            {
+              "name": "Noise Certificate",
+              "authority": "CAA",
+              "renewal_period": "none",
+              "mandatory": true
+            },
+            {
+              "name": "Weight and Balance Report",
+              "authority": "Part 145 Organisation",
+              "renewal_period": "as amended",
+              "mandatory": true
+            },
+            {
+              "name": "Aircraft Flight Manual",
+              "authority": "Manufacturer",
+              "renewal_period": "as amended",
+              "mandatory": true
+            },
+            {
+              "name": "Minimum Equipment List",
+              "authority": "Operator/CAA",
+              "renewal_period": "as amended",
+              "mandatory": false
+            },
+            {
+              "name": "Technical Log",
+              "authority": "Operator",
+              "renewal_period": "continuous",
+              "mandatory": true
+            }
+          ]
+        },
+        "status_tracking": {
+          "name": "Aircraft Status Tracking",
+          "description": "Real-time operational status monitoring",
+          "statuses": [
+            "serviceable",
+            "unserviceable",
+            "in_maintenance",
+            "awaiting_parts",
+            "annual_inspection",
+            "grounded",
+            "in_flight",
+            "reserved",
+            "available"
+          ]
+        }
+      }
+    },
+    "maintenance_management": {
+      "name": "Maintenance Management System",
+      "description": "CAA Part 145 compliant maintenance tracking and scheduling",
+      "features": {
+        "scheduled_maintenance": {
+          "name": "Scheduled Maintenance",
+          "description": "Tracking of all scheduled maintenance requirements",
+          "maintenance_types": [
+            {
+              "name": "Daily Inspection",
+              "interval": "daily",
+              "description": "Pre-flight and post-flight inspections"
+            },
+            {
+              "name": "50-Hour Inspection",
+              "interval": "50 flight hours",
+              "description": "Minor scheduled maintenance check"
+            },
+            {
+              "name": "100-Hour Inspection",
+              "interval": "100 flight hours",
+              "description": "Comprehensive scheduled maintenance check"
+            },
+            {
+              "name": "Annual Inspection",
+              "interval": "12 months",
+              "description": "Annual airworthiness review"
+            },
+            {
+              "name": "2,200-Hour Inspection",
+              "interval": "2200 flight hours",
+              "description": "Major component inspection (Robinson specific)"
+            },
+            {
+              "name": "12-Year Overhaul",
+              "interval": "12 years or 2200 hours",
+              "description": "Complete overhaul requirement (Robinson specific)"
+            },
+            {
+              "name": "Engine TBO",
+              "interval": "varies by engine",
+              "description": "Time Between Overhaul for engine"
+            }
+          ]
+        },
+        "unscheduled_maintenance": {
+          "name": "Unscheduled Maintenance",
+          "description": "Tracking of defects, snags, and unscheduled repairs",
+          "categories": [
+            "defect_rectification",
+            "damage_repair",
+            "component_replacement",
+            "modification",
+            "service_bulletin_compliance",
+            "airworthiness_directive_compliance"
+          ]
+        },
+        "component_tracking": {
+          "name": "Life-Limited Component Tracking",
+          "description": "Tracking of components with mandatory replacement intervals",
+          "component_categories": [
+            {
+              "category": "Main Rotor System",
+              "components": [
+                "main_rotor_blades",
+                "main_rotor_hub",
+                "pitch_change_bearings",
+                "teeter_bearings",
+                "blade_bolts"
+              ]
+            },
+            {
+              "category": "Tail Rotor System",
+              "components": [
+                "tail_rotor_blades",
+                "tail_rotor_hub",
+                "tail_rotor_gearbox",
+                "pitch_change_links"
+              ]
+            },
+            {
+              "category": "Drive System",
+              "components": [
+                "main_transmission",
+                "tail_rotor_driveshaft",
+                "flex_couplings",
+                "clutch_assembly"
+              ]
+            },
+            {
+              "category": "Engine",
+              "components": [
+                "engine_assembly",
+                "fuel_control_unit",
+                "turbine_wheels",
+                "compressor_section"
+              ]
+            },
+            {
+              "category": "Flight Controls",
+              "components": [
+                "servo_actuators",
+                "push_pull_tubes",
+                "bell_cranks",
+                "control_linkages"
+              ]
+            }
+          ]
+        },
+        "work_orders": {
+          "name": "Work Order Management",
+          "description": "Digital work order creation, tracking, and sign-off",
+          "workflow": [
+            "work_order_creation",
+            "parts_requisition",
+            "engineer_assignment",
+            "work_in_progress",
+            "inspection",
+            "quality_assurance",
+            "certification",
+            "release_to_service"
+          ]
+        },
+        "parts_inventory": {
+          "name": "Parts Inventory Management",
+          "description": "Tracking of spare parts, rotables, and consumables",
+          "features": [
+            "stock_levels",
+            "reorder_points",
+            "part_numbers",
+            "approved_suppliers",
+            "certification_tracking",
+            "shelf_life_monitoring",
+            "batch_tracking"
+          ]
+        }
+      }
+    },
+    "regulatory_compliance": {
+      "name": "Regulatory Compliance Management",
+      "description": "Tracking and management of aviation regulatory requirements",
+      "features": {
+        "airworthiness_directives": {
+          "name": "Airworthiness Directive Tracking",
+          "description": "Monitoring and compliance tracking for ADs",
+          "authorities": ["CAA", "EASA", "FAA"],
+          "tracking_fields": [
+            "ad_number",
+            "effective_date",
+            "compliance_date",
+            "recurring_interval",
+            "applicability",
+            "compliance_status",
+            "compliance_method",
+            "documentation"
+          ]
+        },
+        "service_bulletins": {
+          "name": "Service Bulletin Management",
+          "description": "Tracking of manufacturer service bulletins",
+          "categories": [
+            "mandatory",
+            "alert",
+            "recommended",
+            "optional"
+          ]
+        },
+        "certification_standards": {
+          "name": "Certification Standards",
+          "description": "Compliance with aviation certification standards",
+          "standards": [
+            {
+              "code": "Part 145",
+              "name": "Approved Maintenance Organisation",
+              "authority": "CAA/EASA",
+              "description": "Approval to perform aircraft maintenance"
+            },
+            {
+              "code": "Part M",
+              "name": "Continuing Airworthiness",
+              "authority": "EASA",
+              "description": "Requirements for continuing airworthiness management"
+            },
+            {
+              "code": "Part 66",
+              "name": "Aircraft Maintenance Licensing",
+              "authority": "CAA/EASA",
+              "description": "Engineer licensing requirements"
+            },
+            {
+              "code": "Part 147",
+              "name": "Maintenance Training Organisation",
+              "authority": "CAA/EASA",
+              "description": "Approval to provide maintenance training"
+            },
+            {
+              "code": "Part FCL",
+              "name": "Flight Crew Licensing",
+              "authority": "CAA/EASA",
+              "description": "Pilot licensing requirements"
+            },
+            {
+              "code": "Part OPS",
+              "name": "Air Operations",
+              "authority": "CAA/EASA",
+              "description": "Operational requirements for commercial operations"
+            }
+          ]
+        },
+        "audit_management": {
+          "name": "Audit Management",
+          "description": "Internal and external audit tracking",
+          "audit_types": [
+            "internal_quality_audit",
+            "caa_surveillance_audit",
+            "easa_audit",
+            "insurance_audit",
+            "manufacturer_audit"
+          ]
+        }
+      }
+    },
+    "personnel_management": {
+      "name": "Personnel & Certification Management",
+      "description": "Management of pilots, engineers, and instructors",
+      "features": {
+        "pilot_records": {
+          "name": "Pilot Records",
+          "description": "Comprehensive pilot certification and currency tracking",
+          "certifications": [
+            {
+              "type": "PPL(H)",
+              "name": "Private Pilot Licence (Helicopters)",
+              "authority": "CAA",
+              "validity": "lifetime with currency requirements"
+            },
+            {
+              "type": "CPL(H)",
+              "name": "Commercial Pilot Licence (Helicopters)",
+              "authority": "CAA",
+              "validity": "lifetime with currency requirements"
+            },
+            {
+              "type": "ATPL(H)",
+              "name": "Airline Transport Pilot Licence (Helicopters)",
+              "authority": "CAA",
+              "validity": "lifetime with currency requirements"
+            },
+            {
+              "type": "IR(H)",
+              "name": "Instrument Rating (Helicopters)",
+              "authority": "CAA",
+              "validity": "12 months"
+            },
+            {
+              "type": "Night Rating",
+              "name": "Night Rating",
+              "authority": "CAA",
+              "validity": "lifetime"
+            },
+            {
+              "type": "FI(H)",
+              "name": "Flight Instructor (Helicopters)",
+              "authority": "CAA",
+              "validity": "3 years"
+            },
+            {
+              "type": "Type Rating",
+              "name": "Aircraft Type Rating",
+              "authority": "CAA",
+              "validity": "12 months"
+            }
+          ],
+          "currency_requirements": [
+            {
+              "requirement": "90-day currency",
+              "description": "3 takeoffs and landings in preceding 90 days for passenger carrying"
+            },
+            {
+              "requirement": "Licence Proficiency Check",
+              "description": "Annual proficiency check with examiner",
+              "interval": "12 months"
+            },
+            {
+              "requirement": "Operator Proficiency Check",
+              "description": "Operator-specific competency check",
+              "interval": "6-12 months"
+            },
+            {
+              "requirement": "Line check",
+              "description": "Observation during normal operations",
+              "interval": "12 months"
+            }
+          ]
+        },
+        "engineer_records": {
+          "name": "Engineer Records",
+          "description": "Aircraft maintenance engineer licensing and authorisations",
+          "licence_categories": [
+            {
+              "category": "B1.3",
+              "name": "Helicopter Turbine",
+              "scope": "Mechanical, electrical, avionics on turbine helicopters"
+            },
+            {
+              "category": "B1.4",
+              "name": "Helicopter Piston",
+              "scope": "Mechanical, electrical, avionics on piston helicopters"
+            },
+            {
+              "category": "B2",
+              "name": "Avionics",
+              "scope": "Avionic systems on all aircraft"
+            },
+            {
+              "category": "B3",
+              "name": "Light Aircraft",
+              "scope": "Piston aircraft up to 2000kg"
+            }
+          ],
+          "type_ratings": [
+            "Robinson R22",
+            "Robinson R44",
+            "Robinson R66",
+            "MD 500 Series",
+            "Bell 206",
+            "Airbus H125",
+            "Airbus H135"
+          ]
+        },
+        "medical_certificates": {
+          "name": "Medical Certificate Tracking",
+          "description": "Aviation medical certificate validity monitoring",
+          "certificate_types": [
+            {
+              "class": "Class 1",
+              "validity_under_40": "12 months",
+              "validity_40_to_50": "12 months",
+              "validity_over_50": "6 months",
+              "required_for": "Commercial operations"
+            },
+            {
+              "class": "Class 2",
+              "validity_under_40": "60 months",
+              "validity_40_to_50": "24 months",
+              "validity_over_50": "12 months",
+              "required_for": "Private operations"
+            },
+            {
+              "class": "LAPL Medical",
+              "validity": "60 months under 40, 24 months over 40",
+              "required_for": "Light aircraft private operations"
+            }
+          ]
+        },
+        "training_records": {
+          "name": "Training Records",
+          "description": "Comprehensive training and recurrency tracking",
+          "training_types": [
+            "initial_type_training",
+            "recurrent_training",
+            "differences_training",
+            "emergency_procedures",
+            "crew_resource_management",
+            "dangerous_goods",
+            "first_aid",
+            "security_awareness"
+          ]
+        }
+      }
+    },
+    "flight_operations": {
+      "name": "Flight Operations Management",
+      "description": "Planning, scheduling, and recording of flight operations",
+      "features": {
+        "flight_booking": {
+          "name": "Flight Booking System",
+          "description": "Aircraft and instructor booking management",
+          "booking_types": [
+            "training_flight",
+            "self_fly_hire",
+            "charter",
+            "maintenance_flight",
+            "ferry_flight",
+            "demonstration_flight"
+          ]
+        },
+        "flight_planning": {
+          "name": "Flight Planning",
+          "description": "Pre-flight planning and documentation",
+          "planning_elements": [
+            "route_planning",
+            "weather_briefing",
+            "notam_review",
+            "weight_and_balance",
+            "fuel_planning",
+            "performance_calculations",
+            "risk_assessment"
+          ]
+        },
+        "flight_logging": {
+          "name": "Flight Log Management",
+          "description": "Digital flight logging and record keeping",
+          "log_fields": [
+            "date",
+            "aircraft_registration",
+            "pilot_in_command",
+            "student_pilot",
+            "route",
+            "departure_time",
+            "arrival_time",
+            "flight_time",
+            "landings",
+            "exercise_conducted",
+            "remarks",
+            "fuel_uplift",
+            "defects_reported"
+          ]
+        },
+        "tech_log": {
+          "name": "Technical Log Management",
+          "description": "Aircraft technical log digitisation",
+          "sections": [
+            "aircraft_identification",
+            "flight_sector_record",
+            "fuel_and_oil_record",
+            "defect_reporting",
+            "maintenance_actions",
+            "certificate_of_release_to_service"
+          ]
+        }
+      }
+    },
+    "safety_management": {
+      "name": "Safety Management System",
+      "description": "Comprehensive safety management and reporting",
+      "features": {
+        "safety_equipment": {
+          "name": "Safety Equipment Tracking",
+          "description": "Monitoring of required safety equipment",
+          "equipment": [
+            {
+              "item": "Emergency Locator Transmitter (ELT)",
+              "inspection_interval": "12 months",
+              "battery_life": "varies"
+            },
+            {
+              "item": "Fire Extinguisher",
+              "inspection_interval": "12 months",
+              "mandatory": true
+            },
+            {
+              "item": "First Aid Kit",
+              "inspection_interval": "12 months",
+              "mandatory": true
+            },
+            {
+              "item": "Life Jackets",
+              "inspection_interval": "12 months",
+              "required_for": "overwater operations"
+            },
+            {
+              "item": "Life Raft",
+              "inspection_interval": "12 months",
+              "required_for": "extended overwater operations"
+            },
+            {
+              "item": "Survival Kit",
+              "inspection_interval": "12 months",
+              "required_for": "remote area operations"
+            },
+            {
+              "item": "Emergency Flotation System",
+              "inspection_interval": "as per manufacturer",
+              "required_for": "overwater operations"
+            }
+          ]
+        },
+        "occurrence_reporting": {
+          "name": "Occurrence Reporting",
+          "description": "Safety occurrence and incident reporting system",
+          "report_types": [
+            {
+              "type": "Mandatory Occurrence Report",
+              "authority": "CAA",
+              "deadline": "72 hours",
+              "description": "Reportable safety occurrences"
+            },
+            {
+              "type": "Air Safety Report",
+              "authority": "Internal",
+              "deadline": "as soon as practical",
+              "description": "Internal safety reporting"
+            },
+            {
+              "type": "Hazard Report",
+              "authority": "Internal",
+              "deadline": "as soon as practical",
+              "description": "Identification of potential hazards"
+            },
+            {
+              "type": "Ground Incident Report",
+              "authority": "Internal",
+              "deadline": "24 hours",
+              "description": "Ground handling incidents"
+            }
+          ]
+        },
+        "risk_assessment": {
+          "name": "Risk Assessment",
+          "description": "Operational risk assessment tools",
+          "assessment_types": [
+            "flight_risk_assessment",
+            "landing_site_assessment",
+            "weather_risk_assessment",
+            "fatigue_risk_assessment",
+            "passenger_risk_assessment"
+          ]
+        },
+        "safety_metrics": {
+          "name": "Safety Performance Metrics",
+          "description": "Key safety performance indicators",
+          "metrics": [
+            "flight_hours_per_incident",
+            "maintenance_findings_per_inspection",
+            "safety_reports_per_month",
+            "training_completion_rate",
+            "audit_findings_closure_rate"
+          ]
+        }
+      }
+    },
+    "financial_management": {
+      "name": "Financial Management",
+      "description": "Aircraft cost tracking and financial management",
+      "features": {
+        "operating_costs": {
+          "name": "Operating Cost Tracking",
+          "description": "Per-aircraft and per-hour cost analysis",
+          "cost_categories": [
+            "fuel_costs",
+            "maintenance_labour",
+            "parts_and_materials",
+            "insurance",
+            "hangarage",
+            "landing_fees",
+            "navigation_charges",
+            "training_costs",
+            "regulatory_fees"
+          ]
+        },
+        "billing": {
+          "name": "Billing & Invoicing",
+          "description": "Customer billing for hire and training",
+          "billing_types": [
+            "flight_hire",
+            "training_flights",
+            "ground_school",
+            "examination_fees",
+            "maintenance_services",
+            "management_fees"
+          ]
+        },
+        "maintenance_reserves": {
+          "name": "Maintenance Reserve Tracking",
+          "description": "Accrual tracking for major maintenance events",
+          "reserve_categories": [
+            "engine_overhaul_reserve",
+            "component_overhaul_reserve",
+            "twelve_year_overhaul_reserve",
+            "unscheduled_maintenance_reserve"
+          ]
+        }
+      }
+    }
+  },
+  "integrations": {
+    "external_systems": [
+      {
+        "system": "CAA Systems",
+        "purpose": "Licence verification and AD monitoring"
+      },
+      {
+        "system": "EASA Systems",
+        "purpose": "Regulatory compliance monitoring"
+      },
+      {
+        "system": "Weather Services",
+        "purpose": "Real-time weather data for flight planning"
+      },
+      {
+        "system": "NOTAM Services",
+        "purpose": "Airspace restriction monitoring"
+      },
+      {
+        "system": "Fuel Suppliers",
+        "purpose": "Fuel ordering and delivery tracking"
+      },
+      {
+        "system": "Insurance Providers",
+        "purpose": "Policy management and claims"
+      },
+      {
+        "system": "Accounting Systems",
+        "purpose": "Financial integration"
+      }
+    ],
+    "data_exports": [
+      "CAA compliance reports",
+      "EASA Part M reports",
+      "Insurance reports",
+      "Management accounts",
+      "Safety statistics"
+    ]
+  },
+  "notifications": {
+    "alert_types": [
+      {
+        "type": "maintenance_due",
+        "lead_time": "50 hours or 30 days",
+        "priority": "high"
+      },
+      {
+        "type": "certificate_expiry",
+        "lead_time": "90 days",
+        "priority": "high"
+      },
+      {
+        "type": "medical_expiry",
+        "lead_time": "60 days",
+        "priority": "high"
+      },
+      {
+        "type": "licence_proficiency_due",
+        "lead_time": "60 days",
+        "priority": "medium"
+      },
+      {
+        "type": "airworthiness_directive",
+        "lead_time": "immediate",
+        "priority": "critical"
+      },
+      {
+        "type": "insurance_renewal",
+        "lead_time": "60 days",
+        "priority": "high"
+      },
+      {
+        "type": "component_life_limit",
+        "lead_time": "100 hours or 90 days",
+        "priority": "high"
+      },
+      {
+        "type": "recurrent_training_due",
+        "lead_time": "30 days",
+        "priority": "medium"
+      }
+    ],
+    "delivery_methods": [
+      "email",
+      "sms",
+      "in_app_notification",
+      "dashboard_alert"
+    ]
+  },
+  "reporting": {
+    "standard_reports": [
+      {
+        "name": "Fleet Status Report",
+        "description": "Current status of all aircraft",
+        "frequency": "daily"
+      },
+      {
+        "name": "Maintenance Forecast",
+        "description": "Upcoming maintenance requirements",
+        "frequency": "weekly"
+      },
+      {
+        "name": "Personnel Currency Report",
+        "description": "Pilot and engineer certification status",
+        "frequency": "monthly"
+      },
+      {
+        "name": "Flight Hours Summary",
+        "description": "Aircraft utilisation statistics",
+        "frequency": "monthly"
+      },
+      {
+        "name": "Safety Performance Report",
+        "description": "Safety metrics and trends",
+        "frequency": "monthly"
+      },
+      {
+        "name": "Financial Summary",
+        "description": "Operating costs and revenue",
+        "frequency": "monthly"
+      },
+      {
+        "name": "Compliance Status Report",
+        "description": "AD and SB compliance status",
+        "frequency": "monthly"
+      },
+      {
+        "name": "Annual Airworthiness Review Pack",
+        "description": "Documentation for annual review",
+        "frequency": "annual"
+      }
+    ],
+    "custom_reports": {
+      "description": "User-configurable report builder",
+      "export_formats": ["PDF", "Excel", "CSV"]
+    }
+  },
+  "hq_aviation_specific": {
+    "description": "Features specific to HQ Aviation operations at Denham Aerodrome",
+    "features": {
+      "fleet_types": [
+        "Robinson R22",
+        "Robinson R44",
+        "Robinson R66",
+        "MD 500 Series"
+      ],
+      "services": [
+        "PPL(H) Training",
+        "CPL(H) Training",
+        "Type Rating Conversions",
+        "Instructor Ratings",
+        "Night Ratings",
+        "Self-Fly Hire",
+        "Aircraft Management",
+        "Part 145 Maintenance"
+      ],
+      "base_location": {
+        "aerodrome": "Denham Aerodrome",
+        "icao": "EGLD",
+        "coordinates": {
+          "latitude": "51.5825°N",
+          "longitude": "0.5086°W"
+        }
+      }
+    }
+  }
+}

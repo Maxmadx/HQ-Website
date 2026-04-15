@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | HQ Aviation</title>
+    <meta name="description" content="Contact HQ Aviation at Denham Aerodrome, London UK. Helicopter training, sales & maintenance enquiries. Call: +44 1895 833373">
+
+    <link rel="icon" type="image/png" href="/assets/images/logos/hq/hq-aviation-logo-black.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/components.css">
+</head>
+<body class="page-contact">
+    <main class="main">
+        <!-- Page Header -->
+        <section class="page-header">
+            <div class="container">
+                <nav class="page-header__breadcrumb">
+                    <a href="/">Home</a>
+                    <span>/</span>
+                    <span>Contact</span>
+                </nav>
+                <h1 class="page-header__title">Get in Touch</h1>
+                <p class="page-header__description">
+                    We're here to help with your aviation needs.
+                </p>
+            </div>
+        </section>
+
+        <!-- Contact Info & Form -->
+        <section class="section">
+            <div class="container">
+                <div class="grid grid--2 gap-8">
+                    <!-- Contact Form -->
+                    <div>
+                        <h2 class="mb-6">Send Us a Message</h2>
+                        <form action="/api/contact" method="POST" class="contact-form">
+                            <div class="form-group">
+                                <label for="name" class="form-label">Full Name *</label>
+                                <input type="text" id="name" name="name" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email Address *</label>
+                                <input type="email" id="email" name="email" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="department" class="form-label">Department *</label>
+                                <select id="department" name="department" class="form-select" required>
+                                    <option value="">Select a department...</option>
+                                    <option value="general">General Enquiries</option>
+                                    <option value="training">Flight Training</option>
+                                    <option value="sales">Aircraft Sales</option>
+                                    <option value="maintenance">Maintenance</option>
+                                    <option value="expeditions">Expeditions</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="message" class="form-label">Message *</label>
+                                <textarea id="message" name="message" class="form-textarea" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn--primary btn--lg">Send Message</button>
+                        </form>
+                    </div>
+
+                    <!-- Contact Details -->
+                    <div>
+                        <h2 class="mb-6">Contact Details</h2>
+
+                        <!-- Department Contacts -->
+                        <div class="accordion mb-8">
+                            <div class="accordion__item is-open">
+                                <button class="accordion__header">
+                                    <span>General Enquiries</span>
+                                    <i class="fas fa-chevron-down accordion__icon"></i>
+                                </button>
+                                <div class="accordion__content">
+                                    <div class="accordion__body">
+                                        <p><i class="fas fa-phone text-accent"></i> +44 1895 833373</p>
+                                        <p><i class="fas fa-envelope text-accent"></i> info@hqaviation.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion__item">
+                                <button class="accordion__header">
+                                    <span>Maintenance</span>
+                                    <i class="fas fa-chevron-down accordion__icon"></i>
+                                </button>
+                                <div class="accordion__content">
+                                    <div class="accordion__body">
+                                        <p><i class="fas fa-phone text-accent"></i> +44 1895 832833</p>
+                                        <p><i class="fas fa-envelope text-accent"></i> maintenance@hqaviation.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion__item">
+                                <button class="accordion__header">
+                                    <span>Training</span>
+                                    <i class="fas fa-chevron-down accordion__icon"></i>
+                                </button>
+                                <div class="accordion__content">
+                                    <div class="accordion__body">
+                                        <p><i class="fas fa-phone text-accent"></i> +44 1895 833373</p>
+                                        <p><i class="fas fa-envelope text-accent"></i> training@hqaviation.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion__item">
+                                <button class="accordion__header">
+                                    <span>Sales</span>
+                                    <i class="fas fa-chevron-down accordion__icon"></i>
+                                </button>
+                                <div class="accordion__content">
+                                    <div class="accordion__body">
+                                        <p><i class="fas fa-phone text-accent"></i> +44 1895 833373</p>
+                                        <p><i class="fas fa-envelope text-accent"></i> sales@hqaviation.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="mb-8">
+                            <h3 class="mb-4">Location</h3>
+                            <p class="mb-4">
+                                <strong>HQ Aviation</strong><br>
+                                Hangar Road, Denham Aerodrome<br>
+                                Denham, Buckinghamshire<br>
+                                UB9 5DF<br>
+                                United Kingdom
+                            </p>
+                            <!-- Map Placeholder -->
+                            <div style="background: var(--color-background-alt); padding: 4rem 2rem; border-radius: var(--border-radius-md); text-align: center;">
+                                <i class="fas fa-map-marker-alt fa-3x text-accent mb-4"></i>
+                                <p>Interactive Map</p>
+                                <a href="https://maps.google.com/?q=HQ+Aviation+Denham" target="_blank" class="btn btn--outline btn--sm">
+                                    Open in Google Maps
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Social Links -->
+                        <div>
+                            <h3 class="mb-4">Follow Us</h3>
+                            <div class="flex gap-4">
+                                <a href="https://facebook.com/hqaviationltd" class="btn btn--outline" target="_blank">
+                                    <i class="fab fa-facebook-f"></i> Facebook
+                                </a>
+                                <a href="https://instagram.com/hqaviation" class="btn btn--outline" target="_blank">
+                                    <i class="fab fa-instagram"></i> Instagram
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Links -->
+        <section class="section section--alt">
+            <div class="container">
+                <div class="text-center mb-8">
+                    <h2>Looking For Something Specific?</h2>
+                </div>
+                <div class="grid grid--4 gap-4 text-center">
+                    <a href="/contact/pricing" class="card" style="text-decoration: none;">
+                        <div class="card__content">
+                            <i class="fas fa-pound-sign fa-2x text-accent mb-4"></i>
+                            <h4>Price List</h4>
+                            <p class="text-sm text-muted">Training rates, hire costs, maintenance pricing</p>
+                        </div>
+                    </a>
+                    <a href="/contact/careers" class="card" style="text-decoration: none;">
+                        <div class="card__content">
+                            <i class="fas fa-briefcase fa-2x text-accent mb-4"></i>
+                            <h4>Careers</h4>
+                            <p class="text-sm text-muted">Join the HQ Aviation team</p>
+                        </div>
+                    </a>
+                    <a href="/contact/testimonials" class="card" style="text-decoration: none;">
+                        <div class="card__content">
+                            <i class="fas fa-star fa-2x text-accent mb-4"></i>
+                            <h4>Testimonials</h4>
+                            <p class="text-sm text-muted">Hear from our customers</p>
+                        </div>
+                    </a>
+                    <a href="/training/faq" class="card" style="text-decoration: none;">
+                        <div class="card__content">
+                            <i class="fas fa-question-circle fa-2x text-accent mb-4"></i>
+                            <h4>FAQ</h4>
+                            <p class="text-sm text-muted">Common questions answered</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/assets/js/navigation.js" defer></script>
+    <script src="/assets/js/main.js" defer></script>
+</body>
+</html>

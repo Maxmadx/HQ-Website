@@ -1,0 +1,705 @@
+{
+  "brand": {
+    "name": "HQ Aviation",
+    "tagline": "The Robinson Specialists since 1990",
+    "location": {
+      "name": "Denham Aerodrome, UK",
+      "coordinates": {
+        "latitude": "51.5751°N",
+        "longitude": "0.5059°W"
+      }
+    },
+    "established": 1990
+  },
+
+  "designPhilosophy": {
+    "aesthetic": "Luxury Minimal Aviation",
+    "principles": [
+      "Precision and Excellence",
+      "Understated Sophistication",
+      "Technical Elegance",
+      "Progressive Disclosure through Scroll"
+    ],
+    "mood": [
+      "Professional",
+      "Premium",
+      "Technical",
+      "Adventurous",
+      "Refined"
+    ],
+    "influences": [
+      "Editorial Design",
+      "Luxury Automotive",
+      "Aviation Instrumentation",
+      "Swiss Typography"
+    ]
+  },
+
+  "typography": {
+    "fontFamilies": {
+      "primary": {
+        "name": "Space Grotesk",
+        "fallback": "-apple-system, sans-serif",
+        "usage": "Headlines, titles, brand text",
+        "characteristics": "Geometric sans-serif with technical feel"
+      },
+      "monospace": {
+        "name": "Share Tech Mono",
+        "fallback": "monospace",
+        "usage": "Coordinates, numbers, counters, technical data",
+        "characteristics": "Technical, instrument-like"
+      },
+      "secondary": {
+        "name": "Helvetica Neue",
+        "fallback": "Helvetica, Arial, sans-serif",
+        "usage": "Carousel content, body copy in legacy components"
+      },
+      "accent": {
+        "name": "din-condensed-web",
+        "fallback": "Helvetica Neue, Arial, sans-serif",
+        "usage": "Call-to-action buttons"
+      }
+    },
+    "scale": {
+      "hero": {
+        "size": "clamp(2.5rem, 6vw, 4.5rem)",
+        "weight": 700,
+        "lineHeight": 1,
+        "letterSpacing": "-0.02em",
+        "textTransform": "uppercase"
+      },
+      "h1": {
+        "size": "clamp(2rem, 5vw, 3.5rem)",
+        "weight": 700,
+        "lineHeight": 1.1,
+        "textTransform": "uppercase"
+      },
+      "h2": {
+        "size": "clamp(2rem, 4vw, 3rem)",
+        "weight": 700,
+        "lineHeight": 1.1,
+        "textTransform": "uppercase"
+      },
+      "h3": {
+        "size": "clamp(1.5rem, 4vw, 2.5rem)",
+        "weight": 700,
+        "textTransform": "uppercase"
+      },
+      "body": {
+        "size": "1.1rem",
+        "weight": 400,
+        "lineHeight": 1.8
+      },
+      "bodySmall": {
+        "size": "1rem",
+        "weight": 400,
+        "lineHeight": 1.6
+      },
+      "label": {
+        "size": "0.7rem",
+        "weight": 400,
+        "letterSpacing": "0.2em",
+        "textTransform": "uppercase"
+      },
+      "preText": {
+        "size": "0.75rem",
+        "letterSpacing": "0.25em",
+        "textTransform": "uppercase"
+      },
+      "navItem": {
+        "size": "0.75rem",
+        "weight": 500,
+        "letterSpacing": "0.1em",
+        "textTransform": "uppercase"
+      },
+      "counter": {
+        "size": "0.65rem",
+        "letterSpacing": "0.1em",
+        "fontFamily": "Share Tech Mono"
+      },
+      "coordinates": {
+        "size": "0.65rem",
+        "letterSpacing": "0.1em",
+        "fontFamily": "Share Tech Mono"
+      },
+      "button": {
+        "size": "0.75rem",
+        "weight": 400,
+        "letterSpacing": "0.1em",
+        "textTransform": "uppercase"
+      },
+      "scrollPrompt": {
+        "size": "0.65rem",
+        "letterSpacing": "0.2em",
+        "textTransform": "uppercase"
+      }
+    }
+  },
+
+  "colorPalette": {
+    "core": {
+      "primary": {
+        "value": "#1a1a1a",
+        "name": "Charcoal Black",
+        "usage": "Primary text, buttons, active states, footer background"
+      },
+      "background": {
+        "value": "#faf9f6",
+        "name": "Warm White",
+        "usage": "Main page background, primary sections"
+      },
+      "backgroundAlt": {
+        "value": "#ffffff",
+        "name": "Pure White",
+        "usage": "Alternate sections, about section, cards"
+      }
+    },
+    "text": {
+      "heading1": {
+        "value": "#1a1a1a",
+        "name": "Primary Heading",
+        "usage": "First word in gradient headlines"
+      },
+      "heading2": {
+        "value": "#4a4a4a",
+        "name": "Secondary Heading",
+        "usage": "Second word in gradient headlines"
+      },
+      "heading3": {
+        "value": "#7a7a7a",
+        "name": "Tertiary Heading",
+        "usage": "Third word in gradient headlines"
+      },
+      "body": {
+        "value": "#666666",
+        "name": "Body Text",
+        "usage": "Paragraph text, descriptions"
+      },
+      "muted": {
+        "value": "#888888",
+        "name": "Muted Text",
+        "usage": "Pre-text, secondary labels"
+      },
+      "subtle": {
+        "value": "#999999",
+        "name": "Subtle Text",
+        "usage": "Labels, counters, coordinates, nav icons"
+      }
+    },
+    "ui": {
+      "border": {
+        "value": "#e8e6e2",
+        "name": "Warm Gray Border",
+        "usage": "Grid lines, nav borders, section dividers"
+      },
+      "borderLight": {
+        "value": "#e0e0e0",
+        "name": "Light Border",
+        "usage": "Secondary borders, subtle dividers"
+      },
+      "divider": {
+        "value": "#c0bdb8",
+        "name": "Warm Divider",
+        "usage": "Gradient divider lines"
+      },
+      "hoverBg": {
+        "value": "#f5f5f2",
+        "name": "Hover Background",
+        "usage": "Nav item hover state"
+      },
+      "activeBg": {
+        "value": "#e8e6e2",
+        "name": "Active Background",
+        "usage": "Active nav item, selected states"
+      },
+      "progressDotBorder": {
+        "value": "#cccccc",
+        "name": "Progress Dot Border",
+        "usage": "Inactive progress indicators"
+      },
+      "buttonHover": {
+        "value": "#333333",
+        "name": "Button Hover",
+        "usage": "Primary button hover state"
+      }
+    },
+    "dark": {
+      "background": {
+        "value": "#1a1a1a",
+        "name": "Dark Background",
+        "usage": "Footer, dark sections"
+      },
+      "textPrimary": {
+        "value": "#ffffff",
+        "name": "White Text",
+        "usage": "Text on dark backgrounds"
+      },
+      "textMuted": {
+        "value": "rgba(255,255,255,0.5)",
+        "name": "Muted White",
+        "usage": "Secondary text on dark backgrounds"
+      },
+      "border": {
+        "value": "rgba(255,255,255,0.3)",
+        "name": "White Border",
+        "usage": "Borders on dark backgrounds"
+      }
+    },
+    "scrollPath": {
+      "start": "#FFFFFF",
+      "mid": "#5B9BD5",
+      "end": "#1E3A5F",
+      "usage": "Animated scroll path gradient"
+    },
+    "overlay": {
+      "video": {
+        "value": "rgba(0,0,0,0.4)",
+        "usage": "Video overlay for play button visibility"
+      },
+      "scrollLine": {
+        "value": "rgba(0,0,0,0.1)",
+        "usage": "Scroll indicator line background"
+      }
+    }
+  },
+
+  "spacing": {
+    "scale": {
+      "xs": "0.25rem",
+      "sm": "0.5rem",
+      "md": "1rem",
+      "lg": "1.5rem",
+      "xl": "2rem",
+      "2xl": "3rem",
+      "3xl": "4rem",
+      "4xl": "6rem"
+    },
+    "section": {
+      "paddingVertical": "6rem",
+      "paddingHorizontal": "2rem"
+    },
+    "container": {
+      "maxWidth": {
+        "content": "600px",
+        "about": "800px",
+        "carousel": "1200px"
+      }
+    },
+    "gaps": {
+      "headlineWords": "0.25rem",
+      "navItems": "0.5rem",
+      "coordinates": "1.5rem",
+      "sectionElements": "1.5rem",
+      "accordion": "0"
+    }
+  },
+
+  "grid": {
+    "hero": {
+      "layout": "Asymmetric Three-Column",
+      "leftPanel": "28%",
+      "centerContent": "44%",
+      "rightPanel": "28%",
+      "description": "Fixed side images with scrolling center content"
+    },
+    "gridLines": {
+      "vertical": ["5%", "28%", "72%", "95%"],
+      "horizontal": ["15%", "85%"],
+      "color": "#e8e6e2",
+      "width": "1px"
+    },
+    "breakpoints": {
+      "tablet": {
+        "query": "max-width: 1024px",
+        "adjustments": {
+          "sidePanel": "25%",
+          "centerContent": "50%"
+        }
+      },
+      "mobile": {
+        "query": "max-width: 768px",
+        "adjustments": {
+          "sidePanels": "hidden",
+          "centerContent": "full-width with 2rem padding"
+        }
+      }
+    }
+  },
+
+  "components": {
+    "button": {
+      "primary": {
+        "padding": "1rem 2rem",
+        "background": "#1a1a1a",
+        "color": "#ffffff",
+        "fontSize": "0.75rem",
+        "fontWeight": 400,
+        "textTransform": "uppercase",
+        "letterSpacing": "0.1em",
+        "border": "none",
+        "transition": "all 0.3s ease",
+        "hover": {
+          "background": "#333333"
+        }
+      },
+      "outline": {
+        "padding": "21px 34px",
+        "background": "transparent",
+        "color": "#222222",
+        "border": "2px solid #222222",
+        "fontSize": "15px",
+        "textTransform": "uppercase",
+        "letterSpacing": "0.8px",
+        "transition": "0.1s background-color linear, 0.1s color linear",
+        "hover": {
+          "background": "#222222",
+          "color": "#ffffff"
+        }
+      },
+      "link": {
+        "fontSize": "0.75rem",
+        "textTransform": "uppercase",
+        "letterSpacing": "0.1em",
+        "color": "#1a1a1a",
+        "borderBottom": "1px solid #cccccc",
+        "paddingBottom": "0.25rem",
+        "hover": {
+          "borderColor": "#1a1a1a"
+        }
+      }
+    },
+    "navigation": {
+      "sticky": {
+        "topDefault": "49px",
+        "topCompact": "20px",
+        "background": "#ffffff",
+        "borderTop": "1px solid #e8e6e2",
+        "borderBottom": "1px solid #e8e6e2",
+        "transition": "top 0.3s ease"
+      },
+      "accordion": {
+        "itemPadding": "0.75rem 1rem",
+        "borderRight": "1px solid #e8e6e2",
+        "flexDirection": "row",
+        "gap": "0.5rem",
+        "states": {
+          "default": {
+            "background": "transparent"
+          },
+          "hover": {
+            "background": "#f5f5f2"
+          },
+          "active": {
+            "background": "#e8e6e2"
+          }
+        }
+      },
+      "header": {
+        "padding": "0.5rem 2rem",
+        "labelSize": "0.7rem",
+        "labelColor": "#999999"
+      }
+    },
+    "progressIndicator": {
+      "dots": {
+        "size": "8px",
+        "gap": "0.75rem",
+        "borderWidth": "1px",
+        "borderColor": "#cccccc",
+        "borderRadius": "50%",
+        "activeBackground": "#1a1a1a",
+        "activeBorderColor": "#1a1a1a"
+      },
+      "sticks": {
+        "width": "40px",
+        "height": "3px",
+        "gap": "0.5rem",
+        "inactiveBackground": "#e0e0e0",
+        "activeBackground": "#1a1a1a"
+      }
+    },
+    "dividers": {
+      "vertical": {
+        "width": "1px",
+        "height": "40px",
+        "gradient": "linear-gradient(to bottom, transparent, #c0bdb8, transparent)"
+      },
+      "horizontal": {
+        "height": "1px",
+        "width": "20px",
+        "color": "rgba(255,255,255,0.3)"
+      }
+    },
+    "card": {
+      "image": {
+        "aspectRatio": "16/9",
+        "borderRadius": "8px",
+        "boxShadow": "0 20px 60px rgba(0, 0, 0, 0.2)"
+      }
+    },
+    "video": {
+      "aspectRatio": "16/9",
+      "playButton": {
+        "size": "80px",
+        "borderWidth": "2px",
+        "borderColor": "#ffffff",
+        "borderRadius": "50%",
+        "background": "transparent",
+        "hoverBackground": "rgba(255,255,255,0.1)",
+        "hoverScale": 1.05
+      }
+    },
+    "scrollPrompt": {
+      "position": "fixed",
+      "bottom": "1.5rem",
+      "line": {
+        "width": "1px",
+        "height": "50px",
+        "background": "rgba(0,0,0,0.1)",
+        "animatedSegment": {
+          "height": "30%",
+          "background": "#1a1a1a"
+        }
+      }
+    },
+    "carousel": {
+      "tabs": {
+        "fontSize": "13px",
+        "fontWeight": 600,
+        "textTransform": "uppercase",
+        "letterSpacing": "1px",
+        "inactiveColor": "#888888",
+        "activeColor": "#000000",
+        "activeBorder": "2px solid #000000"
+      },
+      "slide": {
+        "width": "50%",
+        "mobileWidth": "90%",
+        "transition": "all 0.5s ease-in-out",
+        "states": {
+          "active": {
+            "opacity": 1,
+            "scale": 1,
+            "zIndex": 10
+          },
+          "adjacent": {
+            "opacity": 0.4,
+            "scale": 0.9,
+            "zIndex": 5
+          }
+        }
+      },
+      "arrows": {
+        "fontSize": "40px",
+        "fontWeight": 100,
+        "color": "#000000",
+        "opacity": 0.4,
+        "hoverOpacity": 1
+      }
+    },
+    "footer": {
+      "padding": "3rem",
+      "background": "#1a1a1a",
+      "layout": "space-between",
+      "brandSize": "1.25rem"
+    }
+  },
+
+  "animation": {
+    "easing": {
+      "smooth": "ease",
+      "expressive": "cubic-bezier(0.16, 1, 0.3, 1)",
+      "standard": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "linear": "linear"
+    },
+    "duration": {
+      "fast": "0.1s",
+      "normal": "0.3s",
+      "medium": "0.5s",
+      "slow": "0.6s",
+      "slower": "0.8s",
+      "slowest": "1s"
+    },
+    "patterns": {
+      "gridLineReveal": {
+        "property": "transform",
+        "from": "scaleY(0) or scaleX(0)",
+        "to": "scaleY(1) or scaleX(1)",
+        "duration": "1s",
+        "easing": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "staggerDelay": "0.1s"
+      },
+      "wordFadeIn": {
+        "from": {
+          "opacity": 0,
+          "transform": "translateY(20px)"
+        },
+        "to": {
+          "opacity": 1,
+          "transform": "translateY(0)"
+        },
+        "duration": "0.8s",
+        "easing": "ease"
+      },
+      "sectionTransition": {
+        "property": "opacity, transform",
+        "from": {
+          "opacity": 0,
+          "transform": "translateY(30px)"
+        },
+        "to": {
+          "opacity": 1,
+          "transform": "translateY(0)"
+        },
+        "duration": "0.6s",
+        "easing": "ease"
+      },
+      "imageSlide": {
+        "property": "transform, opacity",
+        "duration": "0.8s",
+        "easing": "cubic-bezier(0.16, 1, 0.3, 1)"
+      },
+      "imageCycle": {
+        "property": "opacity",
+        "duration": "0.8s",
+        "easing": "ease-in-out"
+      },
+      "scrollLineMove": {
+        "keyframes": "top -30% to 100%",
+        "duration": "2s",
+        "easing": "ease-in-out",
+        "iteration": "infinite"
+      },
+      "spotlightExpand": {
+        "vertical": {
+          "from": "95px",
+          "to": "500px",
+          "scrollDistance": "150px"
+        },
+        "horizontal": {
+          "from": "214px",
+          "to": "2000px",
+          "scrollDistance": "300px"
+        }
+      }
+    },
+    "transitions": {
+      "default": "all 0.3s ease",
+      "button": "all 0.3s ease",
+      "buttonFast": "0.1s background-color linear, 0.1s color linear",
+      "nav": "top 0.3s ease",
+      "opacity": "opacity 0.5s ease"
+    }
+  },
+
+  "shadows": {
+    "card": "0 20px 60px rgba(0, 0, 0, 0.2)",
+    "cardLight": "0 5px 15px rgba(0, 0, 0, 0.1)"
+  },
+
+  "borderRadius": {
+    "none": "0",
+    "sm": "4px",
+    "md": "8px",
+    "lg": "12px",
+    "full": "50%"
+  },
+
+  "iconography": {
+    "helicopter": {
+      "path": "/assets/images/icons/r66-icon-transparent going right.svg",
+      "size": "60px",
+      "usage": "Scroll path animation"
+    },
+    "arrows": {
+      "style": "Minimal chevrons or arrows",
+      "usage": "Navigation, carousel controls, CTAs"
+    },
+    "numbers": {
+      "style": "Zero-padded two-digit format (01, 02, 03...)",
+      "fontFamily": "Share Tech Mono",
+      "usage": "Section numbering, navigation icons"
+    }
+  },
+
+  "imagery": {
+    "style": {
+      "treatment": "Full-bleed, high-contrast photography",
+      "subjects": [
+        "Helicopters in flight",
+        "Expedition landscapes (poles, mountains, oceans)",
+        "Hangar and facility shots",
+        "Aerial perspectives"
+      ],
+      "colorGrading": "Natural with slight warmth",
+      "aspectRatios": {
+        "hero": "Full viewport height (100vh)",
+        "video": "16:9",
+        "card": "4:3"
+      }
+    }
+  },
+
+  "patterns": {
+    "gradientHeadline": {
+      "description": "Multi-word headlines with progressive color fade",
+      "colors": ["#1a1a1a", "#4a4a4a", "#7a7a7a"],
+      "direction": "Per word, darkest to lightest"
+    },
+    "sectionLayout": {
+      "alternating": {
+        "primary": "#faf9f6",
+        "alternate": "#ffffff"
+      },
+      "minHeight": "60vh",
+      "contentWidth": "600px",
+      "textAlign": "center"
+    },
+    "coordinateDisplay": {
+      "format": "XX.XXXX°N / X.XXXX°W",
+      "fontFamily": "Share Tech Mono",
+      "fontSize": "0.65rem",
+      "color": "#999999",
+      "usage": "Hero sections, footer, location references"
+    },
+    "labeledSection": {
+      "label": {
+        "fontSize": "0.7rem",
+        "textTransform": "uppercase",
+        "letterSpacing": "0.2em",
+        "color": "#999999",
+        "marginBottom": "2rem"
+      }
+    }
+  },
+
+  "responsive": {
+    "breakpoints": {
+      "mobile": "768px",
+      "tablet": "1024px",
+      "desktop": "1200px"
+    },
+    "strategies": {
+      "hero": {
+        "mobile": "Hide side images, full-width center content",
+        "tablet": "Reduce side panel width to 25%"
+      },
+      "navigation": {
+        "mobile": "Wrap accordion items to 3 columns"
+      },
+      "carousel": {
+        "mobile": "Full-width slides, hide adjacent slides"
+      },
+      "footer": {
+        "mobile": "Stack vertically with center alignment"
+      }
+    }
+  },
+
+  "accessibility": {
+    "focusStates": "Visible focus rings on interactive elements",
+    "colorContrast": "WCAG AA compliant text contrast ratios",
+    "reducedMotion": "Respect prefers-reduced-motion",
+    "semanticHTML": "Proper heading hierarchy, landmark regions"
+  }
+}

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Menu Test</title>
+  <style>
+    body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+
+    /* Hamburger Button */
+    .menu-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1001;
+      width: 44px;
+      height: 44px;
+      background: #2c3e50;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .menu-toggle span {
+      display: block;
+      width: 24px;
+      height: 3px;
+      background: white;
+      transition: all 0.3s;
+    }
+
+    .menu-toggle.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .menu-toggle.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .menu-toggle.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -6px);
+    }
+
+    /* Menu Panel */
+    .menu-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 1000;
+      transform: translateY(-100%);
+      transition: transform 0.3s ease;
+      padding: 80px 20px 20px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .menu-panel.open {
+      transform: translateY(0);
+    }
+
+    /* Menu Content */
+    .menu-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+    }
+
+    .menu-section h3 {
+      margin: 0 0 15px 0;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #3498db;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 8px;
+    }
+
+    .menu-section ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .menu-section li {
+      margin: 8px 0;
+    }
+
+    .menu-section a {
+      color: #2c3e50;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .menu-section a:hover {
+      color: #3498db;
+    }
+
+    /* Overlay */
+    .menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .menu-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Test Page Content</h1>
+<p>Click the hamburger menu in the top-right corner to test the navigation.</p>
+
+<!-- Overlay -->
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<!-- Menu Panel -->
+<div class="menu-panel" id="menuPanel">
+  <div class="menu-content">
+    <div class="menu-section">
+      <h3>About</h3>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about-us">About Us</a></li>
+        <li><a href="/about-us-more">More About Us</a></li>
+        <li><a href="/meet-the-team">Meet The Team</a></li>
+      </ul>
+    </div>
+
+    <div class="menu-section">
+      <h3>Aircraft Fleet</h3>
+      <ul>
+        <li><a href="/r44">R44 Helicopter</a></li>
+        <li><a href="/r44-details">R44 Details</a></li>
+        <li><a href="/r66">R66 Helicopter</a></li>
+        <li><a href="/r66-details">R66 Details</a></li>
+        <li><a href="/r88">R88 Helicopter</a></li>
+      </ul>
+    </div>
+
+    <div class="menu-section">
+      <h3>Aircraft Sales</h3>
+      <ul>
+        <li><a href="/aircraft-compare">Compare Aircraft</a></li>
+        <li><a href="/used-aircraft">Used Aircraft</a></li>
+        <li><a href="/recently-sold-aircraft">Recently Sold</a></li>
+      </ul>
+    </div>
+
+    <div class="menu-section">
+      <h3>Services</h3>
+      <ul>
+        <li><a href="/discovery-flights">Discovery Flights</a></li>
+        <li><a href="/flying">Flying</a></li>
+        <li><a href="/hangarage">Hangarage</a></li>
+        <li><a href="/training-faq">Training FAQ</a></li>
+      </ul>
+    </div>
+
+    <div class="menu-section">
+      <h3>Gallery</h3>
+      <ul>
+        <li><a href="/gallery">Gallery</a></li>
+        <li><a href="/images-of-q">Images</a></li>
+        <li><a href="/news">News</a></li>
+      </ul>
+    </div>
+
+    <div class="menu-section">
+      <h3>Shop</h3>
+      <ul>
+        <li><a href="/apparel">Apparel</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Hamburger Button -->
+<button class="menu-toggle" id="menuToggle">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<script>
+(function() {
+  var toggle = document.getElementById('menuToggle');
+  var panel = document.getElementById('menuPanel');
+  var overlay = document.getElementById('menuOverlay');
+
+  function openMenu() {
+    toggle.classList.add('active');
+    panel.classList.add('open');
+    overlay.classList.add('show');
+  }
+
+  function closeMenu() {
+    toggle.classList.remove('active');
+    panel.classList.remove('open');
+    overlay.classList.remove('show');
+  }
+
+  toggle.addEventListener('click', function() {
+    if (panel.classList.contains('open')) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  });
+
+  overlay.addEventListener('click', closeMenu);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeMenu();
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,206 @@
+/**
+ * HQ Aviation Design Tokens
+ * Light & Modern aesthetic (Tesla-inspired)
+ *
+ * Usage: var(--hq-token-name)
+ */
+
+:root {
+  /* ============================================
+     COLOR PALETTE
+     ============================================ */
+
+  /* Backgrounds - Light & Airy */
+  --hq-white: #FFFFFF;           /* Pure white for cards */
+  --hq-ivory: #FAFAF8;           /* Primary page background */
+  --hq-cream: #F5F5F2;           /* Section alternates */
+  --hq-sand: #E8E6E1;            /* Borders, dividers */
+
+  /* Text - Clean Typography */
+  --hq-black: #0A0A0A;           /* Headlines, primary text */
+  --hq-charcoal: #1A1A1A;        /* Body text */
+  --hq-slate: #666666;           /* Secondary text */
+  --hq-muted: #999999;           /* Captions, hints */
+
+  /* Accent - Refined Orange */
+  --hq-accent: #E04A2F;          /* Primary CTA */
+  --hq-accent-hover: #C93E25;    /* Hover state */
+  --hq-accent-light: #FCE8E4;    /* Accent backgrounds */
+
+  /* Navigation */
+  --hq-nav-bg: rgba(255, 255, 255, 0.95);     /* Frosted glass nav */
+  --hq-nav-bg-solid: #FFFFFF;                  /* Solid nav on scroll */
+  --hq-nav-border: rgba(0, 0, 0, 0.08);        /* Subtle dividers */
+
+  /* Status Colors */
+  --hq-success: #22C55E;
+  --hq-warning: #F59E0B;
+  --hq-error: #EF4444;
+  --hq-info: #3B82F6;
+
+  /* Overlay Colors */
+  --hq-overlay-dark: rgba(10, 10, 10, 0.6);
+  --hq-overlay-light: rgba(255, 255, 255, 0.9);
+
+  /* Gray Scale (utility aliases) */
+  --hq-gray-100: #F5F5F2;
+  --hq-gray-200: #E8E6E1;
+  --hq-gray-300: #D1D1CC;
+  --hq-gray-400: #A3A3A0;
+  --hq-gray-500: #666666;
+  --hq-gray-600: #4A4A4A;
+  --hq-gray-700: #333333;
+  --hq-gray-800: #1A1A1A;
+  --hq-gray-900: #0A0A0A;
+  --hq-gray-light: #E8E6E1;
+  --hq-gray-dark: #666666;
+
+  /* ============================================
+     TYPOGRAPHY
+     ============================================ */
+
+  /* Font Families */
+  --hq-font-display: 'Playfair Display', Georgia, serif;   /* Hero headlines */
+  --hq-font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;   /* Body text */
+  --hq-font-accent: 'Montserrat', 'Inter', -apple-system, sans-serif;   /* Model names, specs, nav */
+
+  /* Type Scale (Perfect Fourth - 1.333) */
+  --hq-text-xs: 0.75rem;         /* 12px - Labels, badges */
+  --hq-text-sm: 0.875rem;        /* 14px - Captions, small text */
+  --hq-text-base: 1rem;          /* 16px - Body text */
+  --hq-text-lg: 1.125rem;        /* 18px - Lead text */
+  --hq-text-xl: 1.333rem;        /* ~21px - Section leads */
+  --hq-text-2xl: 1.777rem;       /* ~28px - H4 */
+  --hq-text-3xl: 2.369rem;       /* ~38px - H3 */
+  --hq-text-4xl: 3.157rem;       /* ~50px - H2 */
+  --hq-text-5xl: 4.209rem;       /* ~67px - H1 */
+  --hq-text-hero: 5.61rem;       /* ~90px - Hero headlines */
+
+  /* Font Weights */
+  --hq-weight-light: 300;
+  --hq-weight-normal: 400;
+  --hq-weight-medium: 500;
+  --hq-weight-semibold: 600;
+  --hq-weight-bold: 700;
+
+  /* Line Heights */
+  --hq-leading-tight: 1.1;       /* Headlines */
+  --hq-leading-snug: 1.25;       /* Subheadings */
+  --hq-leading-normal: 1.5;      /* Body text */
+  --hq-leading-relaxed: 1.75;    /* Comfortable reading */
+
+  /* Letter Spacing */
+  --hq-tracking-tight: -0.02em;  /* Headlines */
+  --hq-tracking-normal: 0;       /* Body */
+  --hq-tracking-wide: 0.05em;    /* Buttons, labels */
+  --hq-tracking-wider: 0.1em;    /* Badges, all-caps */
+
+  /* ============================================
+     SPACING
+     ============================================ */
+
+  /* Spacing Scale (8px base) */
+  --hq-space-1: 0.25rem;         /* 4px */
+  --hq-space-2: 0.5rem;          /* 8px */
+  --hq-space-3: 0.75rem;         /* 12px */
+  --hq-space-4: 1rem;            /* 16px */
+  --hq-space-5: 1.25rem;         /* 20px */
+  --hq-space-6: 1.5rem;          /* 24px */
+  --hq-space-8: 2rem;            /* 32px */
+  --hq-space-10: 2.5rem;         /* 40px */
+  --hq-space-12: 3rem;           /* 48px */
+  --hq-space-16: 4rem;           /* 64px */
+  --hq-space-20: 5rem;           /* 80px */
+  --hq-space-24: 6rem;           /* 96px */
+  --hq-space-32: 8rem;           /* 128px */
+
+  /* Section Spacing */
+  --hq-section-padding: var(--hq-space-24);
+  --hq-section-padding-mobile: var(--hq-space-12);
+
+  /* ============================================
+     LAYOUT
+     ============================================ */
+
+  /* Container Widths */
+  --hq-container-sm: 640px;
+  --hq-container-md: 768px;
+  --hq-container-lg: 1024px;
+  --hq-container-xl: 1280px;
+  --hq-container-2xl: 1536px;
+  --hq-container-max: 1440px;    /* Max content width */
+
+  /* Container Padding */
+  --hq-container-padding: var(--hq-space-6);
+  --hq-container-padding-mobile: var(--hq-space-4);
+
+  /* ============================================
+     EFFECTS
+     ============================================ */
+
+  /* Border Radius */
+  --hq-radius-sm: 4px;
+  --hq-radius-md: 8px;
+  --hq-radius-lg: 12px;
+  --hq-radius-xl: 16px;
+  --hq-radius-2xl: 24px;
+  --hq-radius-full: 9999px;
+
+  /* Shadows - Subtle & Premium */
+  --hq-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --hq-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --hq-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --hq-shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.1);
+  --hq-shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
+
+  /* Card Shadow */
+  --hq-card-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  --hq-card-shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.1);
+
+  /* ============================================
+     ANIMATION
+     ============================================ */
+
+  /* Timing */
+  --hq-duration-fast: 150ms;
+  --hq-duration-normal: 300ms;
+  --hq-duration-slow: 500ms;
+  --hq-duration-slower: 700ms;
+
+  /* Easing - Refined cubic-bezier */
+  --hq-ease-out: cubic-bezier(0.33, 1, 0.68, 1);           /* ease-out-expo approximation */
+  --hq-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);        /* ease-in-out-expo */
+  --hq-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);     /* Slight bounce */
+
+  /* Standard Transitions */
+  --hq-transition-fast: var(--hq-duration-fast) var(--hq-ease-out);
+  --hq-transition-normal: var(--hq-duration-normal) var(--hq-ease-out);
+  --hq-transition-slow: var(--hq-duration-slow) var(--hq-ease-out);
+
+  /* ============================================
+     BREAKPOINTS (for reference in media queries)
+     ============================================ */
+
+  /*
+   * --hq-bp-sm: 640px;
+   * --hq-bp-md: 768px;
+   * --hq-bp-lg: 1024px;
+   * --hq-bp-xl: 1280px;
+   * --hq-bp-2xl: 1536px;
+   */
+
+  /* ============================================
+     Z-INDEX SCALE
+     ============================================ */
+
+  --hq-z-base: 0;
+  --hq-z-dropdown: 100;
+  --hq-z-sticky: 200;
+  --hq-z-fixed: 300;
+  --hq-z-modal-backdrop: 400;
+  --hq-z-modal: 500;
+  --hq-z-popover: 600;
+  --hq-z-tooltip: 700;
+  --hq-z-toast: 800;
+  --hq-z-max: 9999;
+}
