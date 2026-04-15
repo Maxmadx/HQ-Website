@@ -24,33 +24,36 @@ export default function PageTracker() {
   const exitFiredRef = useRef(false);
   const thresholdsRef = useRef(new Set());
 
-  function fireExit(path) {
-    if (!startTimeRef.current || exitFiredRef.current || !path) return;
-    exitFiredRef.current = true;
-    const seconds = Math.round((Date.now() - startTimeRef.current) / 1000);
-    trackEvent('page_exit', String(seconds), path);
-  }
-
   useEffect(() => {
-    // Fire exit for the page we're leaving
+    // fireExit is defined inside the effect so it always closes over the current
+    // refs without needing to be listed as an exhaustive-deps dependency.
+    function fireExit(path) {
+      if (!startTimeRef.current || exitFiredRef.current || !path) return;
+      exitFiredRef.current = true; // set before async trackEvent to prevent double-fire
+      const seconds = Math.round((Date.now() - startTimeRef.current) / 1000);
+      trackEvent('page_exit', String(seconds), path);
+    }
+
+    // Fire exit for the page we're leaving (must come before exitFiredRef reset below)
     if (prevPathRef.current) {
       fireExit(prevPathRef.current);
     }
 
-    // Reset for new page
+    // Reset state for new page visit
     const currentPath = location.pathname;
     prevPathRef.current = currentPath;
     startTimeRef.current = Date.now();
-    exitFiredRef.current = false;
+    exitFiredRef.current = false; // reset AFTER fireExit call above
     thresholdsRef.current = new Set();
 
     // Track pageview
     trackEvent('pageview', null, currentPath);
 
-    // Scroll depth — throttled at 200ms
+    // Scroll depth — trailing-edge throttle at 200ms so the final resting
+    // position is always checked after a scroll burst ends.
     let scrollTimer = null;
     function onScroll() {
-      if (scrollTimer) return;
+      clearTimeout(scrollTimer);
       scrollTimer = setTimeout(() => {
         scrollTimer = null;
         const pct = getScrollPct();
@@ -64,7 +67,8 @@ export default function PageTracker() {
     }
     window.addEventListener('scroll', onScroll, { passive: true });
 
-    // Tab hide / close (visibilitychange is more reliable than beforeunload on mobile)
+    // Tab hide / close (visibilitychange is more reliable than beforeunload on mobile).
+    // exitFiredRef prevents double-counting if the user hides then closes the tab.
     function onVisibility() {
       if (document.visibilityState === 'hidden') {
         fireExit(currentPath);
@@ -77,7 +81,7 @@ export default function PageTracker() {
       document.removeEventListener('visibilitychange', onVisibility);
       if (scrollTimer) clearTimeout(scrollTimer);
     };
-  }, [location.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   return null;
 }
