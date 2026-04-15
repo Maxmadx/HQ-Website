@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<script>
+window.Squarespace = window.Squarespace || { load: function() {}, afterBodyLoad: function() {}, SQUARESPACE_CONTEXT: {} };
+window.Static = window.Static || { SQUARESPACE_CONTEXT: {} };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<base href="/">
+<title>HQ Aviation &mdash; Blog</title>
+<link rel="icon" type="image/png" href="/assets/images/logos/hq/hq-aviation-logo-black.png"/>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #fff; color: #333; }
+.page-wrapper { width: 100%; max-width: 900px; margin: 0 auto; padding: 60px 40px; }
+.page-header { text-align: center; margin-bottom: 50px; }
+.page-header h1 { font-size: 2.5rem; font-weight: 900; text-transform: uppercase; color: #000; margin-bottom: 15px; }
+.filters { display: flex; gap: 10px; justify-content: center; margin-bottom: 40px; flex-wrap: wrap; }
+.filter { background: #f9f9f9; border: 1px solid #eee; padding: 10px 20px; color: #333; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.3s; }
+.filter:hover, .filter.active { background: #000; color: #fff; border-color: #000; }
+.blog-post { position: relative; background: #f9f9f9; border: 1px solid #eee; margin-bottom: 30px; transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); overflow: hidden; }
+.blog-post::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: #ff0000; transform: scaleY(0); transform-origin: top; transition: transform 0.4s ease; }
+.blog-post:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.05); background: #fff; border-color: #ff0000; }
+.blog-post:hover::before { transform: scaleY(1); }
+.blog-content { padding: 40px; }
+.blog-meta { font-size: 0.75rem; font-weight: 700; color: #ff0000; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px; }
+.blog-content h2 { font-size: 1.5rem; font-weight: 900; text-transform: uppercase; color: #000; margin-bottom: 15px; }
+.blog-content h2 a { color: inherit; text-decoration: none; }
+.blog-content h2 a:hover { color: #ff0000; }
+.blog-content p { font-size: 0.9rem; line-height: 1.8; color: #555; }
+.read-more { display: inline-block; margin-top: 20px; padding: 12px 30px; background: transparent; border: 2px solid #000; color: #000; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; transition: all 0.3s ease; text-decoration: none; }
+.read-more:hover { background: #000; color: #fff; }
+@media (max-width: 768px) { .page-wrapper { padding: 40px 20px; } }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+  <div class="page-header">
+    <h1>Blog</h1>
+  </div>
+
+  <div class="filters">
+    <button class="filter active">All Posts</button>
+    <button class="filter">Training Tips</button>
+    <button class="filter">Adventures</button>
+    <button class="filter">Industry News</button>
+    <button class="filter">Aircraft</button>
+  </div>
+
+  <article class="blog-post">
+    <div class="blog-content">
+      <div class="blog-meta">January 15, 2024 &bull; Training Tips</div>
+      <h2><a href="#">5 Things Every New Helicopter Student Should Know</a></h2>
+      <p>Starting your helicopter training journey? Here are the essential tips that will set you up for success from day one. From managing expectations to mastering the hover, these insights from our instructors will help you progress faster and enjoy the learning process.</p>
+      <a href="#" class="read-more">Read More</a>
+    </div>
+  </article>
+
+  <article class="blog-post">
+    <div class="blog-content">
+      <div class="blog-meta">January 8, 2024 &bull; Adventures</div>
+      <h2><a href="#">Scottish Highlands Expedition: A Pilot's Perspective</a></h2>
+      <p>Last month we completed an incredible 5-day expedition through the Scottish Highlands. From remote castles to dramatic coastlines, this adventure showcased why helicopter travel is truly special. Captain Q shares his experience and planning insights.</p>
+      <a href="#" class="read-more">Read More</a>
+    </div>
+  </article>
+
+  <article class="blog-post">
+    <div class="blog-content">
+      <div class="blog-meta">December 20, 2023 &bull; Aircraft</div>
+      <h2><a href="#">First Look: The Robinson R66 NXG</a></h2>
+      <p>Robinson's latest turbine helicopter brings significant improvements. We take an in-depth look at the new features, performance upgrades, and what it means for operators considering turbine transition or fleet expansion.</p>
+      <a href="#" class="read-more">Read More</a>
+    </div>
+  </article>
+</div>
+<script src="/assets/menu.js"></script>
+</body>
+</html>

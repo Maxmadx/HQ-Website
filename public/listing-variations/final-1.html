@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Final Draft 1 - Clean Split with Sticky Image</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #fff;
+  color: #1a1a1a;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Back Link */
+.back-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: #888; text-decoration: none; font-size: 0.85rem;
+  padding: 24px 40px; transition: color 0.2s;
+  text-transform: uppercase; letter-spacing: 1px; font-weight: 500;
+  cursor: pointer;
+}
+.back-link:hover { color: #1a1a1a; }
+.back-link svg { width: 16px; height: 16px; }
+
+/* Main Layout */
+.listing-wrapper {
+  display: grid;
+  grid-template-columns: minmax(400px, 520px) 1fr;
+  min-height: calc(100vh - 80px);
+}
+
+/* Left Column - Sticky Image */
+.image-column {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-image {
+  flex: 1;
+  background: #f5f5f5;
+  overflow: hidden;
+  position: relative;
+  border-radius: 0 0 12px 0;
+}
+
+/* Carousel */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.carousel-slide.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Carousel Arrows */
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease, background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.main-image:hover .carousel-arrow {
+  opacity: 1;
+}
+
+.carousel-arrow:hover {
+  background: #fff;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-arrow svg {
+  width: 20px;
+  height: 20px;
+  stroke: #333;
+  stroke-width: 2;
+  fill: none;
+}
+
+.carousel-prev { left: 15px; }
+.carousel-next { right: 15px; }
+
+/* Carousel Dots */
+.carousel-dots {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.carousel-dot:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.carousel-dot.active {
+  background: #fff;
+  transform: scale(1.3);
+}
+
+.image-footer {
+  padding: 25px 30px;
+  background: #fafafa;
+  border-top: 1px solid #eee;
+}
+.image-nav {
+  display: flex;
+  gap: 10px;
+}
+.thumb {
+  width: 70px; height: 50px;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s, transform 0.2s;
+  border: 2px solid transparent;
+}
+.thumb:hover, .thumb.active {
+  opacity: 1;
+  border-color: #1a1a1a;
+}
+.thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
+
+/* About Section Under Image */
+.about-section {
+  padding: 25px 30px;
+  background: #fff;
+  border-top: 1px solid #eee;
+}
+.about-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #999;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+.about-text {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #555;
+}
+
+/* Right Column - Content */
+.content-column {
+  padding: 40px 50px 80px;
+  overflow-y: auto;
+}
+
+/* Header */
+.listing-header {
+  margin-bottom: 35px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid #eee;
+}
+
+.model-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
+  color: #1a1a1a;
+}
+
+.meta-row {
+  display: flex;
+  gap: 20px;
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+}
+.meta-row span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.availability-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f0fdf4;
+  color: #166534;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.availability-badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: #22c55e;
+  border-radius: 50%;
+}
+
+/* Price Section */
+.price-section {
+  margin-bottom: 35px;
+}
+.price {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 5px;
+}
+.price-note {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+/* Specs Section */
+.section-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #999;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #eee;
+}
+
+.specs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+  margin-bottom: 40px;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.spec-item {
+  padding: 18px 20px;
+  background: #fafafa;
+  border-bottom: 1px solid #eee;
+  border-right: 1px solid #eee;
+}
+.spec-item:nth-child(even) { border-right: none; }
+.spec-item:nth-last-child(-n+2) { border-bottom: none; }
+.spec-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+  margin-bottom: 4px;
+}
+.spec-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+/* Equipment Section */
+.equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 40px;
+}
+.equipment-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #fafafa;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #444;
+  transition: background 0.2s;
+}
+.equipment-item:hover { background: #f0f0f0; }
+.equipment-item::before {
+  content: '';
+  width: 18px; height: 18px;
+  background: #e8f5e9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2322c55e' stroke-width='3'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Register Interest */
+.register-interest {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 25px;
+  margin-top: 30px;
+  border-top: 1px solid #eee;
+}
+.register-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+.register-icon {
+  width: 44px;
+  height: 44px;
+  background: #1a1a1a;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.register-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: #fff;
+}
+.register-info { flex: 1; }
+.register-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.register-subtitle {
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* Call Office */
+.call-office {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: #fff;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #e5e5e5;
+}
+.call-icon {
+  width: 36px;
+  height: 36px;
+  background: #f0fdf4;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.call-icon svg {
+  width: 16px;
+  height: 16px;
+  stroke: #22c55e;
+}
+.call-info { flex: 1; }
+.call-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
+  margin-bottom: 2px;
+}
+.call-number {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-decoration: none;
+}
+.call-number:hover { color: #22c55e; }
+
+.divider-or {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+  color: #999;
+  font-size: 0.75rem;
+}
+.divider-or::before,
+.divider-or::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #ddd;
+}
+
+.register-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.register-form input,
+.register-form textarea {
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+.register-form input:focus,
+.register-form textarea:focus {
+  outline: none;
+  border-color: #1a1a1a;
+}
+.register-form input[type="email"],
+.register-form input[type="tel"] {
+  grid-column: 1 / -1;
+}
+.register-form textarea {
+  grid-column: 1 / -1;
+  min-height: 80px;
+  resize: vertical;
+}
+.register-form button {
+  grid-column: 1 / -1;
+  padding: 14px 24px;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background 0.2s;
+}
+.register-form button:hover { background: #333; }
+
+/* Responsive */
+@media (max-width: 1000px) {
+  .listing-wrapper {
+    grid-template-columns: 1fr;
+  }
+  .image-column {
+    position: relative;
+    height: auto;
+  }
+  .main-image {
+    aspect-ratio: 16/10;
+    border-radius: 0;
+  }
+  .content-column {
+    padding: 30px 25px 60px;
+  }
+}
+
+/* Nav Picker Styles */
+.final-picker {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #1a1a1a;
+  color: #fff;
+  padding: 15px 20px;
+  border-radius: 12px;
+  z-index: 9999;
+  font-size: 0.85rem;
+}
+.final-picker select {
+  background: #333;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<a href="/used-aircraft-2" class="back-link">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+  Back to Listings
+</a>
+
+<div class="listing-wrapper">
+  <!-- Left Column - Sticky Image -->
+  <div class="image-column">
+    <div class="main-image">
+      <div class="carousel-container">
+        <div class="carousel-slide active" data-index="0">
+          <img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HQAV%2Fblue-r66-palo-verde-front-v4.png?alt=media&token=3084cb09-4600-47bd-adf8-873b980b541d" alt="Robinson R66 Turbine">
+        </div>
+        <div class="carousel-slide" data-index="1">
+          <img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HELI%2Fhq-0209.jpg?alt=media" alt="Interior View">
+        </div>
+        <div class="carousel-slide" data-index="2">
+          <img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HELI%2Fhq-0213.jpg?alt=media" alt="Cockpit View">
+        </div>
+
+        <button class="carousel-arrow carousel-prev" aria-label="Previous image">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <button class="carousel-arrow carousel-next" aria-label="Next image">
+          <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
+        </button>
+
+        <div class="carousel-dots">
+          <div class="carousel-dot active" data-index="0"></div>
+          <div class="carousel-dot" data-index="1"></div>
+          <div class="carousel-dot" data-index="2"></div>
+        </div>
+      </div>
+    </div>
+    <div class="image-footer">
+      <div class="image-nav">
+        <div class="thumb active" data-index="0"><img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HQAV%2Fblue-r66-palo-verde-front-v4.png?alt=media&token=3084cb09-4600-47bd-adf8-873b980b541d" alt=""></div>
+        <div class="thumb" data-index="1"><img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HELI%2Fhq-0209.jpg?alt=media" alt=""></div>
+        <div class="thumb" data-index="2"><img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HELI%2Fhq-0213.jpg?alt=media" alt=""></div>
+      </div>
+    </div>
+    <div class="about-section">
+      <div class="about-label">About This Aircraft</div>
+      <p class="about-text">
+        For sale is a superb example of a Robinson R66 Turbine. This helicopter has accumulated 1,240 hours and retains 5 years of remaining service life. Finished in Robinson's dark continental blue metallic paint, this aircraft has been maintained to the highest standards throughout its operational history.
+      </p>
+    </div>
+  </div>
+
+  <!-- Right Column - Content -->
+  <div class="content-column">
+    <header class="listing-header">
+      <h1 class="model-title">Robinson R66 Turbine</h1>
+      <div class="meta-row">
+        <span>2018</span>
+        <span>G-SAPA</span>
+        <span>1,240 Total Hours</span>
+      </div>
+      <div class="availability-badge">Available</div>
+    </header>
+
+    <div class="price-section">
+      <div class="price">£650,000</div>
+      <div class="price-note">Price excludes VAT where applicable</div>
+    </div>
+
+    <div class="section-title">Specifications</div>
+    <div class="specs-grid">
+      <div class="spec-item">
+        <div class="spec-label">Year</div>
+        <div class="spec-value">2018</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-label">Registration</div>
+        <div class="spec-value">G-SAPA</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-label">Total Hours</div>
+        <div class="spec-value">1,240</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-label">Engine</div>
+        <div class="spec-value">Rolls-Royce RR300</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-label">Engine Hours</div>
+        <div class="spec-value">1,240</div>
+      </div>
+      <div class="spec-item">
+        <div class="spec-label">Remaining Life</div>
+        <div class="spec-value">5 Years</div>
+      </div>
+    </div>
+
+    <div class="section-title">Equipment & Features</div>
+    <div class="equipment-grid">
+      <div class="equipment-item">Pop-out Floats</div>
+      <div class="equipment-item">Corrosion Protection</div>
+      <div class="equipment-item">Garmin G500H</div>
+      <div class="equipment-item">Garmin GTN650</div>
+      <div class="equipment-item">GTX345 Transponder</div>
+      <div class="equipment-item">SAS Autopilot w/ EFIS</div>
+      <div class="equipment-item">Auxiliary Fuel System</div>
+      <div class="equipment-item">Heated Pitot Tube</div>
+      <div class="equipment-item">5-Point Harness</div>
+      <div class="equipment-item">Lithium Ion Battery</div>
+    </div>
+
+    <div class="register-interest">
+      <div class="register-header">
+        <div class="register-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path>
+          </svg>
+        </div>
+        <div class="register-info">
+          <div class="register-title">Register Your Interest</div>
+          <div class="register-subtitle">Get in touch about this aircraft. Call us directly or send an enquiry.</div>
+        </div>
+      </div>
+
+      <div class="call-office">
+        <div class="call-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+          </svg>
+        </div>
+        <div class="call-info">
+          <div class="call-label">Call Our Sales Team</div>
+          <a href="tel:+441onal234567890" class="call-number">+44 1234 567 890</a>
+        </div>
+      </div>
+
+      <div class="divider-or">or send an enquiry</div>
+
+      <form class="register-form">
+        <input type="text" placeholder="First name" required>
+        <input type="text" placeholder="Last name" required>
+        <input type="email" placeholder="Email address" required>
+        <input type="tel" placeholder="Phone number">
+        <textarea placeholder="Tell us about your interest in this aircraft..."></textarea>
+        <button type="submit">Submit Enquiry</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="final-picker">
+  <span style="font-weight:600">Final:</span>
+  <select onchange="window.location.href=this.value">
+    <option value="final-1.html" selected>1. Clean Split</option>
+    <option value="final-2.html">2. Asymmetric Stats</option>
+    <option value="final-3.html">3. Tabbed Minimal</option>
+    <option value="final-4.html">4. Elegant Scroll</option>
+    <option value="final-5.html">5. Premium Combined</option>
+  </select>
+</div>
+
+<script>
+// Image Gallery Carousel
+(function() {
+  const slides = document.querySelectorAll('.carousel-slide');
+  const dots = document.querySelectorAll('.carousel-dot');
+  const thumbs = document.querySelectorAll('.thumb');
+  const prevBtn = document.querySelector('.carousel-prev');
+  const nextBtn = document.querySelector('.carousel-next');
+  let currentIndex = 0;
+
+  function goToSlide(index) {
+    if (index < 0) index = slides.length - 1;
+    if (index >= slides.length) index = 0;
+
+    slides.forEach(s => s.classList.remove('active'));
+    dots.forEach(d => d.classList.remove('active'));
+    thumbs.forEach(t => t.classList.remove('active'));
+
+    slides[index].classList.add('active');
+    dots[index].classList.add('active');
+    thumbs[index].classList.add('active');
+
+    currentIndex = index;
+  }
+
+  prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
+  nextBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      goToSlide(parseInt(dot.dataset.index));
+    });
+  });
+
+  thumbs.forEach(thumb => {
+    thumb.addEventListener('click', () => {
+      goToSlide(parseInt(thumb.dataset.index));
+    });
+  });
+})();
+</script>
+
+<script src="variation-nav.js"></script>
+</body>
+</html>

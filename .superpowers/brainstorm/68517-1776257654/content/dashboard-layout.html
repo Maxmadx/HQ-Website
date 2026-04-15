@@ -1,0 +1,144 @@
+<h2>New Analytics Dashboard Layout</h2>
+<p class="subtitle">Proposed section order — all existing sections kept, new ones added below</p>
+
+<div class="mockup">
+  <div class="mockup-header">Admin → Analytics</div>
+  <div class="mockup-body" style="padding: 1rem; font-size: 0.8rem;">
+
+    <!-- Time filter -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+      <span style="font-weight:600; font-size:0.95rem;">Analytics</span>
+      <div style="background:#1e293b; border:1px solid #334155; padding:4px 10px; border-radius:6px; font-size:0.75rem;">Last 30 days ▾</div>
+    </div>
+
+    <!-- IP filter indicator -->
+    <div style="background:#0f2a1a; border:1px solid #166534; border-radius:6px; padding:6px 10px; margin-bottom:1rem; font-size:0.72rem; color:#4ade80;">
+      ✓ Filtering your IP (82.41.x.x) — showing real visitor data only
+    </div>
+
+    <!-- Row 1: Existing key metrics -->
+    <div style="font-size:0.65rem; color:#94a3b8; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.4rem;">KEY METRICS</div>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:0.5rem; margin-bottom:1rem;">
+      <div style="background:#1e293b; border-radius:6px; padding:10px; text-align:center;">
+        <div style="font-size:1.2rem; font-weight:700;">1,284</div>
+        <div style="font-size:0.65rem; color:#94a3b8;">Page Views</div>
+      </div>
+      <div style="background:#1e293b; border-radius:6px; padding:10px; text-align:center;">
+        <div style="font-size:1.2rem; font-weight:700;">342</div>
+        <div style="font-size:0.65rem; color:#94a3b8;">Unique Sessions</div>
+      </div>
+      <div style="background:#1e293b; border-radius:6px; padding:10px; text-align:center;">
+        <div style="font-size:1.2rem; font-weight:700;">89</div>
+        <div style="font-size:0.65rem; color:#94a3b8;">CTA Clicks</div>
+      </div>
+      <div style="background:#1e293b; border-radius:6px; padding:10px; text-align:center;">
+        <div style="font-size:1.2rem; font-weight:700;">23</div>
+        <div style="font-size:0.65rem; color:#94a3b8;">Form Submits</div>
+      </div>
+    </div>
+
+    <!-- Row 2: New engagement metrics -->
+    <div style="font-size:0.65rem; color:#94a3b8; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.4rem;">ENGAGEMENT</div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:0.5rem; margin-bottom:1rem;">
+      <div style="background:#1e293b; border-radius:6px; padding:10px; text-align:center;">
+        <div style="font-size:1.2rem; font-weight:700;">38%</div>
+        <div style="font-size:0.65rem; color:#94a3b8;">Bounce Rate</div>
+      </div>
+      <div style="background:#1e293b; border-radius:6px; padding:10px; text-align:center;">
+        <div style="font-size:1.2rem; font-weight:700;">2m 14s</div>
+        <div style="font-size:0.65rem; color:#94a3b8;">Avg. Time on Page</div>
+      </div>
+      <div style="background:#1e293b; border-radius:6px; padding:10px; text-align:center;">
+        <div style="font-size:1.2rem; font-weight:700;">62%</div>
+        <div style="font-size:0.65rem; color:#94a3b8;">Avg. Scroll Depth</div>
+      </div>
+    </div>
+
+    <!-- Row 3: Two column — Top Pages + Traffic Sources -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-bottom:1rem;">
+      <div style="background:#1e293b; border-radius:6px; padding:10px;">
+        <div style="font-size:0.7rem; font-weight:600; margin-bottom:0.5rem;">Top Pages</div>
+        <div style="font-size:0.65rem; color:#94a3b8;">
+          <div style="display:flex;justify-content:space-between; margin-bottom:3px;"><span>/training/type-rating</span><span style="color:#e2e8f0;">284</span></div>
+          <div style="display:flex;justify-content:space-between; margin-bottom:3px;"><span>/</span><span style="color:#e2e8f0;">201</span></div>
+          <div style="display:flex;justify-content:space-between; margin-bottom:3px;"><span>/contact</span><span style="color:#e2e8f0;">143</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:#475569">…</span><span></span></div>
+        </div>
+      </div>
+      <div style="background:#1e293b; border-radius:6px; padding:10px;">
+        <div style="font-size:0.7rem; font-weight:600; margin-bottom:0.5rem;">Traffic Sources</div>
+        <div style="font-size:0.65rem; color:#94a3b8;">
+          <div style="display:flex;justify-content:space-between; margin-bottom:3px;"><span>Direct</span><span style="color:#e2e8f0;">48%</span></div>
+          <div style="display:flex;justify-content:space-between; margin-bottom:3px;"><span>Search</span><span style="color:#e2e8f0;">31%</span></div>
+          <div style="display:flex;justify-content:space-between; margin-bottom:3px;"><span>Social</span><span style="color:#e2e8f0;">14%</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>Referral</span><span style="color:#e2e8f0;">7%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 4: Device + Geography side by side -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-bottom:1rem;">
+      <div style="background:#1e293b; border-radius:6px; padding:10px;">
+        <div style="font-size:0.7rem; font-weight:600; margin-bottom:0.5rem;">Devices</div>
+        <div style="font-size:0.65rem; color:#94a3b8;">
+          <div style="display:flex;justify-content:space-between; margin-bottom:3px;"><span>Desktop</span><span style="color:#e2e8f0;">61%</span></div>
+          <div style="display:flex;justify-content:space-between; margin-bottom:3px;"><span>Mobile</span><span style="color:#e2e8f0;">34%</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>Tablet</span><span style="color:#e2e8f0;">5%</span></div>
+        </div>
+        <div style="font-size:0.7rem; font-weight:600; margin-top:0.6rem; margin-bottom:0.5rem;">Browsers</div>
+        <div style="font-size:0.65rem; color:#94a3b8;">
+          <div style="display:flex;justify-content:space-between; margin-bottom:3px;"><span>Chrome</span><span style="color:#e2e8f0;">54%</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>Safari</span><span style="color:#e2e8f0;">38%</span></div>
+        </div>
+      </div>
+      <div style="background:#1e293b; border-radius:6px; padding:10px;">
+        <div style="font-size:0.7rem; font-weight:600; margin-bottom:0.5rem;">Top Countries</div>
+        <div style="font-size:0.65rem; color:#94a3b8;">
+          <div style="display:flex;justify-content:space-between; margin-bottom:3px;"><span>🇬🇧 United Kingdom</span><span style="color:#e2e8f0;">52%</span></div>
+          <div style="display:flex;justify-content:space-between; margin-bottom:3px;"><span>🇺🇸 United States</span><span style="color:#e2e8f0;">18%</span></div>
+          <div style="display:flex;justify-content:space-between; margin-bottom:3px;"><span>🇦🇺 Australia</span><span style="color:#e2e8f0;">9%</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:#475569">…</span><span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 5: Scroll depth per page + User Journey -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-bottom:1rem;">
+      <div style="background:#1e293b; border-radius:6px; padding:10px;">
+        <div style="font-size:0.7rem; font-weight:600; margin-bottom:0.5rem;">Scroll Depth by Page</div>
+        <div style="font-size:0.65rem; color:#94a3b8;">
+          <div style="margin-bottom:5px;">
+            <div style="display:flex;justify-content:space-between; margin-bottom:2px;"><span>/training/type-rating</span><span style="color:#e2e8f0;">75%</span></div>
+            <div style="background:#0f172a; border-radius:3px; height:4px;"><div style="background:#3b82f6; width:75%; height:4px; border-radius:3px;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between; margin-bottom:2px;"><span>/contact</span><span style="color:#e2e8f0;">42%</span></div>
+            <div style="background:#0f172a; border-radius:3px; height:4px;"><div style="background:#3b82f6; width:42%; height:4px; border-radius:3px;"></div></div>
+          </div>
+        </div>
+      </div>
+      <div style="background:#1e293b; border-radius:6px; padding:10px;">
+        <div style="font-size:0.7rem; font-weight:600; margin-bottom:0.5rem;">Top User Journeys</div>
+        <div style="font-size:0.65rem; color:#94a3b8;">
+          <div style="margin-bottom:4px;">/ → /training → /contact <span style="color:#e2e8f0; float:right;">84×</span></div>
+          <div style="margin-bottom:4px;">/ → /about → /contact <span style="color:#e2e8f0; float:right;">41×</span></div>
+          <div>/ → /contact <span style="color:#e2e8f0; float:right;">29×</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 6: Existing — Top CTAs -->
+    <div style="background:#1e293b; border-radius:6px; padding:10px;">
+      <div style="font-size:0.7rem; font-weight:600; margin-bottom:0.5rem;">Top CTA Clicks</div>
+      <div style="font-size:0.65rem; color:#94a3b8;">
+        <div style="display:flex;justify-content:space-between; margin-bottom:3px;"><span>book-consultation-hero</span><span style="color:#e2e8f0;">47</span></div>
+        <div style="display:flex;justify-content:space-between;"><span>download-brochure</span><span style="color:#e2e8f0;">22</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<p style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-secondary);">
+  All existing sections preserved. New sections: Engagement row, Traffic Sources, Devices/Browsers, Countries, Scroll Depth, User Journeys.
+</p>

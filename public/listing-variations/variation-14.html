@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Variation 14: Boxed Layout</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #e8e8e8; color: #1a1a1a; }
+
+/* VARIATION 14: Boxed Layout - Everything in contained bordered boxes */
+.back-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: #666; text-decoration: none; font-size: 0.9rem;
+  padding: 25px 40px; transition: color 0.2s;
+}
+.back-link:hover { color: #000; }
+
+.boxed-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+}
+
+.box {
+  background: #fff;
+  border: 2px solid #1a1a1a;
+  margin-bottom: 20px;
+}
+
+.box-header {
+  background: #1a1a1a;
+  color: #fff;
+  padding: 12px 20px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.box-content {
+  padding: 25px;
+}
+
+/* Image Box */
+.image-box .box-content {
+  padding: 0;
+}
+.image-box img {
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  display: block;
+}
+
+/* Title Box */
+.title-box {
+  display: flex;
+}
+.title-box .box-header {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  padding: 20px 12px;
+}
+.title-content {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.model-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+}
+.price {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #cc0000;
+}
+
+/* Grid of boxes */
+.box-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.spec-box .box-content {
+  text-align: center;
+  padding: 30px 20px;
+}
+.spec-value {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.spec-label {
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Highlights Box */
+.highlights-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+}
+.highlight-box {
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
+  padding: 20px 15px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+.highlight-box:hover {
+  background: #1a1a1a;
+  color: #fff;
+  border-color: #1a1a1a;
+}
+
+/* Description Box */
+.description {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #555;
+}
+
+/* CTA Box */
+.cta-box {
+  display: flex;
+}
+.cta-box .box-header {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  padding: 20px 12px;
+}
+.cta-content {
+  flex: 1;
+  padding: 25px;
+  display: flex;
+  gap: 15px;
+}
+.btn {
+  flex: 1;
+  padding: 18px 30px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 2px solid #1a1a1a;
+}
+.btn-primary {
+  background: #1a1a1a;
+  color: #fff;
+}
+.btn-primary:hover {
+  background: #cc0000;
+  border-color: #cc0000;
+}
+.btn-secondary {
+  background: #fff;
+  color: #1a1a1a;
+}
+.btn-secondary:hover {
+  background: #f5f5f5;
+}
+
+/* Picker */
+.variation-picker {
+  position: fixed; bottom: 20px; right: 20px;
+  background: #1a1a1a; color: #fff;
+  padding: 15px 20px; border-radius: 0;
+  border: 2px solid #fff;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  z-index: 1000; font-size: 0.85rem;
+}
+.variation-picker select {
+  background: #333; color: #fff; border: 1px solid #fff;
+  padding: 8px 12px; border-radius: 0; margin-left: 10px;
+  cursor: pointer;
+}
+.variation-label { font-weight: 600; }
+
+@media (max-width: 900px) {
+  .box-grid { grid-template-columns: repeat(2, 1fr); }
+  .highlights-grid { grid-template-columns: repeat(3, 1fr); }
+  .title-content { flex-direction: column; align-items: flex-start; }
+  .model-title { font-size: 1.8rem; }
+  .price { font-size: 1.6rem; }
+}
+@media (max-width: 600px) {
+  .highlights-grid { grid-template-columns: repeat(2, 1fr); }
+  .cta-content { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<a href="/used-aircraft-2" class="back-link">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+  Back to Listings
+</a>
+
+<div class="boxed-container">
+
+  <div class="box image-box">
+    <div class="box-header">Gallery</div>
+    <div class="box-content">
+      <img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HQAV%2Fblue-r66-palo-verde-front-v4.png?alt=media&token=3084cb09-4600-47bd-adf8-873b980b541d" alt="Robinson R66 Turbine">
+    </div>
+  </div>
+
+  <div class="box title-box">
+    <div class="box-header">Aircraft</div>
+    <div class="title-content">
+      <h1 class="model-title">Robinson R66 Turbine</h1>
+      <div class="price">£650,000</div>
+    </div>
+  </div>
+
+  <div class="box-grid">
+    <div class="box spec-box">
+      <div class="box-header">Year</div>
+      <div class="box-content">
+        <div class="spec-value">2018</div>
+        <div class="spec-label">Manufactured</div>
+      </div>
+    </div>
+    <div class="box spec-box">
+      <div class="box-header">Registration</div>
+      <div class="box-content">
+        <div class="spec-value">G-SAPA</div>
+        <div class="spec-label">UK CAA</div>
+      </div>
+    </div>
+    <div class="box spec-box">
+      <div class="box-header">Hours</div>
+      <div class="box-content">
+        <div class="spec-value">1,240</div>
+        <div class="spec-label">Total Time</div>
+      </div>
+    </div>
+    <div class="box spec-box">
+      <div class="box-header">Engine</div>
+      <div class="box-content">
+        <div class="spec-value">RR300</div>
+        <div class="spec-label">Rolls-Royce</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="box-header">Key Features</div>
+    <div class="box-content">
+      <div class="highlights-grid">
+        <div class="highlight-box">Pop-out Floats</div>
+        <div class="highlight-box">Garmin G500H</div>
+        <div class="highlight-box">GTN650</div>
+        <div class="highlight-box">SAS Autopilot</div>
+        <div class="highlight-box">Corrosion Protection</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="box-header">Description</div>
+    <div class="box-content">
+      <p class="description">
+        For sale is a superb example of a Robinson R66 Turbine. This helicopter has 1,240 hours and 5 years remaining on the airframe. Features Robinson's dark continental blue metallic paint scheme. Maintained to the highest standards at an authorized Robinson service center, this aircraft is in exceptional condition throughout. The comprehensive avionics suite includes a Garmin G500H glass cockpit and GTN650 navigator, making it ideal for both private and commercial operations.
+      </p>
+    </div>
+  </div>
+
+  <div class="box cta-box">
+    <div class="box-header">Contact</div>
+    <div class="cta-content">
+      <a href="/contact" class="btn btn-primary">Enquire Now</a>
+      <a href="/contact" class="btn btn-secondary">Schedule Viewing</a>
+    </div>
+  </div>
+
+</div>
+
+<script src="variation-nav.js"></script>
+</body>
+</html>

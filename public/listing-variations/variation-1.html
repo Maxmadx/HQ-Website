@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Variation 1: Classic Split Layout</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #fff; color: #1a1a1a; }
+
+/* VARIATION 1: Classic Split - Gallery left, details right */
+.back-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: #666; text-decoration: none; font-size: 0.9rem;
+  padding: 20px 40px; transition: color 0.2s;
+}
+.back-link:hover { color: #000; }
+
+.listing-container {
+  max-width: 1400px; margin: 0 auto; padding: 0 40px 60px;
+}
+
+.listing-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 60px;
+  align-items: start;
+}
+
+/* Gallery */
+.gallery { position: relative; }
+.gallery-main {
+  width: 100%; aspect-ratio: 4/3;
+  border-radius: 12px; overflow: hidden;
+  background: #f5f5f5; margin-bottom: 15px;
+}
+.gallery-main img { width: 100%; height: 100%; object-fit: cover; }
+.gallery-thumbs { display: flex; gap: 10px; }
+.gallery-thumb {
+  width: 80px; height: 60px; border-radius: 6px;
+  overflow: hidden; cursor: pointer;
+  border: 2px solid transparent; transition: border-color 0.2s;
+}
+.gallery-thumb.active, .gallery-thumb:hover { border-color: #cc0000; }
+.gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+.gallery-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 44px; height: 44px; background: rgba(255,255,255,0.9);
+  border: none; border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15); z-index: 10;
+}
+.gallery-arrow:hover { background: #fff; }
+.gallery-arrow.prev { left: 15px; }
+.gallery-arrow.next { right: 15px; }
+
+/* Details */
+.details { padding-top: 10px; }
+.model-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.4rem; font-weight: 800;
+  text-transform: uppercase; letter-spacing: -0.5px;
+  margin-bottom: 15px;
+}
+.meta-row {
+  display: flex; gap: 20px; color: #666;
+  font-size: 0.95rem; margin-bottom: 25px;
+}
+.price {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2rem; font-weight: 800;
+  color: #cc0000; margin-bottom: 25px;
+}
+.condition-badge {
+  display: inline-block; background: #e8f5e9;
+  color: #2e7d32; padding: 6px 14px;
+  border-radius: 20px; font-size: 0.85rem;
+  font-weight: 600; margin-bottom: 25px;
+}
+.description {
+  font-size: 1rem; line-height: 1.7;
+  color: #444; margin-bottom: 30px;
+}
+.section-header {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: #999; margin-bottom: 15px;
+  padding-bottom: 10px; border-bottom: 1px solid #eee;
+}
+.highlights {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px;
+}
+.highlight-tag {
+  background: #f5f5f5; padding: 8px 14px;
+  border-radius: 6px; font-size: 0.85rem;
+}
+.specs-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin-bottom: 30px;
+}
+.spec-item {
+  display: flex; justify-content: space-between;
+  padding: 12px 0; border-bottom: 1px solid #eee;
+}
+.spec-label { color: #666; }
+.spec-value { font-weight: 600; }
+.cta-buttons { display: flex; gap: 15px; margin-top: 30px; }
+.btn {
+  flex: 1; padding: 16px 30px; font-size: 0.9rem;
+  font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1px; border-radius: 6px;
+  cursor: pointer; text-align: center; text-decoration: none;
+  transition: all 0.2s;
+}
+.btn-primary {
+  background: #1a1a1a; color: #fff; border: none;
+}
+.btn-primary:hover { background: #cc0000; }
+.btn-secondary {
+  background: #fff; color: #1a1a1a; border: 2px solid #1a1a1a;
+}
+.btn-secondary:hover { background: #1a1a1a; color: #fff; }
+
+/* Picker */
+.variation-picker {
+  position: fixed; bottom: 20px; right: 20px;
+  background: #1a1a1a; color: #fff;
+  padding: 15px 20px; border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  z-index: 1000; font-size: 0.85rem;
+}
+.variation-picker select {
+  background: #333; color: #fff; border: none;
+  padding: 8px 12px; border-radius: 4px; margin-left: 10px;
+  cursor: pointer;
+}
+.variation-label { font-weight: 600; }
+
+@media (max-width: 900px) {
+  .listing-grid { grid-template-columns: 1fr; gap: 30px; }
+  .model-title { font-size: 1.8rem; }
+  .specs-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<a href="/used-aircraft-2" class="back-link">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+  Back to Listings
+</a>
+
+<div class="listing-container">
+  <div class="listing-grid">
+    <div class="gallery">
+      <div class="gallery-main">
+        <img id="main-image" src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HQAV%2Fblue-r66-palo-verde-front-v4.png?alt=media&token=3084cb09-4600-47bd-adf8-873b980b541d" alt="Robinson R66">
+      </div>
+      <button class="gallery-arrow prev">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      <button class="gallery-arrow next">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2">
+          <polyline points="9 6 15 12 9 18"></polyline>
+        </svg>
+      </button>
+      <div class="gallery-thumbs">
+        <div class="gallery-thumb active"><img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HQAV%2Fblue-r66-palo-verde-front-v4.png?alt=media&token=3084cb09-4600-47bd-adf8-873b980b541d" alt=""></div>
+        <div class="gallery-thumb"><img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HELI%2Fhq-0209.jpg?alt=media" alt=""></div>
+        <div class="gallery-thumb"><img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HELI%2Fhq-0213.jpg?alt=media" alt=""></div>
+      </div>
+    </div>
+
+    <div class="details">
+      <h1 class="model-title">Robinson R66 Turbine</h1>
+      <div class="meta-row">
+        <span>2018</span>
+        <span>G-SAPA</span>
+        <span>1,240 hours</span>
+      </div>
+      <div class="price">£650,000</div>
+      <div class="condition-badge">Excellent Condition</div>
+      <p class="description">
+        For sale is a superb example of a Robinson R66. This helicopter has 1240Hrs & 5 years remaining. The helicopter includes Robinson's dark continental blue metallic paint. Maintained to the highest standards and in very good condition.
+      </p>
+
+      <div class="section-header">Highlights</div>
+      <div class="highlights">
+        <span class="highlight-tag">Pop-out floats</span>
+        <span class="highlight-tag">Extra Corrosion Protection</span>
+        <span class="highlight-tag">Garmin G500H</span>
+        <span class="highlight-tag">Auxiliary fuel system</span>
+        <span class="highlight-tag">SAS Autopilot</span>
+      </div>
+
+      <div class="section-header">Specifications</div>
+      <div class="specs-grid">
+        <div class="spec-item">
+          <span class="spec-label">Engine</span>
+          <span class="spec-value">RR300</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Total Hours</span>
+          <span class="spec-value">1,240</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Year</span>
+          <span class="spec-value">2018</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Registration</span>
+          <span class="spec-value">G-SAPA</span>
+        </div>
+      </div>
+
+      <div class="cta-buttons">
+        <a href="/contact" class="btn btn-primary">Enquire Now</a>
+        <a href="/contact" class="btn btn-secondary">Schedule Viewing</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="variation-nav.js"></script>
+</body>
+</html>

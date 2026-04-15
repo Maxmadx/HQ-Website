@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics Dashboard</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #070d1a;
+    color: #e2e8f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ─── Header ─── */
+  .page-header {
+    background: #0d1526;
+    border-bottom: 1px solid #1a2840;
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .page-header .left .breadcrumb { font-size: 0.7rem; color: #475569; margin-bottom: 2px; }
+  .page-header .left h1 { font-size: 1rem; font-weight: 600; color: #f1f5f9; }
+  .time-filter { display: flex; gap: 4px; }
+  .time-filter button {
+    background: transparent; border: 1px solid #1a2840; color: #64748b;
+    padding: 5px 14px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;
+  }
+  .time-filter button.active {
+    background: #172554; border-color: #2563eb; color: #93c5fd; font-weight: 600;
+  }
+
+  /* ─── Body ─── */
+  .body { padding: 20px 28px 60px; max-width: 1160px; margin: 0 auto; }
+
+  /* ─── IP Banner ─── */
+  .ip-banner {
+    background: #052e16; border: 1px solid #166534; border-radius: 8px;
+    padding: 8px 16px; margin-bottom: 22px;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.78rem; color: #86efac;
+  }
+  .ip-banner .pulse {
+    width: 8px; height: 8px; background: #22c55e; border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(34,197,94,0.2); flex-shrink: 0;
+  }
+  .ip-banner code { background: #064e3b; padding: 1px 6px; border-radius: 4px; font-size: 0.75rem; color: #6ee7b7; }
+
+  /* ─── Section Labels ─── */
+  .section-label {
+    font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: #334155;
+    margin: 26px 0 12px; display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after { content:''; flex:1; height:1px; background:#1a2840; }
+
+  /* ─── Cards ─── */
+  .card {
+    background: #0d1526; border: 1px solid #1a2840; border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .card h3 {
+    font-size: 0.78rem; font-weight: 600; color: #94a3b8;
+    margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #1a2840;
+  }
+
+  /* ─── Grid Layouts ─── */
+  .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-2-3 { display: grid; grid-template-columns: 2fr 3fr; gap: 12px; }
+  .grid-3-2 { display: grid; grid-template-columns: 3fr 2fr; gap: 12px; }
+
+  /* ─── Metric Cards ─── */
+  .metric-card {
+    background: #0d1526; border: 1px solid #1a2840; border-radius: 12px;
+    padding: 16px 18px; display: flex; flex-direction: column; gap: 4px;
+  }
+  .metric-card .m-label { font-size: 0.7rem; color: #475569; }
+  .metric-card .m-value { font-size: 1.9rem; font-weight: 700; color: #f1f5f9; line-height: 1.1; }
+  .metric-card .m-value span { font-size: 1rem; color: #475569; font-weight: 400; }
+  .metric-card .m-trend { font-size: 0.7rem; margin-top: 2px; }
+  .m-trend.up { color: #4ade80; }
+  .m-trend.down { color: #f87171; }
+  .m-trend.flat { color: #64748b; }
+  .metric-card .sparkline { margin-top: 8px; }
+
+  /* ─── Table Rows ─── */
+  .t-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 0; border-bottom: 1px solid #0d1526; gap: 10px; font-size: 0.78rem;
+  }
+  .t-row:last-child { border-bottom: none; }
+  .t-row .t-rank { color: #334155; font-size: 0.65rem; font-weight: 700; width: 14px; flex-shrink: 0; }
+  .t-row .t-name { color: #94a3b8; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: monospace; font-size: 0.76rem; }
+  .t-row .t-count { color: #e2e8f0; font-weight: 700; flex-shrink: 0; }
+  .t-row .t-bar-wrap { flex: 0.8; }
+  .t-bar-track { background: #1a2840; border-radius: 4px; height: 4px; }
+  .t-bar-fill { height: 4px; border-radius: 4px; background: #2563eb; }
+
+  /* ─── Bar Rows (horizontal) ─── */
+  .bar-row { margin-bottom: 11px; }
+  .bar-row:last-child { margin-bottom: 0; }
+  .bar-row .bl { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 5px; }
+  .bar-row .bl .name { color: #94a3b8; }
+  .bar-row .bl .val { color: #e2e8f0; font-weight: 600; }
+  .btrack { background: #1a2840; border-radius: 4px; height: 6px; overflow: hidden; }
+  .bfill { height: 6px; border-radius: 4px; }
+
+  /* ─── Donut ─── */
+  .donut-wrap {
+    display: flex; align-items: center; gap: 20px;
+  }
+  .donut-svg { flex-shrink: 0; }
+  .donut-legend { flex: 1; }
+  .donut-legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.76rem; }
+  .donut-legend-item:last-child { margin-bottom: 0; }
+  .donut-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .donut-legend-item .dl-name { color: #94a3b8; flex: 1; }
+  .donut-legend-item .dl-pct { color: #e2e8f0; font-weight: 700; }
+
+  /* ─── Scroll Depth ─── */
+  .scroll-page { margin-bottom: 14px; }
+  .scroll-page:last-child { margin-bottom: 0; }
+  .scroll-page-name { font-size: 0.7rem; color: #64748b; margin-bottom: 6px; font-family: monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .scroll-bars { display: flex; flex-direction: column; gap: 3px; }
+  .scroll-bar-row { display: flex; align-items: center; gap: 8px; }
+  .scroll-bar-label { font-size: 0.6rem; color: #475569; width: 24px; text-align: right; flex-shrink: 0; }
+  .scroll-bar-track { flex: 1; background: #1a2840; border-radius: 3px; height: 8px; overflow: hidden; position: relative; }
+  .scroll-bar-fill { height: 8px; border-radius: 3px; transition: width 0.3s; }
+  .scroll-bar-pct { font-size: 0.62rem; color: #64748b; width: 28px; text-align: right; flex-shrink: 0; }
+
+  /* ─── User Journey ─── */
+  .journey-row {
+    display: flex; align-items: center; gap: 0;
+    padding: 7px 0; border-bottom: 1px solid #0d1526; flex-wrap: wrap;
+  }
+  .journey-row:last-child { border-bottom: none; }
+  .j-page {
+    background: #172554; color: #93c5fd;
+    padding: 2px 8px; border-radius: 5px;
+    font-size: 0.7rem; font-family: monospace; white-space: nowrap;
+  }
+  .j-arrow { color: #1e3a5f; padding: 0 5px; font-size: 0.75rem; }
+  .j-count { margin-left: auto; padding-left: 10px; color: #64748b; font-size: 0.72rem; font-weight: 600; white-space: nowrap; }
+
+  /* ─── Country ─── */
+  .country-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 0; border-bottom: 1px solid #0d1526; font-size: 0.77rem;
+  }
+  .country-row:last-child { border-bottom: none; }
+  .country-row .flag { font-size: 1rem; }
+  .country-row .cname { color: #94a3b8; flex: 1; }
+  .country-row .ctrack { flex: 1.2; background: #1a2840; border-radius: 4px; height: 4px; }
+  .country-row .cfill { height: 4px; background: #2563eb; border-radius: 4px; }
+  .country-row .cpct { color: #e2e8f0; font-weight: 700; width: 34px; text-align: right; font-size: 0.75rem; }
+
+  /* ─── Chart SVG ─── */
+  .chart-card { background: #0d1526; border: 1px solid #1a2840; border-radius: 12px; padding: 18px 20px 12px; margin-bottom: 22px; }
+  .chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+  .chart-title { font-size: 0.78rem; font-weight: 600; color: #94a3b8; }
+  .chart-legend { display: flex; gap: 16px; }
+  .chart-legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: #64748b; }
+  .chart-legend-dot { width: 10px; height: 3px; border-radius: 2px; }
+  .chart-svg-wrap { position: relative; }
+  .chart-y-labels {
+    position: absolute; left: 0; top: 0; bottom: 28px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 0;
+  }
+  .chart-y-label { font-size: 0.6rem; color: #334155; line-height: 1; }
+  .chart-x-labels { display: flex; justify-content: space-between; padding: 4px 0 0 32px; }
+  .chart-x-label { font-size: 0.6rem; color: #334155; }
+
+  /* Device visual strip */
+  .device-strip { display: flex; height: 8px; border-radius: 6px; overflow: hidden; gap: 2px; margin-bottom: 12px; }
+  .device-seg { height: 8px; border-radius: 2px; }
+  .device-legend { display: flex; gap: 14px; margin-bottom: 14px; flex-wrap: wrap; }
+  .dl-item { display: flex; align-items: center; gap: 5px; font-size: 0.72rem; color: #94a3b8; }
+  .dl-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+  /* Event breakdown */
+  .event-badge {
+    display: inline-flex; align-items: center; justify-content: space-between;
+    background: #111827; border: 1px solid #1a2840; border-radius: 7px;
+    padding: 8px 12px; width: 100%; margin-bottom: 6px; font-size: 0.76rem;
+  }
+  .event-badge:last-child { margin-bottom: 0; }
+  .event-badge .eb-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-right: 8px; }
+  .event-badge .eb-name { color: #94a3b8; flex: 1; }
+  .event-badge .eb-count { color: #e2e8f0; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- ═══ PAGE HEADER ═══ -->
+<div class="page-header">
+  <div class="left">
+    <div class="breadcrumb">Admin</div>
+    <h1>Analytics</h1>
+  </div>
+  <div class="time-filter">
+    <button>7d</button>
+    <button>14d</button>
+    <button class="active">30d</button>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- IP Banner -->
+  <div class="ip-banner" style="margin-top:16px;">
+    <div class="pulse"></div>
+    Filtering your IP — <code>82.41.xxx.xxx</code> — showing real visitor data only
+  </div>
+
+  <!-- ═══ AREA CHART ═══ -->
+  <div class="chart-card">
+    <div class="chart-header">
+      <div>
+        <div class="chart-title">Page Views &amp; Sessions — Last 30 Days</div>
+      </div>
+      <div class="chart-legend">
+        <div class="chart-legend-item">
+          <div class="chart-legend-dot" style="background:#3b82f6; height:3px; width:22px;"></div>
+          Page Views
+        </div>
+        <div class="chart-legend-item">
+          <div class="chart-legend-dot" style="background:#a855f7; height:3px; width:22px;"></div>
+          Sessions
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-svg-wrap">
+      <!-- Y labels -->
+      <div class="chart-y-labels" style="width:28px;">
+        <span class="chart-y-label">80</span>
+        <span class="chart-y-label">60</span>
+        <span class="chart-y-label">40</span>
+        <span class="chart-y-label">20</span>
+        <span class="chart-y-label">0</span>
+      </div>
+      <div style="margin-left:32px;">
+        <svg viewBox="0 0 1000 140" preserveAspectRatio="none" style="width:100%;height:150px;display:block;">
+          <defs>
+            <linearGradient id="pvGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#2563eb" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#2563eb" stop-opacity="0.02"/>
+            </linearGradient>
+            <linearGradient id="sessGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#a855f7" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#a855f7" stop-opacity="0.02"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Gridlines -->
+          <line x1="0" y1="13"  x2="1000" y2="13"  stroke="#1a2840" stroke-width="1"/>
+          <line x1="0" y1="42"  x2="1000" y2="42"  stroke="#1a2840" stroke-width="1"/>
+          <line x1="0" y1="71"  x2="1000" y2="71"  stroke="#1a2840" stroke-width="1"/>
+          <line x1="0" y1="101" x2="1000" y2="101" stroke="#1a2840" stroke-width="1"/>
+          <line x1="0" y1="130" x2="1000" y2="130" stroke="#1a2840" stroke-width="1"/>
+
+          <!-- Sessions area (draw behind pageviews) -->
+          <path d="M 0,118 L 34,114 L 69,121 L 103,107 L 138,102 L 172,110 L 207,108 L 241,115 L 276,101 L 310,96 L 345,105 L 379,92 L 414,99 L 448,108 L 483,95 L 517,90 L 552,98 L 586,101 L 621,105 L 655,92 L 690,86 L 724,93 L 759,102 L 793,105 L 828,96 L 862,99 L 897,92 L 931,95 L 966,102 L 1000,89 L 1000,130 L 0,130 Z" fill="url(#sessGrad)"/>
+          <polyline points="0,118 34,114 69,121 103,107 138,102 172,110 207,108 241,115 276,101 310,96 345,105 379,92 414,99 448,108 483,95 517,90 552,98 586,101 621,105 655,92 690,86 724,93 759,102 793,105 828,96 862,99 897,92 931,95 966,102 1000,89" fill="none" stroke="#a855f7" stroke-width="1.5" stroke-linejoin="round"/>
+
+          <!-- Pageview area -->
+          <path d="M 0,98 L 34,85 L 69,104 L 103,64 L 138,54 L 172,74 L 207,70 L 241,88 L 276,50 L 310,38 L 345,60 L 379,26 L 414,45 L 448,69 L 483,32 L 517,22 L 552,41 L 586,50 L 621,60 L 655,23 L 690,10 L 724,29 L 759,51 L 793,61 L 828,38 L 862,45 L 897,26 L 931,34 L 966,54 L 1000,16 L 1000,130 L 0,130 Z" fill="url(#pvGrad)"/>
+          <polyline points="0,98 34,85 69,104 103,64 138,54 172,74 207,70 241,88 276,50 310,38 345,60 379,26 414,45 448,69 483,32 517,22 552,41 586,50 621,60 655,23 690,10 724,29 759,51 793,61 828,38 862,45 897,26 931,34 966,54 1000,16" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linejoin="round"/>
+
+          <!-- Dots at peak days (day 12 and day 21) -->
+          <circle cx="379" cy="26" r="3.5" fill="#3b82f6"/>
+          <circle cx="690" cy="10" r="3.5" fill="#3b82f6"/>
+        </svg>
+      </div>
+      <div class="chart-x-labels" style="margin-left:0; padding-left:32px;">
+        <span class="chart-x-label">Day 1</span>
+        <span class="chart-x-label">Day 7</span>
+        <span class="chart-x-label">Day 14</span>
+        <span class="chart-x-label">Day 21</span>
+        <span class="chart-x-label">Day 28</span>
+        <span class="chart-x-label">Day 30</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ OVERVIEW METRICS ═══ -->
+  <div class="section-label">Overview</div>
+  <div class="grid-4">
+    <!-- Page Views -->
+    <div class="metric-card">
+      <div class="m-label">Page Views</div>
+      <div class="m-value">1,284</div>
+      <div class="m-trend up">↑ 12% vs prev period</div>
+      <div class="sparkline">
+        <svg viewBox="0 0 80 24" style="width:100%;height:24px;display:block;">
+          <polyline points="0,17 13,11 26,2 39,14 52,6 65,9 80,4" fill="none" stroke="#3b82f6" stroke-width="1.5" stroke-linejoin="round"/>
+          <circle cx="80" cy="4" r="2.5" fill="#3b82f6"/>
+        </svg>
+      </div>
+    </div>
+    <!-- Unique Sessions -->
+    <div class="metric-card">
+      <div class="m-label">Unique Sessions</div>
+      <div class="m-value">342</div>
+      <div class="m-trend up">↑ 8% vs prev period</div>
+      <div class="sparkline">
+        <svg viewBox="0 0 80 24" style="width:100%;height:24px;display:block;">
+          <polyline points="0,18 13,14 26,5 39,16 52,9 65,12 80,7" fill="none" stroke="#a855f7" stroke-width="1.5" stroke-linejoin="round"/>
+          <circle cx="80" cy="7" r="2.5" fill="#a855f7"/>
+        </svg>
+      </div>
+    </div>
+    <!-- CTA Clicks -->
+    <div class="metric-card">
+      <div class="m-label">CTA Clicks</div>
+      <div class="m-value">89</div>
+      <div class="m-trend flat">→ Steady</div>
+      <div class="sparkline">
+        <svg viewBox="0 0 80 24" style="width:100%;height:24px;display:block;">
+          <polyline points="0,12 13,10 26,14 39,8 52,11 65,9 80,10" fill="none" stroke="#22d3ee" stroke-width="1.5" stroke-linejoin="round"/>
+          <circle cx="80" cy="10" r="2.5" fill="#22d3ee"/>
+        </svg>
+      </div>
+    </div>
+    <!-- Form Submits -->
+    <div class="metric-card">
+      <div class="m-label">Form Submits</div>
+      <div class="m-value">23</div>
+      <div class="m-trend up">↑ 4 this week</div>
+      <div class="sparkline">
+        <svg viewBox="0 0 80 24" style="width:100%;height:24px;display:block;">
+          <polyline points="0,18 13,16 26,13 39,15 52,10 65,12 80,8" fill="none" stroke="#4ade80" stroke-width="1.5" stroke-linejoin="round"/>
+          <circle cx="80" cy="8" r="2.5" fill="#4ade80"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ ENGAGEMENT ═══ -->
+  <div class="section-label">Engagement</div>
+  <div class="grid-3">
+    <div class="metric-card">
+      <div class="m-label">Bounce Rate</div>
+      <div class="m-value">38<span>%</span></div>
+      <div class="m-trend up">↓ 5pts improvement</div>
+      <div class="sparkline">
+        <svg viewBox="0 0 80 24" style="width:100%;height:24px;display:block;">
+          <polyline points="0,6 13,9 26,14 39,11 52,13 65,10 80,15" fill="none" stroke="#f87171" stroke-width="1.5" stroke-linejoin="round"/>
+          <circle cx="80" cy="15" r="2.5" fill="#f87171"/>
+        </svg>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="m-label">Avg. Time on Page</div>
+      <div class="m-value">2<span>m </span>14<span>s</span></div>
+      <div class="m-trend flat">across all pages</div>
+      <div class="sparkline">
+        <svg viewBox="0 0 80 24" style="width:100%;height:24px;display:block;">
+          <polyline points="0,16 13,13 26,11 39,14 52,9 65,11 80,8" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linejoin="round"/>
+          <circle cx="80" cy="8" r="2.5" fill="#f59e0b"/>
+        </svg>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="m-label">Avg. Scroll Depth</div>
+      <div class="m-value">62<span>%</span></div>
+      <div class="m-trend up">↑ good engagement</div>
+      <div class="sparkline">
+        <svg viewBox="0 0 80 24" style="width:100%;height:24px;display:block;">
+          <polyline points="0,14 13,11 26,9 39,12 52,7 65,10 80,6" fill="none" stroke="#34d399" stroke-width="1.5" stroke-linejoin="round"/>
+          <circle cx="80" cy="6" r="2.5" fill="#34d399"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ ACQUISITION ═══ -->
+  <div class="section-label">Acquisition</div>
+  <div class="grid-2">
+
+    <!-- Top Pages -->
+    <div class="card">
+      <h3>Top Pages</h3>
+      <div class="t-row"><span class="t-rank">1</span><span class="t-name">/training/type-rating</span><div class="t-bar-wrap"><div class="t-bar-track"><div class="t-bar-fill" style="width:100%;background:#2563eb;"></div></div></div><span class="t-count">284</span></div>
+      <div class="t-row"><span class="t-rank">2</span><span class="t-name">/</span><div class="t-bar-wrap"><div class="t-bar-track"><div class="t-bar-fill" style="width:71%;background:#2563eb;"></div></div></div><span class="t-count">201</span></div>
+      <div class="t-row"><span class="t-rank">3</span><span class="t-name">/contact</span><div class="t-bar-wrap"><div class="t-bar-track"><div class="t-bar-fill" style="width:50%;background:#2563eb;"></div></div></div><span class="t-count">143</span></div>
+      <div class="t-row"><span class="t-rank">4</span><span class="t-name">/about</span><div class="t-bar-wrap"><div class="t-bar-track"><div class="t-bar-fill" style="width:34%;background:#2563eb;"></div></div></div><span class="t-count">98</span></div>
+      <div class="t-row"><span class="t-rank">5</span><span class="t-name">/training/mcc</span><div class="t-bar-wrap"><div class="t-bar-track"><div class="t-bar-fill" style="width:25%;background:#2563eb;"></div></div></div><span class="t-count">71</span></div>
+      <div class="t-row"><span class="t-rank">6</span><span class="t-name">/training/atpl</span><div class="t-bar-wrap"><div class="t-bar-track"><div class="t-bar-fill" style="width:19%;background:#2563eb;"></div></div></div><span class="t-count">54</span></div>
+      <div class="t-row"><span class="t-rank">7</span><span class="t-name">/training/cpl</span><div class="t-bar-wrap"><div class="t-bar-track"><div class="t-bar-fill" style="width:13%;background:#2563eb;"></div></div></div><span class="t-count">38</span></div>
+    </div>
+
+    <!-- Traffic Sources (donut) -->
+    <div class="card">
+      <h3>Traffic Sources</h3>
+      <div class="donut-wrap" style="margin-top:8px;">
+        <svg class="donut-svg" viewBox="0 0 100 100" width="130" height="130">
+          <circle cx="50" cy="50" r="38" fill="none" stroke="#1a2840" stroke-width="14"/>
+          <!-- Direct 48% → 228.6/476.1 * circumference of r=38: c=2π*38=238.76 -->
+          <!-- Direct: 0.48*238.76=114.6 -->
+          <!-- Search: 0.31*238.76=74.0 -->
+          <!-- Social: 0.14*238.76=33.4 -->
+          <!-- Referral: 0.07*238.76=16.7 -->
+          <g transform="rotate(-90, 50, 50)">
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#16a34a" stroke-width="14"
+              stroke-dasharray="114.6 124.16" stroke-dashoffset="0"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#2563eb" stroke-width="14"
+              stroke-dasharray="74.0 164.76" stroke-dashoffset="-114.6"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#a855f7" stroke-width="14"
+              stroke-dasharray="33.4 205.36" stroke-dashoffset="-188.6"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#f59e0b" stroke-width="14"
+              stroke-dasharray="16.7 222.06" stroke-dashoffset="-222.0"/>
+          </g>
+          <text x="50" y="46" text-anchor="middle" fill="#f1f5f9" font-size="11" font-weight="700">48%</text>
+          <text x="50" y="58" text-anchor="middle" fill="#64748b" font-size="7">Direct</text>
+        </svg>
+        <div class="donut-legend">
+          <div class="donut-legend-item"><div class="donut-dot" style="background:#16a34a;"></div><span class="dl-name">Direct</span><span class="dl-pct">48%</span></div>
+          <div class="donut-legend-item"><div class="donut-dot" style="background:#2563eb;"></div><span class="dl-name">Search</span><span class="dl-pct">31%</span></div>
+          <div class="donut-legend-item"><div class="donut-dot" style="background:#a855f7;"></div><span class="dl-name">Social</span><span class="dl-pct">14%</span></div>
+          <div class="donut-legend-item"><div class="donut-dot" style="background:#f59e0b;"></div><span class="dl-name">Referral</span><span class="dl-pct">7%</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ AUDIENCE ═══ -->
+  <div class="section-label">Audience</div>
+  <div class="grid-2">
+
+    <!-- Devices & Browsers (donut for devices + bars for browsers) -->
+    <div class="card">
+      <h3>Devices &amp; Browsers</h3>
+      <div class="donut-wrap">
+        <svg class="donut-svg" viewBox="0 0 100 100" width="120" height="120">
+          <circle cx="50" cy="50" r="38" fill="none" stroke="#1a2840" stroke-width="14"/>
+          <!-- Desktop 61%: 0.61*238.76=145.6; Mobile 34%: 0.34*238.76=81.2; Tablet 5%: 0.05*238.76=11.9 -->
+          <g transform="rotate(-90, 50, 50)">
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#2563eb" stroke-width="14"
+              stroke-dasharray="145.6 93.16" stroke-dashoffset="0"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#a855f7" stroke-width="14"
+              stroke-dasharray="81.2 157.56" stroke-dashoffset="-145.6"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#0891b2" stroke-width="14"
+              stroke-dasharray="11.9 226.86" stroke-dashoffset="-226.8"/>
+          </g>
+          <text x="50" y="46" text-anchor="middle" fill="#f1f5f9" font-size="11" font-weight="700">61%</text>
+          <text x="50" y="58" text-anchor="middle" fill="#64748b" font-size="7">Desktop</text>
+        </svg>
+        <div class="donut-legend">
+          <div class="donut-legend-item"><div class="donut-dot" style="background:#2563eb;"></div><span class="dl-name">Desktop</span><span class="dl-pct">61%</span></div>
+          <div class="donut-legend-item"><div class="donut-dot" style="background:#a855f7;"></div><span class="dl-name">Mobile</span><span class="dl-pct">34%</span></div>
+          <div class="donut-legend-item"><div class="donut-dot" style="background:#0891b2;"></div><span class="dl-name">Tablet</span><span class="dl-pct">5%</span></div>
+        </div>
+      </div>
+      <div style="border-top:1px solid #1a2840; margin-top:14px; padding-top:14px;">
+        <div class="bar-row"><div class="bl"><span class="name">Chrome</span><span class="val">54%</span></div><div class="btrack"><div class="bfill" style="width:54%;background:#f59e0b;"></div></div></div>
+        <div class="bar-row"><div class="bl"><span class="name">Safari</span><span class="val">38%</span></div><div class="btrack"><div class="bfill" style="width:38%;background:#94a3b8;"></div></div></div>
+        <div class="bar-row"><div class="bl"><span class="name">Firefox</span><span class="val">5%</span></div><div class="btrack"><div class="bfill" style="width:5%;background:#f97316;"></div></div></div>
+        <div class="bar-row"><div class="bl"><span class="name">Edge</span><span class="val">3%</span></div><div class="btrack"><div class="bfill" style="width:3%;background:#0ea5e9;"></div></div></div>
+      </div>
+    </div>
+
+    <!-- Top Countries -->
+    <div class="card">
+      <h3>Top Countries</h3>
+      <div class="country-row"><span class="flag">🇬🇧</span><span class="cname">United Kingdom</span><div class="ctrack"><div class="cfill" style="width:52%;"></div></div><span class="cpct">52%</span></div>
+      <div class="country-row"><span class="flag">🇺🇸</span><span class="cname">United States</span><div class="ctrack"><div class="cfill" style="width:35%;"></div></div><span class="cpct">18%</span></div>
+      <div class="country-row"><span class="flag">🇦🇺</span><span class="cname">Australia</span><div class="ctrack"><div class="cfill" style="width:17%;"></div></div><span class="cpct">9%</span></div>
+      <div class="country-row"><span class="flag">🇨🇦</span><span class="cname">Canada</span><div class="ctrack"><div class="cfill" style="width:13%;"></div></div><span class="cpct">7%</span></div>
+      <div class="country-row"><span class="flag">🇩🇪</span><span class="cname">Germany</span><div class="ctrack"><div class="cfill" style="width:10%;"></div></div><span class="cpct">5%</span></div>
+      <div class="country-row"><span class="flag">🇦🇪</span><span class="cname">UAE</span><div class="ctrack"><div class="cfill" style="width:8%;"></div></div><span class="cpct">4%</span></div>
+      <div class="country-row"><span class="flag">🌍</span><span class="cname">Other</span><div class="ctrack"><div class="cfill" style="width:10%;background:#334155;"></div></div><span class="cpct">5%</span></div>
+
+      <div style="border-top:1px solid #1a2840; margin-top:14px; padding-top:14px;">
+        <div style="font-size:0.7rem; color:#475569; margin-bottom:8px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Sessions by Hour (UTC)</div>
+        <svg viewBox="0 0 280 40" style="width:100%;height:40px;display:block;">
+          <!-- 24 hourly bars — higher during business hours -->
+          <rect x="0"   y="36" width="9" height="4"  fill="#1e3a5f"/>
+          <rect x="11"  y="37" width="9" height="3"  fill="#1e3a5f"/>
+          <rect x="22"  y="37" width="9" height="3"  fill="#1e3a5f"/>
+          <rect x="33"  y="36" width="9" height="4"  fill="#1e3a5f"/>
+          <rect x="44"  y="34" width="9" height="6"  fill="#1e3a5f"/>
+          <rect x="55"  y="31" width="9" height="9"  fill="#2563eb"/>
+          <rect x="66"  y="26" width="9" height="14" fill="#2563eb"/>
+          <rect x="77"  y="18" width="9" height="22" fill="#2563eb"/>
+          <rect x="88"  y="12" width="9" height="28" fill="#2563eb"/>
+          <rect x="99"  y="8"  width="9" height="32" fill="#2563eb"/>
+          <rect x="110" y="5"  width="9" height="35" fill="#3b82f6"/>
+          <rect x="121" y="6"  width="9" height="34" fill="#3b82f6"/>
+          <rect x="132" y="4"  width="9" height="36" fill="#3b82f6"/>
+          <rect x="143" y="7"  width="9" height="33" fill="#2563eb"/>
+          <rect x="154" y="9"  width="9" height="31" fill="#2563eb"/>
+          <rect x="165" y="12" width="9" height="28" fill="#2563eb"/>
+          <rect x="176" y="10" width="9" height="30" fill="#2563eb"/>
+          <rect x="187" y="14" width="9" height="26" fill="#2563eb"/>
+          <rect x="198" y="20" width="9" height="20" fill="#1e3a5f"/>
+          <rect x="209" y="26" width="9" height="14" fill="#1e3a5f"/>
+          <rect x="220" y="30" width="9" height="10" fill="#1e3a5f"/>
+          <rect x="231" y="33" width="9" height="7"  fill="#1e3a5f"/>
+          <rect x="242" y="35" width="9" height="5"  fill="#1e3a5f"/>
+          <rect x="253" y="36" width="9" height="4"  fill="#1e3a5f"/>
+          <text x="0"   y="50" font-size="7" fill="#334155">0h</text>
+          <text x="110" y="50" font-size="7" fill="#334155">10h</text>
+          <text x="220" y="50" font-size="7" fill="#334155">20h</text>
+        </svg>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ BEHAVIOUR ═══ -->
+  <div class="section-label">Behaviour</div>
+  <div class="grid-2">
+
+    <!-- Scroll Depth by Page -->
+    <div class="card">
+      <h3>Scroll Depth by Page</h3>
+      <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:5px;font-size:0.65rem;color:#64748b;"><div style="width:8px;height:8px;background:#1d4ed8;border-radius:2px;"></div>25%</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:0.65rem;color:#64748b;"><div style="width:8px;height:8px;background:#2563eb;border-radius:2px;"></div>50%</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:0.65rem;color:#64748b;"><div style="width:8px;height:8px;background:#3b82f6;border-radius:2px;"></div>75%</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:0.65rem;color:#64748b;"><div style="width:8px;height:8px;background:#93c5fd;border-radius:2px;"></div>100%</div>
+      </div>
+
+      <div class="scroll-page">
+        <div class="scroll-page-name">/training/type-rating</div>
+        <div class="scroll-bars">
+          <div class="scroll-bar-row"><span class="scroll-bar-label">25%</span><div class="scroll-bar-track"><div class="scroll-bar-fill" style="width:91%;background:#1d4ed8;"></div></div><span class="scroll-bar-pct">91%</span></div>
+          <div class="scroll-bar-row"><span class="scroll-bar-label">50%</span><div class="scroll-bar-track"><div class="scroll-bar-fill" style="width:84%;background:#2563eb;"></div></div><span class="scroll-bar-pct">84%</span></div>
+          <div class="scroll-bar-row"><span class="scroll-bar-label">75%</span><div class="scroll-bar-track"><div class="scroll-bar-fill" style="width:71%;background:#3b82f6;"></div></div><span class="scroll-bar-pct">71%</span></div>
+          <div class="scroll-bar-row"><span class="scroll-bar-label">100%</span><div class="scroll-bar-track"><div class="scroll-bar-fill" style="width:45%;background:#93c5fd;"></div></div><span class="scroll-bar-pct">45%</span></div>
+        </div>
+      </div>
+      <div class="scroll-page" style="margin-top:10px;">
+        <div class="scroll-page-name">/about</div>
+        <div class="scroll-bars">
+          <div class="scroll-bar-row"><span class="scroll-bar-label">25%</span><div class="scroll-bar-track"><div class="scroll-bar-fill" style="width:94%;background:#1d4ed8;"></div></div><span class="scroll-bar-pct">94%</span></div>
+          <div class="scroll-bar-row"><span class="scroll-bar-label">50%</span><div class="scroll-bar-track"><div class="scroll-bar-fill" style="width:88%;background:#2563eb;"></div></div><span class="scroll-bar-pct">88%</span></div>
+          <div class="scroll-bar-row"><span class="scroll-bar-label">75%</span><div class="scroll-bar-track"><div class="scroll-bar-fill" style="width:79%;background:#3b82f6;"></div></div><span class="scroll-bar-pct">79%</span></div>
+          <div class="scroll-bar-row"><span class="scroll-bar-label">100%</span><div class="scroll-bar-track"><div class="scroll-bar-fill" style="width:67%;background:#93c5fd;"></div></div><span class="scroll-bar-pct">67%</span></div>
+        </div>
+      </div>
+      <div class="scroll-page" style="margin-top:10px;">
+        <div class="scroll-page-name">/contact</div>
+        <div class="scroll-bars">
+          <div class="scroll-bar-row"><span class="scroll-bar-label">25%</span><div class="scroll-bar-track"><div class="scroll-bar-fill" style="width:76%;background:#1d4ed8;"></div></div><span class="scroll-bar-pct">76%</span></div>
+          <div class="scroll-bar-row"><span class="scroll-bar-label">50%</span><div class="scroll-bar-track"><div class="scroll-bar-fill" style="width:48%;background:#2563eb;"></div></div><span class="scroll-bar-pct">48%</span></div>
+          <div class="scroll-bar-row"><span class="scroll-bar-label">75%</span><div class="scroll-bar-track"><div class="scroll-bar-fill" style="width:31%;background:#3b82f6;"></div></div><span class="scroll-bar-pct">31%</span></div>
+          <div class="scroll-bar-row"><span class="scroll-bar-label">100%</span><div class="scroll-bar-track"><div class="scroll-bar-fill" style="width:18%;background:#93c5fd;"></div></div><span class="scroll-bar-pct">18%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Journeys + CTA Clicks -->
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <h3>Top User Journeys</h3>
+        <div class="journey-row"><span class="j-page">/</span><span class="j-arrow">→</span><span class="j-page">/training/type-rating</span><span class="j-arrow">→</span><span class="j-page">/contact</span><span class="j-count">84×</span></div>
+        <div class="journey-row"><span class="j-page">/</span><span class="j-arrow">→</span><span class="j-page">/about</span><span class="j-arrow">→</span><span class="j-page">/contact</span><span class="j-count">41×</span></div>
+        <div class="journey-row"><span class="j-page">/</span><span class="j-arrow">→</span><span class="j-page">/contact</span><span class="j-count">29×</span></div>
+        <div class="journey-row"><span class="j-page">/training/mcc</span><span class="j-arrow">→</span><span class="j-page">/contact</span><span class="j-count">17×</span></div>
+        <div class="journey-row"><span class="j-page">/</span><span class="j-arrow">→</span><span class="j-page">/training/atpl</span><span class="j-arrow">→</span><span class="j-page">/training/mcc</span><span class="j-count">12×</span></div>
+      </div>
+
+      <div class="card">
+        <h3>Top CTA Clicks</h3>
+        <div class="t-row"><span class="t-rank">1</span><span class="t-name">book-consultation-hero</span><div class="t-bar-wrap"><div class="t-bar-track"><div class="t-bar-fill" style="width:100%;background:#22d3ee;"></div></div></div><span class="t-count">47</span></div>
+        <div class="t-row"><span class="t-rank">2</span><span class="t-name">download-brochure</span><div class="t-bar-wrap"><div class="t-bar-track"><div class="t-bar-fill" style="width:47%;background:#22d3ee;"></div></div></div><span class="t-count">22</span></div>
+        <div class="t-row"><span class="t-rank">3</span><span class="t-name">enquire-type-rating</span><div class="t-bar-wrap"><div class="t-bar-track"><div class="t-bar-fill" style="width:38%;background:#22d3ee;"></div></div></div><span class="t-count">18</span></div>
+        <div class="t-row"><span class="t-rank">4</span><span class="t-name">apply-now-mcc</span><div class="t-bar-wrap"><div class="t-bar-track"><div class="t-bar-fill" style="width:23%;background:#22d3ee;"></div></div></div><span class="t-count">11</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Notice -->
+  <div style="margin-top:28px; padding:10px 14px; background:#0d1526; border:1px dashed #1a2840; border-radius:8px; font-size:0.72rem; color:#334155; text-align:center;">
+    Mockup — placeholder data only. Section order and content adjustable before implementation.
+  </div>
+
+</div>
+</body>
+</html>

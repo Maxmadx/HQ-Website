@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics Dashboard Mockup</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0a0f1a;
+    color: #e2e8f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* Page chrome */
+  .page-header {
+    background: #0d1526;
+    border-bottom: 1px solid #1e2d45;
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .page-header h1 { font-size: 1rem; font-weight: 600; color: #f1f5f9; }
+  .page-header .breadcrumb { font-size: 0.75rem; color: #64748b; margin-bottom: 2px; }
+
+  .time-filter {
+    display: flex;
+    gap: 4px;
+  }
+  .time-filter button {
+    background: transparent;
+    border: 1px solid #1e2d45;
+    color: #94a3b8;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+  .time-filter button.active {
+    background: #1e3a5f;
+    border-color: #2563eb;
+    color: #93c5fd;
+  }
+
+  .dashboard-body {
+    padding: 20px 28px 40px;
+    max-width: 1100px;
+  }
+
+  /* IP filter banner */
+  .ip-banner {
+    background: #052e16;
+    border: 1px solid #166534;
+    border-radius: 8px;
+    padding: 8px 14px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    color: #86efac;
+  }
+  .ip-banner .dot { width: 7px; height: 7px; background: #22c55e; border-radius: 50%; flex-shrink: 0; }
+  .ip-banner .ip-addr { color: #4ade80; font-family: monospace; font-size: 0.8rem; }
+
+  /* Section label */
+  .section-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #475569;
+    margin-bottom: 10px;
+    margin-top: 24px;
+  }
+  .section-label:first-of-type { margin-top: 0; }
+
+  /* Metric cards */
+  .metrics-grid {
+    display: grid;
+    gap: 12px;
+  }
+  .metrics-grid.four { grid-template-columns: repeat(4, 1fr); }
+  .metrics-grid.three { grid-template-columns: repeat(3, 1fr); }
+  .metrics-grid.two { grid-template-columns: repeat(2, 1fr); }
+
+  .metric-card {
+    background: #111827;
+    border: 1px solid #1e2d45;
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .metric-card .label {
+    font-size: 0.72rem;
+    color: #64748b;
+    margin-bottom: 6px;
+  }
+  .metric-card .value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .metric-card .sub {
+    font-size: 0.7rem;
+    color: #64748b;
+  }
+  .metric-card .trend-up { color: #4ade80; }
+  .metric-card .trend-down { color: #f87171; }
+  .metric-card .trend-neutral { color: #94a3b8; }
+
+  /* Two-panel layout */
+  .two-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .three-panel {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* Data cards */
+  .data-card {
+    background: #111827;
+    border: 1px solid #1e2d45;
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .data-card h3 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #cbd5e1;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #1e2d45;
+  }
+
+  /* Table rows */
+  .data-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid #0d1526;
+    font-size: 0.78rem;
+    gap: 8px;
+  }
+  .data-row:last-child { border-bottom: none; }
+  .data-row .name { color: #94a3b8; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .data-row .count { color: #e2e8f0; font-weight: 600; flex-shrink: 0; }
+
+  /* Bar chart rows */
+  .bar-row {
+    margin-bottom: 10px;
+  }
+  .bar-row:last-child { margin-bottom: 0; }
+  .bar-row .bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    margin-bottom: 4px;
+  }
+  .bar-row .bar-label .name { color: #94a3b8; }
+  .bar-row .bar-label .pct { color: #e2e8f0; font-weight: 600; }
+  .bar-track {
+    background: #1e2d45;
+    border-radius: 4px;
+    height: 5px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 5px;
+    border-radius: 4px;
+    background: #2563eb;
+    transition: width 0.3s;
+  }
+  .bar-fill.green { background: #16a34a; }
+  .bar-fill.purple { background: #7c3aed; }
+  .bar-fill.amber { background: #d97706; }
+  .bar-fill.rose { background: #e11d48; }
+
+  /* Scroll depth bars */
+  .scroll-row {
+    margin-bottom: 12px;
+  }
+  .scroll-row:last-child { margin-bottom: 0; }
+  .scroll-row .page-name {
+    font-size: 0.73rem;
+    color: #64748b;
+    margin-bottom: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .scroll-thresholds {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+  }
+  .threshold-block {
+    height: 18px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    font-weight: 700;
+    flex: 1;
+  }
+  .threshold-block.reached { background: #1d4ed8; color: #bfdbfe; }
+  .threshold-block.partial { background: #1e3a5f; color: #60a5fa; }
+  .threshold-block.empty { background: #1e2d45; color: #475569; }
+
+  /* Journey */
+  .journey-row {
+    display: flex;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid #0d1526;
+    gap: 0;
+    font-size: 0.72rem;
+    flex-wrap: wrap;
+  }
+  .journey-row:last-child { border-bottom: none; }
+  .journey-page {
+    background: #1e2d45;
+    color: #93c5fd;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .journey-arrow {
+    color: #334155;
+    padding: 0 4px;
+    font-size: 0.65rem;
+  }
+  .journey-count {
+    margin-left: auto;
+    color: #94a3b8;
+    font-weight: 600;
+    padding-left: 8px;
+    white-space: nowrap;
+    font-size: 0.72rem;
+  }
+
+  /* Device breakdown visual */
+  .device-bar {
+    display: flex;
+    height: 10px;
+    border-radius: 6px;
+    overflow: hidden;
+    gap: 2px;
+    margin-bottom: 10px;
+  }
+  .device-segment { height: 10px; border-radius: 2px; }
+
+  .legend { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.72rem; color: #94a3b8; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+  /* Country flags */
+  .country-row {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px solid #0d1526;
+    gap: 8px;
+    font-size: 0.78rem;
+  }
+  .country-row:last-child { border-bottom: none; }
+  .country-row .flag { font-size: 1rem; }
+  .country-row .cname { color: #94a3b8; flex: 1; }
+  .country-row .cpct { color: #e2e8f0; font-weight: 600; }
+  .country-row .cbar-track { flex: 1.5; background: #1e2d45; border-radius: 4px; height: 4px; }
+  .country-row .cbar-fill { height: 4px; background: #2563eb; border-radius: 4px; }
+
+  /* Notice */
+  .notice {
+    margin-top: 24px;
+    padding: 10px 14px;
+    background: #0d1526;
+    border: 1px dashed #1e2d45;
+    border-radius: 8px;
+    font-size: 0.72rem;
+    color: #475569;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <div class="breadcrumb">Admin</div>
+    <h1>Analytics</h1>
+  </div>
+  <div class="time-filter">
+    <button>7d</button>
+    <button>14d</button>
+    <button class="active">30d</button>
+  </div>
+</div>
+
+<div class="dashboard-body">
+
+  <!-- IP Banner -->
+  <div class="ip-banner" style="margin-top: 16px;">
+    <div class="dot"></div>
+    Filtering your IP &nbsp;<span class="ip-addr">82.41.xxx.xxx</span>&nbsp;— showing real visitor data only
+  </div>
+
+  <!-- KEY METRICS -->
+  <div class="section-label">Overview</div>
+  <div class="metrics-grid four">
+    <div class="metric-card">
+      <div class="label">Page Views</div>
+      <div class="value">1,284</div>
+      <div class="sub trend-up">↑ 12% vs prev period</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Unique Sessions</div>
+      <div class="value">342</div>
+      <div class="sub trend-up">↑ 8%</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">CTA Clicks</div>
+      <div class="value">89</div>
+      <div class="sub trend-neutral">→ steady</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Form Submits</div>
+      <div class="value">23</div>
+      <div class="sub trend-up">↑ 4 this week</div>
+    </div>
+  </div>
+
+  <!-- ENGAGEMENT -->
+  <div class="section-label">Engagement</div>
+  <div class="metrics-grid three">
+    <div class="metric-card">
+      <div class="label">Bounce Rate</div>
+      <div class="value">38<span style="font-size:1rem; color:#64748b;">%</span></div>
+      <div class="sub trend-up">↓ 5% improvement</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Avg. Time on Page</div>
+      <div class="value">2<span style="font-size:1rem; color:#64748b;">m</span> 14<span style="font-size:1rem; color:#64748b;">s</span></div>
+      <div class="sub trend-neutral">across all pages</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Avg. Scroll Depth</div>
+      <div class="value">62<span style="font-size:1rem; color:#64748b;">%</span></div>
+      <div class="sub trend-up">↑ good engagement</div>
+    </div>
+  </div>
+
+  <!-- TOP PAGES + TRAFFIC SOURCES -->
+  <div class="section-label">Acquisition</div>
+  <div class="two-panel">
+    <div class="data-card">
+      <h3>Top Pages</h3>
+      <div class="data-row"><span class="name">/training/type-rating</span><span class="count">284</span></div>
+      <div class="data-row"><span class="name">/</span><span class="count">201</span></div>
+      <div class="data-row"><span class="name">/contact</span><span class="count">143</span></div>
+      <div class="data-row"><span class="name">/about</span><span class="count">98</span></div>
+      <div class="data-row"><span class="name">/training/mcc</span><span class="count">71</span></div>
+      <div class="data-row"><span class="name">/training/atpl</span><span class="count">54</span></div>
+    </div>
+    <div class="data-card">
+      <h3>Traffic Sources</h3>
+      <div class="bar-row">
+        <div class="bar-label"><span class="name">Direct</span><span class="pct">48%</span></div>
+        <div class="bar-track"><div class="bar-fill green" style="width:48%"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label"><span class="name">Search (Google, Bing)</span><span class="pct">31%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:31%"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label"><span class="name">Social</span><span class="pct">14%</span></div>
+        <div class="bar-track"><div class="bar-fill purple" style="width:14%"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label"><span class="name">Referral</span><span class="pct">7%</span></div>
+        <div class="bar-track"><div class="bar-fill amber" style="width:7%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEVICES + GEOGRAPHY -->
+  <div class="section-label">Audience</div>
+  <div class="two-panel">
+    <div class="data-card">
+      <h3>Devices &amp; Browsers</h3>
+      <!-- Visual device split bar -->
+      <div class="device-bar">
+        <div class="device-segment" style="width:61%; background:#2563eb;"></div>
+        <div class="device-segment" style="width:34%; background:#7c3aed;"></div>
+        <div class="device-segment" style="width:5%; background:#0891b2;"></div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#2563eb;"></div>Desktop 61%</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#7c3aed;"></div>Mobile 34%</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#0891b2;"></div>Tablet 5%</div>
+      </div>
+      <div style="border-top: 1px solid #1e2d45; padding-top: 12px;">
+        <div class="bar-row">
+          <div class="bar-label"><span class="name">Chrome</span><span class="pct">54%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:54%; background:#f59e0b;"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="name">Safari</span><span class="pct">38%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:38%; background:#94a3b8;"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="name">Firefox</span><span class="pct">5%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:5%; background:#f97316;"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="name">Edge</span><span class="pct">3%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:3%; background:#0ea5e9;"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="data-card">
+      <h3>Top Countries</h3>
+      <div class="country-row">
+        <span class="flag">🇬🇧</span>
+        <span class="cname">United Kingdom</span>
+        <div class="cbar-track"><div class="cbar-fill" style="width:52%;"></div></div>
+        <span class="cpct">52%</span>
+      </div>
+      <div class="country-row">
+        <span class="flag">🇺🇸</span>
+        <span class="cname">United States</span>
+        <div class="cbar-track"><div class="cbar-fill" style="width:18%;"></div></div>
+        <span class="cpct">18%</span>
+      </div>
+      <div class="country-row">
+        <span class="flag">🇦🇺</span>
+        <span class="cname">Australia</span>
+        <div class="cbar-track"><div class="cbar-fill" style="width:9%;"></div></div>
+        <span class="cpct">9%</span>
+      </div>
+      <div class="country-row">
+        <span class="flag">🇨🇦</span>
+        <span class="cname">Canada</span>
+        <div class="cbar-track"><div class="cbar-fill" style="width:7%;"></div></div>
+        <span class="cpct">7%</span>
+      </div>
+      <div class="country-row">
+        <span class="flag">🇩🇪</span>
+        <span class="cname">Germany</span>
+        <div class="cbar-track"><div class="cbar-fill" style="width:5%;"></div></div>
+        <span class="cpct">5%</span>
+      </div>
+      <div class="country-row">
+        <span class="flag">🌍</span>
+        <span class="cname">Other</span>
+        <div class="cbar-track"><div class="cbar-fill" style="width:9%;"></div></div>
+        <span class="cpct">9%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCROLL DEPTH + USER JOURNEYS -->
+  <div class="section-label">Behaviour</div>
+  <div class="two-panel">
+    <div class="data-card">
+      <h3>Scroll Depth by Page</h3>
+      <div style="display:flex; gap:8px; font-size:0.6rem; color:#475569; margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:4px;"><div style="width:10px;height:10px;background:#1d4ed8;border-radius:2px;"></div>reached</div>
+        <div style="display:flex;align-items:center;gap:4px;"><div style="width:10px;height:10px;background:#1e3a5f;border-radius:2px;"></div>partial</div>
+        <div style="display:flex;align-items:center;gap:4px;"><div style="width:10px;height:10px;background:#1e2d45;border-radius:2px;"></div>not reached</div>
+      </div>
+      <div class="scroll-row">
+        <div class="page-name">/training/type-rating</div>
+        <div class="scroll-thresholds">
+          <div class="threshold-block reached">25%</div>
+          <div class="threshold-block reached">50%</div>
+          <div class="threshold-block reached">75%</div>
+          <div class="threshold-block partial">100%</div>
+        </div>
+      </div>
+      <div class="scroll-row">
+        <div class="page-name">/</div>
+        <div class="scroll-thresholds">
+          <div class="threshold-block reached">25%</div>
+          <div class="threshold-block reached">50%</div>
+          <div class="threshold-block partial">75%</div>
+          <div class="threshold-block empty">100%</div>
+        </div>
+      </div>
+      <div class="scroll-row">
+        <div class="page-name">/contact</div>
+        <div class="scroll-thresholds">
+          <div class="threshold-block reached">25%</div>
+          <div class="threshold-block partial">50%</div>
+          <div class="threshold-block empty">75%</div>
+          <div class="threshold-block empty">100%</div>
+        </div>
+      </div>
+      <div class="scroll-row">
+        <div class="page-name">/about</div>
+        <div class="scroll-thresholds">
+          <div class="threshold-block reached">25%</div>
+          <div class="threshold-block reached">50%</div>
+          <div class="threshold-block reached">75%</div>
+          <div class="threshold-block reached">100%</div>
+        </div>
+      </div>
+    </div>
+    <div class="data-card">
+      <h3>Top User Journeys</h3>
+      <div class="journey-row">
+        <span class="journey-page">/</span>
+        <span class="journey-arrow">→</span>
+        <span class="journey-page">/training/type-rating</span>
+        <span class="journey-arrow">→</span>
+        <span class="journey-page">/contact</span>
+        <span class="journey-count">84×</span>
+      </div>
+      <div class="journey-row">
+        <span class="journey-page">/</span>
+        <span class="journey-arrow">→</span>
+        <span class="journey-page">/about</span>
+        <span class="journey-arrow">→</span>
+        <span class="journey-page">/contact</span>
+        <span class="journey-count">41×</span>
+      </div>
+      <div class="journey-row">
+        <span class="journey-page">/</span>
+        <span class="journey-arrow">→</span>
+        <span class="journey-page">/contact</span>
+        <span class="journey-count">29×</span>
+      </div>
+      <div class="journey-row">
+        <span class="journey-page">/training/mcc</span>
+        <span class="journey-arrow">→</span>
+        <span class="journey-page">/contact</span>
+        <span class="journey-count">17×</span>
+      </div>
+      <div class="journey-row">
+        <span class="journey-page">/</span>
+        <span class="journey-arrow">→</span>
+        <span class="journey-page">/training/atpl</span>
+        <span class="journey-arrow">→</span>
+        <span class="journey-page">/training/mcc</span>
+        <span class="journey-count">12×</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP CTAS -->
+  <div class="section-label">Interactions</div>
+  <div class="two-panel">
+    <div class="data-card">
+      <h3>Top CTA Clicks</h3>
+      <div class="data-row"><span class="name">book-consultation-hero</span><span class="count">47</span></div>
+      <div class="data-row"><span class="name">download-brochure</span><span class="count">22</span></div>
+      <div class="data-row"><span class="name">enquire-type-rating</span><span class="count">18</span></div>
+      <div class="data-row"><span class="name">apply-now-mcc</span><span class="count">11</span></div>
+    </div>
+    <div class="data-card">
+      <h3>Event Breakdown</h3>
+      <div class="bar-row">
+        <div class="bar-label"><span class="name">Page Views</span><span class="pct">1,284</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%; background:#2563eb;"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label"><span class="name">Scroll Depth</span><span class="pct">843</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:65%; background:#7c3aed;"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label"><span class="name">CTA Clicks</span><span class="pct">89</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:7%; background:#16a34a;"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label"><span class="name">Page Exits</span><span class="pct">71</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:5%; background:#d97706;"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label"><span class="name">Form Submits</span><span class="pct">23</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:2%; background:#e11d48;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice">
+    Mockup — placeholder data only. Section order, labels, and layout can be adjusted before implementation.
+  </div>
+
+</div>
+</body>
+</html>

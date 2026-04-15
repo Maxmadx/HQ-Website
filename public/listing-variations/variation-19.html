@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Variation 19: Asymmetric Layout</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #f5f5f5; color: #1a1a1a; overflow-x: hidden; }
+
+/* VARIATION 19: Asymmetric - Creative offset layout with overlapping elements */
+.back-link {
+  position: fixed; top: 30px; left: 30px;
+  display: inline-flex; align-items: center; gap: 8px;
+  color: #fff; text-decoration: none; font-size: 0.85rem;
+  padding: 12px 20px; background: #1a1a1a;
+  border-radius: 30px; transition: all 0.3s;
+  z-index: 100;
+}
+.back-link:hover { background: #cc0000; }
+
+/* Hero Section with Asymmetric Layout */
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.hero-image-side {
+  position: relative;
+  background: #1a1a1a;
+}
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+}
+
+.hero-content-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px;
+  position: relative;
+}
+
+/* Overlapping Price Box */
+.price-box {
+  position: absolute;
+  left: -80px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #cc0000;
+  color: #fff;
+  padding: 40px;
+  z-index: 10;
+}
+.price-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  opacity: 0.8;
+  margin-bottom: 5px;
+}
+.price-amount {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+}
+
+.hero-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 4rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 1;
+  margin-bottom: 30px;
+  margin-left: 60px;
+}
+.hero-meta {
+  display: flex;
+  gap: 30px;
+  margin-left: 60px;
+  color: #666;
+  font-size: 1rem;
+}
+
+/* Offset Content Sections */
+.content-section {
+  padding: 100px 80px;
+  position: relative;
+}
+
+.offset-left {
+  margin-left: 10%;
+  margin-right: 5%;
+}
+.offset-right {
+  margin-left: 5%;
+  margin-right: 10%;
+}
+
+/* Specs Section - Diagonal */
+.specs-section {
+  background: #1a1a1a;
+  color: #fff;
+  clip-path: polygon(0 5%, 100% 0, 100% 95%, 0 100%);
+  padding: 150px 80px;
+}
+.specs-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.spec-item {
+  position: relative;
+  padding-left: 20px;
+}
+.spec-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #cc0000;
+}
+.spec-value {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+.spec-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #888;
+}
+
+/* Description with Overlap */
+.description-section {
+  position: relative;
+  padding: 80px;
+  margin-top: -50px;
+}
+.description-box {
+  background: #fff;
+  padding: 60px;
+  max-width: 700px;
+  margin-left: 15%;
+  box-shadow: 30px 30px 0 #cc0000;
+  position: relative;
+  z-index: 5;
+}
+.section-number {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 8rem;
+  font-weight: 900;
+  color: rgba(0,0,0,0.05);
+  position: absolute;
+  top: -40px;
+  left: -30px;
+  line-height: 1;
+}
+.section-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.description-text {
+  font-size: 1.1rem;
+  line-height: 1.9;
+  color: #555;
+}
+
+/* Highlights - Staggered */
+.highlights-section {
+  padding: 100px 80px;
+  background: linear-gradient(to right, #f5f5f5 50%, #fff 50%);
+}
+.highlights-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 50px;
+  text-align: center;
+}
+.highlights-stagger {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.highlight-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 25px 30px;
+  background: #fff;
+  border-left: 4px solid #cc0000;
+  box-shadow: 0 5px 30px rgba(0,0,0,0.08);
+  transition: transform 0.3s;
+}
+.highlight-row:nth-child(odd) { margin-left: 0; margin-right: 100px; }
+.highlight-row:nth-child(even) { margin-left: 100px; margin-right: 0; }
+.highlight-row:hover { transform: translateX(10px); }
+.highlight-number {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #cc0000;
+  width: 40px;
+}
+.highlight-text {
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+/* CTA - Asymmetric */
+.cta-section {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  min-height: 400px;
+}
+.cta-dark {
+  background: #1a1a1a;
+  color: #fff;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.cta-dark h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+.cta-dark p {
+  color: #888;
+  font-size: 1.1rem;
+  margin-bottom: 35px;
+}
+.cta-red {
+  background: #cc0000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+  padding: 40px;
+}
+.btn {
+  padding: 18px 50px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border-radius: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s;
+  width: 100%;
+  max-width: 280px;
+  text-align: center;
+}
+.btn-white {
+  background: #fff;
+  color: #1a1a1a;
+  border: none;
+}
+.btn-white:hover { background: #1a1a1a; color: #fff; }
+.btn-outline {
+  background: transparent;
+  color: #fff;
+  border: 2px solid rgba(255,255,255,0.5);
+}
+.btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.1); }
+
+/* Picker */
+.variation-picker {
+  position: fixed; bottom: 20px; right: 20px;
+  background: #1a1a1a; color: #fff;
+  padding: 15px 20px; border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  z-index: 1000; font-size: 0.85rem;
+}
+.variation-picker select {
+  background: #333; color: #fff; border: none;
+  padding: 8px 12px; border-radius: 4px; margin-left: 10px;
+  cursor: pointer;
+}
+.variation-label { font-weight: 600; }
+
+@media (max-width: 1000px) {
+  .hero-section { grid-template-columns: 1fr; }
+  .hero-image-side { height: 50vh; }
+  .price-box { left: 20px; top: auto; bottom: -30px; transform: none; }
+  .hero-title { font-size: 2.5rem; margin-left: 0; margin-top: 60px; }
+  .hero-meta { margin-left: 0; }
+  .hero-content-side { padding: 40px; }
+  .specs-grid { grid-template-columns: repeat(2, 1fr); }
+  .description-box { margin-left: 0; box-shadow: 15px 15px 0 #cc0000; }
+  .highlight-row:nth-child(odd), .highlight-row:nth-child(even) { margin: 0; }
+  .cta-section { grid-template-columns: 1fr; }
+  .content-section { padding: 60px 30px; }
+  .offset-left, .offset-right { margin: 0; }
+}
+</style>
+</head>
+<body>
+
+<a href="/used-aircraft-2" class="back-link">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+  Back
+</a>
+
+<section class="hero-section">
+  <div class="hero-image-side">
+    <img class="hero-image" src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HQAV%2Fblue-r66-palo-verde-front-v4.png?alt=media&token=3084cb09-4600-47bd-adf8-873b980b541d" alt="Robinson R66 Turbine">
+  </div>
+  <div class="hero-content-side">
+    <div class="price-box">
+      <div class="price-label">Price</div>
+      <div class="price-amount">£650,000</div>
+    </div>
+    <h1 class="hero-title">Robinson<br>R66<br>Turbine</h1>
+    <div class="hero-meta">
+      <span>2018</span>
+      <span>G-SAPA</span>
+      <span>1,240 Hours</span>
+    </div>
+  </div>
+</section>
+
+<section class="specs-section">
+  <div class="specs-grid">
+    <div class="spec-item">
+      <div class="spec-value">2018</div>
+      <div class="spec-label">Year</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-value">G-SAPA</div>
+      <div class="spec-label">Registration</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-value">1,240</div>
+      <div class="spec-label">Total Hours</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-value">RR300</div>
+      <div class="spec-label">Engine</div>
+    </div>
+  </div>
+</section>
+
+<section class="description-section">
+  <div class="description-box">
+    <span class="section-number">01</span>
+    <h2 class="section-title">About This Aircraft</h2>
+    <p class="description-text">
+      For sale is a superb example of a Robinson R66 Turbine helicopter. This aircraft has accumulated 1,240 flight hours and has 5 years remaining on the airframe. The helicopter features Robinson's elegant dark continental blue metallic paint scheme and has been maintained to the highest standards throughout its service life. Equipped with premium avionics and safety features, this R66 represents exceptional value for discerning buyers.
+    </p>
+  </div>
+</section>
+
+<section class="highlights-section">
+  <h2 class="highlights-title">Key Highlights</h2>
+  <div class="highlights-stagger">
+    <div class="highlight-row">
+      <span class="highlight-number">01</span>
+      <span class="highlight-text">Pop-out Floats for Water Operations</span>
+    </div>
+    <div class="highlight-row">
+      <span class="highlight-number">02</span>
+      <span class="highlight-text">Garmin G500H Glass Cockpit Display</span>
+    </div>
+    <div class="highlight-row">
+      <span class="highlight-number">03</span>
+      <span class="highlight-text">GTN650 Touchscreen Navigator</span>
+    </div>
+    <div class="highlight-row">
+      <span class="highlight-number">04</span>
+      <span class="highlight-text">SAS Autopilot System</span>
+    </div>
+    <div class="highlight-row">
+      <span class="highlight-number">05</span>
+      <span class="highlight-text">Extra Corrosion Protection Package</span>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="cta-dark">
+    <h2>Ready to Take Off?</h2>
+    <p>Contact our team for more information or to arrange a personal viewing of this exceptional aircraft.</p>
+  </div>
+  <div class="cta-red">
+    <a href="/contact" class="btn btn-white">Enquire Now</a>
+    <a href="/contact" class="btn btn-outline">Schedule Viewing</a>
+  </div>
+</section>
+
+<script src="variation-nav.js"></script>
+</body>
+</html>

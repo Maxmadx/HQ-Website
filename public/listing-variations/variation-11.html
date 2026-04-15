@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Variation 11: Luxury Premium</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
+  color: #fff;
+  min-height: 100vh;
+}
+
+/* VARIATION 11: Luxury Premium - High-end feel with animations, large typography, gold accents */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.back-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: #b8860b; text-decoration: none; font-size: 0.9rem;
+  padding: 30px 50px; transition: color 0.3s;
+  text-transform: uppercase; letter-spacing: 2px;
+}
+.back-link:hover { color: #d4af37; }
+
+.luxury-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 50px 100px;
+}
+
+.hero-section {
+  text-align: center;
+  margin-bottom: 60px;
+  animation: fadeInUp 1s ease;
+}
+
+.gold-line {
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #d4af37, transparent);
+  margin: 0 auto 30px;
+}
+
+.prestige-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: #d4af37;
+  margin-bottom: 20px;
+}
+
+.model-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 4.5rem;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 8px;
+  margin-bottom: 20px;
+  background: linear-gradient(90deg, #fff, #d4af37, #fff, #d4af37, #fff);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+.price {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #d4af37;
+  margin-bottom: 15px;
+}
+
+.image-showcase {
+  position: relative;
+  margin-bottom: 80px;
+  animation: fadeInUp 1.2s ease;
+}
+.image-frame {
+  position: relative;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 20px;
+  padding: 20px;
+  background: rgba(212, 175, 55, 0.03);
+}
+.image-frame::before {
+  content: '';
+  position: absolute;
+  top: -2px; left: -2px; right: -2px; bottom: -2px;
+  background: linear-gradient(45deg, #d4af37, transparent, #d4af37);
+  border-radius: 22px;
+  z-index: -1;
+  opacity: 0.5;
+}
+.main-image {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.main-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s ease;
+}
+.main-image:hover img {
+  transform: scale(1.05);
+}
+
+.specs-luxury {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  margin-bottom: 80px;
+  animation: fadeInUp 1.4s ease;
+}
+.spec-card {
+  text-align: center;
+  padding: 40px 20px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 12px;
+  transition: all 0.4s ease;
+}
+.spec-card:hover {
+  background: rgba(212, 175, 55, 0.08);
+  transform: translateY(-5px);
+  border-color: rgba(212, 175, 55, 0.5);
+}
+.spec-icon {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 20px;
+  border: 1px solid #d4af37;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d4af37;
+}
+.spec-value {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.spec-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #888;
+}
+
+.highlights-section {
+  margin-bottom: 80px;
+  animation: fadeInUp 1.6s ease;
+}
+.section-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: #d4af37;
+  text-align: center;
+  margin-bottom: 40px;
+}
+.highlights-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+}
+.highlight-item {
+  text-align: center;
+  padding: 30px 15px;
+  background: linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(212,175,55,0.02) 100%);
+  border-radius: 10px;
+  transition: all 0.3s;
+}
+.highlight-item:hover {
+  background: linear-gradient(135deg, rgba(212,175,55,0.2) 0%, rgba(212,175,55,0.05) 100%);
+  animation: float 2s ease infinite;
+}
+.highlight-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+.description-section {
+  max-width: 900px;
+  margin: 0 auto 80px;
+  text-align: center;
+  animation: fadeInUp 1.8s ease;
+}
+.description {
+  font-size: 1.2rem;
+  line-height: 2;
+  color: #aaa;
+  font-weight: 300;
+}
+
+.cta-section {
+  text-align: center;
+  animation: fadeInUp 2s ease;
+}
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+.btn {
+  padding: 22px 60px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  border-radius: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.4s;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+  color: #000;
+  border: none;
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #fff 0%, #d4af37 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(212, 175, 55, 0.3);
+}
+.btn-secondary {
+  background: transparent;
+  color: #d4af37;
+  border: 1px solid #d4af37;
+}
+.btn-secondary:hover {
+  background: rgba(212, 175, 55, 0.1);
+}
+
+/* Picker */
+.variation-picker {
+  position: fixed; bottom: 20px; right: 20px;
+  background: #0d0d0d; color: #fff;
+  padding: 15px 20px; border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  z-index: 1000; font-size: 0.85rem;
+}
+.variation-picker select {
+  background: #1a1a1a; color: #d4af37; border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 8px 12px; border-radius: 4px; margin-left: 10px;
+  cursor: pointer;
+}
+.variation-label { font-weight: 600; color: #d4af37; }
+
+@media (max-width: 1000px) {
+  .specs-luxury { grid-template-columns: repeat(2, 1fr); }
+  .highlights-grid { grid-template-columns: repeat(3, 1fr); }
+  .model-title { font-size: 2.5rem; letter-spacing: 4px; }
+}
+@media (max-width: 600px) {
+  .highlights-grid { grid-template-columns: repeat(2, 1fr); }
+  .model-title { font-size: 1.8rem; }
+  .price { font-size: 2rem; }
+  .cta-buttons { flex-direction: column; gap: 15px; }
+}
+</style>
+</head>
+<body>
+
+<a href="/used-aircraft-2" class="back-link">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+  Back to Collection
+</a>
+
+<div class="luxury-container">
+  <div class="hero-section">
+    <div class="gold-line"></div>
+    <div class="prestige-label">Exclusive Aircraft</div>
+    <h1 class="model-title">Robinson R66 Turbine</h1>
+    <div class="price">£650,000</div>
+  </div>
+
+  <div class="image-showcase">
+    <div class="image-frame">
+      <div class="main-image">
+        <img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HQAV%2Fblue-r66-palo-verde-front-v4.png?alt=media&token=3084cb09-4600-47bd-adf8-873b980b541d" alt="Robinson R66 Turbine">
+      </div>
+    </div>
+  </div>
+
+  <div class="specs-luxury">
+    <div class="spec-card">
+      <div class="spec-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+      </div>
+      <div class="spec-value">2018</div>
+      <div class="spec-label">Year</div>
+    </div>
+    <div class="spec-card">
+      <div class="spec-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+      </div>
+      <div class="spec-value">1,240</div>
+      <div class="spec-label">Total Hours</div>
+    </div>
+    <div class="spec-card">
+      <div class="spec-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+        </svg>
+      </div>
+      <div class="spec-value">G-SAPA</div>
+      <div class="spec-label">Registration</div>
+    </div>
+    <div class="spec-card">
+      <div class="spec-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </div>
+      <div class="spec-value">RR300</div>
+      <div class="spec-label">Engine</div>
+    </div>
+  </div>
+
+  <div class="highlights-section">
+    <h2 class="section-title">Premium Features</h2>
+    <div class="highlights-grid">
+      <div class="highlight-item">
+        <span class="highlight-text">Pop-out Floats</span>
+      </div>
+      <div class="highlight-item">
+        <span class="highlight-text">Garmin G500H</span>
+      </div>
+      <div class="highlight-item">
+        <span class="highlight-text">GTN650</span>
+      </div>
+      <div class="highlight-item">
+        <span class="highlight-text">SAS Autopilot</span>
+      </div>
+      <div class="highlight-item">
+        <span class="highlight-text">Corrosion Protection</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="description-section">
+    <p class="description">
+      Presenting a distinguished example of the Robinson R66 Turbine. With 1,240 hours and five years remaining on the airframe, this aircraft represents an exceptional acquisition opportunity. Finished in Robinson's prestigious dark continental blue metallic paint, every detail reflects meticulous care and expert maintenance. The comprehensive Garmin avionics suite, including the G500H glass cockpit and GTN650 navigator, ensures state-of-the-art situational awareness for the discerning pilot.
+    </p>
+  </div>
+
+  <div class="cta-section">
+    <div class="cta-buttons">
+      <a href="/contact" class="btn btn-primary">Request Private Viewing</a>
+      <a href="/contact" class="btn btn-secondary">Make Enquiry</a>
+    </div>
+  </div>
+</div>
+
+<script src="variation-nav.js"></script>
+</body>
+</html>

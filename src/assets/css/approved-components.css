@@ -1,0 +1,214 @@
+/**
+ * HQ Aviation Approved Components Styles
+ * Extracted from inspiration-2.html with brand identity
+ */
+
+/* =============================================
+   CSS VARIABLES (Brand Identity)
+   ============================================= */
+
+:root {
+  --hq-primary: #1a1a1a;
+  --hq-background: #faf9f6;
+  --hq-background-alt: #ffffff;
+  --hq-heading-1: #1a1a1a;
+  --hq-heading-2: #4a4a4a;
+  --hq-heading-3: #7a7a7a;
+  --hq-body: #666666;
+  --hq-muted: #888888;
+  --hq-subtle: #999999;
+  --hq-border: #e8e6e2;
+  --hq-hover-bg: #f5f5f2;
+  --hq-dark-bg: #1a1a1a;
+  --hq-accent: #E04A2F;
+  --hq-accent-hover: #C93E25;
+  --font-primary: 'Space Grotesk', -apple-system, sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+  --section-padding: 4rem;
+  --container-max: 1200px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-light: 0 5px 15px rgba(0, 0, 0, 0.1);
+  --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* =============================================
+   COMPONENT FEEDBACK NOTE
+   ============================================= */
+
+.component-note {
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+  border-left: 4px solid #ffc107;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  font-family: var(--font-primary);
+}
+
+.component-note__label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #856404;
+  margin-bottom: 0.5rem;
+}
+
+.component-note__label::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #ffc107;
+  border-radius: 50%;
+}
+
+.component-note__text {
+  font-size: 0.85rem;
+  color: #664d03;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.component-note--approved {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  border-left-color: #28a745;
+}
+
+.component-note--approved .component-note__label {
+  color: #155724;
+}
+
+.component-note--approved .component-note__label::before {
+  background: #28a745;
+}
+
+.component-note--approved .component-note__text {
+  color: #155724;
+}
+
+.component-note--needs-work {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+  border-left-color: #ffc107;
+}
+
+/* =============================================
+   UTILITY CLASSES
+   ============================================= */
+
+.hq-container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.hq-overline {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--hq-muted);
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.hq-overline--accent {
+  color: var(--hq-accent);
+}
+
+.hq-section-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.hq-section-title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.hq-section-subtitle {
+  font-size: 1rem;
+  color: var(--hq-body);
+  margin-top: 0.75rem;
+}
+
+/* =============================================
+   BUTTON STYLES
+   ============================================= */
+
+.hq-btn {
+  display: inline-block;
+  font-family: var(--font-primary);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.875rem 1.75rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: var(--radius-sm);
+}
+
+.hq-btn--primary {
+  background: var(--hq-primary);
+  color: #fff;
+}
+
+.hq-btn--primary:hover {
+  background: #333;
+}
+
+.hq-btn--accent {
+  background: var(--hq-accent);
+  color: #fff;
+}
+
+.hq-btn--accent:hover {
+  background: var(--hq-accent-hover);
+}
+
+.hq-btn--outline {
+  background: transparent;
+  color: var(--hq-primary);
+  border: 2px solid var(--hq-primary);
+}
+
+.hq-btn--outline:hover {
+  background: var(--hq-primary);
+  color: #fff;
+}
+
+.hq-btn--ghost {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.hq-btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.hq-btn--lg {
+  padding: 1rem 2rem;
+  font-size: 0.75rem;
+}
+
+.hq-btn-group {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.hq-btn-group--center {
+  justify-content: center;
+}

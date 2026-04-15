@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<script>
+window.Squarespace = window.Squarespace || { load: function() {}, afterBodyLoad: function() {}, SQUARESPACE_CONTEXT: {} };
+window.Static = window.Static || { SQUARESPACE_CONTEXT: {} };
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<base href="/">
+<title>HQ Aviation &mdash; Media & Film</title>
+<link rel="icon" type="image/png" href="/assets/images/logos/hq/hq-aviation-logo-black.png"/>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #fff; color: #333; }
+.page-wrapper { width: 100%; max-width: 1400px; margin: 0 auto; padding: 60px 40px; }
+.page-header { text-align: center; margin-bottom: 50px; }
+.page-header h1 { font-size: 2.5rem; font-weight: 900; text-transform: uppercase; color: #000; margin-bottom: 15px; }
+.page-header p { font-size: 1rem; line-height: 1.6; color: #555; max-width: 700px; margin: 0 auto; }
+.section { margin-bottom: 60px; }
+.section-title { font-size: 0.75rem; font-weight: 700; color: #ff0000; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 30px; }
+.card-grid { display: flex; flex-direction: row; gap: 20px; }
+.card { flex: 1; position: relative; background: #f9f9f9; border: 1px solid #eee; padding: 40px 30px; display: flex; flex-direction: column; transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); overflow: hidden; }
+.card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: #ff0000; transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
+.card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); background: #fff; border-color: #ff0000; }
+.card:hover::before { transform: scaleX(1); }
+.card-sub { font-size: 0.75rem; font-weight: 700; color: #ff0000; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+.card h3 { font-size: 1.5rem; font-weight: 900; text-transform: uppercase; color: #000; margin-bottom: 15px; }
+.card p { font-size: 0.9rem; line-height: 1.6; color: #555; margin-bottom: 20px; }
+.card-btn { margin-top: auto; padding: 12px 30px; background: transparent; border: 2px solid #000; color: #000; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; transition: all 0.3s ease; text-decoration: none; display: inline-block; cursor: pointer; text-align: center; }
+.card-btn:hover, .card:hover .card-btn { background: #000; color: #fff; }
+.intro-text { font-size: 1rem; line-height: 1.8; color: #333; max-width: 900px; margin: 0 auto 50px; text-align: center; }
+@media (max-width: 1024px) { .card-grid { flex-direction: column; } .card { width: 100%; } .page-wrapper { padding: 40px 20px; } }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+  <div class="page-header">
+    <h1>Media & Film</h1>
+    <p>Professional helicopter services for film, television, and commercial productions.</p>
+  </div>
+
+  <p class="intro-text">HQ Aviation has provided aerial platform and pilot services for major film productions, television programs, and commercial shoots. Our experienced team understands the demands of production schedules and delivers reliable, safe, and discreet services.</p>
+
+  <div class="section">
+    <div class="section-title">Production Services</div>
+    <div class="card-grid">
+      <div class="card">
+        <span class="card-sub">Film</span>
+        <h3>Aerial Platform</h3>
+        <p>Camera-ready helicopters with door-off capability and mounts for professional cinematography equipment. Smooth, stable flight for the perfect shot.</p>
+        <a href="/contact" class="card-btn">Enquire</a>
+      </div>
+      <div class="card">
+        <span class="card-sub">Television</span>
+        <h3>Documentary Support</h3>
+        <p>Flexible scheduling and experienced pilots for wildlife, landscape, and documentary filming across the UK and Europe.</p>
+        <a href="/contact" class="card-btn">Enquire</a>
+      </div>
+      <div class="card">
+        <span class="card-sub">Commercial</span>
+        <h3>Advertising Shoots</h3>
+        <p>Luxury brand aerial photography, automotive commercials, and promotional content. Professional coordination with production teams.</p>
+        <a href="/contact" class="card-btn">Enquire</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Additional Services</div>
+    <div class="card-grid">
+      <div class="card">
+        <h3>Film Pilot Services</h3>
+        <p>Experienced pilots trained in precision flying for camera work. Familiar with production requirements and safety protocols.</p>
+        <a href="/pilot-provisioning" class="card-btn">Learn More</a>
+      </div>
+      <div class="card">
+        <h3>Location Scouting</h3>
+        <p>Aerial reconnaissance for production location identification. Efficient coverage of potential filming sites from the air.</p>
+        <a href="/contact" class="card-btn">Enquire</a>
+      </div>
+      <div class="card">
+        <h3>Actor Training</h3>
+        <p>Confidential helicopter training for actors and production staff. Flexible scheduling around production timelines.</p>
+        <a href="/special-training" class="card-btn">Learn More</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/assets/menu.js"></script>
+</body>
+</html>

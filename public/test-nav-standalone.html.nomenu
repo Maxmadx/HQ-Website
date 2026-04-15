@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navigation Test - Standalone</title>
+  <style>
+    body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+    main { background: #f0f0f0; padding: 40px; border-radius: 8px; }
+    h1 { color: #333; }
+    .test-status { background: #e8f5e9; padding: 15px; border-radius: 4px; margin: 20px 0; }
+    .test-pass { color: green; font-weight: bold; }
+    .test-fail { color: red; font-weight: bold; }
+  </style>
+</head>
+<body>
+<style>
+/* ============================================
+   HQ AVIATION — TOP DROPDOWN NAVIGATION
+   ============================================ */
+
+/* ---------- Hide Squarespace's own nav ---------- */
+.Mobile-bar-menu           { display: none !important; }
+.Mobile-overlay            { display: none !important; }
+.Header-nav--primary       { display: none !important; }
+
+/* ---------- Hamburger toggle (always on top) ---------- */
+/* X icon when active */
+/* ---------- Dark overlay behind dropdown ---------- */
+/* ---------- Dropdown panel ---------- */
+/* ---------- Horizontal section grid ---------- */
+/* ---------- Section headings ---------- */
+/* ---------- Link lists ---------- */
+/* ---------- Accent stripe at bottom of panel ---------- */
+/* ---------- Mobile: single column ---------- */
+@media (max-width: 640px) {
+  }
+
+/* ---------- Tablet: 3 columns ---------- */
+@media (min-width: 641px) and (max-width: 900px) {
+  }
+</style>
+
+<!-- HQ Nav Overlay -->
+
+
+<!-- HQ Nav Dropdown -->
+
+
+<!-- Hamburger Toggle -->
+
+
+
+
+
+
+<main>
+  <h1>🧪 Navigation System Test</h1>
+  
+  <div class="test-status">
+    <h3>Test Status:</h3>
+    <p id="status">Loading...</p>
+  </div>
+
+  <h2>Instructions:</h2>
+  <ol>
+    <li>Look for a <strong>hamburger menu button (☰) in the top-right corner</strong></li>
+    <li>Click the button - the menu should <strong>slide in from the LEFT</strong></li>
+    <li>The menu should be <strong>styled with blue accents and white background</strong></li>
+    <li>Click any link or the X button to close</li>
+    <li>Click the overlay (dark area) to close</li>
+    <li>Press ESC to close</li>
+  </ol>
+
+  <hr>
+
+  <h2>Debug Info:</h2>
+  <pre id="debug"></pre>
+
+</main>
+
+<!-- INJECT NAV HERE -->
+
+
+<style>
+/* ============ HQ AVIATION TOP DROPDOWN NAV ============ */
+
+/* Hide Squarespace defaults */
+.Mobile-bar-menu, .Mobile-overlay, .Header-nav--primary {
+  display: none !important;
+}
+
+/* Toggle Button - Always on top */
+.hq-nav-toggle {
+  position: fixed !important;
+  top: 18px !important;
+  right: 20px !important;
+  z-index: 50001 !important;
+  width: 44px !important;
+  height: 44px !important;
+  background: #2c3e50 !important;
+  border: none !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  transition: all 0.3s ease !important;
+}
+
+.hq-nav-toggle:hover {
+  background: #34495e !important;
+}
+
+.hq-nav-toggle span {
+  display: block !important;
+  width: 22px !important;
+  height: 2.5px !important;
+  background: #fff !important;
+  border-radius: 2px !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  margin: 0 !important;
+}
+
+.hq-nav-toggle span + span {
+  margin-top: 5px !important;
+}
+
+.hq-nav-toggle.hq-nav-active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px) !important;
+}
+
+.hq-nav-toggle.hq-nav-active span:nth-child(2) {
+  opacity: 0 !important;
+}
+
+.hq-nav-toggle.hq-nav-active span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px) !important;
+}
+
+/* Overlay */
+.hq-nav-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 49999 !important;
+  background: rgba(0, 0, 0, 0) !important;
+  pointer-events: none !important;
+  transition: background 0.3s ease !important;
+}
+
+.hq-nav-overlay.hq-nav-open {
+  background: rgba(0, 0, 0, 0.4) !important;
+  pointer-events: auto !important;
+}
+
+/* Menu Container */
+.hq-nav-menu {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  z-index: 50000 !important;
+  background: #ffffff !important;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.13) !important;
+  transform: translateY(-100%) !important;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+}
+
+/* Aggressive override for Squarespace's inline styles */
+.hq-nav-menu[style],
+.hq-nav-menu.hq-nav-open[style],
+nav.hq-nav-menu[style],
+nav.hq-nav-menu.hq-nav-open[style],
+#hqNavMenu[style],
+#hqNavMenu.hq-nav-open[style] {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding: 0 !important;
+}
+
+.hq-nav-menu.hq-nav-open {
+  transform: translateY(0) !important;
+}
+
+/* Grid Layout */
+.hq-nav-content {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  max-width: 1200px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.hq-nav-section {
+  flex: 1 1 140px !important;
+  padding: 0 18px !important;
+  border-right: 1px solid #e8e8e8 !important;
+}
+
+.hq-nav-section-title {
+  margin: 0 0 10px 0 !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1.4px !important;
+  color: #3498db !important;
+  border-bottom: 2px solid #3498db !important;
+  padding-bottom: 8px !important;
+}
+
+.hq-nav-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.hq-nav-list li {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.hq-nav-list a {
+  display: block !important;
+  padding: 5px 0 !important;
+  color: #2c3e50 !important;
+  text-decoration: none !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  transition: color 0.2s ease, padding-left 0.2s ease !important;
+  margin: 0 !important;
+}
+
+.hq-nav-list a:hover {
+  color: #3498db !important;
+  padding-left: 5px !important;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .hq-nav-content {
+    flex-direction: column !important;
+  }
+  
+  .hq-nav-section {
+    flex: 1 1 auto !important;
+    border-right: none !important;
+    border-bottom: 1px solid #e8e8e8 !important;
+    margin-bottom: 15px !important;
+    padding-bottom: 15px !important;
+  }
+  
+  .hq-nav-section:last-child {
+    border-bottom: none !important;
+  }
+}
+</style>
+
+<div class="hq-nav-overlay" id="hqNavOverlay"></div>
+
+<nav class="hq-nav-menu" id="hqNavMenu" aria-label="Main navigation">
+  <div class="hq-nav-content">
+    <div class="hq-nav-section">
+      <h3 class="hq-nav-section-title">About</h3>
+      <ul class="hq-nav-list">
+        <li><a href="/about-us">About Us</a></li>
+        <li><a href="/more-about-us">More About Us</a></li>
+        <li><a href="/meet-the-team">Meet the Team</a></li>
+        <li><a href="/news">News</a></li>
+      </ul>
+    </div>
+
+    <div class="hq-nav-section">
+      <h3 class="hq-nav-section-title">Aircraft Fleet</h3>
+      <ul class="hq-nav-list">
+        <li><a href="/r44">R44</a></li>
+        <li><a href="/r44-details">R44 Details</a></li>
+        <li><a href="/r66">R66</a></li>
+        <li><a href="/r66-details">R66 Details</a></li>
+        <li><a href="/r88">R88</a></li>
+      </ul>
+    </div>
+
+    <div class="hq-nav-section">
+      <h3 class="hq-nav-section-title">Sales</h3>
+      <ul class="hq-nav-list">
+        <li><a href="/used-aircraft">Used Aircraft</a></li>
+        <li><a href="/recently-sold-aircraft">Recently Sold</a></li>
+        <li><a href="/aircraft-compare">Compare</a></li>
+      </ul>
+    </div>
+
+    <div class="hq-nav-section">
+      <h3 class="hq-nav-section-title">Services</h3>
+      <ul class="hq-nav-list">
+        <li><a href="/flying">Flying</a></li>
+        <li><a href="/discovery-flights">Discovery Flights</a></li>
+        <li><a href="/training-faq">Training FAQ</a></li>
+        <li><a href="/hangarage">Hangarage</a></li>
+      </ul>
+    </div>
+
+    <div class="hq-nav-section">
+      <h3 class="hq-nav-section-title">Gallery</h3>
+      <ul class="hq-nav-list">
+        <li><a href="/gallery">Gallery</a></li>
+        <li><a href="/images-of-q">Images</a></li>
+      </ul>
+    </div>
+
+    <div class="hq-nav-section">
+      <h3 class="hq-nav-section-title">Shop</h3>
+      <ul class="hq-nav-list">
+        <li><a href="/apparel">Apparel</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<button class="hq-nav-toggle" id="hqNavToggle" aria-label="Open navigation menu">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<script>
+(function() {
+  var toggle   = document.getElementById('hqNavToggle');
+  var menu     = document.getElementById('hqNavMenu');
+  var overlay  = document.getElementById('hqNavOverlay');
+
+  // If elements not yet present, wait for DOMContentLoaded
+  if (!toggle || !menu || !overlay) {
+    document.addEventListener('DOMContentLoaded', function() {
+      initNav();
+    });
+  } else {
+    initNav();
+  }
+
+  function initNav() {
+    toggle   = document.getElementById('hqNavToggle');
+    menu     = document.getElementById('hqNavMenu');
+    overlay  = document.getElementById('hqNavOverlay');
+
+    if (!toggle || !menu || !overlay) return;
+
+    // sanitize style string: remove any padding-top declarations
+    function sanitizeStyleString(styleStr) {
+      if (!styleStr) return 'padding-top: 0px !important;';
+      // remove any padding-top entries
+      var s = styleStr.replace(/padding-top\s*:[^;]+;?/gi, '');
+      // ensure a single padding-top:0 important exists
+      if (!/padding-top\s*:/i.test(s)) s = s + ' padding-top: 0px !important;';
+      return s.trim();
+    }
+
+    // Force padding-top to 0 using setProperty (supports !important)
+    function forceZeroPadding() {
+      try {
+        // Nuclear option: remove all inline padding styles and force to 0
+        menu.style.removeProperty('padding-top');
+        menu.style.removeProperty('padding-bottom');
+        menu.style.removeProperty('padding');
+        menu.style.setProperty('padding-top', '0px', 'important');
+        menu.style.setProperty('padding-bottom', '0px', 'important');
+        menu.style.setProperty('padding-left', '0px', 'important');
+        menu.style.setProperty('padding-right', '0px', 'important');
+      } catch (e) {
+        // fallback
+        menu.style.paddingTop = '0px';
+        menu.style.paddingBottom = '0px';
+        menu.style.paddingLeft = '0px';
+        menu.style.paddingRight = '0px';
+      }
+    }
+
+    // Monkey-patch setAttribute for style on this page to sanitize style writes
+    (function() {
+      var origSetAttribute = Element.prototype.setAttribute;
+      Element.prototype.setAttribute = function(name, value) {
+        try {
+          if (name === 'style' && this === menu && typeof value === 'string') {
+            value = sanitizeStyleString(value);
+          }
+        } catch (err) {
+          // swallow
+        }
+        return origSetAttribute.call(this, name, value);
+      };
+    })();
+
+    // MutationObserver: watch for attribute changes on the menu element
+    var mo = new MutationObserver(function(mutations) {
+      mutations.forEach(function(m) {
+        if (m.type === 'attributes' && m.attributeName === 'style') {
+          // sanitize inline style immediately
+          var cur = menu.getAttribute('style');
+          var cleaned = sanitizeStyleString(cur);
+          if (cur !== cleaned) {
+            // use setAttribute (monkey-patched) to sanitize
+            menu.setAttribute('style', cleaned);
+          }
+          // also set via CSSOM with priority
+          forceZeroPadding();
+        }
+      });
+    });
+
+    mo.observe(menu, { attributes: true, attributeFilter: ['style'] });
+
+    // Aggressive polling to catch Squarespace's padding injection
+    var pollCount = 0;
+    var poll = setInterval(function() {
+      var curPadding = window.getComputedStyle(menu).getPropertyValue('padding-top');
+      if (curPadding && curPadding !== '0px') {
+        forceZeroPadding();
+      }
+      pollCount++;
+      // stop after 5 seconds (50 checks)
+      if (pollCount > 50) clearInterval(poll);
+    }, 100);
+
+    // Additional rapid polling for first second (when Squarespace usually injects)
+    var rapidPollCount = 0;
+    var rapidPoll = setInterval(function() {
+      forceZeroPadding();
+      rapidPollCount++;
+      if (rapidPollCount > 20) clearInterval(rapidPoll); // 20 x 50ms = 1 second
+    }, 50);
+
+    // Initial force (run immediately)
+    forceZeroPadding();
+
+    function open() {
+      menu.classList.add('hq-nav-open');
+      overlay.classList.add('hq-nav-open');
+      toggle.classList.add('hq-nav-active');
+      forceZeroPadding();
+    }
+
+    function close() {
+      menu.classList.remove('hq-nav-open');
+      overlay.classList.remove('hq-nav-open');
+      toggle.classList.remove('hq-nav-active');
+    }
+
+    // Toggle on button click
+    toggle.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (menu.classList.contains('hq-nav-open')) {
+        close();
+      } else {
+        open();
+      }
+    });
+
+    // Close on overlay click
+    overlay.addEventListener('click', close);
+
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') close();
+    });
+
+    // Close on link click and navigate
+    var links = menu.querySelectorAll('a');
+    for (var i = 0; i < links.length; i++) {
+      links[i].addEventListener('click', function(e) {
+        e.preventDefault();
+        var href = this.getAttribute('href');
+        close();
+        setTimeout(function() {
+          window.location.href = href;
+        }, 150);
+      });
+    }
+  }
+})();
+</script>
+
+<!-- HQ Nav Overlay -->
+
+
+<!-- HQ Nav Dropdown -->
+
+
+<!-- Hamburger Toggle -->
+
+
+
+
+</body>
+</html>

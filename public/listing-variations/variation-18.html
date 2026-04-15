@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Variation 18: Banner Sections Layout</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #fff; color: #1a1a1a; }
+
+/* VARIATION 18: Banner Sections - Full-width colored banner sections alternating */
+.back-link {
+  position: absolute; top: 20px; left: 20px;
+  display: inline-flex; align-items: center; gap: 8px;
+  color: #fff; text-decoration: none; font-size: 0.9rem;
+  padding: 10px 20px; background: rgba(0,0,0,0.3);
+  border-radius: 30px; transition: background 0.2s;
+  z-index: 100;
+}
+.back-link:hover { background: rgba(0,0,0,0.5); }
+
+/* Hero Banner */
+.hero-banner {
+  position: relative;
+  height: 70vh;
+  min-height: 500px;
+  background: #1a1a1a;
+  overflow: hidden;
+}
+.hero-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+}
+.hero-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 80px 60px 60px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.8));
+  color: #fff;
+}
+.hero-overlay h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 15px;
+}
+.hero-meta {
+  display: flex;
+  gap: 30px;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.8);
+}
+
+/* Banner Section Base */
+.banner-section {
+  padding: 80px 60px;
+}
+.banner-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.section-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 15px;
+  opacity: 0.6;
+}
+.section-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 30px;
+}
+
+/* Price Banner - Dark */
+.price-banner {
+  background: #1a1a1a;
+  color: #fff;
+}
+.price-banner .banner-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.price-amount {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 4rem;
+  font-weight: 900;
+  color: #cc0000;
+}
+.price-details {
+  text-align: right;
+}
+.availability {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+.availability-dot {
+  width: 12px;
+  height: 12px;
+  background: #4caf50;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.availability-text {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.finance-note {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+/* Specs Banner - Light */
+.specs-banner {
+  background: #f8f8f8;
+}
+.specs-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+}
+.spec-block {
+  text-align: center;
+  padding: 30px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+}
+.spec-value {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+.spec-label {
+  font-size: 0.85rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Description Banner - White */
+.description-banner {
+  background: #fff;
+}
+.description-text {
+  font-size: 1.25rem;
+  line-height: 2;
+  color: #444;
+  max-width: 900px;
+}
+
+/* Highlights Banner - Accent Color */
+.highlights-banner {
+  background: linear-gradient(135deg, #cc0000 0%, #990000 100%);
+  color: #fff;
+}
+.highlights-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 25px;
+}
+.highlight-block {
+  text-align: center;
+  padding: 30px 20px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+  transition: background 0.3s;
+}
+.highlight-block:hover {
+  background: rgba(255,255,255,0.2);
+}
+.highlight-icon {
+  width: 50px;
+  height: 50px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 15px;
+}
+.highlight-icon svg {
+  width: 24px;
+  height: 24px;
+  stroke: #fff;
+}
+.highlight-text {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* CTA Banner - Dark */
+.cta-banner {
+  background: #1a1a1a;
+  color: #fff;
+  text-align: center;
+}
+.cta-banner .section-title {
+  margin-bottom: 15px;
+}
+.cta-subtitle {
+  color: #888;
+  margin-bottom: 40px;
+  font-size: 1.1rem;
+}
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+}
+.btn {
+  padding: 18px 50px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+.btn-primary {
+  background: #cc0000;
+  color: #fff;
+  border: none;
+}
+.btn-primary:hover { background: #ff0000; }
+.btn-secondary {
+  background: transparent;
+  color: #fff;
+  border: 2px solid #444;
+}
+.btn-secondary:hover {
+  border-color: #fff;
+}
+
+/* Picker */
+.variation-picker {
+  position: fixed; bottom: 20px; right: 20px;
+  background: #1a1a1a; color: #fff;
+  padding: 15px 20px; border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  z-index: 1000; font-size: 0.85rem;
+}
+.variation-picker select {
+  background: #333; color: #fff; border: none;
+  padding: 8px 12px; border-radius: 4px; margin-left: 10px;
+  cursor: pointer;
+}
+.variation-label { font-weight: 600; }
+
+@media (max-width: 1000px) {
+  .specs-row { grid-template-columns: repeat(2, 1fr); }
+  .highlights-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 700px) {
+  .hero-overlay h1 { font-size: 2rem; }
+  .banner-section { padding: 50px 25px; }
+  .price-banner .banner-content { flex-direction: column; gap: 20px; text-align: center; }
+  .price-details { text-align: center; }
+  .availability { justify-content: center; }
+  .price-amount { font-size: 2.5rem; }
+  .specs-row { grid-template-columns: 1fr; }
+  .highlights-grid { grid-template-columns: 1fr; }
+  .cta-buttons { flex-direction: column; align-items: center; }
+}
+</style>
+</head>
+<body>
+
+<a href="/used-aircraft-2" class="back-link">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+  Back to Listings
+</a>
+
+<section class="hero-banner">
+  <img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HQAV%2Fblue-r66-palo-verde-front-v4.png?alt=media&token=3084cb09-4600-47bd-adf8-873b980b541d" alt="Robinson R66 Turbine">
+  <div class="hero-overlay">
+    <h1>Robinson R66 Turbine</h1>
+    <div class="hero-meta">
+      <span>2018</span>
+      <span>G-SAPA</span>
+      <span>1,240 Hours</span>
+      <span>RR300 Engine</span>
+    </div>
+  </div>
+</section>
+
+<section class="banner-section price-banner">
+  <div class="banner-content">
+    <div>
+      <div class="section-label">Asking Price</div>
+      <div class="price-amount">£650,000</div>
+    </div>
+    <div class="price-details">
+      <div class="availability">
+        <span class="availability-dot"></span>
+        <span class="availability-text">Available Now</span>
+      </div>
+      <div class="finance-note">Finance options available</div>
+    </div>
+  </div>
+</section>
+
+<section class="banner-section specs-banner">
+  <div class="banner-content">
+    <div class="section-label">Specifications</div>
+    <h2 class="section-title">Technical Details</h2>
+    <div class="specs-row">
+      <div class="spec-block">
+        <div class="spec-value">2018</div>
+        <div class="spec-label">Year</div>
+      </div>
+      <div class="spec-block">
+        <div class="spec-value">G-SAPA</div>
+        <div class="spec-label">Registration</div>
+      </div>
+      <div class="spec-block">
+        <div class="spec-value">1,240</div>
+        <div class="spec-label">Total Hours</div>
+      </div>
+      <div class="spec-block">
+        <div class="spec-value">RR300</div>
+        <div class="spec-label">Engine</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="banner-section description-banner">
+  <div class="banner-content">
+    <div class="section-label">Overview</div>
+    <h2 class="section-title">About This Aircraft</h2>
+    <p class="description-text">
+      For sale is a superb example of a Robinson R66 Turbine helicopter. This aircraft has accumulated 1,240 flight hours and has 5 years remaining on the airframe. The helicopter features Robinson's elegant dark continental blue metallic paint scheme and has been maintained to the highest standards throughout its service life. This well-equipped R66 represents exceptional value for discerning buyers seeking a reliable turbine helicopter with outstanding performance characteristics.
+    </p>
+  </div>
+</section>
+
+<section class="banner-section highlights-banner">
+  <div class="banner-content">
+    <div class="section-label">Equipment</div>
+    <h2 class="section-title">Key Highlights</h2>
+    <div class="highlights-grid">
+      <div class="highlight-block">
+        <div class="highlight-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <div class="highlight-text">Pop-out Floats</div>
+      </div>
+      <div class="highlight-block">
+        <div class="highlight-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+        </div>
+        <div class="highlight-text">Garmin G500H</div>
+      </div>
+      <div class="highlight-block">
+        <div class="highlight-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+          </svg>
+        </div>
+        <div class="highlight-text">GTN650</div>
+      </div>
+      <div class="highlight-block">
+        <div class="highlight-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </div>
+        <div class="highlight-text">SAS Autopilot</div>
+      </div>
+      <div class="highlight-block">
+        <div class="highlight-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+        </div>
+        <div class="highlight-text">Corrosion Protection</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="banner-section cta-banner">
+  <div class="banner-content">
+    <div class="section-label">Get in Touch</div>
+    <h2 class="section-title">Interested in This Aircraft?</h2>
+    <p class="cta-subtitle">Contact our team for more information or to schedule a viewing</p>
+    <div class="cta-buttons">
+      <a href="/contact" class="btn btn-primary">Enquire Now</a>
+      <a href="/contact" class="btn btn-secondary">Schedule Viewing</a>
+    </div>
+  </div>
+</section>
+
+<script src="variation-nav.js"></script>
+</body>
+</html>

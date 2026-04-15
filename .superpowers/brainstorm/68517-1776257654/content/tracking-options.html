@@ -1,0 +1,90 @@
+<h2>What additional tracking do you want?</h2>
+<p class="subtitle">Select all that interest you — we'll scope this down after</p>
+
+<div class="options" data-multiselect>
+
+  <div class="option" data-choice="scroll" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Scroll Depth</h3>
+      <p>Track how far users scroll on each page (25%, 50%, 75%, 100%). See which pages actually get read vs skimmed.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="time_on_page" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Time on Page / Session Duration</h3>
+      <p>How long users spend on each page and in total. Track engagement, not just arrival.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="geo" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Geographic Data</h3>
+      <p>Country and/or city from IP geolocation. See where your visitors are coming from on a map or table.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="device" onclick="toggleSelect(this)">
+    <div class="letter">D</div>
+    <div class="content">
+      <h3>Device & Browser Breakdown</h3>
+      <p>Parse the user-agent into mobile/tablet/desktop, OS, and browser. Already captured — just not displayed yet.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="bounce" onclick="toggleSelect(this)">
+    <div class="letter">E</div>
+    <div class="content">
+      <h3>Bounce Rate</h3>
+      <p>Sessions that viewed only one page before leaving. Which landing pages are losing people immediately?</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="referrer" onclick="toggleSelect(this)">
+    <div class="letter">F</div>
+    <div class="content">
+      <h3>Traffic Sources / Referrer Breakdown</h3>
+      <p>Where visitors come from: direct, Google, social, other sites. Already captured in referrer field — just needs a dashboard section.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="heatmap" onclick="toggleSelect(this)">
+    <div class="letter">G</div>
+    <div class="content">
+      <h3>Click Heatmap Data</h3>
+      <p>Track X/Y coordinates of every click. Build a visual heatmap overlay per page.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="journey" onclick="toggleSelect(this)">
+    <div class="letter">H</div>
+    <div class="content">
+      <h3>User Journey / Page Flow</h3>
+      <p>What pages does a session visit in sequence? See common paths: home → training → contact, etc.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="returning" onclick="toggleSelect(this)">
+    <div class="letter">I</div>
+    <div class="content">
+      <h3>Returning vs New Visitors</h3>
+      <p>Use localStorage to distinguish first-time vs returning visitors across sessions.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="conversion" onclick="toggleSelect(this)">
+    <div class="letter">J</div>
+    <div class="content">
+      <h3>Conversion Funnel</h3>
+      <p>Define a goal funnel (e.g. home → training page → contact form → submit) and track drop-off at each step.</p>
+    </div>
+  </div>
+
+</div>
+
+<p style="margin-top: 1.5rem; color: var(--text-secondary); font-size: 0.85rem;">
+  Click to select multiple. D and F are nearly free — the data is already being collected, just not shown.
+</p>

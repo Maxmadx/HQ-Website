@@ -1,0 +1,101 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isEditor() {
+      return isAuthenticated() &&
+        request.auth.token.role in ['super_admin', 'admin', 'editor'];
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        request.auth.token.role in ['super_admin', 'admin'];
+    }
+
+    function isValidImage() {
+      return request.resource.contentType.matches('image/.*') &&
+             request.resource.size < 10 * 1024 * 1024;  // 10MB max
+    }
+
+    function isValidDocument() {
+      return request.resource.contentType == 'application/pdf' &&
+             request.resource.size < 25 * 1024 * 1024;  // 25MB max
+    }
+
+    // Helicopter images and documents - public read, editor+ write
+    match /helicopters/{helicopterId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isEditor() && (isValidImage() || isValidDocument());
+      allow delete: if isAdmin();
+    }
+
+    // Blog images - public read, editor+ write
+    match /blogs/{blogId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isEditor() && isValidImage();
+      allow delete: if isAdmin();
+    }
+
+    // Media library - public read (for embedded images), editor+ write
+    match /media/{allPaths=**} {
+      allow read: if true;
+      allow write: if isEditor() && isValidImage();
+      allow delete: if isAdmin();
+    }
+
+    // User avatars - owner can write their own
+    match /users/{userId}/{avatar} {
+      allow read: if true;
+      allow write: if request.auth.uid == userId && isValidImage();
+    }
+
+    // Admin listing images
+    match /listings/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidImage();
+      allow delete: if isAdmin();
+    }
+
+    // Admin blog cover images
+    match /blog/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidImage();
+      allow delete: if isAdmin();
+    }
+
+    // Admin image slots
+    match /image-slots/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidImage();
+      allow delete: if isAdmin();
+    }
+
+    // Site images (CMS section overrides)
+    match /site-images/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isValidImage();
+      allow delete: if isAuthenticated();
+    }
+
+    // Central media library — any authenticated user (admin panel guards the UI)
+    match /media-library/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isValidImage();
+      allow delete: if isAuthenticated();
+    }
+
+    // Public uploads for Wall of Cool — any user, size ≤ 10MB, images only
+    match /wall-of-cool/{filename} {
+      allow read: if true;
+      allow create: if request.resource.size < 10 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+      allow update, delete: if request.auth != null;
+    }
+  }
+}

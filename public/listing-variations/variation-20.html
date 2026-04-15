@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Variation 20: Modern Grid Layout</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #fff; color: #1a1a1a; }
+
+/* VARIATION 20: Modern Grid - CSS Grid based with image spanning multiple rows */
+.back-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: #555; text-decoration: none; font-size: 0.9rem;
+  padding: 25px 40px; transition: color 0.2s;
+}
+.back-link:hover { color: #000; }
+
+.grid-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px 80px;
+}
+
+/* Main Grid Layout */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  grid-template-rows: auto auto auto auto;
+  gap: 25px;
+}
+
+/* Image spans multiple rows */
+.grid-image {
+  grid-column: 1;
+  grid-row: 1 / 4;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+}
+.grid-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  min-height: 600px;
+}
+.image-badge {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+}
+
+/* Title Card */
+.grid-title {
+  grid-column: 2;
+  grid-row: 1;
+  background: #1a1a1a;
+  color: #fff;
+  padding: 40px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.grid-title h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 15px;
+}
+.title-meta {
+  display: flex;
+  gap: 20px;
+  color: #888;
+  font-size: 0.95rem;
+}
+
+/* Price Card */
+.grid-price {
+  grid-column: 2;
+  grid-row: 2;
+  background: linear-gradient(135deg, #cc0000 0%, #990000 100%);
+  color: #fff;
+  padding: 35px 40px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.price-main {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 900;
+}
+.price-status {
+  text-align: right;
+}
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: #4caf50;
+  border-radius: 50%;
+}
+
+/* Specs Card */
+.grid-specs {
+  grid-column: 2;
+  grid-row: 3;
+  background: #f8f8f8;
+  padding: 35px 40px;
+  border-radius: 16px;
+}
+.specs-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #999;
+  margin-bottom: 20px;
+}
+.specs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.spec-item {
+  display: flex;
+  flex-direction: column;
+}
+.spec-value {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+.spec-label {
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 3px;
+}
+
+/* Description - Full Width */
+.grid-description {
+  grid-column: 1 / -1;
+  grid-row: 4;
+  background: #fff;
+  padding: 50px;
+  border: 1px solid #eee;
+  border-radius: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+}
+.description-content h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.description-text {
+  font-size: 1.05rem;
+  line-height: 1.9;
+  color: #555;
+}
+
+/* Highlights Grid */
+.highlights-content h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.highlights-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.highlight-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px;
+  background: #f8f8f8;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.highlight-item:hover {
+  background: #f0f0f0;
+}
+.highlight-icon {
+  width: 32px;
+  height: 32px;
+  background: #1a1a1a;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.highlight-icon svg {
+  width: 16px;
+  height: 16px;
+  stroke: #fff;
+}
+
+/* CTA Row */
+.grid-cta {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  margin-top: 10px;
+}
+.cta-card {
+  padding: 40px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cta-primary {
+  background: #1a1a1a;
+  color: #fff;
+}
+.cta-secondary {
+  background: #f8f8f8;
+  border: 2px solid #eee;
+}
+.cta-text h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.cta-text p {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+.btn {
+  padding: 16px 35px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+.btn-red {
+  background: #cc0000;
+  color: #fff;
+  border: none;
+}
+.btn-red:hover { background: #e60000; }
+.btn-dark {
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+}
+.btn-dark:hover { background: #333; }
+
+/* Picker */
+.variation-picker {
+  position: fixed; bottom: 20px; right: 20px;
+  background: #1a1a1a; color: #fff;
+  padding: 15px 20px; border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  z-index: 1000; font-size: 0.85rem;
+}
+.variation-picker select {
+  background: #333; color: #fff; border: none;
+  padding: 8px 12px; border-radius: 6px; margin-left: 10px;
+  cursor: pointer;
+}
+.variation-label { font-weight: 600; }
+
+@media (max-width: 1000px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+  .grid-image {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .grid-image img { min-height: 350px; }
+  .grid-title { grid-column: 1; grid-row: 2; }
+  .grid-price { grid-column: 1; grid-row: 3; }
+  .grid-specs { grid-column: 1; grid-row: 4; }
+  .grid-description {
+    grid-column: 1;
+    grid-row: 5;
+    grid-template-columns: 1fr;
+  }
+  .grid-cta {
+    grid-column: 1;
+    grid-template-columns: 1fr;
+  }
+  .cta-card { flex-direction: column; gap: 20px; text-align: center; }
+  .price-main { font-size: 2rem; }
+  .highlights-list { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<a href="/used-aircraft-2" class="back-link">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+  Back to Listings
+</a>
+
+<div class="grid-container">
+  <div class="main-grid">
+
+    <div class="grid-image">
+      <img src="https://firebasestorage.googleapis.com/v0/b/hq-website-4abc7.firebasestorage.app/o/helicopters%2FG-HQAV%2Fblue-r66-palo-verde-front-v4.png?alt=media&token=3084cb09-4600-47bd-adf8-873b980b541d" alt="Robinson R66 Turbine">
+      <span class="image-badge">Featured Listing</span>
+    </div>
+
+    <div class="grid-title">
+      <h1>Robinson R66 Turbine</h1>
+      <div class="title-meta">
+        <span>2018</span>
+        <span>G-SAPA</span>
+        <span>1,240 Hours</span>
+      </div>
+    </div>
+
+    <div class="grid-price">
+      <div class="price-main">£650,000</div>
+      <div class="price-status">
+        <span class="status-badge">
+          <span class="status-dot"></span>
+          Available
+        </span>
+      </div>
+    </div>
+
+    <div class="grid-specs">
+      <div class="specs-title">Specifications</div>
+      <div class="specs-grid">
+        <div class="spec-item">
+          <span class="spec-value">2018</span>
+          <span class="spec-label">Year</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-value">G-SAPA</span>
+          <span class="spec-label">Registration</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-value">1,240</span>
+          <span class="spec-label">Total Hours</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-value">RR300</span>
+          <span class="spec-label">Engine</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-description">
+      <div class="description-content">
+        <h2>About This Aircraft</h2>
+        <p class="description-text">
+          For sale is a superb example of a Robinson R66 Turbine helicopter. This aircraft has accumulated 1,240 flight hours and has 5 years remaining on the airframe. The helicopter features Robinson's elegant dark continental blue metallic paint scheme and has been maintained to the highest standards throughout its service life. This well-equipped R66 represents exceptional value for discerning buyers seeking a reliable turbine helicopter.
+        </p>
+      </div>
+      <div class="highlights-content">
+        <h2>Key Highlights</h2>
+        <div class="highlights-list">
+          <div class="highlight-item">
+            <span class="highlight-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+            Pop-out Floats
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+            Garmin G500H
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+            GTN650 Navigator
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+            SAS Autopilot
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+            Corrosion Protection
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+            Excellent Condition
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-cta">
+      <div class="cta-card cta-primary">
+        <div class="cta-text">
+          <h3>Ready to Purchase?</h3>
+          <p>Get in touch with our sales team</p>
+        </div>
+        <a href="/contact" class="btn btn-red">Enquire Now</a>
+      </div>
+      <div class="cta-card cta-secondary">
+        <div class="cta-text">
+          <h3>Want to See It?</h3>
+          <p>Arrange a personal viewing</p>
+        </div>
+        <a href="/contact" class="btn btn-dark">Schedule Viewing</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="variation-nav.js"></script>
+</body>
+</html>

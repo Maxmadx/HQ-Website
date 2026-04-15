@@ -1,0 +1,2269 @@
+/* HQ Aviation - Helicopter Listings Styles */
+
+/* Grid Container */
+.helicopters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 30px;
+  padding: 20px 0;
+}
+
+/* Helicopter Card */
+.helicopter-card {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #e8e8e8;
+}
+
+.helicopter-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.helicopter-card.sold {
+  opacity: 0.85;
+}
+
+/* Card Image */
+.helicopter-card-image {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.helicopter-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.helicopter-card:hover .helicopter-card-image img {
+  transform: scale(1.05);
+}
+
+/* Status Badges */
+.helicopter-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 6px 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 4px;
+  z-index: 20;
+}
+
+.helicopter-badge.reserved {
+  background: #ff9800;
+  color: #fff;
+}
+
+/* SOLD Badge - Style 1: Classic Red Pill (Default) */
+.helicopter-badge.sold,
+.helicopter-badge.sold.sold-style-1 {
+  background: #cc0000;
+  color: #fff;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 1.5px;
+  box-shadow: 0 3px 10px rgba(204, 0, 0, 0.4);
+}
+
+/* SOLD Badge - Style 2: Gradient Red */
+.helicopter-badge.sold.sold-style-2 {
+  background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+  color: #fff;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  box-shadow: 0 4px 15px rgba(204, 0, 0, 0.35);
+}
+
+/* SOLD Badge - Style 3: Outlined Red */
+.helicopter-badge.sold.sold-style-3 {
+  background: transparent;
+  color: #cc0000;
+  border: 2px solid #cc0000;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  box-shadow: none;
+}
+
+/* SOLD Badge - Style 4: Dark Elegant */
+.helicopter-badge.sold.sold-style-4 {
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* SOLD Badge - Style 5: Red Banner */
+.helicopter-badge.sold.sold-style-5 {
+  background: #cc0000;
+  color: #fff;
+  border-radius: 0;
+  padding: 10px 24px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 3px;
+  box-shadow: 0 4px 15px rgba(204, 0, 0, 0.4);
+  top: 20px;
+  right: -8px;
+}
+
+/* SOLD Badge - Style 6: Minimal */
+.helicopter-badge.sold.sold-style-6 {
+  background: rgba(204, 0, 0, 0.9);
+  color: #fff;
+  border-radius: 3px;
+  padding: 5px 12px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  box-shadow: none;
+}
+
+/* SOLD Badge - Style 7: Circle Badge */
+.helicopter-badge.sold.sold-style-7 {
+  background: #cc0000;
+  color: #fff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  font-weight: 800;
+  font-size: 0.65rem;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(204, 0, 0, 0.4);
+}
+
+/* SOLD Badge - Style 8: Ribbon Effect */
+.helicopter-badge.sold.sold-style-8 {
+  background: #cc0000;
+  color: #fff;
+  border-radius: 0 0 0 8px;
+  padding: 8px 20px 8px 14px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  top: 0;
+  right: 0;
+  box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* SOLD Badge - Style 9: Glossy Red */
+.helicopter-badge.sold.sold-style-9 {
+  background: linear-gradient(180deg, #ff6666 0%, #cc0000 50%, #990000 100%);
+  color: #fff;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(204, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+/* SOLD Badge - Style 10: Stamp Effect */
+.helicopter-badge.sold.sold-style-10 {
+  background: transparent;
+  color: #cc0000;
+  border: 3px solid #cc0000;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-weight: 900;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  transform: rotate(-8deg);
+  box-shadow: none;
+}
+
+/* SOLD Badge - Style 11: Neon Glow */
+.helicopter-badge.sold.sold-style-11 {
+  background: #1a1a1a;
+  color: #ff4444;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  box-shadow: 0 0 10px #ff4444, 0 0 20px rgba(255, 68, 68, 0.5);
+  text-shadow: 0 0 10px #ff4444;
+}
+
+/* SOLD Badge - Style 12: Gold Luxury */
+.helicopter-badge.sold.sold-style-12 {
+  background: linear-gradient(135deg, #d4af37 0%, #f4e4bc 50%, #d4af37 100%);
+  color: #1a1a1a;
+  border-radius: 4px;
+  padding: 8px 18px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+}
+
+/* SOLD Badge - Style 13: White on Black */
+.helicopter-badge.sold.sold-style-13 {
+  background: #000;
+  color: #fff;
+  border-radius: 20px;
+  padding: 8px 20px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* SOLD Badge - Style 14: Diagonal Stripe */
+.helicopter-badge.sold.sold-style-14 {
+  background: repeating-linear-gradient(45deg, #cc0000, #cc0000 10px, #990000 10px, #990000 20px);
+  color: #fff;
+  border-radius: 4px;
+  padding: 8px 18px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* SOLD Badge - Style 15: Soft Shadow */
+.helicopter-badge.sold.sold-style-15 {
+  background: #e74c3c;
+  color: #fff;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  box-shadow: 0 8px 25px rgba(231, 76, 60, 0.5);
+}
+
+/* SOLD Badge - Style 16: Bottom Left */
+.helicopter-badge.sold.sold-style-16 {
+  background: #cc0000;
+  color: #fff;
+  border-radius: 0 8px 0 0;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  top: auto;
+  bottom: 0;
+  left: 0;
+  right: auto;
+  box-shadow: 2px -2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* SOLD Badge - Style 17: Full Width Banner */
+.helicopter-badge.sold.sold-style-17 {
+  background: rgba(204, 0, 0, 0.95);
+  color: #fff;
+  border-radius: 0;
+  padding: 12px 0;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 4px;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  text-align: center;
+  width: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* SOLD Badge - Style 18: Rounded Square */
+.helicopter-badge.sold.sold-style-18 {
+  background: #cc0000;
+  color: #fff;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-weight: 800;
+  font-size: 0.7rem;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  box-shadow: 0 4px 12px rgba(204, 0, 0, 0.4);
+}
+
+/* SOLD Badge - Style 19: Thin Line */
+.helicopter-badge.sold.sold-style-19 {
+  background: #cc0000;
+  color: #fff;
+  border-radius: 2px;
+  padding: 4px 20px;
+  font-weight: 600;
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  box-shadow: 0 2px 8px rgba(204, 0, 0, 0.3);
+}
+
+/* SOLD Badge - Style 20: Embossed */
+.helicopter-badge.sold.sold-style-20 {
+  background: #cc0000;
+  color: #fff;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -2px 4px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* SOLD Badge - Style 21: Metallic Red */
+.helicopter-badge.sold.sold-style-21 {
+  background: linear-gradient(180deg, #ff3333 0%, #cc0000 40%, #660000 100%);
+  color: #fff;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  border: 1px solid #ff6666;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* SOLD Badge - Style 22: Uppercase Serif */
+.helicopter-badge.sold.sold-style-22 {
+  background: #8b0000;
+  color: #fff;
+  border-radius: 0;
+  padding: 10px 20px;
+  font-family: Georgia, serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 3px;
+  font-style: italic;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* SOLD Badge - Style 23: Double Border */
+.helicopter-badge.sold.sold-style-23 {
+  background: #cc0000;
+  color: #fff;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  border: 2px solid #fff;
+  outline: 2px solid #cc0000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* SOLD Badge - Style 24: Frosted Glass */
+.helicopter-badge.sold.sold-style-24 {
+  background: rgba(204, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* SOLD Badge - Style 25: Slanted */
+.helicopter-badge.sold.sold-style-25 {
+  background: #cc0000;
+  color: #fff;
+  border-radius: 0;
+  padding: 8px 24px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  transform: skewX(-10deg);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* SOLD Badge - Style 26: Dotted Border */
+.helicopter-badge.sold.sold-style-26 {
+  background: #fff;
+  color: #cc0000;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  border: 2px dotted #cc0000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* SOLD Badge - Style 27: 3D Effect */
+.helicopter-badge.sold.sold-style-27 {
+  background: #cc0000;
+  color: #fff;
+  border-radius: 4px;
+  padding: 8px 18px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  box-shadow: 0 6px 0 #880000, 0 8px 15px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+/* SOLD Badge - Style 28: Hexagon-ish */
+.helicopter-badge.sold.sold-style-28 {
+  background: #cc0000;
+  color: #fff;
+  border-radius: 4px 12px;
+  padding: 10px 20px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 12px rgba(204, 0, 0, 0.4);
+}
+
+/* SOLD Badge - Style 29: Vintage */
+.helicopter-badge.sold.sold-style-29 {
+  background: #8b0000;
+  color: #f5deb3;
+  border-radius: 2px;
+  padding: 8px 16px;
+  font-family: Georgia, serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  border: 1px solid #f5deb3;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* SOLD Badge - Style 30: Modern Flat */
+.helicopter-badge.sold.sold-style-30 {
+  background: #e53935;
+  color: #fff;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-weight: 500;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  box-shadow: none;
+}
+
+/* SOLD Badge - Style 31: Pulse Animation */
+.helicopter-badge.sold.sold-style-31 {
+  background: #cc0000;
+  color: #fff;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  animation: sold-pulse 2s ease-in-out infinite;
+}
+@keyframes sold-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(204, 0, 0, 0.5); }
+  50% { box-shadow: 0 0 0 10px rgba(204, 0, 0, 0); }
+}
+
+/* SOLD Badge - Style 32: Corner Fold */
+.helicopter-badge.sold.sold-style-32 {
+  background: #cc0000;
+  color: #fff;
+  border-radius: 0;
+  padding: 30px 12px 8px 30px;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  top: 0;
+  right: 0;
+  clip-path: polygon(100% 0, 100% 100%, 20% 100%, 0 60%, 0 0);
+}
+
+/* SOLD Badge - Style 33: Underline */
+.helicopter-badge.sold.sold-style-33 {
+  background: transparent;
+  color: #cc0000;
+  border-radius: 0;
+  padding: 6px 4px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  border-bottom: 3px solid #cc0000;
+  box-shadow: none;
+}
+
+/* SOLD Badge - Style 34: Tag Shape */
+.helicopter-badge.sold.sold-style-34 {
+  background: #cc0000;
+  color: #fff;
+  border-radius: 4px 4px 4px 0;
+  padding: 8px 16px 8px 12px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+.helicopter-badge.sold.sold-style-34::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  border-width: 6px 6px 0 0;
+  border-style: solid;
+  border-color: #880000 transparent transparent transparent;
+}
+
+/* SOLD Badge - Style 35: Minimalist Dot */
+.helicopter-badge.sold.sold-style-35 {
+  background: #cc0000;
+  color: #fff;
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  font-size: 0;
+  box-shadow: 0 0 0 4px rgba(204, 0, 0, 0.3);
+}
+
+/* SOLD Badge - Style 36: Split Color */
+.helicopter-badge.sold.sold-style-36 {
+  background: linear-gradient(90deg, #1a1a1a 50%, #cc0000 50%);
+  color: #fff;
+  border-radius: 4px;
+  padding: 8px 18px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* SOLD Badge - Style 37: Brushstroke */
+.helicopter-badge.sold.sold-style-37 {
+  background: #cc0000;
+  color: #fff;
+  border-radius: 2px 8px 2px 8px;
+  padding: 10px 22px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  transform: rotate(-3deg);
+  box-shadow: 0 4px 15px rgba(204, 0, 0, 0.4);
+}
+
+/* SOLD Badge - Style 38: Outlined White Fill */
+.helicopter-badge.sold.sold-style-38 {
+  background: #fff;
+  color: #cc0000;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  border: 2px solid #cc0000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* =============================================
+   SOLD Badges - Content Area Placements
+   ============================================= */
+
+/* SOLD Badge - Style 39: Below Title */
+.helicopter-badge.sold.sold-style-39 {
+  position: relative;
+  top: auto;
+  right: auto;
+  display: inline-block;
+  background: #cc0000;
+  color: #fff;
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-weight: 700;
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  margin-top: 8px;
+  box-shadow: none;
+}
+
+/* SOLD Badge - Style 40: Card Footer Bar */
+.helicopter-badge.sold.sold-style-40 {
+  position: absolute;
+  top: auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #cc0000;
+  color: #fff;
+  border-radius: 0;
+  padding: 10px 0;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-align: center;
+  width: 100%;
+}
+
+/* SOLD Badge - Style 41: Overlapping Middle */
+.helicopter-badge.sold.sold-style-41 {
+  position: absolute;
+  top: auto;
+  bottom: 200px;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  background: #cc0000;
+  color: #fff;
+  border-radius: 20px;
+  padding: 10px 24px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 1.5px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 25;
+}
+
+/* SOLD Badge - Style 42: Side Tab Left */
+.helicopter-badge.sold.sold-style-42 {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: auto;
+  transform: translateY(-50%);
+  background: #cc0000;
+  color: #fff;
+  border-radius: 0 6px 6px 0;
+  padding: 12px 14px;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* SOLD Badge - Style 43: Content Area Inline */
+.helicopter-badge.sold.sold-style-43 {
+  position: relative;
+  top: auto;
+  right: auto;
+  display: inline-block;
+  background: transparent;
+  color: #cc0000;
+  border-radius: 0;
+  padding: 0;
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  border-bottom: 2px solid #cc0000;
+  box-shadow: none;
+}
+
+/* SOLD Badge - Style 44: Price Replacement */
+.helicopter-badge.sold.sold-style-44 {
+  position: relative;
+  top: auto;
+  right: auto;
+  display: block;
+  background: linear-gradient(135deg, #cc0000 0%, #990000 100%);
+  color: #fff;
+  border-radius: 8px;
+  padding: 14px 20px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: 3px;
+  text-align: center;
+  margin-top: 15px;
+  box-shadow: 0 4px 15px rgba(204, 0, 0, 0.3);
+}
+
+/* SOLD Badge - Style 45: Corner Triangle */
+.helicopter-badge.sold.sold-style-45 {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #cc0000;
+  color: #fff;
+  border-radius: 0;
+  padding: 35px 8px 8px 35px;
+  font-weight: 700;
+  font-size: 0.6rem;
+  letter-spacing: 1px;
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+  box-shadow: none;
+}
+
+/* SOLD Badge - Style 46: Watermark Large */
+.helicopter-badge.sold.sold-style-46 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-25deg);
+  background: transparent;
+  color: rgba(204, 0, 0, 0.15);
+  border-radius: 0;
+  padding: 0;
+  font-weight: 900;
+  font-size: 4rem;
+  letter-spacing: 8px;
+  pointer-events: none;
+  z-index: 5;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+/* SOLD Badge - Style 47: Top Center Bar */
+.helicopter-badge.sold.sold-style-47 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #cc0000;
+  color: #fff;
+  border-radius: 0;
+  padding: 8px 0;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  text-align: center;
+  width: 100%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* SOLD Badge - Style 48: Diagonal Banner */
+.helicopter-badge.sold.sold-style-48 {
+  position: absolute;
+  top: 25px;
+  left: -35px;
+  right: auto;
+  background: #cc0000;
+  color: #fff;
+  border-radius: 0;
+  padding: 6px 40px;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  transform: rotate(-45deg);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* SOLD Badge - Style 49: Bottom Right Content */
+.helicopter-badge.sold.sold-style-49 {
+  position: absolute;
+  top: auto;
+  bottom: 80px;
+  right: 20px;
+  background: rgba(204, 0, 0, 0.95);
+  color: #fff;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* SOLD Badge - Style 50: Strikethrough Effect */
+.helicopter-badge.sold.sold-style-50 {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  background: rgba(204, 0, 0, 0.9);
+  color: #fff;
+  border-radius: 0;
+  padding: 4px 0;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  text-align: center;
+  width: 100%;
+}
+
+/* SOLD Badge - Style 51: Floating Center */
+.helicopter-badge.sold.sold-style-51 {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  color: #cc0000;
+  border-radius: 50px;
+  padding: 12px 28px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  border: 3px solid #cc0000;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* SOLD Badge - Style 52: Card Overlay Tint */
+.helicopter-badge.sold.sold-style-52 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(204, 0, 0, 0.08);
+  color: transparent;
+  border-radius: 0;
+  padding: 0;
+  font-size: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.helicopter-badge.sold.sold-style-52::after {
+  content: 'SOLD';
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #cc0000;
+  color: #fff;
+  padding: 6px 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  border-radius: 4px;
+}
+
+/* SOLD Badge - Style 53: Bottom Left Tag */
+.helicopter-badge.sold.sold-style-53 {
+  position: absolute;
+  top: auto;
+  bottom: 15px;
+  left: 15px;
+  right: auto;
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 4px;
+  padding: 8px 14px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* SOLD Badge - Style 54: X Mark Overlay */
+.helicopter-badge.sold.sold-style-54 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: transparent;
+  color: rgba(204, 0, 0, 0.6);
+  border-radius: 0;
+  padding: 0;
+  font-weight: 900;
+  font-size: 8rem;
+  line-height: 1;
+  letter-spacing: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+.helicopter-badge.sold.sold-style-54::before {
+  content: '×';
+}
+
+/* SOLD Badge - Style 55: Content Box */
+.helicopter-badge.sold.sold-style-55 {
+  position: relative;
+  top: auto;
+  right: auto;
+  display: block;
+  background: #f8f8f8;
+  color: #cc0000;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  text-align: center;
+  margin: 15px 0 0 0;
+  border: 1px solid #eee;
+  box-shadow: none;
+}
+
+/* SOLD Badge - Style 56: Rotated Side */
+.helicopter-badge.sold.sold-style-56 {
+  position: absolute;
+  top: 80px;
+  right: -25px;
+  background: #cc0000;
+  color: #fff;
+  border-radius: 4px;
+  padding: 8px 30px;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  transform: rotate(90deg);
+  transform-origin: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* SOLD Badge - Style 57: Image Grayscale + Badge */
+.helicopter-badge.sold.sold-style-57 {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #cc0000;
+  color: #fff;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  box-shadow: 0 3px 10px rgba(204, 0, 0, 0.4);
+}
+.helicopter-card:has(.sold-style-57) .helicopter-card-image img {
+  filter: grayscale(100%);
+}
+
+/* SOLD Badge - Style 58: Sepia + Vintage Badge */
+.helicopter-badge.sold.sold-style-58 {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #8b4513;
+  color: #f5deb3;
+  border-radius: 2px;
+  padding: 8px 16px;
+  font-family: Georgia, serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  border: 1px solid #f5deb3;
+}
+.helicopter-card:has(.sold-style-58) .helicopter-card-image img {
+  filter: sepia(60%);
+}
+
+/* SOLD Badge - Style 59: Blur Background Badge */
+.helicopter-badge.sold.sold-style-59 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  border-radius: 8px;
+  padding: 14px 28px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 3px;
+  z-index: 10;
+}
+
+/* SOLD Badge - Style 60: Title Prefix */
+.helicopter-badge.sold.sold-style-60 {
+  position: relative;
+  top: auto;
+  right: auto;
+  display: inline;
+  background: #cc0000;
+  color: #fff;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-weight: 700;
+  font-size: 0.6rem;
+  letter-spacing: 1px;
+  margin-right: 8px;
+  vertical-align: middle;
+  box-shadow: none;
+}
+
+/* SOLD Badge - Style 61: Bottom Gradient Fade */
+.helicopter-badge.sold.sold-style-61 {
+  position: absolute;
+  top: auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(0deg, rgba(204,0,0,0.95) 0%, rgba(204,0,0,0.8) 50%, transparent 100%);
+  color: #fff;
+  border-radius: 0;
+  padding: 40px 0 12px 0;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-align: center;
+  width: 100%;
+}
+
+/* SOLD Badge - Style 62: Circle Center */
+.helicopter-badge.sold.sold-style-62 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #cc0000;
+  color: #fff;
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  padding: 0;
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 25px rgba(204, 0, 0, 0.5);
+  z-index: 10;
+}
+
+/* SOLD Badge - Style 63: Corner Arc */
+.helicopter-badge.sold.sold-style-63 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: auto;
+  background: #cc0000;
+  color: #fff;
+  border-radius: 0 0 100% 0;
+  padding: 12px 30px 30px 12px;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* SOLD Badge - Style 64: Border Frame */
+.helicopter-badge.sold.sold-style-64 {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  background: transparent;
+  color: transparent;
+  border: 3px solid rgba(204, 0, 0, 0.7);
+  border-radius: 8px;
+  font-size: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+.helicopter-badge.sold.sold-style-64::after {
+  content: 'SOLD';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  color: #cc0000;
+  padding: 4px 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+/* SOLD Badge - Style 65: Subtle Top Line */
+.helicopter-badge.sold.sold-style-65 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #cc0000;
+  color: #cc0000;
+  border-radius: 0;
+  height: 4px;
+  padding: 0;
+  font-size: 0;
+  width: 100%;
+  box-shadow: none;
+}
+
+/* SOLD Badge - Style 66: Content Stamp */
+.helicopter-badge.sold.sold-style-66 {
+  position: relative;
+  top: auto;
+  right: auto;
+  display: inline-block;
+  background: transparent;
+  color: #cc0000;
+  border: 3px solid #cc0000;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-weight: 900;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  transform: rotate(-5deg);
+  margin-top: 10px;
+  opacity: 0.8;
+}
+
+/* SOLD Badge - Style 67: Split Banner */
+.helicopter-badge.sold.sold-style-67 {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  right: 0;
+  background: linear-gradient(90deg, #cc0000 0%, #cc0000 30%, transparent 30%, transparent 70%, #cc0000 70%, #cc0000 100%);
+  color: #fff;
+  border-radius: 0;
+  padding: 8px 0;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-align: center;
+  width: 100%;
+}
+
+/* SOLD Badge - Style 68: Elegant Script */
+.helicopter-badge.sold.sold-style-68 {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  color: #cc0000;
+  border-radius: 0;
+  padding: 0;
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 1.8rem;
+  letter-spacing: 0;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  box-shadow: none;
+}
+
+/* SOLD Badge - Style 69: Bottom Left Tag + Subtle Gray Top */
+.helicopter-badge.sold.sold-style-69 {
+  position: absolute;
+  top: auto;
+  bottom: 15px;
+  left: 15px;
+  right: auto;
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 4px;
+  padding: 8px 14px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+.helicopter-card:has(.sold-style-69) .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 15;
+}
+
+/* SOLD Badge - Style 70: Bottom Right + Top Line */
+.helicopter-badge.sold.sold-style-70 {
+  position: absolute;
+  top: auto;
+  bottom: 15px;
+  right: 15px;
+  left: auto;
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 4px;
+  padding: 8px 14px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+.helicopter-card:has(.sold-style-70) .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+}
+
+/* SOLD Badge - Style 71: Top Left + Top Line */
+.helicopter-badge.sold.sold-style-71 {
+  position: absolute;
+  top: 20px;
+  left: 15px;
+  right: auto;
+  bottom: auto;
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 4px;
+  padding: 8px 14px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+.helicopter-card:has(.sold-style-71) .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+}
+
+/* SOLD Badge - Style 72: Top Right + Top Line */
+.helicopter-badge.sold.sold-style-72 {
+  position: absolute;
+  top: 20px;
+  right: 15px;
+  left: auto;
+  bottom: auto;
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 4px;
+  padding: 8px 14px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+.helicopter-card:has(.sold-style-72) .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+}
+
+/* SOLD Badge - Style 73: Center Bottom + Top Line */
+.helicopter-badge.sold.sold-style-73 {
+  position: absolute;
+  top: auto;
+  bottom: 15px;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 4px;
+  padding: 8px 18px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+.helicopter-card:has(.sold-style-73) .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+}
+
+/* SOLD Badge - Style 74: Center Image + Top Line */
+.helicopter-badge.sold.sold-style-74 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translate(-50%, -50%);
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+.helicopter-card:has(.sold-style-74) .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+}
+
+/* SOLD Badge - Style 75: In Content - After Title + Top Line */
+.helicopter-badge.sold.sold-style-75 {
+  position: static;
+  display: inline-block;
+  background: #cc0000;
+  color: #fff;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-weight: 700;
+  font-size: 0.6rem;
+  letter-spacing: 1px;
+  margin-left: 10px;
+  vertical-align: middle;
+  box-shadow: none;
+}
+.helicopter-card:has(.sold-style-75) .helicopter-badge {
+  position: static !important;
+}
+.helicopter-card:has(.sold-style-75) .helicopter-card-title {
+  display: flex;
+  align-items: center;
+}
+.helicopter-card:has(.sold-style-75) .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+}
+
+/* SOLD Badge - Style 76: In Content - Below Details + Top Line */
+.helicopter-badge.sold.sold-style-76 {
+  position: absolute;
+  top: auto;
+  bottom: 70px;
+  left: 25px;
+  right: 25px;
+  background: #f5f5f5;
+  color: #cc0000;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  text-align: center;
+  border: 1px solid #eee;
+  box-shadow: none;
+}
+.helicopter-card:has(.sold-style-76) .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+}
+
+/* SOLD Badge - Style 77: In Content - Full Width Bar + Top Line */
+.helicopter-badge.sold.sold-style-77 {
+  position: absolute;
+  top: auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #cc0000;
+  color: #fff;
+  border-radius: 0 0 11px 11px;
+  padding: 12px 16px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-align: center;
+  box-shadow: none;
+}
+.helicopter-card:has(.sold-style-77) .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+}
+
+/* SOLD Badge - Style 78: In Content - Price Area + Top Line */
+.helicopter-badge.sold.sold-style-78 {
+  position: absolute;
+  top: auto;
+  bottom: 85px;
+  left: 25px;
+  right: auto;
+  background: transparent;
+  color: #cc0000;
+  border-radius: 0;
+  padding: 0;
+  font-weight: 800;
+  font-size: 1.4rem;
+  letter-spacing: 2px;
+  box-shadow: none;
+}
+.helicopter-card:has(.sold-style-78) .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+}
+
+/* SOLD Badge - Style 79: In Content - Stamp on Content + Top Line */
+.helicopter-badge.sold.sold-style-79 {
+  position: absolute;
+  top: auto;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-12deg);
+  background: transparent;
+  color: #cc0000;
+  border: 3px solid #cc0000;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-weight: 900;
+  font-size: 1rem;
+  letter-spacing: 3px;
+  opacity: 0.85;
+  box-shadow: none;
+}
+.helicopter-card:has(.sold-style-79) .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+}
+
+/* =============================================
+   Multi-Badge System - Hide non-active badges
+   ============================================= */
+.helicopter-badge.sold.badge-title,
+.helicopter-badge.sold.badge-year,
+.helicopter-badge.sold.badge-content {
+  display: none;
+}
+
+/* SOLD Badge - Style 80: Next to Title + Top Line */
+.helicopter-card:has(.sold-style-80) .badge-image { display: none !important; }
+.helicopter-card:has(.sold-style-80) .badge-title {
+  display: inline-flex !important;
+  position: static !important;
+  background: #cc0000;
+  color: #fff;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-weight: 700;
+  font-size: 0.55rem;
+  letter-spacing: 1px;
+  margin-left: 10px;
+  vertical-align: middle;
+  box-shadow: none;
+}
+.helicopter-card:has(.sold-style-80) .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+}
+
+/* SOLD Badge - Style 81: Next to Year + Top Line */
+.helicopter-card:has(.sold-style-81) .badge-image { display: none !important; }
+.helicopter-card:has(.sold-style-81) .badge-year {
+  display: inline-flex !important;
+  position: static !important;
+  background: #cc0000;
+  color: #fff;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-weight: 700;
+  font-size: 0.55rem;
+  letter-spacing: 1px;
+  margin-left: 10px;
+  vertical-align: middle;
+  box-shadow: none;
+}
+.helicopter-card:has(.sold-style-81) .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+}
+
+/* SOLD Badge - Style 82: Below Year (Content Area) + Top Line */
+.helicopter-card:has(.sold-style-82) .badge-image { display: none !important; }
+.helicopter-card:has(.sold-style-82) .badge-content {
+  display: block !important;
+  position: static !important;
+  background: #cc0000;
+  color: #fff;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  margin-top: 15px;
+  text-align: center;
+  box-shadow: none;
+}
+.helicopter-card:has(.sold-style-82) .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+}
+
+/* SOLD Badge - Style 83: Pill Next to Title + Top Line */
+.helicopter-card:has(.sold-style-83) .badge-image { display: none !important; }
+.helicopter-card:has(.sold-style-83) .badge-title {
+  display: inline-flex !important;
+  position: static !important;
+  background: #fff;
+  color: #cc0000;
+  border: 2px solid #cc0000;
+  border-radius: 20px;
+  padding: 3px 12px;
+  font-weight: 800;
+  font-size: 0.55rem;
+  letter-spacing: 1px;
+  margin-left: 10px;
+  vertical-align: middle;
+  box-shadow: none;
+}
+.helicopter-card:has(.sold-style-83) .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+}
+
+/* SOLD Badge - Style 84: Dark Tag Next to Year + Top Line */
+.helicopter-card:has(.sold-style-84) .badge-image { display: none !important; }
+.helicopter-card:has(.sold-style-84) .badge-year {
+  display: inline-flex !important;
+  position: static !important;
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-weight: 600;
+  font-size: 0.55rem;
+  letter-spacing: 1px;
+  margin-left: 10px;
+  vertical-align: middle;
+  box-shadow: none;
+}
+.helicopter-card:has(.sold-style-84) .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+}
+
+/* =============================================
+   Top Line Variations for Sold Cards
+   ============================================= */
+
+/* Line Style 1: Solid Red (Default) */
+.helicopter-card.sold.line-style-1 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+}
+
+/* Line Style 2: Thin Subtle */
+.helicopter-card.sold.line-style-2 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(204, 0, 0, 0.6);
+  z-index: 15;
+}
+
+/* Line Style 3: Thick Bold */
+.helicopter-card.sold.line-style-3 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: #cc0000;
+  z-index: 15;
+}
+
+/* Line Style 4: Gradient Fade Right */
+.helicopter-card.sold.line-style-4 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #cc0000 0%, transparent 100%);
+  z-index: 15;
+}
+
+/* Line Style 5: Gradient Fade Left */
+.helicopter-card.sold.line-style-5 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, transparent 0%, #cc0000 100%);
+  z-index: 15;
+}
+
+/* Line Style 6: Gradient Fade Both */
+.helicopter-card.sold.line-style-6 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, transparent 0%, #cc0000 50%, transparent 100%);
+  z-index: 15;
+}
+
+/* Line Style 7: Center Accent */
+.helicopter-card.sold.line-style-7 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 30%;
+  right: 30%;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+  border-radius: 0 0 2px 2px;
+}
+
+/* Line Style 8: Left Accent */
+.helicopter-card.sold.line-style-8 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 80px;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+}
+
+/* Line Style 9: Double Line */
+.helicopter-card.sold.line-style-9 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #cc0000;
+  z-index: 15;
+  box-shadow: 0 4px 0 #cc0000;
+}
+
+/* Line Style 10: Dashed */
+.helicopter-card.sold.line-style-10 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: repeating-linear-gradient(90deg, #cc0000 0px, #cc0000 10px, transparent 10px, transparent 15px);
+  z-index: 15;
+}
+
+/* Line Style 11: Dotted */
+.helicopter-card.sold.line-style-11 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: repeating-linear-gradient(90deg, #cc0000 0px, #cc0000 4px, transparent 4px, transparent 8px);
+  z-index: 15;
+}
+
+/* Line Style 12: Gradient Red to Orange */
+.helicopter-card.sold.line-style-12 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #cc0000 0%, #ff6600 100%);
+  z-index: 15;
+}
+
+/* Line Style 13: Dark Line */
+.helicopter-card.sold.line-style-13 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #1a1a1a;
+  z-index: 15;
+}
+
+/* Line Style 14: Subtle Gray */
+.helicopter-card.sold.line-style-14 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 15;
+}
+
+/* Line Style 15: Glow Effect */
+.helicopter-card.sold.line-style-15 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #cc0000;
+  box-shadow: 0 0 10px rgba(204, 0, 0, 0.6), 0 0 20px rgba(204, 0, 0, 0.3);
+  z-index: 15;
+}
+
+/* Line Style 16: Bottom Shadow */
+.helicopter-card.sold.line-style-16 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #cc0000;
+  box-shadow: 0 2px 8px rgba(204, 0, 0, 0.5);
+  z-index: 15;
+}
+
+/* Line Style 17: Rounded Ends */
+.helicopter-card.sold.line-style-17 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10px;
+  right: 10px;
+  height: 4px;
+  background: #cc0000;
+  border-radius: 0 0 4px 4px;
+  z-index: 15;
+}
+
+/* Line Style 18: Very Subtle */
+.helicopter-card.sold.line-style-18 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(204, 0, 0, 0.4);
+  z-index: 15;
+}
+
+/* Line Style 19: Metallic */
+.helicopter-card.sold.line-style-19 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(180deg, #ff4444 0%, #cc0000 50%, #880000 100%);
+  z-index: 15;
+}
+
+/* Line Style 20: No Line */
+.helicopter-card.sold.line-style-20 .helicopter-card-image::before {
+  display: none;
+}
+
+/* Line Style 21: Subtle Gray Top + Center Accent Bottom */
+.helicopter-card.sold.line-style-21 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 15;
+}
+.helicopter-card.sold.line-style-21::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent 0%, #cc0000 30%, #cc0000 70%, transparent 100%);
+  z-index: 15;
+}
+
+/* Line Style 22: Corner Accents (Top-Left + Bottom-Right) */
+.helicopter-card.sold.line-style-22 .helicopter-card-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+}
+.helicopter-card.sold.line-style-22 .helicopter-card-image::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 40px;
+  background: #cc0000;
+  z-index: 15;
+}
+.helicopter-card.sold.line-style-22::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 60px;
+  height: 4px;
+  background: #cc0000;
+  z-index: 15;
+}
+.helicopter-card.sold.line-style-22::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 4px;
+  height: 40px;
+  background: #cc0000;
+  z-index: 15;
+}
+
+/* Card Content */
+.helicopter-card-content {
+  padding: 25px;
+}
+
+.helicopter-card-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: -0.3px;
+}
+
+.helicopter-card.sold .helicopter-card-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.helicopter-title-divider {
+  font-weight: 400;
+  color: #999;
+  margin: 0 8px;
+}
+
+.helicopter-title-year {
+  font-weight: 500;
+  font-size: 1rem;
+  color: #666;
+}
+
+.helicopter-card-details {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.helicopter-year {
+  font-weight: 600;
+  color: #333;
+}
+
+.helicopter-reg {
+  color: #888;
+}
+
+/* Specs Grid */
+.helicopter-card-specs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 15px 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 15px;
+}
+
+.spec-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.spec-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #999;
+  font-weight: 600;
+}
+
+.spec-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Price */
+.helicopter-card-price {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #000;
+  margin-bottom: 15px;
+}
+
+/* CTA Button */
+.helicopter-card-btn {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px 20px;
+  background: #1a1a1a;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 6px;
+  transition: background 0.3s ease;
+}
+
+.helicopter-card-btn:hover {
+  background: #c00;
+}
+
+/* Sold Cards - Compact */
+.helicopter-card.sold .helicopter-card-content {
+  padding: 20px;
+}
+
+.helicopter-card.sold .helicopter-card-image {
+  height: 180px;
+}
+
+/* No Listings Message */
+.no-listings {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 40px;
+  color: #666;
+  font-size: 1.1rem;
+  background: #f9f9f9;
+  border-radius: 12px;
+  border: 1px dashed #ddd;
+}
+
+/* Skeleton Loading */
+.helicopter-card.skeleton {
+  pointer-events: none;
+}
+
+.skeleton-image {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  height: 220px;
+}
+
+.skeleton-text {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeleton-title {
+  height: 24px;
+  width: 80%;
+  margin-bottom: 12px;
+}
+
+.skeleton-details {
+  height: 16px;
+  width: 60%;
+  margin-bottom: 12px;
+}
+
+.skeleton-price {
+  height: 28px;
+  width: 40%;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .helicopters-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .helicopter-card-image {
+    height: 200px;
+  }
+
+  .helicopter-card-content {
+    padding: 20px;
+  }
+
+  .helicopter-card-title {
+    font-size: 1.1rem;
+  }
+
+  .helicopter-card-price {
+    font-size: 1.2rem;
+  }
+}
+
+/* Section Headers for listings page */
+.listings-section {
+  margin-bottom: 60px;
+}
+
+.listings-section-header {
+  margin-bottom: 30px;
+}
+
+/* =============================================
+   Image Carousel
+   ============================================= */
+.helicopter-carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-slides {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.carousel-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.carousel-slide.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Carousel Arrows */
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease, background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.helicopter-card:hover .carousel-arrow {
+  opacity: 1;
+}
+
+.carousel-arrow:hover {
+  background: #fff;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-arrow:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.carousel-arrow svg {
+  width: 20px;
+  height: 20px;
+  stroke: #333;
+}
+
+.carousel-prev {
+  left: 10px;
+}
+
+.carousel-next {
+  right: 10px;
+}
+
+/* Carousel Dots */
+.carousel-dots {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 20px;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.carousel-dot:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.carousel-dot.active {
+  background: #fff;
+  transform: scale(1.2);
+}
+
+/* Hide arrows on touch devices by default, show on interaction */
+@media (hover: none) {
+  .carousel-arrow {
+    opacity: 0.8;
+  }
+
+  .carousel-arrow:active {
+    opacity: 1;
+    background: #fff;
+  }
+}
+
+/* Responsive adjustments for carousel */
+@media (max-width: 768px) {
+  .carousel-arrow {
+    width: 32px;
+    height: 32px;
+  }
+
+  .carousel-arrow svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .carousel-prev {
+    left: 8px;
+  }
+
+  .carousel-next {
+    right: 8px;
+  }
+
+  .carousel-dots {
+    bottom: 8px;
+    padding: 4px 8px;
+    gap: 6px;
+  }
+
+  .carousel-dot {
+    width: 6px;
+    height: 6px;
+  }
+}

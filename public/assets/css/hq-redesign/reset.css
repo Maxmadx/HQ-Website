@@ -1,0 +1,198 @@
+/**
+ * HQ Aviation CSS Reset
+ * Override problematic Squarespace styles
+ * Uses high-specificity selectors (body .hq-*) to win over existing styles
+ */
+
+/* ============================================
+   SQUARESPACE OVERRIDE RESETS
+   ============================================ */
+
+/* Reset body overflow issue */
+body.hq-redesign {
+  overflow-x: hidden;
+  overflow-y: auto !important;
+  background-color: var(--hq-ivory);
+}
+
+/* Reset common Squarespace container issues */
+body .hq-container,
+body .hq-section {
+  box-sizing: border-box;
+}
+
+body .hq-container *,
+body .hq-section * {
+  box-sizing: border-box;
+}
+
+/* ============================================
+   SQUARESPACE HEADER OVERRIDES
+   ============================================ */
+
+/* Hide original Squarespace header when redesigned nav is active */
+body.hq-redesign .Header,
+body.hq-redesign .Header--top,
+body.hq-redesign .Header-inner,
+body.hq-redesign header[data-nc-base] {
+  /* Keep visible but we'll restyle it */
+}
+
+/* Override default link styles in HQ sections */
+body .hq-section a,
+body .hq-container a {
+  text-decoration: none;
+  color: inherit;
+  transition: color var(--hq-transition-fast);
+}
+
+body .hq-section a:hover,
+body .hq-container a:hover {
+  color: var(--hq-accent);
+}
+
+/* ============================================
+   SQUARESPACE TYPOGRAPHY OVERRIDES
+   ============================================ */
+
+/* Override default Squarespace fonts in HQ sections */
+body .hq-section,
+body .hq-container {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-base);
+  line-height: var(--hq-leading-normal);
+  color: var(--hq-charcoal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body .hq-section h1,
+body .hq-section h2,
+body .hq-section h3,
+body .hq-section h4,
+body .hq-section h5,
+body .hq-section h6,
+body .hq-container h1,
+body .hq-container h2,
+body .hq-container h3,
+body .hq-container h4,
+body .hq-container h5,
+body .hq-container h6 {
+  margin: 0;
+  padding: 0;
+  font-weight: var(--hq-weight-bold);
+  line-height: var(--hq-leading-tight);
+  color: var(--hq-black);
+}
+
+body .hq-section p,
+body .hq-container p {
+  margin: 0;
+  padding: 0;
+}
+
+/* ============================================
+   SQUARESPACE BUTTON RESETS
+   ============================================ */
+
+/* Reset Squarespace button styles for HQ buttons */
+body .hq-btn,
+body button.hq-btn,
+body a.hq-btn {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+/* ============================================
+   SQUARESPACE FORM RESETS
+   ============================================ */
+
+body .hq-form input,
+body .hq-form textarea,
+body .hq-form select {
+  font-family: var(--hq-font-primary);
+  font-size: var(--hq-text-base);
+  border-radius: var(--hq-radius-md);
+}
+
+/* ============================================
+   SQUARESPACE IMAGE RESETS
+   ============================================ */
+
+body .hq-section img,
+body .hq-container img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ============================================
+   SQUARESPACE SECTION RESETS
+   ============================================ */
+
+/* Reset Index-page section defaults */
+body.hq-redesign .Index-page {
+  /* Allow our sections to override */
+}
+
+/* Reset Squarespace block margins */
+body .hq-section .sqs-block,
+body .hq-container .sqs-block {
+  padding: 0;
+}
+
+/* ============================================
+   SQUARESPACE GALLERY RESETS
+   ============================================ */
+
+/* Hide default gallery thumbnails */
+body.hq-redesign .sqs-gallery-thumbnails {
+  display: none !important;
+}
+
+/* ============================================
+   UTILITY RESETS
+   ============================================ */
+
+/* Visually hidden (for accessibility) */
+.hq-sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Focus visible utility */
+.hq-focus-visible:focus-visible {
+  outline: 2px solid var(--hq-accent);
+  outline-offset: 2px;
+}
+
+/* Remove focus outline for mouse users */
+.hq-focus-visible:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ============================================
+   ANIMATION RESETS
+   ============================================ */
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  body .hq-section *,
+  body .hq-container * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
