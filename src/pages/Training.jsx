@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { usePageImages } from '../hooks/usePageImages';
+import { usePageText } from '../hooks/usePageText';
 
 function Training() {
   const pageImages = usePageImages('training');
+  const { t } = usePageText('training');
   const courses = [
     {
       title: 'Trial Lessons',
@@ -53,9 +55,10 @@ function Training() {
             <span>/</span>
             <span>Training</span>
           </div>
-          <h1 className="page-header__title">Flight Training</h1>
+          <span className="page-header__pre-label">{t('training-hero', 'pre_label')}</span>
+          <h1 className="page-header__title">{t('training-hero', 'heading')}</h1>
           <p className="page-header__description">
-            CAA Declared Training Organisation - Learn to fly with the best at Denham Aerodrome
+            {t('training-hero', 'subtitle')}
           </p>
         </div>
       </div>
@@ -66,12 +69,9 @@ function Training() {
           <div className="grid grid--2 gap-8 items-center">
             <div>
               <span className="text-accent text-sm text-uppercase font-bold">Learn to Fly</span>
-              <h2>Your Journey Starts Here</h2>
+              <h2>{t('training-intro', 'heading')}</h2>
               <p>
-                Whether you're dreaming of becoming a pilot or looking to advance your existing
-                qualifications, HQ Aviation offers comprehensive training programs to suit every
-                goal. Our experienced instructors and modern fleet make learning to fly both
-                safe and enjoyable.
+                {t('training-intro', 'description')}
               </p>
               <p>
                 Based at Denham Aerodrome, just west of London, we offer an ideal training

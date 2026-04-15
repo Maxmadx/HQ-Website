@@ -27,6 +27,10 @@ import FooterMinimal from '../components/FooterMinimal';
 import ExpeditionBarcode from '../components/Expeditions/ExpeditionBarcode';
 import ExpeditionVideoSlider from '../components/Expeditions/ExpeditionVideoSlider';
 
+// CMS hook
+import { usePageText } from '../hooks/usePageText';
+import { useFaqs } from '../hooks/useFaqs';
+
 /**
  * EXPEDITIONS PAGE HEADER COMPONENT
  * Same spotlight animation as FinalPPL
@@ -317,33 +321,7 @@ const upcomingExpeditions = [
   },
 ];
 
-// FAQ data
-const faqs = [
-  {
-    q: 'Do I need flying experience to join an expedition?',
-    a: 'No prior flying experience is necessary. Our expeditions are designed for passengers to enjoy the journey while Captain Q handles the flying. However, licensed pilots are welcome to participate in certain legs.',
-  },
-  {
-    q: 'What is included in the expedition price?',
-    a: 'All expedition prices include helicopter transport, luxury accommodation, gourmet meals, professional photography, and unique experiences at each destination. International flights to the departure point are typically not included.',
-  },
-  {
-    q: 'How many people can join an expedition?',
-    a: 'Group sizes are intentionally small, typically 2-4 participants per helicopter, ensuring an intimate and exclusive experience. This also allows for more flexibility in routing and stops.',
-  },
-  {
-    q: 'What happens if weather delays the expedition?',
-    a: 'Safety is our top priority. We build flexibility into every itinerary to accommodate weather. If delays occur, we adjust the schedule while ensuring you don\'t miss the key experiences.',
-  },
-  {
-    q: 'Can I bring camera equipment?',
-    a: 'Absolutely. We encourage photography and can accommodate professional camera equipment. Our helicopters have excellent visibility for aerial photography, and we can arrange specific photo stops.',
-  },
-  {
-    q: 'Are bespoke expeditions available?',
-    a: 'Yes, we specialize in creating custom expeditions tailored to your dreams. Whether it\'s a special occasion, a bucket-list destination, or a corporate event, we can design the perfect adventure.',
-  },
-];
+// FAQ data is now managed via Firestore — see useFaqs('expeditions')
 
 // ==================== NEW DATA FOR 20 ADDITIONAL COMPONENTS ====================
 
@@ -968,6 +946,7 @@ function BookingSteps() {
 
 // 15. Expedition Philosophy
 function ExpeditionHistory() {
+  const { t } = usePageText('expeditions');
   return (
     <section className="fexp-philosophy">
       <div className="fexp-philosophy__container">
@@ -978,7 +957,7 @@ function ExpeditionHistory() {
                 This isn't transport.
               </p>
               <p className="fexp-philosophy__text">
-                This is using the helicopter as a machine—a gateway to the world. A first-class ticket to the beauty of our planet, seeing it in ways that very few have ever seen before. The goal is simple: a journey of a lifetime.
+                {t('expeditions-intro', 'description')}
               </p>
               <p className="fexp-philosophy__text">
                 We also offer fully bespoke expeditions tailored to your dreams. Tell us where you want to go, and we'll make it happen.
@@ -1320,6 +1299,126 @@ function FinalExpeditions() {
     offset: ['start start', 'end start'],
   });
 
+  const { faqs } = useFaqs('expeditions', { visibleOnly: true });
+  const { t } = usePageText('expeditions');
+  const { t: tHome } = usePageText('home');
+
+  // Build destinations array from Firestore-backed text
+  const cmsDestinations = [
+    {
+      id: 'arctic',
+      name: tHome('home-exped-destinations', 'arctic_name'),
+      distance: tHome('home-exped-destinations', 'arctic_distance'),
+      year: tHome('home-exped-destinations', 'arctic_year'),
+      image: '/assets/images/expeditions/north-pole.jpg',
+      gallery: [
+        '/assets/images/expeditions/north-pole.jpg',
+        '/assets/images/expeditions/six-helis-in-North-Pole.jpg',
+        '/assets/images/expeditions/antartica.jpg',
+        '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp',
+      ],
+      description: tHome('home-exped-destinations', 'arctic_desc'),
+    },
+    {
+      id: 'iceland',
+      name: tHome('home-exped-destinations', 'iceland_name'),
+      distance: tHome('home-exped-destinations', 'iceland_distance'),
+      year: tHome('home-exped-destinations', 'iceland_year'),
+      image: '/assets/images/expeditions/channel.jpg',
+      gallery: [
+        '/assets/images/expeditions/channel.jpg',
+        '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp',
+        '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp',
+        '/assets/images/expeditions/antartica.jpg',
+      ],
+      description: tHome('home-exped-destinations', 'iceland_desc'),
+    },
+    {
+      id: 'morocco',
+      name: tHome('home-exped-destinations', 'morocco_name'),
+      distance: tHome('home-exped-destinations', 'morocco_distance'),
+      year: tHome('home-exped-destinations', 'morocco_year'),
+      image: '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp',
+      gallery: [
+        '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp',
+        '/assets/images/expeditions/channel.jpg',
+        '/assets/images/expeditions/north-pole.jpg',
+        '/assets/images/expeditions/six-helis-in-North-Pole.jpg',
+      ],
+      description: tHome('home-exped-destinations', 'morocco_desc'),
+    },
+    {
+      id: 'norway',
+      name: tHome('home-exped-destinations', 'norway_name'),
+      distance: tHome('home-exped-destinations', 'norway_distance'),
+      year: tHome('home-exped-destinations', 'norway_year'),
+      image: '/assets/images/expeditions/six-helis-in-North-Pole.jpg',
+      gallery: [
+        '/assets/images/expeditions/six-helis-in-North-Pole.jpg',
+        '/assets/images/expeditions/north-pole.jpg',
+        '/assets/images/expeditions/channel.jpg',
+        '/assets/images/expeditions/antartica.jpg',
+      ],
+      description: tHome('home-exped-destinations', 'norway_desc'),
+    },
+    {
+      id: 'alps',
+      name: tHome('home-exped-destinations', 'alps_name'),
+      distance: tHome('home-exped-destinations', 'alps_distance'),
+      year: tHome('home-exped-destinations', 'alps_year'),
+      image: '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp',
+      gallery: [
+        '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp',
+        '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp',
+        '/assets/images/expeditions/channel.jpg',
+        '/assets/images/expeditions/six-helis-in-North-Pole.jpg',
+      ],
+      description: tHome('home-exped-destinations', 'alps_desc'),
+    },
+    {
+      id: 'greenland',
+      name: tHome('home-exped-destinations', 'greenland_name'),
+      distance: tHome('home-exped-destinations', 'greenland_distance'),
+      year: tHome('home-exped-destinations', 'greenland_year'),
+      image: '/assets/images/expeditions/antartica.jpg',
+      gallery: [
+        '/assets/images/expeditions/antartica.jpg',
+        '/assets/images/expeditions/north-pole.jpg',
+        '/assets/images/expeditions/six-helis-in-North-Pole.jpg',
+        '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp',
+      ],
+      description: tHome('home-exped-destinations', 'greenland_desc'),
+    },
+    {
+      id: 'bahamas',
+      name: tHome('home-exped-destinations', 'bahamas_name'),
+      distance: tHome('home-exped-destinations', 'bahamas_distance'),
+      year: tHome('home-exped-destinations', 'bahamas_year'),
+      image: '/assets/images/expeditions/channel.jpg',
+      gallery: [
+        '/assets/images/expeditions/channel.jpg',
+        '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp',
+        '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp',
+        '/assets/images/expeditions/antartica.jpg',
+      ],
+      description: tHome('home-exped-destinations', 'bahamas_desc'),
+    },
+    {
+      id: 'costa-rica',
+      name: tHome('home-exped-destinations', 'costarica_name'),
+      distance: tHome('home-exped-destinations', 'costarica_distance'),
+      year: tHome('home-exped-destinations', 'costarica_year'),
+      image: '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp',
+      gallery: [
+        '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp',
+        '/assets/images/expeditions/channel.jpg',
+        '/assets/images/expeditions/north-pole.jpg',
+        '/assets/images/expeditions/antartica.jpg',
+      ],
+      description: tHome('home-exped-destinations', 'costarica_desc'),
+    },
+  ];
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -1355,7 +1454,7 @@ function FinalExpeditions() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              WORLDWIDE EXPEDITIONS
+              {t('expeditions-hero', 'pre_label')}
             </motion.span>
 
             <div className="fexp-hero__headline">
@@ -1448,7 +1547,7 @@ function FinalExpeditions() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.6 }}
             >
-              From polar ice caps to tropical islands, experience adventures only possible by helicopter.
+              {t('expeditions-hero', 'subtitle')}
             </motion.p>
           </div>
         </motion.div>
@@ -1463,7 +1562,7 @@ function FinalExpeditions() {
           </div>
         </Reveal>
         <Reveal>
-          <ExpeditionBarcode />
+          <ExpeditionBarcode destinations={cmsDestinations} />
         </Reveal>
       </section>
 

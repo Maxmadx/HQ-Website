@@ -199,10 +199,33 @@ const TripRegistrationCard = ({
 }) => {
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitting(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          subject: `Expedition Interest — ${destination}`,
+          message: `Dates: ${dates}\nDuration: ${duration}\nAircraft: ${aircraft}\nSpots remaining: ${spotsRemaining}`,
+          source: 'expedition-registration',
+        }),
+      });
+      if (!res.ok) throw new Error('server');
+      setSubmitted(true);
+    } catch {
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -292,9 +315,10 @@ const TripRegistrationCard = ({
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   />
                 </div>
-                <button className="trip-btn" style={styles.button} type="submit">
-                  Register Interest
+                <button className="trip-btn" style={styles.button} type="submit" disabled={submitting}>
+                  {submitting ? 'Registering…' : 'Register Interest'}
                 </button>
+                {error && <p style={{ color: '#dc2626', fontSize: '0.8rem', marginTop: '0.5rem', textAlign: 'center' }}>{error}</p>}
               </form>
             </>
           ) : (

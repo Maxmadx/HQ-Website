@@ -52,18 +52,39 @@ const initialTestimonials = [
 const Testimonials = () => {
   const [testimonials] = useState(initialTestimonials);
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ name: '', role: '', quote: '' });
+  const [formData, setFormData] = useState({ name: '', role: '', quote: '', email: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.name && formData.quote) {
+    if (!formData.name || !formData.quote || !formData.email) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          subject: 'Testimonial Submission',
+          message: [formData.role && `Role: ${formData.role}`, `Testimonial: ${formData.quote}`].filter(Boolean).join('\n'),
+          source: 'testimonial',
+        }),
+      });
+      if (!res.ok) throw new Error('server');
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);
         setShowForm(false);
-        setFormData({ name: '', role: '', quote: '' });
+        setFormData({ name: '', role: '', quote: '', email: '' });
       }, 3000);
+    } catch {
+      setSubmitError('Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -451,6 +472,38 @@ const Testimonials = () => {
                         color: 'rgba(26, 26, 26, 0.6)',
                         marginBottom: '0.5rem'
                       }}>
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="form-input"
+                        placeholder="your@email.com"
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '0.875rem 1rem',
+                          border: '2px solid rgba(26, 26, 26, 0.1)',
+                          borderRadius: '10px',
+                          fontSize: '1rem',
+                          fontFamily: "'Space Grotesk', sans-serif",
+                          transition: 'border-color 0.2s ease',
+                          boxSizing: 'border-box'
+                        }}
+                      />
+                    </div>
+
+                    <div style={{ marginBottom: '1.25rem' }}>
+                      <label style={{
+                        display: 'block',
+                        fontFamily: "'Share Tech Mono', monospace",
+                        fontSize: '0.7rem',
+                        letterSpacing: '0.1em',
+                        textTransform: 'uppercase',
+                        color: 'rgba(26, 26, 26, 0.6)',
+                        marginBottom: '0.5rem'
+                      }}>
                         Your Role (Optional)
                       </label>
                       <input
@@ -508,6 +561,7 @@ const Testimonials = () => {
                     <button
                       type="submit"
                       className="form-submit"
+                      disabled={submitting}
                       style={{
                         width: '100%',
                         padding: '1rem',
@@ -518,12 +572,14 @@ const Testimonials = () => {
                         fontSize: '1rem',
                         fontWeight: 600,
                         fontFamily: "'Space Grotesk', sans-serif",
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease'
+                        cursor: submitting ? 'not-allowed' : 'pointer',
+                        transition: 'all 0.3s ease',
+                        opacity: submitting ? 0.7 : 1
                       }}
                     >
-                      Submit Testimonial
+                      {submitting ? 'Submitting…' : 'Submit Testimonial'}
                     </button>
+                    {submitError && <p style={{ color: '#dc2626', textAlign: 'center', fontSize: '0.875rem', marginTop: '0.75rem' }}>{submitError}</p>}
                   </form>
                 </>
               ) : (

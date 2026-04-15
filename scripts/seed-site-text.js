@@ -3,6 +3,7 @@
 // Run: node scripts/seed-site-text.js
 // Safe to re-run — uses merge:true so admin-edited values are preserved.
 
+require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
 const admin = require('../api/firebase-admin');
 const path = require('path');
 const fs = require('fs');

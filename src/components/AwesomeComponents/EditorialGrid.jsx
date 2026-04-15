@@ -907,11 +907,11 @@ export const EditorialGrid = () => {
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 1.5rem 2rem;
-        border-bottom: 1px solid rgba(255,255,255,0.12);
+        padding: 16px 2rem;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
         flex-shrink: 0;
-        background: #1a1a1a;
-        box-shadow: 0 -8px 20px rgba(0,0,0,0.3);
+        background: #fff;
+        box-shadow: 0 -8px 20px rgba(0,0,0,0.06);
       }
 
       .editorial-grid__footer {
@@ -925,12 +925,12 @@ export const EditorialGrid = () => {
       }
 
       .editorial-grid__tagline {
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: 1.1rem;
-        font-weight: 500;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.15em;
-        color: #fff;
+        letter-spacing: 0.12em;
+        color: #1a1a1a;
       }
       .editorial-grid__tagline-hint {
         display: none;

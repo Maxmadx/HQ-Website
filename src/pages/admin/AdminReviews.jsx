@@ -4,7 +4,7 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import { useCollection } from '../../hooks/useFirestore';
 import { db } from '../../lib/firebase';
 
-const EMPTY_FORM = { author: '', rating: 5, text: '', date: '', visible: true, displayOrder: '' };
+const EMPTY_FORM = { author: '', role: '', rating: 5, text: '', date: '', visible: true, displayOrder: '' };
 
 export default function AdminReviews() {
   const { docs: reviews, loading } = useCollection('reviews', 'displayOrder');
@@ -13,6 +13,8 @@ export default function AdminReviews() {
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [creating, setCreating] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState({});
 
   // ── Create ──────────────────────────────────────────────────────────────────
   async function handleCreate(e) {
@@ -21,6 +23,7 @@ export default function AdminReviews() {
     try {
       await addDoc(collection(db, 'reviews'), {
         author: form.author.trim(),
+        role: form.role.trim(),
         rating: Number(form.rating),
         text: form.text.trim(),
         date: form.date.trim(),
@@ -52,6 +55,35 @@ export default function AdminReviews() {
     try {
       await updateDoc(doc(db, 'reviews', id), { displayOrder: val });
       setOrderEdits((o) => { const next = { ...o }; delete next[id]; return next; });
+    } finally {
+      setSaving(null);
+    }
+  }
+
+  function startEdit(review) {
+    setEditingId(review.id);
+    setEditForm({
+      author: review.author ?? '',
+      role: review.role ?? '',
+      rating: review.rating ?? 5,
+      text: review.text ?? '',
+      date: review.date ?? '',
+    });
+  }
+
+  async function handleUpdate(e) {
+    e.preventDefault();
+    setSaving(editingId);
+    try {
+      await updateDoc(doc(db, 'reviews', editingId), {
+        author: editForm.author.trim(),
+        role: editForm.role.trim(),
+        rating: Number(editForm.rating),
+        text: editForm.text.trim(),
+        date: editForm.date.trim(),
+      });
+      setEditingId(null);
+      setEditForm({});
     } finally {
       setSaving(null);
     }
@@ -130,6 +162,16 @@ export default function AdminReviews() {
           </div>
 
           <div style={{ marginBottom: '0.875rem' }}>
+            <label style={label}>Role / subtitle</label>
+            <input
+              style={field}
+              value={form.role}
+              onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
+              placeholder="Helicopter Owner · R44 Raven II"
+            />
+          </div>
+
+          <div style={{ marginBottom: '0.875rem' }}>
             <label style={label}>Review text</label>
             <textarea
               style={{ ...field, minHeight: '100px', resize: 'vertical', lineHeight: 1.6 }}
@@ -195,12 +237,11 @@ export default function AdminReviews() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           {sorted.map((review) => (
+            <div key={review.id} style={{ border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden', opacity: review.visible ? 1 : 0.45 }}>
             <div
-              key={review.id}
               style={{
-                background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px',
+                background: '#fff',
                 padding: '1rem', display: 'flex', gap: '1rem', alignItems: 'flex-start',
-                opacity: review.visible ? 1 : 0.45,
               }}
             >
               {/* Avatar */}
@@ -215,6 +256,7 @@ export default function AdminReviews() {
                   <span style={{ color: '#f59e0b', fontSize: '0.875rem' }}>{stars(review.rating)}</span>
                   {review.date && <span style={{ color: '#9ca3af', fontSize: '0.75rem' }}>{review.date}</span>}
                 </div>
+                {review.role && <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>{review.role}</span>}
                 <p style={{ color: '#374151', fontSize: '0.875rem', lineHeight: 1.55, margin: 0 }}>
                   {review.text}
                 </p>
@@ -243,6 +285,13 @@ export default function AdminReviews() {
                 </div>
 
                 <button
+                  onClick={() => editingId === review.id ? setEditingId(null) : startEdit(review)}
+                  style={{ background: 'none', border: '1px solid #d1d5db', borderRadius: '4px', color: '#374151', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 500, padding: '0.2rem 0.6rem' }}
+                >
+                  {editingId === review.id ? 'Cancel' : 'Edit'}
+                </button>
+
+                <button
                   onClick={() => handleDelete(review.id)}
                   disabled={saving === review.id}
                   style={{ background: 'none', border: 'none', color: '#dc2626', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 500, padding: 0 }}
@@ -250,6 +299,42 @@ export default function AdminReviews() {
                   Delete
                 </button>
               </div>
+            </div>
+
+            {/* Inline edit form */}
+            {editingId === review.id && (
+              <form onSubmit={handleUpdate} style={{ borderTop: '1px solid #e5e7eb', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div>
+                    <label style={label}>Name</label>
+                    <input style={field} value={editForm.author} onChange={(e) => setEditForm((f) => ({ ...f, author: e.target.value }))} required />
+                  </div>
+                  <div>
+                    <label style={label}>Date</label>
+                    <input style={field} value={editForm.date} onChange={(e) => setEditForm((f) => ({ ...f, date: e.target.value }))} placeholder="March 2025" />
+                  </div>
+                </div>
+                <div>
+                  <label style={label}>Role / subtitle</label>
+                  <input style={field} value={editForm.role} onChange={(e) => setEditForm((f) => ({ ...f, role: e.target.value }))} placeholder="Helicopter Owner · R44 Raven II" />
+                </div>
+                <div>
+                  <label style={label}>Review text</label>
+                  <textarea style={{ ...field, minHeight: '90px', resize: 'vertical', lineHeight: 1.6 }} value={editForm.text} onChange={(e) => setEditForm((f) => ({ ...f, text: e.target.value }))} required />
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <div>
+                    <label style={label}>Rating</label>
+                    <select style={{ ...field, width: 'auto' }} value={editForm.rating} onChange={(e) => setEditForm((f) => ({ ...f, rating: Number(e.target.value) }))}>
+                      {[5, 4, 3, 2, 1].map((n) => <option key={n} value={n}>{stars(n)} ({n})</option>)}
+                    </select>
+                  </div>
+                  <button type="submit" disabled={saving === review.id} style={{ marginTop: '1.1rem', background: '#111827', color: '#fff', padding: '0.5rem 1.25rem', border: 'none', borderRadius: '6px', fontWeight: 600, fontSize: '0.875rem', cursor: 'pointer', opacity: saving === review.id ? 0.6 : 1 }}>
+                    {saving === review.id ? 'Saving…' : 'Save changes'}
+                  </button>
+                </div>
+              </form>
+            )}
             </div>
           ))}
         </div>

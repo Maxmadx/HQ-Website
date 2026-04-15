@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useInView } from 'framer-motion';
 import { usePageImages } from '../hooks/usePageImages';
+import { usePageText } from '../hooks/usePageText';
 
 const milestones = [
   { year: '1990', title: 'HQ Aviation Founded', desc: 'Captain Quentin Smith establishes HQ Aviation at Denham Aerodrome, beginning a legacy in Robinson helicopter training, sales, and maintenance.' },
@@ -16,6 +17,7 @@ const milestones = [
 
 function AboutUs() {
   const pageImages = usePageImages('about');
+  const { t } = usePageText('about');
   const [activeMs, setActiveMs] = useState(0);
   const timelineRef = useRef(null);
   const timelineInView = useInView(timelineRef, { once: true, amount: 0.15 });
@@ -61,11 +63,11 @@ function AboutUs() {
           <div className="au__hero-overlay" />
         </div>
         <div className="au__hero-content">
-          <span className="au__hero-pre">About HQ Aviation</span>
+          <span className="au__hero-pre">{t('about-hero', 'pre_label')}</span>
           <h1 className="au__hero-title">
-            <span>The Robinson</span>
-            <span>Specialists</span>
-            <span>Since 1990</span>
+            <span>{t('about-hero', 'heading_1')}</span>
+            <span>{t('about-hero', 'heading_2')}</span>
+            <span>{t('about-hero', 'heading_3')}</span>
           </h1>
           <div className="au__hero-meta">
             <span>Denham Aerodrome, UK</span>
@@ -159,14 +161,12 @@ function AboutUs() {
             <img src={pageImages['about-founder']?.[0]?.url ?? '/assets/images/team/world-helicopter-champion-quentin-smith.webp'} alt="Captain Quentin Smith" />
           </div>
           <div className={`au__captain-content ${captainInView ? 'au__captain-content--visible' : ''}`}>
-            <span className="au__pretitle">The Founder</span>
-            <h2 className="au__captain-title">Captain Quentin Smith</h2>
+            <span className="au__pretitle">{t('about-founder', 'pre_label')}</span>
+            <h2 className="au__captain-title">{t('about-founder', 'name')}</h2>
+            <p className="au__captain-role">{t('about-founder', 'title')}</p>
             <div className="au__captain-text">
               <p>
-                Two-time Helicopter Aerobatics World Champion. Guinness World Record holder.
-                The first person to fly a helicopter to both the North and South Poles.
-                The man Paramount Pictures chose to train Tom Cruise for Mission: Impossible.
-                Over 12,000 hours as pilot-in-command across every continent on earth.
+                {t('about-founder', 'bio')}
               </p>
               <p>
                 Q isn't just a pilot — he's a pioneer. His expeditions have rewritten the record

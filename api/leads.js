@@ -1,9 +1,20 @@
 'use strict';
 
 const express = require('express');
+const rateLimit = require('express-rate-limit');
 const admin = require('./firebase-admin');
 
 const router = express.Router();
+
+// Rate limiter: 5 requests per 10 minutes per IP on the POST endpoint
+const leadsLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => req.ip || 'unknown',
+  handler: (_req, res) => res.status(429).json({ error: 'Too many requests' }),
+});
 
 async function requireAdmin(req, res, next) {
   const header = req.headers.authorization || '';
@@ -21,7 +32,7 @@ async function requireAdmin(req, res, next) {
 }
 
 // POST /api/leads — public endpoint, captures a new lead
-router.post('/', async (req, res) => {
+router.post('/', leadsLimiter, async (req, res) => {
   try {
     const { name, email, phone, subject, message, source } = req.body;
     if (!name || !email) {
@@ -40,6 +51,7 @@ router.post('/', async (req, res) => {
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
+
     return res.json({ id: ref.id });
   } catch (err) {
     console.error('Lead capture error:', err);

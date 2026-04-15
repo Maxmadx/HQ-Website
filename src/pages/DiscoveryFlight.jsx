@@ -14,6 +14,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { usePricing } from '../hooks/usePricing';
 import { usePageImages } from '../hooks/usePageImages';
 import { usePageText } from '../hooks/usePageText';
+import { useFaqs } from '../hooks/useFaqs';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 
 // Import styles
@@ -813,14 +814,7 @@ function DiscoveryTestimonials() {
 function LocationAndFAQ() {
   const [openFaq, setOpenFaq] = useState(null);
   const { t } = usePageText('discovery');
-
-  const faqKeys = [
-    { q: 'q1', a: 'a1' },
-    { q: 'q2', a: 'a2' },
-    { q: 'q3', a: 'a3' },
-    { q: 'q4', a: 'a4' },
-    { q: 'q5', a: 'a5' },
-  ];
+  const { faqs } = useFaqs('discovery', { visibleOnly: true });
 
   return (
     <section className="df-location-faq">
@@ -871,8 +865,8 @@ function LocationAndFAQ() {
           </Reveal>
 
           <div className="df-faq__list">
-            {faqKeys.map((keys, i) => (
-              <Reveal key={i} delay={i * 0.1}>
+            {faqs.map((faq, i) => (
+              <Reveal key={faq.id} delay={i * 0.1}>
                 <div
                   className={`df-faq__item ${openFaq === i ? 'df-faq__item--open' : ''}`}
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
@@ -880,7 +874,7 @@ function LocationAndFAQ() {
                   <div className="df-faq__number">{String(i + 1).padStart(2, '0')}</div>
                   <div className="df-faq__content">
                     <h4>
-                      {t('discovery-faq', keys.q)}
+                      {faq.question}
                       <span className="df-faq__toggle">{openFaq === i ? '−' : '+'}</span>
                     </h4>
                     <motion.div
@@ -889,7 +883,7 @@ function LocationAndFAQ() {
                       animate={{ height: openFaq === i ? 'auto' : 0, opacity: openFaq === i ? 1 : 0 }}
                       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                     >
-                      <p>{t('discovery-faq', keys.a)}</p>
+                      <p>{faq.answer}</p>
                     </motion.div>
                   </div>
                 </div>

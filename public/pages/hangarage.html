@@ -1650,11 +1650,49 @@ img[] {
 
         <div class="ht-form-wrapper">
             <h3>Enquire about hangarage!</h3>
-            <form action="#" method="POST">
-                <input type="email" class="ht-input" placeholder="Email Address" required>
-                <input type="text" class="ht-input" placeholder="Message">
-                <button type="submit" class="ht-btn">Send</button>
+            <form id="ht-enquiry-form" action="#" method="POST">
+                <input id="ht-name" type="text" class="ht-input" placeholder="Your Name" required>
+                <input id="ht-email" type="email" class="ht-input" placeholder="Email Address" required>
+                <input id="ht-msg" type="text" class="ht-input" placeholder="Message">
+                <button type="submit" class="ht-btn" id="ht-submit-btn">Send</button>
+                <p id="ht-feedback" style="margin-top:0.75rem;font-size:0.85rem;display:none;"></p>
             </form>
+            <script>
+(function() {
+  var form = document.getElementById('ht-enquiry-form');
+  if (!form) return;
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var btn = document.getElementById('ht-submit-btn');
+    var feedback = document.getElementById('ht-feedback');
+    var name = document.getElementById('ht-name').value.trim();
+    var email = document.getElementById('ht-email').value.trim();
+    var msg = document.getElementById('ht-msg').value.trim();
+    btn.textContent = 'Sending…';
+    btn.disabled = true;
+    fetch('/api/leads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, email: email, message: msg, subject: 'Hangarage Enquiry', source: 'hangarage' })
+    })
+    .then(function(r) {
+      if (!r.ok) throw new Error();
+      feedback.style.display = 'block';
+      feedback.style.color = '#16a34a';
+      feedback.textContent = 'Enquiry sent! We\'ll be in touch shortly.';
+      form.reset();
+      btn.textContent = 'Sent';
+    })
+    .catch(function() {
+      feedback.style.display = 'block';
+      feedback.style.color = '#dc2626';
+      feedback.textContent = 'Failed to send. Please call us on +44 (0)1895 833373.';
+      btn.textContent = 'Send';
+      btn.disabled = false;
+    });
+  });
+})();
+</script>
         </div>
 
         <div class="ht-img-container ht-r">

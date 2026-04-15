@@ -9,17 +9,8 @@
 import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
+import { useCollection } from '../hooks/useFirestore';
 
-/* ── Data ── */
-const testimonials = [
-  { initials: 'PC', name: 'Patrick C.', role: 'Helicopter Owner · R44 Raven II', stars: 5, text: "HQ Aviation has been looking after my R44 for over five years now. The level of care and attention to detail from David Cross and his engineering team is second to none. They treat my aircraft as if it were their own." },
-  { initials: 'AB', name: 'Andy B.', role: 'Trial Lesson Student', stars: 5, text: "What an incredible day. From the moment I arrived, the team made me feel completely at ease. The briefing was thorough, and then actually flying the helicopter — there's nothing quite like it. I'm already looking at booking my PPL course." },
-  { initials: 'LL', name: 'Luca L.', role: 'Helicopter Owner · R66 Turbine', stars: 5, text: "The leaseback programme has been fantastic for offsetting ownership costs. HQ manages everything — maintenance, scheduling, insurance coordination. My R66 pays for itself, and I still fly it whenever I want." },
-  { initials: 'GR', name: 'Geoff R.', role: 'PPL(H) · Self-Fly Hire Regular', stars: 5, text: "The walk-in, walk-out self-fly hire is exactly what I wanted after getting my licence. No membership fees, no hassle. I book an R44, it's fuelled and ready on the pad. Last month I flew to Le Touquet for lunch — try doing that by car." },
-  { initials: 'MK', name: 'Maxim K.', role: 'Helicopter Owner · R22 Beta II', stars: 5, text: "Bought my R22 through HQ and they've maintained it impeccably since. The engineering team genuinely cares. When my 2,200-hour overhaul came up, they walked me through every option and the rebuild came back better than factory." },
-  { initials: 'SH', name: 'Sarah H.', role: 'PPL Student · Hour Building', stars: 5, text: "The instructors at HQ are patient, professional and genuinely passionate about teaching. I started my PPL in January and passed my skills test in September. The ground school was brilliant — passed all nine exams first time." },
-  { initials: 'JM', name: 'James M.', role: 'Expedition Participant · Iceland 2024', stars: 5, text: "Flying to Iceland with Captain Q was a once-in-a-lifetime experience. The planning was meticulous, the flying was extraordinary, and the camaraderie between the group was something I'll never forget. Already signed up for the next one." },
-];
 
 
 const contactDetails = [
@@ -38,6 +29,18 @@ export default function ArrivalSection() {
   const cardInView = useInView(cardRef, { once: true, margin: '-60px' });
   const reviewTrackRef = useRef(null);
   const [reviewIdx, setReviewIdx] = useState(0);
+
+  const { docs: reviewDocs } = useCollection('reviews', 'displayOrder');
+  const testimonials = reviewDocs
+    .filter((r) => r.visible)
+    .sort((a, b) => (a.displayOrder ?? 999) - (b.displayOrder ?? 999))
+    .map((r) => ({
+      initials: (r.author || '??').split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase(),
+      name: r.author,
+      role: r.role ?? '',
+      stars: r.rating ?? 5,
+      text: r.text,
+    }));
 
   return (
     <section className="arrival" id="the-arrival">

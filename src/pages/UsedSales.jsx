@@ -9,6 +9,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import { useCollection } from '../hooks/useFirestore';
+import AircraftAlertSignup from '../components/AircraftAlertSignup';
 
 import '../assets/css/main.css';
 import '../assets/css/components.css';
@@ -48,6 +49,7 @@ const aircraftSpecs = [
     usefulLoad: '400 lbs', fuelCapacity: '26.4 gal'
   },
 ];
+
 
 // ============================================
 // HEADER (Spotlight animation)
@@ -447,39 +449,9 @@ function ComparisonTool() {
 }
 
 function AlertSignup() {
-  const [email, setEmail] = useState('');
-  const [preferences, setPreferences] = useState([]);
-
-  return (
-    <section className="used-final-cta__alert-section">
-      <div className="used-final-cta__alert">
-        <div className="used-final-cta__alert-col">
-          <div className="used-final-cta__alert-label"><i className="fas fa-bell"></i> Get Aircraft Alerts</div>
-          <div className="used-final-cta__alert-checks">
-            {['R66 Turbine', 'R44 Raven II', 'R44 Cadet', 'R22 Beta II'].map(model => (
-              <label key={model} className="used-final-cta__check">
-                <input type="checkbox" checked={preferences.includes(model)} onChange={(e) => setPreferences(e.target.checked ? [...preferences, model] : preferences.filter(p => p !== model))} />
-                <span>{model}</span>
-              </label>
-            ))}
-          </div>
-          <div className="used-final-cta__alert-form">
-            <input type="email" placeholder="Your email" value={email} onChange={(e) => setEmail(e.target.value)} className="used-final-cta__email" />
-            <button className="used-btn used-btn--primary">Register</button>
-          </div>
-        </div>
-        <div className="used-final-cta__alert-divider" />
-        <div className="used-final-cta__alert-col">
-          <div className="used-final-cta__alert-label"><i className="fas fa-phone"></i> Or Contact Us Directly</div>
-          <div className="used-final-cta__contact-details">
-            <a href="mailto:sales@hqaviation.com">sales@hqaviation.com</a>
-            <a href="tel:+441895833838">+44 (0) 1895 833 838</a>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+  return <AircraftAlertSignup />;
 }
+
 
 function FinalCTA() {
   return (
@@ -569,7 +541,6 @@ function UsedSales() {
           </div>
         </section>
       )}
-      <AlertSignup />
       <FooterMinimal />
     </div>
   );
@@ -925,9 +896,6 @@ const pageStyles = `
 .used-btn--light { background: #fff; color: #1a1a1a; border-color: #fff; }
 .used-btn--light:hover { background: transparent; color: #fff; }
 .used-btn--large { padding: 1.25rem 2.5rem; font-size: 0.85rem; }
-
-/* Alert Signup */
-
 /* Virtual Tour */
 .used-tour { padding: 4rem 2rem; background: #f0efec; text-align: center; }
 .used-tour__container { max-width: 600px; margin: 0 auto; }

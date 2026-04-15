@@ -15,6 +15,37 @@ import FooterMinimal from '../components/FooterMinimal';
 function PartSales() {
   const [partsAircraft, setPartsAircraft] = useState('');
   const [signedIn, setSignedIn] = useState(false);
+  const [partsDesc, setPartsDesc] = useState('');
+  const [partsEmail, setPartsEmail] = useState('');
+  const [partsInfo, setPartsInfo] = useState('');
+  const [partsSubmitting, setPartsSubmitting] = useState(false);
+  const [partsSubmitted, setPartsSubmitted] = useState(false);
+  const [partsError, setPartsError] = useState(null);
+
+  async function handlePartsSubmit(e) {
+    e.preventDefault();
+    setPartsSubmitting(true);
+    setPartsError(null);
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: partsEmail, // email used as identifier since no name field
+          email: partsEmail,
+          subject: partsAircraft ? `Parts Enquiry — ${partsAircraft}` : 'Parts Enquiry',
+          message: [partsDesc && `Part: ${partsDesc}`, partsInfo && `Info: ${partsInfo}`].filter(Boolean).join('\n'),
+          source: 'parts-enquiry',
+        }),
+      });
+      if (!res.ok) throw new Error('server');
+      setPartsSubmitted(true);
+    } catch {
+      setPartsError('Failed to send. Please try again.');
+    } finally {
+      setPartsSubmitting(false);
+    }
+  }
 
   return (
     <>
@@ -442,45 +473,58 @@ function PartSales() {
                 </button>
               </div>
             ) : (
-              <form className="ps-form" onSubmit={(e) => e.preventDefault()}>
-                <div className="ps-form__signed-in">
-                  <span className="ps-form__signed-in-badge">Signed In</span>
-                  <button type="button" className="ps-form__sign-out" onClick={() => setSignedIn(false)}>Sign Out</button>
-                </div>
-                <h3 className="ps-form__title">Request Parts</h3>
-                <span className="ps-form__subtitle">Fill in the details and we'll get back to you</span>
-
-                <div className="ps-form__field">
-                  <label>Aircraft Type</label>
-                  <div className="ps-form__aircraft-btns">
-                    {['R22', 'R44', 'R66', 'N/A'].map((type) => (
-                      <button
-                        key={type}
-                        type="button"
-                        className={`ps-form__aircraft-btn ${partsAircraft === type ? 'ps-form__aircraft-btn--active' : ''}`}
-                        onClick={() => setPartsAircraft(partsAircraft === type ? '' : type)}
-                      >{type}</button>
-                    ))}
+              <>
+                {partsSubmitted ? (
+                  <div style={{ textAlign: 'center', padding: '2rem 0' }}>
+                    <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>✓</div>
+                    <p style={{ fontWeight: 700, marginBottom: '0.5rem' }}>Enquiry Received</p>
+                    <p style={{ fontSize: '0.85rem', color: '#666' }}>We'll be in touch shortly about your parts request.</p>
                   </div>
-                </div>
+                ) : (
+                  <form className="ps-form" onSubmit={handlePartsSubmit}>
+                    <div className="ps-form__signed-in">
+                      <span className="ps-form__signed-in-badge">Signed In</span>
+                      <button type="button" className="ps-form__sign-out" onClick={() => setSignedIn(false)}>Sign Out</button>
+                    </div>
+                    <h3 className="ps-form__title">Request Parts</h3>
+                    <span className="ps-form__subtitle">Fill in the details and we'll get back to you</span>
 
-                <div className="ps-form__field">
-                  <label htmlFor="ps-desc">Part Description</label>
-                  <input id="ps-desc" type="text" className="ps-form__input" placeholder="Part number or description" />
-                </div>
+                    <div className="ps-form__field">
+                      <label>Aircraft Type</label>
+                      <div className="ps-form__aircraft-btns">
+                        {['R22', 'R44', 'R66', 'N/A'].map((type) => (
+                          <button
+                            key={type}
+                            type="button"
+                            className={`ps-form__aircraft-btn ${partsAircraft === type ? 'ps-form__aircraft-btn--active' : ''}`}
+                            onClick={() => setPartsAircraft(partsAircraft === type ? '' : type)}
+                          >{type}</button>
+                        ))}
+                      </div>
+                    </div>
 
-                <div className="ps-form__field">
-                  <label htmlFor="ps-email">Email</label>
-                  <input id="ps-email" type="email" className="ps-form__input" placeholder="your@email.com" />
-                </div>
+                    <div className="ps-form__field">
+                      <label htmlFor="ps-desc">Part Description</label>
+                      <input id="ps-desc" type="text" className="ps-form__input" placeholder="Part number or description" value={partsDesc} onChange={(e) => setPartsDesc(e.target.value)} />
+                    </div>
 
-                <div className="ps-form__field">
-                  <label htmlFor="ps-info">Additional Information</label>
-                  <textarea id="ps-info" className="ps-form__input" rows="3" placeholder="Any additional details..." />
-                </div>
+                    <div className="ps-form__field">
+                      <label htmlFor="ps-email">Email</label>
+                      <input id="ps-email" type="email" className="ps-form__input" placeholder="your@email.com" value={partsEmail} onChange={(e) => setPartsEmail(e.target.value)} />
+                    </div>
 
-                <button type="submit" className="ps-form__submit">Send Parts Enquiry <span>→</span></button>
-              </form>
+                    <div className="ps-form__field">
+                      <label htmlFor="ps-info">Additional Information</label>
+                      <textarea id="ps-info" className="ps-form__input" rows="3" placeholder="Any additional details..." value={partsInfo} onChange={(e) => setPartsInfo(e.target.value)} />
+                    </div>
+
+                    <button type="submit" className="ps-form__submit" disabled={partsSubmitting}>
+                      {partsSubmitting ? 'Sending…' : 'Send Parts Enquiry'} {!partsSubmitting && <span>→</span>}
+                    </button>
+                    {partsError && <p style={{ marginTop: '0.75rem', color: '#dc2626', fontSize: '0.8rem' }}>{partsError}</p>}
+                  </form>
+                )}
+              </>
             )}
           </div>
         </div>

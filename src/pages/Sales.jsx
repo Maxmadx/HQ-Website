@@ -11,6 +11,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { usePageImages } from '../hooks/usePageImages';
+import { usePageText } from '../hooks/usePageText';
 
 // Import styles
 import '../assets/css/main.css';
@@ -904,8 +905,17 @@ const quickComparison = [
   { model: 'R88', ideal: 'Commercial ops, Large groups', notIdeal: 'First-time owners' },
 ];
 
+// Maps model id → textSections section id
+const salesModelSectionId = {
+  r88: 'sales-model-r88',
+  r66: 'sales-model-r66',
+  r44: 'sales-model-r44',
+  r22: 'sales-model-r22',
+};
+
 function Sales() {
   const pageImages = usePageImages('sales');
+  const { t } = usePageText('sales');
 
   // Per-model CMS image helpers (keyed by index matching aircraftModels order)
   const getModelHero   = (model) => pageImages['sales-aircraft-hero']?.[aircraftModels.findIndex(m => m.id === model.id)]?.url   ?? model.image;
@@ -1146,8 +1156,8 @@ function Sales() {
                   onMouseLeave={() => setHoveredModel(null)}
                 >
                   {model.badge && <span className="sales-lineup__tab-badge">{model.badge}</span>}
-                  <span className="sales-lineup__tab-name">{model.name}</span>
-                  <span className="sales-lineup__tab-tagline">{model.tagline}</span>
+                  <span className="sales-lineup__tab-name">{t(salesModelSectionId[model.id], 'name') || model.name}</span>
+                  <span className="sales-lineup__tab-tagline">{t(salesModelSectionId[model.id], 'tagline') || model.tagline}</span>
                 </button>
               </Reveal>
             ))}
@@ -1198,8 +1208,8 @@ function Sales() {
 
             <div className="sales-lineup__info">
                 <div className="sales-lineup__model-header">
-                  <h3>{activeModel.name}</h3>
-                  <span className="sales-lineup__tagline">{activeModel.tagline}</span>
+                  <h3>{t(salesModelSectionId[activeModel.id], 'name') || activeModel.name}</h3>
+                  <span className="sales-lineup__tagline">{t(salesModelSectionId[activeModel.id], 'tagline') || activeModel.tagline}</span>
                   <div className="sales-lineup__header-divider" />
                   {activeModel.subtypes.length > 1 && (
                     <div className="sales-lineup__subtypes">
@@ -1217,23 +1227,23 @@ function Sales() {
                 </div>
 
                 <div className="sales-lineup__middle">
-                  <p className="sales-lineup__desc">{activeSubtype.description}</p>
+                  <p className="sales-lineup__desc">{t(salesModelSectionId[activeModel.id], 'description') || activeSubtype.description}</p>
 
                   <div className="sales-lineup__specs">
                     <div className="sales-lineup__spec">
-                      <span className="sales-lineup__spec-value">{activeModel.seats}</span>
+                      <span className="sales-lineup__spec-value">{t(salesModelSectionId[activeModel.id], 'seats') || activeModel.seats}</span>
                       <span className="sales-lineup__spec-label">Seats</span>
                     </div>
                     <div className="sales-lineup__spec">
-                      <span className="sales-lineup__spec-value">{activeModel.speed}</span>
+                      <span className="sales-lineup__spec-value">{t(salesModelSectionId[activeModel.id], 'speed') || activeModel.speed}</span>
                       <span className="sales-lineup__spec-label">Knots</span>
                     </div>
                     <div className="sales-lineup__spec">
-                      <span className="sales-lineup__spec-value">{activeModel.range}</span>
+                      <span className="sales-lineup__spec-value">{t(salesModelSectionId[activeModel.id], 'range') || activeModel.range}</span>
                       <span className="sales-lineup__spec-label">NM Range</span>
                     </div>
                     <div className="sales-lineup__spec">
-                      <span className="sales-lineup__spec-value">{activeModel.engine}</span>
+                      <span className="sales-lineup__spec-value">{t(salesModelSectionId[activeModel.id], 'engine') || activeModel.engine}</span>
                       <span className="sales-lineup__spec-label">Engine</span>
                     </div>
                   </div>
@@ -1241,7 +1251,7 @@ function Sales() {
 
                 <div className="sales-lineup__price">
                   <span className="sales-lineup__price-label">From</span>
-                  <span className="sales-lineup__price-value">{activeModel.price}</span>
+                  <span className="sales-lineup__price-value">{t(salesModelSectionId[activeModel.id], 'price') || activeModel.price}</span>
                 </div>
               </div>
             </div>
@@ -1426,7 +1436,7 @@ function Sales() {
         <div className="sales-process__container">
           <Reveal>
             <div className="sales-section-header">
-              <span className="sales-pre-text">Your Journey</span>
+              <span className="sales-pre-text">{t('sales-process', 'pre_label') || 'Your Journey'}</span>
               <h2>
                 <span className="sales-text--dark">The</span>{' '}
                 <span className="sales-text--mid">Buying</span>{' '}
@@ -1444,8 +1454,8 @@ function Sales() {
                     <span className="sales-process__num">{step.num}</span>
                   </div>
                   <div className="sales-process__content">
-                    <h4>{step.title}</h4>
-                    <p>{step.desc}</p>
+                    <h4>{t('sales-process', `step_${i + 1}_title`) || step.title}</h4>
+                    <p>{t('sales-process', `step_${i + 1}_desc`) || step.desc}</p>
                   </div>
                 </div>
               </Reveal>
@@ -1677,26 +1687,25 @@ function Sales() {
         <div className="sales-contact__inner">
           <Reveal>
             <div className="sales-contact__content">
-              <span className="sales-pre-text">Ready to Begin?</span>
+              <span className="sales-pre-text">{t('sales-cta', 'pre_label') || 'Ready to Begin?'}</span>
               <h2>
                 <span className="sales-text--light">Let's Talk</span>{' '}
                 <span className="sales-text--white">About Your</span>{' '}
                 <span className="sales-text--white">Next Aircraft</span>
               </h2>
               <p>
-                Whether you're a first-time buyer or expanding your fleet,
-                our team is ready to guide you to the perfect helicopter.
+                {t('sales-cta', 'description') || "Whether you're a first-time buyer or expanding your fleet, our team is ready to guide you to the perfect helicopter."}
               </p>
               <div className="sales-contact__actions">
                 <a href="tel:+441234567890" className="sales-btn sales-btn--white">
-                  Call +44 1234 567 890
+                  {t('sales-cta', 'cta_phone') || 'Call +44 1234 567 890'}
                 </a>
                 <Link to="/contact?subject=aircraft-sales" className="sales-btn sales-btn--outline-white">
-                  Send Enquiry
+                  {t('sales-cta', 'cta_email') || 'Send Enquiry'}
                 </Link>
               </div>
               <div className="sales-contact__location">
-                <span>HQ Aviation · Denham Aerodrome · UB9 5DF</span>
+                <span>{t('sales-cta', 'location') || 'HQ Aviation · Denham Aerodrome · UB9 5DF'}</span>
               </div>
             </div>
           </Reveal>

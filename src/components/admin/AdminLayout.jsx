@@ -1,6 +1,8 @@
+import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
-import { auth } from '../../lib/firebase';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { auth, db } from '../../lib/firebase';
 
 const NAV_ITEMS = [
   { to: '/admin', icon: '📊', label: 'Dashboard' },
@@ -17,6 +19,13 @@ const NAV_ITEMS = [
 
 export default function AdminLayout({ children }) {
   const navigate = useNavigate();
+  const [newLeadCount, setNewLeadCount] = useState(0);
+
+  useEffect(() => {
+    const q = query(collection(db, 'leads'), where('status', '==', 'new'));
+    const unsub = onSnapshot(q, (snap) => setNewLeadCount(snap.size), () => {});
+    return unsub;
+  }, []);
 
   async function handleSignOut() {
     await signOut(auth);
@@ -49,7 +58,16 @@ export default function AdminLayout({ children }) {
               })}
             >
               <span style={{ fontSize: '1rem', lineHeight: 1 }}>{item.icon}</span>
-              {item.label}
+              <span style={{ flex: 1 }}>{item.label}</span>
+              {item.to === '/admin/leads' && newLeadCount > 0 && (
+                <span style={{
+                  background: '#ef4444', color: '#fff', borderRadius: '10px',
+                  fontSize: '0.65rem', fontWeight: 700, padding: '1px 6px',
+                  minWidth: '18px', textAlign: 'center', lineHeight: '18px',
+                }}>
+                  {newLeadCount > 99 ? '99+' : newLeadCount}
+                </span>
+              )}
             </NavLink>
           ))}
         </nav>

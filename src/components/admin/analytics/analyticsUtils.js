@@ -233,3 +233,77 @@ export function topUtmSources(pageviews, n = 8) {
   const withUtm = pageviews.filter((e) => e.utmSource);
   return topN(countBy(withUtm, 'utmSource'), n);
 }
+
+/**
+ * Top N actual referring domains (excludes search engines, social networks, and empty referrers).
+ * Strips www. prefix. Returns [[domain, count], ...].
+ */
+export function topReferrerDomains(pageviews, n = 8) {
+  const domainCounts = {};
+  for (const e of pageviews) {
+    if (!e.referrer) continue;
+    try {
+      const host = new URL(e.referrer).hostname.toLowerCase();
+      if (SEARCH_DOMAINS.some((d) => host.includes(d))) continue;
+      if (SOCIAL_DOMAINS.some((d) => host.includes(d))) continue;
+      const clean = host.replace(/^www\./, '');
+      domainCounts[clean] = (domainCounts[clean] || 0) + 1;
+    } catch {}
+  }
+  return topN(domainCounts, n);
+}
+
+/**
+ * Booking conversion funnel for HQ Aviation.
+ * steps = [{ label, match: (page: string) => boolean }]
+ * The final step (form submit) is taken from formSubmitEvents.
+ * Returns [{ label, count, pct }] where pct is relative to step 0 (total sessions).
+ */
+export function funnelData(pageviews, formSubmitEvents, steps) {
+  const sessionPages = {};
+  for (const e of pageviews) {
+    if (!sessionPages[e.sessionId]) sessionPages[e.sessionId] = new Set();
+    sessionPages[e.sessionId].add(e.page);
+  }
+  const allSessions = Object.keys(sessionPages);
+  const top = allSessions.length || 1;
+
+  const results = steps.map(({ label, match }) => {
+    const count = allSessions.filter((sid) => [...sessionPages[sid]].some(match)).length;
+    return { label, count, pct: Math.round((count / top) * 100) };
+  });
+
+  const formSessions = new Set(formSubmitEvents.map((e) => e.sessionId)).size;
+  results.push({
+    label: 'Submitted Form',
+    count: formSessions,
+    pct: Math.round((formSessions / top) * 100),
+  });
+
+  return results;
+}
+
+/**
+ * Per-page average time on page (seconds) from page_exit events.
+ * elementId on page_exit events holds the elapsed seconds as a string.
+ * Returns [{ page, avgSeconds, count }] sorted by avgSeconds desc.
+ */
+export function avgTimeByPage(exitEvents, n = 8) {
+  const toNum = (v) => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+  const byPage = {};
+  for (const e of exitEvents) {
+    if (!e.page) continue;
+    if (!byPage[e.page]) byPage[e.page] = { total: 0, count: 0 };
+    byPage[e.page].total += toNum(e.elementId);
+    byPage[e.page].count += 1;
+  }
+  return Object.entries(byPage)
+    .filter(([, { count }]) => count > 0)
+    .map(([page, { total, count }]) => ({
+      page,
+      avgSeconds: Math.round(total / count),
+      count,
+    }))
+    .sort((a, b) => b.avgSeconds - a.avgSeconds)
+    .slice(0, n);
+}

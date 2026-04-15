@@ -18,6 +18,7 @@ import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import HeroSectionFinalTesting from './HeroSectionFinalTesting';
 import { usePageImages } from '../hooks/usePageImages';
+import { usePageText } from '../hooks/usePageText';
 import { useCmsTextHighlight } from '../hooks/useCmsTextHighlight';
 import { SECTION_MAP } from '../lib/imageSections';
 
@@ -27,6 +28,7 @@ import '../assets/css/components.css';
 
 // Scroll path animation component
 import ScrollPathAnimation from '../components/ScrollPathAnimation';
+import AircraftAlertSignup from '../components/AircraftAlertSignup';
 import FacilityGallery from '../components/Maintenance/FacilityGallery';
 import FacilityServicesCarousel from '../components/Maintenance/FacilityServicesCarousel';
 import FacilityServicesDetail from '../components/Maintenance/FacilityServicesDetail';
@@ -115,6 +117,7 @@ function ServiceSplitDots({ autoExpand = false }) {
 // Dealer Card — Cloud Frost (cert-114 style)
 // ============================================
 function DealerSplitDots({ autoExpand = false }) {
+  const { t } = usePageText('home');
   const [expanded, setExpanded] = useState(false);
   const dealerRef = useRef(null);
 
@@ -133,9 +136,9 @@ function DealerSplitDots({ autoExpand = false }) {
         </div>
         <div className={`cert-cloud__expanded ${expanded ? 'cert-cloud__expanded--open' : ''}`}>
           <div className="cert-cloud__body">
-            <span className="cert-cloud__label-tag">Official</span>
-            <h3 className="cert-cloud__title">Robinson Authorized Dealer</h3>
-            <p className="cert-cloud__desc">The UK's premier Robinson dealership since 2011. Factory-direct pricing, full warranty support, and expert guidance from purchase to delivery.</p>
+            <span className="cert-cloud__label-tag">{t('home-sales-section', 'cert_label')}</span>
+            <h3 className="cert-cloud__title">{t('home-sales-section', 'cert_title')}</h3>
+            <p className="cert-cloud__desc">{t('home-sales-section', 'cert_desc')}</p>
           </div>
         </div>
       </div>
@@ -403,6 +406,7 @@ const EDITORIAL_MOBILE_R2A = EDITORIAL_IMAGES_ROW2.slice(0, 5);
 const EDITORIAL_MOBILE_R2B = EDITORIAL_IMAGES_ROW2.slice(5, 10);
 
 const EditorialStrips = ({ wrapperRef = null, row1Images = EDITORIAL_IMAGES_ROW1, row2Images = EDITORIAL_IMAGES_ROW2 }) => {
+  const { t } = usePageText('home');
   const containerRef = useRef(null);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
@@ -418,7 +422,20 @@ const EditorialStrips = ({ wrapperRef = null, row1Images = EDITORIAL_IMAGES_ROW1
   const xR1b = useTransform(scrollYProgress, [0, 1], ['-160%', '5%']);
   const xR2b = useTransform(scrollYProgress, [0, 1], ['5%', '-190%']);
 
-  const words = ['Your', 'Sky.', 'Your', 'Schedule.', 'Your', 'Freedom.', 'No', 'Limits.', 'No', 'Queues.', 'Just', 'Fly.'];
+  const words = [
+    t('home-editorial-headline', 'word_1'),
+    t('home-editorial-headline', 'word_2'),
+    t('home-editorial-headline', 'word_3'),
+    t('home-editorial-headline', 'word_4'),
+    t('home-editorial-headline', 'word_5'),
+    t('home-editorial-headline', 'word_6'),
+    t('home-editorial-headline', 'word_7'),
+    t('home-editorial-headline', 'word_8'),
+    t('home-editorial-headline', 'word_9'),
+    t('home-editorial-headline', 'word_10'),
+    t('home-editorial-headline', 'word_11'),
+    t('home-editorial-headline', 'word_12'),
+  ];
   const destsDoubled = [...EDITORIAL_DESTINATIONS, ...EDITORIAL_DESTINATIONS];
 
   return (
@@ -594,11 +611,25 @@ function MaintScrollGallery({ row1 = maintGalleryRow1, row2 = maintGalleryRow2 }
 }
 
 const SelfFlyHireSection = () => {
+  const { t } = usePageText('home');
   const sfhPageImages = usePageImages('home');
   const sfhCmsFleetImgs      = sfhPageImages['home-sfh-fleet']          ?? SECTION_MAP['home-sfh-fleet'].images;
   const sfhCmsIntroCarousel  = sfhPageImages['home-sfh-intro-img'] ?? SECTION_MAP['home-sfh-intro-img'].images;
   const sfhCmsMobileCarousel = sfhPageImages['home-sfh-mobile-carousel'] ?? SECTION_MAP['home-sfh-mobile-carousel'].images;
-  const sfhFleetCms          = sfhFleet.map((f, i) => ({ ...f, img: sfhCmsFleetImgs[i]?.url ?? f.img }));
+  const sfhFleetSectionIds = ['home-sfh-fleet-r66', 'home-sfh-fleet-r44', 'home-sfh-fleet-r22'];
+  const sfhFleetCms = sfhFleet.map((f, i) => ({
+    ...f,
+    img: sfhCmsFleetImgs[i]?.url ?? f.img,
+    model: t(sfhFleetSectionIds[i], 'name'),
+    seats: t(sfhFleetSectionIds[i], 'seats'),
+    rate:  t(sfhFleetSectionIds[i], 'rate'),
+  }));
+  const sfhDestCoordsCms = [
+    { ...sfhDestCoords[0], name: t('home-sfh-destinations', 'dest_1_name'), nm: Number(t('home-sfh-destinations', 'dest_1_nm')) || sfhDestCoords[0].nm, carTime: t('home-sfh-destinations', 'dest_1_car'), desc: t('home-sfh-destinations', 'dest_1_desc') },
+    { ...sfhDestCoords[1], name: t('home-sfh-destinations', 'dest_2_name'), nm: Number(t('home-sfh-destinations', 'dest_2_nm')) || sfhDestCoords[1].nm, carTime: t('home-sfh-destinations', 'dest_2_car'), desc: t('home-sfh-destinations', 'dest_2_desc') },
+    { ...sfhDestCoords[2], name: t('home-sfh-destinations', 'dest_3_name'), nm: Number(t('home-sfh-destinations', 'dest_3_nm')) || sfhDestCoords[2].nm, carTime: t('home-sfh-destinations', 'dest_3_car'), desc: t('home-sfh-destinations', 'dest_3_desc') },
+    { ...sfhDestCoords[3], name: t('home-sfh-destinations', 'dest_4_name'), nm: Number(t('home-sfh-destinations', 'dest_4_nm')) || sfhDestCoords[3].nm, carTime: t('home-sfh-destinations', 'dest_4_car'), desc: t('home-sfh-destinations', 'dest_4_desc') },
+  ];
 
   const [hoveredDest, setHoveredDest] = useState(null);
   const [lockedDest, setLockedDest] = useState(null);
@@ -1115,9 +1146,9 @@ const SelfFlyHireSection = () => {
             </div>
           </div>
           <div className="sfh-map__intro-text" data-cms-text-section="home-sfh-section">
-            <span className="sfh-map__pre-title">Freedom to Fly Yourself Anywhere</span>
+            <span className="sfh-map__pre-title">{t('home-sfh-section', 'pre_label')}</span>
             <h2 className="sfh-map__title">
-              <span className="sfh-map__title-line">Self-Fly Hire:</span>
+              <span className="sfh-map__title-line">{t('home-sfh-section', 'heading')}</span>
               <span className="sfh-map__title-line">Your Aircraft</span>
               <span className="sfh-map__title-line sfh-map__title-line--2">Awaits</span>
             </h2>
@@ -1134,7 +1165,7 @@ const SelfFlyHireSection = () => {
             </div>
 
             <p className="sfh-map__tagline">
-              You've earned your licence. Now use it. Hire from our fleet of R22s, R44s and R66s — fuelled, washed and waiting on the pad for you, ready to go. Fly yourself to lunch in France, a weekend in the Cotswolds, a business meeting across the country, or just flying around for the beauty and fun of it. Available by the hour, day or week. No crew, no waiting, no compromise.
+              {t('home-sfh-section', 'description')}
             </p>
             <div className="sfh-map__collapse-card">
               <button className="sfh-map__collapse-toggle" onClick={() => setMapExpanded(!mapExpanded)}>
@@ -1172,7 +1203,7 @@ const SelfFlyHireSection = () => {
               <circle cx={denham.x} cy={denham.y} r="10" fill="none" stroke="#1a1a1a" strokeWidth="0.5" opacity="0.15" />
               <text x={denham.x + 12} y={denham.y + 3} fontFamily="Share Tech Mono" fontSize="10" fill="#666" fontWeight="700">DENHAM</text>
 
-              {sfhDestCoords.map((d, i) => {
+              {sfhDestCoordsCms.map((d, i) => {
                 if (!d.x) return null;
                 const isActive = activeDest === i;
                 const dx = d.x - denham.x, dy = d.y - denham.y;
@@ -1204,7 +1235,7 @@ const SelfFlyHireSection = () => {
             <div>
               <div className="sfh-map__tl-title">Select Destination</div>
               <ul className="sfh-map__dest-list">
-                {sfhDestCoords.map((d, i) => (
+                {sfhDestCoordsCms.map((d, i) => (
                   <li
                     key={d.name}
                     className={`sfh-map__dest-item ${activeDest === i ? 'sfh-map__dest-item--active' : ''}`}
@@ -1282,7 +1313,7 @@ const SelfFlyHireSection = () => {
                   <circle cx={310} cy={480} r="5" fill="#1a1a1a" />
                   <circle cx={310} cy={480} r="10" fill="none" stroke="#1a1a1a" strokeWidth="0.5" opacity="0.15" />
                   <text x={322} y={483} fontFamily="Share Tech Mono" fontSize="10" fill="#666" fontWeight="700">DENHAM</text>
-                  {sfhDestCoords.map((d) => (
+                  {sfhDestCoordsCms.map((d) => (
                     <g key={d.name}>
                       <line x1={310} y1={480} x2={d.x} y2={d.y} stroke="#b5b0a8" strokeWidth="0.75" strokeDasharray="4 3" />
                       <circle cx={d.x} cy={d.y} r="4" fill="#999" />
@@ -1368,6 +1399,9 @@ function ZigzagTrainingItem({ slide, index, isEven }) {
 }
 
 function Experimentation() {
+  // ── CMS text data ───────────────────────────────────────────────────────────
+  const { t } = usePageText('home');
+
   // ── CMS image data ──────────────────────────────────────────────────────────
   const pageImages = usePageImages('home');
 
@@ -1406,7 +1440,32 @@ function Experimentation() {
 
   // Sales — new aircraft cutout images (merged with base model data)
   const cmsSalesAircraftImgs = pageImages['home-sales-aircraft'] ?? SECTION_MAP['home-sales-aircraft'].images;
-  const newAircraftCards = NEW_AIRCRAFT_MODELS.map((ac, i) => ({ ...ac, img: cmsSalesAircraftImgs[i]?.url ?? ac.img }));
+  const salesModelSectionIds = ['home-sales-model-r88', 'home-sales-model-r66', 'home-sales-model-r44', 'home-sales-model-r22'];
+  const salesModelPropulsion = ['Turbine', 'Turbine', 'Piston', 'Piston'];
+  const newAircraftCards = NEW_AIRCRAFT_MODELS.map((ac, i) => ({
+    ...ac,
+    img:     cmsSalesAircraftImgs[i]?.url ?? ac.img,
+    name:    t(salesModelSectionIds[i], 'name'),
+    tagline: t(salesModelSectionIds[i], 'tagline'),
+    price:   t(salesModelSectionIds[i], 'price'),
+    specs:   [
+      t(salesModelSectionIds[i], 'seats') + ' seats',
+      t(salesModelSectionIds[i], 'speed') + ' kts',
+      salesModelPropulsion[i],
+    ],
+  }));
+
+  // Expedition barcode destinations — CMS text overrides on top of default images/galleries
+  const expedDestinationsCms = [
+    { id: 'arctic',     name: t('home-exped-destinations', 'arctic_name'),     distance: t('home-exped-destinations', 'arctic_distance'),     year: t('home-exped-destinations', 'arctic_year'),     description: t('home-exped-destinations', 'arctic_desc'),     image: '/assets/images/expeditions/north-pole.jpg',                                  gallery: ['/assets/images/expeditions/north-pole.jpg', '/assets/images/expeditions/six-helis-in-North-Pole.jpg', '/assets/images/expeditions/antartica.jpg', '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp'] },
+    { id: 'iceland',    name: t('home-exped-destinations', 'iceland_name'),    distance: t('home-exped-destinations', 'iceland_distance'),    year: t('home-exped-destinations', 'iceland_year'),    description: t('home-exped-destinations', 'iceland_desc'),    image: '/assets/images/expeditions/channel.jpg',                                     gallery: ['/assets/images/expeditions/channel.jpg', '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp', '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp', '/assets/images/expeditions/antartica.jpg'] },
+    { id: 'morocco',    name: t('home-exped-destinations', 'morocco_name'),    distance: t('home-exped-destinations', 'morocco_distance'),    year: t('home-exped-destinations', 'morocco_year'),    description: t('home-exped-destinations', 'morocco_desc'),    image: '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp',      gallery: ['/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp', '/assets/images/expeditions/channel.jpg', '/assets/images/expeditions/north-pole.jpg', '/assets/images/expeditions/six-helis-in-North-Pole.jpg'] },
+    { id: 'norway',     name: t('home-exped-destinations', 'norway_name'),     distance: t('home-exped-destinations', 'norway_distance'),     year: t('home-exped-destinations', 'norway_year'),     description: t('home-exped-destinations', 'norway_desc'),     image: '/assets/images/expeditions/six-helis-in-North-Pole.jpg',                     gallery: ['/assets/images/expeditions/six-helis-in-North-Pole.jpg', '/assets/images/expeditions/north-pole.jpg', '/assets/images/expeditions/channel.jpg', '/assets/images/expeditions/antartica.jpg'] },
+    { id: 'alps',       name: t('home-exped-destinations', 'alps_name'),       distance: t('home-exped-destinations', 'alps_distance'),       year: t('home-exped-destinations', 'alps_year'),       description: t('home-exped-destinations', 'alps_desc'),       image: '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp',    gallery: ['/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp', '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp', '/assets/images/expeditions/channel.jpg', '/assets/images/expeditions/six-helis-in-North-Pole.jpg'] },
+    { id: 'greenland',  name: t('home-exped-destinations', 'greenland_name'),  distance: t('home-exped-destinations', 'greenland_distance'),  year: t('home-exped-destinations', 'greenland_year'),  description: t('home-exped-destinations', 'greenland_desc'),  image: '/assets/images/expeditions/antartica.jpg',                                   gallery: ['/assets/images/expeditions/antartica.jpg', '/assets/images/expeditions/north-pole.jpg', '/assets/images/expeditions/six-helis-in-North-Pole.jpg', '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp'] },
+    { id: 'bahamas',    name: t('home-exped-destinations', 'bahamas_name'),    distance: t('home-exped-destinations', 'bahamas_distance'),    year: t('home-exped-destinations', 'bahamas_year'),    description: t('home-exped-destinations', 'bahamas_desc'),    image: '/assets/images/expeditions/channel.jpg',                                     gallery: ['/assets/images/expeditions/channel.jpg', '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp', '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp', '/assets/images/expeditions/antartica.jpg'] },
+    { id: 'costa-rica', name: t('home-exped-destinations', 'costarica_name'), distance: t('home-exped-destinations', 'costarica_distance'), year: t('home-exped-destinations', 'costarica_year'), description: t('home-exped-destinations', 'costarica_desc'), image: '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp',      gallery: ['/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp', '/assets/images/expeditions/channel.jpg', '/assets/images/expeditions/north-pole.jpg', '/assets/images/expeditions/antartica.jpg'] },
+  ];
 
   // ── CMS section highlight (admin "Find on page" feature) ────────────────────
   useEffect(() => {
@@ -3377,16 +3436,14 @@ function Experimentation() {
             </svg>
           </div>
           <div className="fd-exped__cinematic-content" data-cms-text-section="home-exped-section">
-            <span className="fd-exped__pre-title">Explore the World</span>
+            <span className="fd-exped__pre-title">{t('home-exped-section', 'pre_label')}</span>
             <h2 className="fd-exped__title">
-              <span className="fd-exped__title-word fd-exped__title-word--1">Expeditions</span>
+              <span className="fd-exped__title-word fd-exped__title-word--1">{t('home-exped-section', 'heading')}</span>
             </h2>
-            <ExpeditionBarcode onSelect={(id) => setBarcodeSelected(!!id)} />
+            <ExpeditionBarcode destinations={expedDestinationsCms} onSelect={(id) => setBarcodeSelected(!!id)} />
             {!barcodeSelected && (
             <p className="fd-exped__cinematic-desc">
-              This isn't transport. This is using the helicopter as a gateway to the world—
-              a first-class ticket to the beauty of our planet, seeing places in ways that
-              very few have ever experienced before.
+              {t('home-exped-section', 'description')}
             </p>
             )}
             <div style={{ textAlign: 'center', marginTop: '12px' }}>
@@ -3413,12 +3470,12 @@ function Experimentation() {
         <div className="fd-sales__intro" ref={salesIntroRef}>
           <div className="fd-sales__left">
             <div className="fd-sales__header-sticky" ref={salesHeaderRef} data-cms-text-section="home-sales-section">
-              <span className="fd-sales__pre-title" ref={salesPreTitleRef}>Your Search Starts Here</span>
+              <span className="fd-sales__pre-title" ref={salesPreTitleRef}>{t('home-sales-section', 'pre_label')}</span>
               <div ref={salesTitleFadeRef}>
                 <h2 className="fd-sales__title">
-                  <span className="fd-sales__title-word fd-sales__title-word--1">Find</span>
-                  <span className="fd-sales__title-word fd-sales__title-word--2">Your Next</span>
-                  <span className="fd-sales__title-word fd-sales__title-word--3">Aircraft</span>
+                  <span className="fd-sales__title-word fd-sales__title-word--1">{t('home-sales-section', 'heading_1')}</span>
+                  <span className="fd-sales__title-word fd-sales__title-word--2">{t('home-sales-section', 'heading_2')}</span>
+                  <span className="fd-sales__title-word fd-sales__title-word--3">{t('home-sales-section', 'heading_3')}</span>
                 </h2>
               </div>
               <div ref={salesTextFadeRef}>
@@ -3497,7 +3554,7 @@ function Experimentation() {
         {(() => {
           const salesCards = newAircraftCards;
           return (
-            <div className="fd-sales__carousel-wrap">
+            <div className="fd-sales__carousel-wrap fd-sales__carousel-wrap--new-aircraft">
               <div
                 className="fd-sales__carousel-track"
                 ref={salesGridCarouselRef}
@@ -3567,6 +3624,7 @@ function Experimentation() {
         <p className="fd-sales__section-desc" style={{ marginBottom: '1.5rem' }}>
           Our clients regularly trade, upgrade and renew their fleets — which means we always have access to quality pre-owned aircraft at every stage of life. Many come directly from owners whose maintenance we've managed for years, so we know every hour, every component and every logbook entry. When the right aircraft isn't already on our doorstep, we'll source it — inspecting the airframe, engine and avionics on-site before it ever reaches you. Looking for something specific? Talk to our sales team and we'll begin the search.
         </p>
+        <AircraftAlertSignup />
         <div className="fd-sales__carousel-wrap">
             <button className={`rb-stats__chevron rb-stats__chevron--left ${!preownedCanScrollLeft ? 'rb-stats__chevron--hidden-desktop' : ''}`} onClick={() => preownedRef.current.scrollBy({ left: -280, behavior: 'smooth' })}>
               <i className="fas fa-chevron-left"></i>
@@ -3846,6 +3904,7 @@ function Experimentation() {
             </div>
         </div>
         </div>
+
 
       </section>
 
@@ -7599,6 +7658,7 @@ function Experimentation() {
         .fd-sales__header-divider--mobile { display: none; }
         .fd-sales__carousel-dots--preowned { display: none; }
         .fd-sales__carousel-controls { display: none; }
+        .fd-sales__carousel-wrap--new-aircraft { display: none; }
         .fd-sales__intro-gallery {
           grid-column: 2;
           grid-row: 1;
@@ -7866,6 +7926,23 @@ function Experimentation() {
           color: #1a1a1a;
         }
 
+        .fd-sales__market-intro {
+          max-width: 1100px;
+          margin: 0 auto 1.5rem;
+          padding: 0 2rem;
+          text-align: center;
+        }
+        .fd-sales__market-title {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1rem;
+          font-weight: 700;
+          color: #1a1a1a;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          margin: 40px 0 0.75rem;
+          line-height: 1.2;
+        }
+
         .fd-sales__subsection {
           max-width: 1100px;
           margin: 0 auto;
@@ -8012,7 +8089,7 @@ function Experimentation() {
           overflow-x: auto;
           scroll-snap-type: x mandatory;
           gap: 1.5rem;
-          padding: 0.5rem 0 1.5rem;
+          padding: 42px 0 1.5rem;
           -webkit-overflow-scrolling: touch;
           scrollbar-width: none;
           -ms-overflow-style: none;
@@ -8108,6 +8185,10 @@ function Experimentation() {
         @media (max-width: 768px) {
           .fd-sales__grid--desktop {
             display: none;
+          }
+          .fd-sales__carousel-wrap--new-aircraft {
+            display: flex;
+            flex-wrap: wrap;
           }
         }
         @media (max-width: 550px) {
@@ -12847,9 +12928,9 @@ function Experimentation() {
           .fd-sales__mobile-carousel-wrap { padding-left: 0 !important; padding-right: 0 !important; }
           .fd-sales__intro { grid-template-columns: 1fr; padding-left: 0; padding-right: 0; padding-bottom: 24px; }
           .fd-sales__left { display: contents; }
-          .fd-sales__header-sticky { position: static; text-align: center; padding: 2rem 2rem 32px; order: 1; }
+          .fd-sales__header-sticky { position: static; text-align: center; padding: 2rem 2rem 0 !important; order: 1; }
           .fd-sales__mobile-carousel-wrap { order: 2; margin-top: 24px; }
-          .fd-sales__dealer-catch { position: static; transition: none; transform: none !important; padding: 0 2rem; order: 4; margin-top: 24px; }
+          .fd-sales__dealer-catch { position: static; transition: none; transform: none !important; padding: 0 2rem; order: 4; margin-top: 24px !important; }
           .fd-sales__dealer-catch .cert-cloud__expanded { transition: max-height 2s ease, opacity 2s ease; }
           .fd-maint { padding-left: 0; padding-right: 0; max-width: 100vw; }
           .fd-maint > * { padding-left: 2rem; padding-right: 2rem; box-sizing: border-box; max-width: 100%; overflow: hidden; }

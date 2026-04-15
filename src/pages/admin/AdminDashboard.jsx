@@ -68,6 +68,7 @@ export default function AdminDashboard() {
     { label: 'Analytics', link: '/admin/analytics', icon: '📈' },
     { label: 'Wall of Cool', link: '/admin/wall-of-cool', icon: '📸' },
     { label: 'Reviews', link: '/admin/reviews', icon: '⭐' },
+    { label: 'FAQs', link: '/admin/faqs', icon: '❓' },
   ];
 
   return (

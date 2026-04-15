@@ -88,6 +88,7 @@ import AdminLeads from './pages/admin/AdminLeads';
 import AdminAnalytics from './pages/admin/AdminAnalytics';
 import AdminWallOfCool from './pages/admin/AdminWallOfCool';
 import AdminReviews from './pages/admin/AdminReviews';
+import AdminFaqs from './pages/admin/AdminFaqs';
 import AdminEditImagesMode from './pages/admin/AdminEditImagesMode';
 import AdminEditTextMode from './pages/admin/AdminEditTextMode';
 import PageTracker from './components/PageTracker';
@@ -198,6 +199,7 @@ function App() {
         <Route path="/admin/analytics" element={<AdminRoute><AdminAnalytics /></AdminRoute>} />
         <Route path="/admin/wall-of-cool" element={<AdminRoute><AdminWallOfCool /></AdminRoute>} />
         <Route path="/admin/reviews" element={<AdminRoute><AdminReviews /></AdminRoute>} />
+        <Route path="/admin/faqs" element={<AdminRoute><AdminFaqs /></AdminRoute>} />
 
         <Route path="/" element={<Experimentation />} />
         <Route element={<Layout />}>

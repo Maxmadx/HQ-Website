@@ -10,6 +10,8 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { usePageImages } from '../hooks/usePageImages';
+import { usePageText } from '../hooks/usePageText';
+import { useFaqs } from '../hooks/useFaqs';
 
 // Import styles
 import '../assets/css/main.css';
@@ -316,6 +318,13 @@ const destinationsWithCms = [
 
 function SelfFlyHire() {
   const pageImages = usePageImages('sfh');
+  const { t } = usePageText('sfh');
+
+  const sfhSectionFor = {
+    'R22':          'sfh-aircraft-r22',
+    'R44 Raven II': 'sfh-aircraft-r44',
+    'R66 Turbine':  'sfh-aircraft-r66',
+  };
 
   const heroUrl  = pageImages['sfh-hero']?.[0]?.url  ?? '/assets/images/gallery/carousel/rotating1.jpg';
   const introUrl = pageImages['sfh-intro']?.[0]?.url ?? '/assets/images/facility/fleet-lineup.jpg';
@@ -351,32 +360,7 @@ function SelfFlyHire() {
     window.scrollTo(0, 0);
   }, []);
 
-  const faqs = [
-    {
-      q: 'What are the minimum requirements to hire?',
-      a: 'You need a valid PPL(H) with a current medical certificate, the appropriate type rating for your chosen aircraft, and recent flight experience. If you haven\'t flown recently, we can arrange a currency check flight.'
-    },
-    {
-      q: 'How far in advance should I book?',
-      a: 'We recommend booking at least 48 hours in advance, especially for weekends and holidays. However, subject to availability, we can accommodate same-day bookings.'
-    },
-    {
-      q: 'Is insurance included?',
-      a: 'Yes, comprehensive hull and liability insurance is included in all hire rates. Your excess is £5,000 for the R22, £7,500 for the R44, and £10,000 for the R66.'
-    },
-    {
-      q: 'Can I fly abroad?',
-      a: 'Yes, with prior arrangement. We can assist with flight planning, customs requirements, and necessary permissions for international flights.'
-    },
-    {
-      q: 'What happens if I need to cancel?',
-      a: 'Cancellations made more than 24 hours before your booking receive a full refund. Cancellations within 24 hours are charged at 50% of the booking value.'
-    },
-    {
-      q: 'Do you offer block booking discounts?',
-      a: 'Yes, we offer discounted rates for block bookings of 10 hours or more. Contact us for a personalized quote based on your flying requirements.'
-    }
-  ];
+  const { faqs } = useFaqs('sfh', { visibleOnly: true });
 
   return (
     <div className="sfh">
@@ -405,7 +389,7 @@ function SelfFlyHire() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              HELICOPTER HIRE
+              {t('sfh-hero', 'pre_label')}
             </motion.span>
 
             <div className="sfh-hero__headline">
@@ -415,7 +399,7 @@ function SelfFlyHire() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
               >
-                SELF-FLY
+                {t('sfh-hero', 'headline_1')}
               </motion.span>
               <motion.span
                 className="sfh-hero__word sfh-hero__word--2"
@@ -423,7 +407,7 @@ function SelfFlyHire() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
               >
-                HIRE
+                {t('sfh-hero', 'headline_2')}
               </motion.span>
             </div>
 
@@ -440,7 +424,7 @@ function SelfFlyHire() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1 }}
             >
-              Access Europe's largest Robinson fleet. Fly where you want, when you want—with the freedom only helicopter travel provides.
+              {t('sfh-hero', 'subtitle')}
             </motion.p>
 
             <motion.div
@@ -450,18 +434,18 @@ function SelfFlyHire() {
               transition={{ delay: 1.2 }}
             >
               <div className="sfh-hero__stat">
-                <span className="sfh-hero__stat-value">30+</span>
-                <span className="sfh-hero__stat-label">Aircraft</span>
+                <span className="sfh-hero__stat-value">{t('sfh-hero', 'stat_1_value')}</span>
+                <span className="sfh-hero__stat-label">{t('sfh-hero', 'stat_1_label')}</span>
               </div>
               <div className="sfh-hero__stat-divider" />
               <div className="sfh-hero__stat">
-                <span className="sfh-hero__stat-value">3</span>
-                <span className="sfh-hero__stat-label">Models</span>
+                <span className="sfh-hero__stat-value">{t('sfh-hero', 'stat_2_value')}</span>
+                <span className="sfh-hero__stat-label">{t('sfh-hero', 'stat_2_label')}</span>
               </div>
               <div className="sfh-hero__stat-divider" />
               <div className="sfh-hero__stat">
-                <span className="sfh-hero__stat-value">7</span>
-                <span className="sfh-hero__stat-label">Days/Week</span>
+                <span className="sfh-hero__stat-value">{t('sfh-hero', 'stat_3_value')}</span>
+                <span className="sfh-hero__stat-label">{t('sfh-hero', 'stat_3_label')}</span>
               </div>
             </motion.div>
           </div>
@@ -481,17 +465,9 @@ function SelfFlyHire() {
           <div className="sfh-intro__right">
             <Reveal>
               <div className="sfh-intro__header">
-                <span className="sfh-pre-text">Freedom to Fly</span>
-                <h2>
-                  <span className="sfh-text--dark">Self-Fly Hire:</span>{' '}
-                  <span className="sfh-text--mid">Your Aircraft</span>{' '}
-                  <span className="sfh-text--light">Awaits</span>
-                </h2>
-                <p>
-                  With an impressive fleet of over 30 helicopters, HQ Aviation offers unparalleled choice and availability
-                  for licensed pilots. Whether you're planning a day trip to the coast, a golf weekend in Scotland, or
-                  a business meeting across the country, we have the perfect aircraft for your mission.
-                </p>
+                <span className="sfh-pre-text">{t('sfh-intro', 'pre_label')}</span>
+                <h2>{t('sfh-intro', 'heading')}</h2>
+                <p>{t('sfh-intro', 'description')}</p>
               </div>
             </Reveal>
 
@@ -556,7 +532,7 @@ function SelfFlyHire() {
                 onClick={() => setActiveFleet(i)}
               >
                 <span className="sfh-fleet__tab-num">{String(i + 1).padStart(2, '0')}</span>
-                <span className="sfh-fleet__tab-model">{aircraft.model}</span>
+                <span className="sfh-fleet__tab-model">{t(sfhSectionFor[aircraft.model], 'name')}</span>
               </button>
             ))}
           </div>
@@ -564,33 +540,34 @@ function SelfFlyHire() {
           <Reveal delay={0.1}>
             <div className="sfh-fleet__card">
               <div className="sfh-fleet__image">
-                <img src={fleetWithCms[activeFleet].image} alt={fleetWithCms[activeFleet].model} />
+                <img src={fleetWithCms[activeFleet].image} alt={t(sfhSectionFor[fleetWithCms[activeFleet].model], 'name')} />
                 <div className="sfh-fleet__image-overlay">
-                  <span className="sfh-fleet__model">{fleetWithCms[activeFleet].model}</span>
+                  <span className="sfh-fleet__model">{t(sfhSectionFor[fleetWithCms[activeFleet].model], 'name')}</span>
                 </div>
               </div>
               <div className="sfh-fleet__info">
                 <div className="sfh-fleet__specs">
                   <div className="sfh-fleet__spec">
-                    <span className="sfh-fleet__spec-value">{fleetWithCms[activeFleet].seats}</span>
+                    <span className="sfh-fleet__spec-value">{t(sfhSectionFor[fleetWithCms[activeFleet].model], 'seats')}</span>
                     <span className="sfh-fleet__spec-label">Seats</span>
                   </div>
                   <div className="sfh-fleet__spec-divider" />
                   <div className="sfh-fleet__spec">
-                    <span className="sfh-fleet__spec-value">{fleetWithCms[activeFleet].speed}</span>
+                    <span className="sfh-fleet__spec-value">{t(sfhSectionFor[fleetWithCms[activeFleet].model], 'speed')}</span>
                     <span className="sfh-fleet__spec-label">Cruise Speed</span>
                   </div>
                   <div className="sfh-fleet__spec-divider" />
                   <div className="sfh-fleet__spec">
-                    <span className="sfh-fleet__spec-value">{fleetWithCms[activeFleet].range}</span>
+                    <span className="sfh-fleet__spec-value">{t(sfhSectionFor[fleetWithCms[activeFleet].model], 'range')}</span>
                     <span className="sfh-fleet__spec-label">Range</span>
                   </div>
                 </div>
-                <p className="sfh-fleet__desc">{fleetWithCms[activeFleet].description}</p>
+                <p className="sfh-fleet__desc">{t(sfhSectionFor[fleetWithCms[activeFleet].model], 'description')}</p>
                 <div className="sfh-fleet__features">
-                  {fleetWithCms[activeFleet].features.map((feature, i) => (
-                    <span key={i} className="sfh-fleet__feature">{feature}</span>
-                  ))}
+                  {['feature_1', 'feature_2', 'feature_3', 'feature_4'].map((fKey) => {
+                    const val = t(sfhSectionFor[fleetWithCms[activeFleet].model], fKey);
+                    return val ? <span key={fKey} className="sfh-fleet__feature">{val}</span> : null;
+                  })}
                 </div>
               </div>
             </div>
@@ -605,12 +582,8 @@ function SelfFlyHire() {
                 onClick={() => setDestsExpanded(!destsExpanded)}
               >
                 <div>
-                  <span className="sfh-pre-text" style={{ marginBottom: 0 }}>Where Will You Go?</span>
-                  <h2 style={{ margin: '0.25rem 0 0' }}>
-                    <span className="sfh-text--dark">See Where</span>{' '}
-                    <span className="sfh-text--mid">You Can</span>{' '}
-                    <span className="sfh-text--light">Fly To</span>
-                  </h2>
+                  <span className="sfh-pre-text" style={{ marginBottom: 0 }}>{t('sfh-destinations', 'pre_label')}</span>
+                  <h2 style={{ margin: '0.25rem 0 0' }}>{t('sfh-destinations', 'heading')}</h2>
                 </div>
                 <span className={`sfh-destinations__toggle-icon ${destsExpanded ? 'sfh-destinations__toggle-icon--open' : ''}`}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -621,7 +594,7 @@ function SelfFlyHire() {
 
               <div className={`sfh-destinations__collapse ${destsExpanded ? 'sfh-destinations__collapse--open' : ''}`}>
                 <p className="sfh-section-desc" style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                  From coastal escapes to countryside retreats, the helicopter opens doors to destinations unreachable by road.
+                  {t('sfh-destinations', 'description')}
                 </p>
 
           <Reveal delay={0.1}>
@@ -731,9 +704,9 @@ function SelfFlyHire() {
           <div className="sfh-faq-location__faq">
             <Reveal>
               <div className="sfh-section-header">
-                <span className="sfh-pre-text">Common Questions</span>
+                <span className="sfh-pre-text">{t('sfh-faq', 'pre_label')}</span>
                 <h2>
-                  <span className="sfh-text--dark">FAQ</span>
+                  <span className="sfh-text--dark">{t('sfh-faq', 'heading')}</span>
                 </h2>
               </div>
             </Reveal>
@@ -741,14 +714,14 @@ function SelfFlyHire() {
             <div className="sfh-faq__list">
               {faqs.map((faq, i) => (
                 <div
-                  key={i}
+                  key={faq.id}
                   className={`sfh-faq__item ${openFaq === i ? 'sfh-faq__item--open' : ''}`}
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 >
                   <div className="sfh-faq__number">{String(i + 1).padStart(2, '0')}</div>
                   <div className="sfh-faq__content">
                     <h4>
-                      {faq.q}
+                      {faq.question}
                       <span className="sfh-faq__toggle">{openFaq === i ? '−' : '+'}</span>
                     </h4>
                     <motion.div
@@ -757,7 +730,7 @@ function SelfFlyHire() {
                       animate={{ height: openFaq === i ? 'auto' : 0, opacity: openFaq === i ? 1 : 0 }}
                       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                     >
-                      <p>{faq.a}</p>
+                      <p>{faq.answer}</p>
                     </motion.div>
                   </div>
                 </div>
@@ -784,36 +757,32 @@ function SelfFlyHire() {
 
           <div className="sfh-cta__content">
             <div className="sfh-cta__header">
-              <span className="sfh-pre-text">Ready to Fly?</span>
-              <h2>
-                <span className="sfh-text--dark">Book</span>{' '}
-                <span className="sfh-text--mid">Your</span>{' '}
-                <span className="sfh-text--light">Aircraft</span>
-              </h2>
+              <span className="sfh-pre-text">{t('sfh-cta', 'pre_label')}</span>
+              <h2>{t('sfh-cta', 'heading')}</h2>
             </div>
 
             <p className="sfh-cta__desc">
-              Contact our team to check availability and make your booking. We're here to help make your flight plans a reality.
+              {t('sfh-cta', 'description')}
             </p>
 
             <div className="sfh-cta__contact">
-              <a href="tel:+441895833373" className="sfh-cta__contact-item">
-                <span className="sfh-cta__contact-label">Call Us</span>
-                <span className="sfh-cta__contact-value">+44 1895 833 373</span>
+              <a href={`tel:${t('sfh-cta', 'phone_value').replace(/\s/g, '')}`} className="sfh-cta__contact-item">
+                <span className="sfh-cta__contact-label">{t('sfh-cta', 'phone_label')}</span>
+                <span className="sfh-cta__contact-value">{t('sfh-cta', 'phone_value')}</span>
               </a>
               <div className="sfh-cta__contact-divider" />
-              <a href="mailto:hire@hqaviation.com" className="sfh-cta__contact-item">
-                <span className="sfh-cta__contact-label">Email</span>
-                <span className="sfh-cta__contact-value">hire@hqaviation.com</span>
+              <a href={`mailto:${t('sfh-cta', 'email_value')}`} className="sfh-cta__contact-item">
+                <span className="sfh-cta__contact-label">{t('sfh-cta', 'email_label')}</span>
+                <span className="sfh-cta__contact-value">{t('sfh-cta', 'email_value')}</span>
               </a>
             </div>
 
             <div className="sfh-cta__buttons">
               <a href="/contact?subject=hire" className="sfh-btn sfh-btn--primary sfh-btn--large">
-                Make a Booking
+                {t('sfh-cta', 'cta_primary')}
               </a>
               <Link to="/training/ppl" className="sfh-btn sfh-btn--outline">
-                Get Your License
+                {t('sfh-cta', 'cta_secondary')}
               </Link>
             </div>
           </div>

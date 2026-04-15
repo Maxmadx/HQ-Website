@@ -31,6 +31,7 @@ import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'fra
 
 import '../assets/css/main.css';
 import '../assets/css/components.css';
+import { usePageText } from '../hooks/usePageText';
 import FooterMinimal from '../components/FooterMinimal';
 import FacilityGallery from '../components/Maintenance/FacilityGallery';
 import PartsEnquiry from '../components/Maintenance/PartsEnquiry';
@@ -265,6 +266,7 @@ function ParallaxSection({ image, number, label, largeText }) {
 // ============================================
 
 function HeroSection() {
+  const { t } = usePageText('maintenance');
   const heroRef = useRef(null);
 
   const { scrollYProgress } = useScroll({
@@ -298,7 +300,7 @@ function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          EASA PART 145 APPROVED • UK CAA CERTIFIED
+          {t('maintenance-hero', 'pre_label')}
         </motion.span>
 
         <div className="maint-hero__headline">
@@ -308,15 +310,7 @@ function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
-            PRECISION
-          </motion.span>
-          <motion.span
-            className="maint-hero__word maint-hero__word--2"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          >
-            ENGINEERING
+            {t('maintenance-hero', 'heading')}
           </motion.span>
         </div>
 
@@ -333,7 +327,7 @@ function HeroSection() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2 }}
         >
-          51.5751°N • 0.5059°W • DENHAM AERODROME
+          {t('maintenance-hero', 'subtitle')}
         </motion.span>
       </motion.div>
     </section>
@@ -410,6 +404,7 @@ function StatsStrip() {
 // ============================================
 
 function PhilosophySection() {
+  const { t } = usePageText('maintenance');
   const [partsForm, setPartsForm] = useState({ aircraft: '', part: '', urgency: 'standard', email: '' });
   const [partsSubmitted, setPartsSubmitted] = useState(false);
   const [partsOpen, setPartsOpen] = useState(false);
@@ -429,17 +424,12 @@ function PhilosophySection() {
           <Reveal>
             <span className="maint-pre-text">Maintenance Services</span>
             <h2 className="maint-philosophy__headline">
-              <span className="maint-text--dark">We'll </span>
-              <span className="maint-text--mid">Maintain </span>
-              <span className="maint-text--light">Your Aircraft</span>
+              {t('maintenance-intro', 'heading')}
             </h2>
           </Reveal>
           <Reveal delay={0.2}>
             <p className="maint-philosophy__body">
-              Our team lives and breathes rotary-wing aviation, investing in the latest tooling,
-              training, and techniques to deliver premium maintenance standards. With bays to work
-              on up to 8 aircraft simultaneously and a large team of engineers, we minimise your
-              downtime so your aircraft spends more time in the air, not in the hangar.
+              {t('maintenance-intro', 'description')}
             </p>
           </Reveal>
           <Reveal delay={0.3}>

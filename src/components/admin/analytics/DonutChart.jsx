@@ -50,7 +50,9 @@ export default function DonutChart({
               strokeWidth={strokeWidth}
               strokeDasharray={`${dash.toFixed(2)} ${gap.toFixed(2)}`}
               strokeDashoffset={offset.toFixed(2)}
-            />
+            >
+              <title>{seg.label}: {seg.pct}%</title>
+            </circle>
           );
         })}
       </g>
