@@ -1,4 +1,4 @@
-import UAParser from 'ua-parser-js';
+import { UAParser } from 'ua-parser-js';
 
 // ─── Core helpers ───────────────────────────────────────────
 
@@ -39,6 +39,7 @@ export function groupByDay(events, days) {
     map[d.toISOString().slice(0, 10)] = 0;
   }
   for (const e of events) {
+    if (!e.timestamp) continue;
     const key = toDateKey(e.timestamp);
     if (key in map) map[key]++;
   }
@@ -59,7 +60,8 @@ export function bounceRate(pageviews) {
 /** Mean seconds from page_exit events (elementId holds the seconds as a string) */
 export function avgTimeOnPage(pageExitEvents) {
   if (pageExitEvents.length === 0) return 0;
-  const total = pageExitEvents.reduce((sum, e) => sum + Number(e.elementId || 0), 0);
+  const toNum = (v) => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+  const total = pageExitEvents.reduce((sum, e) => sum + toNum(e.elementId), 0);
   return Math.round(total / pageExitEvents.length);
 }
 
@@ -76,9 +78,10 @@ export function formatDuration(seconds) {
  */
 export function avgScrollDepth(scrollEvents) {
   const maxBySessionPage = {};
+  const toNum = (v) => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
   for (const e of scrollEvents) {
     const key = `${e.sessionId}:${e.page}`;
-    const val = Number(e.elementId || 0);
+    const val = toNum(e.elementId);
     maxBySessionPage[key] = Math.max(maxBySessionPage[key] || 0, val);
   }
   const values = Object.values(maxBySessionPage);
@@ -135,7 +138,7 @@ export function topJourneys(pageviews, n = 5) {
 // ─── Traffic sources ──────────────────────────────────────────
 
 const SEARCH_DOMAINS = ['google', 'bing', 'yahoo', 'duckduckgo', 'baidu', 'yandex'];
-const SOCIAL_DOMAINS = ['facebook', 'instagram', 'twitter', 'x.com', 'linkedin', 'tiktok', 'youtube', 'pinterest'];
+const SOCIAL_DOMAINS = ['facebook', 'instagram', 'twitter', 'x.com', 't.co', 'linkedin', 'tiktok', 'youtube', 'pinterest'];
 
 export function categoriseSource(referrer) {
   if (!referrer) return 'Direct';
@@ -204,6 +207,7 @@ export function parseDevices(events) {
 export function sessionsByHour(pageviews) {
   const hours = Array(24).fill(0);
   for (const e of pageviews) {
+    if (!e.timestamp) continue;
     hours[toDate(e.timestamp).getUTCHours()]++;
   }
   return hours;

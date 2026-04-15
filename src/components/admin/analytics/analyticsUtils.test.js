@@ -4,6 +4,7 @@ import {
   countBy, topN, groupByDay, bounceRate, avgTimeOnPage, formatDuration,
   avgScrollDepth, scrollDepthByPage, topJourneys, categoriseSource,
   trafficSources, sessionsByHour, sparklineData, topCampaigns,
+  parseDevices, topUtmSources,
 } from './analyticsUtils.js';
 
 // Helper to make a mock event
@@ -51,12 +52,15 @@ describe('groupByDay', () => {
   });
 
   it('counts events on the correct day', () => {
+    // Use a date 2 days ago so this test stays valid regardless of when it runs
+    const twoDaysAgo = new Date(Date.now() - 2 * 86400000);
+    const dayKey = twoDaysAgo.toISOString().slice(0, 10);
     const events = [
-      mkEvent({ timestamp: { toDate: () => new Date('2026-04-10T12:00:00Z') } }),
-      mkEvent({ timestamp: { toDate: () => new Date('2026-04-10T18:00:00Z') } }),
+      mkEvent({ timestamp: { toDate: () => new Date(twoDaysAgo) } }),
+      mkEvent({ timestamp: { toDate: () => new Date(twoDaysAgo) } }),
     ];
     const result = groupByDay(events, 7);
-    const day = result.find(([d]) => d === '2026-04-10');
+    const day = result.find(([d]) => d === dayKey);
     expect(day?.[1]).toBe(2);
   });
 });
@@ -225,5 +229,46 @@ describe('topCampaigns', () => {
     const result = topCampaigns(pvs, 5);
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual(['spring', 2]);
+  });
+});
+
+describe('parseDevices', () => {
+  const CHROME_WIN = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+  const SAFARI_IOS = 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1';
+
+  it('classifies desktop and mobile devices', () => {
+    const events = [
+      mkEvent({ userAgent: CHROME_WIN }),
+      mkEvent({ userAgent: SAFARI_IOS }),
+    ];
+    const { devices } = parseDevices(events);
+    const names = devices.map(d => d.name.toLowerCase());
+    expect(names).toContain('desktop');
+    expect(names).toContain('mobile');
+  });
+
+  it('returns browser names', () => {
+    const events = [mkEvent({ userAgent: CHROME_WIN })];
+    const { browsers } = parseDevices(events);
+    expect(browsers[0].name).toBe('Chrome');
+  });
+
+  it('returns empty arrays for no events', () => {
+    const { devices, browsers } = parseDevices([]);
+    expect(devices).toHaveLength(0);
+    expect(browsers).toHaveLength(0);
+  });
+});
+
+describe('topUtmSources', () => {
+  it('returns only events with utmSource set', () => {
+    const pvs = [
+      mkEvent({ utmSource: 'google' }),
+      mkEvent({ utmSource: 'google' }),
+      mkEvent({ utmSource: null }),
+    ];
+    const result = topUtmSources(pvs, 5);
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual(['google', 2]);
   });
 });
