@@ -105,7 +105,12 @@ export default function WallOfCoolSection() {
                 data-src={img.imageUrl}
                 src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
                 alt={img.alt || 'Wall of Cool'}
-                onLoad={(e) => { e.target.style.opacity = 1; }}
+                onLoad={(e) => {
+                  // Only fade in when the real image loads, not the placeholder GIF
+                  if (!e.target.dataset.src) {
+                    e.target.style.opacity = 1;
+                  }
+                }}
                 style={{
                   width: '100%',
                   height: '100%',

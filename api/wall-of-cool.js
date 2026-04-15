@@ -99,6 +99,9 @@ router.patch('/reorder', requireAdmin, async (req, res) => {
     if (!Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ error: 'Body must be a non-empty array of { id, order }' });
     }
+    if (items.length > 500) {
+      return res.status(400).json({ error: 'Reorder payload exceeds Firestore batch limit of 500 items' });
+    }
     for (const item of items) {
       if (!item.id || typeof item.order !== 'number') {
         return res.status(400).json({ error: `Invalid item in reorder payload: ${JSON.stringify(item)}` });

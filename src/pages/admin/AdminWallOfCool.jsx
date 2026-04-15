@@ -58,11 +58,17 @@ export default function AdminWallOfCool() {
     setUpdating(id);
     try {
       const h = await authHeaders();
-      await fetch(`/api/wall-of-cool/${id}`, {
+      const res = await fetch(`/api/wall-of-cool/${id}`, {
         method: 'PATCH',
         headers: h,
         body: JSON.stringify(body),
       });
+      if (!res.ok) {
+        const msg = await res.json().catch(() => ({ error: 'Request failed' }));
+        alert(msg.error || 'Action failed — please try again');
+      }
+    } catch {
+      alert('Network error — please try again');
     } finally {
       setUpdating(null);
     }
