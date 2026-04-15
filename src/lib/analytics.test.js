@@ -1,11 +1,18 @@
 // @vitest-environment jsdom
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 global.fetch = vi.fn(() => Promise.resolve({ ok: true }));
+
+const originalLocation = window.location;
 
 beforeEach(() => {
   sessionStorage.clear();
   vi.clearAllMocks();
+});
+
+afterEach(() => {
+  // Restore window.location if a test replaced it
+  Object.defineProperty(window, 'location', { value: originalLocation, writable: true, configurable: true });
 });
 
 import { getSessionId, trackEvent } from './analytics';
@@ -65,6 +72,9 @@ describe('analytics', () => {
 
     const body = JSON.parse(fetch.mock.calls[0][1].body);
     expect(body.utmSource).toBeNull();
+    expect(body.utmMedium).toBeNull();
     expect(body.utmCampaign).toBeNull();
+    expect(body.utmTerm).toBeNull();
+    expect(body.utmContent).toBeNull();
   });
 });
