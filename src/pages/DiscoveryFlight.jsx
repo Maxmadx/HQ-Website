@@ -13,6 +13,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { usePricing } from '../hooks/usePricing';
 import { usePageImages } from '../hooks/usePageImages';
+import { usePageText } from '../hooks/usePageText';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 
 // Import styles
@@ -318,6 +319,7 @@ const faqs = [
 // ============================================================================
 function DiscoveryHero() {
   const pageImages = usePageImages('discovery');
+  const { t } = usePageText('discovery');
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -353,7 +355,7 @@ function DiscoveryHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            DISCOVERY FLIGHTS
+            {t('discovery-hero', 'pre_label')}
           </motion.span>
 
           <div className="df-hero__headline">
@@ -363,7 +365,7 @@ function DiscoveryHero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
             >
-              YOUR
+              {t('discovery-hero', 'headline_1')}
             </motion.span>
             <motion.span
               className="df-hero__word df-hero__word--2"
@@ -371,7 +373,7 @@ function DiscoveryHero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
             >
-              FIRST
+              {t('discovery-hero', 'headline_2')}
             </motion.span>
             <motion.span
               className="df-hero__word df-hero__word--3"
@@ -379,7 +381,7 @@ function DiscoveryHero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
-              FLIGHT
+              {t('discovery-hero', 'headline_3')}
             </motion.span>
           </div>
 
@@ -435,7 +437,7 @@ function DiscoveryHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.4 }}
           >
-            Take the controls and experience the thrill of helicopter flight over the beautiful Chiltern Hills.
+            {t('discovery-hero', 'subtitle')}
           </motion.p>
 
           <motion.div
@@ -445,7 +447,7 @@ function DiscoveryHero() {
             transition={{ delay: 1.6 }}
           >
             <a href="#select-flight" className="df-btn df-btn--primary">
-              Choose Your Flight
+              {t('discovery-hero', 'cta_primary')}
             </a>
           </motion.div>
         </div>
@@ -463,6 +465,13 @@ function ValueProposition() {
   const navigate = useNavigate();
   const { p, fmt } = usePricing();
   const pageImages = usePageImages('discovery');
+  const { t } = usePageText('discovery');
+
+  const sectionForAircraft = {
+    r22: 'discovery-aircraft-r22',
+    r44: 'discovery-aircraft-r44',
+    r66: 'discovery-aircraft-r66',
+  };
 
   const aircraftWithPricing = aircraftData.map((a, i) => ({
     ...a,
@@ -490,17 +499,13 @@ function ValueProposition() {
       <div className="df-value__container">
         <div className="df-value__content">
           <Reveal>
-            <span className="df-pre-text">Why HQ Aviation</span>
+            <span className="df-pre-text">{t('discovery-value-prop', 'pre_label')}</span>
             <h2>
-              <span className="df-text--dark">Not Just</span>{' '}
-              <span className="df-text--mid">A Flight.</span>{' '}
-              <span className="df-text--light">An Experience.</span>
+              <span className="df-text--dark">{t('discovery-value-prop', 'heading_1')}</span>{' '}
+              <span className="df-text--light">{t('discovery-value-prop', 'heading_2')}</span>
             </h2>
             <p className="df-value__intro">
-              Have you ever wondered what it truly feels like to defy gravity? A Discovery Flight at HQ Aviation
-              is more than just a ride—it is your first step into a world few ever experience. Under the guidance
-              of our expert instructors, you will take the controls and discover the unmatched freedom of piloting
-              a helicopter yourself.
+              {t('discovery-value-prop', 'paragraph_1')}
             </p>
           </Reveal>
 
@@ -519,10 +524,10 @@ function ValueProposition() {
                   </div>
                   <div className="df-card__content">
                     <div className="df-card__header">
-                      <h3 className="df-card__name">{aircraft.name}</h3>
-                      <p className="df-card__tagline">{aircraft.tagline}</p>
-                      <p className="df-card__desc">{aircraft.description}</p>
-                      <div className="df-card__seats"><span>{aircraft.seats} seats</span></div>
+                      <h3 className="df-card__name">{t(sectionForAircraft[aircraft.id], 'name')}</h3>
+                      <p className="df-card__tagline">{t(sectionForAircraft[aircraft.id], 'tagline')}</p>
+                      <p className="df-card__desc">{t(sectionForAircraft[aircraft.id], 'description')}</p>
+                      <div className="df-card__seats"><span>{t(sectionForAircraft[aircraft.id], 'seats')}</span></div>
                     </div>
                     <div className="df-card__pricing">
                       <div
@@ -530,8 +535,8 @@ function ValueProposition() {
                         onClick={() => handleTimeSelect(aircraft.id, 30)}
                       >
                         <div className="df-card__time-info">
-                          <span className="df-card__time-duration">30 MINS</span>
-                          <span className="df-card__time-desc">Introduction flight</span>
+                          <span className="df-card__time-duration">{t(sectionForAircraft[aircraft.id], 'label_30min')}</span>
+                          <span className="df-card__time-desc">{t(sectionForAircraft[aircraft.id], 'desc_30min')}</span>
                         </div>
                         <span className="df-card__price">{aircraft.priceFmt[30]}</span>
                       </div>
@@ -540,8 +545,8 @@ function ValueProposition() {
                         onClick={() => handleTimeSelect(aircraft.id, 60)}
                       >
                         <div className="df-card__time-info">
-                          <span className="df-card__time-duration">60 MINS</span>
-                          <span className="df-card__time-desc">Extended experience</span>
+                          <span className="df-card__time-duration">{t(sectionForAircraft[aircraft.id], 'label_60min')}</span>
+                          <span className="df-card__time-desc">{t(sectionForAircraft[aircraft.id], 'desc_60min')}</span>
                         </div>
                         <span className="df-card__price">{aircraft.priceFmt[60]}</span>
                       </div>
@@ -563,10 +568,10 @@ function ValueProposition() {
 
           <Reveal>
             <p className="df-value__intro">
-              Experience the thrill of controlling a helicopter, even if you don't plan on pursuing a full license immediately. Your perspective will shift the moment you take flight.
+              {t('discovery-value-prop', 'paragraph_2')}
             </p>
             <p className="df-value__intro">
-              If you appreciate mechanical mastery, the helicopter offers total freedom in three dimensions and is unlike anything else you can experience. We enjoyed it so much that our mission is to share this unique sensation with anyone inclined to try.
+              {t('discovery-value-prop', 'paragraph_3')}
             </p>
           </Reveal>
         </div>
@@ -579,6 +584,7 @@ function ValueProposition() {
 // FLIGHT SELECTOR (Card Grid Version)
 // ============================================================================
 function FlightSelector() {
+  const { t } = usePageText('discovery');
   return (
     <section id="select-flight" className="df-selector">
       <div className="df-selector__container">
@@ -586,11 +592,10 @@ function FlightSelector() {
           <div className="df-selector__note">
             <span className="df-selector__note-icon">💳</span>
             <p>
-              <strong>Gift Vouchers Available</strong> — Purchase a voucher valid for 12 months.
-              The perfect present for birthdays, anniversaries, or that special someone.
+              <strong>{t('discovery-gift', 'bold_text')}</strong> — {t('discovery-gift', 'description')}
             </p>
             <Link to="/contact?subject=gift-voucher" className="df-link">
-              Get Gift Voucher
+              {t('discovery-gift', 'link_text')}
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="1.5"/>
               </svg>
@@ -607,44 +612,42 @@ function FlightSelector() {
 // ============================================================================
 function InstructorSection() {
   const pageImages = usePageImages('discovery');
+  const { t } = usePageText('discovery');
   return (
     <section className="df-instructor">
       <div className="df-instructor__container">
         <div className="df-instructor__content">
           <Reveal>
-            <span className="df-pre-text">Your Instructor</span>
+            <span className="df-pre-text">{t('discovery-instructor', 'pre_label')}</span>
             <h2>
-              <span className="df-text--dark">Meet</span>{' '}
-              <span className="df-text--mid">Your Team</span>
+              <span className="df-text--dark">{t('discovery-instructor', 'heading')}</span>
             </h2>
             <p>
-              Your discovery flight will be conducted by one of our highly experienced instructors.
-              Our team includes world champions, military veterans, and career pilots with decades of experience.
+              {t('discovery-instructor', 'intro')}
             </p>
           </Reveal>
 
           <Reveal delay={0.2}>
             <div className="df-instructor__card">
               <div className="df-instructor__image">
-                <img src={pageImages['discovery-instructor']?.[0]?.url ?? '/assets/images/team/quentin-smith-profile-picture.jpg'} alt="Quentin Smith" />
+                <img src={pageImages['discovery-instructor']?.[0]?.url ?? '/assets/images/team/quentin-smith-profile-picture.jpg'} alt={t('discovery-instructor', 'name')} />
               </div>
               <div className="df-instructor__info">
-                <h3>Quentin Smith</h3>
-                <span className="df-instructor__title">Founder & Managing Director</span>
+                <h3>{t('discovery-instructor', 'name')}</h3>
+                <span className="df-instructor__title">{t('discovery-instructor', 'title')}</span>
                 <div className="df-instructor__stats">
                   <div className="df-instructor__stat">
                     <span className="df-instructor__stat-value"><AnimatedNumber value="18000" />+</span>
-                    <span className="df-instructor__stat-label">Flight Hours</span>
+                    <span className="df-instructor__stat-label">{t('discovery-instructor', 'hours_label')}</span>
                   </div>
                   <div className="df-instructor__divider" />
                   <div className="df-instructor__stat">
                     <span className="df-instructor__stat-value"><AnimatedNumber value="35" />+</span>
-                    <span className="df-instructor__stat-label">Years Flying</span>
+                    <span className="df-instructor__stat-label">{t('discovery-instructor', 'years_label')}</span>
                   </div>
                 </div>
                 <p>
-                  World Helicopter Champion and the first person to fly a helicopter to the South Pole and back.
-                  Under Q's guidance, you're learning from one of the best in the world.
+                  {t('discovery-instructor', 'bio')}
                 </p>
               </div>
             </div>
@@ -685,37 +688,14 @@ function InstructorSection() {
 // WHAT TO EXPECT (JOURNEY)
 // ============================================================================
 function WhatToExpect() {
+  const { t } = usePageText('discovery');
+
   const steps = [
-    {
-      num: '01',
-      title: 'Arrival & Welcome',
-      description: 'Arrive at Denham Aerodrome where you\'ll be greeted by your instructor. Enjoy a coffee while we complete the paperwork.',
-      duration: '15 min',
-    },
-    {
-      num: '02',
-      title: 'Pre-Flight Briefing',
-      description: 'Your instructor explains the controls, instruments, and basic flight principles. You\'ll know exactly what to expect.',
-      duration: '15 min',
-    },
-    {
-      num: '03',
-      title: 'Take Flight',
-      description: 'Climb aboard the Robinson helicopter and take off over the stunning Chiltern Hills. You\'ll be at the controls from the start.',
-      duration: '30-60 min',
-    },
-    {
-      num: '04',
-      title: 'Hands-On Flying',
-      description: 'Experience the unique sensation of helicopter flight. Practice turns, climbs, and descents under expert guidance.',
-      duration: 'Included',
-    },
-    {
-      num: '05',
-      title: 'Debrief & Certificate',
-      description: 'After landing, discuss your flight with your instructor. Receive your certificate and talk next steps.',
-      duration: '10 min',
-    },
+    { num: '01', titleKey: 'step_1_title', descKey: 'step_1_desc', timeKey: 'step_1_time' },
+    { num: '02', titleKey: 'step_2_title', descKey: 'step_2_desc', timeKey: 'step_2_time' },
+    { num: '03', titleKey: 'step_3_title', descKey: 'step_3_desc', timeKey: 'step_3_time' },
+    { num: '04', titleKey: 'step_4_title', descKey: 'step_4_desc', timeKey: 'step_4_time' },
+    { num: '05', titleKey: 'step_5_title', descKey: 'step_5_desc', timeKey: 'step_5_time' },
   ];
 
   return (
@@ -723,12 +703,11 @@ function WhatToExpect() {
       <div className="df-expect__container">
         <Reveal>
           <div className="df-section-header">
-            <span className="df-pre-text">Your Experience</span>
+            <span className="df-pre-text">{t('discovery-steps', 'pre_label')}</span>
             <h2>
-              <span className="df-text--dark">What</span>{' '}
-              <span className="df-text--mid">To Expect</span>
+              <span className="df-text--dark">{t('discovery-steps', 'heading')}</span>
             </h2>
-            <p>From the moment you arrive to the moment you leave, every detail is taken care of.</p>
+            <p>{t('discovery-steps', 'intro')}</p>
           </div>
         </Reveal>
 
@@ -742,10 +721,10 @@ function WhatToExpect() {
                 </div>
                 <div className="df-expect__step-content">
                   <div className="df-expect__step-header">
-                    <h3>{step.title}</h3>
-                    <span className="df-expect__step-duration">{step.duration}</span>
+                    <h3>{t('discovery-steps', step.titleKey)}</h3>
+                    <span className="df-expect__step-duration">{t('discovery-steps', step.timeKey)}</span>
                   </div>
-                  <p>{step.description}</p>
+                  <p>{t('discovery-steps', step.descKey)}</p>
                 </div>
               </div>
             </Reveal>
@@ -833,6 +812,15 @@ function DiscoveryTestimonials() {
 // ============================================================================
 function LocationAndFAQ() {
   const [openFaq, setOpenFaq] = useState(null);
+  const { t } = usePageText('discovery');
+
+  const faqKeys = [
+    { q: 'q1', a: 'a1' },
+    { q: 'q2', a: 'a2' },
+    { q: 'q3', a: 'a3' },
+    { q: 'q4', a: 'a4' },
+    { q: 'q5', a: 'a5' },
+  ];
 
   return (
     <section className="df-location-faq">
@@ -877,13 +865,13 @@ function LocationAndFAQ() {
         <div className="df-location-faq__right">
           <Reveal>
             <div className="df-faq__header">
-              <span className="df-label">Common Questions</span>
-              <h2>FAQ</h2>
+              <span className="df-label">{t('discovery-faq', 'pre_label')}</span>
+              <h2>{t('discovery-faq', 'heading')}</h2>
             </div>
           </Reveal>
 
           <div className="df-faq__list">
-            {faqs.map((faq, i) => (
+            {faqKeys.map((keys, i) => (
               <Reveal key={i} delay={i * 0.1}>
                 <div
                   className={`df-faq__item ${openFaq === i ? 'df-faq__item--open' : ''}`}
@@ -892,7 +880,7 @@ function LocationAndFAQ() {
                   <div className="df-faq__number">{String(i + 1).padStart(2, '0')}</div>
                   <div className="df-faq__content">
                     <h4>
-                      {faq.question}
+                      {t('discovery-faq', keys.q)}
                       <span className="df-faq__toggle">{openFaq === i ? '−' : '+'}</span>
                     </h4>
                     <motion.div
@@ -901,7 +889,7 @@ function LocationAndFAQ() {
                       animate={{ height: openFaq === i ? 'auto' : 0, opacity: openFaq === i ? 1 : 0 }}
                       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                     >
-                      <p>{faq.answer}</p>
+                      <p>{t('discovery-faq', keys.a)}</p>
                     </motion.div>
                   </div>
                 </div>
@@ -929,6 +917,7 @@ function LocationAndFAQ() {
 // ============================================================================
 function FinalCTA() {
   const { fmt } = usePricing();
+  const { t } = usePageText('discovery');
   return (
     <section className="df-final-cta">
       <div className="df-final-cta__bg">
@@ -938,26 +927,24 @@ function FinalCTA() {
 
       <div className="df-final-cta__content">
         <Reveal>
-          <span className="df-pre-text df-pre-text--light">Ready To Fly?</span>
+          <span className="df-pre-text df-pre-text--light">{t('discovery-final-cta', 'pre_label')}</span>
           <h2>
-            <span className="df-text--white">Book Your</span>{' '}
-            <span className="df-text--mid-inv">Discovery Flight</span>
+            <span className="df-text--white">{t('discovery-final-cta', 'heading')}</span>
           </h2>
           <p>
-            Take the first step towards the adventure of a lifetime.
-            Whether for yourself or as a gift, a discovery flight is an experience you'll never forget.
+            {t('discovery-final-cta', 'description')}
           </p>
         </Reveal>
 
         <Reveal delay={0.2}>
           <div className="df-final-cta__pricing">
             <div className="df-final-cta__price-item">
-              <span className="df-final-cta__price-label">30 Min</span>
+              <span className="df-final-cta__price-label">{t('discovery-final-cta', 'label_30min')}</span>
               <span className="df-final-cta__price-value">from {fmt('discovery_r22_30min')}</span>
             </div>
             <div className="df-final-cta__price-divider" />
             <div className="df-final-cta__price-item">
-              <span className="df-final-cta__price-label">60 Min</span>
+              <span className="df-final-cta__price-label">{t('discovery-final-cta', 'label_60min')}</span>
               <span className="df-final-cta__price-value">from {fmt('discovery_r22_60min')}</span>
             </div>
           </div>
@@ -966,19 +953,19 @@ function FinalCTA() {
         <Reveal delay={0.3}>
           <div className="df-final-cta__buttons">
             <a href="#select-flight" className="df-btn df-btn--light df-btn--large">
-              Choose Your Flight
+              {t('discovery-final-cta', 'cta_primary')}
             </a>
             <Link to="/contact" className="df-btn df-btn--outline-light">
-              Contact Us
+              {t('discovery-final-cta', 'cta_secondary')}
             </Link>
           </div>
         </Reveal>
 
         <Reveal delay={0.4}>
           <div className="df-final-cta__trust">
-            <span>🎁 Gift Vouchers Available</span>
-            <span>✓ 12-Month Validity</span>
-            <span>✓ Counts Towards PPL</span>
+            <span>🎁 {t('discovery-final-cta', 'badge_gift')}</span>
+            <span>✓ {t('discovery-final-cta', 'badge_valid')}</span>
+            <span>✓ {t('discovery-final-cta', 'badge_ppl')}</span>
           </div>
         </Reveal>
       </div>

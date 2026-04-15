@@ -5,6 +5,11 @@ import { TEXT_SECTIONS_BY_PAGE, TEXT_SECTION_MAP } from '../lib/textSections';
 
 const cache = {};
 
+/** Call this after an admin save to force the next render to re-fetch from Firestore. */
+export function bustPageCache(pageKey) {
+  delete cache[pageKey];
+}
+
 function buildDefaults(pageKey) {
   const map = {};
   (TEXT_SECTIONS_BY_PAGE[pageKey] ?? []).forEach((section) => {

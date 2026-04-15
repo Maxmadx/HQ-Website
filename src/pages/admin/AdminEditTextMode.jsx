@@ -19,7 +19,7 @@ import {
   TEXT_PAGE_LABELS,
   TEXT_SECTION_MAP,
 } from '../../lib/textSections';
-import { usePageText } from '../../hooks/usePageText';
+import { usePageText, bustPageCache } from '../../hooks/usePageText';
 
 // ─── Page tab config ──────────────────────────────────────────────────────────
 const PAGE_IDS = Object.keys(TEXT_PAGE_LABELS);
@@ -99,6 +99,7 @@ export default function AdminEditTextMode() {
       );
       setSaved(true);
       setDirtyFields({});
+      bustPageCache(selectedPage);
     } catch (e) {
       setSaveError(`Save failed: ${e.message ?? 'unknown error'}`);
     } finally {
