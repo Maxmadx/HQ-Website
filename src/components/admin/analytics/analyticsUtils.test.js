@@ -1,0 +1,229 @@
+// @vitest-environment node
+import { describe, it, expect } from 'vitest';
+import {
+  countBy, topN, groupByDay, bounceRate, avgTimeOnPage, formatDuration,
+  avgScrollDepth, scrollDepthByPage, topJourneys, categoriseSource,
+  trafficSources, sessionsByHour, sparklineData, topCampaigns,
+} from './analyticsUtils.js';
+
+// Helper to make a mock event
+function mkEvent(overrides = {}) {
+  return {
+    sessionId: 's1',
+    page: '/',
+    eventType: 'pageview',
+    referrer: '',
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    ip: '1.2.3.4',
+    country: 'United Kingdom',
+    countryCode: 'GB',
+    utmSource: null,
+    utmCampaign: null,
+    timestamp: { toDate: () => new Date('2026-04-10T12:00:00Z') },
+    ...overrides,
+  };
+}
+
+describe('countBy', () => {
+  it('groups events by field and counts', () => {
+    const events = [mkEvent({ page: '/a' }), mkEvent({ page: '/a' }), mkEvent({ page: '/b' })];
+    expect(countBy(events, 'page')).toEqual({ '/a': 2, '/b': 1 });
+  });
+
+  it('uses "unknown" for missing field values', () => {
+    const events = [mkEvent({ page: null })];
+    expect(countBy(events, 'page')).toEqual({ unknown: 1 });
+  });
+});
+
+describe('topN', () => {
+  it('returns top N entries sorted by count descending', () => {
+    const obj = { a: 3, b: 10, c: 1 };
+    expect(topN(obj, 2)).toEqual([['b', 10], ['a', 3]]);
+  });
+});
+
+describe('groupByDay', () => {
+  it('fills all days with 0 for missing data', () => {
+    const result = groupByDay([], 3);
+    expect(result).toHaveLength(3);
+    result.forEach(([, count]) => expect(count).toBe(0));
+  });
+
+  it('counts events on the correct day', () => {
+    const events = [
+      mkEvent({ timestamp: { toDate: () => new Date('2026-04-10T12:00:00Z') } }),
+      mkEvent({ timestamp: { toDate: () => new Date('2026-04-10T18:00:00Z') } }),
+    ];
+    const result = groupByDay(events, 7);
+    const day = result.find(([d]) => d === '2026-04-10');
+    expect(day?.[1]).toBe(2);
+  });
+});
+
+describe('bounceRate', () => {
+  it('returns 100 when all sessions have 1 pageview', () => {
+    const pvs = [mkEvent({ sessionId: 's1' }), mkEvent({ sessionId: 's2' })];
+    expect(bounceRate(pvs)).toBe(100);
+  });
+
+  it('returns 0 when all sessions have >1 pageview', () => {
+    const pvs = [
+      mkEvent({ sessionId: 's1', page: '/' }),
+      mkEvent({ sessionId: 's1', page: '/about' }),
+    ];
+    expect(bounceRate(pvs)).toBe(0);
+  });
+
+  it('returns 0 for empty array', () => {
+    expect(bounceRate([])).toBe(0);
+  });
+});
+
+describe('avgTimeOnPage', () => {
+  it('returns mean of elementId values as seconds', () => {
+    const exits = [
+      mkEvent({ eventType: 'page_exit', elementId: '30' }),
+      mkEvent({ eventType: 'page_exit', elementId: '90' }),
+    ];
+    expect(avgTimeOnPage(exits)).toBe(60);
+  });
+
+  it('returns 0 for empty array', () => {
+    expect(avgTimeOnPage([])).toBe(0);
+  });
+});
+
+describe('formatDuration', () => {
+  it('formats seconds under 60 as Xs', () => {
+    expect(formatDuration(45)).toBe('45s');
+  });
+
+  it('formats seconds over 60 as Xm Ys', () => {
+    expect(formatDuration(134)).toBe('2m 14s');
+  });
+
+  it('formats exact minutes', () => {
+    expect(formatDuration(120)).toBe('2m 0s');
+  });
+});
+
+describe('avgScrollDepth', () => {
+  it('returns mean max threshold per session+page', () => {
+    const scrolls = [
+      mkEvent({ eventType: 'scroll_depth', sessionId: 's1', page: '/', elementId: '25' }),
+      mkEvent({ eventType: 'scroll_depth', sessionId: 's1', page: '/', elementId: '50' }),
+      mkEvent({ eventType: 'scroll_depth', sessionId: 's2', page: '/', elementId: '25' }),
+    ];
+    // s1 max = 50, s2 max = 25, avg = 37.5 → rounds to 38
+    expect(avgScrollDepth(scrolls)).toBe(38);
+  });
+
+  it('returns 0 for no scroll events', () => {
+    expect(avgScrollDepth([])).toBe(0);
+  });
+});
+
+describe('scrollDepthByPage', () => {
+  it('computes threshold percentages per top page', () => {
+    const pageviews = [
+      mkEvent({ sessionId: 's1', page: '/a' }),
+      mkEvent({ sessionId: 's2', page: '/a' }),
+    ];
+    const scrolls = [
+      mkEvent({ eventType: 'scroll_depth', sessionId: 's1', page: '/a', elementId: '50' }),
+    ];
+    const result = scrollDepthByPage(pageviews, scrolls, 1);
+    expect(result).toHaveLength(1);
+    expect(result[0].page).toBe('/a');
+    const t50 = result[0].thresholds.find(t => t.threshold === 50);
+    // s1 reached 50%, s2 did not → 1/2 = 50%
+    expect(t50.pct).toBe(50);
+    const t75 = result[0].thresholds.find(t => t.threshold === 75);
+    expect(t75.pct).toBe(0);
+  });
+});
+
+describe('topJourneys', () => {
+  it('extracts and counts multi-page session paths', () => {
+    const pageviews = [
+      mkEvent({ sessionId: 's1', page: '/', timestamp: { toDate: () => new Date('2026-04-10T10:00:00Z') } }),
+      mkEvent({ sessionId: 's1', page: '/about', timestamp: { toDate: () => new Date('2026-04-10T10:01:00Z') } }),
+      mkEvent({ sessionId: 's2', page: '/', timestamp: { toDate: () => new Date('2026-04-10T11:00:00Z') } }),
+      mkEvent({ sessionId: 's2', page: '/about', timestamp: { toDate: () => new Date('2026-04-10T11:01:00Z') } }),
+    ];
+    const result = topJourneys(pageviews, 5);
+    expect(result[0][0]).toBe('/ → /about');
+    expect(result[0][1]).toBe(2);
+  });
+
+  it('excludes single-page sessions', () => {
+    const pageviews = [mkEvent({ sessionId: 's1', page: '/' })];
+    expect(topJourneys(pageviews, 5)).toHaveLength(0);
+  });
+});
+
+describe('categoriseSource', () => {
+  it('returns Direct for empty referrer', () => {
+    expect(categoriseSource('')).toBe('Direct');
+    expect(categoriseSource(null)).toBe('Direct');
+  });
+
+  it('returns Search for Google', () => {
+    expect(categoriseSource('https://www.google.com/search?q=helicopter')).toBe('Search');
+  });
+
+  it('returns Social for Instagram', () => {
+    expect(categoriseSource('https://www.instagram.com/')).toBe('Social');
+  });
+
+  it('returns Referral for other sites', () => {
+    expect(categoriseSource('https://aviationweek.com/article/123')).toBe('Referral');
+  });
+});
+
+describe('trafficSources', () => {
+  it('groups and totals sources correctly', () => {
+    const pvs = [
+      mkEvent({ referrer: '' }),
+      mkEvent({ referrer: '' }),
+      mkEvent({ referrer: 'https://google.com' }),
+    ];
+    const result = trafficSources(pvs);
+    const direct = result.find(s => s.name === 'Direct');
+    expect(direct.pct).toBe(67);
+  });
+});
+
+describe('sessionsByHour', () => {
+  it('returns 24-element array', () => {
+    const result = sessionsByHour([mkEvent()]);
+    expect(result).toHaveLength(24);
+  });
+
+  it('increments the correct hour (UTC)', () => {
+    const pvs = [mkEvent({ timestamp: { toDate: () => new Date('2026-04-10T12:00:00Z') } })];
+    const result = sessionsByHour(pvs);
+    expect(result[12]).toBe(1);
+  });
+});
+
+describe('sparklineData', () => {
+  it('returns an array of length equal to days', () => {
+    const result = sparklineData([], 7);
+    expect(result).toHaveLength(7);
+  });
+});
+
+describe('topCampaigns', () => {
+  it('returns only events with utmCampaign set', () => {
+    const pvs = [
+      mkEvent({ utmCampaign: 'spring' }),
+      mkEvent({ utmCampaign: 'spring' }),
+      mkEvent({ utmCampaign: null }),
+    ];
+    const result = topCampaigns(pvs, 5);
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual(['spring', 2]);
+  });
+});
