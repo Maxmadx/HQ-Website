@@ -28,6 +28,9 @@ export default function AdminWallOfCool() {
   const [wallOrder, setWallOrder] = useState([]);
   const [dragId, setDragId]       = useState(null);
 
+  // Admin upload error
+  const [uploadError, setUploadError] = useState(null);
+
   // Live wall inline edit
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm]   = useState({ caption: '', alt: '' });
@@ -66,9 +69,7 @@ export default function AdminWallOfCool() {
   }
 
   function maxApprovedOrder() {
-    return docs
-      .filter((d) => (d.type === 'image' || !d.type) && d.status === 'approved')
-      .reduce((m, d) => Math.max(m, typeof d.order === 'number' ? d.order : 0), -1);
+    return wallOrder.reduce((m, d) => Math.max(m, typeof d.order === 'number' ? d.order : 0), -1);
   }
 
   // ── Approval actions ─────────────────────────────────────────────────────────
@@ -95,9 +96,10 @@ export default function AdminWallOfCool() {
   async function submitAdminUpload() {
     if (!pickedImage) return;
     setUpdating('admin-upload');
+    setUploadError(null);
     try {
       const h = await authHeaders();
-      await fetch('/api/wall-of-cool/admin', {
+      const res = await fetch('/api/wall-of-cool/admin', {
         method: 'POST',
         headers: h,
         body: JSON.stringify({
@@ -106,10 +108,13 @@ export default function AdminWallOfCool() {
           alt: adminForm.alt || pickedImage.alt,
         }),
       });
-    } finally {
-      setUpdating(null);
+      if (!res.ok) throw new Error('Upload failed — please try again');
       setPickedImage(null);
       setAdminForm({ caption: '', alt: '' });
+    } catch (err) {
+      setUploadError(err.message);
+    } finally {
+      setUpdating(null);
     }
   }
 
@@ -127,6 +132,7 @@ export default function AdminWallOfCool() {
   // ── Drag-and-drop ────────────────────────────────────────────────────────────
 
   function onDragStart(id) { setDragId(id); }
+  function onDragEnd() { setDragId(null); }
   function onDragOver(e) { e.preventDefault(); }
 
   async function onDrop(targetId) {
@@ -169,7 +175,7 @@ export default function AdminWallOfCool() {
         <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#111827', margin: 0 }}>Wall of Cool</h1>
         <div style={{ display: 'flex', gap: 8 }}>
           {['images', 'videos'].map((s) => (
-            <button key={s} onClick={() => setSection(s)} style={{
+            <button key={s} onClick={() => { setSection(s); setExpandedId(null); setExpandForm({ caption: '', alt: '' }); }} style={{
               padding: '0.4rem 1.1rem', border: '1px solid', borderRadius: 6, cursor: 'pointer',
               fontSize: '0.85rem', fontWeight: 600, textTransform: 'capitalize',
               background: section === s ? '#111827' : '#fff',
@@ -193,7 +199,7 @@ export default function AdminWallOfCool() {
                 { key: 'live',     label: 'Live Wall'  },
                 { key: 'rejected', label: 'Rejected'   },
               ].map(({ key, label }) => (
-                <button key={key} onClick={() => setImageTab(key)} style={tabStyle(imageTab === key)}>
+                <button key={key} onClick={() => { setImageTab(key); setExpandedId(null); setExpandForm({ caption: '', alt: '' }); }} style={tabStyle(imageTab === key)}>
                   {label} ({imgCounts[key]})
                 </button>
               ))}
@@ -229,6 +235,7 @@ export default function AdminWallOfCool() {
                   setEditingId={setEditingId}
                   setEditForm={setEditForm}
                   onDragStart={onDragStart}
+                  onDragEnd={onDragEnd}
                   onDragOver={onDragOver}
                   onDrop={onDrop}
                   onRemove={(id) => patchItem(id, { status: 'rejected' })}
@@ -256,7 +263,7 @@ export default function AdminWallOfCool() {
               { key: 'pending',  label: 'Pending'  },
               { key: 'rejected', label: 'Rejected' },
             ].map(({ key, label }) => (
-              <button key={key} onClick={() => setVideoTab(key)} style={tabStyle(videoTab === key)}>
+              <button key={key} onClick={() => { setVideoTab(key); setExpandedId(null); setExpandForm({ caption: '', alt: '' }); }} style={tabStyle(videoTab === key)}>
                 {label} ({vidCounts[key]})
               </button>
             ))}
@@ -308,9 +315,10 @@ export default function AdminWallOfCool() {
           pickedImage={pickedImage}
           adminForm={adminForm}
           updating={updating}
+          uploadError={uploadError}
           setAdminForm={setAdminForm}
           onSubmit={submitAdminUpload}
-          onCancel={() => { setPickedImage(null); setAdminForm({ caption: '', alt: '' }); }}
+          onCancel={() => { setPickedImage(null); setAdminForm({ caption: '', alt: '' }); setUploadError(null); }}
         />
       )}
     </AdminLayout>
@@ -414,10 +422,10 @@ function ImagesPendingGrid({ items, expandedId, expandForm, updating, setExpande
 
 // ── Live Wall ─────────────────────────────────────────────────────────────────
 
-function LiveWallGrid({ items, dragId, editingId, editForm, updating, setEditingId, setEditForm, onDragStart, onDragOver, onDrop, onRemove, onSaveEdit }) {
+function LiveWallGrid({ items, dragId, editingId, editForm, updating, setEditingId, setEditForm, onDragStart, onDragEnd, onDragOver, onDrop, onRemove, onSaveEdit }) {
   if (items.length === 0) return <p style={muted}>No approved images yet. Add one with the button above.</p>;
   return (
-    <div style={grid}>
+    <div style={grid} onDragOver={onDragOver}>
       {items.map((item) => {
         const isEditing = editingId === item.id;
         const isDragging = dragId === item.id;
@@ -426,6 +434,7 @@ function LiveWallGrid({ items, dragId, editingId, editForm, updating, setEditing
             key={item.id}
             draggable
             onDragStart={() => onDragStart(item.id)}
+            onDragEnd={onDragEnd}
             onDragOver={onDragOver}
             onDrop={() => onDrop(item.id)}
             style={{ ...card, opacity: isDragging ? 0.45 : 1, cursor: 'grab' }}
@@ -591,7 +600,7 @@ function VideosPendingGrid({ items, expandedId, expandForm, updating, setExpande
 
 // ── Admin Upload Overlay ──────────────────────────────────────────────────────
 
-function AdminUploadOverlay({ pickedImage, adminForm, updating, setAdminForm, onSubmit, onCancel }) {
+function AdminUploadOverlay({ pickedImage, adminForm, updating, uploadError, setAdminForm, onSubmit, onCancel }) {
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 100002, background: 'rgba(0,0,0,0.65)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       <div style={{ background: '#fff', borderRadius: 12, padding: 24, maxWidth: 480, width: '100%', boxShadow: '0 24px 80px rgba(0,0,0,0.3)' }}>
@@ -609,6 +618,9 @@ function AdminUploadOverlay({ pickedImage, adminForm, updating, setAdminForm, on
           onChange={(e) => setAdminForm((f) => ({ ...f, alt: e.target.value }))}
           style={inputStyle}
         />
+        {uploadError && (
+          <p style={{ color: '#991b1b', fontSize: '0.8rem', marginTop: 8, marginBottom: 0 }}>{uploadError}</p>
+        )}
         <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
           <button
             onClick={onSubmit}
