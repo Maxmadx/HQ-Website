@@ -61,6 +61,8 @@ router.post('/admin', requireAdmin, async (req, res) => {
     if (!String(imageUrl).startsWith('https://firebasestorage.googleapis.com/')) {
       return res.status(400).json({ error: 'imageUrl must be a Firebase Storage URL' });
     }
+    // Note: two simultaneous admin uploads could compute the same maxOrder.
+    // Acceptable given admin-only usage — no transaction needed at this scale.
     // Find the current max order value so new image is appended
     const snap = await admin.firestore()
       .collection('wall_of_cool')
@@ -97,10 +99,14 @@ router.patch('/reorder', requireAdmin, async (req, res) => {
     if (!Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ error: 'Body must be a non-empty array of { id, order }' });
     }
+    for (const item of items) {
+      if (!item.id || typeof item.order !== 'number') {
+        return res.status(400).json({ error: `Invalid item in reorder payload: ${JSON.stringify(item)}` });
+      }
+    }
     const db = admin.firestore();
     const batch = db.batch();
     for (const item of items) {
-      if (!item.id || typeof item.order !== 'number') continue;
       batch.update(db.collection('wall_of_cool').doc(item.id), { order: item.order });
     }
     await batch.commit();
