@@ -16,6 +16,7 @@ export default function WallOfCoolSection() {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const observerRef = useRef(null);
+  const containerRef = useRef(null);
 
   useEffect(() => {
     async function fetchApproved() {
@@ -58,9 +59,11 @@ export default function WallOfCoolSection() {
       { rootMargin: '200px 0px' }, // start loading 200px before entering viewport
     );
 
-    document.querySelectorAll('.woc-lazy-img').forEach((img) => {
-      observerRef.current.observe(img);
-    });
+    if (containerRef.current) {
+      containerRef.current.querySelectorAll('.woc-lazy-img').forEach((img) => {
+        observerRef.current.observe(img);
+      });
+    }
 
     return () => observerRef.current?.disconnect();
   }, [loading, images]);
@@ -82,7 +85,7 @@ export default function WallOfCoolSection() {
         </div>
 
         {/* Image grid */}
-        <div style={{
+        <div ref={containerRef} style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
           gap: '0.5rem',
@@ -102,11 +105,14 @@ export default function WallOfCoolSection() {
                 data-src={img.imageUrl}
                 src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
                 alt={img.alt || 'Wall of Cool'}
+                onLoad={(e) => { e.target.style.opacity = 1; }}
                 style={{
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
                   display: 'block',
+                  opacity: 0,
+                  transition: 'opacity 0.3s',
                 }}
               />
             </div>
