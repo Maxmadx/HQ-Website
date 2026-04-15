@@ -14,10 +14,28 @@ export function getSessionId() {
 }
 
 /**
+ * Read UTM params from the current URL.
+ * Returns an object with utmSource/Medium/Campaign/Term/Content (null when absent).
+ */
+function getUtmParams() {
+  if (typeof window === 'undefined') {
+    return { utmSource: null, utmMedium: null, utmCampaign: null, utmTerm: null, utmContent: null };
+  }
+  const params = new URLSearchParams(window.location.search);
+  return {
+    utmSource: params.get('utm_source'),
+    utmMedium: params.get('utm_medium'),
+    utmCampaign: params.get('utm_campaign'),
+    utmTerm: params.get('utm_term'),
+    utmContent: params.get('utm_content'),
+  };
+}
+
+/**
  * Send a tracking event to the server. Fire-and-forget — never throws.
- * @param {string} eventType  pageview | cta_click | form_submit | image_view
- * @param {string} [elementId]  Optional element identifier
- * @param {string} [page]  Defaults to window.location.pathname
+ * @param {string} eventType  pageview | cta_click | form_submit | image_view | scroll_depth | page_exit
+ * @param {string|null} [elementId]  Optional element identifier
+ * @param {string|null} [page]  Defaults to window.location.pathname
  */
 export async function trackEvent(eventType, elementId = null, page = null) {
   try {
@@ -30,6 +48,7 @@ export async function trackEvent(eventType, elementId = null, page = null) {
         eventType,
         elementId,
         referrer: typeof document !== 'undefined' ? document.referrer : '',
+        ...getUtmParams(),
       }),
     });
   } catch {

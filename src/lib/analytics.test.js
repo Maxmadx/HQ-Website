@@ -41,4 +41,30 @@ describe('analytics', () => {
     fetch.mockRejectedValueOnce(new Error('network error'));
     await expect(trackEvent('pageview')).resolves.toBeUndefined();
   });
+
+  it('trackEvent includes UTM params from URL when present', async () => {
+    // Simulate URL with UTM params
+    delete window.location;
+    window.location = { pathname: '/', search: '?utm_source=google&utm_campaign=spring_sale', href: '' };
+
+    await trackEvent('pageview');
+
+    const body = JSON.parse(fetch.mock.calls[0][1].body);
+    expect(body.utmSource).toBe('google');
+    expect(body.utmCampaign).toBe('spring_sale');
+    expect(body.utmMedium).toBeNull();
+    expect(body.utmTerm).toBeNull();
+    expect(body.utmContent).toBeNull();
+  });
+
+  it('trackEvent sends null UTM params when URL has no UTM params', async () => {
+    delete window.location;
+    window.location = { pathname: '/', search: '', href: '' };
+
+    await trackEvent('pageview');
+
+    const body = JSON.parse(fetch.mock.calls[0][1].body);
+    expect(body.utmSource).toBeNull();
+    expect(body.utmCampaign).toBeNull();
+  });
 });
