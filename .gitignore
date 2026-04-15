@@ -36,3 +36,6 @@ build/
 *.bak
 *.backup
 .cache/
+
+# Superpowers brainstorm artefacts
+.superpowers/
