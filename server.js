@@ -26,6 +26,7 @@ const stripeDiscoveryRouter = require('./api/stripe-discovery');
 const analyticsRouter = require('./api/analytics-api');
 
 const app = express();
+app.set('trust proxy', 1); // Read real IP from X-Forwarded-For (required for req.ip behind proxies)
 const PORT = process.env.PORT || 7500;
 const publicDir = path.join(__dirname, 'public');
 const pagesDir = path.join(publicDir, 'pages');
