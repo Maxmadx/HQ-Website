@@ -8,8 +8,8 @@ const router = express.Router();
 
 const ALLOWED_TYPES = ['pageview', 'cta_click', 'form_submit', 'image_view', 'scroll_depth', 'page_exit'];
 
-// Private / loopback IPs — skip geo lookup for these
-const PRIVATE_IP_RE = /^(127\.|::1$|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/;
+// Private / loopback IPs (IPv4 + IPv6) — skip geo lookup for these
+const PRIVATE_IP_RE = /^(127\.|::1$|::ffff:127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|fc[0-9a-f]{2}:|fd[0-9a-f]{2}:|fe80:)/i;
 
 // Rate limiter: 60 requests per IP per minute on the ingest endpoint
 const analyticsLimiter = rateLimit({
@@ -86,7 +86,7 @@ router.post('/', analyticsLimiter, async (req, res) => {
     }
 
     const ip = req.ip || null;
-    const geo = await geoLookup(ip || '');
+    const geo = await geoLookup(ip);
 
     await admin.firestore().collection('page_events').add({
       sessionId: String(sessionId || '').slice(0, 64),
