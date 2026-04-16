@@ -280,7 +280,7 @@ export default function Misc() {
         <section className="misc-hero">
           <div className="misc-container">
             <span className="misc-eyebrow">HQ Aviation</span>
-            <h1 className="misc-title">Miscellaneous</h1>
+            <h1 className="misc-title">MISCELLANEOUS</h1>
             <p className="misc-subtitle">
               Accessories, apparel, ground equipment, training materials and more — everything beyond the aircraft itself, sourced and stocked by HQ.
             </p>
