@@ -173,7 +173,7 @@ export default function AdminMiscItemEdit() {
             {form.images.length > 0 && (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.75rem' }}>
                 {form.images.map((img, i) => (
-                  <div key={i} style={{ position: 'relative', width: '120px' }}>
+                  <div key={img.url} style={{ position: 'relative', width: '120px' }}>
                     <img
                       src={img.url}
                       alt={img.alt}
