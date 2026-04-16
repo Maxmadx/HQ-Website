@@ -294,7 +294,6 @@ function AircraftCard({ aircraft, isActive, onClick }) {
                   ✕
                 </button>
               </div>
-              <span className="tr-aircraft-card__expanded-price">{aircraft.price}</span>
             </div>
 
             <p className="tr-aircraft-card__expanded-desc">{aircraft.description}</p>
@@ -332,6 +331,55 @@ function TypeRating() {
   const heroRef = useRef(null);
   const [openFaq, setOpenFaq] = useState(null);
   const [selectedAircraft, setSelectedAircraft] = useState(0);
+
+  // Enquiry form state
+  const [enquiryAircraft, setEnquiryAircraft] = useState('');
+  const [formVisible, setFormVisible] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
+  const [formStatus, setFormStatus] = useState('idle'); // 'idle' | 'submitting' | 'success' | 'error'
+  const enquiryFormRef = useRef(null);
+
+  function handleEnquire(model) {
+    setEnquiryAircraft(model);
+    if (!formVisible) {
+      setFormVisible(true);
+      setTimeout(() => {
+        enquiryFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    } else {
+      enquiryFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function handleFormChange(e) {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  }
+
+  async function handleFormSubmit(e) {
+    e.preventDefault();
+    setFormStatus('submitting');
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          subject: `Type Rating — ${enquiryAircraft}`,
+          message: formData.message,
+          source: 'type-rating-page',
+        }),
+      });
+      if (!res.ok) throw new Error('Submit failed');
+      setFormStatus('success');
+      setFormData({ name: '', email: '', phone: '', message: '' });
+    } catch {
+      setFormStatus('error');
+    }
+  }
+
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ['start start', 'end start'],
@@ -359,7 +407,6 @@ function TypeRating() {
       description: 'The ideal training helicopter. Lightweight and responsive, the R22 teaches precision flying and develops sharp skills that transfer to any aircraft.',
       groundHours: 8,
       flightHours: 5,
-      price: '£2,400',
     },
     {
       model: 'Robinson R44',
@@ -372,7 +419,6 @@ function TypeRating() {
       description: 'The world\'s best-selling helicopter. Spacious, powerful, and versatile—perfect for touring, business travel, and family flying.',
       groundHours: 8,
       flightHours: 5,
-      price: '£3,200',
     },
     {
       model: 'Robinson R66',
@@ -385,7 +431,6 @@ function TypeRating() {
       description: 'Turbine power and unmatched performance. The R66 delivers exceptional range, speed, and reliability for serious pilots.',
       groundHours: 10,
       flightHours: 5,
-      price: '£4,800',
     },
     {
       model: 'Hughes 500',
@@ -398,7 +443,6 @@ function TypeRating() {
       description: 'The iconic light turbine helicopter. Renowned for its agility and performance, the Hughes 500 is a favourite among experienced pilots seeking a responsive, capable aircraft.',
       groundHours: 10,
       flightHours: 5,
-      price: '£5,200',
     },
     {
       model: 'AS350 Squirrel',
@@ -411,7 +455,6 @@ function TypeRating() {
       description: 'The legendary single-engine workhorse. The AS350 combines exceptional performance with proven reliability—a favourite for utility, tours, and aerial work worldwide.',
       groundHours: 10,
       flightHours: 5,
-      price: '£5,800',
     },
     {
       model: 'Bell 407',
@@ -424,7 +467,6 @@ function TypeRating() {
       description: 'Premium single-turbine performance. The Bell 407 combines spacious cabin comfort with outstanding power and speed—a favourite for corporate and charter operations.',
       groundHours: 12,
       flightHours: 5,
-      price: '£7,400',
     },
   ];
 
