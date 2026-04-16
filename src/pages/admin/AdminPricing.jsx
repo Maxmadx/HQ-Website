@@ -81,11 +81,12 @@ export default function AdminPricing() {
     setSaving(id);
     try {
       const ed = editing[id];
+      const item = items.find((i) => i.id === id);
       await updateDocById('pricing', id, {
         price:       poundsToAppence(ed.price),
         label:       ed.label,
         description: ed.description,
-        ...(ed.condition !== undefined && { condition: ed.condition }),
+        ...(item?.category === 'miscellaneous' && { condition: ed.condition }),
       });
       cancelEdit(id);
     } finally {
@@ -242,9 +243,9 @@ export default function AdminPricing() {
                             ? <input style={fieldStyle} value={ed.description} onChange={(e) => setEditing((x) => ({ ...x, [item.id]: { ...x[item.id], description: e.target.value } }))} />
                             : item.description}
                         </td>
-                        <td style={{ padding: '0.6rem 0.75rem', color: '#6b7280', fontSize: '0.8rem' }}>
-                          {cat.id === 'miscellaneous' && (
-                            ed
+                        {cat.id === 'miscellaneous' && (
+                          <td style={{ padding: '0.6rem 0.75rem', color: '#6b7280', fontSize: '0.8rem' }}>
+                            {ed
                               ? (
                                 <select
                                   style={{ ...fieldStyle, width: '80px' }}
@@ -256,8 +257,9 @@ export default function AdminPricing() {
                                 </select>
                               )
                               : (item.condition === 'used' ? 'Used' : 'New')
-                          )}
-                        </td>
+                            }
+                          </td>
+                        )}
                         <td style={{ padding: '0.6rem 0.75rem', whiteSpace: 'nowrap' }}>
                           {ed ? (
                             <>
