@@ -81,6 +81,8 @@ import ImageEditDrawer from './components/admin/ImageEditDrawer';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminListings from './pages/admin/AdminListings';
 import AdminListingEdit from './pages/admin/AdminListingEdit';
+import AdminMiscItems from './pages/admin/AdminMiscItems';
+import AdminMiscItemEdit from './pages/admin/AdminMiscItemEdit';
 import AdminBlog from './pages/admin/AdminBlog';
 import AdminBlogEdit from './pages/admin/AdminBlogEdit';
 import AdminPricing from './pages/admin/AdminPricing';
@@ -192,6 +194,8 @@ function App() {
         <Route path="/admin/text" element={<AdminRoute><AdminEditTextMode /></AdminRoute>} />
         <Route path="/admin/listings" element={<AdminRoute><AdminListings /></AdminRoute>} />
         <Route path="/admin/listings/:id" element={<AdminRoute><AdminListingEdit /></AdminRoute>} />
+        <Route path="/admin/misc" element={<AdminRoute><AdminMiscItems /></AdminRoute>} />
+        <Route path="/admin/misc/:id" element={<AdminRoute><AdminMiscItemEdit /></AdminRoute>} />
         <Route path="/admin/blog" element={<AdminRoute><AdminBlog /></AdminRoute>} />
         <Route path="/admin/blog/:id" element={<AdminRoute><AdminBlogEdit /></AdminRoute>} />
         <Route path="/admin/pricing" element={<AdminRoute><AdminPricing /></AdminRoute>} />

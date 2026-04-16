@@ -7,6 +7,7 @@ import { auth, db } from '../../lib/firebase';
 const NAV_ITEMS = [
   { to: '/admin', icon: '📊', label: 'Dashboard' },
   { to: '/admin/listings', icon: '✈️', label: 'Listings' },
+  { to: '/admin/misc', icon: '🛒', label: 'Misc Items' },
   { to: '/admin/images', icon: '🖼️', label: 'Images' },
   { to: '/admin/text', icon: '✍️', label: 'Text' },
   { to: '/admin/blog', icon: '📝', label: 'Blog' },
