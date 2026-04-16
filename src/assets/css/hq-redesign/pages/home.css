@@ -2397,12 +2397,17 @@
   grid-template-columns: 1fr auto;
 }
 
-@media (max-width: 580px) {
+.hq-woc-teaser__right {
+  border-left: 1px solid #e8e6e2;
+  min-width: 195px;
+}
+
+@media (max-width: 640px) {
   .hq-woc-teaser {
     grid-template-columns: 1fr;
   }
 
-  .hq-woc-teaser .hq-woc-teaser__right {
+  .hq-woc-teaser__right {
     border-left: none;
     border-top: 1px solid #e8e6e2;
     min-width: unset;

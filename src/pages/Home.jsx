@@ -338,9 +338,7 @@ function Home() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '0.75rem',
-                    minWidth: '195px',
                     background: '#faf9f6',
-                    borderLeft: '1px solid #e8e6e2',
                   }}>
                     <a
                       href="#wall-of-cool"
