@@ -11,6 +11,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
+import { useFaqs } from '../hooks/useFaqs';
 
 // Animated counter component
 function AnimatedNumber({ value, suffix = '', prefix = '', duration = 2 }) {
@@ -112,28 +113,7 @@ function PPL() {
 
   // FAQ items
   const [openFaq, setOpenFaq] = useState(null);
-  const faqs = [
-    {
-      q: 'How long does it take to get a PPL(H)?',
-      a: 'Most students complete their PPL(H) in 6-12 months, depending on how frequently they can fly. Flying 2-3 times per week typically leads to faster progress and better retention of skills.'
-    },
-    {
-      q: 'What medical certificate do I need?',
-      a: 'You need at least a Class 2 medical certificate or a LAPL medical. We recommend obtaining your medical before starting training to avoid any surprises. We can recommend approved Aviation Medical Examiners.'
-    },
-    {
-      q: 'Can I train year-round?',
-      a: 'Yes! Helicopters can operate in a wide range of weather conditions. Training in varied conditions actually makes you a better, more confident pilot. However, we never compromise on safety.'
-    },
-    {
-      q: 'What happens after I get my PPL(H)?',
-      a: 'Your PPL(H) allows you to fly helicopters for private purposes. Many pilots continue to build hours, add ratings (night, type ratings), or work toward a commercial license. The sky is truly the limit.'
-    },
-    {
-      q: 'Is financing available?',
-      a: 'We offer flexible payment plans and can discuss financing options. Many students pay as they go rather than upfront. Contact us to discuss what works best for your situation.'
-    }
-  ];
+  const { faqs } = useFaqs('ppl', { visibleOnly: true });
 
   return (
     <div className="ppl-page">
@@ -385,7 +365,7 @@ function PPL() {
       </section>
 
       {/* ===== FAQ ===== */}
-      <section className="ppl-faq">
+      <section className="ppl-faq" data-cms-section="faqs-ppl">
         <div className="ppl-faq__container">
           <RevealSection className="ppl-faq__header">
             <span className="ppl-section-number">05</span>
@@ -394,19 +374,19 @@ function PPL() {
 
           <div className="ppl-faq__list">
             {faqs.map((faq, index) => (
-              <RevealSection key={index} delay={index * 0.1}>
+              <RevealSection key={faq.id || index} delay={index * 0.1}>
                 <div
                   className={`ppl-faq__item ${openFaq === index ? 'ppl-faq__item--open' : ''}`}
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
                 >
                   <div className="ppl-faq__question">
-                    <span>{faq.q}</span>
+                    <span>{faq.question}</span>
                     <span className="ppl-faq__icon">
                       {openFaq === index ? '−' : '+'}
                     </span>
                   </div>
                   <div className="ppl-faq__answer">
-                    <p>{faq.a}</p>
+                    <p>{faq.answer}</p>
                   </div>
                 </div>
               </RevealSection>

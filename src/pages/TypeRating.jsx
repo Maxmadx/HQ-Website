@@ -10,6 +10,7 @@
  */
 
 import React, { useRef, useEffect, useState } from 'react';
+import { useFaqs } from '../hooks/useFaqs';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 
@@ -455,33 +456,7 @@ function TypeRating() {
     },
   ];
 
-  // FAQ data
-  const faqs = [
-    {
-      q: 'What is a Type Rating?',
-      a: 'A Type Rating is an additional qualification added to your pilot\'s license that authorizes you to fly a specific aircraft type. Having achieved your PPL(H), you may wish to fly different types of helicopter—a type rating course makes this possible.',
-    },
-    {
-      q: 'How long does it take to get a Type Rating?',
-      a: 'Typically 3-5 days. This includes ground school (1-2 days), a minimum of 5 hours flight training, and the skill test. The exact duration depends on your availability and proficiency.',
-    },
-    {
-      q: 'Do I need any previous experience on the type?',
-      a: 'No, the type rating course teaches you everything from scratch. However, having experience on similar aircraft types can help you progress faster.',
-    },
-    {
-      q: 'What\'s the difference between piston and turbine type ratings?',
-      a: 'Piston types (R22, R44) are typically simpler with lower operating costs. Turbine types (R66) offer more power and performance but require additional turbine-specific training. The R66 turbine conversion includes additional systems knowledge.',
-    },
-    {
-      q: 'Can I do multiple type ratings at once?',
-      a: 'Yes, many pilots combine type ratings—for example, getting both R44 and R66 ratings during an intensive course. This can be more time and cost-efficient.',
-    },
-    {
-      q: 'How often do type ratings need to be renewed?',
-      a: 'Type ratings don\'t expire, but you must remain current on the type. If you haven\'t flown a type for an extended period, refresher training may be required before acting as pilot in command.',
-    },
-  ];
+  const { faqs } = useFaqs('type-rating', { visibleOnly: true });
 
   // Prerequisites
   const prerequisites = [
@@ -670,6 +645,50 @@ function TypeRating() {
           </Reveal>
         </div>
       </section>
+
+      {/* ========== FAQ SECTION ========== */}
+      {faqs.length > 0 && (
+        <section className="tr-faq" data-cms-section="faqs-type-rating">
+          <div className="tr-faq__container">
+            <Reveal>
+              <div className="tr-section-header">
+                <span className="tr-pre-text">Common Questions</span>
+                <h2>
+                  <span className="tr-text--dark">Frequently</span>{' '}
+                  <span className="tr-text--mid">Asked</span>
+                </h2>
+              </div>
+            </Reveal>
+
+            <div className="tr-faq__list">
+              {faqs.map((faq, i) => (
+                <Reveal key={faq.id} delay={i * 0.05}>
+                  <div
+                    className={`tr-faq__item ${openFaq === i ? 'tr-faq__item--open' : ''}`}
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  >
+                    <span className="tr-faq__number">{String(i + 1).padStart(2, '0')}</span>
+                    <div className="tr-faq__content">
+                      <h4>
+                        {faq.question}
+                        <span className="tr-faq__toggle">{openFaq === i ? '−' : '+'}</span>
+                      </h4>
+                      <motion.div
+                        className="tr-faq__answer"
+                        initial={false}
+                        animate={{ height: openFaq === i ? 'auto' : 0, opacity: openFaq === i ? 1 : 0 }}
+                        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                      >
+                        <p>{faq.answer}</p>
+                      </motion.div>
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ========== CTA SECTION ========== */}
       <section className="tr-cta">

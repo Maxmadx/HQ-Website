@@ -667,7 +667,7 @@ function SelfFlyHire() {
 
 
       {/* ========== FAQ & LOCATION SECTION ========== */}
-      <section className="sfh-faq-location">
+      <section className="sfh-faq-location" data-cms-section="faqs-sfh">
         <div className="sfh-faq-location__container">
           <div className="sfh-faq-location__map">
             <Reveal>

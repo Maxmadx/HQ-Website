@@ -1578,7 +1578,7 @@ function FinalExpeditions() {
       <BookingSteps />
 
       {/* ========== FAQ SECTION ========== */}
-      <section className="fexp-faq">
+      <section className="fexp-faq" data-cms-section="faqs-expeditions">
         <div className="fexp-faq__container fexp-faq__container--full">
           <div className="fexp-faq__right">
             <Reveal>
@@ -1590,7 +1590,7 @@ function FinalExpeditions() {
 
             <div className="fexp-faq__list">
               {faqs.map((faq, i) => (
-                <Reveal key={i} delay={i * 0.05}>
+                <Reveal key={faq.id} delay={i * 0.05}>
                   <div
                     className={`fexp-faq__item ${openFaq === i ? 'fexp-faq__item--open' : ''}`}
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
@@ -1598,7 +1598,7 @@ function FinalExpeditions() {
                     <div className="fexp-faq__number">{String(i + 1).padStart(2, '0')}</div>
                     <div className="fexp-faq__content">
                       <h4>
-                        {faq.q}
+                        {faq.question}
                         <span className="fexp-faq__toggle">{openFaq === i ? '−' : '+'}</span>
                       </h4>
                       <motion.div
@@ -1607,7 +1607,7 @@ function FinalExpeditions() {
                         animate={{ height: openFaq === i ? 'auto' : 0, opacity: openFaq === i ? 1 : 0 }}
                         transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                       >
-                        <p>{faq.a}</p>
+                        <p>{faq.answer}</p>
                       </motion.div>
                     </div>
                   </div>

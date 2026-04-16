@@ -1,17 +1,35 @@
 import { useState, useEffect } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import MediaLibraryPicker from '../../components/admin/MediaLibraryPicker';
-import { useCollection } from '../../hooks/useFirestore';
-import { auth } from '../../lib/firebase';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db, auth } from '../../lib/firebase';
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function AdminWallOfCool() {
-  const { docs, loading } = useCollection('wall_of_cool', 'submittedAt');
+  const [docs, setDocs]       = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch all wall_of_cool docs without orderBy — orderBy('submittedAt') would
+  // silently exclude documents that were created without that field.
+  useEffect(() => {
+    const unsub = onSnapshot(
+      collection(db, 'wall_of_cool'),
+      (snap) => {
+        setDocs(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+        setLoading(false);
+      },
+      (err) => {
+        console.error('wall_of_cool snapshot error:', err);
+        setLoading(false);
+      },
+    );
+    return unsub;
+  }, []);
 
   // Section + tab state
   const [section, setSection]     = useState('images');   // 'images' | 'videos'
-  const [imageTab, setImageTab]   = useState('pending'); // 'pending' | 'live' | 'rejected'
+  const [imageTab, setImageTab]   = useState('live'); // 'pending' | 'live' | 'rejected'
   const [videoTab, setVideoTab]   = useState('pending'); // 'pending' | 'rejected'
 
   // UI action state
@@ -27,6 +45,7 @@ export default function AdminWallOfCool() {
   // Live wall drag-and-drop
   const [wallOrder, setWallOrder] = useState([]);
   const [dragId, setDragId]       = useState(null);
+  const [dragOverId, setDragOverId] = useState(null);
 
   // Admin upload error
   const [uploadError, setUploadError] = useState(null);
@@ -114,7 +133,10 @@ export default function AdminWallOfCool() {
           alt: adminForm.alt || pickedImage.alt,
         }),
       });
-      if (!res.ok) throw new Error('Upload failed — please try again');
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error || 'Upload failed — please try again');
+      }
       setPickedImage(null);
       setAdminForm({ caption: '', alt: '' });
     } catch (err) {
@@ -137,11 +159,26 @@ export default function AdminWallOfCool() {
 
   // ── Drag-and-drop ────────────────────────────────────────────────────────────
 
-  function onDragStart(id) { setDragId(id); }
-  function onDragEnd() { setDragId(null); }
-  function onDragOver(e) { e.preventDefault(); }
+  function onDragStart(id) { setDragId(id); setDragOverId(null); }
+  function onDragEnd()    { setDragId(null); setDragOverId(null); }
+  function onDragOver(e)  { e.preventDefault(); }
+  function onDragEnter(id) { if (id !== dragId) setDragOverId(id); }
+  function onDragLeave(e, id) {
+    // Only clear if leaving the card entirely (not entering a child)
+    if (!e.currentTarget.contains(e.relatedTarget)) setDragOverId((prev) => prev === id ? null : prev);
+  }
+
+  async function persistOrder(items) {
+    const h = await authHeaders();
+    fetch('/api/wall-of-cool/reorder', {
+      method: 'PATCH',
+      headers: h,
+      body: JSON.stringify(items.map((d, i) => ({ id: d.id, order: i }))),
+    });
+  }
 
   async function onDrop(targetId) {
+    setDragOverId(null);
     if (!dragId || dragId === targetId) { setDragId(null); return; }
     const items = [...wallOrder];
     const fromIdx = items.findIndex((d) => d.id === dragId);
@@ -150,13 +187,16 @@ export default function AdminWallOfCool() {
     items.splice(toIdx, 0, items.splice(fromIdx, 1)[0]);
     setWallOrder(items);
     setDragId(null);
-    // Fire-and-forget reorder API call
-    const h = await authHeaders();
-    fetch('/api/wall-of-cool/reorder', {
-      method: 'PATCH',
-      headers: h,
-      body: JSON.stringify(items.map((d, i) => ({ id: d.id, order: i }))),
-    });
+    persistOrder(items);
+  }
+
+  function onMove(idx, delta) {
+    const toIdx = idx + delta;
+    if (toIdx < 0 || toIdx >= wallOrder.length) return;
+    const items = [...wallOrder];
+    [items[idx], items[toIdx]] = [items[toIdx], items[idx]];
+    setWallOrder(items);
+    persistOrder(items);
   }
 
   // ── Derived lists ────────────────────────────────────────────────────────────
@@ -235,6 +275,7 @@ export default function AdminWallOfCool() {
                 <LiveWallGrid
                   items={wallOrder}
                   dragId={dragId}
+                  dragOverId={dragOverId}
                   editingId={editingId}
                   editForm={editForm}
                   updating={updating}
@@ -243,7 +284,10 @@ export default function AdminWallOfCool() {
                   onDragStart={onDragStart}
                   onDragEnd={onDragEnd}
                   onDragOver={onDragOver}
+                  onDragEnter={onDragEnter}
+                  onDragLeave={onDragLeave}
                   onDrop={onDrop}
+                  onMove={onMove}
                   onRemove={(id) => patchItem(id, { status: 'rejected' })}
                   onSaveEdit={saveEdit}
                 />
@@ -428,13 +472,14 @@ function ImagesPendingGrid({ items, expandedId, expandForm, updating, setExpande
 
 // ── Live Wall ─────────────────────────────────────────────────────────────────
 
-function LiveWallGrid({ items, dragId, editingId, editForm, updating, setEditingId, setEditForm, onDragStart, onDragEnd, onDragOver, onDrop, onRemove, onSaveEdit }) {
+function LiveWallGrid({ items, dragId, dragOverId, editingId, editForm, updating, setEditingId, setEditForm, onDragStart, onDragEnd, onDragOver, onDragEnter, onDragLeave, onDrop, onMove, onRemove, onSaveEdit }) {
   if (items.length === 0) return <p style={muted}>No approved images yet. Add one with the button above.</p>;
   return (
     <div style={grid} onDragOver={onDragOver}>
-      {items.map((item) => {
-        const isEditing = editingId === item.id;
+      {items.map((item, idx) => {
+        const isEditing  = editingId === item.id;
         const isDragging = dragId === item.id;
+        const isOver     = dragOverId === item.id && !isDragging;
         return (
           <div
             key={item.id}
@@ -442,11 +487,23 @@ function LiveWallGrid({ items, dragId, editingId, editForm, updating, setEditing
             onDragStart={() => onDragStart(item.id)}
             onDragEnd={onDragEnd}
             onDragOver={onDragOver}
+            onDragEnter={() => onDragEnter(item.id)}
+            onDragLeave={(e) => onDragLeave(e, item.id)}
             onDrop={() => onDrop(item.id)}
-            style={{ ...card, opacity: isDragging ? 0.45 : 1, cursor: 'grab' }}
+            style={{
+              ...card,
+              opacity: isDragging ? 0.35 : 1,
+              cursor: isDragging ? 'grabbing' : 'grab',
+              transform: isOver ? 'scale(1.03)' : 'scale(1)',
+              transition: 'transform 0.15s, box-shadow 0.15s, opacity 0.15s',
+              boxShadow: isOver ? '0 0 0 3px #111827, 0 8px 24px rgba(0,0,0,0.18)' : 'none',
+              outline: 'none',
+            }}
           >
-            {/* Drag handle indicator */}
-            <div style={{ position: 'absolute', top: 6, left: 6, color: 'rgba(255,255,255,0.8)', fontSize: '0.7rem', userSelect: 'none', pointerEvents: 'none' }}>⠿⠿</div>
+            {/* Position badge */}
+            <div style={{ position: 'absolute', top: 6, left: 6, background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: '0.6rem', fontWeight: 700, padding: '1px 5px', borderRadius: 3, userSelect: 'none', pointerEvents: 'none' }}>
+              {idx + 1}
+            </div>
             <img src={item.imageUrl} alt={item.alt || ''} style={thumb} />
             <div style={cardBody}>
               {isEditing ? (
@@ -482,6 +539,23 @@ function LiveWallGrid({ items, dragId, editingId, editForm, updating, setEditing
               ) : (
                 <>
                   {item.caption && <p style={{ fontSize: '0.78rem', color: '#374151', margin: '0 0 6px', lineHeight: 1.3 }}>{item.caption}</p>}
+                  {/* Move buttons */}
+                  <div style={{ display: 'flex', gap: 4, marginBottom: 4 }}>
+                    <button
+                      onClick={() => onMove(idx, -1)}
+                      disabled={idx === 0}
+                      style={{ ...actionBtn, background: '#f3f4f6', color: '#374151', flex: 1, opacity: idx === 0 ? 0.3 : 1 }}
+                    >
+                      ←
+                    </button>
+                    <button
+                      onClick={() => onMove(idx, 1)}
+                      disabled={idx === items.length - 1}
+                      style={{ ...actionBtn, background: '#f3f4f6', color: '#374151', flex: 1, opacity: idx === items.length - 1 ? 0.3 : 1 }}
+                    >
+                      →
+                    </button>
+                  </div>
                   <div style={{ display: 'flex', gap: 4 }}>
                     <button
                       onClick={() => { setEditingId(item.id); setEditForm({ caption: item.caption || '', alt: item.alt || '' }); }}

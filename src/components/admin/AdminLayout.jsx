@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { to: '/admin/analytics', icon: '📈', label: 'Analytics' },
   { to: '/admin/wall-of-cool', icon: '📸', label: 'Wall of Cool' },
   { to: '/admin/reviews', icon: '⭐', label: 'Reviews' },
+  { to: '/admin/faqs', icon: '❓', label: 'FAQs' },
 ];
 
 export default function AdminLayout({ children }) {

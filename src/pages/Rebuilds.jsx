@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useFaqs } from '../hooks/useFaqs';
 import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import FooterMinimal from '../components/FooterMinimal';
@@ -242,14 +243,6 @@ const customisationOptions = [
   { icon: 'fa-shield-alt', title: 'Safety', desc: 'Crash-resistant fuel systems, ELT upgrades, enhanced lighting packages.' },
 ];
 
-const faqItems = [
-  { q: 'How does a rebuild differ from buying new?', a: 'A rebuild strips an existing airframe to bare metal, replaces all life-limited components, and reassembles to zero-time specification. You get factory-new condition with full customisation at a fraction of the new aircraft price.' },
-  { q: 'Can I supply my own aircraft for rebuild?', a: 'Absolutely. Many owners bring their existing helicopter for a complete rebuild. We\'ll assess the airframe and provide a detailed quotation based on its condition.' },
-  { q: 'What warranty do rebuilt aircraft carry?', a: 'All rebuilt aircraft come with a comprehensive warranty covering workmanship and components. Engine overhauls carry the manufacturer\'s warranty. Full details are provided with each quotation.' },
-  { q: 'How do I reserve a rebuild slot?', a: 'Contact our sales team to discuss your requirements. A refundable deposit secures your place in our build schedule. We then work together to finalise your specification before work begins.' },
-  { q: 'Are rebuilt aircraft CAA/EASA certified?', a: 'Yes. All rebuilds are completed at our CAA Part 145 approved facility. Each aircraft receives a full Certificate of Release to Service and all necessary documentation.' },
-  { q: 'Can I visit during the rebuild process?', a: 'We encourage it. Clients are welcome to visit our Denham facility at any stage. We also provide regular photo and video updates throughout the build.' },
-];
 
 // ============================================
 // BEFORE/AFTER COMPONENT
@@ -321,19 +314,20 @@ function BeforeAfter() {
 
 function FAQ() {
   const [openIndex, setOpenIndex] = useState(null);
+  const { faqs } = useFaqs('rebuilds', { visibleOnly: true });
 
   return (
-    <div className="rb__faq-list">
-      {faqItems.map((item, i) => (
-        <div key={i} className={`rb__faq-item ${openIndex === i ? 'rb__faq-item--open' : ''}`} onClick={() => setOpenIndex(openIndex === i ? null : i)}>
+    <div className="rb__faq-list" data-cms-section="faqs-rebuilds">
+      {faqs.map((item, i) => (
+        <div key={item.id || i} className={`rb__faq-item ${openIndex === i ? 'rb__faq-item--open' : ''}`} onClick={() => setOpenIndex(openIndex === i ? null : i)}>
           <span className="rb__faq-number">{String(i + 1).padStart(2, '0')}</span>
           <div className="rb__faq-content">
             <h4>
-              <span>{item.q}</span>
+              <span>{item.question}</span>
               <span className="rb__faq-toggle">{openIndex === i ? '−' : '+'}</span>
             </h4>
             <div className="rb__faq-answer" style={{ maxHeight: openIndex === i ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
-              <p>{item.a}</p>
+              <p>{item.answer}</p>
             </div>
           </div>
         </div>

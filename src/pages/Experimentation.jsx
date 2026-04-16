@@ -55,9 +55,11 @@ const UnionJack = ({ size = 20, className = '', id = '' }) => (
 );
 
 // Awesome Components
-import EditorialGrid from '../components/AwesomeComponents/EditorialGrid';
+import { EditorialGrid } from '../components/AwesomeComponents/EditorialGrid';
 // Blog posts data
 import blogPosts from '../blog/posts.json';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import ExpeditionBarcode from '../components/Expeditions/ExpeditionBarcode';
 
 // ============================================
@@ -1596,6 +1598,31 @@ function Experimentation() {
   const [blogVisible, setBlogVisible] = useState(6);
   const [blogSort, setBlogSort] = useState('popular');
   const [blogSearch, setBlogSearch] = useState('');
+  const [firestorePressLinks, setFirestorePressLinks] = useState([]);
+
+  useEffect(() => {
+    getDocs(collection(db, 'press_links'))
+      .then((snap) => {
+        setFirestorePressLinks(
+          snap.docs.map((d) => {
+            const data = d.data();
+            return {
+              id: d.id,
+              title: data.title || '',
+              category: 'Press',
+              date: data.date || '',
+              excerpt: data.excerpt || '',
+              image: data.image || '',
+              author: data.author || '',
+              readingTime: data.readingTime || '',
+              published: true,
+              externalUrl: data.externalUrl || '',
+            };
+          })
+        );
+      })
+      .catch(() => {});
+  }, []);
 
   // Sales three-phase sticky
   const salesIntroRef = useRef(null);
@@ -1817,8 +1844,9 @@ function Experimentation() {
     return () => { window.removeEventListener('scroll', handleScroll); window.removeEventListener('resize', onResize); cancelAnimationFrame(maintRaf); clearTimeout(maintResizeTimer); };
   }, []);
 
-  // Blog derived data
-  const allPublished = blogPosts.filter(p => p.published).sort((a, b) => new Date(b.date) - new Date(a.date));
+  // Blog derived data — static posts + Firestore press links
+  const allPublished = [...blogPosts.filter(p => p.published), ...firestorePressLinks]
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
   const activeCats = blogPersona ? BLOG_PERSONAS.find(p => p.id === blogPersona)?.categories || [] : [];
 
   const filteredPosts = allPublished.filter(post => {
@@ -4059,7 +4087,7 @@ function Experimentation() {
 
       <ArrivalSection />
 
-      {/* ===== EDITORIAL GRID (Hero 90) ===== */}
+      {/* ===== EDITORIAL GRID (Wall of Cool) ===== */}
       <div className="reveal-element">
         <EditorialGrid />
       </div>

@@ -686,7 +686,7 @@ export default function AdminBlogEdit() {
               <div>
                 <label style={lbl}>Category</label>
                 <select style={{ ...fld, width: '100%' }} value={form.category} onChange={(e) => set('category', e.target.value)}>
-                  {['Training', 'Operations', 'Maintenance', 'Safety', 'Aircraft', 'Ownership', 'Lifestyle', 'Press'].map((c) => <option key={c}>{c}</option>)}
+                  {['Training', 'Operations', 'Maintenance', 'Safety', 'Aircraft', 'Ownership', 'Lifestyle'].map((c) => <option key={c}>{c}</option>)}
                 </select>
               </div>
               <div>

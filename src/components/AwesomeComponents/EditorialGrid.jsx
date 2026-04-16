@@ -7,6 +7,9 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
+import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { storage, db } from '../../lib/firebase';
 
 /* ─── Gallery Data ────────────────────────────────────────────── */
 
@@ -73,15 +76,58 @@ const GridCell = ({ cell }) => {
   );
 };
 
+/* ─── Helpers ─────────────────────────────────────────────────── */
+
+// Group a flat list of Firestore images into pages for the desktop photo grid.
+// 15 per page (5 cols × 3 rows), all equal — no feature span.
+const PAGE_SIZE = 15;
+function buildPages(firestoreDocs) {
+  const pages = [];
+  for (let i = 0; i < firestoreDocs.length; i += PAGE_SIZE) {
+    pages.push(
+      firestoreDocs.slice(i, i + PAGE_SIZE).map((img) => ({
+        type: 'image',
+        src: img.imageUrl,
+        alt: img.alt || 'Wall of Cool',
+        description: img.caption || '',
+      }))
+    );
+  }
+  return pages.length ? pages : GALLERY_PAGES;
+}
+
 /* ─── Main Component ──────────────────────────────────────────── */
 
-// Build flat array of all image/video cells for fullscreen slideshow
-const allGalleryImages = GALLERY_PAGES.flatMap((page) =>
-  page.filter((cell) => cell.type === 'image' || cell.type === 'video')
-    .map((cell) => ({ src: cell.src, alt: cell.alt || '' }))
-);
-
 export const EditorialGrid = () => {
+  // CMS gallery pages — starts with hardcoded fallback, replaced by Firestore data
+  const [galleryPages, setGalleryPages] = useState(GALLERY_PAGES);
+
+  useEffect(() => {
+    async function loadFromFirestore() {
+      try {
+        const q = query(
+          collection(db, 'wall_of_cool'),
+          where('status', '==', 'approved'),
+        );
+        const snap = await getDocs(q);
+        const docs = snap.docs
+          .map((d) => ({ id: d.id, ...d.data() }))
+          .filter((d) => d.type === 'image' || !d.type)
+          .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+        if (docs.length) setGalleryPages(buildPages(docs));
+      } catch {
+        // silently fall back to hardcoded GALLERY_PAGES
+      }
+    }
+    loadFromFirestore();
+  }, []);
+
+  // Flat list for fullscreen slideshow — derived from live galleryPages
+  const allGalleryImages = galleryPages.flatMap((page) =>
+    page.filter((cell) => cell.type === 'image' || cell.type === 'video')
+      .map((cell) => ({ src: cell.src, alt: cell.alt || '' }))
+  );
+
   // Ticker state
   const [mode, setMode] = useState('normal');
   const [navBottom, setNavBottom] = useState(120);
@@ -100,7 +146,67 @@ export const EditorialGrid = () => {
   const [uploadOpen, setUploadOpen] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadResult, setUploadResult] = useState(null); // null | { success, failed, errorMsg }
   const fileInputRef = useRef(null);
+
+  function closeUploadModal() {
+    if (uploading) return;
+    setUploadOpen(false);
+    setUploadedFiles([]);
+    setUploadResult(null);
+  }
+
+  async function handleUpload() {
+    if (!uploadedFiles.length || uploading) return;
+    setUploading(true);
+    setUploadResult(null);
+    let success = 0;
+    let failed = 0;
+    let lastError = '';
+
+    for (const file of uploadedFiles) {
+      try {
+        const type = file.type.startsWith('video/') ? 'video' : 'image';
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+        const path = `wall-of-cool/${Date.now()}-${safeName}`;
+        const sRef = storageRef(storage, path);
+        await uploadBytes(sRef, file);
+        const url = await getDownloadURL(sRef);
+        const body = { type };
+        if (type === 'image') body.imageUrl = url;
+        else body.videoUrl = url;
+        const res = await fetch('/api/wall-of-cool', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        if (res.ok) {
+          success++;
+        } else {
+          const data = await res.json().catch(() => ({}));
+          lastError = data.error || `Server error ${res.status}`;
+          failed++;
+        }
+      } catch (err) {
+        console.error('Wall of Cool upload error:', err);
+        lastError = err?.code || err?.message || String(err);
+        failed++;
+      }
+    }
+
+    setUploading(false);
+    setUploadResult({ success, failed, errorMsg: lastError });
+
+    // Auto-close 2.5 s after a fully successful upload
+    if (failed === 0) {
+      setTimeout(() => {
+        setUploadOpen(false);
+        setUploadedFiles([]);
+        setUploadResult(null);
+      }, 2500);
+    }
+  }
 
   const handleDrop = useCallback((e) => {
     e.preventDefault();
@@ -170,21 +276,18 @@ export const EditorialGrid = () => {
   }, [fsSpeed]);
 
   const goToPage = useCallback((i) => {
-    const el = scrollRef.current;
-    if (el) el.scrollTo({ left: i * el.clientWidth, behavior: 'smooth' });
-  }, []);
+    setCurrentPage(Math.max(0, Math.min(galleryPages.length - 1, i)));
+  }, [galleryPages.length]);
 
   const nextPage = useCallback(() => {
-    const el = scrollRef.current;
-    if (el) el.scrollBy({ left: el.clientWidth, behavior: 'smooth' });
-  }, []);
+    setCurrentPage(prev => Math.min(galleryPages.length - 1, prev + 1));
+  }, [galleryPages.length]);
 
   const prevPage = useCallback(() => {
-    const el = scrollRef.current;
-    if (el) el.scrollBy({ left: -el.clientWidth, behavior: 'smooth' });
+    setCurrentPage(prev => Math.max(0, prev - 1));
   }, []);
 
-  // Track current page from scroll position
+  // Track current page from scroll position (mobile only — desktop uses state-based navigation)
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -321,17 +424,41 @@ export const EditorialGrid = () => {
 
   return (
   <section className="editorial-grid">
-    {/* Header — title only */}
+    {/* Header */}
     <header className="editorial-grid__header">
-      <div className="editorial-grid__tagline">The Wall of Cool <span className="editorial-grid__tagline-hint">(Scroll to go Through)</span></div>
+      {/* Left spacer — balances the right page indicator on desktop */}
+      <div className="editorial-grid__header-spacer" />
+
+      {/* Center: pretitle + title */}
+      <div className="editorial-grid__header-center">
+        <p className="editorial-grid__pretitle">Community</p>
+        <div className="editorial-grid__tagline">Wall of Cool</div>
+      </div>
+
+      {/* Right: page counter (desktop only) */}
+      <div className="editorial-grid__page-indicator">
+        <span className="editorial-grid__page-count">{currentPage + 1} / {galleryPages.length}</span>
+      </div>
     </header>
 
-    {/* Gallery — auto-scrolling editorial grids */}
+    {/* Gallery */}
     <div className="editorial-grid__gallery">
+
+      {/* ── Desktop: uniform photo grid, paginated ── */}
+      <div className="editorial-grid__desktop-gallery">
+        <div className="editorial-grid__photo-grid">
+          {(galleryPages[currentPage] || []).map((cell, i) => (
+            <div key={`${currentPage}-${i}`} className="editorial-grid__photo-cell">
+              <img src={cell.src} alt={cell.alt} loading="lazy" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Mobile: horizontal swipe scroll ── */}
       <div className="editorial-grid__scroll" ref={scrollRef}>
         <div className="editorial-grid__scroll-track">
-          {/* Original pages + duplicate for seamless loop (desktop only) */}
-          {(typeof window !== 'undefined' && window.innerWidth <= 768 ? GALLERY_PAGES : [...GALLERY_PAGES, ...GALLERY_PAGES]).map((page, pageIdx) => (
+          {galleryPages.map((page, pageIdx) => (
             <div key={pageIdx} className="editorial-grid__grid">
               {page.map((cell, i) => (
                 <GridCell key={`${pageIdx}-${i}`} cell={cell} />
@@ -340,14 +467,15 @@ export const EditorialGrid = () => {
           ))}
         </div>
       </div>
+
     </div>
 
 
     {/* Upload modal */}
     {uploadOpen && createPortal(
-      <div className="upload-modal__backdrop" onClick={() => setUploadOpen(false)}>
+      <div className="upload-modal__backdrop" onClick={closeUploadModal}>
         <div className="upload-modal" onClick={(e) => e.stopPropagation()}>
-          <button className="upload-modal__close" onClick={() => setUploadOpen(false)} aria-label="Close">&times;</button>
+          <button className="upload-modal__close" onClick={closeUploadModal} disabled={uploading} aria-label="Close">&times;</button>
           <div className="upload-modal__header">
             <h3>Upload</h3>
             <p>Upload any image or video of your HQ experience</p>
@@ -390,9 +518,48 @@ export const EditorialGrid = () => {
               ))}
             </div>
           )}
-          {uploadedFiles.length > 0 && (
-            <button className="upload-modal__submit" onClick={() => setUploadOpen(false)}>
-              Upload {uploadedFiles.length} file{uploadedFiles.length > 1 ? 's' : ''}
+          {/* Upload result */}
+          {uploadResult && (
+            <div style={{
+              margin: '12px 0 0',
+              padding: '12px 16px',
+              borderRadius: 8,
+              background: uploadResult.failed === 0 ? '#d1fae5' : uploadResult.success === 0 ? '#fee2e2' : '#fef3c7',
+              color: uploadResult.failed === 0 ? '#065f46' : uploadResult.success === 0 ? '#991b1b' : '#92400e',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              textAlign: 'center',
+            }}>
+              {uploadResult.failed === 0
+                ? `✓ ${uploadResult.success} file${uploadResult.success !== 1 ? 's' : ''} submitted — thanks! Closing in a moment…`
+                : uploadResult.success === 0
+                  ? `Upload failed: ${uploadResult.errorMsg}`
+                  : `${uploadResult.success} uploaded, ${uploadResult.failed} failed: ${uploadResult.errorMsg}`}
+            </div>
+          )}
+
+          {/* Submit button — shown when files are selected and not yet done */}
+          {uploadedFiles.length > 0 && !uploadResult && (
+            <button
+              className="upload-modal__submit"
+              onClick={handleUpload}
+              disabled={uploading}
+              style={{ opacity: uploading ? 0.7 : 1, cursor: uploading ? 'wait' : 'pointer' }}
+            >
+              {uploading
+                ? 'Uploading…'
+                : `Upload ${uploadedFiles.length} file${uploadedFiles.length !== 1 ? 's' : ''}`}
+            </button>
+          )}
+
+          {/* Retry button after partial/full failure */}
+          {uploadResult && uploadResult.failed > 0 && (
+            <button
+              className="upload-modal__submit"
+              onClick={() => { setUploadResult(null); }}
+              style={{ marginTop: 8, background: '#374151' }}
+            >
+              Try again
             </button>
           )}
         </div>
@@ -904,14 +1071,45 @@ export const EditorialGrid = () => {
       }
 
       .editorial-grid__header {
-        display: flex;
-        justify-content: center;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
         align-items: center;
-        padding: 16px 2rem;
+        padding: 14px 2rem;
         border-bottom: 1px solid rgba(0,0,0,0.1);
         flex-shrink: 0;
         background: #fff;
         box-shadow: 0 -8px 20px rgba(0,0,0,0.06);
+      }
+
+      .editorial-grid__header-spacer {
+        /* intentionally empty — balances the page indicator */
+      }
+
+      .editorial-grid__header-center {
+        text-align: center;
+      }
+
+      .editorial-grid__pretitle {
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #6b7280;
+        margin: 0 0 3px;
+      }
+
+      .editorial-grid__page-indicator {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.5rem;
+      }
+
+      .editorial-grid__page-count {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.65rem;
+        color: #9ca3af;
+        letter-spacing: 0.1em;
       }
 
       .editorial-grid__footer {
@@ -931,15 +1129,6 @@ export const EditorialGrid = () => {
         text-transform: uppercase;
         letter-spacing: 0.12em;
         color: #1a1a1a;
-      }
-      .editorial-grid__tagline-hint {
-        display: none;
-      }
-
-      .editorial-grid__header-right {
-        display: flex;
-        align-items: baseline;
-        gap: 1.25rem;
       }
 
       .editorial-grid__issue {
@@ -981,24 +1170,82 @@ export const EditorialGrid = () => {
         overflow: hidden;
       }
 
-      /* ── Scroll container (auto-scroll) ──────── */
+      /* ── Desktop: static paginated grid ──────── */
+
+      .editorial-grid__desktop-gallery {
+        position: relative;
+        height: 100%;
+        display: flex;
+        align-items: stretch;
+      }
+
+      .editorial-grid__desktop-gallery .editorial-grid__grid {
+        flex: 1;
+      }
+
+      /* Footer pagination controls */
+      .editorial-grid__footer-nav {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      /* Override rb-stats__chevron's absolute positioning for inline footer use */
+      .editorial-grid__footer-chevron {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        transform: none !important;
+        flex-shrink: 0;
+      }
+      .editorial-grid__footer-chevron:disabled {
+        opacity: 0.3;
+        cursor: default;
+        pointer-events: none;
+      }
+
+      /* ── Uniform photo grid (desktop) ────────── */
+
+      .editorial-grid__photo-grid {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        gap: 0.4rem;
+        padding: 0.4rem;
+        height: 100%;
+        background: #f3f2ef;
+      }
+
+      .editorial-grid__photo-cell {
+        overflow: hidden;
+        background: #e5e7eb;
+      }
+
+      .editorial-grid__photo-cell img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.3s ease;
+      }
+
+      .editorial-grid__photo-cell:hover img {
+        transform: scale(1.04);
+      }
+
+      /* ── Mobile scroll (hidden on desktop) ──── */
 
       .editorial-grid__scroll {
         height: 100%;
         overflow: hidden;
+        display: none;
       }
 
       .editorial-grid__scroll-track {
         display: flex;
         height: 100%;
-        width: max-content;
-        animation: editorial-autoscroll 120s linear infinite;
-      }
-
-
-      @keyframes editorial-autoscroll {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); }
       }
 
       /* ── Grid (each page) ──────────────────────── */
@@ -1051,8 +1298,6 @@ export const EditorialGrid = () => {
         justify-content: center;
         backdrop-filter: blur(4px);
       }
-
-      /* (chevrons and pagination removed — now using auto-scroll marquee) */
 
       /* ── Ticker ─────────────────────────────────── */
 
@@ -1113,36 +1358,32 @@ export const EditorialGrid = () => {
 
       @media (max-width: 768px) {
         .editorial-grid__header {
-          flex-direction: row;
-          align-items: center;
-          justify-content: center;
+          grid-template-columns: 1fr;
+          justify-items: center;
           padding: 1rem 1.5rem;
+        }
+
+        .editorial-grid__header-spacer,
+        .editorial-grid__page-indicator,
+        .editorial-grid__footer-nav {
+          display: none;
         }
 
         .editorial-grid__footer {
           padding: 1rem 1.5rem;
         }
 
-        .editorial-grid__header-right {
-          width: 100%;
-          justify-content: space-between;
-        }
-
-        .editorial-grid__tagline-hint {
-          display: inline;
-          font-size: 0.55rem;
-          font-weight: 400;
-          letter-spacing: 0.05em;
-          text-transform: none;
-          opacity: 0.5;
-          margin-left: 0.5rem;
-        }
-
         .editorial-grid__gallery {
           height: 55vw;
         }
 
+        /* Hide desktop grid, show mobile scroll */
+        .editorial-grid__desktop-gallery {
+          display: none;
+        }
+
         .editorial-grid__scroll {
+          display: block;
           overflow-x: auto;
           overflow-y: hidden;
           -webkit-overflow-scrolling: touch;
@@ -1151,7 +1392,6 @@ export const EditorialGrid = () => {
         .editorial-grid__scroll::-webkit-scrollbar { display: none; }
 
         .editorial-grid__scroll-track {
-          animation: none;
           height: 100%;
         }
 
@@ -1171,6 +1411,24 @@ export const EditorialGrid = () => {
     {/* Footer — actions */}
     <footer className="editorial-grid__footer">
       <div className="editorial-grid__issue">Are you an HQ'er with some cool footage?</div>
+
+      {/* Pagination chevrons (desktop only) */}
+      <div className="editorial-grid__footer-nav">
+        <button
+          className="rb-stats__chevron editorial-grid__footer-chevron"
+          onClick={prevPage}
+          disabled={currentPage === 0}
+          aria-label="Previous page"
+        ><i className="fas fa-chevron-left" /></button>
+        <span className="editorial-grid__page-count">{currentPage + 1} / {galleryPages.length}</span>
+        <button
+          className="rb-stats__chevron editorial-grid__footer-chevron"
+          onClick={nextPage}
+          disabled={currentPage === galleryPages.length - 1}
+          aria-label="Next page"
+        ><i className="fas fa-chevron-right" /></button>
+      </div>
+
       <button
         className="editorial-grid__upload-btn"
         onClick={() => { setUploadOpen(true); setUploadedFiles([]); }}

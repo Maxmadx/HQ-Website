@@ -10,6 +10,7 @@
  */
 
 import React, { useRef, useEffect, useState, useMemo } from 'react';
+import { useFaqs } from '../hooks/useFaqs';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 
@@ -274,33 +275,7 @@ function NightRating() {
     },
   ];
 
-  // FAQ data
-  const faqs = [
-    {
-      q: 'What is a Night Rating?',
-      a: 'The Night Rating is an additional qualification that allows PPL holders to fly during the hours of darkness. Without it, you are restricted to flying from thirty minutes before sunrise to thirty minutes after sunset. It is still VFR flying — you must maintain visual contact with the surface at all times.',
-    },
-    {
-      q: 'How long does the Night Rating course take?',
-      a: 'The course consists of a minimum of 5 hours of flight training plus ground school. Training is typically conducted during winter months when early darkness makes scheduling practical. Most students complete the course within 2-3 weeks, weather permitting.',
-    },
-    {
-      q: 'Can I fly in cloud or poor visibility at night?',
-      a: 'No. Night flying under a Night Rating remains VFR flying. You must maintain visual contact with the ground or water and comply with VMC minima at all times. For flight in instrument conditions, you would need an Instrument Rating.',
-    },
-    {
-      q: 'What aircraft is used for night training?',
-      a: 'Training is conducted in our Robinson R44, which provides an excellent platform for night instruction with its reliable systems, comprehensive instrumentation, and stable handling characteristics.',
-    },
-    {
-      q: 'When is night training conducted?',
-      a: 'We typically schedule night training during the winter months (October to March) when darkness comes early enough to begin flying at reasonable hours. Sessions often begin at dusk, allowing you to experience the transition from day to night.',
-    },
-    {
-      q: 'Will my daylight flying improve after night training?',
-      a: 'Absolutely. Night flying demands greater precision, more thorough planning, and heightened situational awareness. Pilots who complete a Night Rating invariably report that their daylight flying improves as well — the disciplines learned at night carry over into all their operations.',
-    },
-  ];
+  const { faqs } = useFaqs('night-rating', { visibleOnly: true });
 
   // Prerequisites
   const prerequisites = [
@@ -569,7 +544,7 @@ function NightRating() {
       </section>
 
       {/* ========== FAQ SECTION ========== */}
-      <section className="nr-faq">
+      <section className="nr-faq" data-cms-section="faqs-night-rating">
         <div className="nr-faq__container">
           <Reveal>
             <div className="nr-section-header">
@@ -583,7 +558,7 @@ function NightRating() {
 
           <div className="nr-faq__list">
             {faqs.map((faq, i) => (
-              <Reveal key={i} delay={i * 0.05}>
+              <Reveal key={faq.id} delay={i * 0.05}>
                 <div
                   className={`nr-faq__item ${openFaq === i ? 'nr-faq__item--open' : ''}`}
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
@@ -591,7 +566,7 @@ function NightRating() {
                   <span className="nr-faq__number">{String(i + 1).padStart(2, '0')}</span>
                   <div className="nr-faq__content">
                     <h4>
-                      {faq.q}
+                      {faq.question}
                       <span className="nr-faq__toggle">{openFaq === i ? '−' : '+'}</span>
                     </h4>
                     <AnimatePresence>
@@ -603,7 +578,7 @@ function NightRating() {
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                         >
-                          <p>{faq.a}</p>
+                          <p>{faq.answer}</p>
                         </motion.div>
                       )}
                     </AnimatePresence>

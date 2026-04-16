@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { usePageImages } from '../hooks/usePageImages';
 import { usePageText } from '../hooks/usePageText';
+import { useFaqs } from '../hooks/useFaqs';
 
 // Import styles
 import '../assets/css/main.css';
@@ -509,33 +510,7 @@ const exampleDeliveries = [
   { model: 'R88', image: '/assets/images/new-aircraft/r88/rhc-r88-atmospheric-effect-front-view-218022.jpg', spec: '8-seat flagship' },
 ];
 
-// FAQ items
-const faqItems = [
-  {
-    q: 'How long does delivery take for a new helicopter?',
-    a: 'Delivery times vary by model and configuration. Currently, R22 and R44 models typically take 6-12 months from order. R66 models can be 12-18 months. R88 availability is limited—contact us for current timelines.',
-  },
-  {
-    q: 'Can I trade in my current aircraft?',
-    a: 'Yes! We accept trade-ins on all Robinson helicopters. Our team will provide a fair market valuation and apply the value directly to your new aircraft purchase.',
-  },
-  {
-    q: 'What financing options are available?',
-    a: 'We work with specialist aviation finance providers to offer flexible terms. Options include aviation loans, lease purchase, operating leases, and hire purchase. Typical deposits start from 10% with terms up to 10 years.',
-  },
-  {
-    q: 'Do you offer demo flights?',
-    a: 'Absolutely. We encourage prospective buyers to experience the aircraft before committing. Demo flights can be arranged at Denham Aerodrome—contact our sales team to schedule.',
-  },
-  {
-    q: 'What warranty comes with a new Robinson?',
-    a: 'All new Robinson helicopters come with a 2-year factory warranty covering defects in materials and workmanship. Extended warranty options are available through Robinson and third-party providers.',
-  },
-  {
-    q: 'Can you deliver internationally?',
-    a: 'Yes, we deliver worldwide. We can arrange ferry flights to any destination, handle export documentation, and coordinate with local authorities for registration and certification.',
-  },
-];
+// FAQ items are now managed via Firestore — see useFaqs('sales')
 
 // Insurance partners
 const insurancePartners = [
@@ -916,6 +891,8 @@ const salesModelSectionId = {
 function Sales() {
   const pageImages = usePageImages('sales');
   const { t } = usePageText('sales');
+  const [openFaq, setOpenFaq] = useState(null);
+  const { faqs } = useFaqs('sales', { visibleOnly: true });
 
   // Per-model CMS image helpers (keyed by index matching aircraftModels order)
   const getModelHero   = (model) => pageImages['sales-aircraft-hero']?.[aircraftModels.findIndex(m => m.id === model.id)]?.url   ?? model.image;
@@ -1681,6 +1658,47 @@ function Sales() {
           </div>
         </div>
       </section>
+
+      {/* ========== FAQ ========== */}
+      {faqs.length > 0 && (
+        <section className="sales-faq" data-cms-section="faqs-sales">
+          <div className="sales-faq__container">
+            <Reveal>
+              <div className="sales-faq__header">
+                <span className="sales-pre-text">Common Questions</span>
+                <h2>Frequently Asked</h2>
+              </div>
+            </Reveal>
+            <div className="sales-faq__list">
+              {faqs.map((faq, i) => (
+                <Reveal key={faq.id} delay={i * 0.05}>
+                  <div
+                    className={`sales-faq__item ${openFaq === i ? 'sales-faq__item--open' : ''}`}
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    style={{ cursor: 'pointer', borderBottom: '1px solid #e8e6e2', padding: '1.25rem 0', display: 'flex', gap: '1.5rem' }}
+                  >
+                    <span style={{ fontFamily: 'Share Tech Mono, monospace', fontSize: '0.75rem', color: '#ccc', flexShrink: 0, paddingTop: '0.1rem' }}>{String(i + 1).padStart(2, '0')}</span>
+                    <div style={{ flex: 1 }}>
+                      <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
+                        {faq.question}
+                        <span style={{ fontSize: '1.25rem', fontWeight: 300, color: '#999', flexShrink: 0 }}>{openFaq === i ? '−' : '+'}</span>
+                      </h4>
+                      <motion.div
+                        initial={false}
+                        animate={{ height: openFaq === i ? 'auto' : 0, opacity: openFaq === i ? 1 : 0 }}
+                        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                        style={{ overflow: 'hidden' }}
+                      >
+                        <p style={{ margin: '0.75rem 0 0', color: '#666', lineHeight: 1.7, fontSize: '0.95rem' }}>{faq.answer}</p>
+                      </motion.div>
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ========== CONTACT CTA ========== */}
       <section className="sales-contact">

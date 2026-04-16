@@ -292,28 +292,6 @@ const testimonials = [
   },
 ];
 
-const faqs = [
-  {
-    question: "Do I need any prior experience?",
-    answer: "No prior experience is required. Our instructors will guide you through everything from the pre-flight briefing to hands-on flying. Discovery flights are designed for complete beginners.",
-  },
-  {
-    question: "Can I bring passengers?",
-    answer: "Yes! Depending on the helicopter type and weights, you may be able to bring 1-2 passengers. Let us know when booking so we can arrange the appropriate aircraft.",
-  },
-  {
-    question: "What happens if the weather is bad?",
-    answer: "Safety is our priority. If weather conditions are unsuitable, we'll reschedule at no extra cost. We monitor conditions closely and give as much notice as possible.",
-  },
-  {
-    question: "Does this count towards my pilot's license?",
-    answer: "Yes! Hours flown during your discovery flight count towards PPL(H) training. We'll log everything properly if you decide to continue with us.",
-  },
-  {
-    question: "Is this suitable as a gift?",
-    answer: "Absolutely! Discovery flights make unforgettable gifts. We offer vouchers valid for 12 months, giving flexibility to book at their convenience.",
-  },
-];
 
 // ============================================================================
 // HERO SECTION
@@ -817,7 +795,7 @@ function LocationAndFAQ() {
   const { faqs } = useFaqs('discovery', { visibleOnly: true });
 
   return (
-    <section className="df-location-faq">
+    <section className="df-location-faq" data-cms-section="faqs-discovery">
       <div className="df-location-faq__container">
         {/* Left: Location */}
         <div className="df-location-faq__left">

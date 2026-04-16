@@ -9,6 +9,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform, useSpring } from 'framer-motion';
+import { useFaqs } from '../hooks/useFaqs';
 
 // Import styles for Header/Navigation
 import '../assets/css/main.css';
@@ -286,33 +287,7 @@ function FinalPPL() {
   const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
   const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
 
-  const faqs = [
-    {
-      q: 'How long does it take to get a PPL(H)?',
-      a: 'Typically 6-12 months depending on your schedule and weather conditions. Most students train 1-2 times per week, building skills progressively.',
-    },
-    {
-      q: 'Do I need any previous flying experience?',
-      a: 'No prior experience is needed. We teach you everything from the very basics during your first lesson. Everyone starts somewhere.',
-    },
-    {
-      q: 'Can I fly in winter?',
-      a: 'Yes, weather permitting! In fact, experiencing challenging weather conditions with a qualified instructor is one of the best times to fly. One of the greatest benefits of training in the UK is that it makes better pilots—pilots who are more conscientious and truly understand the effects of weather and wind on flying as part of their core training process.',
-      featured: true,
-    },
-    {
-      q: 'What medical certificate do I need?',
-      a: 'You\'ll need a Class 2 medical or LAPL medical. It\'s a straightforward examination from a CAA-approved doctor, similar to a thorough check-up.',
-    },
-    {
-      q: 'Is financing available?',
-      a: 'Yes, we offer various payment structures to suit your circumstances. Speak with us about spreading the cost of training.',
-    },
-    {
-      q: 'What happens after I get my PPL(H)?',
-      a: 'The sky is truly the limit. You can hire our aircraft for personal flying, continue training for advanced ratings like Night or Instrument qualifications, or even join one of our worldwide expeditions to places like the Alps, Morocco, or beyond.',
-    },
-  ];
+  const { faqs } = useFaqs('ppl', { visibleOnly: true });
 
   return (
     <div className="fppl">
@@ -651,7 +626,7 @@ function FinalPPL() {
       </section>
 
       {/* ========== WHERE & FAQ: Two Column Layout ========== */}
-      <section className="fppl-where-faq">
+      <section className="fppl-where-faq" data-cms-section="faqs-ppl">
         <div className="fppl-where-faq__container">
           {/* Left Column: Location Highlight (comp-014) */}
           <div className="fppl-where-faq__left">
@@ -700,7 +675,7 @@ function FinalPPL() {
 
             <div className="fppl-faq__list">
               {faqs.map((faq, i) => (
-                <Reveal key={i} delay={i * 0.1}>
+                <Reveal key={faq.id} delay={i * 0.1}>
                   <div
                     className={`fppl-faq__item ${openFaq === i ? 'fppl-faq__item--open' : ''}`}
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
@@ -708,7 +683,7 @@ function FinalPPL() {
                     <div className="fppl-faq__number">{String(i + 1).padStart(2, '0')}</div>
                     <div className="fppl-faq__content">
                       <h4>
-                        {faq.q}
+                        {faq.question}
                         <span className="fppl-faq__toggle">{openFaq === i ? '−' : '+'}</span>
                       </h4>
                       <motion.div
@@ -717,7 +692,7 @@ function FinalPPL() {
                         animate={{ height: openFaq === i ? 'auto' : 0, opacity: openFaq === i ? 1 : 0 }}
                         transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                       >
-                        <p>{faq.a}</p>
+                        <p>{faq.answer}</p>
                       </motion.div>
                     </div>
                   </div>

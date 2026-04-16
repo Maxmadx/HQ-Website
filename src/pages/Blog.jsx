@@ -16,6 +16,7 @@ import '../assets/css/components.css';
 
 function Blog() {
   const [firestorePosts, setFirestorePosts] = useState([]);
+  const [firestorePressLinks, setFirestorePressLinks] = useState([]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -33,10 +34,33 @@ function Blog() {
       .catch(() => {
         // Firestore unavailable — listing falls back to static posts
       });
+
+    // Fetch press links added via admin
+    getDocs(collection(db, 'press_links'))
+      .then((snap) => {
+        setFirestorePressLinks(
+          snap.docs.map((d) => {
+            const data = d.data();
+            return {
+              id: d.id,
+              title: data.title || '',
+              excerpt: data.excerpt || '',
+              category: 'Press',
+              readingTime: data.readingTime || '',
+              image: data.image || '',
+              published: true,
+              date: data.date || '',
+              externalUrl: data.externalUrl || '',
+            };
+          })
+        );
+      })
+      .catch(() => {});
   }, []);
 
   // Merge: Firestore posts override static posts with the same slug.
   // Admin-only posts (not in static list) are appended.
+  // Firestore press_links are appended as external-link entries.
   const staticSlugs = new Set(staticPosts.map((p) => p.id));
   const firestoreBySlug = Object.fromEntries(firestorePosts.map((p) => [p.slug || p.id, p]));
 
@@ -60,7 +84,7 @@ function Blog() {
             : p.date,
         };
       }),
-    // Firestore-only posts (created in admin, not in posts.json)
+    // Firestore-only blog posts (created in admin, not in posts.json)
     ...firestorePosts
       .filter((p) => !staticSlugs.has(p.slug || p.id))
       .map((p) => ({
@@ -75,6 +99,8 @@ function Blog() {
           ? p.publishedAt.toDate().toISOString().split('T')[0]
           : '',
       })),
+    // Press links added via admin
+    ...firestorePressLinks,
   ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
   const publishedPosts = mergedPosts;

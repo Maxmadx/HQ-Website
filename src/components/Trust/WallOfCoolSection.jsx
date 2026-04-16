@@ -9,7 +9,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 
 export default function WallOfCoolSection() {
@@ -21,14 +21,18 @@ export default function WallOfCoolSection() {
   useEffect(() => {
     async function fetchApproved() {
       try {
+        // Single where clause avoids needing a composite Firestore index.
+        // Filter type and sort by order client-side.
         const q = query(
           collection(db, 'wall_of_cool'),
           where('status', '==', 'approved'),
-          where('type', '==', 'image'),
-          orderBy('order', 'asc'),
         );
         const snap = await getDocs(q);
-        setImages(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+        const docs = snap.docs
+          .map((d) => ({ id: d.id, ...d.data() }))
+          .filter((d) => d.type === 'image' || !d.type)
+          .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+        setImages(docs);
       } catch (err) {
         console.error('WallOfCoolSection fetch error:', err);
       } finally {

@@ -322,57 +322,5 @@
     "readingTime": "7 min",
     "published": true,
     "component": "AnnualInspection"
-  },
-  {
-    "id": "flyer-magazine-feature",
-    "title": "FLYER Magazine: 'Denham's Helicopter Powerhouse'",
-    "category": "Press",
-    "date": "2026-01-20",
-    "excerpt": "FLYER Magazine visits HQ Aviation for an in-depth feature on how Denham became the UK's leading Robinson helicopter centre.",
-    "image": "/assets/images/facility/hq-0477.jpg",
-    "author": "FLYER Magazine",
-    "readingTime": "12 min",
-    "published": true,
-    "component": "FlyerMagazineFeature",
-    "externalUrl": "https://flyer.co.uk/feature/learn-to-fly-how-much-does-a-helicopter-ppl-cost/"
-  },
-  {
-    "id": "pilot-mag-r66-review",
-    "title": "Pilot Magazine: Robinson R66 Turbine Review",
-    "category": "Press",
-    "date": "2025-12-18",
-    "excerpt": "Pilot Magazine's comprehensive flight test of the R66 Turbine, conducted at HQ Aviation with Chief Pilot commentary on turbine transition training.",
-    "image": "/assets/images/new-aircraft/r66/r66-cutout.png",
-    "author": "Pilot Magazine",
-    "readingTime": "10 min",
-    "published": true,
-    "component": "PilotMagR66Review",
-    "externalUrl": "https://pilotweb.aero/news/robinson-unveils-new-r66-variants/"
-  },
-  {
-    "id": "heli-ops-training-spotlight",
-    "title": "HeliOps: 'The Gold Standard in Ab-Initio Training'",
-    "category": "Press",
-    "date": "2025-10-15",
-    "excerpt": "HeliOps International profiles HQ Aviation's training programme, speaking to instructors and students about what sets the school apart.",
-    "image": "/assets/images/training/home-2312.jpg",
-    "author": "HeliOps International",
-    "readingTime": "8 min",
-    "published": true,
-    "component": "HeliOpsTrainingSpotlight",
-    "externalUrl": "https://www.heliopsmag.com/heliops/articles/the-helicopter-pilot-shortage-understanding-the-causes-and-crafting-solutions/"
-  },
-  {
-    "id": "vertical-mag-leaseback",
-    "title": "Vertical Magazine: Making Ownership Work with Leaseback",
-    "category": "Press",
-    "date": "2025-09-22",
-    "excerpt": "Vertical Magazine explores the economics of helicopter ownership through the lens of HQ Aviation's popular leaseback programme.",
-    "image": "/assets/images/facility/main-sales-pic.jpg",
-    "author": "Vertical Magazine",
-    "readingTime": "9 min",
-    "published": true,
-    "component": "VerticalMagLeaseback",
-    "externalUrl": "https://verticalmag.com/helitrader-hub-news/to-buy-or-lease-a-helicopter-which-option-is-best-for-me/"
   }
 ]

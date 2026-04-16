@@ -58,8 +58,9 @@ router.post('/admin', requireAdmin, async (req, res) => {
   try {
     const { imageUrl, caption, alt } = req.body;
     if (!imageUrl) return res.status(400).json({ error: 'imageUrl required' });
-    if (!String(imageUrl).startsWith('https://firebasestorage.googleapis.com/')) {
-      return res.status(400).json({ error: 'imageUrl must be a Firebase Storage URL' });
+    const urlStr = String(imageUrl);
+    if (!urlStr.startsWith('https://firebasestorage.googleapis.com/') && !urlStr.startsWith('/')) {
+      return res.status(400).json({ error: 'imageUrl must be a Firebase Storage URL or a site-relative path' });
     }
     // Note: two simultaneous admin uploads could compute the same maxOrder.
     // Acceptable given admin-only usage — no transaction needed at this scale.
@@ -78,7 +79,7 @@ router.post('/admin', requireAdmin, async (req, res) => {
       type: 'image',
       source: 'admin',
       status: 'approved',
-      imageUrl: String(imageUrl).slice(0, 500),
+      imageUrl: urlStr.slice(0, 500),
       caption: String(caption || '').slice(0, 500),
       alt: String(alt || '').slice(0, 200),
       order: maxOrder + 1,

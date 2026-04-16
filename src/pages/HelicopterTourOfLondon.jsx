@@ -17,6 +17,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { useFaqs } from '../hooks/useFaqs';
 
 // Import styles
 import '../assets/css/main.css';
@@ -223,37 +224,11 @@ const landmarks = [
   'The O2 Arena',
 ];
 
-// FAQ data
-const faqs = [
-  {
-    q: 'How long is the flight?',
-    a: 'The tour lasts approximately 50 minutes of flight time, giving you ample opportunity to see all of London\'s iconic landmarks from the air.',
-  },
-  {
-    q: 'Where does the tour depart from?',
-    a: 'All tours depart from Denham Aerodrome, conveniently located just 20 minutes from Central London. We\'re easily accessible from the M40 and M25.',
-  },
-  {
-    q: 'What happens if the weather is bad?',
-    a: 'Safety is our priority. If weather conditions are unsuitable for flying, we\'ll contact you to reschedule at no extra cost. All bookings are fully refundable.',
-  },
-  {
-    q: 'Can I bring a camera?',
-    a: 'Absolutely! Photography is encouraged. The R66 offers excellent visibility with large windows perfect for capturing stunning aerial shots of London.',
-  },
-  {
-    q: 'What\'s the difference between shared and private?',
-    a: 'Shared flights pair you with other guests (up to 4 passengers total). Private flights give you the entire helicopter for your group, allowing for a more intimate experience.',
-  },
-  {
-    q: 'Is there a weight limit?',
-    a: 'For safety and balance purposes, we need to know passenger weights in advance. Please contact us if you have any concerns.',
-  },
-];
 
 function HelicopterTourOfLondon() {
   const heroRef = useRef(null);
   const [openFaq, setOpenFaq] = useState(null);
+  const { faqs } = useFaqs('helicopter-tour', { visibleOnly: true });
 
   // Scroll to top on mount
   useEffect(() => {
@@ -445,7 +420,7 @@ function HelicopterTourOfLondon() {
       </section>
 
       {/* ========== FAQ SECTION ========== */}
-      <section className="ltour-faq">
+      <section className="ltour-faq" data-cms-section="faqs-helicopter-tour">
         <div className="ltour-faq__container">
           <Reveal>
             <div className="ltour-section-header">
@@ -460,7 +435,7 @@ function HelicopterTourOfLondon() {
 
           <div className="ltour-faq__list">
             {faqs.map((faq, i) => (
-              <Reveal key={i} delay={i * 0.1}>
+              <Reveal key={faq.id || i} delay={i * 0.1}>
                 <div
                   className={`ltour-faq__item ${openFaq === i ? 'ltour-faq__item--open' : ''}`}
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
@@ -468,7 +443,7 @@ function HelicopterTourOfLondon() {
                   <div className="ltour-faq__number">{String(i + 1).padStart(2, '0')}</div>
                   <div className="ltour-faq__content">
                     <h4>
-                      {faq.q}
+                      {faq.question}
                       <span className="ltour-faq__toggle">{openFaq === i ? '−' : '+'}</span>
                     </h4>
                     <motion.div
@@ -477,7 +452,7 @@ function HelicopterTourOfLondon() {
                       animate={{ height: openFaq === i ? 'auto' : 0, opacity: openFaq === i ? 1 : 0 }}
                       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                     >
-                      <p>{faq.a}</p>
+                      <p>{faq.answer}</p>
                     </motion.div>
                   </div>
                 </div>
