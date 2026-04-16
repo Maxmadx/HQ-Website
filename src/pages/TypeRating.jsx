@@ -635,6 +635,7 @@ function TypeRating() {
                   aircraft={aircraft}
                   isActive={selectedAircraft === i}
                   onClick={() => setSelectedAircraft(selectedAircraft === i ? null : i)}
+                  onEnquire={handleEnquire}
                 />
               </Reveal>
             ))}
