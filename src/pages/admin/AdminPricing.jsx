@@ -106,9 +106,11 @@ export default function AdminPricing() {
     setCreating(true);
     try {
       await createDoc('pricing', {
-        ...newItem,
-        price:     poundsToAppence(newItem.price),
-        condition: newItem.category === 'miscellaneous' ? newItem.condition : undefined,
+        label:       newItem.label,
+        price:       poundsToAppence(newItem.price),
+        description: newItem.description,
+        category:    newItem.category,
+        ...(newItem.category === 'miscellaneous' && { condition: newItem.condition }),
       });
       setNewItem(EMPTY_NEW);
       setAdding(false);
