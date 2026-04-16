@@ -13,6 +13,7 @@ import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'fra
 import { usePageImages } from '../hooks/usePageImages';
 import { usePageText } from '../hooks/usePageText';
 import { useFaqs } from '../hooks/useFaqs';
+import { usePricing } from '../hooks/usePricing';
 
 // Import styles
 import '../assets/css/main.css';
@@ -893,6 +894,12 @@ function Sales() {
   const { t } = usePageText('sales');
   const [openFaq, setOpenFaq] = useState(null);
   const { faqs } = useFaqs('sales', { visibleOnly: true });
+  const { prices, loading } = usePricing();
+
+  const miscItems = Object.entries(prices)
+    .filter(([, doc]) => doc.category === 'miscellaneous')
+    .map(([id, doc]) => ({ id, ...doc }))
+    .sort((a, b) => (a.label || '').localeCompare(b.label || ''));
 
   // Per-model CMS image helpers (keyed by index matching aircraftModels order)
   const getModelHero   = (model) => pageImages['sales-aircraft-hero']?.[aircraftModels.findIndex(m => m.id === model.id)]?.url   ?? model.image;
@@ -1658,6 +1665,41 @@ function Sales() {
           </div>
         </div>
       </section>
+
+      {/* ========== MISCELLANEOUS PARTS & ACCESSORIES ========== */}
+      {!loading && miscItems.length > 0 && (
+        <section className="sales-accessories">
+          <div className="sales-accessories__container">
+            <div className="sales-section-header" style={{ marginBottom: '2rem' }}>
+              <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#888' }}>
+                Miscellaneous
+              </span>
+              <h2 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', margin: '0.5rem 0 0', textTransform: 'uppercase', fontWeight: 700 }}>
+                Parts &amp; Accessories
+              </h2>
+            </div>
+            <div className="sales-accessories__grid">
+              {miscItems.map((item) => (
+                <div key={item.id} className="sales-accessories__item">
+                  <span className="sales-accessories__category">
+                    {item.condition === 'used' ? 'Used' : 'New'}
+                  </span>
+                  <h4>{item.label}</h4>
+                  {item.description && (
+                    <p style={{ fontSize: '0.75rem', color: '#888', margin: '0 0 0.5rem', lineHeight: 1.4 }}>{item.description}</p>
+                  )}
+                  <span className="sales-accessories__price">
+                    {item.price > 0 ? '£' + (item.price / 100).toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : 'POA'}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="sales-accessories__cta">
+              <a href="/contact" className="sales-btn sales-btn--outline">Enquire About Any Item</a>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ========== FAQ ========== */}
       {faqs.length > 0 && (
