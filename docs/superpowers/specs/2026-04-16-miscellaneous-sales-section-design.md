@@ -9,6 +9,8 @@
 
 Add a "Miscellaneous" category to the HQ Aviation pricing system. Staff manage items freely via the admin panel; they display as a 4-column card grid on the public Sales page (`/sales`). This is display-only pricing — no Stripe integration.
 
+Each miscellaneous item carries a **condition** field — either `new` or `used` — so customers know whether a product is brand new or second-hand.
+
 Examples of items: helicopter covers (R22/R44), helicopter mover, start stick, Pooleys logbook, revision material, HQ merch. The category is open-ended; staff can add anything.
 
 ---
@@ -21,17 +23,17 @@ Three files change. No new files, no new collections.
 
 Add seven initial miscellaneous items to the `PRICING` array with `category: 'miscellaneous'`:
 
-| ID | Label | Seed Price |
-|----|-------|------------|
-| `misc_cover_r22` | Helicopter Cover (R22) | £0 (update in admin) |
-| `misc_cover_r44` | Helicopter Cover (R44) | £0 |
-| `misc_mover` | Helicopter Mover | £0 |
-| `misc_start_stick` | Start Stick | £0 |
-| `misc_pooleys_logbook` | Pooleys Logbook | £0 |
-| `misc_revision_material` | Revision Material | £0 |
-| `misc_hq_merch` | HQ Merchandise | £0 |
+| ID | Label | Seed Price | Condition |
+|----|-------|------------|-----------|
+| `misc_cover_r22` | Helicopter Cover (R22) | £0 (update in admin) | `new` |
+| `misc_cover_r44` | Helicopter Cover (R44) | £0 | `new` |
+| `misc_mover` | Helicopter Mover | £0 | `new` |
+| `misc_start_stick` | Start Stick | £0 | `new` |
+| `misc_pooleys_logbook` | Pooleys Logbook | £0 | `new` |
+| `misc_revision_material` | Revision Material | £0 | `new` |
+| `misc_hq_merch` | HQ Merchandise | £0 | `new` |
 
-Prices are seeded at £0 as placeholders. Staff updates them in the admin panel before the section goes live.
+All items seeded with `condition: 'new'` as default. Staff updates prices and conditions in the admin panel before the section goes live.
 
 ### 2. `src/pages/admin/AdminPricing.jsx`
 
@@ -52,7 +54,9 @@ The existing `grouped` logic filters by `WEBSITE_IDS.has(i.id)`. For `miscellane
 
 Concretely: change the `grouped` reducer so that for `category === 'miscellaneous'`, it filters by category only (no WEBSITE_IDS check).
 
-No other changes — the existing add/edit/delete UI works as-is. Staff creates new misc items via `+ Add Item`, selecting "Sales Page — Miscellaneous Items" as the category.
+**c) Add `condition` field to the add/edit form for misc items:**
+
+The `+ Add Item` form and the inline edit row gain a **Condition** dropdown (`New` / `Used`) when the selected category is `miscellaneous`. For all other categories the field is hidden (not relevant). The field writes a `condition` value of `'new'` or `'used'` to Firestore alongside label, price, and description.
 
 ### 3. `src/pages/Sales.jsx`
 
@@ -65,7 +69,7 @@ const miscItems = Object.entries(prices)
   .map(([id, doc]) => ({ id, ...doc }));
 ```
 
-**Render:** 4-column card grid using `.sales-accessories` CSS classes (already defined). Cards show: category label ("Miscellaneous"), item name, price in monospace. Section is conditionally rendered — hidden if `miscItems.length === 0` or `loading`.
+**Render:** 4-column card grid using `.sales-accessories` CSS classes (already defined). Cards show: a condition badge ("New" or "Used"), item name, price in monospace. Section is conditionally rendered — hidden if `miscItems.length === 0` or `loading`.
 
 **No FALLBACK values** are added to `usePricing.js`. If Firestore is unavailable, the section doesn't render. This is acceptable for supplementary display-only content.
 
@@ -99,7 +103,8 @@ Admin writes directly to the same Firestore collection → changes reflect on th
 ## Success Criteria
 
 1. Staff can add, edit, and delete miscellaneous items in the admin panel without developer involvement
-2. All items with `category === 'miscellaneous'` appear on `/sales` in a 4-column grid
-3. The section does not render if there are no misc items
-4. Prices seeded at £0 are updated in the admin before the section is shown publicly
-5. Re-running `seed-pricing.js` is safe (existing docs updated, not duplicated)
+2. Staff can set condition (New / Used) on any misc item via the admin panel
+3. All items with `category === 'miscellaneous'` appear on `/sales` in a 4-column grid with a condition badge
+4. The section does not render if there are no misc items
+5. Prices seeded at £0 are updated in the admin before the section is shown publicly
+6. Re-running `seed-pricing.js` is safe (existing docs updated, not duplicated)
