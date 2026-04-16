@@ -899,7 +899,7 @@ function Sales() {
   const miscItems = Object.entries(prices)
     .filter(([, doc]) => doc.category === 'miscellaneous')
     .map(([id, doc]) => ({ id, ...doc }))
-    .sort((a, b) => (a.label || '').localeCompare(b.label || ''));
+    .sort((a, b) => (a.label || '').localeCompare(b.label || '', 'en-GB'));
 
   // Per-model CMS image helpers (keyed by index matching aircraftModels order)
   const getModelHero   = (model) => pageImages['sales-aircraft-hero']?.[aircraftModels.findIndex(m => m.id === model.id)]?.url   ?? model.image;
@@ -1670,14 +1670,16 @@ function Sales() {
       {!loading && miscItems.length > 0 && (
         <section className="sales-accessories">
           <div className="sales-accessories__container">
-            <div className="sales-section-header" style={{ marginBottom: '2rem' }}>
-              <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#888' }}>
-                Miscellaneous
-              </span>
-              <h2 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', margin: '0.5rem 0 0', textTransform: 'uppercase', fontWeight: 700 }}>
-                Parts &amp; Accessories
-              </h2>
-            </div>
+            <Reveal>
+              <div className="sales-section-header">
+                <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#888' }}>
+                  Miscellaneous
+                </span>
+                <h2 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', margin: '0.5rem 0 0', textTransform: 'uppercase', fontWeight: 700 }}>
+                  Parts &amp; Accessories
+                </h2>
+              </div>
+            </Reveal>
             <div className="sales-accessories__grid">
               {miscItems.map((item) => (
                 <div key={item.id} className="sales-accessories__item">
@@ -1695,7 +1697,7 @@ function Sales() {
               ))}
             </div>
             <div className="sales-accessories__cta">
-              <a href="/contact" className="sales-btn sales-btn--outline">Enquire About Any Item</a>
+              <Link to="/contact" className="sales-btn sales-btn--outline">Enquire About Any Item</Link>
             </div>
           </div>
         </section>
