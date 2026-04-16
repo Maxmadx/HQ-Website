@@ -643,6 +643,119 @@ function TypeRating() {
         </div>
       </section>
 
+      {/* ========== ENQUIRY FORM ========== */}
+      <AnimatePresence>
+        {formVisible && (
+          <motion.section
+            ref={enquiryFormRef}
+            className="tr-enquiry"
+            key="enquiry-form"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            style={{ overflow: 'hidden' }}
+          >
+            <div className="tr-enquiry__container">
+              {formStatus === 'success' ? (
+                <div className="tr-enquiry__success">
+                  <span className="tr-enquiry__success-icon">✓</span>
+                  <h3>Enquiry Sent</h3>
+                  <p>We'll be in touch within 24 hours.</p>
+                  <button
+                    className="tr-btn tr-btn--outline"
+                    onClick={() => { setFormStatus('idle'); setFormVisible(false); }}
+                  >
+                    Close
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="tr-enquiry__header">
+                    <span className="tr-pre-text">Type Rating Enquiry</span>
+                    <h2>
+                      <span className="tr-text--dark">{enquiryAircraft}</span>
+                    </h2>
+                  </div>
+
+                  <form className="tr-enquiry__form" onSubmit={handleFormSubmit} noValidate>
+                    <div className="tr-enquiry__field tr-enquiry__field--readonly">
+                      <label>Aircraft</label>
+                      <input type="text" value={enquiryAircraft} readOnly />
+                    </div>
+
+                    <div className="tr-enquiry__row">
+                      <div className="tr-enquiry__field">
+                        <label htmlFor="enq-name">Name *</label>
+                        <input
+                          id="enq-name"
+                          type="text"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleFormChange}
+                          required
+                          placeholder="Your full name"
+                        />
+                      </div>
+                      <div className="tr-enquiry__field">
+                        <label htmlFor="enq-email">Email *</label>
+                        <input
+                          id="enq-email"
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleFormChange}
+                          required
+                          placeholder="your@email.com"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="tr-enquiry__field">
+                      <label htmlFor="enq-phone">Phone</label>
+                      <input
+                        id="enq-phone"
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleFormChange}
+                        placeholder="+44 7700 000000"
+                      />
+                    </div>
+
+                    <div className="tr-enquiry__field">
+                      <label htmlFor="enq-message">Message</label>
+                      <textarea
+                        id="enq-message"
+                        name="message"
+                        value={formData.message}
+                        onChange={handleFormChange}
+                        rows={4}
+                        placeholder="Tell us about your experience and what you're hoping to achieve..."
+                      />
+                    </div>
+
+                    {formStatus === 'error' && (
+                      <p className="tr-enquiry__error">
+                        Something went wrong. Please try again or contact us directly.
+                      </p>
+                    )}
+
+                    <button
+                      type="submit"
+                      className="tr-btn tr-btn--primary tr-btn--full"
+                      disabled={formStatus === 'submitting'}
+                    >
+                      {formStatus === 'submitting' ? 'Sending...' : 'Send Enquiry'}
+                    </button>
+                  </form>
+                </>
+              )}
+            </div>
+          </motion.section>
+        )}
+      </AnimatePresence>
+
       {/* ========== TRAINING PROCESS ========== */}
       <section className="tr-process">
         <div className="tr-process__container">
