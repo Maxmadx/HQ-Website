@@ -2385,3 +2385,26 @@
 .hq-hero-carousel .sqs-gallery-controls button.next::before {
   color: var(--hq-white);
 }
+
+/* ============================================
+   WALL OF COOL TEASER MODULE
+   ============================================ */
+
+.hq-woc-teaser {
+  background: #fff;
+  border: 1px solid #e8e6e2;
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+
+@media (max-width: 580px) {
+  .hq-woc-teaser {
+    grid-template-columns: 1fr;
+  }
+
+  .hq-woc-teaser .hq-woc-teaser__right {
+    border-left: none;
+    border-top: 1px solid #e8e6e2;
+    min-width: unset;
+  }
+}

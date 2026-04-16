@@ -289,16 +289,10 @@ function Home() {
             {/* Wall of Cool Teaser */}
             <div className="sqs-block reveal-element">
               <div className="sqs-block-content">
-                <div style={{
-                  background: '#fff',
-                  border: '1px solid #e8e6e2',
-                  display: 'grid',
-                  gridTemplateColumns: '1fr auto',
-                }}>
+                <div className="hq-woc-teaser">
                   {/* Left: copy */}
                   <div style={{
                     padding: '1.75rem 2rem',
-                    borderRight: '1px solid #e8e6e2',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
@@ -337,7 +331,7 @@ function Home() {
                     </p>
                   </div>
                   {/* Right: CTA */}
-                  <div style={{
+                  <div className="hq-woc-teaser__right" style={{
                     padding: '1.75rem 2rem',
                     display: 'flex',
                     flexDirection: 'column',
@@ -346,13 +340,14 @@ function Home() {
                     gap: '0.75rem',
                     minWidth: '195px',
                     background: '#faf9f6',
+                    borderLeft: '1px solid #e8e6e2',
                   }}>
                     <a
                       href="#wall-of-cool"
                       className="hq-btn hq-btn--primary"
                       style={{ width: '100%', textAlign: 'center', display: 'block' }}
                     >
-                      Wall of Cool →
+                      Wall of Cool <span aria-hidden="true">→</span>
                     </a>
                     <span style={{
                       fontFamily: "'Share Tech Mono', monospace",
@@ -680,9 +675,9 @@ function Home() {
       </section>
 
       {/* Wall of Cool Section */}
-      <section id="wall-of-cool">
+      <div id="wall-of-cool">
         <WallOfCoolSection />
-      </section>
+      </div>
 
       {/* Contact Section */}
       <section id="contact" className="Index-page">
