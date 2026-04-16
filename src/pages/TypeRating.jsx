@@ -362,6 +362,10 @@ function TypeRating() {
 
   async function handleFormSubmit(e) {
     e.preventDefault();
+    if (!formData.name.trim() || !formData.email.trim()) {
+      setFormStatus('error');
+      return;
+    }
     setFormStatus('submitting');
     try {
       const res = await fetch('/api/leads', {
@@ -659,7 +663,7 @@ function TypeRating() {
             <div className="tr-enquiry__container">
               {formStatus === 'success' ? (
                 <div className="tr-enquiry__success">
-                  <span className="tr-enquiry__success-icon">✓</span>
+                  <span className="tr-enquiry__success-icon" aria-hidden="true">✓</span>
                   <h3>Enquiry Sent</h3>
                   <p>We'll be in touch within 24 hours.</p>
                   <button
@@ -987,7 +991,7 @@ function TypeRating() {
         .tr-btn--outline {
           background: transparent;
           color: #1a1a1a;
-          border: 2px solid #1a1a1a;
+          border: 1px solid #1a1a1a;
         }
 
         .tr-btn--outline:hover {
