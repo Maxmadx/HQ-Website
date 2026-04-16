@@ -65,6 +65,7 @@ import NightRating from './pages/NightRating';
 import HeroSectionFinal from './pages/HeroSectionFinal';
 import HeroSectionFinalTesting from './pages/HeroSectionFinalTesting';
 import AboutUsVariations from './pages/AboutUsVariations';
+import Misc from './pages/Misc';
 import PartSales from './pages/PartSales';
 import AwardVariations from './pages/AwardVariations';
 import MobileSecondSection from './pages/MobileSecondSection';
@@ -163,6 +164,7 @@ function App() {
         <Route path="/sales/pre-owned-variations" element={<UsedSalesVariations />} />
         <Route path="/sales/pre-owned/:id" element={<UsedAircraftDetail />} />
         <Route path="/self-fly-hire" element={<SelfFlyHire />} />
+        <Route path="/misc" element={<Misc />} />
         <Route path="/parts" element={<PartSales />} />
         <Route path="/maintenance" element={<FinalMaintenance />} />
         <Route path="/expeditions" element={<FinalExpeditions />} />
