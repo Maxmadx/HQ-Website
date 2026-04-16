@@ -314,8 +314,10 @@ function AircraftCard({ aircraft, isActive, onClick, onEnquire }) {
             </div>
 
             <button
+              type="button"
               className="tr-enquire-btn"
-              onClick={(e) => { e.stopPropagation(); onEnquire(aircraft.model); }}
+              aria-label={`Enquire about ${aircraft.model} type rating`}
+              onClick={(e) => { e.stopPropagation(); onEnquire?.(aircraft.model); }}
             >
               <span className="tr-enquire-btn__icon">↗</span>
               <span className="tr-enquire-btn__title">Enquire About This Type Rating</span>
