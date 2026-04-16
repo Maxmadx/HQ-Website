@@ -14,6 +14,7 @@
  */
 
 import { useState, useEffect, useRef, Fragment } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import HeroSectionFinalTesting from './HeroSectionFinalTesting';
@@ -31,6 +32,7 @@ import ScrollPathAnimation from '../components/ScrollPathAnimation';
 import AircraftAlertSignup from '../components/AircraftAlertSignup';
 import FacilityGallery from '../components/Maintenance/FacilityGallery';
 import FacilityServicesCarousel from '../components/Maintenance/FacilityServicesCarousel';
+import { useCollection } from '../hooks/useFirestore';
 import FacilityServicesDetail from '../components/Maintenance/FacilityServicesDetail';
 
 // Footer component
@@ -1281,7 +1283,7 @@ const SelfFlyHireSection = () => {
             </div>
           </div>
 
-          <Link to="/contact?subject=hire" className="sfh-map__cta">Enquire About Hire</Link>
+          <Link to="/self-fly-hire" className="sfh-map__cta">Enquire About Hire</Link>
           </div>
         </div>
         </div>
@@ -1515,7 +1517,71 @@ function Experimentation() {
   const [aboutLayout, setAboutLayout] = useState(0); // 0=right, 1=above, 2=below, 3=above+below, 4=three-col
   const [activeNavSection, setActiveNavSection] = useState(null);
   const [rebuildStep, setRebuildStep] = useState(0);
-  const [salesExpanded, setSalesExpanded] = useState({ new: false, preowned: false, rebuilt: false, unmanned: false });
+  const [salesExpanded, setSalesExpanded] = useState({ new: false, preowned: false, rebuilt: false, tradein: false, unmanned: false, misc: false });
+  const [unmannedFormOpen, setUnmannedFormOpen] = useState(false);
+  const [unmannedSubmitted, setUnmannedSubmitted] = useState(false);
+  const [unmannedSubmitting, setUnmannedSubmitting] = useState(false);
+  const [unmannedError, setUnmannedError] = useState('');
+  const [unmannedName, setUnmannedName] = useState('');
+  const [unmannedEmail, setUnmannedEmail] = useState('');
+  const [unmannedPhone, setUnmannedPhone] = useState('');
+  const [unmannedOrg, setUnmannedOrg] = useState('');
+  const [unmannedUseCase, setUnmannedUseCase] = useState('');
+  const [unmannedNotes, setUnmannedNotes] = useState('');
+  // Rebuild interest form
+  const [rebuildFormOpen, setRebuildFormOpen] = useState(false);
+  const [rebuildIntent, setRebuildIntent] = useState(null); // 'own' | 'source' | 'available'
+  const [rebuildSubmitted, setRebuildSubmitted] = useState(false);
+  const [rebuildSubmitting, setRebuildSubmitting] = useState(false);
+  const [rebuildError, setRebuildError] = useState('');
+  const [rbName, setRbName] = useState('');
+  const [rbEmail, setRbEmail] = useState('');
+  const [rbPhone, setRbPhone] = useState('');
+  const [rbNotes, setRbNotes] = useState('');
+  const [rbAircraftType, setRbAircraftType] = useState('');
+  const [rbReg, setRbReg] = useState('');
+  const [rbYear, setRbYear] = useState('');
+  const [rbWork, setRbWork] = useState('');
+  const [rbSourceType, setRbSourceType] = useState('');
+  const [rbBudget, setRbBudget] = useState('');
+  const [rbPrefType, setRbPrefType] = useState('');
+  const [rbAvailBudget, setRbAvailBudget] = useState('');
+  // Trade-in form
+  const [tradeinFormOpen, setTradeinFormOpen] = useState(false);
+  const [tradeinIntent, setTradeinIntent] = useState(null); // 'tradein' | 'sell'
+  const [tradeinSubmitted, setTradeinSubmitted] = useState(false);
+  const [tradeinSubmitting, setTradeinSubmitting] = useState(false);
+  const [tradeinError, setTradeinError] = useState('');
+  const [tiName, setTiName] = useState('');
+  const [tiEmail, setTiEmail] = useState('');
+  const [tiPhone, setTiPhone] = useState('');
+  const [tiAircraftType, setTiAircraftType] = useState('');
+  const [tiReg, setTiReg] = useState('');
+  const [tiYear, setTiYear] = useState('');
+  const [tiHours, setTiHours] = useState('');
+  const [tiUpgradeTo, setTiUpgradeTo] = useState('');
+  const [tiNotes, setTiNotes] = useState('');
+  const tradeinFormRef = useRef(null);
+  const unmannedFormRef = useRef(null);
+
+  function scrollBelowHeader(ref) {
+    setTimeout(() => {
+      if (!ref.current) return;
+      const isMobile = window.innerWidth <= 768;
+      const offset = isMobile ? 80 : 160;
+      const targetY = window.scrollY + ref.current.getBoundingClientRect().top - offset;
+      window.scrollTo({ top: targetY, behavior: 'smooth' });
+    }, 100);
+  }
+
+  useEffect(() => {
+    if (tradeinIntent) scrollBelowHeader(tradeinFormRef);
+  }, [tradeinIntent]);
+
+  useEffect(() => {
+    if (unmannedFormOpen) scrollBelowHeader(unmannedFormRef);
+  }, [unmannedFormOpen]);
+
   const [salesCardIdx, setSalesCardIdx] = useState(0);
   const salesGridCarouselRef = useRef(null);
   const [rebuildView, setRebuildView] = useState('option1');
@@ -1987,7 +2053,7 @@ function Experimentation() {
 
     const setRunwayHeight = () => {
       const overflow = inner.scrollWidth - scroller.clientWidth;
-      runway.style.height = `${overflow + window.innerHeight}px`;
+      runway.style.height = `${overflow + stickyEl.offsetHeight}px`;
     };
     setRunwayHeight();
     let hscrollResizeTimer;
@@ -2102,6 +2168,20 @@ function Experimentation() {
   const [videoProgress, setVideoProgress] = useState(0);
   const [controlsVisible, setControlsVisible] = useState(false);
   const controlsTimerRef = useRef(null);
+  const [awardModal, setAwardModal] = useState(null);
+  const milestoneRef = useRef(null);
+  const [milestoneAtStart, setMilestoneAtStart] = useState(true);
+  const [milestoneAtEnd, setMilestoneAtEnd] = useState(false);
+  const [hitterIdx, setHitterIdx] = useState(0);
+  const hitterTrackRef = useRef(null);
+  const HEAVY_HITTERS = [
+    { name: 'Tim Tucker', title: 'Chief Pilot & Safety Instructor', org: 'Robinson Helicopter Company', quote: 'Captain Smith is, without question, one of the finest rotary aviators I have ever encountered. His school sets the standard others aspire to.' },
+    { name: 'Yuri Lonchakov', title: 'Head of the Cosmonaut Corps', org: 'Roscosmos', quote: 'To reach the North Pole by piston helicopter requires not only skill but an extraordinary quality of spirit. Quentin Smith has both.' },
+    { name: 'Gilles Brunier', title: 'Director General', org: 'Fédération Aéronautique Internationale', quote: 'The FAI Gold Rotorcraft Medal is our highest honour. There was no question who deserved it.' },
+    { name: 'Sir Ranulph Fiennes', title: 'Explorer & World Record Holder', org: '', quote: 'In polar exploration, the helicopter is everything. Captain Smith flew further than anyone thought possible in a piston machine.' },
+  ];
+  const [hitterModal, setHitterModal] = useState(null);
+
   const showControls = () => {
     setControlsVisible(true);
     clearTimeout(controlsTimerRef.current);
@@ -2594,27 +2674,27 @@ function Experimentation() {
       { label: 'Type Rating', to: '/training/type-rating' },
       { label: 'Night Rating', to: '/training/night-rating' },
     ]},
-    { id: 'fleet', label: 'Fleet', icon: '02', subItems: [
-      { label: 'R22', to: '/aircraft/r22' },
-      { label: 'R44', to: '/aircraft/r44' },
-      { label: 'R66', to: '/aircraft/r66' },
-      { label: 'R88', to: '/aircraft/r88' },
-    ]},
-    { id: 'expeditions', label: 'Expeditions', icon: '03', subItems: [
+    { id: 'expeditions', label: 'Expeditions', icon: '02', subItems: [
       { label: 'Worldwide Expeditions', to: '/expeditions' },
       { label: 'HQ Trips', to: '/expeditions/calendar' },
     ]},
-    { id: 'sales', label: 'Sales', icon: '04', subItems: [
+    { id: 'sales', label: 'Sales', icon: '03', subItems: [
       { label: 'New Aircraft', to: '/sales/new' },
       { label: 'Pre-Owned', to: '/sales/pre-owned' },
       { label: 'Rebuilds', to: '/sales/rebuilds' },
     ]},
-    { id: 'maintenance', label: 'Maintenance', icon: '05', subItems: [
+    { id: 'maintenance', label: 'Maintenance', icon: '04', subItems: [
       { label: 'Servicing', to: '/maintenance' },
       { label: 'Parts', to: '/parts' },
     ]},
-    { id: 'contact', label: 'Contact', icon: '06', subItems: [
+    { id: 'contact', label: 'Contact', icon: '05', subItems: [
       { label: 'Get in Touch', to: '/contact' },
+    ]},
+    { id: 'pricing', label: 'Pricing', icon: '06', subItems: [
+      { label: 'Training', to: '/#pricing' },
+      { label: 'Self-Fly Hire', to: '/#pricing' },
+      { label: 'Hangarage', to: '/#pricing' },
+      { label: 'Valet Services', to: '/#pricing' },
     ]},
   ];
 
@@ -2623,16 +2703,18 @@ function Experimentation() {
     let navRaf = 0;
     const update = () => {
       const windowHeight = window.innerHeight;
-      const navSectionIds = ['training', 'fleet', 'expeditions', 'sales', 'maintenance', 'contact'];
+      const navSectionIds = ['training', 'expeditions', 'sales', 'maintenance', 'contact', 'pricing'];
       let currentNavSection = null;
 
       for (const sectionId of navSectionIds) {
         const element = document.getElementById(sectionId);
         if (element) {
           const rect = element.getBoundingClientRect();
-          if (rect.top <= windowHeight * 0.5 && rect.bottom >= 100) {
-            currentNavSection = sectionId;
-          }
+          // pricing: once it enters the active zone, keep it active to end of page
+          const matches = sectionId === 'pricing'
+            ? rect.top <= windowHeight * 0.5
+            : rect.top <= windowHeight * 0.5 && rect.bottom >= 100;
+          if (matches) currentNavSection = sectionId;
         }
       }
 
@@ -2710,72 +2792,16 @@ function Experimentation() {
   
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    if (!element) return;
+    const navEl = document.querySelector('.fd-nav');
+    const offset = (navEl ? navEl.getBoundingClientRect().bottom : 100) + 8;
+    const targetY = window.scrollY + element.getBoundingClientRect().top - offset;
+    window.scrollTo({ top: targetY, behavior: 'smooth' });
   };
 
-  const preownedInventory = [
-    // Available aircraft first
-    {
-      id: 'r66-ghkcc', model: 'R66 Turbine', year: 2021, hours: 485, registration: 'G-HKCC',
-      price: '£995,000', status: 'available',
-      images: [
-        '/assets/images/used-aircraft/r66/r66-turbine-ghkcc.jpg',
-        '/assets/images/new-aircraft/r66/blue-r66-palo-verde-left-v4.png',
-        '/assets/images/used-aircraft/r66/chris-r66-alps.jpg',
-      ],
-    },
-    {
-      id: 'r44-grrob', model: 'R44 Raven II', year: 2019, hours: 890, registration: 'G-RROB',
-      price: '£385,000', status: 'available',
-      images: [
-        '/assets/images/new-aircraft/r44/r44blueprint.jpg',
-        '/assets/images/new-aircraft/r44/raven-ii-front-alpha.png',
-      ],
-    },
-    {
-      id: 'r66-gnxg', model: 'R66 Turbine', year: 2020, hours: 650, registration: 'G-NXG1',
-      price: '£925,000', status: 'reserved',
-      images: [
-        '/assets/images/used-aircraft/r66/chris-r66-alps.jpg',
-        '/assets/images/new-aircraft/r66/blue-r66-palo-verde-left-v4.png',
-      ],
-    },
-    {
-      id: 'r44-cadet', model: 'R44 Cadet', year: 2022, hours: 320, registration: 'G-CADB',
-      price: '£345,000', status: 'available',
-      images: [
-        '/assets/images/new-aircraft/r44/raven-ii-front-alpha.png',
-        '/assets/images/new-aircraft/r44/r44blueprint.jpg',
-      ],
-    },
-    {
-      id: 'r44-raven1', model: 'R44 Raven I', year: 2017, hours: 1450, registration: 'G-RAVI',
-      price: '£295,000', status: 'available',
-      images: [
-        '/assets/images/new-aircraft/r44/r44blueprint.jpg',
-        '/assets/images/new-aircraft/r44/raven-ii-front-alpha.png',
-      ],
-    },
-    // Sold aircraft at the end
-    {
-      id: 'sold-r66-1', model: 'R66 Turbine', year: 2019, registration: 'G-SOLD', status: 'sold',
-      images: ['/assets/images/used-aircraft/r66/r66-turbine-ghkcc.jpg'],
-    },
-    {
-      id: 'sold-r44-1', model: 'R44 Raven II', year: 2020, registration: 'G-SOLD', status: 'sold',
-      images: ['/assets/images/new-aircraft/r44/r44blueprint.jpg'],
-    },
-    {
-      id: 'sold-r22-1', model: 'R22 Beta II', year: 2019, registration: 'G-SOLD', status: 'sold',
-      images: ['/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png'],
-    },
-    {
-      id: 'sold-r44-2', model: 'R44 Cadet', year: 2021, registration: 'G-SOLD', status: 'sold',
-      images: ['/assets/images/new-aircraft/r44/raven-ii-front-alpha.png'],
-    },
-  ];
+  const { docs: allListings, error: listingsError } = useCollection('listings');
+  const { docs: miscItems, loading: miscLoading } = useCollection('misc_items');
+  const preownedInventory = listingsError ? [] : allListings.filter(l => l.featured);
 
   const rebuildSteps = [
     { label: 'Airframe', before: '/assets/images/rebuilds/airframe-before.jpg', after: '/assets/images/rebuilds/airframe-after.jpg', beforeDesc: 'Corrosion, fatigue cracks and fifteen years of wear across the bare airframe.', afterDesc: 'Stripped, inspected, repaired and re-protected — ready for another lifetime.' },
@@ -2853,6 +2879,129 @@ function Experimentation() {
       ],
     },
   ];
+
+  async function handleTradeinSubmit(e) {
+    e.preventDefault();
+    if (!tiEmail) { setTradeinError('Email is required'); return; }
+    setTradeinSubmitting(true);
+    setTradeinError('');
+    try {
+      const aircraft = [tiAircraftType, tiReg, tiYear && `(${tiYear})`, tiHours && `${tiHours} hrs`].filter(Boolean).join(' ');
+      const body = tradeinIntent === 'tradein'
+        ? [
+            `Aircraft: ${aircraft || 'Not specified'}`,
+            tiUpgradeTo ? `Upgrading to: ${tiUpgradeTo}` : '',
+            tiNotes     ? `Notes: ${tiNotes}` : '',
+          ].filter(Boolean).join('\n')
+        : [
+            `Aircraft: ${aircraft || 'Not specified'}`,
+            tiNotes ? `Notes: ${tiNotes}` : '',
+          ].filter(Boolean).join('\n');
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name:    tiName,
+          email:   tiEmail,
+          phone:   tiPhone,
+          subject: tradeinIntent === 'tradein' ? 'Trade-In Enquiry — Towards New Aircraft' : 'Aircraft Sale Enquiry — We Buy Any Robinson',
+          message: body || 'No additional information provided.',
+          source:  `tradein-${tradeinIntent}`,
+        }),
+      });
+      if (!res.ok) throw new Error('Request failed');
+      setTradeinSubmitted(true);
+    } catch {
+      setTradeinError('Something went wrong. Please try again or call us directly.');
+    } finally {
+      setTradeinSubmitting(false);
+    }
+  }
+
+  async function handleRebuildSubmit(e) {
+    e.preventDefault();
+    if (!rbEmail) { setRebuildError('Email is required'); return; }
+    setRebuildSubmitting(true);
+    setRebuildError('');
+    try {
+      let subject = '';
+      let body = '';
+      if (rebuildIntent === 'own') {
+        subject = 'Rebuild Enquiry — Own Aircraft';
+        body = [
+          `Aircraft: ${rbAircraftType || 'Not specified'}`,
+          `Registration: ${rbReg || 'Not specified'}`,
+          `Year: ${rbYear || 'Not specified'}`,
+          rbWork  ? `Desired work: ${rbWork}` : '',
+          rbNotes ? `Notes: ${rbNotes}` : '',
+        ].filter(Boolean).join('\n');
+      } else if (rebuildIntent === 'source') {
+        subject = 'Rebuild Enquiry — Source an Aircraft';
+        body = [
+          `Aircraft type wanted: ${rbSourceType || 'Not specified'}`,
+          rbBudget ? `Budget: £${rbBudget}` : '',
+          rbNotes  ? `Notes: ${rbNotes}` : '',
+        ].filter(Boolean).join('\n');
+      } else {
+        subject = 'Rebuild Enquiry — Available Now';
+        body = [
+          `Preferred type: ${rbPrefType || 'Not specified'}`,
+          rbAvailBudget ? `Budget: £${rbAvailBudget}` : '',
+          rbNotes       ? `Notes: ${rbNotes}` : '',
+        ].filter(Boolean).join('\n');
+      }
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name:    rbName,
+          email:   rbEmail,
+          phone:   rbPhone,
+          subject,
+          message: body || 'No additional information provided.',
+          source:  `rebuild-interest-${rebuildIntent}`,
+        }),
+      });
+      if (!res.ok) throw new Error('Request failed');
+      setRebuildSubmitted(true);
+    } catch {
+      setRebuildError('Something went wrong. Please try again or call us directly.');
+    } finally {
+      setRebuildSubmitting(false);
+    }
+  }
+
+  async function handleUnmannedSubmit(e) {
+    e.preventDefault();
+    if (!unmannedEmail) { setUnmannedError('Email is required'); return; }
+    setUnmannedSubmitting(true);
+    setUnmannedError('');
+    try {
+      const messageParts = [
+        unmannedOrg   ? `Organisation: ${unmannedOrg}`    : '',
+        unmannedUseCase ? `Intended use: ${unmannedUseCase}` : '',
+        unmannedNotes  ? `Notes: ${unmannedNotes}`         : '',
+      ].filter(Boolean).join('\n');
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name:    unmannedName,
+          email:   unmannedEmail,
+          phone:   unmannedPhone,
+          subject: 'Robinson Unmanned — Interest Registration',
+          message: messageParts || 'No additional information provided.',
+          source:  'unmanned-interest',
+        }),
+      });
+      if (!res.ok) throw new Error('Request failed');
+      setUnmannedSubmitted(true);
+    } catch {
+      setUnmannedError('Something went wrong. Please try again or call us directly.');
+    } finally {
+      setUnmannedSubmitting(false);
+    }
+  }
 
   return (
     <div className="final-draft" ref={containerRef}>
@@ -2998,18 +3147,43 @@ function Experimentation() {
                   </div>
                 </div>
               </div>
-              <h3 className="fd-about__rec-title">Recommendations</h3>
-              <div className="abt-v9__milestones">
+              <h3 className="fd-about__rec-title">Recognitions</h3>
+              <div style={{ position: 'relative' }}>
+                <div style={{
+                  position: 'absolute', top: 0, bottom: 8, left: 0, width: '3rem',
+                  background: 'linear-gradient(to right, #fff, transparent)',
+                  pointerEvents: 'none', zIndex: 1,
+                  opacity: milestoneAtStart ? 0 : 1, transition: 'opacity 0.3s ease',
+                }} />
+                <div style={{
+                  position: 'absolute', top: 0, bottom: 8, right: 0, width: '3rem',
+                  background: 'linear-gradient(to left, #fff, transparent)',
+                  pointerEvents: 'none', zIndex: 1,
+                  opacity: milestoneAtEnd ? 0 : 1, transition: 'opacity 0.3s ease',
+                }} />
+              <div className="abt-v9__milestones" ref={milestoneRef} onScroll={() => {
+                const el = milestoneRef.current;
+                if (!el) return;
+                setMilestoneAtStart(el.scrollLeft <= 1);
+                setMilestoneAtEnd(el.scrollLeft >= el.scrollWidth - el.clientWidth - 1);
+              }}>
                 {[
-                  { year: '2019', icon: 'fas fa-award', text: 'FAI Gold Rotorcraft Medal', sub: 'Lifetime Achievement' },
-                  { year: '2016', icon: 'fas fa-snowflake', text: 'Solo to All 3 North Poles', sub: 'World First' },
-                  { year: '2012', icon: 'fas fa-medal', text: 'Second World Championship', sub: 'Backwards Autorotation' },
-                  { year: '2005', icon: 'fas fa-flag', text: 'First Crew to Both Poles', sub: 'Guinness World Record' },
-                  { year: '2002', icon: 'fas fa-compass', text: 'First Piston Heli to North Pole', sub: 'Guinness World Record' },
-                  { year: '1997', icon: 'fas fa-globe-americas', text: 'First Piston Heli Around the World', sub: 'Now in the Smithsonian' },
-                  { year: '1994', icon: 'fas fa-trophy', text: 'World Aerobatics Gold', sub: 'Moscow, Russia' },
+                  { year: '2019', icon: 'fas fa-award',         text: 'FAI Gold Rotorcraft Medal',          sub: 'Lifetime Achievement',   detail: 'The highest individual honour in international helicopter aviation, awarded for extraordinary contribution to rotorcraft flight.', img: '/assets/images/icons/fai-gold-rotorcraft-award.png' },
+                  { year: '2016', icon: 'fas fa-snowflake',      text: 'Solo to All 3 North Poles',          sub: 'World First',             detail: 'First person to fly solo by helicopter to the Arctic, Antarctic, and Magnetic North Pole.',                                       img: '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp' },
+                  { year: '2012', icon: 'fas fa-medal',          text: 'Second World Championship',          sub: 'Backwards Autorotation',  detail: 'Won gold performing a backwards autorotation from 300ft — a maneuver experts declared impossible.',                               img: '/assets/images/team/world-helicopter-champion-quentin-smith.webp' },
+                  { year: '2005', icon: 'fas fa-flag',           text: 'First Crew to Both Poles',           sub: 'Guinness World Record',   detail: 'Led the first crew expedition to reach both the geographic North and South Poles by helicopter.',                                 img: '/assets/images/expeditions/six-helis-in-North-Pole.jpg' },
+                  { year: '2002', icon: 'fas fa-compass',        text: 'First Piston Heli to North Pole',    sub: 'Guinness World Record',   detail: 'Flew a piston-engined helicopter to the North Pole, setting a Guinness World Record.',                                           img: '/assets/images/expeditions/north-pole.jpg' },
+                  { year: '1997', icon: 'fas fa-globe-americas', text: 'First Piston Heli Around the World', sub: 'Now in the Smithsonian',  detail: 'First piston helicopter circumnavigation of the globe. The aircraft now resides in the Smithsonian collection.',                  img: '/assets/images/team/quentin-smith-world-record-holder-helicopter-aerobatics.webp' },
+                  { year: '1994', icon: 'fas fa-trophy',         text: 'World Aerobatics Gold',              sub: 'Moscow, Russia',          detail: 'Beat turbine-powered Russian aircraft flying a humble R22 at the World Freestyle Aerobatics Championship.',                        img: '/assets/images/team/helicopter-genius-quentin-smith-great-britain.webp' },
                 ].map((m, i) => (
-                  <div key={i} className="abt-v9__milestone">
+                  <div
+                    key={i}
+                    className="abt-v9__milestone"
+                    onClick={() => setAwardModal(m)}
+                  >
+                    <button className="abt-v9__info-btn" aria-label="View award">
+                      <i className="fas fa-info-circle"></i>
+                    </button>
                     <i className={m.icon}></i>
                     <span className="abt-v9__milestone-year">{m.year}</span>
                     <span className="abt-v9__milestone-text">{m.text}</span>
@@ -3017,6 +3191,110 @@ function Experimentation() {
                   </div>
                 ))}
               </div>
+              </div>
+
+              {/* Award modal */}
+              {awardModal && createPortal(
+                <div className="abt-v9__modal-overlay" onClick={() => setAwardModal(null)}>
+                  <div className="abt-v9__modal" onClick={(e) => e.stopPropagation()}>
+                    <button className="abt-v9__modal-close" onClick={() => setAwardModal(null)} aria-label="Close">
+                      <i className="fas fa-times"></i>
+                    </button>
+                    <div className="abt-v9__modal-img-wrap">
+                      <img src={awardModal.img} alt={awardModal.text} />
+                    </div>
+                    <div className="abt-v9__modal-info">
+                      <span className="abt-v9__milestone-year">{awardModal.year}</span>
+                      <span className="abt-v9__modal-title">{awardModal.text}</span>
+                      <span className="abt-v9__milestone-sub">{awardModal.sub}</span>
+                      <p className="abt-v9__modal-detail">{awardModal.detail}</p>
+                    </div>
+                  </div>
+                </div>,
+                document.body
+              )}
+
+              <h3 className="fd-about__rec-title">Industry Recommendations</h3>
+              <div className="abt-v9__hitters-carousel">
+                <div
+                  className="abt-v9__hitters-track"
+                  ref={hitterTrackRef}
+                  onScroll={(e) => {
+                    const el = e.currentTarget;
+                    const card = el.firstElementChild;
+                    if (!card) return;
+                    const idx = Math.round(el.scrollLeft / (card.offsetWidth + 12));
+                    if (idx !== hitterIdx && idx >= 0 && idx < HEAVY_HITTERS.length) setHitterIdx(idx);
+                  }}
+                >
+                  {HEAVY_HITTERS.map((h, i) => (
+                    <div key={i} className="abt-v9__hitter">
+                      <span className="abt-v9__hitter-mark">&ldquo;</span>
+                      <p className="abt-v9__hitter-quote">{h.quote}</p>
+                      <div className="abt-v9__hitter-footer">
+                        <div className="abt-v9__hitter-person">
+                          <span className="abt-v9__hitter-name">{h.name}</span>
+                          <span className="abt-v9__hitter-role">{h.title}{h.org ? ` · ${h.org}` : ''}</span>
+                        </div>
+                        <button className="abt-v9__hitter-expand" onClick={() => setHitterModal(h)}>
+                          See Full Quote
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="abt-v9__hitters-controls">
+                  <button
+                    className="abt-v9__hitters-chevron"
+                    onClick={() => {
+                      const next = (hitterIdx - 1 + HEAVY_HITTERS.length) % HEAVY_HITTERS.length;
+                      setHitterIdx(next);
+                      hitterTrackRef.current?.children[next]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    }}
+                    aria-label="Previous"
+                  ><i className="fas fa-chevron-left"></i></button>
+                  <div className="abt-v9__hitters-dots">
+                    {HEAVY_HITTERS.map((_, i) => (
+                      <span
+                        key={i}
+                        className={`abt-v9__hitters-dot${hitterIdx === i ? ' abt-v9__hitters-dot--active' : ''}`}
+                        onClick={() => {
+                          setHitterIdx(i);
+                          hitterTrackRef.current?.children[i]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    className="abt-v9__hitters-chevron"
+                    onClick={() => {
+                      const next = (hitterIdx + 1) % HEAVY_HITTERS.length;
+                      setHitterIdx(next);
+                      hitterTrackRef.current?.children[next]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    }}
+                    aria-label="Next"
+                  ><i className="fas fa-chevron-right"></i></button>
+                </div>
+              </div>
+
+              {hitterModal && createPortal(
+                <div className="abt-v9__modal-overlay" onClick={() => setHitterModal(null)}>
+                  <div className="abt-v9__modal" onClick={(e) => e.stopPropagation()}>
+                    <button className="abt-v9__modal-close" onClick={() => setHitterModal(null)} aria-label="Close">
+                      <i className="fas fa-times"></i>
+                    </button>
+                    <div className="abt-v9__modal-info" style={{ padding: '2rem 1.5rem 1.5rem' }}>
+                      <span className="abt-v9__hitter-mark" style={{ display: 'block', marginBottom: '0.75rem' }}>&ldquo;</span>
+                      <p className="abt-v9__modal-detail" style={{ border: 'none', padding: 0, margin: '0 0 1.25rem', fontSize: '0.82rem', lineHeight: 1.65 }}>{hitterModal.quote}</p>
+                      <div className="abt-v9__hitter-person" style={{ paddingTop: '0.75rem', borderTop: '1px solid #e8e4df' }}>
+                        <span className="abt-v9__hitter-name">{hitterModal.name}</span>
+                        <span className="abt-v9__hitter-role">{hitterModal.title}{hitterModal.org ? ` · ${hitterModal.org}` : ''}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>,
+                document.body
+              )}
             </div>
             <div className="fd-about__split-about">
               <h3 className="fd-about__founder-title">About</h3>
@@ -3126,7 +3404,73 @@ function Experimentation() {
                 <p className="fd-training-header__desc">
                   From your first discovery flight to advanced commercial ratings, our experienced instructors guide you every step of the way.
                 </p>
-                <hr className="fd-training-header__divider" />
+
+                {/* Wall of Cool Teaser */}
+                <div style={{
+                  marginTop: '1rem',
+                  background: '#fff',
+                  border: '1px solid #e8e6e2',
+                  borderRadius: '8px',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}>
+                  <div style={{
+                    padding: '0.75rem 1rem',
+                    borderBottom: '1px solid #e8e6e2',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.3rem',
+                  }}>
+                    <h3 style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontSize: '0.82rem',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '-0.02em',
+                      lineHeight: 1.2,
+                      color: '#1a1a1a',
+                      margin: 0,
+                    }}>
+                      See flying at HQ
+                    </h3>
+                    <p style={{ fontSize: '0.72rem', color: '#9ca3af', margin: '4px 0 0', fontFamily: "'Share Tech Mono', monospace", letterSpacing: '0.08em', textTransform: 'uppercase' }}>Community photos · Updated regularly</p>
+                  </div>
+                  <div style={{
+                    padding: '0.75rem 1rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'stretch',
+                    gap: '0.4rem',
+                    background: '#faf9f6',
+                  }}>
+                    <a
+                      href="#wall-of-cool"
+                      onClick={e => {
+                        e.preventDefault();
+                        document.getElementById('wall-of-cool')?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        textAlign: 'center',
+                        padding: '0.6rem 1rem',
+                        background: '#1a1a1a',
+                        color: '#fff',
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontSize: '0.7rem',
+                        fontWeight: 600,
+                        letterSpacing: '0.1em',
+                        textTransform: 'uppercase',
+                        textDecoration: 'none',
+                        boxSizing: 'border-box',
+                      }}
+                    >
+                      Wall of Cool →
+                    </a>
+                  </div>
+                </div>
+
               </div>
             </div>
             <div className="fd-training-courses">
@@ -3207,7 +3551,6 @@ function Experimentation() {
         </div>
         </section>
       </div>
-
       {/* ===== THE CLUBHOUSE ===== */}
       <section className="clubhouse reveal-element" ref={clubhouseRef} data-cms-section="home-clubhouse-carousel">
         <div style={{ margin: '0 auto 1.5rem', position: 'relative', zIndex: 2 }} />
@@ -3272,12 +3615,12 @@ function Experimentation() {
                   </div>
                   <div className="clubhouse__map-card-bottom">
                     <div className="clubhouse__map-card-stat">
-                      <h4 className="clubhouse__grid-title">25 min</h4>
-                      <p className="clubhouse__grid-desc">From Central London</p>
+                      <h4 className="clubhouse__grid-title">By Train</h4>
+                      <p className="clubhouse__grid-desc">15 min Marylebone to Denham, pickup available</p>
                     </div>
                     <div className="clubhouse__map-card-stat">
-                      <h4 className="clubhouse__grid-title">M25</h4>
-                      <p className="clubhouse__grid-desc">Just Inside the Orbital</p>
+                      <h4 className="clubhouse__grid-title">By Car</h4>
+                      <p className="clubhouse__grid-desc">Inside the M25 Orbital, Greater London</p>
                     </div>
                   </div>
                 </div>
@@ -3660,16 +4003,16 @@ function Experimentation() {
           <div className="fd-sales__carousel" ref={preownedRef}>
             {preownedInventory.map((ac, i) => {
               const imgIdx = preownedImgIndex[i] || 0;
-              const images = ac.images;
+              const images = ac.images ?? [];
               const isSold = ac.status === 'sold';
               const isReserved = ac.status === 'reserved';
               const cardContent = (
               <>
                 {isSold && <div className="fd-sales__sold-badge">SOLD</div>}
                 {isReserved && <div className="fd-sales__sold-badge" style={{ background: '#d4880f' }}>UNDER OFFER</div>}
-                {!isSold && !isReserved && ac.price && <div className="fd-sales__sold-badge" style={{ background: '#1a1a1a' }}>{ac.price}</div>}
+                {!isSold && !isReserved && ac.priceDisplay && <div className="fd-sales__sold-badge" style={{ background: '#1a1a1a' }}>{ac.priceDisplay}</div>}
                 <div className={`fd-sales__sold-image ${isSold ? '' : 'fd-sales__sold-image--active'}`}>
-                  <img src={images[imgIdx]} alt={ac.model} />
+                  <img src={images[imgIdx]?.url || '/assets/images/r66helis.jpg'} alt={ac.model} />
                   {images.length > 1 && (
                     <>
                       <button
@@ -3698,7 +4041,7 @@ function Experimentation() {
                 </div>
                 <div className="fd-sales__sold-info">
                   <strong>{ac.model}</strong>
-                  <span>{ac.registration} &middot; {ac.year}{ac.hours ? ` · ${ac.hours.toLocaleString()} hrs` : ''}</span>
+                  <span>{ac.registration} &middot; {ac.year}{ac.specs?.hours ? ` · ${ac.specs.hours.toLocaleString()} hrs` : ''}</span>
                 </div>
               </>
               );
@@ -3912,6 +4255,131 @@ function Experimentation() {
         <div className="fd-sales__actions">
           <Link to="/sales/rebuilds" className="fd-sales__btn fd-sales__btn--primary">Understand Rebuilds</Link>
         </div>
+
+        </div>
+        </div>
+
+        {/* ── Section 3b: Trade In Aircraft ── */}
+        <div className="fd-sales__subsection">
+        <h3 className={`fd-sales__section-title fd-sales__section-title--toggle ${salesExpanded.tradein ? 'fd-sales__section-title--active' : ''}`} onClick={() => setSalesExpanded(prev => ({ ...prev, tradein: !prev.tradein }))}>
+          Trade In Aircraft
+          <span className={`fd-sales__chevron ${salesExpanded.tradein ? 'fd-sales__chevron--open' : ''}`}><i className="fas fa-chevron-down"></i></span>
+        </h3>
+        <div className={`fd-sales__collapse ${salesExpanded.tradein ? 'fd-sales__collapse--open' : ''}`}>
+
+        <div className="fd-sales__webuy">
+          <div className="fd-sales__webuy__inner">
+            <div className="fd-sales__webuy__left">
+              <i className="fas fa-hand-holding-usd fd-sales__webuy__icon"></i>
+              <div>
+                <span className="fd-sales__webuy__pre">Aircraft Acquisition</span>
+                <p className="fd-sales__webuy__headline">We Buy Any Robinson</p>
+              </div>
+            </div>
+            <div className="fd-sales__webuy__pills">
+              <span className="fd-sales__webuy__pill"><i className="fas fa-check"></i> Fair Market Value</span>
+              <span className="fd-sales__webuy__pill"><i className="fas fa-check"></i> Quick Decision</span>
+              <span className="fd-sales__webuy__pill"><i className="fas fa-check"></i> All Models</span>
+            </div>
+          </div>
+        </div>
+
+        <p className="fd-sales__section-desc" style={{marginTop: '1.25rem'}}>
+          If you're looking to upgrade your aircraft, or simply want to sell — we'll give you a fair offer on any Robinson and have the experience to make the process straightforward.
+        </p>
+
+        <div className="fd-sales__rebuild-interest">
+          {!tradeinFormOpen && !tradeinSubmitted && (
+            <div className="fd-sales__rebuild-intents-grid fd-sales__tradein-grid">
+              <button className="fd-sales__intent-btn" onClick={() => { setTradeinIntent('tradein'); setTradeinFormOpen(true); }}>
+                <span className="fd-sales__intent-icon">⇄</span>
+                <span className="fd-sales__intent-title">Trade In Towards New Aircraft</span>
+                <span className="fd-sales__intent-sub">Use your current Robinson as part-exchange against a new or pre-owned purchase with us.</span>
+              </button>
+              <button className="fd-sales__intent-btn" onClick={() => { setTradeinIntent('sell'); setTradeinFormOpen(true); }}>
+                <span className="fd-sales__intent-icon">£</span>
+                <span className="fd-sales__intent-title">I Just Want to Sell</span>
+                <span className="fd-sales__intent-sub">No purchase required — we buy Robinsons outright. Tell us about your aircraft and we'll respond quickly.</span>
+              </button>
+            </div>
+          )}
+
+          {tradeinFormOpen && !tradeinSubmitted && (
+            <form className="fd-sales__unmanned-form" ref={tradeinFormRef} onSubmit={handleTradeinSubmit}>
+              <div className="fd-sales__unmanned-form-header">
+                <span className="fd-sales__unmanned-form-badge">
+                  {tradeinIntent === 'tradein' ? 'Trade In Towards New Aircraft' : 'Aircraft Sale Enquiry'}
+                </span>
+                <button type="button" className="fd-sales__unmanned-back" onClick={() => { setTradeinFormOpen(false); setTradeinIntent(null); setTradeinError(''); }}>← Back</button>
+              </div>
+
+              <div className="fd-sales__unmanned-form-row">
+                <div className="fd-sales__unmanned-field">
+                  <label className="fd-sales__unmanned-label">Aircraft Type</label>
+                  <input className="fd-sales__unmanned-input" type="text" placeholder="e.g. Robinson R44 Raven II" value={tiAircraftType} onChange={e => setTiAircraftType(e.target.value)} />
+                </div>
+                <div className="fd-sales__unmanned-field">
+                  <label className="fd-sales__unmanned-label">Registration <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                  <input className="fd-sales__unmanned-input" type="text" placeholder="e.g. G-HQAV" value={tiReg} onChange={e => setTiReg(e.target.value)} />
+                </div>
+              </div>
+              <div className="fd-sales__unmanned-form-row fd-sales__unmanned-form-row--2col">
+                <div className="fd-sales__unmanned-field">
+                  <label className="fd-sales__unmanned-label">Year <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                  <input className="fd-sales__unmanned-input" type="text" placeholder="e.g. 2015" value={tiYear} onChange={e => setTiYear(e.target.value)} />
+                </div>
+                <div className="fd-sales__unmanned-field">
+                  <label className="fd-sales__unmanned-label">Airframe Hours <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                  <input className="fd-sales__unmanned-input" type="text" placeholder="e.g. 1,200" value={tiHours} onChange={e => setTiHours(e.target.value)} />
+                </div>
+              </div>
+
+              {tradeinIntent === 'tradein' && (
+                <div className="fd-sales__unmanned-field">
+                  <label className="fd-sales__unmanned-label">Upgrading To <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                  <input className="fd-sales__unmanned-input" type="text" placeholder="e.g. R44 Raven II, R66 Turbine…" value={tiUpgradeTo} onChange={e => setTiUpgradeTo(e.target.value)} />
+                </div>
+              )}
+
+              <div className="fd-sales__unmanned-form-row">
+                <div className="fd-sales__unmanned-field">
+                  <label className="fd-sales__unmanned-label">Name</label>
+                  <input className="fd-sales__unmanned-input" type="text" placeholder="Full name" value={tiName} onChange={e => setTiName(e.target.value)} />
+                </div>
+                <div className="fd-sales__unmanned-field">
+                  <label className="fd-sales__unmanned-label">Email <span style={{color:'#c00'}}>*</span></label>
+                  <input className="fd-sales__unmanned-input" type="email" placeholder="you@example.com" required value={tiEmail} onChange={e => setTiEmail(e.target.value)} />
+                </div>
+                <div className="fd-sales__unmanned-field">
+                  <label className="fd-sales__unmanned-label">Phone <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                  <input className="fd-sales__unmanned-input" type="tel" placeholder="+44" value={tiPhone} onChange={e => setTiPhone(e.target.value)} />
+                </div>
+              </div>
+
+              <div className="fd-sales__unmanned-field">
+                <label className="fd-sales__unmanned-label">Additional Notes <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                <textarea className="fd-sales__unmanned-input fd-sales__unmanned-textarea" placeholder="Anything else we should know…" rows={3} value={tiNotes} onChange={e => setTiNotes(e.target.value)} />
+              </div>
+
+              {tradeinError && <p className="fd-sales__unmanned-error">{tradeinError}</p>}
+              <div className="fd-sales__unmanned-form-footer">
+                <button type="submit" className="fd-sales__unmanned-submit" disabled={tradeinSubmitting}>
+                  {tradeinSubmitting ? 'Sending…' : 'Submit Enquiry'}
+                </button>
+                <span className="fd-sales__unmanned-form-note">We'll be in touch shortly.</span>
+              </div>
+            </form>
+          )}
+
+          {tradeinSubmitted && (
+            <div className="fd-sales__unmanned-success">
+              <span className="fd-sales__unmanned-success-icon">✓</span>
+              <p className="fd-sales__unmanned-success-title">Enquiry Received</p>
+              <p className="fd-sales__unmanned-success-sub">Thank you — we'll review your aircraft details and be in touch with a valuation shortly.</p>
+            </div>
+          )}
+        </div>
+
         </div>
         </div>
 
@@ -3927,10 +4395,133 @@ function Experimentation() {
             </p>
             <div className="fd-sales__unmanned-coming">
               <span className="fd-sales__unmanned-icon"><i className="fas fa-helicopter"></i></span>
-              <p>More information coming soon. Contact our sales team for early enquiries.</p>
-              <Link to="/contact?subject=unmanned" className="fd-sales__btn fd-sales__btn--primary">Enquire About Robinson Unmanned</Link>
+              <p>More information coming soon. Register your interest and we'll be in touch.</p>
+
+              {!unmannedFormOpen && !unmannedSubmitted && (
+                <button className="fd-sales__intent-btn" onClick={() => setUnmannedFormOpen(true)}>
+                  <span className="fd-sales__intent-icon">↗</span>
+                  <span className="fd-sales__intent-title">Register Interest</span>
+                  <span className="fd-sales__intent-sub">Be first to know — we'll reach out with early access information, pricing, and availability.</span>
+                </button>
+              )}
+
+              {unmannedFormOpen && !unmannedSubmitted && (
+                <form className="fd-sales__unmanned-form" ref={unmannedFormRef} onSubmit={handleUnmannedSubmit}>
+                  <div className="fd-sales__unmanned-form-header">
+                    <span className="fd-sales__unmanned-form-badge">Interest Registration</span>
+                    <button type="button" className="fd-sales__unmanned-back" onClick={() => { setUnmannedFormOpen(false); setUnmannedError(''); }}>← Back</button>
+                  </div>
+                  <div className="fd-sales__unmanned-form-row">
+                    <div className="fd-sales__unmanned-field">
+                      <label className="fd-sales__unmanned-label">Name</label>
+                      <input className="fd-sales__unmanned-input" type="text" placeholder="Full name" value={unmannedName} onChange={e => setUnmannedName(e.target.value)} />
+                    </div>
+                    <div className="fd-sales__unmanned-field">
+                      <label className="fd-sales__unmanned-label">Email <span style={{color:'#c00'}}>*</span></label>
+                      <input className="fd-sales__unmanned-input" type="email" placeholder="you@example.com" required value={unmannedEmail} onChange={e => setUnmannedEmail(e.target.value)} />
+                    </div>
+                    <div className="fd-sales__unmanned-field">
+                      <label className="fd-sales__unmanned-label">Phone <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                      <input className="fd-sales__unmanned-input" type="tel" placeholder="+44" value={unmannedPhone} onChange={e => setUnmannedPhone(e.target.value)} />
+                    </div>
+                  </div>
+                  <div className="fd-sales__unmanned-form-row fd-sales__unmanned-form-row--2col">
+                    <div className="fd-sales__unmanned-field">
+                      <label className="fd-sales__unmanned-label">Organisation <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                      <input className="fd-sales__unmanned-input" type="text" placeholder="Company or organisation" value={unmannedOrg} onChange={e => setUnmannedOrg(e.target.value)} />
+                    </div>
+                    <div className="fd-sales__unmanned-field">
+                      <label className="fd-sales__unmanned-label">Intended Use <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                      <input className="fd-sales__unmanned-input" type="text" placeholder="e.g. Agricultural, inspection, search & rescue…" value={unmannedUseCase} onChange={e => setUnmannedUseCase(e.target.value)} />
+                    </div>
+                  </div>
+                  <div className="fd-sales__unmanned-field">
+                    <label className="fd-sales__unmanned-label">Additional Notes <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                    <textarea className="fd-sales__unmanned-input fd-sales__unmanned-textarea" placeholder="Any other requirements or questions…" rows={3} value={unmannedNotes} onChange={e => setUnmannedNotes(e.target.value)} />
+                  </div>
+                  {unmannedError && <p className="fd-sales__unmanned-error">{unmannedError}</p>}
+                  <div className="fd-sales__unmanned-form-footer">
+                    <button type="submit" className="fd-sales__unmanned-submit" disabled={unmannedSubmitting}>
+                      {unmannedSubmitting ? 'Registering…' : 'Register Interest'}
+                    </button>
+                    <span className="fd-sales__unmanned-form-note">We'll be in touch. No spam, ever.</span>
+                  </div>
+                </form>
+              )}
+
+              {unmannedSubmitted && (
+                <div className="fd-sales__unmanned-success">
+                  <span className="fd-sales__unmanned-success-icon">✓</span>
+                  <p className="fd-sales__unmanned-success-title">Interest Registered</p>
+                  <p className="fd-sales__unmanned-success-sub">Thank you — we'll be in touch with early access information as Robinson Unmanned becomes available.</p>
+                </div>
+              )}
             </div>
         </div>
+        </div>
+
+        {/* ── Section 5: Miscellaneous ── */}
+        <div className="fd-sales__subsection">
+          <h3
+            className={`fd-sales__section-title fd-sales__section-title--toggle ${salesExpanded.misc ? 'fd-sales__section-title--active' : ''}`}
+            onClick={() => setSalesExpanded((prev) => ({ ...prev, misc: !prev.misc }))}
+          >
+            Miscellaneous
+            <span className={`fd-sales__chevron ${salesExpanded.misc ? 'fd-sales__chevron--open' : ''}`}>
+              <i className="fas fa-chevron-down"></i>
+            </span>
+          </h3>
+          <div className={`fd-sales__collapse ${salesExpanded.misc ? 'fd-sales__collapse--open' : ''}`}>
+            <p className="fd-sales__section-desc">
+              Accessories, apparel, ground equipment, training materials and more — everything beyond the aircraft itself, all available from HQ.
+            </p>
+
+            {!miscLoading && miscItems.length > 0 && (
+              <div className="fd-sales__grid fd-sales__grid--desktop fd-sales__grid--misc">
+                {miscItems.slice(0, 4).map((item) => {
+                  const primary = item.images?.find((i) => i.isPrimary) || item.images?.[0];
+                  return (
+                    <Link key={item.id} to="/misc" className="fd-sales__card">
+                      <div className="fd-sales__card-image">
+                        {primary ? (
+                          <img src={primary.url} alt={primary.alt || item.name} />
+                        ) : (
+                          <span className="fd-sales__card-placeholder-icon">
+                            <i className="fas fa-box"></i>
+                          </span>
+                        )}
+                      </div>
+                      <div className="fd-sales__card-info">
+                        <span className="fd-sales__card-category">{item.category}</span>
+                        <h3>{item.name}</h3>
+                        <div className="fd-sales__card-meta">
+                          <span className={`fd-sales__condition-badge fd-sales__condition-badge--${item.condition || 'new'}`}>
+                            {item.condition === 'used' ? 'Used' : 'New'}
+                          </span>
+                          <span className="fd-sales__card-price">{item.priceDisplay || 'POA'}</span>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+
+            {(miscLoading || miscItems.length === 0) && (
+              <div className="fd-sales__unmanned-coming">
+                <span className="fd-sales__unmanned-icon">
+                  <i className="fas fa-box-open"></i>
+                </span>
+                <p>Stock being added — check back soon or browse the full catalogue.</p>
+              </div>
+            )}
+
+            <div className="fd-sales__actions">
+              <Link to="/misc" className="fd-sales__btn fd-sales__btn--primary">
+                Browse All Miscellaneous Items
+              </Link>
+            </div>
+          </div>
         </div>
 
 
@@ -4059,36 +4650,38 @@ function Experimentation() {
       {/* ===== SECTION: PRIVATE & SPECIALIST SERVICES ===== */}
 
       {/* ===== SECTION: THE ARRIVAL (Location + Testimonials combined) ===== */}
-      <ParallaxSection
-        image={cmsParallaxContact}
-        alt="Find Us & Contact Us"
-        className="reveal-element"
-        waves={true}
-        dataCmsSection="home-parallax-contact"
-      >
-        <h2 className="parallax-section__title">Contact & Find Us</h2>
-      </ParallaxSection>
+      <div id="contact">
+        <ParallaxSection
+          image={cmsParallaxContact}
+          alt="Find Us & Contact Us"
+          className="reveal-element"
+          waves={true}
+          dataCmsSection="home-parallax-contact"
+        >
+          <h2 className="parallax-section__title">Contact & Find Us</h2>
+        </ParallaxSection>
 
-      <div className="fd-about__divider">
-        <span className="fd-about__divider-line"></span>
-        <div className="fd-about__socials">
-          <a href="https://www.instagram.com/haborhelicopters/" target="_blank" rel="noopener noreferrer" className="fd-about__social" aria-label="Instagram">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="2" width="20" height="20" rx="5"></rect><circle cx="12" cy="12" r="5"></circle><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"></circle></svg>
-          </a>
-          <a href="https://www.facebook.com/haborhelicopters" target="_blank" rel="noopener noreferrer" className="fd-about__social" aria-label="Facebook">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path></svg>
-          </a>
-          <a href="https://www.youtube.com/@hqaviation" target="_blank" rel="noopener noreferrer" className="fd-about__social" aria-label="YouTube">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33A2.78 2.78 0 003.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29 29 0 00.46-5.25 29 29 0 00-.46-5.43z"></path><polygon points="9.75,15.02 15.5,11.75 9.75,8.48" fill="currentColor" stroke="none"></polygon></svg>
-          </a>
+        <div className="fd-about__divider">
+          <span className="fd-about__divider-line"></span>
+          <div className="fd-about__socials">
+            <a href="https://www.instagram.com/haborhelicopters/" target="_blank" rel="noopener noreferrer" className="fd-about__social" aria-label="Instagram">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="2" width="20" height="20" rx="5"></rect><circle cx="12" cy="12" r="5"></circle><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"></circle></svg>
+            </a>
+            <a href="https://www.facebook.com/haborhelicopters" target="_blank" rel="noopener noreferrer" className="fd-about__social" aria-label="Facebook">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path></svg>
+            </a>
+            <a href="https://www.youtube.com/@hqaviation" target="_blank" rel="noopener noreferrer" className="fd-about__social" aria-label="YouTube">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33A2.78 2.78 0 003.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29 29 0 00.46-5.25 29 29 0 00-.46-5.43z"></path><polygon points="9.75,15.02 15.5,11.75 9.75,8.48" fill="currentColor" stroke="none"></polygon></svg>
+            </a>
+          </div>
+          <span className="fd-about__divider-line"></span>
         </div>
-        <span className="fd-about__divider-line"></span>
+
+        <ArrivalSection />
       </div>
 
-      <ArrivalSection />
-
       {/* ===== EDITORIAL GRID (Wall of Cool) ===== */}
-      <div className="reveal-element">
+      <div id="wall-of-cool" className="reveal-element" style={{ scrollMarginTop: '80px' }}>
         <EditorialGrid />
       </div>
 
@@ -4997,39 +5590,57 @@ function Experimentation() {
         }
 
         .abt-v9__milestones {
-          position: relative;
           display: flex;
           gap: 0.75rem;
           margin-bottom: 1.75rem;
           overflow-x: auto;
           scrollbar-width: thin;
           scrollbar-color: #c0b8aa transparent;
+          scroll-snap-type: x mandatory;
+          -webkit-overflow-scrolling: touch;
           padding-bottom: 8px;
-          mask-image: linear-gradient(to right, black 80%, transparent 100%);
-          -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
         }
         .abt-v9__milestones::-webkit-scrollbar { height: 4px; }
         .abt-v9__milestones::-webkit-scrollbar-track { background: transparent; }
         .abt-v9__milestones::-webkit-scrollbar-thumb { background: #c0b8aa; border-radius: 2px; }
+        .abt-v9__milestone { scroll-snap-align: start; }
         .abt-v9__milestone {
+          flex-shrink: 0;
+          width: 130px;
+          height: 160px;
+          border: 1px solid #e8e4df;
+          border-radius: 8px;
+          cursor: pointer;
+          background: #faf8f5;
+          position: relative;
           display: flex;
           flex-direction: column;
           align-items: center;
+          justify-content: center;
           text-align: center;
-          flex-shrink: 0;
-          width: 130px;
           padding: 1.25rem 0.75rem;
-          border: 1px solid #e8e4df;
-          background: #faf8f5;
-          border-radius: 8px;
           transition: border-color 0.2s;
         }
         .abt-v9__milestone:hover { border-color: #c0b8aa; }
-        .abt-v9__milestone i {
+        .abt-v9__milestone > i {
           font-size: 1rem;
           color: #a09080;
           margin-bottom: 0.6rem;
         }
+        .abt-v9__info-btn {
+          position: absolute;
+          top: 6px;
+          right: 6px;
+          background: none;
+          border: none;
+          padding: 2px;
+          cursor: pointer;
+          color: #c0b8aa;
+          font-size: 0.7rem;
+          line-height: 1;
+          transition: color 0.15s;
+        }
+        .abt-v9__info-btn:hover { color: #7a6f65; }
         .abt-v9__milestone-year {
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.55rem;
@@ -5052,6 +5663,208 @@ function Experimentation() {
           text-transform: uppercase;
           color: #b0a898;
         }
+
+        /* Award modal */
+        .abt-v9__modal-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(10, 8, 6, 0.75);
+          z-index: 9999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 1.5rem;
+          backdrop-filter: blur(4px);
+          -webkit-backdrop-filter: blur(4px);
+        }
+        .abt-v9__modal {
+          background: #fff;
+          border-radius: 10px;
+          max-width: 420px;
+          width: 100%;
+          overflow: hidden;
+          position: relative;
+          box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+        }
+        .abt-v9__modal-close {
+          position: absolute;
+          top: 10px;
+          right: 12px;
+          background: rgba(255,255,255,0.85);
+          border: none;
+          border-radius: 50%;
+          width: 28px;
+          height: 28px;
+          cursor: pointer;
+          font-size: 0.75rem;
+          color: #444;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1;
+          transition: background 0.15s;
+        }
+        .abt-v9__modal-close:hover { background: #fff; }
+        .abt-v9__modal-img-wrap {
+          width: 100%;
+          aspect-ratio: 4/3;
+          background: #f2efea;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+        .abt-v9__modal-img-wrap img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          padding: 1.5rem;
+        }
+        .abt-v9__modal-info {
+          padding: 1rem 1.25rem 1.25rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.2rem;
+        }
+        .abt-v9__modal-title {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.85rem;
+          font-weight: 700;
+          color: #1a1a1a;
+          line-height: 1.3;
+        }
+        .abt-v9__modal-detail {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.72rem;
+          color: #5a5248;
+          line-height: 1.55;
+          margin: 0.5rem 0 0;
+          padding-top: 0.6rem;
+          border-top: 1px solid #e8e4df;
+        }
+
+        /* Heavy hitter recommendations carousel */
+        .abt-v9__hitters-carousel {
+          margin-bottom: 1.75rem;
+        }
+        .abt-v9__hitters-track {
+          display: flex;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          gap: 12px;
+        }
+        .abt-v9__hitters-track::-webkit-scrollbar { display: none; }
+        .abt-v9__hitter {
+          flex: 0 0 100%;
+          scroll-snap-align: center;
+          box-sizing: border-box;
+          border: 1px solid #e8e4df;
+          border-radius: 6px;
+          padding: 1rem 1.1rem 1rem;
+          background: #faf8f5;
+        }
+        .abt-v9__hitter-mark {
+          font-family: Georgia, serif;
+          font-size: 2.5rem;
+          color: #e0dbd4;
+          line-height: 0;
+          display: block;
+          margin-bottom: 0.5rem;
+          padding-top: 0.75rem;
+        }
+        .abt-v9__hitter-quote {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.85rem;
+          font-style: italic;
+          color: #3a3228;
+          line-height: 1.55;
+          margin: 0 0 0.75rem;
+        }
+        .abt-v9__hitter-quote {
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+        .abt-v9__hitter-footer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.5rem;
+          padding-top: 0.6rem;
+          border-top: 1px solid #e8e4df;
+        }
+        .abt-v9__hitter-person {
+          display: flex;
+          flex-direction: column;
+          gap: 0.1rem;
+        }
+        .abt-v9__hitter-expand {
+          flex-shrink: 0;
+          background: none;
+          border: 1px solid #e0dbd4;
+          border-radius: 3px;
+          padding: 0.3rem 0.55rem;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.42rem;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: #a09080;
+          cursor: pointer;
+          white-space: nowrap;
+          transition: border-color 0.15s, color 0.15s;
+        }
+        .abt-v9__hitter-expand:hover { border-color: #a09080; color: #3a3228; }
+        .abt-v9__hitter-name {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.82rem;
+          font-weight: 700;
+          color: #1a1a1a;
+        }
+        .abt-v9__hitter-role {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.72rem;
+          color: #7a6f65;
+          line-height: 1.4;
+        }
+        .abt-v9__hitters-controls {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          padding-top: 0.65rem;
+        }
+        .abt-v9__hitters-chevron {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: #fff;
+          border: 1px solid #e8e4df;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #1a1a1a;
+          font-size: 0.6rem;
+          transition: background 0.15s, border-color 0.15s, color 0.15s;
+        }
+        .abt-v9__hitters-chevron:hover { background: #1a1a1a; border-color: #1a1a1a; color: #fff; }
+        .abt-v9__hitters-dots {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+        }
+        .abt-v9__hitters-dot {
+          width: 5px;
+          height: 5px;
+          border-radius: 50%;
+          background: #e0dbd4;
+          cursor: pointer;
+          transition: background 0.15s, transform 0.15s;
+        }
+        .abt-v9__hitters-dot--active { background: #a09080; transform: scale(1.3); }
 
         /* Why Fly horizontal panel */
         .abt-v9__whyfly {
@@ -5842,7 +6655,7 @@ function Experimentation() {
         /* ===== TRAINING SECTION (two-col like clubhouse) ===== */
         .fd-training-section {
           background: #faf9f6;
-          padding: 0;
+          padding: 0 0 10rem;
           position: relative;
           overflow-x: clip;
           z-index: 2;
@@ -7849,6 +8662,317 @@ function Experimentation() {
           margin-right: auto;
         }
 
+        .fd-sales__intent-btn {
+          display: grid;
+          grid-template-columns: auto 1fr;
+          grid-template-rows: auto auto;
+          column-gap: 0.6rem;
+          row-gap: 0.2rem;
+          align-items: center;
+          padding: 1rem 1.4rem;
+          background: #fff;
+          border: 1px solid #e8e6e2;
+          text-decoration: none;
+          text-align: left;
+          color: #1a1a1a;
+          transition: border-color 0.22s ease, background 0.22s ease;
+          max-width: 420px;
+          margin: 0 auto;
+        }
+        .fd-sales__intent-btn:hover {
+          border-color: #1a1a1a;
+          background: #faf9f6;
+        }
+        .fd-sales__intent-icon {
+          grid-column: 1;
+          grid-row: 1 / span 2;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 1rem;
+          color: #999;
+          line-height: 1;
+          align-self: center;
+        }
+        .fd-sales__intent-title {
+          grid-column: 2;
+          grid-row: 1;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.75rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          color: #1a1a1a;
+        }
+        .fd-sales__intent-sub {
+          grid-column: 2;
+          grid-row: 2;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.72rem;
+          color: #999;
+          line-height: 1.5;
+          font-weight: 400;
+          text-transform: none;
+          letter-spacing: 0;
+        }
+
+        /* Rebuild interest */
+        .fd-sales__rebuild-interest {
+          margin-top: 1.5rem;
+        }
+        .fd-sales__intent-btn--full {
+          max-width: 100%;
+        }
+        .fd-sales__rebuild-intents {
+          background: #fff;
+          border: 1px solid #e0deda;
+          padding: 2rem;
+        }
+        .fd-sales__rebuild-intents-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 1.5rem;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid #e8e6e2;
+        }
+        .fd-sales__rebuild-intents-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+        @media (max-width: 768px) {
+          .fd-sales__rebuild-intents-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Unmanned interest form */
+        .fd-sales__unmanned-form {
+          background: #fff;
+          border: 1px solid #e0deda;
+          padding: 2rem;
+          text-align: left;
+          margin-top: 1.5rem;
+          width: 100%;
+          max-width: 640px;
+          margin-left: auto;
+          margin-right: auto;
+          box-sizing: border-box;
+        }
+        .fd-sales__unmanned-form-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 1.75rem;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid #e8e6e2;
+        }
+        .fd-sales__unmanned-form-badge {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.58rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          background: #1a1a1a;
+          color: #fff;
+          padding: 0.3rem 0.7rem;
+        }
+        .fd-sales__unmanned-back {
+          background: none;
+          border: none;
+          color: #bbb;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.62rem;
+          letter-spacing: 0.1em;
+          cursor: pointer;
+          padding: 0;
+          transition: color 0.2s;
+        }
+        .fd-sales__unmanned-back:hover { color: #1a1a1a; }
+        .fd-sales__unmanned-form-row {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1rem;
+          margin-bottom: 1rem;
+          align-items: end;
+        }
+        .fd-sales__unmanned-form-row--2col {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .fd-sales__unmanned-field {
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+          margin-bottom: 1rem;
+        }
+        .fd-sales__unmanned-form-row .fd-sales__unmanned-field { margin-bottom: 0; }
+        .fd-sales__unmanned-label {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.58rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: #999;
+          white-space: nowrap;
+        }
+        .fd-sales__unmanned-optional {
+          color: #ccc;
+          font-size: 0.55rem;
+          text-transform: none;
+          letter-spacing: 0;
+          font-family: 'Space Grotesk', sans-serif;
+        }
+        .fd-sales__unmanned-input {
+          background: #faf9f6;
+          border: 1px solid #e0ddd8;
+          padding: 0.7rem 0.9rem;
+          color: #1a1a1a;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.88rem;
+          transition: border-color 0.2s;
+          width: 100%;
+          box-sizing: border-box;
+        }
+        .fd-sales__unmanned-input::placeholder { color: #bbb; }
+        .fd-sales__unmanned-input:focus { outline: none; border-color: #1a1a1a; }
+        .fd-sales__unmanned-textarea { resize: vertical; min-height: 80px; }
+        .fd-sales__unmanned-error {
+          font-size: 0.78rem;
+          color: #c00;
+          margin-bottom: 0.75rem;
+        }
+        .fd-sales__unmanned-form-footer {
+          display: flex;
+          align-items: center;
+          gap: 1.25rem;
+          padding-top: 1.25rem;
+          border-top: 1px solid #e8e6e2;
+          margin-top: 0.5rem;
+        }
+        .fd-sales__unmanned-submit {
+          padding: 0.8rem 2rem;
+          background: #1a1a1a;
+          border: none;
+          color: #fff;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.75rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+        .fd-sales__unmanned-submit:hover:not(:disabled) { background: #333; }
+        .fd-sales__unmanned-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+        .fd-sales__unmanned-form-note {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.6rem;
+          letter-spacing: 0.05em;
+          color: #bbb;
+        }
+        /* Success state */
+        .fd-sales__unmanned-success {
+          text-align: center;
+          padding: 2rem;
+          max-width: 420px;
+          margin: 1.5rem auto 0;
+        }
+        .fd-sales__unmanned-success-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 48px;
+          height: 48px;
+          background: #1a1a1a;
+          color: #fff;
+          border-radius: 50%;
+          font-size: 1.1rem;
+          margin: 0 auto 1rem;
+        }
+        .fd-sales__unmanned-success-title {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: -0.01em;
+          color: #1a1a1a;
+          margin-bottom: 0.5rem;
+        }
+        .fd-sales__unmanned-success-sub {
+          font-size: 0.82rem;
+          color: #888;
+          line-height: 1.6;
+          margin: 0;
+        }
+        @media (max-width: 640px) {
+          .fd-sales__unmanned-form-row,
+          .fd-sales__unmanned-form-row--2col { grid-template-columns: 1fr; }
+        }
+
+        /* Trade In banner */
+        .fd-sales__webuy {
+          background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+          padding: 1.25rem 1.5rem;
+          border-radius: 6px;
+          margin-top: 1rem;
+        }
+        .fd-sales__webuy__inner {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          flex-wrap: wrap;
+        }
+        .fd-sales__webuy__left {
+          display: flex;
+          align-items: center;
+          gap: 0.9rem;
+          min-width: 200px;
+        }
+        .fd-sales__webuy__icon {
+          font-size: 1.4rem;
+          color: #4ade80;
+          flex-shrink: 0;
+        }
+        .fd-sales__webuy__pre {
+          display: block;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.58rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: rgba(255,255,255,0.5);
+          margin-bottom: 0.2rem;
+        }
+        .fd-sales__webuy__headline {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1rem;
+          font-weight: 700;
+          color: #fff;
+          margin: 0;
+          letter-spacing: -0.02em;
+        }
+        .fd-sales__webuy__pills {
+          display: flex;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+        }
+        .fd-sales__webuy__pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          background: rgba(255,255,255,0.08);
+          border: 1px solid rgba(255,255,255,0.12);
+          padding: 0.3rem 0.75rem;
+          border-radius: 99px;
+          font-size: 0.72rem;
+          color: rgba(255,255,255,0.85);
+          white-space: nowrap;
+        }
+        .fd-sales__webuy__pill i { font-size: 0.5rem; color: #4ade80; }
+        .fd-sales__tradein-grid {
+          grid-template-columns: repeat(2, 1fr);
+          margin-top: 1.5rem;
+        }
+        @media (max-width: 640px) {
+          .fd-sales__tradein-grid { grid-template-columns: 1fr; }
+          .fd-sales__webuy__inner { flex-direction: column; align-items: flex-start; }
+        }
+
         .fd-sales__grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
@@ -7952,6 +9076,61 @@ function Experimentation() {
           font-size: 0.9rem;
           font-weight: 700;
           color: #1a1a1a;
+        }
+
+        .fd-sales__card-category {
+          display: block;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.58rem;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          color: #888;
+          margin-bottom: 0.4rem;
+        }
+
+        .fd-sales__card-meta {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-top: 0.75rem;
+          padding-top: 0.75rem;
+          border-top: 1px solid #e8e6e2;
+        }
+
+        .fd-sales__condition-badge {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.58rem;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          padding: 2px 8px;
+          border-radius: 3px;
+          font-weight: 600;
+        }
+
+        .fd-sales__condition-badge--new {
+          background: #f0fdf4;
+          color: #166534;
+        }
+
+        .fd-sales__condition-badge--used {
+          background: #fef3c7;
+          color: #92400e;
+        }
+
+        .fd-sales__card-placeholder-icon {
+          font-size: 2rem;
+          color: #ccc;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .fd-sales__grid--misc h3 {
+          font-size: 0.9rem;
+          font-weight: 600;
+          margin: 0 0 0.25rem;
+          color: #1a1a1a;
+          line-height: 1.3;
         }
 
         .fd-sales__market-intro {
