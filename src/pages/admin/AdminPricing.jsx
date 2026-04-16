@@ -14,11 +14,6 @@ const CATEGORIES = [
     label: 'Self-Fly Hire Tab — Hourly Rates',
     hint: 'Displayed in the Self-Fly Hire tab of Rates & Pricing. Wet rate = standard hourly rate including fuel. Not charged via Stripe.',
   },
-  {
-    id: 'miscellaneous',
-    label: 'Sales Page — Miscellaneous Items',
-    hint: 'Displayed on the Sales page. Add any item here — covers, movers, logbooks, merch, etc. Not charged via Stripe.',
-  },
 ];
 
 // Whitelist of IDs that are actually displayed on the website
@@ -30,7 +25,7 @@ const WEBSITE_IDS = new Set([
 ]);
 
 const CATEGORY_IDS = CATEGORIES.map((c) => c.id);
-const EMPTY_NEW = { label: '', price: '', description: '', category: 'discovery', condition: 'new' };
+const EMPTY_NEW = { label: '', price: '', description: '', category: 'discovery' };
 
 // Convert pence stored in Firestore → pounds string shown in inputs
 function penceToPounds(pence) {
@@ -68,7 +63,6 @@ export default function AdminPricing() {
         price:       penceToPounds(item.price),
         label:       item.label,
         description: item.description || '',
-        condition:   item.condition || 'new',
       },
     }));
   }
@@ -81,12 +75,10 @@ export default function AdminPricing() {
     setSaving(id);
     try {
       const ed = editing[id];
-      const item = items.find((i) => i.id === id);
       await updateDocById('pricing', id, {
         price:       poundsToAppence(ed.price),
         label:       ed.label,
         description: ed.description,
-        ...(item?.category === 'miscellaneous' && { condition: ed.condition }),
       });
       cancelEdit(id);
     } finally {
@@ -106,11 +98,8 @@ export default function AdminPricing() {
     setCreating(true);
     try {
       await createDoc('pricing', {
-        label:       newItem.label,
-        price:       poundsToAppence(newItem.price),
-        description: newItem.description,
-        category:    newItem.category,
-        ...(newItem.category === 'miscellaneous' && { condition: newItem.condition }),
+        ...newItem,
+        price: poundsToAppence(newItem.price),
       });
       setNewItem(EMPTY_NEW);
       setAdding(false);
@@ -120,9 +109,7 @@ export default function AdminPricing() {
   }
 
   const grouped = CATEGORY_IDS.reduce((acc, id) => {
-    acc[id] = id === 'miscellaneous'
-      ? items.filter((i) => i.category === 'miscellaneous')
-      : items.filter((i) => i.category === id && WEBSITE_IDS.has(i.id));
+    acc[id] = items.filter((i) => i.category === id && WEBSITE_IDS.has(i.id));
     return acc;
   }, {});
 
@@ -159,15 +146,6 @@ export default function AdminPricing() {
               {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
             </select>
           </div>
-          {newItem.category === 'miscellaneous' && (
-            <div>
-              <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '2px' }}>Condition</label>
-              <select style={fieldStyle} value={newItem.condition} onChange={(e) => setNewItem((n) => ({ ...n, condition: e.target.value }))}>
-                <option value="new">New</option>
-                <option value="used">Used</option>
-              </select>
-            </div>
-          )}
           <div>
             <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '2px' }}>Description</label>
             <input style={fieldStyle} value={newItem.description} onChange={(e) => setNewItem((n) => ({ ...n, description: e.target.value }))} />
@@ -205,10 +183,7 @@ export default function AdminPricing() {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
                 <thead>
                   <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-                    {(cat.id === 'miscellaneous'
-                      ? ['Label', 'Price', 'Description', 'Condition', '']
-                      : ['Label', 'Price', 'Description', '']
-                    ).map((h) => (
+                    {['Label', 'Price', 'Description', ''].map((h) => (
                       <th key={h} style={{ padding: '0.5rem 0.75rem', textAlign: 'left', color: '#374151', fontWeight: 600 }}>{h}</th>
                     ))}
                   </tr>
@@ -245,23 +220,6 @@ export default function AdminPricing() {
                             ? <input style={fieldStyle} value={ed.description} onChange={(e) => setEditing((x) => ({ ...x, [item.id]: { ...x[item.id], description: e.target.value } }))} />
                             : item.description}
                         </td>
-                        {cat.id === 'miscellaneous' && (
-                          <td style={{ padding: '0.6rem 0.75rem', color: '#6b7280', fontSize: '0.8rem' }}>
-                            {ed
-                              ? (
-                                <select
-                                  style={{ ...fieldStyle, width: '80px' }}
-                                  value={ed.condition}
-                                  onChange={(e) => setEditing((x) => ({ ...x, [item.id]: { ...x[item.id], condition: e.target.value } }))}
-                                >
-                                  <option value="new">New</option>
-                                  <option value="used">Used</option>
-                                </select>
-                              )
-                              : (item.condition === 'used' ? 'Used' : 'New')
-                            }
-                          </td>
-                        )}
                         <td style={{ padding: '0.6rem 0.75rem', whiteSpace: 'nowrap' }}>
                           {ed ? (
                             <>

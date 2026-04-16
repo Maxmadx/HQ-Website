@@ -101,15 +101,6 @@ const PRICING = [
   { id: 'costs_medical_to',    label: 'Medical Certificate — to',   category: 'costs', price: 30000, description: 'Class 2 medical, CAA-approved examiner' },
   { id: 'costs_total_from',    label: 'Typical Total — from',   category: 'costs', price: 1700000, description: 'Typical total investment for a PPL(H)' },
   { id: 'costs_total_to',      label: 'Typical Total — to',     category: 'costs', price: 2200000, description: 'Typical total investment for a PPL(H)' },
-
-  // ── Miscellaneous — Sales page display only ────────────────────────────────
-  { id: 'misc_cover_r22',         label: 'Helicopter Cover (R22)', category: 'miscellaneous', condition: 'new', price: 0, description: '' },
-  { id: 'misc_cover_r44',         label: 'Helicopter Cover (R44)', category: 'miscellaneous', condition: 'new', price: 0, description: '' },
-  { id: 'misc_mover',             label: 'Helicopter Mover',       category: 'miscellaneous', condition: 'new', price: 0, description: '' },
-  { id: 'misc_start_stick',       label: 'Start Stick',            category: 'miscellaneous', condition: 'new', price: 0, description: '' },
-  { id: 'misc_pooleys_logbook',   label: 'Pooleys Logbook',        category: 'miscellaneous', condition: 'new', price: 0, description: '' },
-  { id: 'misc_revision_material', label: 'Revision Material',      category: 'miscellaneous', condition: 'new', price: 0, description: '' },
-  { id: 'misc_hq_merch',          label: 'HQ Merchandise',         category: 'miscellaneous', condition: 'new', price: 0, description: '' },
 ];
 
 async function seed() {
