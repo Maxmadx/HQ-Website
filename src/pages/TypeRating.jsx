@@ -651,8 +651,8 @@ function TypeRating() {
             className="tr-enquiry"
             key="enquiry-form"
             initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1, transitionEnd: { overflow: 'visible' } }}
+            exit={{ height: 0, opacity: 0, overflow: 'hidden' }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             style={{ overflow: 'hidden' }}
           >
@@ -663,6 +663,7 @@ function TypeRating() {
                   <h3>Enquiry Sent</h3>
                   <p>We'll be in touch within 24 hours.</p>
                   <button
+                    type="button"
                     className="tr-btn tr-btn--outline"
                     onClick={() => { setFormStatus('idle'); setFormVisible(false); }}
                   >
@@ -674,19 +675,19 @@ function TypeRating() {
                   <div className="tr-enquiry__header">
                     <span className="tr-pre-text">Type Rating Enquiry</span>
                     <h2>
-                      <span className="tr-text--dark">{enquiryAircraft}</span>
+                      <span className="tr-text--dark">{enquiryAircraft || 'Aircraft'}</span>
                     </h2>
                   </div>
 
                   <form className="tr-enquiry__form" onSubmit={handleFormSubmit} noValidate>
                     <div className="tr-enquiry__field tr-enquiry__field--readonly">
-                      <label>Aircraft</label>
-                      <input type="text" value={enquiryAircraft} readOnly />
+                      <label htmlFor="enq-aircraft">Aircraft</label>
+                      <input id="enq-aircraft" type="text" value={enquiryAircraft} readOnly aria-readonly="true" />
                     </div>
 
                     <div className="tr-enquiry__row">
                       <div className="tr-enquiry__field">
-                        <label htmlFor="enq-name">Name *</label>
+                        <label htmlFor="enq-name">Name <span aria-hidden="true">*</span></label>
                         <input
                           id="enq-name"
                           type="text"
@@ -698,7 +699,7 @@ function TypeRating() {
                         />
                       </div>
                       <div className="tr-enquiry__field">
-                        <label htmlFor="enq-email">Email *</label>
+                        <label htmlFor="enq-email">Email <span aria-hidden="true">*</span></label>
                         <input
                           id="enq-email"
                           type="email"
@@ -736,7 +737,7 @@ function TypeRating() {
                     </div>
 
                     {formStatus === 'error' && (
-                      <p className="tr-enquiry__error">
+                      <p className="tr-enquiry__error" role="alert">
                         Something went wrong. Please try again or contact us directly.
                       </p>
                     )}
