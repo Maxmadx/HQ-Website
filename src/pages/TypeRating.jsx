@@ -237,7 +237,7 @@ function AnimatedNumber({ value, suffix = '' }) {
 }
 
 // Aircraft card for fleet section - transforms into expanded view when selected
-function AircraftCard({ aircraft, isActive, onClick }) {
+function AircraftCard({ aircraft, isActive, onClick, onEnquire }) {
   return (
     <motion.div
       className={`tr-aircraft-card ${isActive ? 'tr-aircraft-card--active' : ''}`}
@@ -313,13 +313,14 @@ function AircraftCard({ aircraft, isActive, onClick }) {
               </div>
             </div>
 
-            <a
-              href={`/contact?subject=type-rating-${aircraft.model.toLowerCase().replace(' ', '-')}`}
-              className="tr-btn tr-btn--primary tr-btn--full"
-              onClick={(e) => e.stopPropagation()}
+            <button
+              className="tr-enquire-btn"
+              onClick={(e) => { e.stopPropagation(); onEnquire(aircraft.model); }}
             >
-              Enquire Now
-            </a>
+              <span className="tr-enquire-btn__icon">↗</span>
+              <span className="tr-enquire-btn__title">Enquire About This Type Rating</span>
+              <span className="tr-enquire-btn__sub">Tell us your experience level and goals. We'll get back to you within 24 hours.</span>
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
