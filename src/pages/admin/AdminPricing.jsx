@@ -2,21 +2,35 @@ import { useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { useCollection, updateDocById, createDoc, deleteDocById } from '../../hooks/useFirestore';
 
-// Categories in the order they should appear on screen
+// Only categories actively displayed on the website
 const CATEGORIES = [
-  { id: 'discovery',   label: 'Discovery Flights',      hint: 'These prices are charged via Stripe — changes take effect immediately on the next booking.' },
-  { id: 'training',    label: 'Training Hourly Rates',  hint: 'Displayed on the training page. Not charged via Stripe.' },
-  { id: 'type-rating', label: 'Type Ratings',           hint: '"From" price displayed on training page.' },
-  { id: 'sfh',         label: 'Self-Fly Hire',          hint: 'Displayed on the SFH page. Not charged via Stripe.' },
-  { id: 'additional',  label: 'Additional Services',    hint: 'Displayed on the SFH page.' },
-  { id: 'costs',       label: 'PPL(H) Cost Estimates',  hint: 'Range values for the cost transparency section. Stored as from/to pairs.' },
-  { id: 'rebuild',     label: 'Rebuild',                hint: '' },
-  { id: 'maintenance', label: 'Maintenance',            hint: '' },
-  { id: 'sales',       label: 'Sales',                  hint: '' },
+  {
+    id: 'discovery',
+    label: 'Training Tab — Discovery & Dual Instruction Prices',
+    hint: 'Displayed in the Training tab of Rates & Pricing. Discovery = 30 min trial flight. Dual Instruction = 60 min lesson. These prices are also charged via Stripe on booking.',
+  },
+  {
+    id: 'sfh',
+    label: 'Self-Fly Hire Tab — Hourly Rates',
+    hint: 'Displayed in the Self-Fly Hire tab of Rates & Pricing. Wet rate = standard hourly rate including fuel. Not charged via Stripe.',
+  },
+  {
+    id: 'miscellaneous',
+    label: 'Sales Page — Miscellaneous Items',
+    hint: 'Displayed on the Sales page. Add any item here — covers, movers, logbooks, merch, etc. Not charged via Stripe.',
+  },
 ];
 
+// Whitelist of IDs that are actually displayed on the website
+const WEBSITE_IDS = new Set([
+  'discovery_r22_30min', 'discovery_r22_60min',
+  'discovery_r44_30min', 'discovery_r44_60min',
+  'discovery_r66_30min', 'discovery_r66_60min',
+  'sfh_r22_wet', 'sfh_r44_wet', 'sfh_r66_wet',
+]);
+
 const CATEGORY_IDS = CATEGORIES.map((c) => c.id);
-const EMPTY_NEW = { label: '', price: '', description: '', category: 'discovery' };
+const EMPTY_NEW = { label: '', price: '', description: '', category: 'discovery', condition: 'new' };
 
 // Convert pence stored in Firestore → pounds string shown in inputs
 function penceToPounds(pence) {
@@ -54,6 +68,7 @@ export default function AdminPricing() {
         price:       penceToPounds(item.price),
         label:       item.label,
         description: item.description || '',
+        condition:   item.condition || 'new',
       },
     }));
   }
@@ -70,6 +85,7 @@ export default function AdminPricing() {
         price:       poundsToAppence(ed.price),
         label:       ed.label,
         description: ed.description,
+        ...(ed.condition !== undefined && { condition: ed.condition }),
       });
       cancelEdit(id);
     } finally {
@@ -90,7 +106,8 @@ export default function AdminPricing() {
     try {
       await createDoc('pricing', {
         ...newItem,
-        price: poundsToAppence(newItem.price),
+        price:     poundsToAppence(newItem.price),
+        condition: newItem.category === 'miscellaneous' ? newItem.condition : undefined,
       });
       setNewItem(EMPTY_NEW);
       setAdding(false);
@@ -100,7 +117,9 @@ export default function AdminPricing() {
   }
 
   const grouped = CATEGORY_IDS.reduce((acc, id) => {
-    acc[id] = items.filter((i) => i.category === id);
+    acc[id] = id === 'miscellaneous'
+      ? items.filter((i) => i.category === 'miscellaneous')
+      : items.filter((i) => i.category === id && WEBSITE_IDS.has(i.id));
     return acc;
   }, {});
 
@@ -110,7 +129,7 @@ export default function AdminPricing() {
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#111827', margin: 0 }}>Pricing</h1>
           <p style={{ fontSize: '0.78rem', color: '#6b7280', margin: '4px 0 0' }}>
-            All prices enter in pounds (£). Discovery flight prices are charged directly via Stripe.
+            All prices in pounds (£), excluding VAT. Only prices displayed on the website are shown here.
           </p>
         </div>
         <button
@@ -137,6 +156,15 @@ export default function AdminPricing() {
               {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
             </select>
           </div>
+          {newItem.category === 'miscellaneous' && (
+            <div>
+              <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '2px' }}>Condition</label>
+              <select style={fieldStyle} value={newItem.condition} onChange={(e) => setNewItem((n) => ({ ...n, condition: e.target.value }))}>
+                <option value="new">New</option>
+                <option value="used">Used</option>
+              </select>
+            </div>
+          )}
           <div>
             <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '2px' }}>Description</label>
             <input style={fieldStyle} value={newItem.description} onChange={(e) => setNewItem((n) => ({ ...n, description: e.target.value }))} />
@@ -174,7 +202,10 @@ export default function AdminPricing() {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
                 <thead>
                   <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-                    {['Label', 'Price', 'Description', ''].map((h) => (
+                    {(cat.id === 'miscellaneous'
+                      ? ['Label', 'Price', 'Description', 'Condition', '']
+                      : ['Label', 'Price', 'Description', '']
+                    ).map((h) => (
                       <th key={h} style={{ padding: '0.5rem 0.75rem', textAlign: 'left', color: '#374151', fontWeight: 600 }}>{h}</th>
                     ))}
                   </tr>
@@ -210,6 +241,22 @@ export default function AdminPricing() {
                           {ed
                             ? <input style={fieldStyle} value={ed.description} onChange={(e) => setEditing((x) => ({ ...x, [item.id]: { ...x[item.id], description: e.target.value } }))} />
                             : item.description}
+                        </td>
+                        <td style={{ padding: '0.6rem 0.75rem', color: '#6b7280', fontSize: '0.8rem' }}>
+                          {cat.id === 'miscellaneous' && (
+                            ed
+                              ? (
+                                <select
+                                  style={{ ...fieldStyle, width: '80px' }}
+                                  value={ed.condition}
+                                  onChange={(e) => setEditing((x) => ({ ...x, [item.id]: { ...x[item.id], condition: e.target.value } }))}
+                                >
+                                  <option value="new">New</option>
+                                  <option value="used">Used</option>
+                                </select>
+                              )
+                              : (item.condition === 'used' ? 'Used' : 'New')
+                          )}
                         </td>
                         <td style={{ padding: '0.6rem 0.75rem', whiteSpace: 'nowrap' }}>
                           {ed ? (
