@@ -341,6 +341,7 @@ function TypeRating() {
 
   function handleEnquire(model) {
     setEnquiryAircraft(model);
+    setFormStatus('idle');
     if (!formVisible) {
       setFormVisible(true);
       setTimeout(() => {
@@ -1356,13 +1357,6 @@ function TypeRating() {
 
         .tr-aircraft-card__close:hover {
           background: rgba(255,255,255,0.2);
-          color: #fff;
-        }
-
-        .tr-aircraft-card__expanded-price {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 1.5rem;
-          font-weight: 700;
           color: #fff;
         }
 
