@@ -1756,7 +1756,7 @@ function DiscoveryFlight() {
 
         /* ===== INSTRUCTOR SECTION ===== */
         .df-instructor {
-          padding: 4rem 2rem;
+          padding: 3rem 2rem;
           background: #f0efec;
         }
 
@@ -1767,7 +1767,7 @@ function DiscoveryFlight() {
 
         .df-instructor__content h2 {
           font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-          margin: 0.5rem 0 1rem;
+          margin: 0.5rem 0 0.75rem;
           text-transform: uppercase;
         }
 
@@ -1776,12 +1776,12 @@ function DiscoveryFlight() {
           font-size: 1rem;
           line-height: 1.7;
           max-width: 600px;
-          margin-bottom: 2rem;
+          margin-bottom: 1.5rem;
         }
 
         .df-instructor__row {
           display: flex;
-          gap: 2rem;
+          gap: 1.5rem;
           align-items: stretch;
         }
 
@@ -1800,9 +1800,9 @@ function DiscoveryFlight() {
         .df-instructor__card {
           display: flex;
           align-items: center;
-          gap: 2rem;
+          gap: 1.25rem;
           background: #fff;
-          padding: 1.5rem;
+          padding: 1rem 1.25rem;
           border-radius: 8px;
           border-left: 4px solid #1a1a1a;
         }
@@ -1812,50 +1812,50 @@ function DiscoveryFlight() {
         }
 
         .df-instructor__image img {
-          width: 120px;
-          height: 120px;
+          width: 80px;
+          height: 80px;
           object-fit: cover;
           border-radius: 4px;
         }
 
         .df-instructor__info h3 {
-          margin: 0 0 0.25rem;
-          font-size: 1.25rem;
+          margin: 0 0 0.2rem;
+          font-size: 1.05rem;
           text-transform: uppercase;
         }
 
         .df-instructor__title {
           display: block;
           color: #666;
-          font-size: 0.7rem;
+          font-size: 0.65rem;
           letter-spacing: 0.15em;
           text-transform: uppercase;
-          margin-bottom: 1rem;
+          margin-bottom: 0.6rem;
         }
 
         .df-instructor__stats {
           display: flex;
           align-items: center;
-          gap: 1.5rem;
-          margin-bottom: 1rem;
+          gap: 1rem;
+          margin-bottom: 0.6rem;
         }
 
         .df-instructor__divider {
           width: 1px;
-          height: 30px;
+          height: 24px;
           background: linear-gradient(to bottom, transparent, #e8e6e2, transparent);
         }
 
         .df-instructor__stat-value {
           display: block;
           font-family: 'Share Tech Mono', monospace;
-          font-size: 1.5rem;
+          font-size: 1.15rem;
           font-weight: 700;
           color: #1a1a1a;
         }
 
         .df-instructor__stat-label {
-          font-size: 0.6rem;
+          font-size: 0.58rem;
           color: #888;
           text-transform: uppercase;
           letter-spacing: 0.15em;
@@ -1863,56 +1863,59 @@ function DiscoveryFlight() {
 
         .df-instructor__info p {
           color: #666;
-          font-size: 0.9rem;
-          line-height: 1.6;
+          font-size: 0.82rem;
+          line-height: 1.55;
           margin: 0;
         }
 
         .df-instructor__team {
           background: #faf9f6;
-          padding: 1.5rem;
+          padding: 1rem 1.25rem;
           border-radius: 8px;
         }
 
         .df-instructor__team-label {
           display: block;
-          font-size: 0.7rem;
+          font-size: 0.65rem;
           letter-spacing: 0.2em;
           text-transform: uppercase;
           color: #999;
-          margin-bottom: 1rem;
+          margin-bottom: 0.75rem;
         }
 
         .df-instructor__team-list {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 1rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
         }
 
         .df-instructor__team-member {
           background: #fff;
-          padding: 1rem;
+          padding: 0.55rem 0.75rem;
           border-left: 3px solid #1a1a1a;
           display: flex;
-          flex-direction: column;
+          flex-direction: row;
+          align-items: center;
+          gap: 0.75rem;
         }
 
         .df-instructor__team-name {
           font-weight: 600;
-          font-size: 0.9rem;
-          margin-bottom: 0.25rem;
+          font-size: 0.82rem;
+          white-space: nowrap;
         }
 
         .df-instructor__team-title {
-          font-size: 0.75rem;
+          font-size: 0.72rem;
           color: #666;
-          margin-bottom: 0.5rem;
+          flex: 1;
         }
 
         .df-instructor__team-hours {
           font-family: 'Share Tech Mono', monospace;
-          font-size: 0.75rem;
+          font-size: 0.72rem;
           color: #999;
+          white-space: nowrap;
         }
 
         /* ===== WHAT TO EXPECT ===== */
