@@ -2409,8 +2409,8 @@ function DiscoveryFlight() {
         }
 
         .df-card__acc-thumb {
-          width: 50px;
-          height: 42px;
+          width: 72px;
+          height: 58px;
           flex-shrink: 0;
           background: radial-gradient(circle at center, #f4f3f0 0%, #fff 80%);
           border-radius: 8px;
@@ -2436,18 +2436,18 @@ function DiscoveryFlight() {
           background: #1a1a1a;
           color: #fff;
           font-family: 'Space Grotesk', sans-serif;
-          font-size: 0.38rem;
+          font-size: 0.6rem;
           font-weight: 700;
           letter-spacing: 0.08em;
           text-transform: uppercase;
           padding: 2px 7px;
           border-radius: 10px;
-          margin-bottom: 3px;
+          margin-bottom: 4px;
         }
 
         .df-card__acc-name {
           font-family: 'Space Grotesk', sans-serif;
-          font-size: 0.7rem;
+          font-size: 1rem;
           font-weight: 700;
           color: #1a1a1a;
           display: block;
@@ -2455,14 +2455,14 @@ function DiscoveryFlight() {
 
         .df-card__acc-from {
           font-family: 'Share Tech Mono', monospace;
-          font-size: 0.55rem;
+          font-size: 0.85rem;
           color: #888;
-          margin-top: 2px;
+          margin-top: 3px;
           display: block;
         }
 
         .df-card__acc-chevron {
-          font-size: 0.55rem;
+          font-size: 0.75rem;
           color: #aaa;
           flex-shrink: 0;
           transition: transform 0.25s ease, color 0.25s ease;
@@ -2484,14 +2484,14 @@ function DiscoveryFlight() {
 
         .df-card__acc-strip-text {
           font-family: 'Share Tech Mono', monospace;
-          font-size: 0.45rem;
+          font-size: 0.8rem;
           color: #fff;
           letter-spacing: 0.05em;
         }
 
         .df-card__acc-strip-btn {
           font-family: 'Space Grotesk', sans-serif;
-          font-size: 0.42rem;
+          font-size: 0.7rem;
           font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 0.06em;
@@ -2499,7 +2499,7 @@ function DiscoveryFlight() {
           color: #1a1a1a;
           border: none;
           border-radius: 8px;
-          padding: 3px 9px;
+          padding: 5px 12px;
           cursor: pointer;
         }
 
