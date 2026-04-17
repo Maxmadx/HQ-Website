@@ -323,7 +323,7 @@ export const TEXT_SECTIONS = [
     name: 'Gift Vouchers Note',
     hint: 'Gift voucher callout below the aircraft cards',
     fields: [
-      { id: 'bold_text',   label: 'Bold Text',    type: 'text',      default: 'Gift Vouchers Available' },
+      { id: 'bold_text',   label: 'Bold Text',    type: 'text',      default: 'Physical Gift Vouchers Available' },
       { id: 'description', label: 'Description',  type: 'paragraph', default: 'Purchase a voucher valid for 12 months. The perfect present for birthdays, anniversaries, or that special someone.' },
       { id: 'link_text',   label: 'Link Text',    type: 'text',      default: 'Get Gift Voucher' },
     ],
@@ -337,12 +337,12 @@ export const TEXT_SECTIONS = [
     fields: [
       { id: 'pre_label',    label: 'Pre-label',         type: 'text',      default: 'Your Instructor' },
       { id: 'heading',      label: 'Section Heading',   type: 'heading',   default: 'Meet Your Team' },
-      { id: 'intro',        label: 'Introduction',      type: 'paragraph', default: 'Your discovery flight will be conducted by one of our highly experienced instructors. Our team includes world champions, military veterans, and career pilots with decades of experience.' },
+      { id: 'intro',        label: 'Introduction',      type: 'paragraph', default: 'Your discovery flight will be conducted by one of our highly experienced instructors.' },
       { id: 'name',         label: 'Lead Instructor Name',  type: 'text', default: 'Quentin Smith' },
       { id: 'title',        label: 'Lead Instructor Title', type: 'text', default: 'Founder & Managing Director' },
       { id: 'hours_label',  label: 'Stat 1 Label',     type: 'text',      default: 'Flight Hours' },
       { id: 'years_label',  label: 'Stat 2 Label',     type: 'text',      default: 'Years Flying' },
-      { id: 'bio',          label: 'Bio',               type: 'paragraph', default: 'World Helicopter Champion and the first person to fly a helicopter to the South Pole and back. Under Q\'s guidance, you\'re learning from one of the best in the world.' },
+      { id: 'bio',          label: 'Bio',               type: 'paragraph', default: 'Under Q\'s guidance, you\'re learning from one of the best teams in the world.' },
     ],
   },
 
