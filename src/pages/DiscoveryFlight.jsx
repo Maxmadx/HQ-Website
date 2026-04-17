@@ -2354,7 +2354,7 @@ function DiscoveryFlight() {
 
         /* ===== LOCATION & FAQ ===== */
         .df-location-faq {
-          padding: 5rem 2rem 4rem;
+          padding: 2.5rem 2rem 4rem;
           background: #fff;
         }
 
