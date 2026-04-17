@@ -718,16 +718,10 @@ function InstructorSection() {
               <div className="df-instructor__card">
                 <div className="df-instructor__info">
                   <div className="df-instructor__info-top">
-                    <div className="df-instructor__name-block">
-                      <h3>{t('discovery-instructor', 'name')}</h3>
-                      <span className="df-instructor__title">{t('discovery-instructor', 'title')}</span>
-                    </div>
-                    <div className="df-instructor__stats">
-                      <div className="df-instructor__stat">
-                        <span className="df-instructor__stat-value"><AnimatedNumber value="18000" />+</span>
-                        <span className="df-instructor__stat-label">{t('discovery-instructor', 'hours_label')}</span>
-                      </div>
-                    </div>
+                    <h3>{t('discovery-instructor', 'name')}</h3>
+                    <span className="df-instructor__stat-value"><AnimatedNumber value="18000" />+</span>
+                    <span className="df-instructor__title">{t('discovery-instructor', 'title')}</span>
+                    <span className="df-instructor__stat-label">{t('discovery-instructor', 'hours_label')}</span>
                   </div>
                   <p>{t('discovery-instructor', 'bio')}</p>
                 </div>
@@ -1808,9 +1802,8 @@ function DiscoveryFlight() {
         }
 
         .df-instructor__info h3 {
-          margin: 0 0 0.2rem;
+          margin: 0;
           font-size: 1.05rem;
-          line-height: 1.2;
           text-transform: uppercase;
         }
 
@@ -1823,10 +1816,10 @@ function DiscoveryFlight() {
         }
 
         .df-instructor__info-top {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          gap: 1rem;
+          display: grid;
+          grid-template-columns: 1fr auto;
+          column-gap: 2rem;
+          row-gap: 0.2rem;
           margin-bottom: 0.6rem;
         }
 
@@ -1843,13 +1836,11 @@ function DiscoveryFlight() {
         }
 
         .df-instructor__stat-value {
-          display: block;
           font-family: 'Share Tech Mono', monospace;
           font-size: 1.05rem;
           font-weight: 700;
           color: #1a1a1a;
-          margin-bottom: 0.2rem;
-          line-height: 1.2;
+          text-align: right;
         }
 
         .df-instructor__stat-label {
@@ -1857,6 +1848,7 @@ function DiscoveryFlight() {
           color: #888;
           text-transform: uppercase;
           letter-spacing: 0.15em;
+          text-align: right;
         }
 
         .df-instructor__info p {
