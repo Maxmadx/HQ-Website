@@ -2588,16 +2588,19 @@ function DiscoveryFlight() {
 
           .df-instructor__card {
             flex-direction: column;
-            text-align: center;
           }
 
-          .df-instructor__image {
-            margin: 0 auto;
+          .df-instructor__team-member {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            grid-template-areas: "name hours" "title .";
+            row-gap: 0.1rem;
+            align-items: center;
           }
 
-          .df-instructor__stats {
-            justify-content: center;
-          }
+          .df-instructor__team-name { grid-area: name; }
+          .df-instructor__team-title { grid-area: title; }
+          .df-instructor__team-hours { grid-area: hours; align-self: center; }
 
           .df-location-faq__container {
             grid-template-columns: 1fr;
