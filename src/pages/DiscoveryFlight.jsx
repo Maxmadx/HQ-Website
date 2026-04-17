@@ -13,6 +13,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { usePricing } from '../hooks/usePricing';
 import { usePageImages } from '../hooks/usePageImages';
+import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { usePageText } from '../hooks/usePageText';
 import { useFaqs } from '../hooks/useFaqs';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
@@ -299,6 +300,7 @@ const testimonials = [
 function DiscoveryHero() {
   const pageImages = usePageImages('discovery');
   const { t } = usePageText('discovery');
+  const { fmt } = usePricing();
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -310,7 +312,7 @@ function DiscoveryHero() {
   const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
 
   return (
-    <section ref={heroRef} className="df-hero">
+    <section ref={heroRef} className="df-hero" data-cms-section="discovery-hero">
       {/* Background image */}
       <motion.div
         className="df-hero__bg"
@@ -403,7 +405,7 @@ function DiscoveryHero() {
             <div className="df-hero__ticket-perf"></div>
             <div className="df-hero__ticket-stub">
               <div className="df-hero__ticket-stub-row">
-                <div><span className="df-hero__ticket-lbl">FROM</span><span>£180</span></div>
+                <div><span className="df-hero__ticket-lbl">FROM</span><span>{fmt('discovery_r22_30min')}</span></div>
                 <div><span className="df-hero__ticket-lbl">GATE</span><span>EGLD</span></div>
                 <div><span className="df-hero__ticket-lbl">TIME</span><span>30+</span></div>
               </div>
@@ -441,7 +443,21 @@ function DiscoveryHero() {
 function ValueProposition() {
   const [selectedCard, setSelectedCard] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [openCard, setOpenCard] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 1024px)');
+    setIsMobile(mq.matches);
+    if (mq.matches) setOpenCard('r22');
+    const handler = (e) => {
+      setIsMobile(e.matches);
+      if (!e.matches) setOpenCard(null);
+    };
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
   const { p, fmt } = usePricing();
   const pageImages = usePageImages('discovery');
   const { t } = usePageText('discovery');
@@ -473,8 +489,12 @@ function ValueProposition() {
     }
   };
 
+  const handleAccordionToggle = (id) => {
+    setOpenCard(prev => prev === id ? null : id);
+  };
+
   return (
-    <section className="df-value">
+    <section id="select-flight" className="df-value">
       <div className="df-value__container">
         <div className="df-value__content">
           <Reveal>
@@ -488,7 +508,7 @@ function ValueProposition() {
             </p>
           </Reveal>
 
-          <div className={`df-cards ${selectedCard ? 'has-focus' : ''}`}>
+          <div className={`df-cards ${selectedCard ? 'has-focus' : ''}`} data-cms-section="discovery-aircraft">
             {aircraftWithPricing.map((aircraft, index) => (
               <Reveal key={aircraft.id} delay={index * 0.1}>
                 <motion.div
@@ -545,6 +565,17 @@ function ValueProposition() {
             ))}
           </div>
 
+          <Reveal delay={0.2}>
+            <div className="df-selector__note">
+              <div className="df-selector__note-inner">
+                <span className="df-selector__note-icon">💳</span>
+                <p>
+                  <strong>{t('discovery-gift', 'bold_text')}</strong>
+                </p>
+              </div>
+            </div>
+          </Reveal>
+
           <Reveal>
             <p className="df-value__intro">
               {t('discovery-value-prop', 'paragraph_2')}
@@ -560,40 +591,13 @@ function ValueProposition() {
 }
 
 // ============================================================================
-// FLIGHT SELECTOR (Card Grid Version)
-// ============================================================================
-function FlightSelector() {
-  const { t } = usePageText('discovery');
-  return (
-    <section id="select-flight" className="df-selector">
-      <div className="df-selector__container">
-        <Reveal delay={0.4}>
-          <div className="df-selector__note">
-            <span className="df-selector__note-icon">💳</span>
-            <p>
-              <strong>{t('discovery-gift', 'bold_text')}</strong> — {t('discovery-gift', 'description')}
-            </p>
-            <Link to="/contact?subject=gift-voucher" className="df-link">
-              {t('discovery-gift', 'link_text')}
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="1.5"/>
-              </svg>
-            </Link>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-// ============================================================================
 // INSTRUCTOR SECTION
 // ============================================================================
 function InstructorSection() {
   const pageImages = usePageImages('discovery');
   const { t } = usePageText('discovery');
   return (
-    <section className="df-instructor">
+    <section className="df-instructor" data-cms-section="discovery-instructor">
       <div className="df-instructor__container">
         <div className="df-instructor__content">
           <Reveal>
@@ -606,57 +610,59 @@ function InstructorSection() {
             </p>
           </Reveal>
 
-          <Reveal delay={0.2}>
-            <div className="df-instructor__card">
-              <div className="df-instructor__image">
-                <img src={pageImages['discovery-instructor']?.[0]?.url ?? '/assets/images/team/quentin-smith-profile-picture.jpg'} alt={t('discovery-instructor', 'name')} />
-              </div>
-              <div className="df-instructor__info">
-                <h3>{t('discovery-instructor', 'name')}</h3>
-                <span className="df-instructor__title">{t('discovery-instructor', 'title')}</span>
-                <div className="df-instructor__stats">
-                  <div className="df-instructor__stat">
-                    <span className="df-instructor__stat-value"><AnimatedNumber value="18000" />+</span>
-                    <span className="df-instructor__stat-label">{t('discovery-instructor', 'hours_label')}</span>
-                  </div>
-                  <div className="df-instructor__divider" />
-                  <div className="df-instructor__stat">
-                    <span className="df-instructor__stat-value"><AnimatedNumber value="35" />+</span>
-                    <span className="df-instructor__stat-label">{t('discovery-instructor', 'years_label')}</span>
-                  </div>
+          <div className="df-instructor__row">
+            <Reveal delay={0.2}>
+              <div className="df-instructor__card">
+                <div className="df-instructor__image">
+                  <img src={pageImages['discovery-instructor']?.[0]?.url ?? '/assets/images/team/quentin-smith-profile-picture.jpg'} alt={t('discovery-instructor', 'name')} />
                 </div>
-                <p>
-                  {t('discovery-instructor', 'bio')}
-                </p>
+                <div className="df-instructor__info">
+                  <h3>{t('discovery-instructor', 'name')}</h3>
+                  <span className="df-instructor__title">{t('discovery-instructor', 'title')}</span>
+                  <div className="df-instructor__stats">
+                    <div className="df-instructor__stat">
+                      <span className="df-instructor__stat-value"><AnimatedNumber value="18000" />+</span>
+                      <span className="df-instructor__stat-label">{t('discovery-instructor', 'hours_label')}</span>
+                    </div>
+                    <div className="df-instructor__divider" />
+                    <div className="df-instructor__stat">
+                      <span className="df-instructor__stat-value"><AnimatedNumber value="35" />+</span>
+                      <span className="df-instructor__stat-label">{t('discovery-instructor', 'years_label')}</span>
+                    </div>
+                  </div>
+                  <p>
+                    {t('discovery-instructor', 'bio')}
+                  </p>
+                </div>
               </div>
-            </div>
-          </Reveal>
+            </Reveal>
 
-          <Reveal delay={0.3}>
-            <div className="df-instructor__team">
-              <span className="df-instructor__team-label">Full Instructor Team</span>
-              <div className="df-instructor__team-list">
-                {[
-                  { name: 'Mackie Alcantara', title: 'Chief Flight Instructor', hours: '8,500+' },
-                  { name: 'George Agnelli', title: 'Flight Instructor', hours: '3,000+' },
-                  { name: 'Phil Summers', title: 'Flight Instructor', hours: '2,500+' },
-                ].map((instructor, i) => (
-                  <motion.div
-                    key={i}
-                    className="df-instructor__team-member"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                    viewport={{ once: true }}
-                  >
-                    <span className="df-instructor__team-name">{instructor.name}</span>
-                    <span className="df-instructor__team-title">{instructor.title}</span>
-                    <span className="df-instructor__team-hours">{instructor.hours} hours</span>
-                  </motion.div>
-                ))}
+            <Reveal delay={0.3}>
+              <div className="df-instructor__team">
+                <span className="df-instructor__team-label">Full Instructor Team</span>
+                <div className="df-instructor__team-list">
+                  {[
+                    { name: 'Mackie Alcantara', title: 'Chief Flight Instructor', hours: '8,500+' },
+                    { name: 'George Agnelli', title: 'Flight Instructor', hours: '3,000+' },
+                    { name: 'Phil Summers', title: 'Flight Instructor', hours: '2,500+' },
+                  ].map((instructor, i) => (
+                    <motion.div
+                      key={i}
+                      className="df-instructor__team-member"
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                      viewport={{ once: true }}
+                    >
+                      <span className="df-instructor__team-name">{instructor.name}</span>
+                      <span className="df-instructor__team-title">{instructor.title}</span>
+                      <span className="df-instructor__team-hours">{instructor.hours} hours</span>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
-            </div>
-          </Reveal>
+            </Reveal>
+          </div>
         </div>
       </div>
     </section>
@@ -740,47 +746,6 @@ function DiscoveryGallery() {
             <img src={img.src} alt={img.alt} />
           </motion.div>
         ))}
-      </div>
-    </section>
-  );
-}
-
-// ============================================================================
-// TESTIMONIALS
-// ============================================================================
-function DiscoveryTestimonials() {
-  return (
-    <section className="df-testimonials">
-      <div className="df-testimonials__container">
-        <Reveal>
-          <div className="df-section-header df-section-header--light">
-            <span className="df-pre-text df-pre-text--light">Reviews</span>
-            <h2>
-              <span className="df-text--white">What Our</span>{' '}
-              <span className="df-text--mid-inv">Pilots Say</span>
-            </h2>
-          </div>
-        </Reveal>
-
-        <div className="df-testimonials__grid">
-          {testimonials.map((testimonial, index) => (
-            <Reveal key={index} delay={index * 0.15}>
-              <motion.div
-                className="df-testimonials__card"
-                whileHover={{ y: -4 }}
-              >
-                <p className="df-testimonials__text">{testimonial.quote}</p>
-                <div className="df-testimonials__author">
-                  <div className="df-testimonials__avatar">{testimonial.initials}</div>
-                  <div>
-                    <strong className="df-testimonials__name">{testimonial.name}</strong>
-                    <span className="df-testimonials__role">{testimonial.role}</span>
-                  </div>
-                </div>
-              </motion.div>
-            </Reveal>
-          ))}
-        </div>
       </div>
     </section>
   );
@@ -952,17 +917,16 @@ function DiscoveryFlight() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+  useCmsHighlight();
 
   return (
     <div className="df">
       <DiscoveryHeader />
       <DiscoveryHero />
       <ValueProposition />
-      <FlightSelector />
       <InstructorSection />
       <WhatToExpect />
       <DiscoveryGallery />
-      <DiscoveryTestimonials />
       <LocationAndFAQ />
       <FooterMinimal />
 
@@ -1359,19 +1323,18 @@ function DiscoveryFlight() {
 
         /* ===== VALUE PROPOSITION ===== */
         .df-value {
-          padding: 5rem 2rem 2rem;
+          padding: 5rem 2rem 4rem;
           background: #fff;
         }
 
         .df-value__container {
-          max-width: 1100px;
+          max-width: 1200px;
           margin: 0 auto;
         }
 
         .df-value__content {
           text-align: center;
-          max-width: 800px;
-          margin: 0 auto 3rem;
+          margin: 0 auto;
         }
 
         .df-value__content h2 {
@@ -1450,21 +1413,17 @@ function DiscoveryFlight() {
         }
 
         /* ===== FLIGHT SELECTOR ===== */
-        .df-selector {
-          padding: 2rem 2rem 6rem;
-          background: #faf9f6;
-        }
-
-        .df-selector__container {
-          max-width: 1100px;
-          margin: 0 auto;
-        }
-
         .df-cards {
           display: flex;
           gap: 25px;
           align-items: stretch;
           min-height: 520px;
+          padding: 2rem 0 0;
+        }
+
+        .df-cards > * {
+          flex: 1;
+          min-width: 0;
         }
 
         .df-card {
@@ -1659,32 +1618,47 @@ function DiscoveryFlight() {
         .df-selector__note {
           display: flex;
           align-items: center;
-          gap: 1rem;
-          padding: 1.5rem 2rem;
+          gap: 1.25rem;
+          margin-top: 2rem;
+          margin-bottom: 2rem;
+        }
+
+        .df-selector__note::before,
+        .df-selector__note::after {
+          content: '';
+          flex: 1;
+          height: 1px;
+          background: #e0ddd8;
+        }
+
+        .df-selector__note-inner {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          padding: 0.35rem 0.75rem;
           background: #fff;
           border: 1px solid #e8e6e2;
-          margin-top: 3rem;
-          border-left: 4px solid #1a1a1a;
+          border-left: 3px solid #1a1a1a;
+          white-space: nowrap;
         }
 
         .df-selector__note-icon {
-          font-size: 1.5rem;
+          font-size: 0.8rem;
         }
 
-        .df-selector__note p {
-          flex: 1;
+        .df-selector__note-inner p {
           margin: 0;
           color: #666;
-          font-size: 0.95rem;
+          font-size: 0.72rem;
         }
 
-        .df-selector__note strong {
+        .df-selector__note-inner strong {
           color: #1a1a1a;
         }
 
         /* ===== INSTRUCTOR SECTION ===== */
         .df-instructor {
-          padding: 5rem 2rem;
+          padding: 4rem 2rem;
           background: #f0efec;
         }
 
@@ -1707,13 +1681,31 @@ function DiscoveryFlight() {
           margin-bottom: 2rem;
         }
 
+        .df-instructor__row {
+          display: flex;
+          gap: 2rem;
+          align-items: stretch;
+        }
+
+        .df-instructor__row > * {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .df-instructor__row .df-instructor__card,
+        .df-instructor__row .df-instructor__team {
+          flex: 1;
+          box-sizing: border-box;
+        }
+
         .df-instructor__card {
           display: flex;
+          align-items: center;
           gap: 2rem;
           background: #fff;
           padding: 1.5rem;
           border-radius: 8px;
-          margin-bottom: 2rem;
           border-left: 4px solid #1a1a1a;
         }
 
@@ -1795,7 +1787,7 @@ function DiscoveryFlight() {
 
         .df-instructor__team-list {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: 1fr;
           gap: 1rem;
         }
 
@@ -1992,81 +1984,6 @@ function DiscoveryFlight() {
           height: 100%;
           background: linear-gradient(to bottom, transparent 15%, rgba(128,128,128,0.25) 50%, transparent 85%);
           z-index: 3;
-        }
-
-        /* ===== TESTIMONIALS ===== */
-        .df-testimonials {
-          padding: 6rem 2rem;
-          background: #1a1a1a;
-        }
-
-        .df-testimonials__container {
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-
-        .df-testimonials__grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 2rem;
-        }
-
-        .df-testimonials__card {
-          background: rgba(255,255,255,0.06);
-          border: 1px solid rgba(255,255,255,0.1);
-          border-radius: 8px;
-          padding: 1.5rem;
-          transition: all 0.3s ease;
-        }
-
-        .df-testimonials__card:hover {
-          background: rgba(255,255,255,0.1);
-        }
-
-        .df-testimonials__text {
-          font-size: 0.78rem;
-          line-height: 1.65;
-          color: rgba(255,255,255,0.75);
-          margin: 0 0 1rem;
-        }
-
-        .df-testimonials__author {
-          display: flex;
-          align-items: center;
-          gap: 0.6rem;
-        }
-
-        .df-testimonials__avatar {
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          background: #fff;
-          color: #1a1a1a;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.55rem;
-          font-weight: 700;
-          letter-spacing: 0.05em;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-        }
-
-        .df-testimonials__name {
-          display: block;
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 0.7rem;
-          font-weight: 700;
-          color: #fff;
-        }
-
-        .df-testimonials__role {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.5rem;
-          color: rgba(255,255,255,0.45);
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-          display: block;
         }
 
         /* ===== LOCATION & FAQ ===== */
@@ -2452,6 +2369,10 @@ function DiscoveryFlight() {
             border: 2px solid #1a1a1a;
           }
 
+          .df-instructor__row {
+            flex-direction: column;
+          }
+
           .df-instructor__card {
             flex-direction: column;
             text-align: center;
@@ -2466,7 +2387,7 @@ function DiscoveryFlight() {
           }
 
           .df-instructor__team-list {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
           }
 
           .df-location-faq__container {
@@ -2484,11 +2405,6 @@ function DiscoveryFlight() {
             grid-template-columns: 1fr;
             gap: 1rem;
           }
-
-          .df-testimonials__grid {
-            grid-template-columns: 1fr;
-          }
-        }
 
         @media (max-width: 768px) {
           .df-location-faq__actions {
@@ -2565,6 +2481,10 @@ function DiscoveryFlight() {
           .df-instructor__image img {
             width: 100px;
             height: 100px;
+          }
+
+          .df-instructor__team-list {
+            grid-template-columns: 1fr;
           }
         }
       `}</style>
