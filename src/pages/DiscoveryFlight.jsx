@@ -1790,6 +1790,11 @@ function DiscoveryFlight() {
           border-left: 4px solid #1a1a1a;
         }
 
+        .df-instructor__info {
+          flex: 1;
+          min-width: 0;
+        }
+
         .df-instructor__image {
           flex-shrink: 0;
         }
@@ -1820,6 +1825,8 @@ function DiscoveryFlight() {
           grid-template-columns: 1fr auto;
           column-gap: 2rem;
           row-gap: 0.2rem;
+          align-items: start;
+          width: 100%;
           margin-bottom: 0.6rem;
         }
 
