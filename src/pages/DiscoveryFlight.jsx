@@ -517,6 +517,11 @@ function ValueProposition() {
                     <div
                       className="df-card__acc-header"
                       onClick={() => handleAccordionToggle(aircraft.id)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleAccordionToggle(aircraft.id)}
+                      aria-expanded={openCard === aircraft.id}
+                      aria-controls={`acc-body-${aircraft.id}`}
                     >
                       <div className="df-card__acc-thumb">
                         <img src={aircraft.image} alt={aircraft.name} />
@@ -545,7 +550,8 @@ function ValueProposition() {
                     <AnimatePresence>
                       {openCard === aircraft.id && (
                         <motion.div
-                          key="body"
+                          key={`body-${aircraft.id}`}
+                          id={`acc-body-${aircraft.id}`}
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: 'auto', opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
