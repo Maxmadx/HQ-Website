@@ -755,6 +755,79 @@ function InstructorSection() {
 }
 
 // ============================================================================
+// MOBILE GALLERY STRIP (between instructor + expect, mobile only)
+// ============================================================================
+function MobileGalleryStrip() {
+  const trackRef = useRef(null);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const BASE_SPEED = 30, DAMPING = 3;
+    const state = { offset: 0, velocity: BASE_SPEED, isDragging: false, lastTime: 0, lastPointerX: 0, setWidth: 0 };
+    let rafId = 0;
+    const measure = () => {
+      const half = track.children.length / 2;
+      let w = 0;
+      for (let i = 0; i < half; i++) w += track.children[i].offsetWidth + 12;
+      state.setWidth = w;
+    };
+    const tick = (time) => {
+      rafId = requestAnimationFrame(tick);
+      if (!state.lastTime) { state.lastTime = time; return; }
+      if (state.setWidth <= 0) { measure(); state.lastTime = time; return; }
+      const dt = Math.min((time - state.lastTime) / 1000, 0.1);
+      state.lastTime = time;
+      if (!state.isDragging) state.velocity += (BASE_SPEED - state.velocity) * DAMPING * dt;
+      state.offset += state.velocity * dt;
+      if (state.offset >= state.setWidth) state.offset -= state.setWidth;
+      if (state.offset < 0) state.offset += state.setWidth;
+      track.style.transform = `translateX(${-state.offset}px)`;
+    };
+    const onPointerDown = (e) => { state.isDragging = true; state.lastPointerX = e.clientX; state.velocity = 0; track.setPointerCapture(e.pointerId); };
+    const onPointerMove = (e) => { if (!state.isDragging) return; const dx = e.clientX - state.lastPointerX; state.lastPointerX = e.clientX; state.offset -= dx; state.velocity = -dx * 60; };
+    const onPointerUp = () => { state.isDragging = false; };
+    measure();
+    rafId = requestAnimationFrame(tick);
+    track.addEventListener('pointerdown', onPointerDown);
+    track.addEventListener('pointermove', onPointerMove);
+    track.addEventListener('pointerup', onPointerUp);
+    track.addEventListener('pointercancel', onPointerUp);
+    window.addEventListener('resize', measure);
+    return () => {
+      cancelAnimationFrame(rafId);
+      track.removeEventListener('pointerdown', onPointerDown);
+      track.removeEventListener('pointermove', onPointerMove);
+      track.removeEventListener('pointerup', onPointerUp);
+      track.removeEventListener('pointercancel', onPointerUp);
+      window.removeEventListener('resize', measure);
+    };
+  }, []);
+
+  const images = [
+    { src: '/assets/images/gallery/carousel/rotating1.jpg', alt: 'Helicopter in flight' },
+    { src: '/assets/images/gallery/carousel/rotating2.jpg', alt: 'Scenic flying' },
+    { src: '/assets/images/gallery/flying/foggy-evening-flying.jpg', alt: 'Evening flight' },
+    { src: '/assets/images/gallery/carousel/rotating6.jpg', alt: 'Helicopter adventure' },
+  ];
+
+  return (
+    <div className="df-mobile-strip">
+      <div className="df-mobile-strip__divider" />
+      <div className="df-gallery__mobile-carousel-wrap">
+        <div className="df-gallery__mobile-carousel" ref={trackRef}>
+          {[0, 1].map(set => images.map((img, i) => (
+            <div className="df-gallery__mobile-carousel-item" key={`${set}-${i}`}>
+              <img src={img.src} alt={img.alt} loading="lazy" draggable="false" />
+            </div>
+          )))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
 // WHAT TO EXPECT (JOURNEY)
 // ============================================================================
 function WhatToExpect() {
@@ -1124,6 +1197,7 @@ function DiscoveryFlight() {
       <DiscoveryHero />
       <ValueProposition />
       <InstructorSection />
+      <MobileGalleryStrip />
       <WhatToExpect />
       <DiscoveryGallery />
       <LocationAndFAQ />
@@ -2191,6 +2265,7 @@ function DiscoveryFlight() {
 
         /* ===== GALLERY ===== */
         .df-gallery__mobile-carousel-wrap { display: none; }
+        .df-mobile-strip { display: none; }
 
         .df-gallery {
           position: relative;
@@ -2810,6 +2885,17 @@ function DiscoveryFlight() {
           .df-instructor__team-name { grid-area: name; }
           .df-instructor__team-title { grid-area: title; }
           .df-instructor__team-hours { grid-area: hours; align-self: center; }
+
+          /* Mobile gallery strip between instructor + expect */
+          .df-mobile-strip {
+            display: block;
+          }
+
+          .df-mobile-strip__divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #e0deda 20%, #e0deda 80%, transparent);
+            margin: 0 2rem 1.5rem;
+          }
 
           /* Gallery — hide desktop track, show mobile carousel */
           .df-gallery__track { display: none; }
