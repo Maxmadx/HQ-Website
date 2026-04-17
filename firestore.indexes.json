@@ -33,6 +33,22 @@
         { "fieldPath": "type",   "order": "ASCENDING" },
         { "fieldPath": "order",  "order": "ASCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "faqs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "page",         "order": "ASCENDING" },
+        { "fieldPath": "displayOrder", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "page_events",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "eventType", "order": "ASCENDING" },
+        { "fieldPath": "page", "order": "ASCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []
