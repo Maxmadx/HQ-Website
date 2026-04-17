@@ -499,7 +499,7 @@ export default function AdminBlog() {
                       </tr>
                       {editingPress === p.id && (
                         <tr key={`${p.id}-edit`} style={{ borderBottom: '1px solid #f3f4f6', background: '#f9fafb' }}>
-                          <td colSpan={5} style={{ padding: '1rem 1rem 1.25rem' }}>
+                          <td colSpan={6} style={{ padding: '1rem 1rem 1.25rem' }}>
                             <form onSubmit={(e) => handleUpdatePress(e, p.id)}>
                               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
                                 <div>
