@@ -1810,6 +1810,7 @@ function DiscoveryFlight() {
         .df-instructor__info h3 {
           margin: 0 0 0.2rem;
           font-size: 1.05rem;
+          line-height: 1.2;
           text-transform: uppercase;
         }
 
@@ -1824,7 +1825,7 @@ function DiscoveryFlight() {
         .df-instructor__info-top {
           display: flex;
           justify-content: space-between;
-          align-items: center;
+          align-items: flex-start;
           gap: 1rem;
           margin-bottom: 0.6rem;
         }
@@ -1841,17 +1842,14 @@ function DiscoveryFlight() {
           background: linear-gradient(to bottom, transparent, #e8e6e2, transparent);
         }
 
-        .df-instructor__stat {
-          display: flex;
-          align-items: baseline;
-          gap: 0.35rem;
-        }
-
         .df-instructor__stat-value {
+          display: block;
           font-family: 'Share Tech Mono', monospace;
-          font-size: 1.15rem;
+          font-size: 1.05rem;
           font-weight: 700;
           color: #1a1a1a;
+          margin-bottom: 0.2rem;
+          line-height: 1.2;
         }
 
         .df-instructor__stat-label {
