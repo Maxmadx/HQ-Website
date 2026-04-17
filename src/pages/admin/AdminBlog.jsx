@@ -448,8 +448,8 @@ export default function AdminBlog() {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
                 <thead>
                   <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-                    {['Title', 'Publication', 'Date', 'URL', ''].map((h) => (
-                      <th key={h} style={{ padding: '0.75rem 1rem', textAlign: 'left', color: '#374151', fontWeight: 600 }}>
+                    {['Title', 'Publication', 'Date', 'URL', 'Clicks', ''].map((h) => (
+                      <th key={h} style={{ padding: '0.75rem 1rem', textAlign: h === 'Clicks' ? 'right' : 'left', color: '#374151', fontWeight: 600 }}>
                         {h}
                       </th>
                     ))}
@@ -468,6 +468,9 @@ export default function AdminBlog() {
                           <a href={p.externalUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb', textDecoration: 'none', fontSize: '0.8rem' }}>
                             {p.externalUrl}
                           </a>
+                        </td>
+                        <td style={{ padding: '0.75rem 1rem', color: '#6b7280', textAlign: 'right', fontFamily: 'monospace', fontSize: '0.8rem' }}>
+                          {(p.clicks ?? 0).toLocaleString()}
                         </td>
                         <td style={{ padding: '0.75rem 1rem', whiteSpace: 'nowrap' }}>
                           {editingPress === p.id ? (
