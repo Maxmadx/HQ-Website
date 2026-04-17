@@ -717,17 +717,16 @@ function InstructorSection() {
             <Reveal delay={0.15}>
               <div className="df-instructor__card">
                 <div className="df-instructor__info">
-                  <h3>{t('discovery-instructor', 'name')}</h3>
-                  <span className="df-instructor__title">{t('discovery-instructor', 'title')}</span>
-                  <div className="df-instructor__stats">
-                    <div className="df-instructor__stat">
-                      <span className="df-instructor__stat-value"><AnimatedNumber value="18000" />+</span>
-                      <span className="df-instructor__stat-label">{t('discovery-instructor', 'hours_label')}</span>
+                  <div className="df-instructor__info-top">
+                    <div className="df-instructor__name-block">
+                      <h3>{t('discovery-instructor', 'name')}</h3>
+                      <span className="df-instructor__title">{t('discovery-instructor', 'title')}</span>
                     </div>
-                    <div className="df-instructor__divider" />
-                    <div className="df-instructor__stat">
-                      <span className="df-instructor__stat-value"><AnimatedNumber value="35" />+</span>
-                      <span className="df-instructor__stat-label">{t('discovery-instructor', 'years_label')}</span>
+                    <div className="df-instructor__stats">
+                      <div className="df-instructor__stat">
+                        <span className="df-instructor__stat-value"><AnimatedNumber value="18000" />+</span>
+                        <span className="df-instructor__stat-label">{t('discovery-instructor', 'hours_label')}</span>
+                      </div>
                     </div>
                   </div>
                   <p>{t('discovery-instructor', 'bio')}</p>
@@ -1793,7 +1792,7 @@ function DiscoveryFlight() {
           gap: 1.25rem;
           background: #fff;
           padding: 1rem 1.25rem;
-          border-radius: 8px;
+          border-radius: 0 8px 8px 0;
           border-left: 4px solid #1a1a1a;
         }
 
@@ -1820,6 +1819,13 @@ function DiscoveryFlight() {
           font-size: 0.65rem;
           letter-spacing: 0.15em;
           text-transform: uppercase;
+        }
+
+        .df-instructor__info-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 1rem;
           margin-bottom: 0.6rem;
         }
 
@@ -1827,7 +1833,6 @@ function DiscoveryFlight() {
           display: flex;
           align-items: center;
           gap: 1rem;
-          margin-bottom: 0.6rem;
         }
 
         .df-instructor__divider {
@@ -1868,6 +1873,7 @@ function DiscoveryFlight() {
           background: #fff;
           padding: 0.55rem 0.75rem;
           border-left: 3px solid #1a1a1a;
+          border-radius: 0 8px 8px 0;
           display: flex;
           flex-direction: row;
           align-items: center;
