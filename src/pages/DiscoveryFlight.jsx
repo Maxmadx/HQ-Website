@@ -2405,7 +2405,7 @@ function DiscoveryFlight() {
 
         /* ===== CARDS FOOTNOTES ===== */
         .df-cards__footnotes {
-          padding: 0.5rem 0 0.25rem;
+          padding: 1.5rem 0 0.25rem;
         }
 
         .df-cards__footnotes p {
