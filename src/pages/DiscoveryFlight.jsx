@@ -450,7 +450,7 @@ function ValueProposition() {
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 1024px)');
     setIsMobile(mq.matches);
-    if (mq.matches) setOpenCard('r22');
+    // all cards start collapsed
     const handler = (e) => {
       setIsMobile(e.matches);
       if (!e.matches) setOpenCard(null);
