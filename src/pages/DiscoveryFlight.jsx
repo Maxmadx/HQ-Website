@@ -2904,12 +2904,6 @@ function DiscoveryFlight() {
           .df-instructor__team-title { grid-area: title; }
           .df-instructor__team-hours { grid-area: hours; align-self: center; }
 
-          /* Selector note — lines stretch to screen edges */
-          .df-selector__note {
-            margin-left: -2rem;
-            margin-right: -2rem;
-            width: calc(100% + 4rem);
-          }
 
           /* Mobile gallery strip between instructor + expect */
           .df-mobile-strip {
@@ -3035,6 +3029,13 @@ function DiscoveryFlight() {
         @media (max-width: 480px) {
           .df-hero__ticket {
             max-width: 280px;
+          }
+
+          /* Selector note — stretch lines to screen edges only at very narrow widths */
+          .df-selector__note {
+            margin-left: -2rem;
+            margin-right: -2rem;
+            width: calc(100% + 4rem);
           }
 
           .df-value__stat-value {
