@@ -2908,8 +2908,8 @@ function DiscoveryFlight() {
             margin: 0 2rem 1.5rem;
           }
 
-          /* Gallery — hide desktop track, show mobile carousel */
-          .df-gallery__track { display: none; }
+          /* Gallery section hidden on mobile — replaced by MobileGalleryStrip above */
+          .df-gallery { display: none; }
 
           .df-gallery__mobile-carousel-wrap {
             display: block;
