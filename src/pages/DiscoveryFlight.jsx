@@ -697,19 +697,24 @@ function InstructorSection() {
   return (
     <section className="df-instructor" data-cms-section="discovery-instructor">
       <div className="df-instructor__container">
-        <div className="df-instructor__content">
+        <div className="df-instructor__layout">
+
+          {/* LEFT: heading + intro */}
           <Reveal>
-            <span className="df-pre-text">{t('discovery-instructor', 'pre_label')}</span>
-            <h2>
-              <span className="df-text--dark">{t('discovery-instructor', 'heading')}</span>
-            </h2>
-            <p>
-              {t('discovery-instructor', 'intro')}
-            </p>
+            <div className="df-instructor__left">
+              <span className="df-pre-text">{t('discovery-instructor', 'pre_label')}</span>
+              <h2>
+                <span className="df-text--dark">{t('discovery-instructor', 'heading')}</span>
+              </h2>
+              <p>
+                {t('discovery-instructor', 'intro')}
+              </p>
+            </div>
           </Reveal>
 
-          <div className="df-instructor__row">
-            <Reveal delay={0.2}>
+          {/* RIGHT: all instructor cards */}
+          <div className="df-instructor__right">
+            <Reveal delay={0.15}>
               <div className="df-instructor__card">
                 <div className="df-instructor__image">
                   <img src={pageImages['discovery-instructor']?.[0]?.url ?? '/assets/images/team/quentin-smith-profile-picture.jpg'} alt={t('discovery-instructor', 'name')} />
@@ -728,39 +733,33 @@ function InstructorSection() {
                       <span className="df-instructor__stat-label">{t('discovery-instructor', 'years_label')}</span>
                     </div>
                   </div>
-                  <p>
-                    {t('discovery-instructor', 'bio')}
-                  </p>
+                  <p>{t('discovery-instructor', 'bio')}</p>
                 </div>
               </div>
             </Reveal>
 
-            <Reveal delay={0.3}>
-              <div className="df-instructor__team">
-                <span className="df-instructor__team-label">Full Instructor Team</span>
-                <div className="df-instructor__team-list">
-                  {[
-                    { name: 'Mackie Alcantara', title: 'Chief Flight Instructor', hours: '8,500+' },
-                    { name: 'George Agnelli', title: 'Flight Instructor', hours: '3,000+' },
-                    { name: 'Phil Summers', title: 'Flight Instructor', hours: '2,500+' },
-                  ].map((instructor, i) => (
-                    <motion.div
-                      key={i}
-                      className="df-instructor__team-member"
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                      viewport={{ once: true }}
-                    >
-                      <span className="df-instructor__team-name">{instructor.name}</span>
-                      <span className="df-instructor__team-title">{instructor.title}</span>
-                      <span className="df-instructor__team-hours">{instructor.hours} hours</span>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </Reveal>
+            <div className="df-instructor__team-list">
+              {[
+                { name: 'Mackie Alcantara', title: 'Chief Flight Instructor', hours: '8,500+' },
+                { name: 'George Agnelli', title: 'Flight Instructor', hours: '3,000+' },
+                { name: 'Phil Summers', title: 'Flight Instructor', hours: '2,500+' },
+              ].map((instructor, i) => (
+                <motion.div
+                  key={i}
+                  className="df-instructor__team-member"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                  viewport={{ once: true }}
+                >
+                  <span className="df-instructor__team-name">{instructor.name}</span>
+                  <span className="df-instructor__team-title">{instructor.title}</span>
+                  <span className="df-instructor__team-hours">{instructor.hours} hours</span>
+                </motion.div>
+              ))}
+            </div>
           </div>
+
         </div>
       </div>
     </section>
@@ -1765,36 +1764,30 @@ function DiscoveryFlight() {
           margin: 0 auto;
         }
 
-        .df-instructor__content h2 {
+        .df-instructor__layout {
+          display: grid;
+          grid-template-columns: 1fr 1.4fr;
+          gap: 3rem;
+          align-items: start;
+        }
+
+        .df-instructor__left h2 {
           font-size: clamp(1.75rem, 3.5vw, 2.5rem);
           margin: 0.5rem 0 0.75rem;
           text-transform: uppercase;
         }
 
-        .df-instructor__content > p {
+        .df-instructor__left > p {
           color: #666;
           font-size: 1rem;
           line-height: 1.7;
-          max-width: 600px;
-          margin-bottom: 1.5rem;
+          margin: 0;
         }
 
-        .df-instructor__row {
-          display: flex;
-          gap: 1.5rem;
-          align-items: stretch;
-        }
-
-        .df-instructor__row > * {
-          flex: 1;
+        .df-instructor__right {
           display: flex;
           flex-direction: column;
-        }
-
-        .df-instructor__row .df-instructor__card,
-        .df-instructor__row .df-instructor__team {
-          flex: 1;
-          box-sizing: border-box;
+          gap: 0.6rem;
         }
 
         .df-instructor__card {
@@ -1866,21 +1859,6 @@ function DiscoveryFlight() {
           font-size: 0.82rem;
           line-height: 1.55;
           margin: 0;
-        }
-
-        .df-instructor__team {
-          background: #faf9f6;
-          padding: 1rem 1.25rem;
-          border-radius: 8px;
-        }
-
-        .df-instructor__team-label {
-          display: block;
-          font-size: 0.65rem;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: #999;
-          margin-bottom: 0.75rem;
         }
 
         .df-instructor__team-list {
@@ -2596,8 +2574,9 @@ function DiscoveryFlight() {
             border: 2px solid #1a1a1a;
           }
 
-          .df-instructor__row {
-            flex-direction: column;
+          .df-instructor__layout {
+            grid-template-columns: 1fr;
+            gap: 2rem;
           }
 
           .df-instructor__card {
@@ -2611,10 +2590,6 @@ function DiscoveryFlight() {
 
           .df-instructor__stats {
             justify-content: center;
-          }
-
-          .df-instructor__team-list {
-            grid-template-columns: repeat(2, 1fr);
           }
 
           .df-location-faq__container {
