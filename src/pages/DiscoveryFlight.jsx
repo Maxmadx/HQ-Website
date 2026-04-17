@@ -3016,12 +3016,6 @@ function DiscoveryFlight() {
             font-size: 2rem;
           }
 
-          .df-selector__note {
-            flex-direction: column;
-            text-align: center;
-            gap: 0.75rem;
-          }
-
           .df-instructor__image img {
             width: 100px;
             height: 100px;
