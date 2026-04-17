@@ -2305,6 +2305,111 @@ function DiscoveryFlight() {
           font-size: 0.85rem;
         }
 
+        /* ===== ACCORDION (mobile) ===== */
+        .df-card__acc-header {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 12px;
+          cursor: pointer;
+          user-select: none;
+        }
+
+        .df-card__acc-thumb {
+          width: 50px;
+          height: 42px;
+          flex-shrink: 0;
+          background: radial-gradient(circle at center, #f4f3f0 0%, #fff 80%);
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+
+        .df-card__acc-thumb img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+        }
+
+        .df-card__acc-meta {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .df-card__acc-rec {
+          display: inline-block;
+          background: #1a1a1a;
+          color: #fff;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.38rem;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          padding: 2px 7px;
+          border-radius: 10px;
+          margin-bottom: 3px;
+        }
+
+        .df-card__acc-name {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.7rem;
+          font-weight: 700;
+          color: #1a1a1a;
+          display: block;
+        }
+
+        .df-card__acc-from {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.55rem;
+          color: #888;
+          margin-top: 2px;
+          display: block;
+        }
+
+        .df-card__acc-chevron {
+          font-size: 0.55rem;
+          color: #aaa;
+          flex-shrink: 0;
+          transition: transform 0.25s ease, color 0.25s ease;
+          line-height: 1;
+        }
+
+        .df-card__acc-chevron--open {
+          transform: rotate(180deg);
+          color: #1a1a1a;
+        }
+
+        .df-card__acc-strip {
+          background: #1a1a1a;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 6px 12px;
+        }
+
+        .df-card__acc-strip-text {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.45rem;
+          color: #fff;
+          letter-spacing: 0.05em;
+        }
+
+        .df-card__acc-strip-btn {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.42rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          background: #fff;
+          color: #1a1a1a;
+          border: none;
+          border-radius: 8px;
+          padding: 3px 9px;
+          cursor: pointer;
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
           .df-hero__overlay {
