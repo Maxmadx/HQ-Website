@@ -2871,6 +2871,10 @@ function DiscoveryFlight() {
             gap: 2rem;
           }
 
+          .df-instructor__left {
+            text-align: center;
+          }
+
           .df-instructor__card {
             flex-direction: column;
           }
