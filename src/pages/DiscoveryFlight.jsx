@@ -2458,6 +2458,13 @@ function DiscoveryFlight() {
           .df-cards {
             flex-direction: column;
             min-height: auto;
+            gap: 10px;
+            padding: 1rem 0 0;
+          }
+
+          .df-cards > * {
+            flex: none;
+            width: 100%;
           }
 
           .df-card,
@@ -2467,7 +2474,7 @@ function DiscoveryFlight() {
             flex: none;
             transform: none;
             width: 100%;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0;
           }
 
           .df-card--featured {
