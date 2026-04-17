@@ -2804,7 +2804,11 @@ function DiscoveryFlight() {
           .df-hero__left {
             text-align: center;
             max-width: 100%;
-            padding: 0 2rem;
+          }
+
+          .df-hero__left > *:not(.df-hero__ticket) {
+            padding-left: 2rem;
+            padding-right: 2rem;
           }
 
           .df-hero__headline {
