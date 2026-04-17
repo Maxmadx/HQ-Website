@@ -870,6 +870,36 @@ function ExpeditionBarcode({
             font-size: 1.25rem;
           }
         }
+
+        @media (max-width: 380px) {
+          /* Grid wrapper fills full width; chevrons wrap to a centred second row */
+          .exp-barcode__scroll-row {
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+          }
+
+          .exp-barcode__grid-wrapper {
+            order: 1;
+            flex: 0 0 100%;
+            min-width: 0;
+          }
+
+          .exp-barcode__scroll-chevron--left {
+            order: 2;
+            margin-right: 0;
+          }
+
+          .exp-barcode__scroll-chevron--right {
+            order: 3;
+            margin-left: 0;
+          }
+
+          /* Tighten the card grid column gap */
+          .exp-barcode__grid {
+            gap: 0.5rem;
+          }
+        }
       `}</style>
     </section>
   );
