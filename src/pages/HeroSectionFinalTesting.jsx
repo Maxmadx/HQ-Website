@@ -89,7 +89,7 @@ const ScrollPrompt = () => (
 );
 
 // ─── Header that appears as diagonal disappears ───
-function TestingHeader() {
+function TestingHeader({ navHidden = false, navManuallyShown = false, onToggleNav = () => {} }) {
   const headerRef = useRef(null);
   const menuBtnRef = useRef(null);
   const rafId = useRef(0);
@@ -218,7 +218,15 @@ function TestingHeader() {
               </div>
             </nav>
           </div>
-          <div data-nc-container="top-right"></div>
+          <div data-nc-container="top-right">
+            <button
+              className={`fd-header-burger hq-menu-btn${navHidden ? ' fd-header-burger--visible' : ''}${navManuallyShown ? ' open' : ''}`}
+              onClick={onToggleNav}
+              aria-label="Toggle navigation"
+            >
+              <span></span><span></span><span></span>
+            </button>
+          </div>
         </div>
       </header>
     </>
@@ -363,7 +371,7 @@ function ImagePickerGallery() {
 }
 
 // ─── Main component ───
-const HeroSectionFinalTesting = React.memo(() => {
+const HeroSectionFinalTesting = React.memo(({ navHidden, navManuallyShown, onToggleNav }) => {
   const pageImages = usePageImages('home');
   const cmsMobileSlides = (pageImages['home-hero-slides-mobile'] ?? SECTION_MAP['home-hero-slides-mobile'].images).map(img => img.url);
   const cmsDesktopSlides = (pageImages['home-hero-slides'] ?? SECTION_MAP['home-hero-slides'].images).map(img => img.url);
@@ -631,14 +639,14 @@ const HeroSectionFinalTesting = React.memo(() => {
   return (
     <>
       <style>{styles}</style>
-      <TestingHeader />
+      <TestingHeader navHidden={navHidden} navManuallyShown={navManuallyShown} onToggleNav={onToggleNav} />
 
       <section className="hsf" ref={heroRef}>
         {/* ── Sticky viewport ── */}
         <div className="hsf__sticky">
 
           {/* Full-screen image layers */}
-          <div className="hsf__images">
+          <div className="hsf__images" data-cms-section="home-hero-slides-mobile">
             {(isMobile ? cmsMobileSlides : cmsDesktopSlides).map((src, i) => (
                 <motion.div
                   key={i}
@@ -699,7 +707,7 @@ const HeroSectionFinalTesting = React.memo(() => {
               <div className="hsf__meta">
                 <span style={{ whiteSpace: 'nowrap' }}>EST. 2010</span>
                 <span className="hsf__dot" />
-                <UnionJack size={12} />
+                <UnionJack size={22} />
                 <span className="hsf__dot" />
                 <span>LONDON</span>
               </div>

@@ -13,7 +13,7 @@
  * - hero-74: Varying font colors (luxury feel)
  */
 
-import { useState, useEffect, useRef, Fragment } from 'react';
+import { useState, useEffect, useRef, useCallback, Fragment } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
@@ -21,6 +21,7 @@ import HeroSectionFinalTesting from './HeroSectionFinalTesting';
 import { usePageImages } from '../hooks/usePageImages';
 import { usePageText } from '../hooks/usePageText';
 import { useCmsTextHighlight } from '../hooks/useCmsTextHighlight';
+import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { SECTION_MAP } from '../lib/imageSections';
 
 // Import all styles - Header/Navigation styles included via main.css
@@ -602,7 +603,7 @@ function MaintScrollGallery({ row1 = maintGalleryRow1, row2 = maintGalleryRow2 }
             </div>
           ))}
         </div>
-        <div className="fd-maint__scroll-col fd-maint__scroll-col--down">
+        <div className="fd-maint__scroll-col fd-maint__scroll-col--down" data-cms-section="home-maint-scroll-2">
           {row2.slice(0, 4).map((src, i) => (
             <div key={i} className="fd-maint__scroll-img">
               <img src={src} alt="" loading="lazy" />
@@ -1472,43 +1473,7 @@ function Experimentation() {
   ];
 
   // ── CMS section highlight (admin "Find on page" feature) ────────────────────
-  useEffect(() => {
-    const highlight = new URLSearchParams(window.location.search).get('highlight');
-    if (!highlight) return;
-
-    // Inject pulse keyframe once
-    if (!document.getElementById('cms-hl-style')) {
-      const s = document.createElement('style');
-      s.id = 'cms-hl-style';
-      s.textContent = '@keyframes cmsHlPulse{0%,100%{box-shadow:0 0 0 3px #f59e0b,0 0 30px rgba(245,158,11,0.35)}50%{box-shadow:0 0 0 3px #f59e0b,0 0 8px rgba(245,158,11,0.1)}}';
-      document.head.appendChild(s);
-    }
-
-    // Floating label so the admin knows which section is highlighted
-    const label = document.createElement('div');
-    label.id = 'cms-hl-label';
-    Object.assign(label.style, {
-      position: 'fixed', top: '80px', right: '24px', zIndex: '99999',
-      background: '#f59e0b', color: '#0f172a',
-      fontFamily: 'Inter, sans-serif', fontSize: '11px', fontWeight: '700',
-      padding: '5px 12px', borderRadius: '6px', pointerEvents: 'none',
-      letterSpacing: '0.06em', textTransform: 'uppercase',
-      boxShadow: '0 2px 10px rgba(0,0,0,0.25)',
-    });
-    label.textContent = `Editing: ${highlight}`;
-    document.body.appendChild(label);
-
-    // Apply highlight to the matched element
-    const el = document.querySelector(`[data-cms-section="${highlight}"]`);
-    if (el) {
-      el.style.outline = '3px solid #f59e0b';
-      el.style.outlineOffset = '4px';
-      el.style.animation = 'cmsHlPulse 1.8s ease-in-out infinite';
-      setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }), 400);
-    }
-
-    return () => { document.getElementById('cms-hl-label')?.remove(); };
-  }, []);
+  useCmsHighlight();
 
   // ── CMS text section highlight (admin "Find on page" from text editor) ───────
   useCmsTextHighlight();
@@ -1517,7 +1482,7 @@ function Experimentation() {
   const [aboutLayout, setAboutLayout] = useState(0); // 0=right, 1=above, 2=below, 3=above+below, 4=three-col
   const [activeNavSection, setActiveNavSection] = useState(null);
   const [rebuildStep, setRebuildStep] = useState(0);
-  const [salesExpanded, setSalesExpanded] = useState({ new: false, preowned: false, rebuilt: false, tradein: false, unmanned: false, misc: false });
+  const [salesExpanded, setSalesExpanded] = useState(() => ({ new: window.innerWidth > 768, preowned: false, rebuilt: false, tradein: false, unmanned: false, misc: false }));
   const [unmannedFormOpen, setUnmannedFormOpen] = useState(false);
   const [unmannedSubmitted, setUnmannedSubmitted] = useState(false);
   const [unmannedSubmitting, setUnmannedSubmitting] = useState(false);
@@ -1621,12 +1586,6 @@ function Experimentation() {
   const [teamSlide, setTeamSlide] = useState(0);
   const [facilitySlide, setFacilitySlide] = useState(0);
   const [partsAircraft, setPartsAircraft] = useState('');
-  const [galleryFullscreen, setGalleryFullscreen] = useState(false);
-  const [gallerySlide, setGallerySlide] = useState(0);
-  const [galleryShowClock, setGalleryShowClock] = useState(false);
-  const [clockTime, setClockTime] = useState('');
-  const galleryImages = (pageImages['home-facility-gallery'] ?? SECTION_MAP['home-facility-gallery'].images)
-    .map(img => ({ src: img.url, alt: img.alt }));
 
   const facilityItems = [
     { icon: 'fa-warehouse', label: 'Main Hangar · 12,000 sq ft', images: [null, null, null, null, null] },
@@ -2008,6 +1967,8 @@ function Experimentation() {
   }, [salesExpanded.preowned]);
 
   const [navCompact, setNavCompact] = useState(false);
+  const [navHidden, setNavHidden] = useState(false);
+  const [navManuallyShown, setNavManuallyShown] = useState(false);
   const [trainingSlide, setTrainingSlide] = useState(0); // Start on Discovery Flight
 
 
@@ -2170,8 +2131,22 @@ function Experimentation() {
   const controlsTimerRef = useRef(null);
   const [awardModal, setAwardModal] = useState(null);
   const milestoneRef = useRef(null);
-  const [milestoneAtStart, setMilestoneAtStart] = useState(true);
-  const [milestoneAtEnd, setMilestoneAtEnd] = useState(false);
+  const milestoneThumbRef = useRef(null);
+  const milestoneFadeLeftRef = useRef(null);
+  const milestoneFadeRightRef = useRef(null);
+  // All milestone scroll state is driven via DOM refs — no React state in the hot path
+  const updateMilestoneThumb = useCallback((el) => {
+    if (!el) return;
+    const ratio = el.clientWidth / el.scrollWidth;
+    if (milestoneThumbRef.current) {
+      milestoneThumbRef.current.style.width = `${ratio * 100}%`;
+      milestoneThumbRef.current.style.left = `${(el.scrollLeft / el.scrollWidth) * 100}%`;
+    }
+    if (milestoneFadeLeftRef.current)
+      milestoneFadeLeftRef.current.style.opacity = el.scrollLeft <= 1 ? '0' : '1';
+    if (milestoneFadeRightRef.current)
+      milestoneFadeRightRef.current.style.opacity = el.scrollLeft >= el.scrollWidth - el.clientWidth - 1 ? '0' : '1';
+  }, []);
   const [hitterIdx, setHitterIdx] = useState(0);
   const hitterTrackRef = useRef(null);
   const HEAVY_HITTERS = [
@@ -2181,6 +2156,22 @@ function Experimentation() {
     { name: 'Sir Ranulph Fiennes', title: 'Explorer & World Record Holder', org: '', quote: 'In polar exploration, the helicopter is everything. Captain Smith flew further than anyone thought possible in a piston machine.' },
   ];
   const [hitterModal, setHitterModal] = useState(null);
+  const [recOpen, setRecOpen] = useState(false);
+  useEffect(() => {
+    if (!recOpen) return;
+    let rafId;
+    let lastLeft = -1;
+    const poll = () => {
+      const el = milestoneRef.current;
+      if (el && el.scrollLeft !== lastLeft) {
+        lastLeft = el.scrollLeft;
+        updateMilestoneThumb(el);
+      }
+      rafId = requestAnimationFrame(poll);
+    };
+    rafId = requestAnimationFrame(poll);
+    return () => cancelAnimationFrame(rafId);
+  }, [recOpen, updateMilestoneThumb]);
 
   const showControls = () => {
     setControlsVisible(true);
@@ -2726,26 +2717,6 @@ function Experimentation() {
     return () => { window.removeEventListener('scroll', handleScroll); cancelAnimationFrame(navRaf); };
   }, []);
 
-  // Gallery fullscreen auto-rotate + clock
-  useEffect(() => {
-    if (!galleryFullscreen) return;
-    const interval = setInterval(() => {
-      setGallerySlide((prev) => (prev + 1) % galleryImages.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [galleryFullscreen, galleryImages.length]);
-
-  useEffect(() => {
-    if (!galleryFullscreen || !galleryShowClock) return;
-    const tick = () => {
-      const now = new Date();
-      setClockTime(now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
-    };
-    tick();
-    const interval = setInterval(tick, 1000);
-    return () => clearInterval(interval);
-  }, [galleryFullscreen, galleryShowClock]);
-
   // Compact nav: after the nav has been stuck for 200px, hide the "Explore" header
   useEffect(() => {
     if (!navRef.current) return;
@@ -2768,6 +2739,32 @@ function Experimentation() {
     update();
     return () => { window.removeEventListener('scroll', handleScroll); cancelAnimationFrame(compactRaf); };
   }, []);
+
+  // Mobile: hide nav when clubhouse section is in view
+  useEffect(() => {
+    if (window.innerWidth >= 768) return;
+    const el = clubhouseRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setNavHidden(true);
+        } else if (entry.boundingClientRect.top > 0) {
+          // Section is below viewport — user scrolled back up, show nav
+          setNavHidden(false);
+        }
+        // If section is above viewport (top < 0), user scrolled past — keep hidden
+      },
+      { threshold: 0.05 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  // Reset manual override when clubhouse section leaves view
+  useEffect(() => {
+    if (!navHidden) setNavManuallyShown(false);
+  }, [navHidden]);
 
   // Scroll reveal effect - elements fade in when scrolling into view, reset when leaving
   useEffect(() => {
@@ -3006,7 +3003,7 @@ function Experimentation() {
   return (
     <div className="final-draft" ref={containerRef}>
       {/* ===== HERO SECTION (Diagonal Split + Header) ===== */}
-      <HeroSectionFinalTesting />
+      <HeroSectionFinalTesting navHidden={navHidden} navManuallyShown={navManuallyShown} onToggleNav={() => setNavManuallyShown(v => !v)} />
 
       {/* ===== MOBILE-ONLY: ABOUT TEXT (before video) ===== */}
       <section className="fd-about-mobile-standalone">
@@ -3147,154 +3144,6 @@ function Experimentation() {
                   </div>
                 </div>
               </div>
-              <h3 className="fd-about__rec-title">Recognitions</h3>
-              <div style={{ position: 'relative' }}>
-                <div style={{
-                  position: 'absolute', top: 0, bottom: 8, left: 0, width: '3rem',
-                  background: 'linear-gradient(to right, #fff, transparent)',
-                  pointerEvents: 'none', zIndex: 1,
-                  opacity: milestoneAtStart ? 0 : 1, transition: 'opacity 0.3s ease',
-                }} />
-                <div style={{
-                  position: 'absolute', top: 0, bottom: 8, right: 0, width: '3rem',
-                  background: 'linear-gradient(to left, #fff, transparent)',
-                  pointerEvents: 'none', zIndex: 1,
-                  opacity: milestoneAtEnd ? 0 : 1, transition: 'opacity 0.3s ease',
-                }} />
-              <div className="abt-v9__milestones" ref={milestoneRef} onScroll={() => {
-                const el = milestoneRef.current;
-                if (!el) return;
-                setMilestoneAtStart(el.scrollLeft <= 1);
-                setMilestoneAtEnd(el.scrollLeft >= el.scrollWidth - el.clientWidth - 1);
-              }}>
-                {[
-                  { year: '2019', icon: 'fas fa-award',         text: 'FAI Gold Rotorcraft Medal',          sub: 'Lifetime Achievement',   detail: 'The highest individual honour in international helicopter aviation, awarded for extraordinary contribution to rotorcraft flight.', img: '/assets/images/icons/fai-gold-rotorcraft-award.png' },
-                  { year: '2016', icon: 'fas fa-snowflake',      text: 'Solo to All 3 North Poles',          sub: 'World First',             detail: 'First person to fly solo by helicopter to the Arctic, Antarctic, and Magnetic North Pole.',                                       img: '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp' },
-                  { year: '2012', icon: 'fas fa-medal',          text: 'Second World Championship',          sub: 'Backwards Autorotation',  detail: 'Won gold performing a backwards autorotation from 300ft — a maneuver experts declared impossible.',                               img: '/assets/images/team/world-helicopter-champion-quentin-smith.webp' },
-                  { year: '2005', icon: 'fas fa-flag',           text: 'First Crew to Both Poles',           sub: 'Guinness World Record',   detail: 'Led the first crew expedition to reach both the geographic North and South Poles by helicopter.',                                 img: '/assets/images/expeditions/six-helis-in-North-Pole.jpg' },
-                  { year: '2002', icon: 'fas fa-compass',        text: 'First Piston Heli to North Pole',    sub: 'Guinness World Record',   detail: 'Flew a piston-engined helicopter to the North Pole, setting a Guinness World Record.',                                           img: '/assets/images/expeditions/north-pole.jpg' },
-                  { year: '1997', icon: 'fas fa-globe-americas', text: 'First Piston Heli Around the World', sub: 'Now in the Smithsonian',  detail: 'First piston helicopter circumnavigation of the globe. The aircraft now resides in the Smithsonian collection.',                  img: '/assets/images/team/quentin-smith-world-record-holder-helicopter-aerobatics.webp' },
-                  { year: '1994', icon: 'fas fa-trophy',         text: 'World Aerobatics Gold',              sub: 'Moscow, Russia',          detail: 'Beat turbine-powered Russian aircraft flying a humble R22 at the World Freestyle Aerobatics Championship.',                        img: '/assets/images/team/helicopter-genius-quentin-smith-great-britain.webp' },
-                ].map((m, i) => (
-                  <div
-                    key={i}
-                    className="abt-v9__milestone"
-                    onClick={() => setAwardModal(m)}
-                  >
-                    <button className="abt-v9__info-btn" aria-label="View award">
-                      <i className="fas fa-info-circle"></i>
-                    </button>
-                    <i className={m.icon}></i>
-                    <span className="abt-v9__milestone-year">{m.year}</span>
-                    <span className="abt-v9__milestone-text">{m.text}</span>
-                    <span className="abt-v9__milestone-sub">{m.sub}</span>
-                  </div>
-                ))}
-              </div>
-              </div>
-
-              {/* Award modal */}
-              {awardModal && createPortal(
-                <div className="abt-v9__modal-overlay" onClick={() => setAwardModal(null)}>
-                  <div className="abt-v9__modal" onClick={(e) => e.stopPropagation()}>
-                    <button className="abt-v9__modal-close" onClick={() => setAwardModal(null)} aria-label="Close">
-                      <i className="fas fa-times"></i>
-                    </button>
-                    <div className="abt-v9__modal-img-wrap">
-                      <img src={awardModal.img} alt={awardModal.text} />
-                    </div>
-                    <div className="abt-v9__modal-info">
-                      <span className="abt-v9__milestone-year">{awardModal.year}</span>
-                      <span className="abt-v9__modal-title">{awardModal.text}</span>
-                      <span className="abt-v9__milestone-sub">{awardModal.sub}</span>
-                      <p className="abt-v9__modal-detail">{awardModal.detail}</p>
-                    </div>
-                  </div>
-                </div>,
-                document.body
-              )}
-
-              <h3 className="fd-about__rec-title">Industry Recommendations</h3>
-              <div className="abt-v9__hitters-carousel">
-                <div
-                  className="abt-v9__hitters-track"
-                  ref={hitterTrackRef}
-                  onScroll={(e) => {
-                    const el = e.currentTarget;
-                    const card = el.firstElementChild;
-                    if (!card) return;
-                    const idx = Math.round(el.scrollLeft / (card.offsetWidth + 12));
-                    if (idx !== hitterIdx && idx >= 0 && idx < HEAVY_HITTERS.length) setHitterIdx(idx);
-                  }}
-                >
-                  {HEAVY_HITTERS.map((h, i) => (
-                    <div key={i} className="abt-v9__hitter">
-                      <span className="abt-v9__hitter-mark">&ldquo;</span>
-                      <p className="abt-v9__hitter-quote">{h.quote}</p>
-                      <div className="abt-v9__hitter-footer">
-                        <div className="abt-v9__hitter-person">
-                          <span className="abt-v9__hitter-name">{h.name}</span>
-                          <span className="abt-v9__hitter-role">{h.title}{h.org ? ` · ${h.org}` : ''}</span>
-                        </div>
-                        <button className="abt-v9__hitter-expand" onClick={() => setHitterModal(h)}>
-                          See Full Quote
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="abt-v9__hitters-controls">
-                  <button
-                    className="abt-v9__hitters-chevron"
-                    onClick={() => {
-                      const next = (hitterIdx - 1 + HEAVY_HITTERS.length) % HEAVY_HITTERS.length;
-                      setHitterIdx(next);
-                      hitterTrackRef.current?.children[next]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                    }}
-                    aria-label="Previous"
-                  ><i className="fas fa-chevron-left"></i></button>
-                  <div className="abt-v9__hitters-dots">
-                    {HEAVY_HITTERS.map((_, i) => (
-                      <span
-                        key={i}
-                        className={`abt-v9__hitters-dot${hitterIdx === i ? ' abt-v9__hitters-dot--active' : ''}`}
-                        onClick={() => {
-                          setHitterIdx(i);
-                          hitterTrackRef.current?.children[i]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                        }}
-                      />
-                    ))}
-                  </div>
-                  <button
-                    className="abt-v9__hitters-chevron"
-                    onClick={() => {
-                      const next = (hitterIdx + 1) % HEAVY_HITTERS.length;
-                      setHitterIdx(next);
-                      hitterTrackRef.current?.children[next]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                    }}
-                    aria-label="Next"
-                  ><i className="fas fa-chevron-right"></i></button>
-                </div>
-              </div>
-
-              {hitterModal && createPortal(
-                <div className="abt-v9__modal-overlay" onClick={() => setHitterModal(null)}>
-                  <div className="abt-v9__modal" onClick={(e) => e.stopPropagation()}>
-                    <button className="abt-v9__modal-close" onClick={() => setHitterModal(null)} aria-label="Close">
-                      <i className="fas fa-times"></i>
-                    </button>
-                    <div className="abt-v9__modal-info" style={{ padding: '2rem 1.5rem 1.5rem' }}>
-                      <span className="abt-v9__hitter-mark" style={{ display: 'block', marginBottom: '0.75rem' }}>&ldquo;</span>
-                      <p className="abt-v9__modal-detail" style={{ border: 'none', padding: 0, margin: '0 0 1.25rem', fontSize: '0.82rem', lineHeight: 1.65 }}>{hitterModal.quote}</p>
-                      <div className="abt-v9__hitter-person" style={{ paddingTop: '0.75rem', borderTop: '1px solid #e8e4df' }}>
-                        <span className="abt-v9__hitter-name">{hitterModal.name}</span>
-                        <span className="abt-v9__hitter-role">{hitterModal.title}{hitterModal.org ? ` · ${hitterModal.org}` : ''}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>,
-                document.body
-              )}
             </div>
             <div className="fd-about__split-about">
               <h3 className="fd-about__founder-title">About</h3>
@@ -3305,8 +3154,172 @@ function Experimentation() {
               <p className="fd-about__body">
                 What started as a single-helicopter training operation has, over three decades, evolved into one of the largest Robinson fleets in Europe, supported by a team of CAA-approved engineers and instructors who share a relentless commitment to rotary flight.
               </p>
+
+              {/* Recognitions & Recommendations accordion */}
+              <div className="fd-about__accordion">
+                {!recOpen && (
+                  <button className="fd-about__accordion-hdr" onClick={() => setRecOpen(true)}>
+                    <span className="fd-about__rec-title" style={{ margin: 0 }}>Recognitions & Recommendations</span>
+                    <i className="fas fa-chevron-down fd-about__accordion-chevron" />
+                  </button>
+                )}
+                {recOpen && (
+                  <>
+                    <h4 className="fd-about__rec-title" style={{ margin: '1rem 0 0.75rem' }}>Recognitions & Recommendations</h4>
+                    <div style={{ position: 'relative' }}>
+                      <div ref={milestoneFadeLeftRef} style={{
+                        position: 'absolute', top: 0, bottom: 8, left: 0, width: '3rem',
+                        background: 'linear-gradient(to right, #fff, transparent)',
+                        pointerEvents: 'none', zIndex: 1,
+                        opacity: 0, transition: 'opacity 0.1s ease',
+                      }} />
+                      <div ref={milestoneFadeRightRef} style={{
+                        position: 'absolute', top: 0, bottom: 8, right: 0, width: '3rem',
+                        background: 'linear-gradient(to left, #fff, transparent)',
+                        pointerEvents: 'none', zIndex: 1,
+                        opacity: 1, transition: 'opacity 0.1s ease',
+                      }} />
+                      <div className="abt-v9__milestones" ref={milestoneRef}>
+                        {[
+                          { year: '2019', icon: 'fas fa-award',         text: 'FAI Gold Rotorcraft Medal',          sub: 'Lifetime Achievement',   detail: 'The highest individual honour in international helicopter aviation, awarded for extraordinary contribution to rotorcraft flight.', img: '/assets/images/icons/fai-gold-rotorcraft-award.png' },
+                          { year: '2016', icon: 'fas fa-snowflake',      text: 'Solo to All 3 North Poles',          sub: 'World First',             detail: 'First person to fly solo by helicopter to the Arctic, Antarctic, and Magnetic North Pole.',                                       img: '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp' },
+                          { year: '2012', icon: 'fas fa-medal',          text: 'Second World Championship',          sub: 'Backwards Autorotation',  detail: 'Won gold performing a backwards autorotation from 300ft — a maneuver experts declared impossible.',                               img: '/assets/images/team/world-helicopter-champion-quentin-smith.webp' },
+                          { year: '2005', icon: 'fas fa-flag',           text: 'First Crew to Both Poles',           sub: 'Guinness World Record',   detail: 'Led the first crew expedition to reach both the geographic North and South Poles by helicopter.',                                 img: '/assets/images/expeditions/six-helis-in-North-Pole.jpg' },
+                          { year: '2002', icon: 'fas fa-compass',        text: 'First Piston Heli to North Pole',    sub: 'Guinness World Record',   detail: 'Flew a piston-engined helicopter to the North Pole, setting a Guinness World Record.',                                           img: '/assets/images/expeditions/north-pole.jpg' },
+                          { year: '1997', icon: 'fas fa-globe-americas', text: 'First Piston Heli Around the World', sub: 'Now in the Smithsonian',  detail: 'First piston helicopter circumnavigation of the globe. The aircraft now resides in the Smithsonian collection.',                  img: '/assets/images/team/quentin-smith-world-record-holder-helicopter-aerobatics.webp' },
+                          { year: '1994', icon: 'fas fa-trophy',         text: 'World Aerobatics Gold',              sub: 'Moscow, Russia',          detail: 'Beat turbine-powered Russian aircraft flying a humble R22 at the World Freestyle Aerobatics Championship.',                        img: '/assets/images/team/helicopter-genius-quentin-smith-great-britain.webp' },
+                        ].map((m, i) => (
+                          <div
+                            key={i}
+                            className="abt-v9__milestone"
+                            onClick={() => setAwardModal(m)}
+                          >
+                            <button className="abt-v9__info-btn" aria-label="View award">
+                              <i className="fas fa-info-circle"></i>
+                            </button>
+                            <span className="abt-v9__milestone-year">{m.year}</span>
+                            <span className="abt-v9__milestone-text">{m.text}</span>
+                            <span className="abt-v9__milestone-sub">{m.sub}</span>
+                          </div>
+                        ))}
+                      </div>
+                      {/* Custom scrollbar */}
+                      <div style={{ position: 'relative', height: '4px', background: '#ece9e3', borderRadius: '9999px', margin: '0.5rem 0 1.25rem', overflow: 'hidden' }}>
+                        <div ref={milestoneThumbRef} style={{
+                          position: 'absolute', top: 0, height: '100%',
+                          left: '0%', width: '100%',
+                          background: '#c0b8aa', borderRadius: '9999px',
+                        }} />
+                      </div>
+                    </div>
+                    {awardModal && createPortal(
+                      <div className="abt-v9__modal-overlay" onClick={() => setAwardModal(null)}>
+                        <div className="abt-v9__modal" onClick={(e) => e.stopPropagation()}>
+                          <button className="abt-v9__modal-close" onClick={() => setAwardModal(null)} aria-label="Close">
+                            <i className="fas fa-times"></i>
+                          </button>
+                          <div className="abt-v9__modal-img-wrap">
+                            <img src={awardModal.img} alt={awardModal.text} />
+                          </div>
+                          <div className="abt-v9__modal-info">
+                            <span className="abt-v9__milestone-year">{awardModal.year}</span>
+                            <span className="abt-v9__modal-title">{awardModal.text}</span>
+                            <span className="abt-v9__milestone-sub">{awardModal.sub}</span>
+                            <p className="abt-v9__modal-detail">{awardModal.detail}</p>
+                          </div>
+                        </div>
+                      </div>,
+                      document.body
+                    )}
+                    <div className="abt-v9__hitters-carousel">
+                      <div
+                        className="abt-v9__hitters-track"
+                        ref={hitterTrackRef}
+                        onScroll={(e) => {
+                          const el = e.currentTarget;
+                          const card = el.firstElementChild;
+                          if (!card) return;
+                          const idx = Math.round(el.scrollLeft / (card.offsetWidth + 12));
+                          if (idx !== hitterIdx && idx >= 0 && idx < HEAVY_HITTERS.length) setHitterIdx(idx);
+                        }}
+                      >
+                        {HEAVY_HITTERS.map((h, i) => (
+                          <div key={i} className="abt-v9__hitter">
+                            <span className="abt-v9__hitter-mark">&ldquo;</span>
+                            <p className="abt-v9__hitter-quote">{h.quote}</p>
+                            <div className="abt-v9__hitter-footer">
+                              <div className="abt-v9__hitter-person">
+                                <span className="abt-v9__hitter-name">{h.name}</span>
+                                <span className="abt-v9__hitter-role">{h.title}{h.org ? ` · ${h.org}` : ''}</span>
+                              </div>
+                              <button className="abt-v9__hitter-expand" onClick={() => setHitterModal(h)}>
+                                See Full Quote
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="abt-v9__hitters-controls">
+                        <button
+                          className="abt-v9__hitters-chevron"
+                          onClick={() => {
+                            const next = (hitterIdx - 1 + HEAVY_HITTERS.length) % HEAVY_HITTERS.length;
+                            setHitterIdx(next);
+                            hitterTrackRef.current?.children[next]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                          }}
+                          aria-label="Previous"
+                        ><i className="fas fa-chevron-left"></i></button>
+                        <div className="abt-v9__hitters-dots">
+                          {HEAVY_HITTERS.map((_, i) => (
+                            <span
+                              key={i}
+                              className={`abt-v9__hitters-dot${hitterIdx === i ? ' abt-v9__hitters-dot--active' : ''}`}
+                              onClick={() => {
+                                setHitterIdx(i);
+                                hitterTrackRef.current?.children[i]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                              }}
+                            />
+                          ))}
+                        </div>
+                        <button
+                          className="abt-v9__hitters-chevron"
+                          onClick={() => {
+                            const next = (hitterIdx + 1) % HEAVY_HITTERS.length;
+                            setHitterIdx(next);
+                            hitterTrackRef.current?.children[next]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                          }}
+                          aria-label="Next"
+                        ><i className="fas fa-chevron-right"></i></button>
+                      </div>
+                    </div>
+                    {hitterModal && createPortal(
+                      <div className="abt-v9__modal-overlay" onClick={() => setHitterModal(null)}>
+                        <div className="abt-v9__modal" onClick={(e) => e.stopPropagation()}>
+                          <button className="abt-v9__modal-close" onClick={() => setHitterModal(null)} aria-label="Close">
+                            <i className="fas fa-times"></i>
+                          </button>
+                          <div className="abt-v9__modal-info" style={{ padding: '2rem 1.5rem 1.5rem' }}>
+                            <span className="abt-v9__hitter-mark" style={{ display: 'block', marginBottom: '0.75rem' }}>&ldquo;</span>
+                            <p className="abt-v9__modal-detail" style={{ border: 'none', padding: 0, margin: '0 0 1.25rem', fontSize: '0.82rem', lineHeight: 1.65 }}>{hitterModal.quote}</p>
+                            <div className="abt-v9__hitter-person" style={{ paddingTop: '0.75rem', borderTop: '1px solid #e8e4df' }}>
+                              <span className="abt-v9__hitter-name">{hitterModal.name}</span>
+                              <span className="abt-v9__hitter-role">{hitterModal.title}{hitterModal.org ? ` · ${hitterModal.org}` : ''}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>,
+                      document.body
+                    )}
+                  </>
+                )}
+              </div>
             </div>
             <div className="fd-about__split-founder">
+              <div className="fd-about__section-divider">
+                <span className="fd-about__section-divider-line" />
+                <span className="fd-about__section-divider-mark">◆</span>
+                <span className="fd-about__section-divider-line" />
+              </div>
               <div className="fd-about__founder">
                 <h3 className="fd-about__founder-title">The Founder</h3>
                 <h4 className="fd-about__founder-name">Captain Quentin Smith</h4>
@@ -3345,7 +3358,10 @@ function Experimentation() {
       <div ref={navSentinelRef} style={{ height: 0, margin: 0, padding: 0 }} />
 
       {/* ===== HORIZONTAL ACCORDION NAVIGATION ===== */}
-      <nav className={`fd-nav ${navCompact ? 'fd-nav--compact' : ''}`} ref={navRef}>
+      <nav
+        className={`fd-nav ${navCompact ? 'fd-nav--compact' : ''} ${navHidden && !navManuallyShown ? 'fd-nav--hidden' : ''}`}
+        ref={navRef}
+      >
         <div className="fd-nav__header">
           <span className="fd-nav__line"></span>
           <span>Explore</span>
@@ -4587,27 +4603,6 @@ function Experimentation() {
           <MaintScrollGallery row1={cmsMaintRow1} row2={cmsMaintRow2} />
         </div>
 
-        {/* Fullscreen gallery overlay */}
-        {galleryFullscreen && (
-          <div className="fd-gallery-fs">
-            <div className="fd-gallery-fs__img-wrap">
-              <img src={galleryImages[gallerySlide].src} alt={galleryImages[gallerySlide].alt} className="fd-gallery-fs__img" />
-            </div>
-            {galleryShowClock && (
-              <div className="fd-gallery-fs__clock">{clockTime}</div>
-            )}
-            <div className="fd-gallery-fs__controls">
-              <button onClick={() => setGallerySlide((prev) => (prev - 1 + galleryImages.length) % galleryImages.length)} aria-label="Previous">&lsaquo;</button>
-              <span className="fd-gallery-fs__counter">{gallerySlide + 1} / {galleryImages.length}</span>
-              <button onClick={() => setGallerySlide((prev) => (prev + 1) % galleryImages.length)} aria-label="Next">&rsaquo;</button>
-            </div>
-            <button className="fd-gallery-fs__clock-toggle" onClick={() => setGalleryShowClock(!galleryShowClock)} aria-label="Toggle clock">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
-            </button>
-            <button className="fd-gallery-fs__close" onClick={() => setGalleryFullscreen(false)} aria-label="Close fullscreen">&times;</button>
-          </div>
-        )}
-
         {/* Merged maintenance panel moved to ComponentShowcase */}
         <div className="fsd__right" style={{ position: 'relative' }}>
           <div className="fd-maint__actions fd-maint__actions--overlay">
@@ -4643,6 +4638,8 @@ function Experimentation() {
             </div>
           </div>
         </div>
+
+        <hr className="fsd__mobile-divider" />
       </section>
 
       {/* fd-parts-cta removed — Parts CTA now in fd-maint__actions */}
@@ -5487,7 +5484,8 @@ function Experimentation() {
           display: grid;
           grid-template-columns: 3fr 2fr;
           grid-template-rows: auto auto;
-          gap: 3rem;
+          column-gap: 3rem;
+          row-gap: 0;
           align-items: start;
           text-align: left;
         }
@@ -5530,9 +5528,25 @@ function Experimentation() {
         }
 
         .fd-about__founder {
-          margin-top: 2.5rem;
-          padding-top: 2rem;
-          border-top: 1px solid #e8e6e2;
+          margin-top: 0;
+          padding-top: 0.5rem;
+        }
+
+        .fd-about__section-divider {
+          display: flex;
+          align-items: center;
+          gap: 0.85rem;
+          padding: 32px 0 2rem;
+        }
+        .fd-about__section-divider-line {
+          flex: 1;
+          height: 1px;
+          background: #e0dbd4;
+        }
+        .fd-about__section-divider-mark {
+          font-size: 0.4rem;
+          color: #c0b8aa;
+          line-height: 1;
         }
 
         .fd-about__founder-title {
@@ -5589,43 +5603,75 @@ function Experimentation() {
           margin: 2.5rem 0 1rem;
         }
 
+        .fd-about__accordion {
+          margin-top: 1.25rem;
+        }
+        .fd-about__accordion-hdr {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          background: #f7f5f2;
+          border: 1px solid #e0dbd4;
+          border-radius: 4px;
+          cursor: pointer;
+          padding: 0.85rem 1rem;
+          transition: background 0.15s ease, border-color 0.15s ease;
+        }
+        .fd-about__accordion-hdr:hover {
+          background: #f0ede8;
+          border-color: #c8c0b4;
+        }
+        .fd-about__accordion-chevron {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          border: 1px solid #c8c0b4;
+          font-size: 0.55rem;
+          color: #a09080;
+          flex-shrink: 0;
+          transition: transform 0.2s ease, background 0.15s ease, color 0.15s ease;
+        }
+        .fd-about__accordion-hdr:hover .fd-about__accordion-chevron {
+          background: #a09080;
+          color: #fff;
+          border-color: #a09080;
+        }
+
         .abt-v9__milestones {
           display: flex;
           gap: 0.75rem;
-          margin-bottom: 1.75rem;
+          margin-bottom: 0;
           overflow-x: auto;
-          scrollbar-width: thin;
-          scrollbar-color: #c0b8aa transparent;
-          scroll-snap-type: x mandatory;
+          overscroll-behavior-x: contain;
           -webkit-overflow-scrolling: touch;
-          padding-bottom: 8px;
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
-        .abt-v9__milestones::-webkit-scrollbar { height: 4px; }
-        .abt-v9__milestones::-webkit-scrollbar-track { background: transparent; }
-        .abt-v9__milestones::-webkit-scrollbar-thumb { background: #c0b8aa; border-radius: 2px; }
-        .abt-v9__milestone { scroll-snap-align: start; }
+        .abt-v9__milestones::-webkit-scrollbar { display: none; }
+        .abt-v9__milestone { }
         .abt-v9__milestone {
           flex-shrink: 0;
-          width: 130px;
-          height: 160px;
+          width: 155px;
           border: 1px solid #e8e4df;
-          border-radius: 8px;
+          border-radius: 6px;
           cursor: pointer;
           background: #faf8f5;
           position: relative;
           display: flex;
           flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          padding: 1.25rem 0.75rem;
-          transition: border-color 0.2s;
+          align-items: flex-start;
+          text-align: left;
+          padding: 0.9rem 1rem 1rem;
+          gap: 0.25rem;
+          transition: border-color 0.2s, background 0.2s;
         }
-        .abt-v9__milestone:hover { border-color: #c0b8aa; }
-        .abt-v9__milestone > i {
-          font-size: 1rem;
-          color: #a09080;
-          margin-bottom: 0.6rem;
+        .abt-v9__milestone:hover {
+          border-color: #c0b8aa;
+          background: #f5f2ee;
         }
         .abt-v9__info-btn {
           position: absolute;
@@ -5643,23 +5689,23 @@ function Experimentation() {
         .abt-v9__info-btn:hover { color: #7a6f65; }
         .abt-v9__milestone-year {
           font-family: 'Share Tech Mono', monospace;
-          font-size: 0.55rem;
-          letter-spacing: 0.15em;
-          color: #a09080;
-          margin-bottom: 0.5rem;
+          font-size: 0.95rem;
+          letter-spacing: 0.04em;
+          color: #d0c8bc;
+          line-height: 1;
+          margin-bottom: 0.4rem;
         }
         .abt-v9__milestone-text {
           font-family: 'Space Grotesk', sans-serif;
-          font-size: 0.7rem;
+          font-size: 0.72rem;
           font-weight: 700;
           color: #2a2218;
           line-height: 1.3;
-          margin-bottom: 0.3rem;
         }
         .abt-v9__milestone-sub {
           font-family: 'Share Tech Mono', monospace;
-          font-size: 0.48rem;
-          letter-spacing: 0.08em;
+          font-size: 0.46rem;
+          letter-spacing: 0.1em;
           text-transform: uppercase;
           color: #b0a898;
         }
@@ -5984,20 +6030,36 @@ function Experimentation() {
         @media (max-width: 768px) {
           .fd-about {
             min-height: auto;
-            padding: 0.5rem 1rem 2rem;
+            padding: 0 1rem 2rem;
             align-items: flex-start;
           }
           .fd-about__split {
             grid-template-columns: 1fr;
             grid-template-rows: auto;
-            gap: 1.5rem;
+            gap: 0;
           }
           .fd-about__split-about {
+            display: block;
+            order: 2;
+            grid-column: 1;
+            grid-row: auto;
+            padding: 0;
+            margin: 0;
+          }
+          .fd-about__split-about .fd-about__body,
+          .fd-about__split-about .fd-about__founder-title,
+          .fd-about__split-about .fd-about__founder-name {
             display: none;
+          }
+          .fd-about__split-about .fd-about__accordion {
+            margin-top: 0;
+          }
+          .fd-about__accordion-hdr {
+            margin-bottom: 1.5rem;
           }
           .fd-about__rec-title {
             margin-top: 0.75rem;
-            padding-bottom: 0.75rem;
+            padding-bottom: 0;
             display: flex;
             align-items: center;
             gap: 1rem;
@@ -6011,13 +6073,10 @@ function Experimentation() {
             background: rgba(0,0,0,0.08);
           }
           .fd-about__split-left {
-            order: 2;
-            position: static;
-            grid-column: 1;
-            grid-row: auto;
+            display: none;
           }
-          .fd-about__split-left .fd-about__video {
-            margin-bottom: 1.5rem;
+          .fd-about__section-divider {
+            display: none;
           }
           .fd-about__split-founder {
             order: 3;
@@ -6043,6 +6102,7 @@ function Experimentation() {
             text-align: center;
           }
           .abt-v9__milestones { margin-bottom: 0; }
+          .abt-v9__hitter { margin-top: 1.5rem; }
           .abt-v9__whyfly { grid-template-columns: 1fr; }
           .abt-v9__whyfly-visual { min-height: 200px; }
           .fd-about__carousel-wrap {
@@ -6359,6 +6419,35 @@ function Experimentation() {
           border-top-color: transparent;
         }
 
+        @media (max-width: 640px) {
+          .fd-nav {
+            overflow: hidden;
+            max-height: 200px;
+            transition: max-height 0.6s ease, opacity 0.6s ease, border-top-color 1.2s ease, box-shadow 0.3s ease;
+          }
+          .fd-nav--hidden {
+            max-height: 0;
+            opacity: 0;
+            pointer-events: none;
+          }
+        }
+
+        /* Burger in header top-right — override fixed positioning, fade in/out */
+        .fd-header-burger.hq-menu-btn {
+          position: static;
+          top: auto;
+          right: auto;
+          transform: none;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.6s ease;
+        }
+
+        .fd-header-burger--visible.hq-menu-btn {
+          opacity: 1;
+          pointer-events: auto;
+        }
+
         .fd-nav__header {
           display: flex;
           align-items: center;
@@ -6655,7 +6744,7 @@ function Experimentation() {
         /* ===== TRAINING SECTION (two-col like clubhouse) ===== */
         .fd-training-section {
           background: #faf9f6;
-          padding: 0 0 10rem;
+          padding: 0 0 4rem;
           position: relative;
           overflow-x: clip;
           z-index: 2;
@@ -6889,11 +6978,12 @@ function Experimentation() {
         @media (max-width: 768px) {
           .fd-training-section {
             overflow: hidden !important;
+            padding-bottom: 2rem;
           }
           .fd-training-inner {
             display: flex !important;
             flex-direction: column !important;
-            padding: 2rem 1.5rem 0;
+            padding: 1rem 1rem 0;
           }
           .fd-training-sticky {
             position: static;
@@ -10084,6 +10174,24 @@ function Experimentation() {
         }
 
         .fsd__right { overflow: hidden; display: flex; flex-direction: column; gap: 0.75rem; justify-content: center; margin-top: 48px; margin-left: -2rem; margin-right: -2rem; }
+
+        .fsd__mobile-divider {
+          display: none;
+          border: none;
+          height: 1px;
+          background: rgba(0,0,0,0.12);
+          margin: 0;
+        }
+
+        @media (max-width: 768px) {
+          .fsd__mobile-divider {
+            display: block;
+            margin: 2.5rem 2rem;
+          }
+          .fd-maint {
+            padding-bottom: 0 !important;
+          }
+        }
         .fsd__img-carousel { overflow: hidden; }
         .fsd__img-track { display: flex; will-change: transform; }
         .fsd__img-set { display: flex; gap: 0.75rem; flex-shrink: 0; padding-right: 0.75rem; }
