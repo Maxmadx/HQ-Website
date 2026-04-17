@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
 import { Link } from 'react-router-dom';
 import AdminLayout from '../../components/admin/AdminLayout';
 import StatusBadge from '../../components/admin/StatusBadge';
@@ -90,6 +92,33 @@ export default function AdminBlog() {
   const [editForm, setEditForm] = useState({});
   const [editSaving, setEditSaving] = useState(false);
   const [editError, setEditError] = useState('');
+  const [blogViewMap, setBlogViewMap] = useState({});
+  const [viewsLoading, setViewsLoading] = useState(false);
+  const [viewsFetched, setViewsFetched] = useState(false);
+
+  useEffect(() => {
+    if (activeTab !== 'posts' || viewsFetched) return;
+    setViewsLoading(true);
+    setViewsFetched(true);
+    getDocs(
+      query(
+        collection(db, 'page_events'),
+        where('eventType', '==', 'pageview'),
+        where('page', '>=', '/blog/'),
+        where('page', '<', '/blog/~'),
+      ),
+    )
+      .then((snap) => {
+        const map = {};
+        snap.docs.forEach((d) => {
+          const p = d.data().page;
+          map[p] = (map[p] || 0) + 1;
+        });
+        setBlogViewMap(map);
+      })
+      .catch(() => {})
+      .finally(() => setViewsLoading(false));
+  }, [activeTab, viewsFetched]);
 
   async function handleSeed() {
     setSeeding(true);
@@ -248,8 +277,8 @@ export default function AdminBlog() {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
                 <thead>
                   <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-                    {['Title', 'Slug', 'Status', 'Published', ''].map((h) => (
-                      <th key={h} style={{ padding: '0.75rem 1rem', textAlign: 'left', color: '#374151', fontWeight: 600 }}>
+                    {['Title', 'Slug', 'Status', 'Published', 'Views', ''].map((h) => (
+                      <th key={h} style={{ padding: '0.75rem 1rem', textAlign: h === 'Views' ? 'right' : 'left', color: '#374151', fontWeight: 600 }}>
                         {h}
                       </th>
                     ))}
@@ -262,6 +291,9 @@ export default function AdminBlog() {
                       <td style={{ padding: '0.75rem 1rem', color: '#6b7280', fontFamily: 'monospace', fontSize: '0.8rem' }}>{p.slug}</td>
                       <td style={{ padding: '0.75rem 1rem' }}><StatusBadge status={p.status} /></td>
                       <td style={{ padding: '0.75rem 1rem', color: '#6b7280' }}>{formatDate(p.publishedAt)}</td>
+                      <td style={{ padding: '0.75rem 1rem', color: '#6b7280', textAlign: 'right', fontFamily: 'monospace', fontSize: '0.8rem' }}>
+                        {viewsLoading ? '—' : (blogViewMap[`/blog/${p.slug || p.id}`] ?? 0).toLocaleString()}
+                      </td>
                       <td style={{ padding: '0.75rem 1rem', whiteSpace: 'nowrap' }}>
                         <Link to={`/admin/blog/${p.id}`} style={{ color: '#2563eb', textDecoration: 'none', marginRight: '1rem', fontWeight: 500 }}>
                           Edit
