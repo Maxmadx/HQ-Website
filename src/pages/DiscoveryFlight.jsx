@@ -658,6 +658,11 @@ function ValueProposition() {
             ))}
           </div>
 
+          <div className="df-cards__footnotes">
+            <p>* Flying time, additional instruction on the ground included within the price</p>
+            <p>* All prices exclude VAT</p>
+          </div>
+
           <Reveal delay={0.2}>
             <div className="df-selector__note">
               <div className="df-selector__note-inner">
@@ -2396,6 +2401,19 @@ function DiscoveryFlight() {
         .df-final-cta__trust span {
           color: rgba(255,255,255,0.6);
           font-size: 0.85rem;
+        }
+
+        /* ===== CARDS FOOTNOTES ===== */
+        .df-cards__footnotes {
+          padding: 0.5rem 0 0.25rem;
+        }
+
+        .df-cards__footnotes p {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.72rem;
+          color: #bbb;
+          margin: 0 0 0.5rem;
+          line-height: 1.5;
         }
 
         /* ===== ACCORDION (mobile) ===== */
