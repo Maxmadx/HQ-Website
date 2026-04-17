@@ -2096,7 +2096,7 @@ function DiscoveryFlight() {
 
         /* ===== WHAT TO EXPECT ===== */
         .df-expect {
-          padding: 6rem 2rem;
+          padding: 3rem 2rem;
           background: #faf9f6;
         }
 
