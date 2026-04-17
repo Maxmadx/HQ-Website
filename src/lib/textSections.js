@@ -337,7 +337,7 @@ export const TEXT_SECTIONS = [
     fields: [
       { id: 'pre_label',    label: 'Pre-label',         type: 'text',      default: 'Your Instructor' },
       { id: 'heading',      label: 'Section Heading',   type: 'heading',   default: 'Meet Your Team' },
-      { id: 'intro',        label: 'Introduction',      type: 'paragraph', default: 'Under Q\'s guidance, you\'re learning from one of the best teams in the world.' },
+      { id: 'intro',        label: 'Introduction',      type: 'paragraph', default: 'Your discovery flight will be conducted by one of our highly experienced instructors.' },
       { id: 'name',         label: 'Lead Instructor Name',  type: 'text', default: 'Quentin Smith' },
       { id: 'title',        label: 'Lead Instructor Title', type: 'text', default: 'Founder & Managing Director' },
       { id: 'hours_label',  label: 'Stat 1 Label',     type: 'text',      default: 'Flight Hours' },
