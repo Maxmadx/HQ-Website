@@ -2722,13 +2722,14 @@ function DiscoveryFlight() {
           }
 
           .df-hero__content {
-            padding: 5rem 2rem 2rem;
+            padding: 5rem 0 2rem;
             justify-content: center;
           }
 
           .df-hero__left {
             text-align: center;
             max-width: 100%;
+            padding: 0 2rem;
           }
 
           .df-hero__headline {
