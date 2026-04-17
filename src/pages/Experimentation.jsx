@@ -413,12 +413,22 @@ const EDITORIAL_MOBILE_R2B = EDITORIAL_IMAGES_ROW2.slice(5, 10);
 const EditorialStrips = ({ wrapperRef = null, row1Images = EDITORIAL_IMAGES_ROW1, row2Images = EDITORIAL_IMAGES_ROW2 }) => {
   const { t } = usePageText('home');
   const containerRef = useRef(null);
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth <= 640);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 640);
+    window.addEventListener('resize', handleResize, { passive: true });
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: wrapperRef || containerRef,
     offset: ['start end', 'end start'],
   });
+
+  // Force MotionValues to recompute with the updated range after breakpoint crossing
+  useEffect(() => {
+    scrollYProgress.set(scrollYProgress.get());
+  }, [isMobile, scrollYProgress]);
 
   const xL  = useTransform(scrollYProgress, [0, 1], isMobile ? ['10%', '-200%'] : ['15%', '-120%']);
   const xR  = useTransform(scrollYProgress, [0, 1], isMobile ? ['0%', '-180%']  : ['5%', '-100%']);
@@ -447,7 +457,7 @@ const EditorialStrips = ({ wrapperRef = null, row1Images = EDITORIAL_IMAGES_ROW1
     <section
       className="editorial-strips"
       ref={containerRef}
-      style={{ position: 'sticky', top: '90px', zIndex: 50 }}
+      style={{ position: 'sticky', top: 'var(--catch-top, 90px)', zIndex: 50 }}
       data-cms-section="home-editorial-strip-1"
     >
       <style>{`
@@ -468,7 +478,7 @@ const EditorialStrips = ({ wrapperRef = null, row1Images = EDITORIAL_IMAGES_ROW1
         .editorial-strips__dest { flex-shrink: 0; display: flex; align-items: center; gap: 0.75rem; }
         .editorial-strips__dest-name { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #1a1a1a; text-shadow: -4px -4px 0 #faf9f6, 4px -4px 0 #faf9f6, -4px 4px 0 #faf9f6, 4px 4px 0 #faf9f6, 0 -4px 0 #faf9f6, 0 4px 0 #faf9f6, -4px 0 0 #faf9f6, 4px 0 0 #faf9f6; }
         .editorial-strips__dest-time { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #4a4a4a; background: #dcfce7; border: 1px solid #4ade80; padding: 3px 10px; border-radius: 2px; }
-        @media (max-width: 768px) {
+        @media (max-width: 640px) {
           .editorial-strips { gap: 0.75rem; padding: 2rem 0; }
           .editorial-strips::before, .editorial-strips::after { width: 60px; }
           .editorial-strips__img { width: 160px; height: 100px; }
@@ -478,7 +488,7 @@ const EditorialStrips = ({ wrapperRef = null, row1Images = EDITORIAL_IMAGES_ROW1
           .editorial-strips__img-row--desktop { display: none; }
           .editorial-strips__img-row--mobile { display: flex; }
         }
-        @media (min-width: 769px) {
+        @media (min-width: 641px) {
           .editorial-strips__img-row--mobile { display: none; }
         }
       `}</style>
@@ -1653,6 +1663,15 @@ function Experimentation() {
   const salesIntroRef = useRef(null);
   const salesHeaderRef = useRef(null);
   const salesPreTitleRef = useRef(null);
+  const [isSalesPretitleNarrow, setIsSalesPretitleNarrow] = useState(
+    () => window.matchMedia('(max-width: 390px)').matches
+  );
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 390px)');
+    const handler = (e) => setIsSalesPretitleNarrow(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
   const salesDealerRef = useRef(null);
   const salesTitleFadeRef = useRef(null);
   const salesTextFadeRef = useRef(null);
@@ -1685,12 +1704,13 @@ function Experimentation() {
       }
       const isMobile = window.innerWidth <= 768;
       const vh = window.innerHeight;
-      const scrolled = -rect.top;
-      const sectionHeight = introEl.offsetHeight;
       const dealerRect = dealerEl.getBoundingClientRect();
-      const isStuck = dealerRect.top <= vh * 0.10 + 60 + 150;
 
       if (!isMobile) {
+        // Use --catch-top CSS variable so the stuck threshold tracks a 2-row nav correctly
+        const catchTopPx = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--catch-top')) || 90;
+        const stickyTop = Math.max(vh * 0.10, catchTopPx);
+        const isStuck = dealerRect.top <= stickyTop + 60 + 150;
         if (isStuck && !wasStuck) {
           wasStuck = true;
           setDealerAutoExpand(true);
@@ -1698,14 +1718,23 @@ function Experimentation() {
           wasStuck = false;
           setDealerAutoExpand(false);
         }
-        const textFadeStart = sectionHeight * 0.04;
-        const textFadeEnd = textFadeStart + sectionHeight * 0.16;
-        const titleFadeStart = textFadeEnd;
-        const titleFadeEnd = titleFadeStart + sectionHeight * 0.09;
-        const textT = Math.max(0, Math.min(1, (scrolled - textFadeStart) / (textFadeEnd - textFadeStart)));
-        const titleT = Math.max(0, Math.min(1, (scrolled - titleFadeStart) / (titleFadeEnd - titleFadeStart)));
-        if (textFadeEl) textFadeEl.style.opacity = String(1 - textT);
-        if (titleFadeEl) titleFadeEl.style.opacity = String(1 - titleT);
+        // Collision-based fade — viewport-independent, same approach as maintenance section.
+        // Start fading when the dealer card is within earlyStart px of the element's bottom edge;
+        // fully faded before any visual overlap occurs.
+        if (textFadeEl) {
+          const textRect = textFadeEl.getBoundingClientRect();
+          const earlyStart = 200;
+          const overlap = textRect.bottom - dealerRect.top + earlyStart;
+          const fadeRange = Math.max(textRect.height * 0.4, 40);
+          textFadeEl.style.opacity = overlap <= 0 ? '1' : String(Math.max(0, 1 - overlap / fadeRange));
+        }
+        if (titleFadeEl) {
+          const titleRect = titleFadeEl.getBoundingClientRect();
+          const earlyStart = 150;
+          const overlap = titleRect.bottom - dealerRect.top + earlyStart;
+          const fadeRange = Math.max(titleRect.height, 60);
+          titleFadeEl.style.opacity = overlap <= 0 ? '1' : String(Math.max(0, 1 - overlap / fadeRange));
+        }
       } else {
         if (dealerRect.bottom < vh - 200) setDealerAutoExpand(true);
         if (textFadeEl) textFadeEl.style.opacity = '1';
@@ -2742,29 +2771,58 @@ function Experimentation() {
 
   // Mobile: hide nav when clubhouse section is in view
   useEffect(() => {
-    if (window.innerWidth >= 768) return;
+    const mq = window.matchMedia('(max-width: 768px)');
     const el = clubhouseRef.current;
     if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setNavHidden(true);
-        } else if (entry.boundingClientRect.top > 0) {
-          // Section is below viewport — user scrolled back up, show nav
-          setNavHidden(false);
-        }
-        // If section is above viewport (top < 0), user scrolled past — keep hidden
-      },
-      { threshold: 0.05 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
+    let obs = null;
+    const setup = () => {
+      if (mq.matches) {
+        obs = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) {
+              setNavHidden(true);
+            } else if (entry.boundingClientRect.top > 0) {
+              setNavHidden(false);
+            }
+          },
+          { threshold: 0.05 }
+        );
+        obs.observe(el);
+      } else {
+        setNavHidden(false);
+        obs?.disconnect();
+        obs = null;
+      }
+    };
+    setup();
+    mq.addEventListener('change', setup);
+    return () => { mq.removeEventListener('change', setup); obs?.disconnect(); };
   }, []);
 
   // Reset manual override when clubhouse section leaves view
   useEffect(() => {
     if (!navHidden) setNavManuallyShown(false);
   }, [navHidden]);
+
+  // Keep --catch-top in sync with actual header + nav height (used by all sticky elements)
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+    const header = document.querySelector('.Header');
+    const update = () => {
+      const headerH = header ? header.offsetHeight : 49;
+      const navH = nav.offsetHeight;
+      // Nav sticks at top:49px so its bottom is 49+navH.
+      // When nav is hidden (height≈0), that's only ~49px — less than headerH.
+      // Use whichever is larger, minus 1px so the card edge fully covers the gap.
+      document.documentElement.style.setProperty('--catch-top', `${Math.max(headerH, 49 + navH) - 1}px`);
+    };
+    const ro = new ResizeObserver(update);
+    ro.observe(nav);
+    if (header) ro.observe(header);
+    update();
+    return () => ro.disconnect();
+  }, []);
 
   // Scroll reveal effect - elements fade in when scrolling into view, reset when leaving
   useEffect(() => {
@@ -3084,6 +3142,79 @@ function Experimentation() {
         <div className="fd-about__content">
           <div className="fd-about__split" ref={aboutVideoRef}>
             <div className="fd-about__split-left">
+              {/* EGLD runway 24/06 — perspective background */}
+              <svg
+                viewBox="0 0 400 800"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  opacity: 0.2,
+                  pointerEvents: 'none',
+                }}
+                preserveAspectRatio="xMidYMid meet"
+              >
+                {/* Tarmac strip — wide at bottom (near), narrow at top (far) */}
+                <polygon points="80,800 320,800 230,0 170,0" fill="#b8b2a8"/>
+
+                {/* FAR END — runway 06 */}
+                <text x="200" y="38" textAnchor="middle" fill="#2a2824"
+                  fontFamily="Arial Black, Arial, sans-serif"
+                  fontSize="13" fontWeight="900" letterSpacing="3" opacity="0.5">06</text>
+                <rect x="176" y="44" width="5" height="10" fill="#2a2824" rx="0.5" opacity="0.55"/>
+                <rect x="183" y="44" width="5" height="10" fill="#2a2824" rx="0.5" opacity="0.55"/>
+                <rect x="190" y="44" width="5" height="10" fill="#2a2824" rx="0.5" opacity="0.55"/>
+                <rect x="197" y="44" width="5" height="10" fill="#2a2824" rx="0.5" opacity="0.55"/>
+                <rect x="204" y="44" width="5" height="10" fill="#2a2824" rx="0.5" opacity="0.55"/>
+                <rect x="211" y="44" width="5" height="10" fill="#2a2824" rx="0.5" opacity="0.55"/>
+                <rect x="218" y="44" width="5" height="10" fill="#2a2824" rx="0.5" opacity="0.55"/>
+
+                {/* CENTRELINE DASHES — perspective scaled, small at top → large at bottom */}
+                <rect x="199.5" y="62"  width="1"   height="2"  fill="#2a2824" rx="0.5"/>
+                <rect x="199.5" y="68"  width="1"   height="2"  fill="#2a2824" rx="0.5"/>
+                <rect x="199"   y="75"  width="1.5" height="3"  fill="#2a2824" rx="0.5"/>
+                <rect x="199"   y="82"  width="1.5" height="3"  fill="#2a2824" rx="0.5"/>
+                <rect x="199"   y="90"  width="2"   height="4"  fill="#2a2824" rx="0.5"/>
+                <rect x="199"   y="99"  width="2"   height="4"  fill="#2a2824" rx="0.5"/>
+                <rect x="198.5" y="109" width="2.5" height="5"  fill="#2a2824" rx="0.5"/>
+                <rect x="198.5" y="120" width="2.5" height="5"  fill="#2a2824" rx="0.5"/>
+                <rect x="198"   y="132" width="3"   height="6"  fill="#2a2824" rx="1"/>
+                <rect x="198"   y="145" width="3"   height="7"  fill="#2a2824" rx="1"/>
+                <rect x="197.5" y="160" width="3.5" height="8"  fill="#2a2824" rx="1"/>
+                <rect x="197"   y="176" width="4"   height="9"  fill="#2a2824" rx="1"/>
+                <rect x="197"   y="194" width="4.5" height="11" fill="#2a2824" rx="1"/>
+                <rect x="196.5" y="215" width="5"   height="13" fill="#2a2824" rx="1"/>
+                <rect x="196"   y="240" width="5.5" height="15" fill="#2a2824" rx="1.5"/>
+                <rect x="195.5" y="268" width="6"   height="17" fill="#2a2824" rx="1.5"/>
+                <rect x="195"   y="300" width="7"   height="20" fill="#2a2824" rx="2"/>
+                <rect x="194.5" y="336" width="8"   height="24" fill="#2a2824" rx="2"/>
+                <rect x="194"   y="376" width="9"   height="28" fill="#2a2824" rx="2"/>
+                <rect x="193.5" y="422" width="10"  height="32" fill="#2a2824" rx="2"/>
+                <rect x="193"   y="474" width="11"  height="36" fill="#2a2824" rx="2"/>
+                <rect x="192.5" y="530" width="12"  height="40" fill="#2a2824" rx="2"/>
+
+                {/* AIMING POINT MARKERS — two bars either side of centreline */}
+                <rect x="96"  y="480" width="18" height="58" fill="#2a2824" rx="2"/>
+                <rect x="286" y="480" width="18" height="58" fill="#2a2824" rx="2"/>
+
+                {/* NEAR END — runway 24 */}
+                <text x="200" y="736" textAnchor="middle" fill="#2a2824"
+                  fontFamily="Arial Black, Arial, sans-serif"
+                  fontSize="60" fontWeight="900" letterSpacing="12">24</text>
+                <line x1="83" y1="750" x2="317" y2="750" stroke="#2a2824" strokeWidth="3"/>
+                <rect x="86"  y="756" width="22" height="26" fill="#2a2824" rx="1.5"/>
+                <rect x="112" y="756" width="22" height="26" fill="#2a2824" rx="1.5"/>
+                <rect x="138" y="756" width="22" height="26" fill="#2a2824" rx="1.5"/>
+                <rect x="164" y="756" width="22" height="26" fill="#2a2824" rx="1.5"/>
+                <rect x="190" y="756" width="22" height="26" fill="#2a2824" rx="1.5"/>
+                <rect x="216" y="756" width="22" height="26" fill="#2a2824" rx="1.5"/>
+                <rect x="242" y="756" width="22" height="26" fill="#2a2824" rx="1.5"/>
+                <rect x="268" y="756" width="22" height="26" fill="#2a2824" rx="1.5"/>
+                <rect x="294" y="756" width="22" height="26" fill="#2a2824" rx="1.5"/>
+              </svg>
               <div className="fd-about__video">
                 <div className={`fd-about__video-placeholder fd-about__video-placeholder--clean fd-about__video-placeholder--desktop${controlsVisible ? ' fd-about__video-placeholder--controls-visible' : ''}`}>
                   <div ref={ytDesktopRef} style={{ position: 'absolute', top: '-60px', left: 0, width: '100%', height: 'calc(100% + 120px)' }} />
@@ -3397,7 +3528,6 @@ function Experimentation() {
       <ParallaxSection
         image={cmsParallaxFlying}
         alt="Training"
-        className="reveal-element"
         waves={true}
         dataCmsSection="home-parallax-flying"
       >
@@ -3723,14 +3853,10 @@ function Experimentation() {
           </div>
           <span className="clubhouse__tagline">Friendly. Relaxed. Welcoming.</span>
 
-          {/* Phase 2 — fades in on scroll */}
+          {/* Phase 2 */}
           <div
             className="clubhouse__mobile-phase2"
             ref={clubhouseMobilePhase2Ref}
-            style={{
-              opacity: clubhouseMobilePhase2Visible ? 1 : 0,
-              transform: clubhouseMobilePhase2Visible ? 'translateY(0)' : 'translateY(30px)',
-            }}
           >
             <h3 className="clubhouse__title">Escape to the Country</h3>
             <p className="clubhouse__desc">
@@ -3748,12 +3874,12 @@ function Experimentation() {
               </div>
               <div className="clubhouse__map-card-bottom">
                 <div className="clubhouse__map-card-stat">
-                  <h4 className="clubhouse__grid-title">25 min</h4>
-                  <p className="clubhouse__grid-desc">From Central London</p>
+                  <h4 className="clubhouse__grid-title">By Train</h4>
+                  <p className="clubhouse__grid-desc">15 min Marylebone to Denham, pickup available</p>
                 </div>
                 <div className="clubhouse__map-card-stat">
-                  <h4 className="clubhouse__grid-title">M25</h4>
-                  <p className="clubhouse__grid-desc">Just Inside the Orbital</p>
+                  <h4 className="clubhouse__grid-title">By Car</h4>
+                  <p className="clubhouse__grid-desc">Inside the M25 Orbital, Greater London</p>
                 </div>
               </div>
             </div>
@@ -3846,7 +3972,6 @@ function Experimentation() {
       <ParallaxSection
         image={cmsParallaxSales}
         alt="Aircraft Sales"
-        className="reveal-element"
         waves={true}
         dataCmsSection="home-parallax-sales"
       >
@@ -3857,7 +3982,7 @@ function Experimentation() {
         <div className="fd-sales__intro" ref={salesIntroRef}>
           <div className="fd-sales__left">
             <div className="fd-sales__header-sticky" ref={salesHeaderRef} data-cms-text-section="home-sales-section">
-              <span className="fd-sales__pre-title" ref={salesPreTitleRef}>{t('home-sales-section', 'pre_label')}</span>
+              <span className="fd-sales__pre-title" ref={salesPreTitleRef}>{isSalesPretitleNarrow ? 'Search Starts Here' : t('home-sales-section', 'pre_label')}</span>
               <div ref={salesTitleFadeRef}>
                 <h2 className="fd-sales__title">
                   <span className="fd-sales__title-word fd-sales__title-word--1">{t('home-sales-section', 'heading_1')}</span>
@@ -4011,7 +4136,11 @@ function Experimentation() {
         <p className="fd-sales__section-desc" style={{ marginBottom: '1.5rem' }}>
           Our clients regularly trade, upgrade and renew their fleets — which means we always have access to quality pre-owned aircraft at every stage of life. Many come directly from owners whose maintenance we've managed for years, so we know every hour, every component and every logbook entry. When the right aircraft isn't already on our doorstep, we'll source it — inspecting the airframe, engine and avionics on-site before it ever reaches you. Looking for something specific? Talk to our sales team and we'll begin the search.
         </p>
-        <AircraftAlertSignup />
+        <div className="fd-sales__preowned-layout">
+        <div className="fd-sales__listings-header">
+          <h4 className="fd-sales__listings-title">Active &amp; Past Listings</h4>
+          <p className="fd-sales__listings-desc">Aircraft currently available and recently sold through our network. Sold listings give you a sense of what moves through our hands — and at what standard.</p>
+        </div>
         <div className="fd-sales__carousel-wrap">
             <button className={`rb-stats__chevron rb-stats__chevron--left ${!preownedCanScrollLeft ? 'rb-stats__chevron--hidden-desktop' : ''}`} onClick={() => preownedRef.current.scrollBy({ left: -280, behavior: 'smooth' })}>
               <i className="fas fa-chevron-left"></i>
@@ -4085,6 +4214,8 @@ function Experimentation() {
               </button>
             </div>
         </div>
+        <AircraftAlertSignup />
+        </div>{/* fd-sales__preowned-layout */}
         <div className="fd-sales__actions">
           <Link to="/sales/pre-owned" className="fd-sales__btn fd-sales__btn--primary">Browse Pre-Owned Aircraft</Link>
         </div>
@@ -4547,7 +4678,6 @@ function Experimentation() {
       <ParallaxSection
         image={cmsParallaxMaintenance}
         alt="Maintenance"
-        className="reveal-element"
         waves={true}
         dataCmsSection="home-parallax-maintenance"
       >
@@ -4651,7 +4781,6 @@ function Experimentation() {
         <ParallaxSection
           image={cmsParallaxContact}
           alt="Find Us & Contact Us"
-          className="reveal-element"
           waves={true}
           dataCmsSection="home-parallax-contact"
         >
@@ -6419,10 +6548,10 @@ function Experimentation() {
           border-top-color: transparent;
         }
 
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
           .fd-nav {
             overflow: hidden;
-            max-height: 200px;
+            max-height: 300px;
             transition: max-height 0.6s ease, opacity 0.6s ease, border-top-color 1.2s ease, box-shadow 0.3s ease;
           }
           .fd-nav--hidden {
@@ -6491,6 +6620,30 @@ function Experimentation() {
         }
         .fd-nav__item-wrap:last-child {
           border-right: none;
+        }
+
+        @media (max-width: 900px) {
+          .fd-nav__header {
+            border-bottom: 1px solid #e8e6e2;
+          }
+          .fd-nav__accordion {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: #e8e6e2;
+            border-top: none;
+          }
+          .fd-nav .fd-nav__item-wrap,
+          .fd-nav .fd-nav__item-wrap:last-child {
+            border: none;
+            background: #fff;
+          }
+        }
+
+        @media (max-width: 400px) {
+          .fd-nav__accordion {
+            grid-template-columns: repeat(2, 1fr);
+          }
         }
 
         .fd-nav__dropdown {
@@ -8544,7 +8697,7 @@ function Experimentation() {
 
         .fd-sales__header-sticky {
           position: sticky;
-          top: 10vh;
+          top: max(10vh, var(--catch-top, 90px));
           text-align: left;
           padding: 32px 0 0;
           z-index: 3;
@@ -8552,7 +8705,7 @@ function Experimentation() {
 
         .fd-sales__dealer-catch {
           position: sticky;
-          top: calc(10vh + 60px);
+          top: calc(max(10vh, var(--catch-top, 90px)) + 60px);
           z-index: 2;
           padding: 0.5rem 0 8px;
           margin-top: 275px;
@@ -9060,7 +9213,9 @@ function Experimentation() {
         }
         @media (max-width: 640px) {
           .fd-sales__tradein-grid { grid-template-columns: 1fr; }
-          .fd-sales__webuy__inner { flex-direction: column; align-items: flex-start; }
+          .fd-sales__webuy__inner { flex-direction: column; align-items: center; text-align: center; }
+          .fd-sales__webuy__left { justify-content: center; }
+          .fd-sales__webuy__pills { justify-content: center; }
         }
 
         .fd-sales__grid {
@@ -9245,6 +9400,39 @@ function Experimentation() {
           margin: 0 auto;
         }
 
+        .fd-sales__listings-header {
+          display: flex;
+          flex-direction: column;
+          gap: 0.3rem;
+          margin-bottom: 1.25rem;
+        }
+        .fd-sales__listings-label {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.6rem;
+          letter-spacing: 0.25em;
+          text-transform: uppercase;
+          color: #999;
+        }
+        .fd-sales__listings-title {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1.1rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          color: #1a1a1a;
+          margin: 0;
+        }
+        .fd-sales__listings-desc {
+          font-size: 0.85rem;
+          color: #777;
+          line-height: 1.65;
+          margin: 0.35rem 0 0;
+        }
+        @media (max-width: 768px) {
+          .fd-sales__listings-header { text-align: center; }
+          .fd-sales__listings-title { font-size: 1.1rem; }
+        }
+
         @media (min-width: 769px) {
           .fd-sales__intro + .fd-sales__subsection .fd-sales__section-title {
             margin-top: 100px;
@@ -9386,7 +9574,7 @@ function Experimentation() {
           overflow-x: auto;
           scroll-snap-type: x mandatory;
           gap: 1.5rem;
-          padding: 42px 0 1.5rem;
+          padding: 0 0 1.5rem;
           -webkit-overflow-scrolling: touch;
           scrollbar-width: none;
           -ms-overflow-style: none;
@@ -9668,7 +9856,7 @@ function Experimentation() {
 
         .clubhouse__sticky {
           position: sticky;
-          top: 90px;
+          top: var(--catch-top, 90px);
           max-width: 480px;
           margin: 0 auto;
           padding: 48px 3rem 48px;
@@ -9820,26 +10008,6 @@ function Experimentation() {
           border-right: 1px solid rgba(0,0,0,0.08);
         }
 
-        @media (max-width: 768px) {
-          .clubhouse__map-card {
-            border: none;
-          }
-          .clubhouse__map-card-top {
-            padding: 0;
-            border: 1px solid rgba(0,0,0,0.08);
-            border-radius: 12px 12px 0 0;
-            border-bottom: none;
-          }
-          .clubhouse__map {
-            border-radius: 12px 12px 0 0;
-            border-bottom: 1px solid rgba(0,0,0,0.08);
-          }
-          .clubhouse__map-card-bottom {
-            border: 1px solid rgba(0,0,0,0.08);
-            border-top: none;
-            border-radius: 0 0 12px 12px;
-          }
-        }
 
         /* Phase crossfade */
         .clubhouse__phases {
@@ -9946,7 +10114,7 @@ function Experimentation() {
         @media (max-width: 768px) {
           .clubhouse {
             padding: 2rem 0 0;
-            overflow: visible;
+            overflow: hidden;
           }
 
           /* Hide entire desktop layout on mobile */
@@ -10002,10 +10170,6 @@ function Experimentation() {
             pointer-events: none;
           }
 
-          /* Phase 2 reveal */
-          .clubhouse__mobile-phase2 {
-            transition: opacity 0.6s ease, transform 0.6s ease;
-          }
 
           .clubhouse__mobile-divider {
             height: 1px;
@@ -10386,7 +10550,7 @@ function Experimentation() {
 
         .fd-maint__header-sticky {
           position: sticky;
-          top: 10vh;
+          top: max(10vh, var(--catch-top, 90px));
           text-align: left;
           padding: 32px 0 1.25rem;
           z-index: 3;
@@ -10394,7 +10558,7 @@ function Experimentation() {
 
         .fd-maint__service-catch {
           position: sticky;
-          top: 10vh;
+          top: max(10vh, var(--catch-top, 90px));
           z-index: 2;
           padding: 0.5rem 0 10px;
           margin-bottom: 48px;
@@ -10485,9 +10649,9 @@ function Experimentation() {
           border-radius: 8px 0 0 8px;
           pointer-events: none;
           align-self: start;
-          height: calc(100vh - 120px - 2rem);
+          height: calc(100vh - var(--catch-top, 90px) - 30px - 2rem);
           position: sticky;
-          top: 120px;
+          top: calc(var(--catch-top, 90px) + 30px);
           margin: 0 -50vw 0 0;
         }
 
@@ -10499,9 +10663,9 @@ function Experimentation() {
           border-radius: 8px 0 0 8px;
           pointer-events: none;
           align-self: start;
-          height: calc(100vh - 120px - 2rem);
+          height: calc(100vh - var(--catch-top, 90px) - 30px - 2rem);
           position: sticky;
-          top: 120px;
+          top: calc(var(--catch-top, 90px) + 30px);
           margin: 0 -50vw 0 0;
           z-index: 2;
         }
@@ -10525,8 +10689,8 @@ function Experimentation() {
 
         .fd-maint__scroll-sticky {
           position: sticky;
-          top: 120px;
-          height: calc(100vh - 120px - 2rem);
+          top: calc(var(--catch-top, 90px) + 30px);
+          height: calc(100vh - var(--catch-top, 90px) - 30px - 2rem);
           display: flex;
           gap: 0.5rem;
           overflow: hidden;
@@ -11580,6 +11744,14 @@ function Experimentation() {
           transform: translateY(0) scale(1);
         }
 
+        @media (max-width: 768px) {
+          .reveal-element {
+            opacity: 1;
+            transform: none;
+            transition: none;
+          }
+        }
+
         /* ===== UNION JACK PLACEMENTS ===== */
         .union-jack {
           display: inline-block;
@@ -11624,20 +11796,34 @@ function Experimentation() {
 
           .fd-nav__accordion {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
           }
 
           .fd-nav__item-wrap {
             border-right: 1px solid #e8e6e2;
-            border-bottom: none;
+            border-bottom: 1px solid #e8e6e2;
           }
 
-          .fd-nav__item-wrap:nth-child(3n) {
+          .fd-nav__item-wrap:nth-child(2n) {
             border-right: none;
           }
 
-          .fd-nav__item-wrap:nth-child(-n+3) {
-            border-bottom: 1px solid #e8e6e2;
+          .fd-nav__item-wrap:nth-last-child(-n+2) {
+            border-bottom: none;
+          }
+
+          .fd-nav__item {
+            padding: 0.65rem 0.5rem;
+            gap: 0.35rem;
+          }
+
+          .fd-nav__item-label {
+            font-size: 0.65rem;
+            letter-spacing: 0.06em;
+          }
+
+          .fd-nav__item-icon {
+            font-size: 0.6rem;
           }
         }
 
@@ -14254,7 +14440,7 @@ function Experimentation() {
           .fd-maint__left { display: contents; }
           .fd-maint__header-sticky { position: static; text-align: center; padding: 2rem 0 0; order: 1; }
           .fd-maint__text { margin: 0 auto; padding-bottom: 1rem; }
-          .fd-maint__service-catch { position: sticky; top: 120px; z-index: 10; transition: none; transform: none !important; padding: 24px 2rem 0; order: 3; margin: 0 0 24px; overflow: visible; background: #faf9f6; }
+          .fd-maint__service-catch { position: sticky; top: var(--catch-top, 120px); z-index: 10; transition: none; transform: none !important; padding: 24px 2rem 0; order: 3; margin: 0 0 24px; overflow: visible; background: #faf9f6; }
           .fd-maint__divider-mobile { display: block; order: 2; margin: 1.5rem auto 0; padding: 0 2rem; }
           .fsd__right { padding: 0 !important; margin: 0 !important; }
           .fd-maint__service-catch::before, .fd-maint__service-catch::after { display: none; }
