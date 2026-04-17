@@ -1841,8 +1841,13 @@ function DiscoveryFlight() {
           background: linear-gradient(to bottom, transparent, #e8e6e2, transparent);
         }
 
+        .df-instructor__stat {
+          display: flex;
+          align-items: baseline;
+          gap: 0.35rem;
+        }
+
         .df-instructor__stat-value {
-          display: block;
           font-family: 'Share Tech Mono', monospace;
           font-size: 1.15rem;
           font-weight: 700;
