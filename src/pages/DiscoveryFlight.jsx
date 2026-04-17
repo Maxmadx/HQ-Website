@@ -717,7 +717,7 @@ function InstructorSection() {
                 <div className="df-instructor__info">
                   <div className="df-instructor__info-top">
                     <h3>{t('discovery-instructor', 'name')}</h3>
-                    <span className="df-instructor__stat-value"><AnimatedNumber value="18000" />+</span>
+                    <span className="df-instructor__stat-value"><AnimatedNumber value="25000" />+</span>
                     <span className="df-instructor__title">{t('discovery-instructor', 'title')}</span>
                     <span className="df-instructor__stat-label">{t('discovery-instructor', 'hours_label')}</span>
                   </div>
