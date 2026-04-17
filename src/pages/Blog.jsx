@@ -11,6 +11,7 @@ import { db } from '../lib/firebase';
 import staticPosts from '../blog/posts.json';
 import FinalDraftHeader from '../components/FinalDraftHeader';
 import FooterMinimal from '../components/FooterMinimal';
+import { trackPressClick } from '../lib/pressClick';
 import '../assets/css/main.css';
 import '../assets/css/components.css';
 
@@ -153,6 +154,7 @@ function Blog() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="blog-listing__card"
+                onClick={() => trackPressClick(post.id)}
               >
                 {cardContent}
               </a>
