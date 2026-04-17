@@ -716,9 +716,6 @@ function InstructorSection() {
           <div className="df-instructor__right">
             <Reveal delay={0.15}>
               <div className="df-instructor__card">
-                <div className="df-instructor__image">
-                  <img src={pageImages['discovery-instructor']?.[0]?.url ?? '/assets/images/team/quentin-smith-profile-picture.jpg'} alt={t('discovery-instructor', 'name')} />
-                </div>
                 <div className="df-instructor__info">
                   <h3>{t('discovery-instructor', 'name')}</h3>
                   <span className="df-instructor__title">{t('discovery-instructor', 'title')}</span>
