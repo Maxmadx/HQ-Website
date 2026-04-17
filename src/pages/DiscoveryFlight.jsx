@@ -511,56 +511,143 @@ function ValueProposition() {
           <div className={`df-cards ${selectedCard ? 'has-focus' : ''}`} data-cms-section="discovery-aircraft">
             {aircraftWithPricing.map((aircraft, index) => (
               <Reveal key={aircraft.id} delay={index * 0.1}>
-                <motion.div
-                  className={`df-card ${aircraft.featured ? 'df-card--featured' : ''} ${selectedCard === aircraft.id ? 'df-card--focused' : ''}`}
-                  whileHover={{ y: -4 }}
-                >
-                  {aircraft.featured && !selectedCard && (
-                    <span className="df-card__badge">RECOMMENDED</span>
-                  )}
-                  <div className="df-card__image">
-                    <img src={aircraft.image} alt={aircraft.name} />
-                  </div>
-                  <div className="df-card__content">
-                    <div className="df-card__header">
-                      <h3 className="df-card__name">{t(sectionForAircraft[aircraft.id], 'name')}</h3>
-                      <p className="df-card__tagline">{t(sectionForAircraft[aircraft.id], 'tagline')}</p>
-                      <p className="df-card__desc">{t(sectionForAircraft[aircraft.id], 'description')}</p>
-                      <div className="df-card__seats"><span>{t(sectionForAircraft[aircraft.id], 'seats')}</span></div>
-                    </div>
-                    <div className="df-card__pricing">
-                      <div
-                        className={`df-card__time ${selectedCard === aircraft.id && selectedTime === 30 ? 'selected' : ''}`}
-                        onClick={() => handleTimeSelect(aircraft.id, 30)}
-                      >
-                        <div className="df-card__time-info">
-                          <span className="df-card__time-duration">{t(sectionForAircraft[aircraft.id], 'label_30min')}</span>
-                          <span className="df-card__time-desc">{t(sectionForAircraft[aircraft.id], 'desc_30min')}</span>
-                        </div>
-                        <span className="df-card__price">{aircraft.priceFmt[30]}</span>
-                      </div>
-                      <div
-                        className={`df-card__time ${selectedCard === aircraft.id && selectedTime === 60 ? 'selected' : ''}`}
-                        onClick={() => handleTimeSelect(aircraft.id, 60)}
-                      >
-                        <div className="df-card__time-info">
-                          <span className="df-card__time-duration">{t(sectionForAircraft[aircraft.id], 'label_60min')}</span>
-                          <span className="df-card__time-desc">{t(sectionForAircraft[aircraft.id], 'desc_60min')}</span>
-                        </div>
-                        <span className="df-card__price">{aircraft.priceFmt[60]}</span>
-                      </div>
-                    </div>
-                    <button
-                      className={`df-card__btn ${selectedCard === aircraft.id && selectedTime ? 'active' : ''}`}
-                      onClick={() => handleBook(aircraft.id)}
-                      disabled={selectedCard !== aircraft.id || !selectedTime}
+                {isMobile ? (
+                  /* ---- MOBILE: accordion ---- */
+                  <div className={`df-card ${aircraft.featured ? 'df-card--featured' : ''}`}>
+                    <div
+                      className="df-card__acc-header"
+                      onClick={() => handleAccordionToggle(aircraft.id)}
                     >
-                      {selectedCard === aircraft.id && selectedTime
-                        ? `Book Now - ${aircraft.priceFmt[selectedTime]}`
-                        : 'Select Duration'}
-                    </button>
+                      <div className="df-card__acc-thumb">
+                        <img src={aircraft.image} alt={aircraft.name} />
+                      </div>
+                      <div className="df-card__acc-meta">
+                        {aircraft.featured && (
+                          <span className="df-card__acc-rec">Recommended</span>
+                        )}
+                        <span className="df-card__acc-name">{t(sectionForAircraft[aircraft.id], 'name')}</span>
+                        <span className="df-card__acc-from">from {aircraft.priceFmt[30]}</span>
+                      </div>
+                      <span className={`df-card__acc-chevron ${openCard === aircraft.id ? 'df-card__acc-chevron--open' : ''}`}>▼</span>
+                    </div>
+
+                    {selectedCard === aircraft.id && selectedTime && openCard !== aircraft.id && (
+                      <div className="df-card__acc-strip">
+                        <span className="df-card__acc-strip-text">
+                          {t(sectionForAircraft[aircraft.id], 'name')} · {selectedTime} min · {aircraft.priceFmt[selectedTime]}
+                        </span>
+                        <button className="df-card__acc-strip-btn" onClick={() => handleBook(aircraft.id)}>
+                          Book Now
+                        </button>
+                      </div>
+                    )}
+
+                    <AnimatePresence>
+                      {openCard === aircraft.id && (
+                        <motion.div
+                          key="body"
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                          style={{ overflow: 'hidden' }}
+                        >
+                          <div className="df-card__content">
+                            <div className="df-card__header">
+                              <h3 className="df-card__name">{t(sectionForAircraft[aircraft.id], 'name')}</h3>
+                              <p className="df-card__tagline">{t(sectionForAircraft[aircraft.id], 'tagline')}</p>
+                              <p className="df-card__desc">{t(sectionForAircraft[aircraft.id], 'description')}</p>
+                              <div className="df-card__seats"><span>{t(sectionForAircraft[aircraft.id], 'seats')}</span></div>
+                            </div>
+                            <div className="df-card__pricing">
+                              <div
+                                className={`df-card__time ${selectedCard === aircraft.id && selectedTime === 30 ? 'selected' : ''}`}
+                                onClick={() => handleTimeSelect(aircraft.id, 30)}
+                              >
+                                <div className="df-card__time-info">
+                                  <span className="df-card__time-duration">{t(sectionForAircraft[aircraft.id], 'label_30min')}</span>
+                                  <span className="df-card__time-desc">{t(sectionForAircraft[aircraft.id], 'desc_30min')}</span>
+                                </div>
+                                <span className="df-card__price">{aircraft.priceFmt[30]}</span>
+                              </div>
+                              <div
+                                className={`df-card__time ${selectedCard === aircraft.id && selectedTime === 60 ? 'selected' : ''}`}
+                                onClick={() => handleTimeSelect(aircraft.id, 60)}
+                              >
+                                <div className="df-card__time-info">
+                                  <span className="df-card__time-duration">{t(sectionForAircraft[aircraft.id], 'label_60min')}</span>
+                                  <span className="df-card__time-desc">{t(sectionForAircraft[aircraft.id], 'desc_60min')}</span>
+                                </div>
+                                <span className="df-card__price">{aircraft.priceFmt[60]}</span>
+                              </div>
+                            </div>
+                            <button
+                              className={`df-card__btn ${selectedCard === aircraft.id && selectedTime ? 'active' : ''}`}
+                              onClick={() => handleBook(aircraft.id)}
+                              disabled={selectedCard !== aircraft.id || !selectedTime}
+                            >
+                              {selectedCard === aircraft.id && selectedTime
+                                ? `Book Now - ${aircraft.priceFmt[selectedTime]}`
+                                : 'Select Duration'}
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
-                </motion.div>
+                ) : (
+                  /* ---- DESKTOP: unchanged ---- */
+                  <motion.div
+                    className={`df-card ${aircraft.featured ? 'df-card--featured' : ''} ${selectedCard === aircraft.id ? 'df-card--focused' : ''}`}
+                    whileHover={{ y: -4 }}
+                  >
+                    {aircraft.featured && !selectedCard && (
+                      <span className="df-card__badge">RECOMMENDED</span>
+                    )}
+                    <div className="df-card__image">
+                      <img src={aircraft.image} alt={aircraft.name} />
+                    </div>
+                    <div className="df-card__content">
+                      <div className="df-card__header">
+                        <h3 className="df-card__name">{t(sectionForAircraft[aircraft.id], 'name')}</h3>
+                        <p className="df-card__tagline">{t(sectionForAircraft[aircraft.id], 'tagline')}</p>
+                        <p className="df-card__desc">{t(sectionForAircraft[aircraft.id], 'description')}</p>
+                        <div className="df-card__seats"><span>{t(sectionForAircraft[aircraft.id], 'seats')}</span></div>
+                      </div>
+                      <div className="df-card__pricing">
+                        <div
+                          className={`df-card__time ${selectedCard === aircraft.id && selectedTime === 30 ? 'selected' : ''}`}
+                          onClick={() => handleTimeSelect(aircraft.id, 30)}
+                        >
+                          <div className="df-card__time-info">
+                            <span className="df-card__time-duration">{t(sectionForAircraft[aircraft.id], 'label_30min')}</span>
+                            <span className="df-card__time-desc">{t(sectionForAircraft[aircraft.id], 'desc_30min')}</span>
+                          </div>
+                          <span className="df-card__price">{aircraft.priceFmt[30]}</span>
+                        </div>
+                        <div
+                          className={`df-card__time ${selectedCard === aircraft.id && selectedTime === 60 ? 'selected' : ''}`}
+                          onClick={() => handleTimeSelect(aircraft.id, 60)}
+                        >
+                          <div className="df-card__time-info">
+                            <span className="df-card__time-duration">{t(sectionForAircraft[aircraft.id], 'label_60min')}</span>
+                            <span className="df-card__time-desc">{t(sectionForAircraft[aircraft.id], 'desc_60min')}</span>
+                          </div>
+                          <span className="df-card__price">{aircraft.priceFmt[60]}</span>
+                        </div>
+                      </div>
+                      <button
+                        className={`df-card__btn ${selectedCard === aircraft.id && selectedTime ? 'active' : ''}`}
+                        onClick={() => handleBook(aircraft.id)}
+                        disabled={selectedCard !== aircraft.id || !selectedTime}
+                      >
+                        {selectedCard === aircraft.id && selectedTime
+                          ? `Book Now - ${aircraft.priceFmt[selectedTime]}`
+                          : 'Select Duration'}
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
               </Reveal>
             ))}
           </div>
