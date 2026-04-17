@@ -706,9 +706,7 @@ function InstructorSection() {
               <h2>
                 <span className="df-text--dark">{t('discovery-instructor', 'heading')}</span>
               </h2>
-              <p>
-                {t('discovery-instructor', 'intro')}
-              </p>
+              <p>Under Q&apos;s guidance, you&apos;re learning from one of the best teams in the world.</p>
             </div>
           </Reveal>
 
@@ -723,7 +721,6 @@ function InstructorSection() {
                     <span className="df-instructor__title">{t('discovery-instructor', 'title')}</span>
                     <span className="df-instructor__stat-label">{t('discovery-instructor', 'hours_label')}</span>
                   </div>
-                  <p>{t('discovery-instructor', 'bio')}</p>
                 </div>
               </div>
             </Reveal>
