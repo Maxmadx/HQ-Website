@@ -24,6 +24,7 @@ const { createPaymentIntent, handleWebhook } = require('./api/stripe');
 const leadsRouter = require('./api/leads');
 const stripeDiscoveryRouter = require('./api/stripe-discovery');
 const analyticsRouter = require('./api/analytics-api');
+const pressClickRouter = require('./api/press-click');
 
 const app = express();
 app.set('trust proxy', 1); // Read real IP from X-Forwarded-For (required for req.ip behind proxies)
@@ -126,7 +127,7 @@ function fileExists(filePath) {
 // Creates a Stripe PaymentIntent using server-side validated price.
 // Uses express.json() middleware inline so it doesn't affect the webhook route.
 app.post('/api/create-payment-intent', express.json(), async (req, res) => {
-  const { aircraft, duration, customerName, customerEmail, customerPhone } = req.body || {};
+  const { aircraft, duration, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage } = req.body || {};
 
   // Validate presence
   if (!aircraft || !duration || !customerName || !customerEmail || !customerPhone) {
@@ -154,6 +155,9 @@ app.post('/api/create-payment-intent', express.json(), async (req, res) => {
       customerName,
       customerEmail,
       customerPhone: sanitisedPhone,
+      wantsVoucher: !!wantsVoucher,
+      voucherLocation: wantsVoucher ? String(voucherLocation || '').slice(0, 300) : '',
+      voucherMessage: wantsVoucher ? String(voucherMessage || '').slice(0, 150) : '',
     });
     res.json({ clientSecret: paymentIntent.client_secret });
   } catch (err) {
@@ -192,10 +196,21 @@ app.use('/api/stripe/discovery-checkout', express.json(), stripeDiscoveryRouter)
 app.use('/api/analytics', express.json(), analyticsRouter);
 
 // ============================================
+// PRESS CLICK ROUTES
+// ============================================
+app.use('/api/press-click', express.json(), pressClickRouter);
+
+// ============================================
 // WALL OF COOL ROUTES
 // ============================================
 const wallOfCoolRouter = require('./api/wall-of-cool');
 app.use('/api/wall-of-cool', express.json(), wallOfCoolRouter);
+
+// ============================================
+// ADMIN FAQ ROUTES
+// ============================================
+const adminFaqsRouter = require('./api/admin-faqs');
+app.use('/api/admin/faqs', express.json(), adminFaqsRouter);
 
 /**
  * Root route: serve index.html
