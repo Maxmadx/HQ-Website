@@ -2875,6 +2875,16 @@ function DiscoveryFlight() {
             text-align: center;
           }
 
+          .df-instructor__info-top h3,
+          .df-instructor__title {
+            text-align: left;
+          }
+
+          .df-instructor__stat-value,
+          .df-instructor__stat-label {
+            text-align: right;
+          }
+
           .df-instructor__card {
             flex-direction: column;
           }
