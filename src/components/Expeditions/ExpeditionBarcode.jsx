@@ -6,7 +6,7 @@
  * Clicking a destination expands a gallery section below.
  */
 
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { usePageImages } from '../../hooks/usePageImages';
 
@@ -150,6 +150,16 @@ function ExpeditionBarcode({
   const isInView = useInView(ref, { once: true, amount: 0.2 });
   const [selectedId, setSelectedId] = useState(null);
   const [lightboxImage, setLightboxImage] = useState(null);
+  const [isNarrow, setIsNarrow] = useState(
+    () => window.matchMedia('(max-width: 450px)').matches
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 450px)');
+    const handler = (e) => setIsNarrow(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   const pageImages = usePageImages('home');
   const cmsDestinations = useMemo(() => {
@@ -172,11 +182,12 @@ function ExpeditionBarcode({
   }, []);
 
   const barcodes = useMemo(() => {
+    const barCount = isNarrow ? 15 : 25;
     return cmsDestinations.map(d => ({
       ...d,
-      code: generateBarcode(d.id + d.name, 25)
+      code: generateBarcode(d.id + d.name, barCount)
     }));
-  }, [cmsDestinations]);
+  }, [cmsDestinations, isNarrow]);
 
   const selectedDestination = barcodes.find(d => d.id === selectedId);
 
