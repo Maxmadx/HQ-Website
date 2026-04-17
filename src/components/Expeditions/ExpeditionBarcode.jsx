@@ -126,7 +126,7 @@ const defaultDestinations = [
 ];
 
 // Generate deterministic barcode pattern from string
-function generateBarcode(str, length = 30) {
+export function generateBarcode(str, length = 30) {
   const bars = [];
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
