@@ -519,7 +519,7 @@ function ValueProposition() {
                       onClick={() => handleAccordionToggle(aircraft.id)}
                       role="button"
                       tabIndex={0}
-                      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleAccordionToggle(aircraft.id)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleAccordionToggle(aircraft.id); } }}
                       aria-expanded={openCard === aircraft.id}
                       aria-controls={`acc-body-${aircraft.id}`}
                     >
