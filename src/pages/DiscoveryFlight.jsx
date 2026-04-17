@@ -718,7 +718,8 @@ function InstructorSection() {
                   <div className="df-instructor__info-top">
                     <h3>{t('discovery-instructor', 'name')}</h3>
                     <span className="df-instructor__stat-value"><AnimatedNumber value="25000" />+</span>
-                    <span className="df-instructor__title">{t('discovery-instructor', 'title')}</span>
+                    <span className="df-instructor__title df-instructor__title--desktop">{t('discovery-instructor', 'title')}</span>
+                    <span className="df-instructor__title df-instructor__title--mobile">Founder</span>
                     <span className="df-instructor__stat-label">{t('discovery-instructor', 'hours_label')}</span>
                   </div>
                 </div>
@@ -758,6 +759,16 @@ function InstructorSection() {
 // ============================================================================
 function WhatToExpect() {
   const { t } = usePageText('discovery');
+  const [isMobile, setIsMobile] = useState(false);
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 1024px)');
+    setIsMobile(mq.matches);
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   const steps = [
     { num: '01', titleKey: 'step_1_title', descKey: 'step_1_desc', timeKey: 'step_1_time' },
@@ -766,6 +777,8 @@ function WhatToExpect() {
     { num: '04', titleKey: 'step_4_title', descKey: 'step_4_desc', timeKey: 'step_4_time' },
     { num: '05', titleKey: 'step_5_title', descKey: 'step_5_desc', timeKey: 'step_5_time' },
   ];
+
+  const step = steps[current];
 
   return (
     <section className="df-expect">
@@ -780,25 +793,53 @@ function WhatToExpect() {
           </div>
         </Reveal>
 
-        <div className="df-expect__timeline">
-          {steps.map((step, index) => (
-            <Reveal key={index} delay={index * 0.1}>
-              <div className="df-expect__step">
-                <div className="df-expect__step-marker">
-                  <span className="df-expect__step-num">{step.num}</span>
-                  {index < steps.length - 1 && <div className="df-expect__step-line" />}
-                </div>
-                <div className="df-expect__step-content">
-                  <div className="df-expect__step-header">
-                    <h3>{t('discovery-steps', step.titleKey)}</h3>
-                    <span className="df-expect__step-duration">{t('discovery-steps', step.timeKey)}</span>
-                  </div>
-                  <p>{t('discovery-steps', step.descKey)}</p>
-                </div>
+        {isMobile ? (
+          <div className="df-expect__carousel">
+            <button
+              className="df-expect__chevron"
+              onClick={() => setCurrent(c => c - 1)}
+              disabled={current === 0}
+              aria-label="Previous step"
+            >‹</button>
+
+            <div className="df-expect__carousel-card">
+              <div className="df-expect__carousel-top">
+                <span className="df-expect__carousel-num">{step.num}</span>
+                <span className="df-expect__step-duration">{t('discovery-steps', step.timeKey)}</span>
               </div>
-            </Reveal>
-          ))}
-        </div>
+              <h3 className="df-expect__carousel-title">{t('discovery-steps', step.titleKey)}</h3>
+              <p className="df-expect__carousel-desc">{t('discovery-steps', step.descKey)}</p>
+              <span className="df-expect__carousel-counter">{current + 1} / {steps.length}</span>
+            </div>
+
+            <button
+              className="df-expect__chevron"
+              onClick={() => setCurrent(c => c + 1)}
+              disabled={current === steps.length - 1}
+              aria-label="Next step"
+            >›</button>
+          </div>
+        ) : (
+          <div className="df-expect__timeline">
+            {steps.map((s, index) => (
+              <Reveal key={index} delay={index * 0.1}>
+                <div className="df-expect__step">
+                  <div className="df-expect__step-marker">
+                    <span className="df-expect__step-num">{s.num}</span>
+                    {index < steps.length - 1 && <div className="df-expect__step-line" />}
+                  </div>
+                  <div className="df-expect__step-content">
+                    <div className="df-expect__step-header">
+                      <h3>{t('discovery-steps', s.titleKey)}</h3>
+                      <span className="df-expect__step-duration">{t('discovery-steps', s.timeKey)}</span>
+                    </div>
+                    <p>{t('discovery-steps', s.descKey)}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
@@ -1817,6 +1858,8 @@ function DiscoveryFlight() {
           text-transform: uppercase;
         }
 
+        .df-instructor__title--mobile { display: none; }
+
         .df-instructor__info-top {
           display: grid;
           grid-template-columns: 1fr auto;
@@ -1984,6 +2027,86 @@ function DiscoveryFlight() {
           font-size: 0.95rem;
           line-height: 1.6;
           margin: 0;
+        }
+
+        /* Carousel — mobile only */
+        .df-expect__carousel {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .df-expect__chevron {
+          flex-shrink: 0;
+          width: 40px;
+          height: 40px;
+          background: #fff;
+          border: 1px solid #e0deda;
+          border-radius: 50%;
+          font-size: 1.4rem;
+          color: #1a1a1a;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background 0.15s, color 0.15s;
+          line-height: 1;
+        }
+
+        .df-expect__chevron:disabled {
+          color: #ccc;
+          border-color: #eee;
+          cursor: default;
+        }
+
+        .df-expect__carousel-card {
+          flex: 1;
+          background: #fff;
+          border-left: 3px solid #1a1a1a;
+          border-radius: 0 10px 10px 0;
+          padding: 1.25rem 1rem;
+          min-height: 160px;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .df-expect__carousel-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 0.6rem;
+        }
+
+        .df-expect__carousel-num {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #1a1a1a;
+          line-height: 1;
+        }
+
+        .df-expect__carousel-title {
+          font-size: 1rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          color: #1a1a1a;
+          margin: 0 0 0.5rem;
+        }
+
+        .df-expect__carousel-desc {
+          font-size: 0.88rem;
+          color: #666;
+          line-height: 1.6;
+          margin: 0 0 0.75rem;
+          flex: 1;
+        }
+
+        .df-expect__carousel-counter {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.72rem;
+          color: #bbb;
+          letter-spacing: 0.08em;
+          align-self: flex-end;
         }
 
         /* ===== GALLERY ===== */
@@ -2589,6 +2712,9 @@ function DiscoveryFlight() {
           .df-instructor__card {
             flex-direction: column;
           }
+
+          .df-instructor__title--desktop { display: none; }
+          .df-instructor__title--mobile  { display: block; }
 
           .df-instructor__team-member {
             display: grid;
