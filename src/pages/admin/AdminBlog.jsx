@@ -95,6 +95,7 @@ export default function AdminBlog() {
   const [blogViewMap, setBlogViewMap] = useState({});
   const [viewsLoading, setViewsLoading] = useState(false);
   const [viewsFetched, setViewsFetched] = useState(false);
+  const [viewsError, setViewsError] = useState(false);
 
   useEffect(() => {
     if (activeTab !== 'posts' || viewsFetched) return;
@@ -111,12 +112,12 @@ export default function AdminBlog() {
       .then((snap) => {
         const map = {};
         snap.docs.forEach((d) => {
-          const p = d.data().page;
-          map[p] = (map[p] || 0) + 1;
+          const path = d.data().page;
+          map[path] = (map[path] || 0) + 1;
         });
         setBlogViewMap(map);
       })
-      .catch(() => {})
+      .catch(() => { setViewsError(true); })
       .finally(() => setViewsLoading(false));
   }, [activeTab, viewsFetched]);
 
@@ -292,7 +293,7 @@ export default function AdminBlog() {
                       <td style={{ padding: '0.75rem 1rem' }}><StatusBadge status={p.status} /></td>
                       <td style={{ padding: '0.75rem 1rem', color: '#6b7280' }}>{formatDate(p.publishedAt)}</td>
                       <td style={{ padding: '0.75rem 1rem', color: '#6b7280', textAlign: 'right', fontFamily: 'monospace', fontSize: '0.8rem' }}>
-                        {viewsLoading ? '—' : (blogViewMap[`/blog/${p.slug || p.id}`] ?? 0).toLocaleString()}
+                        {viewsLoading || viewsError ? '—' : (blogViewMap[`/blog/${p.slug || p.id}`] ?? 0).toLocaleString()}
                       </td>
                       <td style={{ padding: '0.75rem 1rem', whiteSpace: 'nowrap' }}>
                         <Link to={`/admin/blog/${p.id}`} style={{ color: '#2563eb', textDecoration: 'none', marginRight: '1rem', fontWeight: 500 }}>
