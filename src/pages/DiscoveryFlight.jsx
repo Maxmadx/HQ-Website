@@ -1216,22 +1216,23 @@ function DiscoveryFlight() {
         }
 
         .df-label {
-          display: inline-block;
+          display: block;
+          font-family: 'Share Tech Mono', monospace;
           font-size: 0.7rem;
           text-transform: uppercase;
-          letter-spacing: 0.25em;
-          color: #888;
-          font-weight: 400;
+          letter-spacing: 0.2em;
+          color: #999;
           margin-bottom: 0.75rem;
         }
 
         .df-pre-text {
           display: block;
+          font-family: 'Share Tech Mono', monospace;
           font-size: 0.7rem;
           text-transform: uppercase;
-          letter-spacing: 0.25em;
+          letter-spacing: 0.2em;
           color: #999;
-          margin-bottom: 1rem;
+          margin-bottom: 0.75rem;
         }
 
         .df-pre-text--light {
@@ -1390,9 +1391,8 @@ function DiscoveryFlight() {
         }
 
         .df-hero__label {
-          font-family: 'Space Grotesk', sans-serif;
+          font-family: 'Share Tech Mono', monospace;
           font-size: 0.7rem;
-          font-weight: 400;
           letter-spacing: 0.2em;
           text-transform: uppercase;
           color: #999;
