@@ -1785,7 +1785,7 @@ function DiscoveryFlight() {
           align-items: center;
           gap: 1.25rem;
           background: #fff;
-          padding: 1rem 1.25rem;
+          padding: 12px;
           border-radius: 0 8px 8px 0;
           border-left: 4px solid #1a1a1a;
         }
@@ -1824,10 +1824,15 @@ function DiscoveryFlight() {
           display: grid;
           grid-template-columns: 1fr auto;
           column-gap: 2rem;
-          row-gap: 0.2rem;
-          align-items: start;
+          row-gap: 0;
           width: 100%;
           margin-bottom: 0.6rem;
+        }
+
+        .df-instructor__info-top > * {
+          align-self: start;
+          margin: 0;
+          padding: 0;
         }
 
         .df-instructor__stats {
