@@ -706,7 +706,7 @@ function InstructorSection() {
               <h2>
                 <span className="df-text--dark">{t('discovery-instructor', 'heading')}</span>
               </h2>
-              <p>Under Q&apos;s guidance, you&apos;re learning from one of the best teams in the world.</p>
+              <p>{t('discovery-instructor', 'intro')} Under Q&apos;s guidance, you&apos;re learning from one of the best teams in the world.</p>
             </div>
           </Reveal>
 
