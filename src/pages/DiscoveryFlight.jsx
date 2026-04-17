@@ -761,6 +761,7 @@ function WhatToExpect() {
   const { t } = usePageText('discovery');
   const [isMobile, setIsMobile] = useState(false);
   const [current, setCurrent] = useState(0);
+  const swipeStartX = useRef(null);
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 1024px)');
@@ -795,29 +796,38 @@ function WhatToExpect() {
 
         {isMobile ? (
           <div className="df-expect__carousel">
-            <button
-              className="df-expect__chevron"
-              onClick={() => setCurrent(c => c - 1)}
-              disabled={current === 0}
-              aria-label="Previous step"
-            >‹</button>
-
-            <div className="df-expect__carousel-card">
+            <div
+              className="df-expect__carousel-card"
+              onPointerDown={e => { swipeStartX.current = e.clientX; }}
+              onPointerUp={e => {
+                const dx = e.clientX - (swipeStartX.current ?? e.clientX);
+                if (Math.abs(dx) > 40) setCurrent(c => dx < 0 ? Math.min(c + 1, steps.length - 1) : Math.max(c - 1, 0));
+                swipeStartX.current = null;
+              }}
+            >
               <div className="df-expect__carousel-top">
                 <span className="df-expect__carousel-num">{step.num}</span>
                 <span className="df-expect__step-duration">{t('discovery-steps', step.timeKey)}</span>
               </div>
               <h3 className="df-expect__carousel-title">{t('discovery-steps', step.titleKey)}</h3>
               <p className="df-expect__carousel-desc">{t('discovery-steps', step.descKey)}</p>
-              <span className="df-expect__carousel-counter">{current + 1} / {steps.length}</span>
             </div>
 
-            <button
-              className="df-expect__chevron"
-              onClick={() => setCurrent(c => c + 1)}
-              disabled={current === steps.length - 1}
-              aria-label="Next step"
-            >›</button>
+            <div className="df-expect__carousel-nav">
+              <button
+                className="df-expect__chevron"
+                onClick={() => setCurrent(c => c - 1)}
+                disabled={current === 0}
+                aria-label="Previous step"
+              >‹</button>
+              <span className="df-expect__carousel-counter">{current + 1} / {steps.length}</span>
+              <button
+                className="df-expect__chevron"
+                onClick={() => setCurrent(c => c + 1)}
+                disabled={current === steps.length - 1}
+                aria-label="Next step"
+              >›</button>
+            </div>
           </div>
         ) : (
           <div className="df-expect__timeline">
@@ -856,6 +866,60 @@ function DiscoveryGallery() {
     { src: '/assets/images/gallery/carousel/rotating6.jpg', alt: 'Helicopter adventure' },
   ];
 
+  const mobileCarouselRef = useRef(null);
+
+  useEffect(() => {
+    const track = mobileCarouselRef.current;
+    if (!track) return;
+
+    const BASE_SPEED = 30;
+    const DAMPING = 3;
+    const state = { offset: 0, velocity: BASE_SPEED, isDragging: false, lastTime: 0, lastPointerX: 0, setWidth: 0 };
+    let rafId = 0;
+
+    const measure = () => {
+      const children = track.children;
+      const half = children.length / 2;
+      let w = 0;
+      for (let i = 0; i < half; i++) w += children[i].offsetWidth + 12;
+      state.setWidth = w;
+    };
+
+    const tick = (time) => {
+      rafId = requestAnimationFrame(tick);
+      if (!state.lastTime) { state.lastTime = time; return; }
+      if (state.setWidth <= 0) { measure(); state.lastTime = time; return; }
+      const dt = Math.min((time - state.lastTime) / 1000, 0.1);
+      state.lastTime = time;
+      if (!state.isDragging) state.velocity += (BASE_SPEED - state.velocity) * DAMPING * dt;
+      state.offset += state.velocity * dt;
+      if (state.offset >= state.setWidth) state.offset -= state.setWidth;
+      if (state.offset < 0) state.offset += state.setWidth;
+      track.style.transform = `translateX(${-state.offset}px)`;
+    };
+
+    const onPointerDown = (e) => { state.isDragging = true; state.lastPointerX = e.clientX; state.velocity = 0; track.setPointerCapture(e.pointerId); };
+    const onPointerMove = (e) => { if (!state.isDragging) return; const dx = e.clientX - state.lastPointerX; state.lastPointerX = e.clientX; state.offset -= dx; state.velocity = -dx * 60; };
+    const onPointerUp = () => { state.isDragging = false; };
+
+    measure();
+    rafId = requestAnimationFrame(tick);
+    track.addEventListener('pointerdown', onPointerDown);
+    track.addEventListener('pointermove', onPointerMove);
+    track.addEventListener('pointerup', onPointerUp);
+    track.addEventListener('pointercancel', onPointerUp);
+    window.addEventListener('resize', measure);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      track.removeEventListener('pointerdown', onPointerDown);
+      track.removeEventListener('pointermove', onPointerMove);
+      track.removeEventListener('pointerup', onPointerUp);
+      track.removeEventListener('pointercancel', onPointerUp);
+      window.removeEventListener('resize', measure);
+    };
+  }, []);
+
   return (
     <section className="df-gallery">
       <div className="df-gallery__track">
@@ -871,6 +935,16 @@ function DiscoveryGallery() {
             <img src={img.src} alt={img.alt} />
           </motion.div>
         ))}
+      </div>
+
+      <div className="df-gallery__mobile-carousel-wrap">
+        <div className="df-gallery__mobile-carousel" ref={mobileCarouselRef}>
+          {[0, 1].map(set => images.map((img, i) => (
+            <div className="df-gallery__mobile-carousel-item" key={`${set}-${i}`}>
+              <img src={img.src} alt={img.alt} loading="lazy" draggable="false" />
+            </div>
+          )))}
+        </div>
       </div>
     </section>
   );
@@ -2032,43 +2106,23 @@ function DiscoveryFlight() {
         /* Carousel — mobile only */
         .df-expect__carousel {
           display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .df-expect__chevron {
-          flex-shrink: 0;
-          width: 40px;
-          height: 40px;
-          background: #fff;
-          border: 1px solid #e0deda;
-          border-radius: 50%;
-          font-size: 1.4rem;
-          color: #1a1a1a;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: background 0.15s, color 0.15s;
-          line-height: 1;
-        }
-
-        .df-expect__chevron:disabled {
-          color: #ccc;
-          border-color: #eee;
-          cursor: default;
+          flex-direction: column;
+          gap: 14px;
         }
 
         .df-expect__carousel-card {
-          flex: 1;
           background: #fff;
           border-left: 3px solid #1a1a1a;
           border-radius: 0 10px 10px 0;
           padding: 1.25rem 1rem;
-          min-height: 160px;
           display: flex;
           flex-direction: column;
+          touch-action: pan-y;
+          user-select: none;
+          cursor: grab;
         }
+
+        .df-expect__carousel-card:active { cursor: grabbing; }
 
         .df-expect__carousel-top {
           display: flex;
@@ -2097,8 +2151,35 @@ function DiscoveryFlight() {
           font-size: 0.88rem;
           color: #666;
           line-height: 1.6;
-          margin: 0 0 0.75rem;
-          flex: 1;
+          margin: 0;
+        }
+
+        .df-expect__carousel-nav {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 20px;
+        }
+
+        .df-expect__chevron {
+          width: 36px;
+          height: 36px;
+          background: #fff;
+          border: 1px solid #e0deda;
+          border-radius: 50%;
+          font-size: 1.2rem;
+          color: #1a1a1a;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 1;
+        }
+
+        .df-expect__chevron:disabled {
+          color: #ccc;
+          border-color: #eee;
+          cursor: default;
         }
 
         .df-expect__carousel-counter {
@@ -2106,10 +2187,11 @@ function DiscoveryFlight() {
           font-size: 0.72rem;
           color: #bbb;
           letter-spacing: 0.08em;
-          align-self: flex-end;
         }
 
         /* ===== GALLERY ===== */
+        .df-gallery__mobile-carousel-wrap { display: none; }
+
         .df-gallery {
           position: relative;
           width: 100vw;
@@ -2727,6 +2809,43 @@ function DiscoveryFlight() {
           .df-instructor__team-name { grid-area: name; }
           .df-instructor__team-title { grid-area: title; }
           .df-instructor__team-hours { grid-area: hours; align-self: center; }
+
+          /* Gallery — hide desktop track, show mobile carousel */
+          .df-gallery__track { display: none; }
+
+          .df-gallery__mobile-carousel-wrap {
+            display: block;
+            overflow: hidden;
+            mask-image: linear-gradient(to right, transparent 0, black 1.5rem, black calc(100% - 1.5rem), transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0, black 1.5rem, black calc(100% - 1.5rem), transparent 100%);
+          }
+
+          .df-gallery__mobile-carousel {
+            display: flex;
+            gap: 12px;
+            will-change: transform;
+            cursor: grab;
+            touch-action: pan-y;
+            user-select: none;
+            -webkit-user-select: none;
+          }
+
+          .df-gallery__mobile-carousel:active { cursor: grabbing; }
+
+          .df-gallery__mobile-carousel-item {
+            flex: 0 0 72vw;
+            min-width: 0;
+            border-radius: 8px;
+            overflow: hidden;
+          }
+
+          .df-gallery__mobile-carousel-item img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+            pointer-events: none;
+          }
 
           .df-location-faq__container {
             grid-template-columns: 1fr;
