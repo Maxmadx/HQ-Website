@@ -20,6 +20,7 @@ import '../assets/css/components.css';
 
 // Import FooterMinimal component
 import FooterMinimal from '../components/FooterMinimal';
+import { arrivalStyles } from '../components/ArrivalSection';
 
 
 /**
@@ -639,69 +640,117 @@ function FinalPPL() {
         </div>
       </section>
 
-      {/* ========== WHERE & FAQ: Two Column Layout ========== */}
-      <section className="fppl-where-faq" data-cms-section="faqs-ppl">
-        <div className="fppl-where-faq__container">
-          {/* Left Column: Location Highlight (comp-014) */}
-          <div className="fppl-where-faq__left">
+      {/* ========== WHERE & FAQ ========== */}
+      <section className="df-location-faq" data-cms-section="faqs-ppl">
+        <style>{arrivalStyles}</style>
+        <div className="df-location-faq__container">
+          {/* Left: Location */}
+          <div className="df-location-faq__left">
             <Reveal>
-              <div className="fppl-location">
-                <div className="fppl-location__header">
-                  <span className="fppl-label">Visit Us</span>
+              <div className="df-location">
+                <div className="df-location__header">
+                  <span className="df-label">Visit Us</span>
                   <h2>Denham Aerodrome</h2>
                 </div>
-                <div className="fppl-location__map">
-                  <div className="fppl-location__map-placeholder">
-                    <i className="fas fa-map-marked-alt"></i>
-                    <span>Interactive Map</span>
+                <div className="arrival__card">
+                  <div className="arrival__map">
+                    <div className="arrival__map-inner">
+                      <iframe
+                        title="HQ Aviation Denham Aerodrome"
+                        src="https://maps.google.com/maps?q=HQ+Aviation,+Denham+Aerodrome,+UB9+5DF&ll=51.578,0.05&t=&z=9&ie=UTF8&iwloc=&output=embed"
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0 }}
+                        allowFullScreen=""
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="fppl-location__info">
-                  <p className="fppl-location__desc">
-                    Just 20 minutes from Central London, our purpose-built facility has been home to HQ Aviation since 2010.
-                  </p>
-                  <div className="fppl-location__details">
-                    <div className="fppl-location__detail">
-                      <span className="fppl-location__detail-label">Address</span>
-                      <p>HQ Aviation<br />Tilehouse Lane<br />Denham, UB9 5DF</p>
+                  <div className="arrival__info">
+                    <div className="arrival__rule"></div>
+                    <div className="arrival__details">
+                      <div className="arrival__detail">
+                        <span className="arrival__detail-icon"><i className="fas fa-map-marker-alt"></i></span>
+                        <div>
+                          <span className="arrival__detail-label">Address</span>
+                          <p className="arrival__detail-text">Hangar E, Denham Aerodrome<br />Uxbridge, London, UB9 5DF</p>
+                        </div>
+                      </div>
+                      <div className="arrival__detail">
+                        <span className="arrival__detail-icon"><i className="fas fa-phone-alt"></i></span>
+                        <div>
+                          <span className="arrival__detail-label">Operations</span>
+                          <p className="arrival__detail-text"><a href="tel:+441895833373" className="arrival__detail-link">+44 1895 833373</a></p>
+                        </div>
+                      </div>
+                      <div className="arrival__detail">
+                        <span className="arrival__detail-icon"><i className="fas fa-wrench"></i></span>
+                        <div>
+                          <span className="arrival__detail-label">Maintenance</span>
+                          <p className="arrival__detail-text"><a href="tel:+441895832833" className="arrival__detail-link">+44 1895 832833</a></p>
+                        </div>
+                      </div>
+                      <div className="arrival__detail">
+                        <span className="arrival__detail-icon"><i className="fas fa-envelope"></i></span>
+                        <div>
+                          <span className="arrival__detail-label">Email</span>
+                          <p className="arrival__detail-text"><a href="mailto:Operations@HQAviation.com" className="arrival__detail-link">Operations@HQAviation.com</a></p>
+                        </div>
+                      </div>
+                      <div className="arrival__detail">
+                        <span className="arrival__detail-icon"><i className="fas fa-clock"></i></span>
+                        <div>
+                          <span className="arrival__detail-label">Hours</span>
+                          <p className="arrival__detail-text">Monday – Sunday<br />09:00 – 17:00</p>
+                        </div>
+                      </div>
                     </div>
-                    <div className="fppl-location__detail">
-                      <span className="fppl-location__detail-label">Getting Here</span>
-                      <p>5 min from M40 J1<br />20 min from M25 J16<br />On Site Parking</p>
+                    <div className="arrival__rating">
+                      <div className="arrival__rating-stars">
+                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                      </div>
+                      <div className="arrival__rating-text">
+                        <span className="arrival__rating-score">4.9</span>
+                        <span className="arrival__rating-total"> / 5</span>
+                      </div>
                     </div>
+                  </div>
+                  <div className="arrival__actions">
+                    <a href="https://maps.google.com/?q=HQ+Aviation+Denham" target="_blank" rel="noopener noreferrer" className="arrival__cta">Get Directions <span>→</span></a>
                   </div>
                 </div>
               </div>
             </Reveal>
           </div>
 
-          {/* Vertical Divider */}
-          <div className="fppl-where-faq__divider"></div>
+          {/* Divider */}
+          <div className="df-location-faq__divider"></div>
 
-          {/* Right Column: FAQ */}
-          <div className="fppl-where-faq__right">
+          {/* Right: FAQ */}
+          <div className="df-location-faq__right">
             <Reveal>
-              <div className="fppl-faq__header">
-                <span className="fppl-label">Common Questions</span>
+              <div className="df-faq__header">
+                <span className="df-label">Common Questions</span>
                 <h2>FAQ</h2>
               </div>
             </Reveal>
 
-            <div className="fppl-faq__list">
+            <div className="df-faq__list">
               {faqs.map((faq, i) => (
                 <Reveal key={faq.id} delay={i * 0.1}>
                   <div
-                    className={`fppl-faq__item ${openFaq === i ? 'fppl-faq__item--open' : ''}`}
+                    className={`df-faq__item ${openFaq === i ? 'df-faq__item--open' : ''}`}
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   >
-                    <div className="fppl-faq__number">{String(i + 1).padStart(2, '0')}</div>
-                    <div className="fppl-faq__content">
+                    <div className="df-faq__number">{String(i + 1).padStart(2, '0')}</div>
+                    <div className="df-faq__content">
                       <h4>
                         {faq.question}
-                        <span className="fppl-faq__toggle">{openFaq === i ? '−' : '+'}</span>
+                        <span className="df-faq__toggle">{openFaq === i ? '−' : '+'}</span>
                       </h4>
                       <motion.div
-                        className="fppl-faq__answer"
+                        className="df-faq__answer"
                         initial={false}
                         animate={{ height: openFaq === i ? 'auto' : 0, opacity: openFaq === i ? 1 : 0 }}
                         transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
@@ -716,14 +765,13 @@ function FinalPPL() {
           </div>
         </div>
 
-        {/* Action Bar - Buttons at same level */}
+        {/* Action Buttons */}
         <Reveal delay={0.3}>
-          <div className="fppl-where-faq__actions">
-            <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" className="fppl-btn fppl-btn--outline">
-              <i className="fas fa-directions" style={{ marginRight: '0.5rem' }}></i>
+          <div className="df-location-faq__actions">
+            <a href="https://maps.google.com/?q=HQ+Aviation+Denham" target="_blank" rel="noopener noreferrer" className="df-btn df-btn--outline">
               Get Directions
             </a>
-            <a href="/training/faq" className="fppl-btn fppl-btn--outline">View All FAQs</a>
+            <Link to="/training/faq" className="df-btn df-btn--outline">View All FAQs</Link>
           </div>
         </Reveal>
       </section>
@@ -1482,13 +1530,60 @@ function FinalPPL() {
           background: linear-gradient(90deg, transparent, #e0deda, transparent);
         }
 
-        /* ===== WHERE & FAQ TWO-COLUMN ===== */
-        .fppl-where-faq {
-          padding: 5rem 2rem 4rem;
-          background: #faf9f6;
+        /* ===== WHERE & FAQ (df-location-faq) ===== */
+        .df-label {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          white-space: nowrap;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.7rem;
+          text-transform: uppercase;
+          letter-spacing: 0.2em;
+          color: #999;
+          margin-bottom: 0.75rem;
         }
 
-        .fppl-where-faq__container {
+        .df-label::before,
+        .df-label::after {
+          content: '';
+          flex: 1;
+          height: 1px;
+          background: #e0ddd8;
+          min-width: 20px;
+        }
+
+        .df-btn {
+          display: inline-block;
+          padding: 1rem 2rem;
+          font-size: 0.75rem;
+          font-weight: 400;
+          text-decoration: none;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          border: none;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-family: inherit;
+        }
+
+        .df-btn--outline {
+          background: transparent;
+          color: #1a1a1a;
+          border: 2px solid #1a1a1a;
+        }
+
+        .df-btn--outline:hover {
+          background: #1a1a1a;
+          color: #fff;
+        }
+
+        .df-location-faq {
+          padding: 2.5rem 2rem 4rem;
+          background: #fff;
+        }
+
+        .df-location-faq__container {
           max-width: 1100px;
           margin: 0 auto;
           display: grid;
@@ -1497,88 +1592,87 @@ function FinalPPL() {
           align-items: stretch;
         }
 
-        .fppl-where-faq__left,
-        .fppl-where-faq__right {
+        .df-location-faq__left,
+        .df-location-faq__right {
           min-width: 0;
           display: flex;
           flex-direction: column;
         }
 
-        .fppl-where-faq__right .fppl-faq__list {
-          flex: 1;
-        }
-
-        .fppl-where-faq__divider {
+        .df-location-faq__divider {
           width: 1px;
           background: linear-gradient(to bottom, transparent, #e0deda 20%, #e0deda 80%, transparent);
         }
 
-        .fppl-where-faq__actions {
+        .df-location-faq__actions {
           display: grid;
           grid-template-columns: 1fr 1fr;
           align-items: center;
           gap: 3rem;
           max-width: 1100px;
-          margin: 20px auto 0;
-          padding-top: 0;
+          margin: 2rem auto 0;
         }
 
-        .fppl-where-faq__actions .fppl-btn {
+        .df-location-faq__actions .df-btn {
           width: 100%;
           text-align: center;
-          padding: 1rem 1.5rem;
         }
 
-        /* FAQ Header */
-        .fppl-faq__header {
-          margin-bottom: 2rem;
+        .df-location {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
         }
 
-        .fppl-faq__header h2 {
+        .df-location__header {
+          margin-bottom: 1.5rem;
+          text-align: center;
+        }
+
+        .df-location__header h2 {
           font-size: 1.5rem;
           font-weight: 700;
           text-transform: uppercase;
           margin: 0;
         }
 
-        .fppl-btn--small {
-          padding: 0.6rem 1.25rem;
-          font-size: 0.65rem;
-          white-space: nowrap;
+        /* FAQ (df) */
+        .df-faq__header {
+          margin-bottom: 2rem;
+          text-align: center;
         }
 
-        /* FAQ */
-        .fppl-faq__container {
-          max-width: 800px;
-          margin: 0 auto;
+        .df-faq__header h2 {
+          font-size: 1.5rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          margin: 0;
         }
 
-        .fppl-faq__list {
+        .df-faq__list {
           display: flex;
           flex-direction: column;
           gap: 0;
-          border-radius: 0;
         }
 
-        .fppl-faq__item {
+        .df-faq__item {
           display: flex;
           gap: 1.5rem;
           padding: 1.25rem 0;
           border-bottom: 1px solid #e8e6e2;
           cursor: pointer;
           transition: background 0.2s ease;
-          border-radius: 0;
         }
 
-        .fppl-faq__item:hover {
+        .df-faq__item:hover {
           background: rgba(0,0,0,0.01);
         }
 
-        .fppl-faq__item--open {
+        .df-faq__item--open {
           background: rgba(0,0,0,0.02);
         }
 
-        .fppl-faq__number {
+        .df-faq__number {
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.75rem;
           color: #ccc;
@@ -1586,11 +1680,11 @@ function FinalPPL() {
           padding-top: 0.1rem;
         }
 
-        .fppl-faq__content {
+        .df-faq__content {
           flex: 1;
         }
 
-        .fppl-faq__content h4 {
+        .df-faq__content h4 {
           margin: 0;
           font-size: 1rem;
           font-weight: 600;
@@ -1600,132 +1694,39 @@ function FinalPPL() {
           gap: 1rem;
         }
 
-        .fppl-faq__toggle {
+        .df-faq__toggle {
           font-size: 1.25rem;
           font-weight: 300;
           color: #999;
           flex-shrink: 0;
         }
 
-        .fppl-faq__answer {
+        .df-faq__answer {
           overflow: hidden;
         }
 
-        .fppl-faq__answer p {
+        .df-faq__answer p {
           margin: 0.75rem 0 0;
           color: #666;
           line-height: 1.7;
           font-size: 0.95rem;
         }
 
-        .fppl-faq__more {
-          text-align: center;
-          margin-top: auto;
-          padding-top: 1.5rem;
-        }
-
-        /* ===== LOCATION HIGHLIGHT (comp-014) ===== */
-        .fppl-location {
-          display: flex;
-          flex-direction: column;
-          height: 100%;
-        }
-
-        .fppl-location__info {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .fppl-location__header {
-          margin-bottom: 1.5rem;
-        }
-
-        .fppl-location__header h2 {
-          font-size: 1.5rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          margin: 0;
-        }
-
-        .fppl-location__map {
-          background: linear-gradient(135deg, #e8e6e2 0%, #d8d6d2 100%);
-          min-height: 180px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 4px;
-          margin-bottom: 1.5rem;
-          position: relative;
-          overflow: hidden;
-        }
-
-        .fppl-location__map::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background:
-            linear-gradient(90deg, transparent 49.5%, rgba(0,0,0,0.05) 49.5%, rgba(0,0,0,0.05) 50.5%, transparent 50.5%),
-            linear-gradient(0deg, transparent 49.5%, rgba(0,0,0,0.05) 49.5%, rgba(0,0,0,0.05) 50.5%, transparent 50.5%);
-          background-size: 40px 40px;
-        }
-
-        .fppl-location__map-placeholder {
-          text-align: center;
-          color: #888;
-          position: relative;
-          z-index: 1;
-        }
-
-        .fppl-location__map-placeholder i {
-          font-size: 2rem;
-          margin-bottom: 0.5rem;
-          display: block;
-          color: #999;
-        }
-
-        .fppl-location__map-placeholder span {
-          font-size: 0.7rem;
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
-          color: #888;
-        }
-
-        .fppl-location__desc {
-          font-size: 0.9rem;
-          color: #666;
-          line-height: 1.7;
-          margin-bottom: 1.5rem;
-        }
-
-        .fppl-location__details {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 1.5rem;
-          margin-top: auto;
-        }
-
-        .fppl-location__detail {
-          padding: 1rem;
-          background: #faf9f6;
-          border-left: 2px solid #1a1a1a;
-        }
-
-        .fppl-location__detail-label {
-          display: block;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.6rem;
-          letter-spacing: 0.15em;
-          color: #999;
-          text-transform: uppercase;
-          margin-bottom: 0.5rem;
-        }
-
-        .fppl-location__detail p {
-          font-size: 0.85rem;
-          line-height: 1.6;
-          margin: 0;
-          color: #1a1a1a;
+        @media (min-width: 1025px) {
+          .df-faq__header .df-label,
+          .df-location__header .df-label {
+            display: block;
+          }
+          .df-faq__header .df-label::before,
+          .df-faq__header .df-label::after,
+          .df-location__header .df-label::before,
+          .df-location__header .df-label::after {
+            display: none;
+          }
+          .df-faq__header h2,
+          .df-location__header h2 {
+            text-align: center;
+          }
         }
 
         /* ===== PRE-TEXT & GRADIENT TEXT ===== */
@@ -2330,20 +2331,26 @@ function FinalPPL() {
             grid-template-columns: 1fr;
           }
 
-          .fppl-where-faq__container {
+          .df-location-faq__container {
             grid-template-columns: 1fr;
             gap: 2.5rem;
           }
 
-          .fppl-where-faq__divider {
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(to right, transparent, #e0deda 20%, #e0deda 80%, transparent);
+          .df-location-faq__divider {
+            display: none;
           }
 
-          .fppl-where-faq__actions {
+          .df-location-faq__actions {
             grid-template-columns: 1fr;
             gap: 1rem;
+          }
+
+          .df-faq__header h2 {
+            text-align: center;
+          }
+
+          .df-location__header h2 {
+            text-align: center;
           }
 
           .fppl-discovery--compact .fppl-discovery__compact-row {
@@ -2476,18 +2483,8 @@ function FinalPPL() {
             justify-content: center;
           }
 
-          .fppl-faq__item {
-            gap: 0.75rem;
-          }
-
-          .fppl-faq__item--featured {
-            margin: 0;
-            padding: 1.5rem;
-          }
-
-          .fppl-location__details {
-            grid-template-columns: 1fr;
-            gap: 1rem;
+          .df-location-faq__actions {
+            display: none;
           }
 
           .fppl-hero__overlay {
