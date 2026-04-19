@@ -531,7 +531,7 @@ async function handleWebhook(req) {
 
       // Also write misc orders to the misc_marketplace collection
       if (productType === 'misc') {
-        const { itemId, itemName, qty } = pi.metadata;
+        const { itemId, itemName, qty, shippingLine1, shippingLine2, shippingCity, shippingPostcode } = pi.metadata;
         await admin.firestore().collection('misc_marketplace').doc(pi.id).set({
           type: 'order',
           status: 'new',
@@ -544,6 +544,7 @@ async function handleWebhook(req) {
           customerName: customerName || '',
           customerEmail: customerEmail || '',
           customerPhone: customerPhone || '',
+          ...(shippingLine1 ? { shippingLine1, shippingLine2: shippingLine2 || '', shippingCity, shippingPostcode } : {}),
         });
       }
     } catch (dbErr) {
@@ -653,7 +654,7 @@ async function recordBooking(paymentIntentId) {
  * Creates a Stripe PaymentIntent for a misc item purchase.
  * Price is read from Firestore server-side — the client-supplied amount is never trusted.
  */
-async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmail, customerPhone }) {
+async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmail, customerPhone, shippingAddress }) {
   const snap = await admin.firestore().collection('misc_items').doc(itemId).get();
   if (!snap.exists) {
     const err = new Error(`Misc item not found: ${itemId}`);
@@ -685,6 +686,14 @@ async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmai
     throw err;
   }
 
+  if (item.requiresShipping) {
+    if (!shippingAddress?.line1 || !shippingAddress?.city || !shippingAddress?.postcode) {
+      const err = new Error('Delivery address is required for this item');
+      err.statusCode = 400;
+      throw err;
+    }
+  }
+
   const amount = item.price * qtyNum;
 
   const paymentIntent = await getStripe().paymentIntents.create({
@@ -698,6 +707,10 @@ async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmai
       customerName,
       customerEmail,
       customerPhone,
+      shippingLine1: shippingAddress?.line1 || '',
+      shippingLine2: shippingAddress?.line2 || '',
+      shippingCity: shippingAddress?.city || '',
+      shippingPostcode: shippingAddress?.postcode || '',
     },
   });
 
