@@ -211,7 +211,7 @@ app.post('/api/create-london-tour-payment-intent', express.json(), async (req, r
 // POST /api/create-misc-payment-intent
 // Creates a Stripe PaymentIntent for a misc item purchase. Price validated server-side.
 app.post('/api/create-misc-payment-intent', express.json(), async (req, res) => {
-  const { itemId, qty, customerName, customerEmail, customerPhone } = req.body || {};
+  const { itemId, qty, customerName, customerEmail, customerPhone, shippingAddress } = req.body || {};
 
   if (!itemId || !customerName || !customerEmail || !customerPhone) {
     return res.status(400).json({ error: 'Missing required fields' });
@@ -233,6 +233,7 @@ app.post('/api/create-misc-payment-intent', express.json(), async (req, res) => 
       customerName,
       customerEmail,
       customerPhone: sanitisedPhone,
+      shippingAddress,
     });
     res.json({ clientSecret: paymentIntent.client_secret });
   } catch (err) {
