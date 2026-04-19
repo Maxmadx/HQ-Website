@@ -1440,17 +1440,17 @@ function FinalPPL() {
 
         .fppl-intro__instructors {
           display: flex;
-          align-items: center;
+          flex-direction: column;
           gap: 0.5rem;
         }
 
         .fppl-intro__instructor {
-          flex: 1;
-          background: #fff;
           padding: 0.5rem 1rem;
           text-align: center;
           border-left: 3px solid #1a1a1a;
           border-radius: 0 6px 6px 0;
+          border: 1px solid rgba(0,0,0,0.12);
+          border-left: 3px solid #1a1a1a;
         }
 
         .fppl-intro__instructor-name {
@@ -2551,13 +2551,6 @@ function FinalPPL() {
             padding-top: 0.5rem;
           }
 
-          .fppl-intro__instructors {
-            flex-wrap: nowrap;
-          }
-
-          .fppl-intro__instructor {
-            flex: 1;
-          }
 
           .df-location-faq__actions {
             display: none;
