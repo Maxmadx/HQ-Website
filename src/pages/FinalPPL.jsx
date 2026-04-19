@@ -786,9 +786,7 @@ function FinalPPL() {
                       </div>
                     </div>
                   </div>
-                  <div className="arrival__actions">
-                    <a href="https://maps.google.com/?q=HQ+Aviation+Denham" target="_blank" rel="noopener noreferrer" className="arrival__cta">Get Directions <span>→</span></a>
-                  </div>
+
                 </div>
               </div>
             </Reveal>
