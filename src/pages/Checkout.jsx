@@ -6,6 +6,8 @@ import FinalDraftHeader from '../components/FinalDraftHeader';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
+const fmt = (n) => Number(n).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
 const AIRCRAFT_NAMES = {
   r22: 'Robinson R22',
   r44: 'Robinson R44',
@@ -204,7 +206,7 @@ function CheckoutForm({ aircraft, duration, price, wantsVoucher, setWantsVoucher
       {error && <p style={styles.error}>{error}</p>}
 
       <button type="submit" disabled={!stripe || loading} style={loading ? { ...styles.btn, ...styles.btnDisabled } : styles.btn}>
-        {loading ? 'Processing…' : `Pay £${price}`}
+        {loading ? 'Processing…' : `Pay £${fmt(price)}`}
       </button>
 
       <p style={styles.secureNote}>
@@ -215,7 +217,7 @@ function CheckoutForm({ aircraft, duration, price, wantsVoucher, setWantsVoucher
 }
 
 // ─── Misc Payment Form ───────────────────────────────────────────────────────
-function MiscCheckoutForm({ itemId, itemName, qty, price }) {
+function MiscCheckoutForm({ itemId, itemName, qty, price, requiresShipping }) {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -225,6 +227,7 @@ function MiscCheckoutForm({ itemId, itemName, qty, price }) {
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [shippingAddress, setShippingAddress] = useState({ line1: '', line2: '', city: '', postcode: '' });
 
   const total = (Number(price) * Number(qty)).toFixed(2);
 
@@ -245,6 +248,7 @@ function MiscCheckoutForm({ itemId, itemName, qty, price }) {
           customerName: name,
           customerEmail: email,
           customerPhone: phone,
+          ...(requiresShipping ? { shippingAddress } : {}),
         }),
       });
       const data = await res.json();
@@ -292,6 +296,29 @@ function MiscCheckoutForm({ itemId, itemName, qty, price }) {
         <input style={styles.input} type="tel" placeholder="+44 7700 900000" value={phone} onChange={(e) => setPhone(e.target.value)} required />
       </div>
 
+      {requiresShipping && (
+        <>
+          <div style={styles.fieldGroup}>
+            <label style={styles.label}>Address Line 1</label>
+            <input style={styles.input} type="text" placeholder="12 Example Street" value={shippingAddress.line1} onChange={(e) => setShippingAddress((a) => ({ ...a, line1: e.target.value }))} required />
+          </div>
+          <div style={styles.fieldGroup}>
+            <label style={styles.label}>Address Line 2 <span style={{ fontWeight: 400, color: '#9ca3af' }}>(optional)</span></label>
+            <input style={styles.input} type="text" placeholder="Flat 2" value={shippingAddress.line2} onChange={(e) => setShippingAddress((a) => ({ ...a, line2: e.target.value }))} />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div style={styles.fieldGroup}>
+              <label style={styles.label}>City</label>
+              <input style={styles.input} type="text" placeholder="London" value={shippingAddress.city} onChange={(e) => setShippingAddress((a) => ({ ...a, city: e.target.value }))} required />
+            </div>
+            <div style={styles.fieldGroup}>
+              <label style={styles.label}>Postcode</label>
+              <input style={styles.input} type="text" placeholder="SW1A 1AA" value={shippingAddress.postcode} onChange={(e) => setShippingAddress((a) => ({ ...a, postcode: e.target.value }))} required />
+            </div>
+          </div>
+        </>
+      )}
+
       <div style={styles.fieldGroup}>
         <label style={styles.label}>Card Number</label>
         <div style={styles.cardElement}><CardNumberElement options={CARD_FIELD_STYLE} /></div>
@@ -310,7 +337,7 @@ function MiscCheckoutForm({ itemId, itemName, qty, price }) {
       {error && <div style={{ color: '#e74c3c', fontSize: '14px', padding: '10px', background: '#fef2f2', borderRadius: '6px' }}>{error}</div>}
 
       <button type="submit" disabled={!stripe || loading} style={loading ? { ...styles.btn, ...styles.btnDisabled } : styles.btn}>
-        {loading ? 'Processing…' : `Pay £${total}`}
+        {loading ? 'Processing…' : `Pay £${fmt(total)}`}
       </button>
 
       <p style={styles.secureNote}>🔒 Payments are processed securely by Stripe. HQ Aviation never sees your card details.</p>
@@ -329,6 +356,7 @@ export default function Checkout() {
   const itemId = searchParams.get('itemId');
   const itemName = searchParams.get('itemName');
   const qty = searchParams.get('qty') || '1';
+  const requiresShipping = searchParams.get('requiresShipping') === '1';
 
   // Flight params (existing)
   const aircraft = searchParams.get('aircraft');
@@ -422,7 +450,7 @@ export default function Checkout() {
                 <div style={{ ...styles.summaryRow, borderTop: '1px solid #e8e8e8', paddingTop: '16px', marginTop: '8px' }}>
                   <span style={{ ...styles.summaryLabel, fontWeight: 700, color: '#1a1a1a' }}>Total</span>
                   <span style={{ ...styles.summaryValue, fontWeight: 700, fontSize: '1.25rem' }}>
-                    £{(Number(price) * Number(qty)).toFixed(2)}
+                    £{fmt(Number(price) * Number(qty))}
                   </span>
                 </div>
                 <p style={styles.summaryNote}>
@@ -447,7 +475,7 @@ export default function Checkout() {
                 )}
                 <div style={{ ...styles.summaryRow, borderTop: '1px solid #e8e8e8', paddingTop: '16px', marginTop: '8px' }}>
                   <span style={{ ...styles.summaryLabel, fontWeight: 700, color: '#1a1a1a' }}>Total</span>
-                  <span style={{ ...styles.summaryValue, fontWeight: 700, fontSize: '1.25rem' }}>£{price}</span>
+                  <span style={{ ...styles.summaryValue, fontWeight: 700, fontSize: '1.25rem' }}>£{fmt(price)}</span>
                 </div>
                 <p style={styles.summaryNote}>
                   After payment, a member of the HQ Aviation team will contact you to arrange a date and time.
@@ -461,7 +489,7 @@ export default function Checkout() {
             <h2 style={styles.formHeading}>Your Details &amp; Payment</h2>
             <Elements stripe={stripePromise}>
               {isMisc ? (
-                <MiscCheckoutForm itemId={itemId} itemName={itemName} qty={qty} price={price} />
+                <MiscCheckoutForm itemId={itemId} itemName={itemName} qty={qty} price={price} requiresShipping={requiresShipping} />
               ) : (
                 <CheckoutForm
                   aircraft={aircraft}
