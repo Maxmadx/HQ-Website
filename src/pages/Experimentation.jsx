@@ -3093,6 +3093,7 @@ function Experimentation() {
       <HeroSectionFinalTesting
         navHidden={navHidden}
         navManuallyShown={navManuallyShown}
+        navIsStuck={navIsStuck}
         navManuallyClosed={navManuallyClosed}
         onToggleNav={handleBurgerClick}
       />
