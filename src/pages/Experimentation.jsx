@@ -6578,28 +6578,28 @@ function Experimentation() {
           border-top-color: transparent;
         }
 
-        @media (max-width: 768px) {
-          .fd-nav {
-            overflow: hidden;
-            max-height: 300px;
-            transition: max-height 0.6s ease, opacity 0.6s ease, border-top-color 1.2s ease, box-shadow 0.3s ease;
-          }
-          .fd-nav--hidden {
-            max-height: 0;
-            opacity: 0;
-            pointer-events: none;
-          }
+        /* fd-nav collapse — works on all screen sizes (was mobile-only before) */
+        .fd-nav {
+          overflow: hidden;
+          max-height: 300px;
+          transition: max-height 0.6s ease, opacity 0.6s ease, border-top-color 1.2s ease, box-shadow 0.3s ease;
         }
 
-        /* Burger in header top-right — override fixed positioning, fade in/out */
+        .fd-nav--hidden {
+          max-height: 0;
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        /* Burger in header top-right — always visible once header fades in.
+           Header's own opacity animation gates overall visibility. */
         .fd-header-burger.hq-menu-btn {
           position: static;
           top: auto;
           right: auto;
           transform: none;
-          opacity: 0;
-          pointer-events: none;
-          transition: opacity 0.6s ease;
+          opacity: 1;
+          pointer-events: auto;
         }
 
         .fd-header-burger--visible.hq-menu-btn {
