@@ -89,7 +89,7 @@ const ScrollPrompt = () => (
 );
 
 // ─── Header that appears as diagonal disappears ───
-function TestingHeader({ navHidden = false, navManuallyShown = false, onToggleNav = () => {} }) {
+function TestingHeader({ navHidden = false, navManuallyShown = false, navIsStuck = false, navManuallyClosed = false, onToggleNav = () => {} }) {
   const headerRef = useRef(null);
   const menuBtnRef = useRef(null);
   const rafId = useRef(0);
@@ -220,7 +220,7 @@ function TestingHeader({ navHidden = false, navManuallyShown = false, onToggleNa
           </div>
           <div data-nc-container="top-right">
             <button
-              className={`fd-header-burger hq-menu-btn${navHidden ? ' fd-header-burger--visible' : ''}${navManuallyShown ? ' open' : ''}`}
+              className={`fd-header-burger hq-menu-btn${(!navHidden || navManuallyShown) && !navManuallyClosed ? ' open' : ''}`}
               onClick={onToggleNav}
               aria-label="Toggle navigation"
             >
@@ -371,7 +371,7 @@ function ImagePickerGallery() {
 }
 
 // ─── Main component ───
-const HeroSectionFinalTesting = React.memo(({ navHidden, navManuallyShown, onToggleNav }) => {
+const HeroSectionFinalTesting = React.memo(({ navHidden, navManuallyShown, navIsStuck, navManuallyClosed, onToggleNav }) => {
   const pageImages = usePageImages('home');
   const cmsMobileSlides = (pageImages['home-hero-slides-mobile'] ?? SECTION_MAP['home-hero-slides-mobile'].images).map(img => img.url);
   const cmsDesktopSlides = (pageImages['home-hero-slides'] ?? SECTION_MAP['home-hero-slides'].images).map(img => img.url);
@@ -639,7 +639,7 @@ const HeroSectionFinalTesting = React.memo(({ navHidden, navManuallyShown, onTog
   return (
     <>
       <style>{styles}</style>
-      <TestingHeader navHidden={navHidden} navManuallyShown={navManuallyShown} onToggleNav={onToggleNav} />
+      <TestingHeader navHidden={navHidden} navManuallyShown={navManuallyShown} navIsStuck={navIsStuck} navManuallyClosed={navManuallyClosed} onToggleNav={onToggleNav} />
 
       <section className="hsf" ref={heroRef}>
         {/* ── Sticky viewport ── */}
