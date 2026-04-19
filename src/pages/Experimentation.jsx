@@ -6570,19 +6570,14 @@ function Experimentation() {
           border-top: 1px solid #e8e6e2;
           border-bottom: 1px solid #e8e6e2;
           padding: 0;
-          transition: border-top-color 1.2s ease, box-shadow 0.3s ease;
+          overflow: hidden;
+          max-height: 300px;
+          transition: max-height 0.6s ease, opacity 0.6s ease, border-top-color 1.2s ease, box-shadow 0.3s ease;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .fd-nav--compact {
           border-top-color: transparent;
-        }
-
-        /* fd-nav collapse — works on all screen sizes (was mobile-only before) */
-        .fd-nav {
-          overflow: hidden;
-          max-height: 300px;
-          transition: max-height 0.6s ease, opacity 0.6s ease, border-top-color 1.2s ease, box-shadow 0.3s ease;
         }
 
         .fd-nav--hidden {
@@ -6598,11 +6593,6 @@ function Experimentation() {
           top: auto;
           right: auto;
           transform: none;
-          opacity: 1;
-          pointer-events: auto;
-        }
-
-        .fd-header-burger--visible.hq-menu-btn {
           opacity: 1;
           pointer-events: auto;
         }
