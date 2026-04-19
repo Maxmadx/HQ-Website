@@ -1812,25 +1812,13 @@ function FinalPPL() {
 
         /* ===== PRE-TEXT & GRADIENT TEXT ===== */
         .fppl-pre-text {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          white-space: nowrap;
+          display: block;
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.7rem;
           text-transform: uppercase;
           letter-spacing: 0.2em;
           color: #999;
           margin-bottom: 0.75rem;
-        }
-
-        .fppl-pre-text::before,
-        .fppl-pre-text::after {
-          content: '';
-          flex: 1;
-          height: 1px;
-          background: #e0ddd8;
-          min-width: 20px;
         }
 
         .fppl-text--dark { color: #1a1a1a; }
