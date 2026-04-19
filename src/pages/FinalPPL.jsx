@@ -2393,7 +2393,7 @@ function FinalPPL() {
         }
 
         .fppl-visit__note-card {
-          background: #fff;
+          background: #faf9f6;
           border: 1px solid rgba(0,0,0,0.12);
           border-radius: 8px;
           padding: 1.25rem 1.5rem;
