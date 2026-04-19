@@ -714,10 +714,6 @@ function FinalPPL() {
           <div className="df-location-faq__left">
             <Reveal>
               <div className="df-location">
-                <div className="df-location__header">
-                  <span className="df-label">Visit Us</span>
-                  <h2>Denham Aerodrome</h2>
-                </div>
                 <div className="arrival__card">
                   <div className="arrival__map">
                     <div className="arrival__map-inner">
