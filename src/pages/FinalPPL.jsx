@@ -276,6 +276,7 @@ function AnimatedNumber({ value, suffix = '' }) {
 
 function FinalPPL() {
   const heroRef = useRef(null);
+  const visitCarouselRef = useRef(null);
   const [openFaq, setOpenFaq] = useState(null);
   const pageImages = usePageImages('ppl');
   useCmsHighlight();
@@ -288,6 +289,58 @@ function FinalPPL() {
   // Scroll to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, []);
+
+  // Visit gallery: infinite auto-scroll carousel (mobile only)
+  useEffect(() => {
+    const track = visitCarouselRef.current;
+    if (!track) return;
+
+    const BASE_SPEED = 30;
+    const DAMPING = 3;
+    const state = { offset: 0, velocity: BASE_SPEED, isDragging: false, lastTime: 0, lastPointerX: 0, setWidth: 0 };
+    let rafId = 0;
+
+    const measure = () => {
+      const half = track.children.length / 2;
+      let w = 0;
+      for (let i = 0; i < half; i++) w += track.children[i].offsetWidth + 12;
+      state.setWidth = w;
+    };
+
+    const tick = (time) => {
+      rafId = requestAnimationFrame(tick);
+      if (!state.lastTime) { state.lastTime = time; return; }
+      if (state.setWidth <= 0) { measure(); state.lastTime = time; return; }
+      const dt = Math.min((time - state.lastTime) / 1000, 0.1);
+      state.lastTime = time;
+      if (!state.isDragging) state.velocity += (BASE_SPEED - state.velocity) * DAMPING * dt;
+      state.offset += state.velocity * dt;
+      if (state.offset >= state.setWidth) state.offset -= state.setWidth;
+      if (state.offset < 0) state.offset += state.setWidth;
+      track.style.transform = `translateX(${-state.offset}px)`;
+    };
+
+    const onPointerDown = (e) => { state.isDragging = true; state.lastPointerX = e.clientX; state.velocity = 0; track.setPointerCapture(e.pointerId); };
+    const onPointerMove = (e) => { if (!state.isDragging) return; const dx = e.clientX - state.lastPointerX; state.lastPointerX = e.clientX; state.offset -= dx; state.velocity = -dx * 60; };
+    const onPointerUp = () => { state.isDragging = false; };
+
+    measure();
+    rafId = requestAnimationFrame(tick);
+    track.addEventListener('pointerdown', onPointerDown);
+    track.addEventListener('pointermove', onPointerMove);
+    track.addEventListener('pointerup', onPointerUp);
+    track.addEventListener('pointercancel', onPointerUp);
+    window.addEventListener('resize', measure);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      track.removeEventListener('pointerdown', onPointerDown);
+      track.removeEventListener('pointermove', onPointerMove);
+      track.removeEventListener('pointerup', onPointerUp);
+      track.removeEventListener('pointercancel', onPointerUp);
+      window.removeEventListener('resize', measure);
+    };
   }, []);
 
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
@@ -624,6 +677,20 @@ function FinalPPL() {
                       <img src={img.src} alt={img.alt} />
                     </motion.div>
                   ))}
+                </div>
+              </div>
+              <div className="fppl-visit__mobile-carousel-wrap">
+                <div className="fppl-visit__mobile-carousel" ref={visitCarouselRef}>
+                  {[0, 1].map(set => [
+                    { src: '/assets/images/gallery/carousel/rotating1.jpg', alt: 'Helicopter in flight' },
+                    { src: '/assets/images/gallery/carousel/rotating2.jpg', alt: 'Scenic flying' },
+                    { src: '/assets/images/gallery/flying/foggy-evening-flying.jpg', alt: 'Evening flight' },
+                    { src: '/assets/images/gallery/carousel/rotating8.jpg', alt: 'Helicopter adventure' },
+                  ].map((img, i) => (
+                    <div className="fppl-visit__mobile-carousel-item" key={`${set}-${i}`}>
+                      <img src={img.src} alt={img.alt} loading="lazy" draggable="false" />
+                    </div>
+                  )))}
                 </div>
               </div>
             </Reveal>
@@ -2167,6 +2234,11 @@ function FinalPPL() {
         }
 
 
+        /* Mobile gallery carousel — hidden on desktop */
+        .fppl-visit__mobile-carousel-wrap {
+          display: none;
+        }
+
         .fppl-visit__content {
           max-width: 900px;
           margin: 0 auto;
@@ -2485,6 +2557,43 @@ function FinalPPL() {
 
           .df-location-faq__actions {
             display: none;
+          }
+
+          .fppl-visit__gallery {
+            display: none;
+          }
+
+          .fppl-visit__mobile-carousel-wrap {
+            display: block;
+            overflow: hidden;
+            margin: 1rem -1rem 1.5rem;
+            -webkit-mask-image: linear-gradient(to right, transparent 0.5rem, black 1rem, black calc(100% - 1rem), transparent calc(100% - 0.5rem));
+          }
+
+          .fppl-visit__mobile-carousel {
+            display: flex;
+            gap: 12px;
+            will-change: transform;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+          }
+
+          .fppl-visit__mobile-carousel:active {
+            cursor: grabbing;
+          }
+
+          .fppl-visit__mobile-carousel-item {
+            flex: 0 0 65vw;
+            min-width: 0;
+            border-radius: 6px;
+            overflow: hidden;
+          }
+
+          .fppl-visit__mobile-carousel-item img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
           }
 
           .fppl-hero__overlay {
