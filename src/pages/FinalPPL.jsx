@@ -1334,7 +1334,7 @@ function FinalPPL() {
           display: flex;
           flex-wrap: wrap;
           gap: 1rem;
-          background: #fff;
+          background: #faf9f6;
           padding: 1rem;
           border: 1px solid rgba(0,0,0,0.12);
           border-radius: 0 6px 6px 0;
@@ -1457,7 +1457,7 @@ function FinalPPL() {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          background: #fff;
+          background: #faf9f6;
           padding: 0.5rem 1rem;
           border: 1px solid rgba(0,0,0,0.12);
           border-left: 3px solid #1a1a1a;
