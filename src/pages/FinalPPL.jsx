@@ -1653,7 +1653,7 @@ function FinalPPL() {
         }
 
         .df-location-faq {
-          padding: 2.5rem 2rem 4rem;
+          padding: 0 2rem 4rem;
           background: #fff;
         }
 
