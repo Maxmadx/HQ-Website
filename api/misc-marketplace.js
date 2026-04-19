@@ -39,7 +39,7 @@ router.post('/', enquiryLimiter, async (req, res) => {
     });
     return res.json({ ok: true });
   } catch (err) {
-    console.error('[misc-enquiry] error:', err.message);
+    console.error('[misc-enquiry] error:', err);
     return res.status(500).json({ error: 'Failed to submit enquiry' });
   }
 });
