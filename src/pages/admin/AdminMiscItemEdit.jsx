@@ -9,7 +9,11 @@ import { createDoc, updateDocById } from '../../hooks/useFirestore';
 const EMPTY = {
   name: '',
   category: '',
-  priceDisplay: '',
+  priceType: 'poa',
+  price: 0,
+  priceDisplay: 'POA',
+  hasQuantity: false,
+  stock: 1,
   condition: 'new',
   description: '',
   images: [],
@@ -87,11 +91,19 @@ export default function AdminMiscItemEdit() {
     setSaving(true);
     setError('');
     try {
+      const priceDisplay = form.priceType === 'fixed' && form.price > 0
+        ? `£${(form.price / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+        : 'POA';
+      const payload = {
+        ...form,
+        priceDisplay,
+        ...(form.priceType === 'poa' ? { price: 0, hasQuantity: false, stock: 1 } : {}),
+      };
       if (isNew) {
-        const newId = await createDoc('misc_items', form);
+        const newId = await createDoc('misc_items', payload);
         navigate(`/admin/misc/${newId}`);
       } else {
-        await updateDocById('misc_items', id, form);
+        await updateDocById('misc_items', id, payload);
       }
     } catch (err) {
       setError(err.message);
@@ -143,18 +155,80 @@ export default function AdminMiscItemEdit() {
               <label style={labelStyle}>Category</label>
               <input style={fieldStyle} value={form.category} onChange={(e) => set('category', e.target.value)} placeholder="e.g. Apparel, Ground Equipment" />
             </div>
-            <div>
-              <label style={labelStyle}>Price Display</label>
-              <input style={fieldStyle} value={form.priceDisplay} onChange={(e) => set('priceDisplay', e.target.value)} placeholder="e.g. £250 or POA" />
-            </div>
-            <div>
-              <label style={labelStyle}>Condition</label>
-              <select style={fieldStyle} value={form.condition} onChange={(e) => set('condition', e.target.value)}>
-                <option value="new">New</option>
-                <option value="used">Used</option>
-              </select>
-            </div>
           </div>
+
+          {/* Pricing */}
+          <div>
+            <label style={labelStyle}>Pricing</label>
+            <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '0.75rem' }}>
+              {['poa', 'fixed'].map((pt) => (
+                <label key={pt} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', fontSize: '0.875rem', color: '#374151' }}>
+                  <input
+                    type="radio"
+                    name="priceType"
+                    value={pt}
+                    checked={form.priceType === pt}
+                    onChange={() => set('priceType', pt)}
+                  />
+                  {pt === 'poa' ? 'Price on Application' : 'Fixed Price'}
+                </label>
+              ))}
+            </div>
+            {form.priceType === 'fixed' && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontSize: '0.9rem', color: '#374151', fontWeight: 600 }}>£</span>
+                <input
+                  style={{ ...fieldStyle, width: '140px' }}
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                  value={form.price > 0 ? (form.price / 100).toFixed(2) : ''}
+                  onChange={(e) => set('price', Math.round(parseFloat(e.target.value || 0) * 100))}
+                />
+                {form.price > 0 && (
+                  <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>
+                    → displays as £{(form.price / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label style={labelStyle}>Condition</label>
+            <select style={{ ...fieldStyle, width: '160px' }} value={form.condition} onChange={(e) => set('condition', e.target.value)}>
+              <option value="new">New</option>
+              <option value="used">Used</option>
+            </select>
+          </div>
+
+          {form.priceType === 'fixed' && (
+            <div>
+              <label style={labelStyle}>Quantity</label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: '#374151', marginBottom: '0.5rem' }}>
+                <input
+                  type="checkbox"
+                  checked={form.hasQuantity}
+                  onChange={(e) => set('hasQuantity', e.target.checked)}
+                />
+                Allow quantity selection on product page
+              </label>
+              {form.hasQuantity && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <label style={{ ...labelStyle, margin: 0, textTransform: 'none', letterSpacing: 0, fontSize: '0.8rem' }}>Stock available:</label>
+                  <input
+                    style={{ ...fieldStyle, width: '80px' }}
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={form.stock}
+                    onChange={(e) => set('stock', Math.max(1, parseInt(e.target.value || 1, 10)))}
+                  />
+                </div>
+              )}
+            </div>
+          )}
 
           <div>
             <label style={labelStyle}>Description</label>
