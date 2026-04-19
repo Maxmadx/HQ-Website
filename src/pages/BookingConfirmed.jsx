@@ -15,6 +15,9 @@ export default function BookingConfirmed() {
   const duration = searchParams.get('duration');
   const price = searchParams.get('price');
   const name = searchParams.get('name');
+  const type = searchParams.get('type');
+  const itemName = searchParams.get('itemName');
+  const isMisc = type === 'misc';
 
   const aircraftName = AIRCRAFT_NAMES[aircraft] || aircraft || 'Discovery Flight';
 
@@ -25,27 +28,41 @@ export default function BookingConfirmed() {
         {/* Success mark */}
         <div style={styles.checkmark}>✓</div>
 
-        <h1 style={styles.heading}>Booking Confirmed</h1>
+        <h1 style={styles.heading}>{isMisc ? 'Purchase Confirmed' : 'Booking Confirmed'}</h1>
         <p style={styles.subheading}>
-          {name ? `Thank you, ${name}.` : 'Thank you.'} Your Discovery Flight has been booked.
+          {name ? `Thank you, ${name}.` : 'Thank you.'}{' '}
+          {isMisc
+            ? 'Your order has been placed. The HQ team will be in touch shortly.'
+            : 'Your Discovery Flight has been booked.'}
         </p>
 
         {/* Summary card */}
         <div style={styles.card}>
           <h2 style={styles.cardHeading}>Booking Summary</h2>
 
-          <div style={styles.row}>
-            <span style={styles.label}>Aircraft</span>
-            <span style={styles.value}>{aircraftName}</span>
-          </div>
-          <div style={styles.row}>
-            <span style={styles.label}>Duration</span>
-            <span style={styles.value}>{duration} minutes</span>
-          </div>
-          <div style={styles.row}>
-            <span style={styles.label}>Amount Paid</span>
-            <span style={styles.value}>£{price}</span>
-          </div>
+          {isMisc ? (
+            itemName && (
+              <div style={styles.row}>
+                <span style={styles.label}>Item</span>
+                <span style={styles.value}>{itemName}</span>
+              </div>
+            )
+          ) : (
+            <>
+              <div style={styles.row}>
+                <span style={styles.label}>Aircraft</span>
+                <span style={styles.value}>{aircraftName}</span>
+              </div>
+              <div style={styles.row}>
+                <span style={styles.label}>Duration</span>
+                <span style={styles.value}>{duration} minutes</span>
+              </div>
+              <div style={styles.row}>
+                <span style={styles.label}>Amount Paid</span>
+                <span style={styles.value}>£{price}</span>
+              </div>
+            </>
+          )}
           {ref && (
             <div style={{ ...styles.row, borderTop: '1px solid #f0f0f0', marginTop: '12px', paddingTop: '12px' }}>
               <span style={{ ...styles.label, fontSize: '12px', color: '#bbb' }}>Booking Reference</span>
