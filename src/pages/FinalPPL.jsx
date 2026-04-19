@@ -1426,7 +1426,7 @@ function FinalPPL() {
           flex-direction: column;
           align-items: stretch;
           gap: 0.5rem;
-          padding: 0.75rem 1.5rem;
+          padding: 0.75rem 0;
         }
 
         .fppl-intro__team-label {
@@ -1445,9 +1445,11 @@ function FinalPPL() {
         }
 
         .fppl-intro__instructor {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
           background: #fff;
           padding: 0.5rem 1rem;
-          text-align: center;
           border: 1px solid rgba(0,0,0,0.12);
           border-left: 3px solid #1a1a1a;
           border-radius: 0 6px 6px 0;
