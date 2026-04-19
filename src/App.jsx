@@ -62,10 +62,17 @@ import Rebuilds from './pages/Rebuilds';
 import HeroSectionTest from './pages/HeroSectionTest';
 import FlyingVariations from './pages/FlyingVariations';
 import NightRating from './pages/NightRating';
+import CPL from './pages/CPL';
+import AdvancedTraining from './pages/AdvancedTraining';
+import SuperYachtOps from './pages/SuperYachtOps';
+import PilotProvisioning from './pages/PilotProvisioning';
+import AircraftConsulting from './pages/AircraftConsulting';
 import HeroSectionFinal from './pages/HeroSectionFinal';
 import HeroSectionFinalTesting from './pages/HeroSectionFinalTesting';
+import TestingHeroSection from './pages/TestingHeroSection';
 import AboutUsVariations from './pages/AboutUsVariations';
 import Misc from './pages/Misc';
+import MiscItemDetail from './pages/MiscItemDetail';
 import PartSales from './pages/PartSales';
 import AwardVariations from './pages/AwardVariations';
 import MobileSecondSection from './pages/MobileSecondSection';
@@ -74,6 +81,8 @@ import Wireframes from './pages/Wireframes';
 import AccordionVariations from './pages/AccordionVariations';
 import Checkout from './pages/Checkout';
 import BookingConfirmed from './pages/BookingConfirmed';
+import LondonTourCheckout from './pages/LondonTourCheckout';
+import LondonTourConfirmed from './pages/LondonTourConfirmed';
 import AdminRoute from './components/admin/AdminRoute';
 import AdminLogin from './pages/admin/AdminLogin';
 import { EditModeProvider } from './context/EditModeContext';
@@ -84,9 +93,11 @@ import AdminListings from './pages/admin/AdminListings';
 import AdminListingEdit from './pages/admin/AdminListingEdit';
 import AdminMiscItems from './pages/admin/AdminMiscItems';
 import AdminMiscItemEdit from './pages/admin/AdminMiscItemEdit';
+import AdminMiscMarketplace from './pages/admin/AdminMiscMarketplace';
 import AdminBlog from './pages/admin/AdminBlog';
 import AdminBlogEdit from './pages/admin/AdminBlogEdit';
 import AdminPricing from './pages/admin/AdminPricing';
+import AdminBookings from './pages/admin/AdminBookings';
 import AdminLeads from './pages/admin/AdminLeads';
 import AdminAnalytics from './pages/admin/AdminAnalytics';
 import AdminWallOfCool from './pages/admin/AdminWallOfCool';
@@ -125,6 +136,7 @@ function App() {
         <Route path="/hero-section-test" element={<HeroSectionTest />} />
         <Route path="/hero-section-final" element={<HeroSectionFinal />} />
         <Route path="/hero-section-final-testing" element={<HeroSectionFinalTesting />} />
+        <Route path="/testing-hero-section" element={<TestingHeroSection />} />
         <Route path="/award-variations" element={<AwardVariations />} />
         <Route path="/mobile-second-section" element={<MobileSecondSection />} />
         <Route path="/sfh-variations" element={<SFHVariations />} />
@@ -156,6 +168,8 @@ function App() {
         <Route path="/training/trial-lessons" element={<DiscoveryFlight />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/booking-confirmed" element={<BookingConfirmed />} />
+        <Route path="/london-tour-checkout" element={<LondonTourCheckout />} />
+        <Route path="/london-tour-confirmed" element={<LondonTourConfirmed />} />
         <Route path="/sales/new" element={<Sales />} />
         <Route path="/sales/sliding-gallery-variations" element={<SlidingGalleryVariations />} />
         <Route path="/sales/pre-owned" element={<UsedSales />} />
@@ -165,6 +179,7 @@ function App() {
         <Route path="/sales/pre-owned/:id" element={<UsedAircraftDetail />} />
         <Route path="/self-fly-hire" element={<SelfFlyHire />} />
         <Route path="/misc" element={<Misc />} />
+        <Route path="/misc/:id" element={<MiscItemDetail />} />
         <Route path="/parts" element={<PartSales />} />
         <Route path="/maintenance" element={<FinalMaintenance />} />
         <Route path="/expeditions" element={<FinalExpeditions />} />
@@ -198,14 +213,22 @@ function App() {
         <Route path="/admin/listings/:id" element={<AdminRoute><AdminListingEdit /></AdminRoute>} />
         <Route path="/admin/misc" element={<AdminRoute><AdminMiscItems /></AdminRoute>} />
         <Route path="/admin/misc/:id" element={<AdminRoute><AdminMiscItemEdit /></AdminRoute>} />
+        <Route path="/admin/misc-marketplace" element={<AdminRoute><AdminMiscMarketplace /></AdminRoute>} />
         <Route path="/admin/blog" element={<AdminRoute><AdminBlog /></AdminRoute>} />
         <Route path="/admin/blog/:id" element={<AdminRoute><AdminBlogEdit /></AdminRoute>} />
         <Route path="/admin/pricing" element={<AdminRoute><AdminPricing /></AdminRoute>} />
+        <Route path="/admin/bookings" element={<AdminRoute><AdminBookings /></AdminRoute>} />
         <Route path="/admin/leads" element={<AdminRoute><AdminLeads /></AdminRoute>} />
         <Route path="/admin/analytics" element={<AdminRoute><AdminAnalytics /></AdminRoute>} />
         <Route path="/admin/wall-of-cool" element={<AdminRoute><AdminWallOfCool /></AdminRoute>} />
         <Route path="/admin/reviews" element={<AdminRoute><AdminReviews /></AdminRoute>} />
         <Route path="/admin/faqs" element={<AdminRoute><AdminFaqs /></AdminRoute>} />
+
+        <Route path="/training/commercial" element={<CPL />} />
+        <Route path="/training/advanced" element={<AdvancedTraining />} />
+        <Route path="/superyacht-ops" element={<SuperYachtOps />} />
+        <Route path="/pilot-provisioning" element={<PilotProvisioning />} />
+        <Route path="/aircraft-consulting" element={<AircraftConsulting />} />
 
         <Route path="/" element={<Experimentation />} />
         <Route element={<Layout />}>

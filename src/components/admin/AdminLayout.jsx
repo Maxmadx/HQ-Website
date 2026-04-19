@@ -6,8 +6,10 @@ import { auth, db } from '../../lib/firebase';
 
 const NAV_ITEMS = [
   { to: '/admin', icon: '📊', label: 'Dashboard' },
+  { to: '/admin/bookings', icon: '🎟️', label: 'Bookings' },
   { to: '/admin/listings', icon: '✈️', label: 'Listings' },
   { to: '/admin/misc', icon: '🛒', label: 'Misc Items' },
+  { to: '/admin/misc-marketplace', icon: '🛍️', label: 'Marketplace' },
   { to: '/admin/images', icon: '🖼️', label: 'Images' },
   { to: '/admin/text', icon: '✍️', label: 'Text' },
   { to: '/admin/blog', icon: '📝', label: 'Blog' },
@@ -22,10 +24,24 @@ const NAV_ITEMS = [
 export default function AdminLayout({ children }) {
   const navigate = useNavigate();
   const [newLeadCount, setNewLeadCount] = useState(0);
+  const [newBookingCount, setNewBookingCount] = useState(0);
+  const [newMarketplaceCount, setNewMarketplaceCount] = useState(0);
 
   useEffect(() => {
     const q = query(collection(db, 'leads'), where('status', '==', 'new'));
     const unsub = onSnapshot(q, (snap) => setNewLeadCount(snap.size), () => {});
+    return unsub;
+  }, []);
+
+  useEffect(() => {
+    const q = query(collection(db, 'bookings'), where('status', '==', 'new'));
+    const unsub = onSnapshot(q, (snap) => setNewBookingCount(snap.size), () => {});
+    return unsub;
+  }, []);
+
+  useEffect(() => {
+    const q = query(collection(db, 'misc_marketplace'), where('status', '==', 'new'));
+    const unsub = onSnapshot(q, (snap) => setNewMarketplaceCount(snap.size), () => {});
     return unsub;
   }, []);
 
@@ -68,6 +84,24 @@ export default function AdminLayout({ children }) {
                   minWidth: '18px', textAlign: 'center', lineHeight: '18px',
                 }}>
                   {newLeadCount > 99 ? '99+' : newLeadCount}
+                </span>
+              )}
+              {item.to === '/admin/bookings' && newBookingCount > 0 && (
+                <span style={{
+                  background: '#ef4444', color: '#fff', borderRadius: '10px',
+                  fontSize: '0.65rem', fontWeight: 700, padding: '1px 6px',
+                  minWidth: '18px', textAlign: 'center', lineHeight: '18px',
+                }}>
+                  {newBookingCount > 99 ? '99+' : newBookingCount}
+                </span>
+              )}
+              {item.to === '/admin/misc-marketplace' && newMarketplaceCount > 0 && (
+                <span style={{
+                  background: '#ef4444', color: '#fff', borderRadius: '10px',
+                  fontSize: '0.65rem', fontWeight: 700, padding: '1px 6px',
+                  minWidth: '18px', textAlign: 'center', lineHeight: '18px',
+                }}>
+                  {newMarketplaceCount > 99 ? '99+' : newMarketplaceCount}
                 </span>
               )}
             </NavLink>
