@@ -505,7 +505,6 @@ function FinalPPL() {
                           <span className="fppl-intro__stat-value"><AnimatedNumber value="18000" />+</span>
                           <span className="fppl-intro__stat-label">Flight Hours</span>
                         </div>
-                        <div className="fppl-intro__divider" />
                         <div className="fppl-intro__q-stat">
                           <span className="fppl-intro__stat-value"><AnimatedNumber value="35" />+</span>
                           <span className="fppl-intro__stat-label">Years Flying</span>
@@ -535,7 +534,6 @@ function FinalPPL() {
                           <span className="fppl-intro__stat-value"><AnimatedNumber value="8500" />+</span>
                           <span className="fppl-intro__stat-label">Flight Hours</span>
                         </div>
-                        <div className="fppl-intro__divider" />
                         <div className="fppl-intro__q-stat">
                           <span className="fppl-intro__stat-value"><AnimatedNumber value="15" />+</span>
                           <span className="fppl-intro__stat-label">Years Teaching</span>
