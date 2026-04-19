@@ -2512,7 +2512,11 @@ function FinalPPL() {
           }
 
           .fppl-intro {
-            padding: 3rem 1rem;
+            padding: 3rem 1rem 1.5rem;
+          }
+
+          .fppl-ground {
+            padding-top: 2rem;
           }
 
           .fppl-intro__network {
