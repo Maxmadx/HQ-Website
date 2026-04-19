@@ -1427,7 +1427,6 @@ function FinalPPL() {
           align-items: center;
           gap: 0.5rem;
           padding: 0.75rem 1.5rem;
-          background: #faf9f6;
         }
 
         .fppl-intro__team-label {
@@ -1445,12 +1444,12 @@ function FinalPPL() {
         }
 
         .fppl-intro__instructor {
+          background: #fff;
           padding: 0.5rem 1rem;
           text-align: center;
-          border-left: 3px solid #1a1a1a;
-          border-radius: 0 6px 6px 0;
           border: 1px solid rgba(0,0,0,0.12);
           border-left: 3px solid #1a1a1a;
+          border-radius: 0 6px 6px 0;
         }
 
         .fppl-intro__instructor-name {
