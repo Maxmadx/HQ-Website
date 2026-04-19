@@ -14,6 +14,7 @@ const EMPTY = {
   priceDisplay: 'POA',
   hasQuantity: false,
   stock: 1,
+  requiresShipping: false,
   condition: 'new',
   description: '',
   images: [],
@@ -97,7 +98,7 @@ export default function AdminMiscItemEdit() {
       const payload = {
         ...form,
         priceDisplay,
-        ...(form.priceType === 'poa' ? { price: 0, hasQuantity: false, stock: 1 } : {}),
+        ...(form.priceType === 'poa' ? { price: 0, hasQuantity: false, stock: 1, requiresShipping: false } : {}),
       };
       if (isNew) {
         const newId = await createDoc('misc_items', payload);
@@ -204,29 +205,42 @@ export default function AdminMiscItemEdit() {
           </div>
 
           {form.priceType === 'fixed' && (
-            <div>
-              <label style={labelStyle}>Quantity</label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: '#374151', marginBottom: '0.5rem' }}>
-                <input
-                  type="checkbox"
-                  checked={form.hasQuantity}
-                  onChange={(e) => set('hasQuantity', e.target.checked)}
-                />
-                Allow quantity selection on product page
-              </label>
-              {form.hasQuantity && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <label style={{ ...labelStyle, margin: 0, textTransform: 'none', letterSpacing: 0, fontSize: '0.8rem' }}>Stock available:</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <div>
+                <label style={labelStyle}>Quantity</label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: '#374151', marginBottom: '0.5rem' }}>
                   <input
-                    style={{ ...fieldStyle, width: '80px' }}
-                    type="number"
-                    min="1"
-                    step="1"
-                    value={form.stock}
-                    onChange={(e) => set('stock', Math.max(1, parseInt(e.target.value || 1, 10)))}
+                    type="checkbox"
+                    checked={form.hasQuantity}
+                    onChange={(e) => set('hasQuantity', e.target.checked)}
                   />
-                </div>
-              )}
+                  Allow quantity selection on product page
+                </label>
+                {form.hasQuantity && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <label style={{ ...labelStyle, margin: 0, textTransform: 'none', letterSpacing: 0, fontSize: '0.8rem' }}>Stock available:</label>
+                    <input
+                      style={{ ...fieldStyle, width: '80px' }}
+                      type="number"
+                      min="1"
+                      step="1"
+                      value={form.stock}
+                      onChange={(e) => set('stock', Math.max(1, parseInt(e.target.value || 1, 10)))}
+                    />
+                  </div>
+                )}
+              </div>
+              <div>
+                <label style={labelStyle}>Shipping</label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: '#374151' }}>
+                  <input
+                    type="checkbox"
+                    checked={form.requiresShipping}
+                    onChange={(e) => set('requiresShipping', e.target.checked)}
+                  />
+                  Requires delivery address at checkout
+                </label>
+              </div>
             </div>
           )}
 
