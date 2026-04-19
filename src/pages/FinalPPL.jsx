@@ -2405,15 +2405,36 @@ function FinalPPL() {
             grid-template-columns: 1fr;
           }
 
-          .fppl-intro__q-card {
-            flex-direction: column;
-            gap: 0.75rem;
+          /* Grid replaces flex on the card so stats can occupy their own
+             full-width row below the photo+name+title block.
+             Uses higher-specificity selector to beat the base
+             .fppl-intro__leads .fppl-intro__q-card { display: flex } rule. */
+          .fppl-intro__leads .fppl-intro__q-card {
+            display: grid;
+            height: auto;
+            grid-template-areas:
+              "photo name"
+              "photo title"
+              "stats stats"
+              "bio   bio";
+            grid-template-columns: 72px 1fr;
+            column-gap: 0.875rem;
+            row-gap: 0.2rem;
           }
 
+          /* Both wrappers become transparent so their children are
+             direct grid items placed by grid-area below. */
           .fppl-intro__q-top {
-            display: flex;
-            gap: 0.875rem;
-            align-items: flex-start;
+            display: contents;
+          }
+
+          .fppl-intro__q-info {
+            display: contents;
+          }
+
+          .fppl-intro__q-image {
+            grid-area: photo;
+            align-self: start;
           }
 
           .fppl-intro__q-image img {
@@ -2422,8 +2443,28 @@ function FinalPPL() {
             object-position: top center;
           }
 
+          .fppl-intro__q-card h3 {
+            grid-area: name;
+            align-self: end;
+            margin-bottom: 0;
+          }
+
+          .fppl-intro__q-title {
+            grid-area: title;
+            align-self: start;
+            margin-bottom: 0;
+          }
+
+          .fppl-intro__q-stats {
+            grid-area: stats;
+            margin-bottom: 0;
+            padding-top: 0.5rem;
+          }
+
           .fppl-intro__q-bio-row {
+            grid-area: bio;
             flex-basis: auto;
+            padding-top: 0.5rem;
           }
 
           .fppl-intro__instructors {
