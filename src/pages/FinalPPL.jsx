@@ -490,7 +490,6 @@ function FinalPPL() {
           </Reveal>
 
           <div className="fppl-intro__network" data-cms-section="ppl-instructors">
-            <span className="fppl-intro__team-label">Our Instructor Team</span>
             <div className="fppl-intro__leads">
               <Reveal delay={0.2}>
                 <div className="fppl-intro__q-card">
@@ -694,11 +693,13 @@ function FinalPPL() {
             </Reveal>
 
             <Reveal delay={0.15}>
-              <div className="fppl-visit__note-wrap">
-                <span className="fppl-visit__note-title">If You Love Helicopters</span>
-                <p className="fppl-visit__note">
-                  No appointment needed · Coffee always on · Pilots happy to chat · Extensive Fleet
-                </p>
+              <div className="fppl-visit__note-card">
+                <div className="fppl-visit__note-wrap">
+                  <span className="fppl-visit__note-title">If You Love Helicopters</span>
+                  <p className="fppl-visit__note">
+                    No appointment needed · Coffee always on · Pilots happy to chat · Extensive Fleet
+                  </p>
+                </div>
               </div>
             </Reveal>
           </div>
@@ -2360,6 +2361,13 @@ function FinalPPL() {
           align-items: center;
           gap: 2rem;
           margin-bottom: 1.5rem;
+        }
+
+        .fppl-visit__note-card {
+          background: #fff;
+          border: 1px solid rgba(0,0,0,0.12);
+          border-radius: 8px;
+          padding: 1.25rem 1.5rem;
         }
 
         .fppl-visit__note-wrap {
