@@ -2401,6 +2401,10 @@ function FinalPPL() {
             grid-template-columns: 1fr;
           }
 
+          .fppl-intro {
+            padding: 3rem 1rem;
+          }
+
           .fppl-intro__leads {
             grid-template-columns: 1fr;
           }
