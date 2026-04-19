@@ -1,48 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCollection } from '../hooks/useFirestore';
+import FinalDraftHeader from '../components/FinalDraftHeader';
 import FooterMinimal from '../components/FooterMinimal';
-
-function MiscNav() {
-  return (
-    <header style={{
-      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-      background: '#1a1a1a', padding: '0 2rem', height: '60px',
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      borderBottom: '1px solid rgba(255,255,255,0.08)',
-    }}>
-      <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#fff', letterSpacing: '-0.02em' }}>
-          HQ Aviation
-        </span>
-      </Link>
-      <nav style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-        {[
-          { to: '/sales', label: 'Aircraft' },
-          { to: '/training', label: 'Training' },
-          { to: '/services', label: 'Services' },
-          { to: '/misc', label: 'Miscellaneous' },
-          { to: '/contact', label: 'Contact' },
-        ].map(({ to, label }) => (
-          <Link
-            key={to}
-            to={to}
-            style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: '0.7rem', fontWeight: 600,
-              textTransform: 'uppercase', letterSpacing: '0.08em',
-              color: to === '/misc' ? '#fff' : '#9ca3af',
-              textDecoration: 'none',
-              transition: 'color 0.15s ease',
-            }}
-          >
-            {label}
-          </Link>
-        ))}
-      </nav>
-    </header>
-  );
-}
 
 const CSS = `
   *, *::before, *::after { box-sizing: border-box; }
@@ -275,7 +235,7 @@ export default function Misc() {
   return (
     <>
       <style>{CSS}</style>
-      <MiscNav />
+      <FinalDraftHeader />
       <main>
         <section className="misc-hero">
           <div className="misc-container">
@@ -338,7 +298,7 @@ export default function Misc() {
                               </span>
                               <span className="misc-card__price">{item.priceDisplay || 'POA'}</span>
                             </div>
-                            <Link to="/contact" className="misc-card__enquire">Enquire</Link>
+                            <Link to={`/misc/${item.id}`} className="misc-card__enquire">View Details</Link>
                           </div>
                         </div>
                       );
