@@ -2628,6 +2628,10 @@ function FinalPPL() {
             order: -1;
           }
 
+          .df-location-faq {
+            padding-top: 2.5rem;
+          }
+
           .fppl-pre-text {
             display: flex;
             align-items: center;
