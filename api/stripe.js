@@ -535,7 +535,7 @@ async function handleWebhook(req) {
           amount: pi.amount,
           itemId: itemId || '',
           itemName: itemName || '',
-          qty: Number(qty) || 1,
+          qty: Number(qty),
           customerName: customerName || '',
           customerEmail: customerEmail || '',
           customerPhone: customerPhone || '',
@@ -667,7 +667,7 @@ async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmai
     throw err;
   }
   if (item.hasQuantity) {
-    if (qtyNum > (item.stock || 1)) {
+    if (qtyNum > item.stock) {
       const err = new Error(`Quantity exceeds available stock (${item.stock})`);
       err.statusCode = 400;
       throw err;
