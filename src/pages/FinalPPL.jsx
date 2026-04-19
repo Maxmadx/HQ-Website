@@ -2483,8 +2483,17 @@ function FinalPPL() {
             padding: 3rem 1rem;
           }
 
+          .fppl-intro__network {
+            gap: 12px;
+          }
+
           .fppl-intro__leads {
             grid-template-columns: 1fr;
+            gap: 12px;
+          }
+
+          .fppl-intro__instructors {
+            gap: 12px;
           }
 
           /* Grid replaces flex on the card so image spans the full height
