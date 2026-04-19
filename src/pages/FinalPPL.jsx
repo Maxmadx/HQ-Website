@@ -708,6 +708,9 @@ function FinalPPL() {
         </div>
       </section>
 
+      {/* ========== WHERE & FAQ + DISCOVERY (swapped on mobile) ========== */}
+      <div className="fppl__faq-discovery-wrap">
+
       {/* ========== WHERE & FAQ ========== */}
       <section className="df-location-faq" data-cms-section="faqs-ppl">
         <style>{arrivalStyles}</style>
@@ -890,6 +893,8 @@ function FinalPPL() {
           </div>
         </div>
       </section>
+
+      </div>{/* end fppl__faq-discovery-wrap */}
 
       {/* ========== FOOTER ========== */}
       <FooterMinimal />
@@ -2264,6 +2269,11 @@ function FinalPPL() {
         }
 
 
+        /* FAQ/Discovery wrapper — transparent on desktop */
+        .fppl__faq-discovery-wrap {
+          display: contents;
+        }
+
         /* Mobile gallery carousel — hidden on desktop */
         .fppl-visit__mobile-carousel-wrap {
           display: none;
@@ -2611,6 +2621,15 @@ function FinalPPL() {
 
           .fppl-visit__header {
             margin-bottom: 0.875rem;
+          }
+
+          .fppl__faq-discovery-wrap {
+            display: flex;
+            flex-direction: column;
+          }
+
+          #discovery {
+            order: -1;
           }
 
           .fppl-pre-text {
