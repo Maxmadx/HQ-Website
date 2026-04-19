@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { Elements, CardNumberElement, CardExpiryElement, CardCvcElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import FinalDraftHeader from '../components/FinalDraftHeader';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -11,7 +12,7 @@ const AIRCRAFT_NAMES = {
   r66: 'Robinson R66',
 };
 
-const CARD_ELEMENT_OPTIONS = {
+const CARD_FIELD_STYLE = {
   style: {
     base: {
       fontSize: '16px',
@@ -24,7 +25,7 @@ const CARD_ELEMENT_OPTIONS = {
 };
 
 // ─── Payment Form ────────────────────────────────────────────────────────────
-function CheckoutForm({ aircraft, duration, price }) {
+function CheckoutForm({ aircraft, duration, price, wantsVoucher, setWantsVoucher, voucherLocation, setVoucherLocation, voucherMessage, setVoucherMessage }) {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -54,6 +55,9 @@ function CheckoutForm({ aircraft, duration, price }) {
           customerName: name,
           customerEmail: email,
           customerPhone: phone,
+          wantsVoucher,
+          voucherLocation: wantsVoucher ? voucherLocation : '',
+          voucherMessage: wantsVoucher ? voucherMessage : '',
         }),
       });
       const data = await res.json();
@@ -68,7 +72,7 @@ function CheckoutForm({ aircraft, duration, price }) {
     // Step 2: confirm card payment — result.error carries user-friendly decline messages
     const result = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
-        card: elements.getElement(CardElement),
+        card: elements.getElement(CardNumberElement),
         billing_details: { name, email, phone },
       },
     });
@@ -78,6 +82,11 @@ function CheckoutForm({ aircraft, duration, price }) {
     if (result.error) {
       setError(result.error.message);
     } else if (result.paymentIntent.status === 'succeeded') {
+      fetch('/api/record-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentIntentId: result.paymentIntent.id }),
+      }).catch(() => {}); // fire-and-forget — webhook is the fallback
       navigate(
         `/booking-confirmed?ref=${result.paymentIntent.id}` +
         `&aircraft=${aircraft}&duration=${duration}&price=${price}` +
@@ -124,10 +133,71 @@ function CheckoutForm({ aircraft, duration, price }) {
         />
       </div>
 
+      {/* Physical Voucher */}
+      <div style={styles.voucherBox}>
+        <button
+          type="button"
+          style={{ ...styles.voucherToggle, ...(wantsVoucher ? styles.voucherToggleActive : {}) }}
+          onClick={() => setWantsVoucher(!wantsVoucher)}
+        >
+          <span style={styles.voucherToggleLeft}>
+            <span>
+              <span style={styles.voucherToggleTitle}>Add a physical gift voucher</span>
+              <span style={styles.voucherToggleSub}>A beautifully printed voucher posted to you or a recipient</span>
+            </span>
+          </span>
+          <span style={{ ...styles.voucherCheck, ...(wantsVoucher ? styles.voucherCheckActive : {}) }}>
+            {wantsVoucher ? '✓' : '+'}
+          </span>
+        </button>
+
+        {wantsVoucher && (
+          <div style={styles.voucherFields}>
+            <div style={styles.fieldGroup}>
+              <label style={styles.label}>Delivery address</label>
+              <textarea
+                style={{ ...styles.input, resize: 'vertical', minHeight: '72px', lineHeight: 1.5 }}
+                placeholder="Full postal address for the voucher to be sent to"
+                value={voucherLocation}
+                onChange={e => setVoucherLocation(e.target.value)}
+                required
+              />
+            </div>
+            <div style={styles.fieldGroup}>
+              <label style={styles.label}>
+                Personal message
+                <span style={styles.charCount}>{voucherMessage.length}/150</span>
+              </label>
+              <textarea
+                style={{ ...styles.input, resize: 'vertical', minHeight: '80px', lineHeight: 1.5 }}
+                placeholder="A message to print on the voucher — e.g. Happy Birthday!"
+                value={voucherMessage}
+                maxLength={150}
+                onChange={e => setVoucherMessage(e.target.value)}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
       <div style={styles.fieldGroup}>
-        <label style={styles.label}>Card Details</label>
+        <label style={styles.label}>Card Number</label>
         <div style={styles.cardElement}>
-          <CardElement options={CARD_ELEMENT_OPTIONS} />
+          <CardNumberElement options={CARD_FIELD_STYLE} />
+        </div>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+        <div style={styles.fieldGroup}>
+          <label style={styles.label}>Expiry</label>
+          <div style={styles.cardElement}>
+            <CardExpiryElement options={CARD_FIELD_STYLE} />
+          </div>
+        </div>
+        <div style={styles.fieldGroup}>
+          <label style={styles.label}>CVC</label>
+          <div style={styles.cardElement}>
+            <CardCvcElement options={CARD_FIELD_STYLE} />
+          </div>
         </div>
       </div>
 
@@ -144,70 +214,274 @@ function CheckoutForm({ aircraft, duration, price }) {
   );
 }
 
+// ─── Misc Payment Form ───────────────────────────────────────────────────────
+function MiscCheckoutForm({ itemId, itemName, qty, price }) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const navigate = useNavigate();
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const total = (Number(price) * Number(qty)).toFixed(2);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
+    setLoading(true);
+    setError('');
+
+    let clientSecret;
+    try {
+      const res = await fetch('/api/create-misc-payment-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          itemId,
+          qty: Number(qty),
+          customerName: name,
+          customerEmail: email,
+          customerPhone: phone,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to initiate payment.');
+      clientSecret = data.clientSecret;
+    } catch (err) {
+      setError(err.message || 'Something went wrong. Please try again.');
+      setLoading(false);
+      return;
+    }
+
+    const result = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: {
+        card: elements.getElement(CardNumberElement),
+        billing_details: { name, email, phone },
+      },
+    });
+
+    setLoading(false);
+
+    if (result.error) {
+      setError(result.error.message);
+    } else if (result.paymentIntent.status === 'succeeded') {
+      navigate(
+        `/booking-confirmed?ref=${result.paymentIntent.id}` +
+        `&type=misc` +
+        `&itemName=${encodeURIComponent(itemName)}` +
+        `&name=${encodeURIComponent(name)}`
+      );
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={styles.fieldGroup}>
+        <label style={styles.label}>Full Name</label>
+        <input style={styles.input} type="text" placeholder="Jane Smith" value={name} onChange={(e) => setName(e.target.value)} required />
+      </div>
+      <div style={styles.fieldGroup}>
+        <label style={styles.label}>Email Address</label>
+        <input style={styles.input} type="email" placeholder="jane@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+      </div>
+      <div style={styles.fieldGroup}>
+        <label style={styles.label}>Phone Number</label>
+        <input style={styles.input} type="tel" placeholder="+44 7700 900000" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+      </div>
+
+      <div style={styles.fieldGroup}>
+        <label style={styles.label}>Card Number</label>
+        <div style={styles.stripeInput}><CardNumberElement options={CARD_FIELD_STYLE} /></div>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+        <div style={styles.fieldGroup}>
+          <label style={styles.label}>Expiry</label>
+          <div style={styles.stripeInput}><CardExpiryElement options={CARD_FIELD_STYLE} /></div>
+        </div>
+        <div style={styles.fieldGroup}>
+          <label style={styles.label}>CVC</label>
+          <div style={styles.stripeInput}><CardCvcElement options={CARD_FIELD_STYLE} /></div>
+        </div>
+      </div>
+
+      {error && <div style={{ color: '#e74c3c', fontSize: '14px', padding: '10px', background: '#fef2f2', borderRadius: '6px' }}>{error}</div>}
+
+      <button type="submit" disabled={!stripe || loading} style={loading ? { ...styles.btn, ...styles.btnDisabled } : styles.btn}>
+        {loading ? 'Processing…' : `Pay £${total}`}
+      </button>
+
+      <p style={styles.secureNote}>🔒 Payments are processed securely by Stripe. HQ Aviation never sees your card details.</p>
+    </form>
+  );
+}
+
 // ─── Page ────────────────────────────────────────────────────────────────────
 export default function Checkout() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
+  const type = searchParams.get('type');
+
+  // Misc params
+  const itemId = searchParams.get('itemId');
+  const itemName = searchParams.get('itemName');
+  const qty = searchParams.get('qty') || '1';
+
+  // Flight params (existing)
   const aircraft = searchParams.get('aircraft');
   const duration = searchParams.get('duration');
   const price = searchParams.get('price');
 
-  const isValid = aircraft && duration && Number(price) > 0 && AIRCRAFT_NAMES[aircraft];
+  const [wantsVoucher, setWantsVoucher] = useState(false);
+  const [voucherLocation, setVoucherLocation] = useState('');
+  const [voucherMessage, setVoucherMessage] = useState('');
 
-  // Redirect back if params are missing, unrecognised, or price is non-numeric.
-  // useEffect prevents calling navigate() during render (React anti-pattern).
+  const isMisc = type === 'misc';
+  const isMiscValid = isMisc && !!itemId && !!itemName && Number(price) > 0 && Number(qty) >= 1;
+  const isFlightValid = !isMisc && !!aircraft && !!duration && Number(price) > 0 && !!AIRCRAFT_NAMES[aircraft];
+  const isValid = isMiscValid || isFlightValid;
+
   useEffect(() => {
     if (!isValid) {
-      navigate('/training/trial-lessons', { replace: true });
+      navigate(isMisc ? '/misc' : '/training/trial-lessons', { replace: true });
     }
-  }, [isValid, navigate]);
+  }, [isValid, navigate, isMisc]);
 
   if (!isValid) return null;
 
   return (
-    <div style={styles.page}>
+    <>
+    <FinalDraftHeader hideMenu />
+    <div style={styles.page} className="co-page-wrap">
+      <style>{`
+        .co-layout {
+          display: grid;
+          grid-template-columns: 1fr 1.4fr;
+          gap: 40px;
+          align-items: start;
+        }
+        @media (max-width: 1024px) {
+          .co-page-wrap {
+            padding-top: 80px !important;
+          }
+          .co-layout {
+            grid-template-columns: 1fr;
+            gap: 20px;
+          }
+          .co-layout .co-summary {
+            order: 2;
+            width: 100%;
+            box-sizing: border-box;
+          }
+          .co-layout .co-form {
+            order: 1;
+            width: 100%;
+            box-sizing: border-box;
+          }
+          .co-page-heading {
+            font-size: 1.5rem !important;
+          }
+          .co-page-subheading {
+            font-size: 0.9rem !important;
+            margin-bottom: 24px !important;
+          }
+        }
+      `}</style>
       <div style={styles.container}>
 
         {/* Back link */}
-        <Link to="/training/trial-lessons" style={styles.back}>← Back</Link>
+        <Link to={isMisc ? `/misc/${itemId}` : '/training/trial-lessons'} style={styles.back}>← Back</Link>
 
-        <h1 style={styles.heading}>Complete Your Booking</h1>
-        <p style={styles.subheading}>Pay now — we'll call you to schedule your flight.</p>
+        <h1 style={styles.heading} className="co-page-heading">
+          {isMisc ? 'Complete Your Purchase' : 'Complete Your Booking'}
+        </h1>
+        <p style={styles.subheading} className="co-page-subheading">
+          {isMisc ? 'Pay securely — the HQ team will be in touch about your order.' : "Pay now — we'll call you to schedule your flight."}
+        </p>
 
-        <div style={styles.layout}>
+        <div className="co-layout">
 
           {/* Order Summary */}
-          <div style={styles.summary}>
+          <div style={styles.summary} className="co-summary">
             <h2 style={styles.summaryHeading}>Order Summary</h2>
-            <div style={styles.summaryRow}>
-              <span style={styles.summaryLabel}>Aircraft</span>
-              <span style={styles.summaryValue}>{AIRCRAFT_NAMES[aircraft]}</span>
-            </div>
-            <div style={styles.summaryRow}>
-              <span style={styles.summaryLabel}>Experience</span>
-              <span style={styles.summaryValue}>{duration} Minute Discovery Flight</span>
-            </div>
-            <div style={{ ...styles.summaryRow, borderTop: '1px solid #e8e8e8', paddingTop: '16px', marginTop: '8px' }}>
-              <span style={{ ...styles.summaryLabel, fontWeight: 700, color: '#1a1a1a' }}>Total</span>
-              <span style={{ ...styles.summaryValue, fontWeight: 700, fontSize: '1.25rem' }}>£{price}</span>
-            </div>
-            <p style={styles.summaryNote}>
-              After payment, a member of the HQ Aviation team will contact you to arrange a date and time.
-            </p>
+            {isMisc ? (
+              <>
+                <div style={styles.summaryRow}>
+                  <span style={styles.summaryLabel}>Item</span>
+                  <span style={styles.summaryValue}>{itemName}</span>
+                </div>
+                {Number(qty) > 1 && (
+                  <div style={styles.summaryRow}>
+                    <span style={styles.summaryLabel}>Quantity</span>
+                    <span style={styles.summaryValue}>{qty}</span>
+                  </div>
+                )}
+                <div style={{ ...styles.summaryRow, borderTop: '1px solid #e8e8e8', paddingTop: '16px', marginTop: '8px' }}>
+                  <span style={{ ...styles.summaryLabel, fontWeight: 700, color: '#1a1a1a' }}>Total</span>
+                  <span style={{ ...styles.summaryValue, fontWeight: 700, fontSize: '1.25rem' }}>
+                    £{(Number(price) * Number(qty)).toFixed(2)}
+                  </span>
+                </div>
+                <p style={styles.summaryNote}>
+                  After payment, the HQ Aviation team will be in touch to arrange your order.
+                </p>
+              </>
+            ) : (
+              <>
+                <div style={styles.summaryRow}>
+                  <span style={styles.summaryLabel}>Aircraft</span>
+                  <span style={styles.summaryValue}>{AIRCRAFT_NAMES[aircraft]}</span>
+                </div>
+                <div style={styles.summaryRow}>
+                  <span style={styles.summaryLabel}>Experience</span>
+                  <span style={styles.summaryValue}>{duration} Minute Discovery Flight</span>
+                </div>
+                {wantsVoucher && (
+                  <div style={styles.summaryRow}>
+                    <span style={styles.summaryLabel}>Physical voucher</span>
+                    <span style={{ ...styles.summaryValue, color: '#2d7a4f', fontSize: '13px' }}>Included</span>
+                  </div>
+                )}
+                <div style={{ ...styles.summaryRow, borderTop: '1px solid #e8e8e8', paddingTop: '16px', marginTop: '8px' }}>
+                  <span style={{ ...styles.summaryLabel, fontWeight: 700, color: '#1a1a1a' }}>Total</span>
+                  <span style={{ ...styles.summaryValue, fontWeight: 700, fontSize: '1.25rem' }}>£{price}</span>
+                </div>
+                <p style={styles.summaryNote}>
+                  After payment, a member of the HQ Aviation team will contact you to arrange a date and time.
+                </p>
+              </>
+            )}
           </div>
 
           {/* Payment Form */}
-          <div style={styles.formPanel}>
+          <div style={styles.formPanel} className="co-form">
             <h2 style={styles.formHeading}>Your Details &amp; Payment</h2>
             <Elements stripe={stripePromise}>
-              <CheckoutForm aircraft={aircraft} duration={duration} price={price} />
+              {isMisc ? (
+                <MiscCheckoutForm itemId={itemId} itemName={itemName} qty={qty} price={price} />
+              ) : (
+                <CheckoutForm
+                  aircraft={aircraft}
+                  duration={duration}
+                  price={price}
+                  wantsVoucher={wantsVoucher}
+                  setWantsVoucher={setWantsVoucher}
+                  voucherLocation={voucherLocation}
+                  setVoucherLocation={setVoucherLocation}
+                  voucherMessage={voucherMessage}
+                  setVoucherMessage={setVoucherMessage}
+                />
+              )}
             </Elements>
           </div>
 
         </div>
       </div>
     </div>
+    </>
   );
 }
 
@@ -215,8 +489,10 @@ export default function Checkout() {
 const styles = {
   page: {
     minHeight: '100vh',
+    width: '100%',
+    boxSizing: 'border-box',
     background: '#faf9f6',
-    padding: '40px 20px',
+    padding: '120px 20px 40px',
     fontFamily: "'Space Grotesk', Arial, sans-serif",
   },
   container: {
@@ -242,12 +518,6 @@ const styles = {
     fontSize: '1rem',
     color: '#666',
     margin: '0 0 40px',
-  },
-  layout: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1.4fr',
-    gap: '40px',
-    alignItems: 'start',
   },
   summary: {
     background: '#fff',
@@ -358,5 +628,79 @@ const styles = {
     color: '#aaa',
     textAlign: 'center',
     margin: '0',
+  },
+  voucherBox: {
+    border: '1px solid #e0e0e0',
+    borderRadius: '8px',
+    overflow: 'hidden',
+  },
+  voucherToggle: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    padding: '14px 16px',
+    background: '#faf9f6',
+    border: 'none',
+    cursor: 'pointer',
+    textAlign: 'left',
+    gap: '12px',
+    transition: 'background 0.15s',
+  },
+  voucherToggleActive: {
+    background: '#f0f7f3',
+    borderBottom: '1px solid #e0e0e0',
+  },
+  voucherToggleLeft: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+  },
+  voucherIcon: {
+    fontSize: '20px',
+    lineHeight: 1,
+  },
+  voucherToggleTitle: {
+    display: 'block',
+    fontSize: '14px',
+    fontWeight: 600,
+    color: '#1a1a1a',
+  },
+  voucherToggleSub: {
+    display: 'block',
+    fontSize: '12px',
+    color: '#888',
+    marginTop: '2px',
+  },
+  voucherCheck: {
+    width: '28px',
+    height: '28px',
+    borderRadius: '50%',
+    border: '1px solid #ccc',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '14px',
+    color: '#999',
+    flexShrink: 0,
+    background: '#fff',
+  },
+  voucherCheckActive: {
+    background: '#1a1a1a',
+    border: '1px solid #1a1a1a',
+    color: '#fff',
+  },
+  voucherFields: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '14px',
+    padding: '16px',
+    background: '#fff',
+  },
+  charCount: {
+    marginLeft: '8px',
+    fontSize: '11px',
+    color: '#aaa',
+    fontWeight: 400,
   },
 };
