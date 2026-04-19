@@ -1016,25 +1016,13 @@ function FinalPPL() {
         }
 
         .fppl-hero__label {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          white-space: nowrap;
+          display: block;
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.7rem;
           letter-spacing: 0.2em;
           text-transform: uppercase;
           color: #999;
           margin-bottom: 1.5rem;
-        }
-
-        .fppl-hero__label::before,
-        .fppl-hero__label::after {
-          content: '';
-          flex: 1;
-          height: 1px;
-          background: #e0ddd8;
-          min-width: 20px;
         }
 
         .fppl-hero__headline {
@@ -1919,7 +1907,13 @@ function FinalPPL() {
         }
 
         .fppl-discovery__content .fppl-pre-text {
+          display: block;
           color: rgba(255,255,255,0.5);
+        }
+
+        .fppl-discovery__content .fppl-pre-text::before,
+        .fppl-discovery__content .fppl-pre-text::after {
+          display: none;
         }
 
         .fppl-discovery__header h2 {
