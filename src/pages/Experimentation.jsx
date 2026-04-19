@@ -3093,7 +3093,6 @@ function Experimentation() {
       <HeroSectionFinalTesting
         navHidden={navHidden}
         navManuallyShown={navManuallyShown}
-        navIsStuck={navIsStuck}
         navManuallyClosed={navManuallyClosed}
         onToggleNav={handleBurgerClick}
       />
@@ -6558,9 +6557,6 @@ function Experimentation() {
           color: #a09080;
           white-space: nowrap;
         }
-        @media (max-width: 768px) {
-        }
-
         /* ===== HORIZONTAL ACCORDION NAV ===== */
         .fd-nav {
           position: sticky;

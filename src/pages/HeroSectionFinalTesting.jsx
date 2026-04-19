@@ -89,7 +89,7 @@ const ScrollPrompt = () => (
 );
 
 // ─── Header that appears as diagonal disappears ───
-function TestingHeader({ navHidden = false, navManuallyShown = false, navIsStuck = false, navManuallyClosed = false, onToggleNav = () => {} }) {
+function TestingHeader({ navHidden = false, navManuallyShown = false, navManuallyClosed = false, onToggleNav = () => {} }) {
   const headerRef = useRef(null);
   const menuBtnRef = useRef(null);
   const rafId = useRef(0);
@@ -371,7 +371,7 @@ function ImagePickerGallery() {
 }
 
 // ─── Main component ───
-const HeroSectionFinalTesting = React.memo(({ navHidden, navManuallyShown, navIsStuck, navManuallyClosed, onToggleNav }) => {
+const HeroSectionFinalTesting = React.memo(({ navHidden, navManuallyShown, navManuallyClosed, onToggleNav }) => {
   const pageImages = usePageImages('home');
   const cmsMobileSlides = (pageImages['home-hero-slides-mobile'] ?? SECTION_MAP['home-hero-slides-mobile'].images).map(img => img.url);
   const cmsDesktopSlides = (pageImages['home-hero-slides'] ?? SECTION_MAP['home-hero-slides'].images).map(img => img.url);
@@ -639,7 +639,7 @@ const HeroSectionFinalTesting = React.memo(({ navHidden, navManuallyShown, navIs
   return (
     <>
       <style>{styles}</style>
-      <TestingHeader navHidden={navHidden} navManuallyShown={navManuallyShown} navIsStuck={navIsStuck} navManuallyClosed={navManuallyClosed} onToggleNav={onToggleNav} />
+      <TestingHeader navHidden={navHidden} navManuallyShown={navManuallyShown} navManuallyClosed={navManuallyClosed} onToggleNav={onToggleNav} />
 
       <section className="hsf" ref={heroRef}>
         {/* ── Sticky viewport ── */}
