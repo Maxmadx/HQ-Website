@@ -490,6 +490,7 @@ function FinalPPL() {
           </Reveal>
 
           <div className="fppl-intro__network" data-cms-section="ppl-instructors">
+            <span className="fppl-intro__team-label">Our Instructor Team</span>
             <div className="fppl-intro__leads">
               <Reveal delay={0.2}>
                 <div className="fppl-intro__q-card">
@@ -552,7 +553,6 @@ function FinalPPL() {
 
             <Reveal delay={0.4}>
               <div className="fppl-intro__team">
-                <span className="fppl-intro__team-label">Our Instructor Team</span>
                 <div className="fppl-intro__instructors">
                   {[
                     { name: 'George Agnelli', title: 'Flight Instructor' },
