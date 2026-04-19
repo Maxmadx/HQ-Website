@@ -2290,8 +2290,8 @@ function FinalPPL() {
 
         .fppl-visit__header p {
           color: #666;
-          font-size: 1.1rem;
-          line-height: 1.8;
+          font-size: 0.9rem;
+          line-height: 1.5;
           max-width: 600px;
           margin: 0 auto;
         }
