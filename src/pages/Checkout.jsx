@@ -294,16 +294,16 @@ function MiscCheckoutForm({ itemId, itemName, qty, price }) {
 
       <div style={styles.fieldGroup}>
         <label style={styles.label}>Card Number</label>
-        <div style={styles.stripeInput}><CardNumberElement options={CARD_FIELD_STYLE} /></div>
+        <div style={styles.cardElement}><CardNumberElement options={CARD_FIELD_STYLE} /></div>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
         <div style={styles.fieldGroup}>
           <label style={styles.label}>Expiry</label>
-          <div style={styles.stripeInput}><CardExpiryElement options={CARD_FIELD_STYLE} /></div>
+          <div style={styles.cardElement}><CardExpiryElement options={CARD_FIELD_STYLE} /></div>
         </div>
         <div style={styles.fieldGroup}>
           <label style={styles.label}>CVC</label>
-          <div style={styles.stripeInput}><CardCvcElement options={CARD_FIELD_STYLE} /></div>
+          <div style={styles.cardElement}><CardCvcElement options={CARD_FIELD_STYLE} /></div>
         </div>
       </div>
 
