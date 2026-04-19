@@ -1326,6 +1326,7 @@ function FinalPPL() {
           gap: 1rem;
           background: #fff;
           padding: 1rem;
+          border: 1px solid rgba(0,0,0,0.12);
           border-radius: 0 6px 6px 0;
           position: relative;
         }
