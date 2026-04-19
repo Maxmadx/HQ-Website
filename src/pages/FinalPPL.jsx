@@ -1708,8 +1708,15 @@ function FinalPPL() {
         }
 
         .df-location__header {
+          display: none;
           margin-bottom: 1.5rem;
           text-align: center;
+        }
+
+        @media (min-width: 1025px) {
+          .df-location__header {
+            display: block;
+          }
         }
 
         .df-location__header h2 {
