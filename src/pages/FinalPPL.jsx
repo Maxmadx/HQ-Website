@@ -10,6 +10,9 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform, useSpring } from 'framer-motion';
 import { useFaqs } from '../hooks/useFaqs';
+import { usePricing } from '../hooks/usePricing';
+import { usePageImages } from '../hooks/usePageImages';
+import { useCmsHighlight } from '../hooks/useCmsHighlight';
 
 // Import styles for Header/Navigation
 import '../assets/css/main.css';
@@ -273,6 +276,9 @@ function AnimatedNumber({ value, suffix = '' }) {
 function FinalPPL() {
   const heroRef = useRef(null);
   const [openFaq, setOpenFaq] = useState(null);
+  const pageImages = usePageImages('ppl');
+  useCmsHighlight();
+  const { fmt } = usePricing();
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ['start start', 'end start'],
@@ -294,7 +300,7 @@ function FinalPPL() {
       <PPLHeader />
 
       {/* ========== HERO: Split Layout with Boarding Pass ========== */}
-      <section ref={heroRef} className="fppl-hero">
+      <section ref={heroRef} className="fppl-hero" data-cms-section="ppl-hero">
         {/* Background image */}
         <motion.div
           className="fppl-hero__bg"
@@ -302,7 +308,7 @@ function FinalPPL() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 1.5 }}
         >
-          <img src="/assets/images/gallery/carousel/rotating6.jpg" alt="" />
+          <img src={pageImages['ppl-hero']?.[0]?.url || '/assets/images/gallery/carousel/rotating6.jpg'} alt="" />
         </motion.div>
         <div className="fppl-hero__overlay" />
 
@@ -429,27 +435,31 @@ function FinalPPL() {
             </div>
           </Reveal>
 
-          <div className="fppl-intro__network">
+          <div className="fppl-intro__network" data-cms-section="ppl-instructors">
             <div className="fppl-intro__leads">
               <Reveal delay={0.2}>
                 <div className="fppl-intro__q-card">
-                  <div className="fppl-intro__q-image">
-                    <img src="/assets/images/team/quentin-smith-profile-picture.jpg" alt="Quentin Smith" />
-                  </div>
-                  <div className="fppl-intro__q-info">
-                    <h3>Quentin Smith</h3>
-                    <span className="fppl-intro__q-title">Founder & Managing Director</span>
-                    <div className="fppl-intro__q-stats">
-                      <div className="fppl-intro__q-stat">
-                        <span className="fppl-intro__stat-value"><AnimatedNumber value="18000" />+</span>
-                        <span className="fppl-intro__stat-label">Flight Hours</span>
-                      </div>
-                      <div className="fppl-intro__divider" />
-                      <div className="fppl-intro__q-stat">
-                        <span className="fppl-intro__stat-value"><AnimatedNumber value="35" />+</span>
-                        <span className="fppl-intro__stat-label">Years Flying</span>
+                  <div className="fppl-intro__q-top">
+                    <div className="fppl-intro__q-image">
+                      <img src={pageImages['ppl-instructors']?.[0]?.url || '/assets/images/team/quentin-smith-profile-picture.jpg'} alt="Quentin Smith" />
+                    </div>
+                    <div className="fppl-intro__q-info">
+                      <h3>Quentin Smith</h3>
+                      <span className="fppl-intro__q-title">Founder & Managing Director</span>
+                      <div className="fppl-intro__q-stats">
+                        <div className="fppl-intro__q-stat">
+                          <span className="fppl-intro__stat-value"><AnimatedNumber value="18000" />+</span>
+                          <span className="fppl-intro__stat-label">Flight Hours</span>
+                        </div>
+                        <div className="fppl-intro__divider" />
+                        <div className="fppl-intro__q-stat">
+                          <span className="fppl-intro__stat-value"><AnimatedNumber value="35" />+</span>
+                          <span className="fppl-intro__stat-label">Years Flying</span>
+                        </div>
                       </div>
                     </div>
+                  </div>
+                  <div className="fppl-intro__q-bio-row">
                     <p>
                       World Helicopter Champion and the first person to fly a helicopter to the South Pole and back.
                     </p>
@@ -459,23 +469,27 @@ function FinalPPL() {
 
               <Reveal delay={0.3}>
                 <div className="fppl-intro__q-card">
-                  <div className="fppl-intro__q-image">
-                    <img src="/assets/images/team/mackie-alcantara-profile-picture.jpg" alt="Mackie Alcantara" />
-                  </div>
-                  <div className="fppl-intro__q-info">
-                    <h3>Mackie Alcantara</h3>
-                    <span className="fppl-intro__q-title">Chief Flight Instructor</span>
-                    <div className="fppl-intro__q-stats">
-                      <div className="fppl-intro__q-stat">
-                        <span className="fppl-intro__stat-value"><AnimatedNumber value="8500" />+</span>
-                        <span className="fppl-intro__stat-label">Flight Hours</span>
-                      </div>
-                      <div className="fppl-intro__divider" />
-                      <div className="fppl-intro__q-stat">
-                        <span className="fppl-intro__stat-value"><AnimatedNumber value="15" />+</span>
-                        <span className="fppl-intro__stat-label">Years Teaching</span>
+                  <div className="fppl-intro__q-top">
+                    <div className="fppl-intro__q-image">
+                      <img src={pageImages['ppl-instructors']?.[1]?.url || '/assets/images/team/mackie-alcantara-profile-picture.jpg'} alt="Mackie Alcantara" />
+                    </div>
+                    <div className="fppl-intro__q-info">
+                      <h3>Mackie Alcantara</h3>
+                      <span className="fppl-intro__q-title">Chief Flight Instructor</span>
+                      <div className="fppl-intro__q-stats">
+                        <div className="fppl-intro__q-stat">
+                          <span className="fppl-intro__stat-value"><AnimatedNumber value="8500" />+</span>
+                          <span className="fppl-intro__stat-label">Flight Hours</span>
+                        </div>
+                        <div className="fppl-intro__divider" />
+                        <div className="fppl-intro__q-stat">
+                          <span className="fppl-intro__stat-value"><AnimatedNumber value="15" />+</span>
+                          <span className="fppl-intro__stat-label">Years Teaching</span>
+                        </div>
                       </div>
                     </div>
+                  </div>
+                  <div className="fppl-intro__q-bio-row">
                     <p>
                       Leading our instructor team with exceptional skill and dedication to every lesson.
                     </p>
@@ -715,10 +729,10 @@ function FinalPPL() {
       </section>
 
       {/* ========== DISCOVERY FLIGHT ========== */}
-      <section id="discovery" className="fppl-discovery fppl-discovery--compact">
+      <section id="discovery" className="fppl-discovery fppl-discovery--compact" data-cms-section="ppl-cta">
         <div className="fppl-discovery__inner">
           <div className="fppl-discovery__image">
-            <img alt="Discovery flight over countryside" src="/assets/images/gallery/carousel/rotating1.jpg" style={{ transform: 'none' }} />
+            <img alt="Discovery flight over countryside" src={pageImages['ppl-cta']?.[0]?.url || '/assets/images/gallery/carousel/rotating1.jpg'} style={{ transform: 'none' }} />
             <div className="fppl-discovery__image-overlay"></div>
           </div>
           <div className="fppl-discovery__content">
@@ -749,9 +763,9 @@ function FinalPPL() {
               <div className="fppl-discovery__booking">
                 <div className="fppl-discovery__price">
                   <span className="fppl-discovery__price-from">From</span>
-                  <span className="fppl-discovery__price-amount">£199</span>
+                  <span className="fppl-discovery__price-amount">{fmt('discovery_r22_30min')}</span>
                 </div>
-                <a href="/contact?subject=discovery-flight" className="fppl-discovery__book-btn">
+                <a href="/training/trial-lessons" className="fppl-discovery__book-btn">
                   <span className="fppl-discovery__book-btn-text">Book Now</span>
                   <span className="fppl-discovery__book-btn-arrow">→</span>
                 </a>
@@ -1199,6 +1213,7 @@ function FinalPPL() {
 
         .fppl-intro__q-card {
           display: flex;
+          flex-wrap: wrap;
           gap: 1rem;
           background: #fff;
           padding: 1rem;
@@ -1214,6 +1229,27 @@ function FinalPPL() {
           width: 3px;
           height: 100%;
           background: #1a1a1a;
+        }
+
+        /* display:contents makes q-top transparent to the parent flex layout;
+           image and info become direct flex children of q-card on desktop.
+           Do not add ARIA roles here — display:contents removes the element
+           from the accessibility tree in most browsers. */
+        .fppl-intro__q-top {
+          display: contents;
+        }
+
+        .fppl-intro__q-bio-row {
+          flex-basis: 100%;
+          padding-top: 0.625rem;
+          border-top: 1px solid #f0f0ee;
+        }
+
+        .fppl-intro__q-bio-row p {
+          color: #666;
+          line-height: 1.5;
+          margin: 0;
+          font-size: 0.85rem;
         }
 
         .fppl-intro__q-image {
@@ -1272,13 +1308,6 @@ function FinalPPL() {
           color: #999;
           text-transform: uppercase;
           letter-spacing: 0.15em;
-        }
-
-        .fppl-intro__q-info p {
-          color: #666;
-          line-height: 1.5;
-          margin: 0;
-          font-size: 0.85rem;
         }
 
         .fppl-intro__team {
@@ -2378,15 +2407,23 @@ function FinalPPL() {
 
           .fppl-intro__q-card {
             flex-direction: column;
-            text-align: center;
+            gap: 0.75rem;
           }
 
-          .fppl-intro__q-image {
-            margin: 0 auto;
+          .fppl-intro__q-top {
+            display: flex;
+            gap: 0.875rem;
+            align-items: flex-start;
           }
 
-          .fppl-intro__q-stats {
-            justify-content: center;
+          .fppl-intro__q-image img {
+            width: 72px;
+            height: 72px;
+            object-position: top center;
+          }
+
+          .fppl-intro__q-bio-row {
+            flex-basis: auto;
           }
 
           .fppl-intro__instructors {
@@ -2395,8 +2432,7 @@ function FinalPPL() {
           }
 
           .fppl-faq__item {
-            flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.75rem;
           }
 
           .fppl-faq__item--featured {
