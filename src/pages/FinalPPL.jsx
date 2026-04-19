@@ -2554,8 +2554,11 @@ function FinalPPL() {
           }
 
           .fppl-intro__instructors {
-            flex-wrap: wrap;
-            justify-content: center;
+            flex-wrap: nowrap;
+          }
+
+          .fppl-intro__instructor {
+            flex: 1;
           }
 
           .df-location-faq__actions {
