@@ -2606,6 +2606,10 @@ function FinalPPL() {
             display: none;
           }
 
+          .fppl-visit__header {
+            margin-bottom: 0.875rem;
+          }
+
           .fppl-visit__gallery {
             display: none;
           }
