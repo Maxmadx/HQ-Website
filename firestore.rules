@@ -235,5 +235,22 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAuthenticated();
     }
+
+    // Misc items — public read, admin write
+    match /misc_items/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Bookings — written server-side via Admin SDK on payment success, admin read/update
+    match /bookings/{id} {
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Misc marketplace — server-only creates, admin read/update/delete
+    match /misc_marketplace/{id} {
+      allow read, update, delete: if isAdmin();
+      allow create: if false;
+    }
   }
 }
