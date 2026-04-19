@@ -2526,6 +2526,7 @@ function FinalPPL() {
             height: 100%;
             object-fit: cover;
             object-position: top center;
+            border-radius: 6px;
           }
 
           .fppl-intro__q-card h3 {
