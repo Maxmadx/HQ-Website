@@ -1302,10 +1302,6 @@ function FinalPPL() {
           display: flex;
           flex-direction: column;
           gap: 1.5rem;
-          background: #faf9f6;
-          padding: 1.5rem;
-          border: 1px solid #e8e6e2;
-          border-radius: 8px;
         }
 
         .fppl-intro__leads {
