@@ -1463,6 +1463,7 @@ function FinalPPL() {
         .fppl-intro__instructor-title {
           font-size: 0.6rem;
           color: #888;
+          margin-left: auto;
         }
 
         .fppl-intro__instructor-num {
