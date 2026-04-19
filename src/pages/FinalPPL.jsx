@@ -1290,7 +1290,8 @@ function FinalPPL() {
           text-transform: uppercase;
         }
 
-        .fppl-intro__header p {
+        .fppl-intro__header p,
+        .fppl-intro__body {
           color: #666;
           font-size: 1rem;
           line-height: 1.7;
