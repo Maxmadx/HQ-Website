@@ -255,7 +255,8 @@ export default function MiscItemDetail() {
       `&itemId=${id}` +
       `&itemName=${encodeURIComponent(item.name)}` +
       `&price=${(item.price / 100).toFixed(2)}` +
-      `&qty=${qty}`
+      `&qty=${qty}` +
+      (item.requiresShipping ? `&requiresShipping=1` : '')
     );
   }
 
