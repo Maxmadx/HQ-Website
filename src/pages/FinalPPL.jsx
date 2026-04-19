@@ -1691,6 +1691,13 @@ function FinalPPL() {
           height: 100%;
         }
 
+        .df-location .arrival__card {
+          padding-left: 0;
+          padding-right: 0;
+          margin-left: 0;
+          margin-right: 0;
+        }
+
         .df-location__header {
           margin-bottom: 1.5rem;
           text-align: center;
