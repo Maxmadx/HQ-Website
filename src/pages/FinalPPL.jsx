@@ -874,10 +874,6 @@ function FinalPPL() {
                   <span className="fppl-discovery__point-icon">🎮</span>
                   <span className="fppl-discovery__point-text">You take the controls</span>
                 </div>
-                <div className="fppl-discovery__point">
-                  <span className="fppl-discovery__point-icon">📍</span>
-                  <span className="fppl-discovery__point-text">Departs Denham</span>
-                </div>
               </div>
               <div className="fppl-discovery__booking">
                 <div className="fppl-discovery__price">
