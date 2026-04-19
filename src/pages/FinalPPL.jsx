@@ -1438,7 +1438,6 @@ function FinalPPL() {
           flex-direction: column;
           align-items: stretch;
           gap: 0.5rem;
-          padding: 0.75rem 0;
         }
 
         .fppl-intro__team-label {
