@@ -134,11 +134,24 @@ export default function AdminMiscMarketplace() {
                     </div>
 
                     {isOrder ? (
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', marginTop: '0.5rem' }}>
-                        <Detail label="Qty" value={String(entry.qty || 1)} />
-                        <Detail label="Amount" value={displayAmount(entry.amount)} />
-                        <Detail label="Stripe Ref" value={entry.ref} />
-                      </div>
+                      <>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', marginTop: '0.5rem' }}>
+                          <Detail label="Qty" value={String(entry.qty || 1)} />
+                          <Detail label="Amount" value={displayAmount(entry.amount)} />
+                          <Detail label="Stripe Ref" value={entry.ref} />
+                        </div>
+                        {entry.shippingLine1 && (
+                          <div style={{ marginTop: '0.5rem', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '6px', padding: '0.75rem' }}>
+                            <div style={{ fontSize: '0.65rem', color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>Delivery Address</div>
+                            <div style={{ fontSize: '0.85rem', color: '#374151', lineHeight: 1.6 }}>
+                              {entry.shippingLine1}<br />
+                              {entry.shippingLine2 && <>{entry.shippingLine2}<br /></>}
+                              {entry.shippingCity}<br />
+                              {entry.shippingPostcode}
+                            </div>
+                          </div>
+                        )}
+                      </>
                     ) : (
                       entry.message && (
                         <div style={{ marginTop: '0.5rem', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '6px', padding: '0.75rem' }}>
