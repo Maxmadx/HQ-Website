@@ -1017,9 +1017,8 @@ function FinalPPL() {
         }
 
         .fppl-hero__label {
-          font-family: 'Space Grotesk', sans-serif;
+          font-family: 'Share Tech Mono', monospace;
           font-size: 0.7rem;
-          font-weight: 400;
           letter-spacing: 0.2em;
           text-transform: uppercase;
           color: #999;
@@ -1798,12 +1797,13 @@ function FinalPPL() {
 
         /* ===== PRE-TEXT & GRADIENT TEXT ===== */
         .fppl-pre-text {
+          font-family: 'Share Tech Mono', monospace;
           display: block;
           font-size: 0.7rem;
           text-transform: uppercase;
-          letter-spacing: 0.25em;
+          letter-spacing: 0.2em;
           color: #999;
-          margin-bottom: 1rem;
+          margin-bottom: 0.75rem;
         }
 
         .fppl-text--dark { color: #1a1a1a; }
