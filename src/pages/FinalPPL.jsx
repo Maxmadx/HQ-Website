@@ -2488,8 +2488,8 @@ function FinalPPL() {
             grid-template-columns: 1fr;
           }
 
-          /* Grid replaces flex on the card so stats can occupy their own
-             full-width row below the photo+name+title block.
+          /* Grid replaces flex on the card so image spans the full height
+             of the name/title/stats column.
              Uses higher-specificity selector to beat the base
              .fppl-intro__leads .fppl-intro__q-card { display: flex } rule. */
           .fppl-intro__leads .fppl-intro__q-card {
@@ -2498,9 +2498,10 @@ function FinalPPL() {
             grid-template-areas:
               "photo name"
               "photo title"
-              "stats stats"
+              "photo stats"
               "bio   bio";
             grid-template-columns: 72px 1fr;
+            grid-template-rows: auto auto 1fr auto;
             column-gap: 0.875rem;
             row-gap: 0.2rem;
           }
@@ -2517,12 +2518,13 @@ function FinalPPL() {
 
           .fppl-intro__q-image {
             grid-area: photo;
-            align-self: start;
+            align-self: stretch;
           }
 
           .fppl-intro__q-image img {
             width: 72px;
-            height: 72px;
+            height: 100%;
+            object-fit: cover;
             object-position: top center;
           }
 
@@ -2541,7 +2543,8 @@ function FinalPPL() {
           .fppl-intro__q-stats {
             grid-area: stats;
             margin-bottom: 0;
-            padding-top: 0.5rem;
+            margin-top: 0.4rem;
+            align-self: start;
           }
 
           .fppl-intro__q-bio-row {
