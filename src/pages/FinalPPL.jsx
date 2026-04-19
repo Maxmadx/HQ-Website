@@ -1423,6 +1423,7 @@ function FinalPPL() {
           color: #999;
           text-transform: uppercase;
           letter-spacing: 0.15em;
+          white-space: nowrap;
         }
 
         .fppl-intro__team {
