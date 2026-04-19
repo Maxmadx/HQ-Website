@@ -20,7 +20,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const compression = require('compression');
-const { createPaymentIntent, handleWebhook } = require('./api/stripe');
+const { createPaymentIntent, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking } = require('./api/stripe');
 const leadsRouter = require('./api/leads');
 const stripeDiscoveryRouter = require('./api/stripe-discovery');
 const analyticsRouter = require('./api/analytics-api');
@@ -166,6 +166,96 @@ app.post('/api/create-payment-intent', express.json(), async (req, res) => {
   }
 });
 
+// POST /api/create-london-tour-payment-intent
+app.post('/api/create-london-tour-payment-intent', express.json(), async (req, res) => {
+  const { experience, timeOfDay, quantity, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage } = req.body || {};
+
+  if (!experience || !timeOfDay || !customerName || !customerEmail || !customerPhone) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+  if (!['shared', 'private'].includes(experience)) {
+    return res.status(400).json({ error: 'Invalid experience type' });
+  }
+  if (!['day', 'sunset', 'night'].includes(timeOfDay)) {
+    return res.status(400).json({ error: 'Invalid time of day' });
+  }
+  const qtyNum = Number(quantity);
+  if (!Number.isInteger(qtyNum) || qtyNum < 1 || qtyNum > 4) {
+    return res.status(400).json({ error: 'Invalid quantity' });
+  }
+  if (!customerEmail.includes('@') || customerEmail.length < 5) {
+    return res.status(400).json({ error: 'Invalid email address' });
+  }
+
+  const sanitisedPhone = String(customerPhone).replace(/[^\d\s+\-()]/g, '').slice(0, 20);
+
+  try {
+    const paymentIntent = await createLondonTourPaymentIntent({
+      experience,
+      timeOfDay,
+      quantity: qtyNum,
+      customerName,
+      customerEmail,
+      customerPhone: sanitisedPhone,
+      wantsVoucher: !!wantsVoucher,
+      voucherLocation: wantsVoucher ? String(voucherLocation || '').slice(0, 300) : '',
+      voucherMessage: wantsVoucher ? String(voucherMessage || '').slice(0, 150) : '',
+    });
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (err) {
+    const status = err.statusCode || 500;
+    res.status(status).json({ error: err.message });
+  }
+});
+
+// POST /api/create-misc-payment-intent
+// Creates a Stripe PaymentIntent for a misc item purchase. Price validated server-side.
+app.post('/api/create-misc-payment-intent', express.json(), async (req, res) => {
+  const { itemId, qty, customerName, customerEmail, customerPhone } = req.body || {};
+
+  if (!itemId || !customerName || !customerEmail || !customerPhone) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+  if (!customerEmail.includes('@') || customerEmail.length < 5) {
+    return res.status(400).json({ error: 'Invalid email address' });
+  }
+  const qtyNum = Number(qty);
+  if (!Number.isInteger(qtyNum) || qtyNum < 1) {
+    return res.status(400).json({ error: 'Invalid quantity' });
+  }
+
+  const sanitisedPhone = String(customerPhone).replace(/[^\d\s+\-()]/g, '').slice(0, 20);
+
+  try {
+    const paymentIntent = await createMiscPaymentIntent({
+      itemId,
+      qty: qtyNum,
+      customerName,
+      customerEmail,
+      customerPhone: sanitisedPhone,
+    });
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (err) {
+    const status = err.statusCode || 500;
+    res.status(status).json({ error: err.message });
+  }
+});
+
+// POST /api/record-booking
+// Called by the client confirmation page right after Stripe payment succeeds.
+// Verifies the payment intent with Stripe and writes the booking to Firestore.
+// Safe to call multiple times — idempotent.
+app.post('/api/record-booking', express.json(), async (req, res) => {
+  try {
+    const { paymentIntentId } = req.body;
+    const booking = await recordBooking(paymentIntentId);
+    res.json({ ok: true, booking });
+  } catch (err) {
+    const status = err.statusCode || 500;
+    res.status(status).json({ error: err.message });
+  }
+});
+
 // POST /api/webhook
 // Receives Stripe webhook events. MUST use express.raw() — Stripe requires
 // the raw body buffer to verify the webhook signature. Do NOT use express.json() here.
@@ -211,6 +301,12 @@ app.use('/api/wall-of-cool', express.json(), wallOfCoolRouter);
 // ============================================
 const adminFaqsRouter = require('./api/admin-faqs');
 app.use('/api/admin/faqs', express.json(), adminFaqsRouter);
+
+// ============================================
+// MISC MARKETPLACE ROUTES
+// ============================================
+const miscMarketplaceRouter = require('./api/misc-marketplace');
+app.use('/api/misc-enquiry', express.json(), miscMarketplaceRouter);
 
 /**
  * Root route: serve index.html
