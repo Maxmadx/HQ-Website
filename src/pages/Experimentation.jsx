@@ -3066,10 +3066,37 @@ function Experimentation() {
     }
   }
 
+  const handleBurgerClick = () => {
+    if (!navRef.current) return;
+    const navRect = navRef.current.getBoundingClientRect();
+
+    // If the nav hasn't reached its stick point yet, scroll down to it
+    if (navRect.top > 54) {
+      window.scrollTo({ top: window.scrollY + navRect.top - 49, behavior: 'smooth' });
+      return;
+    }
+
+    // Nav is at its sticky position — toggle open/closed
+    const isCurrentlyVisible = (!navHidden || navManuallyShown) && !navManuallyClosed;
+    if (isCurrentlyVisible) {
+      if (navHidden) setNavManuallyShown(false);
+      else setNavManuallyClosed(true);
+    } else {
+      if (navManuallyClosed) setNavManuallyClosed(false);
+      else if (navHidden) setNavManuallyShown(true);
+    }
+  };
+
   return (
     <div className="final-draft" ref={containerRef}>
       {/* ===== HERO SECTION (Diagonal Split + Header) ===== */}
-      <HeroSectionFinalTesting navHidden={navHidden} navManuallyShown={navManuallyShown} onToggleNav={() => setNavManuallyShown(v => !v)} />
+      <HeroSectionFinalTesting
+        navHidden={navHidden}
+        navManuallyShown={navManuallyShown}
+        navIsStuck={navIsStuck}
+        navManuallyClosed={navManuallyClosed}
+        onToggleNav={handleBurgerClick}
+      />
 
       {/* ===== MOBILE-ONLY: ABOUT TEXT (before video) ===== */}
       <section className="fd-about-mobile-standalone">
@@ -3489,7 +3516,7 @@ function Experimentation() {
 
       {/* ===== HORIZONTAL ACCORDION NAVIGATION ===== */}
       <nav
-        className={`fd-nav ${navCompact ? 'fd-nav--compact' : ''} ${navHidden && !navManuallyShown ? 'fd-nav--hidden' : ''}`}
+        className={`fd-nav ${navCompact ? 'fd-nav--compact' : ''} ${(navHidden && !navManuallyShown) || navManuallyClosed ? 'fd-nav--hidden' : ''}`}
         ref={navRef}
       >
         <div className="fd-nav__header">
