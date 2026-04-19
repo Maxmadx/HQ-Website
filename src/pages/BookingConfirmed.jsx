@@ -72,7 +72,9 @@ export default function BookingConfirmed() {
         </div>
 
         <p style={styles.nextStep}>
-          A member of the HQ Aviation team will be in touch shortly to arrange a date and time for your flight.
+          {isMisc
+            ? 'The HQ Aviation team will be in touch about your order.'
+            : 'A member of the HQ Aviation team will be in touch shortly to arrange a date and time for your flight.'}
         </p>
 
         <p style={styles.emailNote}>

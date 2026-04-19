@@ -515,6 +515,11 @@ async function handleWebhook(req) {
         bookingData.experience = experience;
         bookingData.timeOfDay = timeOfDay;
         bookingData.quantity = Number(quantity);
+      } else if (productType === 'misc') {
+        const { itemId, itemName, qty } = pi.metadata;
+        bookingData.itemId = itemId || '';
+        bookingData.itemName = itemName || '';
+        bookingData.qty = Number(qty) || 1;
       } else {
         const { aircraft, aircraftName, duration } = pi.metadata;
         bookingData.aircraft = aircraft;
@@ -558,6 +563,8 @@ async function handleWebhook(req) {
           amount: pi.amount,
           bookingRef: pi.id,
         });
+      } else if (productType === 'misc') {
+        // No confirmation email for misc orders — admin contacts customer
       } else {
         // Default: discovery-flight (includes legacy intents without productType)
         const { aircraft, duration } = pi.metadata;
