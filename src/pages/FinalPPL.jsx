@@ -859,24 +859,24 @@ function FinalPPL() {
               <span className="fppl-pre-text">Your First Flight</span>
               <h2><span className="fppl-text--dark">Discovery</span> <span className="fppl-text--mid">Flight</span></h2>
             </div>
-            <p className="fppl-discovery__desc">Experience helicopter flying firsthand. Take the controls and discover the freedom of vertical flight.</p>
+            <p className="fppl-discovery__desc">Not sure if flying is for you? A Discovery Flight puts you in the seat and at the controls in under an hour — no experience needed, no commitment required.</p>
             <div className="fppl-discovery__compact-row">
               <div className="fppl-discovery__selling-points">
                 <div className="fppl-discovery__point">
                   <span className="fppl-discovery__point-icon">⏱</span>
-                  <span className="fppl-discovery__point-text">30 min flight</span>
+                  <span className="fppl-discovery__point-text">30 min airborne</span>
                 </div>
                 <div className="fppl-discovery__point">
                   <span className="fppl-discovery__point-icon">✓</span>
-                  <span className="fppl-discovery__point-text">Counts to PPL</span>
+                  <span className="fppl-discovery__point-text">Counts toward PPL</span>
                 </div>
                 <div className="fppl-discovery__point">
                   <span className="fppl-discovery__point-icon">🎮</span>
-                  <span className="fppl-discovery__point-text">You fly the controls</span>
+                  <span className="fppl-discovery__point-text">You take the controls</span>
                 </div>
                 <div className="fppl-discovery__point">
-                  <span className="fppl-discovery__point-icon">📸</span>
-                  <span className="fppl-discovery__point-text">Photo opportunity</span>
+                  <span className="fppl-discovery__point-icon">📍</span>
+                  <span className="fppl-discovery__point-text">Departs Denham</span>
                 </div>
               </div>
               <div className="fppl-discovery__booking">
@@ -885,7 +885,7 @@ function FinalPPL() {
                   <span className="fppl-discovery__price-amount">{fmt('discovery_r22_30min')}</span>
                 </div>
                 <a href="/training/trial-lessons" className="fppl-discovery__book-btn">
-                  <span className="fppl-discovery__book-btn-text">Book Now</span>
+                  <span className="fppl-discovery__book-btn-text">See More Details</span>
                   <span className="fppl-discovery__book-btn-arrow">→</span>
                 </a>
               </div>
