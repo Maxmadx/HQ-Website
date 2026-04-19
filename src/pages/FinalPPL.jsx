@@ -1424,7 +1424,7 @@ function FinalPPL() {
         .fppl-intro__team {
           display: flex;
           flex-direction: column;
-          align-items: center;
+          align-items: stretch;
           gap: 0.5rem;
           padding: 0.75rem 1.5rem;
         }
@@ -1435,6 +1435,7 @@ function FinalPPL() {
           text-transform: uppercase;
           color: #999;
           white-space: nowrap;
+          text-align: center;
         }
 
         .fppl-intro__instructors {
