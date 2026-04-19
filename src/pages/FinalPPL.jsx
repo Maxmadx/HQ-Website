@@ -1290,11 +1290,18 @@ function FinalPPL() {
           text-transform: uppercase;
         }
 
-        .fppl-intro__header p,
+        .fppl-intro__header p {
+          color: #666;
+          font-size: 1rem;
+          line-height: 1.7;
+        }
+
         .fppl-intro__body {
           color: #666;
           font-size: 1rem;
           line-height: 1.7;
+          padding-top: 2rem;
+          text-align: center;
         }
 
         .fppl-intro__network {
