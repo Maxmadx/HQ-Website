@@ -1311,13 +1311,13 @@ function FinalPPL() {
         .fppl-intro__network {
           display: flex;
           flex-direction: column;
-          gap: 1.5rem;
+          gap: 0.5rem;
         }
 
         .fppl-intro__leads {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 1.5rem;
+          gap: 0.5rem;
         }
 
         .fppl-intro__leads > div {
