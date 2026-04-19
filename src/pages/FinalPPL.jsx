@@ -483,9 +483,6 @@ function FinalPPL() {
                 exceptionally high standard, develop no bad habits, and become a better pilot at a much faster
                 pace with our rigorous, hands-on training program.
               </p>
-              <p>
-                Let aside the ground exams that most students self study before taking the tests on site, the obtention of a PPL(H) requires a minimum of 45 hrs of flight training, including 10 hrs of solo. The duration varies depending on commitment.
-              </p>
             </div>
           </Reveal>
 
@@ -573,6 +570,11 @@ function FinalPPL() {
               </div>
             </Reveal>
           </div>
+          <Reveal delay={0.5}>
+            <p className="fppl-intro__body">
+              Let aside the ground exams that most students self study before taking the tests on site, the obtention of a PPL(H) requires a minimum of 45 hrs of flight training, including 10 hrs of solo. The duration varies depending on commitment.
+            </p>
+          </Reveal>
         </div>
       </section>
 
@@ -1812,13 +1814,25 @@ function FinalPPL() {
 
         /* ===== PRE-TEXT & GRADIENT TEXT ===== */
         .fppl-pre-text {
-          display: block;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          white-space: nowrap;
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.7rem;
           text-transform: uppercase;
           letter-spacing: 0.2em;
           color: #999;
           margin-bottom: 0.75rem;
+        }
+
+        .fppl-pre-text::before,
+        .fppl-pre-text::after {
+          content: '';
+          flex: 1;
+          height: 1px;
+          background: #e0ddd8;
+          min-width: 20px;
         }
 
         .fppl-text--dark { color: #1a1a1a; }
