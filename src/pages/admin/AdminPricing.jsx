@@ -6,8 +6,13 @@ import { useCollection, updateDocById, createDoc, deleteDocById } from '../../ho
 const CATEGORIES = [
   {
     id: 'discovery',
-    label: 'Training Tab — Discovery & Dual Instruction Prices',
-    hint: 'Displayed in the Training tab of Rates & Pricing. Discovery = 30 min trial flight. Dual Instruction = 60 min lesson. These prices are also charged via Stripe on booking.',
+    label: 'Discovery & Dual Instruction Prices',
+    hint: 'Displayed on the Discovery Flight booking page. Discovery = 30 min trial flight. Dual Instruction = 60 min lesson. These prices are charged via Stripe on booking.',
+  },
+  {
+    id: 'london_tour',
+    label: 'Helicopter Tour of London Prices',
+    hint: 'Displayed on the Helicopter Tour of London booking page. Shared = per-person price × passenger count. Private = flat charter price. Charged via Stripe on booking.',
   },
   {
     id: 'sfh',
@@ -21,11 +26,16 @@ const WEBSITE_IDS = new Set([
   'discovery_r22_30min', 'discovery_r22_60min',
   'discovery_r44_30min', 'discovery_r44_60min',
   'discovery_r66_30min', 'discovery_r66_60min',
+  'london_tour_shared_day', 'london_tour_shared_sunset', 'london_tour_shared_night',
+  'london_tour_private_day', 'london_tour_private_sunset', 'london_tour_private_night',
   'sfh_r22_wet', 'sfh_r44_wet', 'sfh_r66_wet',
 ]);
 
 const CATEGORY_IDS = CATEGORIES.map((c) => c.id);
 const EMPTY_NEW = { label: '', price: '', description: '', category: 'discovery' };
+
+// Stripe badge categories
+const STRIPE_CATEGORIES = new Set(['discovery', 'london_tour']);
 
 // Convert pence stored in Firestore → pounds string shown in inputs
 function penceToPounds(pence) {
@@ -170,7 +180,7 @@ export default function AdminPricing() {
               <div style={{ marginBottom: '0.5rem' }}>
                 <h2 style={{ fontSize: '0.875rem', fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
                   {cat.label}
-                  {cat.id === 'discovery' && (
+                  {STRIPE_CATEGORIES.has(cat.id) && (
                     <span style={{ marginLeft: 8, fontSize: '0.65rem', fontWeight: 600, background: '#fef3c7', color: '#92400e', padding: '2px 7px', borderRadius: 99, textTransform: 'none', letterSpacing: 0 }}>
                       Stripe — live charges
                     </span>

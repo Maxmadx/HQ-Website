@@ -7,6 +7,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useFaqs } from '../hooks/useFaqs';
+import { usePageImages } from '../hooks/usePageImages';
+import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import FooterMinimal from '../components/FooterMinimal';
@@ -248,23 +250,31 @@ const customisationOptions = [
 // BEFORE/AFTER COMPONENT
 // ============================================
 
-function BeforeAfter() {
+const MODEL_SECTION = { R22: 'rebuilds-steps-r22', R44: 'rebuilds-steps-r44', R66: 'rebuilds-steps-r66' };
+
+function BeforeAfter({ pageImages = {} }) {
   const [activeModel, setActiveModel] = useState('R44');
   const [rebuildStep, setRebuildStep] = useState(0);
   const steps = rebuildStepsByModel[activeModel];
+  const sectionId = MODEL_SECTION[activeModel];
+  const cmsImages = pageImages[sectionId] || [];
 
   const handleModelChange = (model) => {
     setActiveModel(model);
     setRebuildStep(0);
   };
 
+  // Gallery order: [before0, after0, before1, after1, ...]
+  const beforeSrc = cmsImages[rebuildStep * 2]?.url || steps[rebuildStep].before;
+  const afterSrc  = cmsImages[rebuildStep * 2 + 1]?.url || steps[rebuildStep].after;
+
   return (
-    <div className="rb__beforeafter">
+    <div className="rb__beforeafter" data-cms-section={sectionId}>
       <span className="rb__beforeafter-label">The Transformation</span>
       <div className="rb__beforeafter-item">
         <div className="rb__beforeafter-before">
           <div className="rb__beforeafter-img">
-            <img src={steps[rebuildStep].before} alt={`${steps[rebuildStep].label} — before`} />
+            <img src={beforeSrc} alt={`${steps[rebuildStep].label} — before`} />
           </div>
           <span>BEFORE</span>
           <p>{steps[rebuildStep].beforeDesc}</p>
@@ -272,7 +282,7 @@ function BeforeAfter() {
         <div className="rb__beforeafter-arrow">&rarr;</div>
         <div className="rb__beforeafter-after">
           <div className="rb__beforeafter-img">
-            <img src={steps[rebuildStep].after} alt={`${steps[rebuildStep].label} — after`} />
+            <img src={afterSrc} alt={`${steps[rebuildStep].label} — after`} />
           </div>
           <span>AFTER</span>
           <p>{steps[rebuildStep].afterDesc}</p>
@@ -341,16 +351,107 @@ function FAQ() {
 // ============================================
 
 function Rebuilds() {
+  const pageImages = usePageImages('rebuilds');
+  useCmsHighlight();
+  const [rebuildFormOpen, setRebuildFormOpen] = useState(false);
+  const [rebuildIntent, setRebuildIntent] = useState(null);
+  const [rebuildSubmitted, setRebuildSubmitted] = useState(false);
+  const [rebuildSubmitting, setRebuildSubmitting] = useState(false);
+  const [rebuildError, setRebuildError] = useState('');
+  const rebuildIntentsRef = useRef(null);
+  const rebuildFormRef = useRef(null);
+
+  function scrollToRef(ref) {
+    setTimeout(() => {
+      if (!ref.current) return;
+      const isMobile = window.innerWidth <= 768;
+      const offset = isMobile ? 80 : 120;
+      const targetY = window.scrollY + ref.current.getBoundingClientRect().top - offset;
+      window.scrollTo({ top: targetY, behavior: 'smooth' });
+    }, 100);
+  }
+
+  useEffect(() => {
+    if (rebuildFormOpen && !rebuildIntent) scrollToRef(rebuildIntentsRef);
+  }, [rebuildFormOpen]);
+
+  useEffect(() => {
+    if (rebuildIntent) scrollToRef(rebuildFormRef);
+  }, [rebuildIntent]);
+  const [rbName, setRbName] = useState('');
+  const [rbEmail, setRbEmail] = useState('');
+  const [rbPhone, setRbPhone] = useState('');
+  const [rbNotes, setRbNotes] = useState('');
+  const [rbAircraftType, setRbAircraftType] = useState('');
+  const [rbReg, setRbReg] = useState('');
+  const [rbYear, setRbYear] = useState('');
+  const [rbWork, setRbWork] = useState('');
+  const [rbSourceType, setRbSourceType] = useState('');
+  const [rbBudget, setRbBudget] = useState('');
+  const [rbPrefType, setRbPrefType] = useState('');
+  const [rbAvailBudget, setRbAvailBudget] = useState('');
+
+  async function handleRebuildSubmit(e) {
+    e.preventDefault();
+    if (!rbEmail) { setRebuildError('Email is required'); return; }
+    setRebuildSubmitting(true);
+    setRebuildError('');
+    try {
+      let subject = '';
+      let body = '';
+      if (rebuildIntent === 'own') {
+        subject = 'Rebuild Enquiry — Own Aircraft';
+        body = [
+          `Aircraft: ${rbAircraftType || 'Not specified'}`,
+          rbReg  ? `Reg: ${rbReg}` : '',
+          rbYear ? `Year: ${rbYear}` : '',
+          rbWork ? `Desired work: ${rbWork}` : '',
+          rbNotes ? `Notes: ${rbNotes}` : '',
+        ].filter(Boolean).join('\n');
+      } else if (rebuildIntent === 'source') {
+        subject = 'Rebuild Enquiry — Source Aircraft';
+        body = [
+          `Type wanted: ${rbSourceType || 'Not specified'}`,
+          rbBudget ? `Budget: £${rbBudget}` : '',
+          rbNotes  ? `Notes: ${rbNotes}` : '',
+        ].filter(Boolean).join('\n');
+      } else {
+        subject = 'Rebuild Enquiry — Available Now';
+        body = [
+          rbPrefType   ? `Preferred type: ${rbPrefType}` : '',
+          rbAvailBudget ? `Budget: £${rbAvailBudget}` : '',
+          rbNotes       ? `Notes: ${rbNotes}` : '',
+        ].filter(Boolean).join('\n');
+      }
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: rbName, email: rbEmail, phone: rbPhone,
+          subject,
+          message: body || 'No additional information provided.',
+          source: `rebuild-${rebuildIntent}`,
+        }),
+      });
+      if (!res.ok) throw new Error('Request failed');
+      setRebuildSubmitted(true);
+    } catch {
+      setRebuildError('Something went wrong. Please try again or call us directly.');
+    } finally {
+      setRebuildSubmitting(false);
+    }
+  }
+
   return (
     <div className="rb">
       <style>{pageStyles}</style>
       <FinalDraftHeader />
 
       {/* Hero */}
-      <section className="rb__hero">
+      <section className="rb__hero" data-cms-section="rebuilds-hero">
         <div className="rb__hero-inner">
           <div className="rb__hero-image">
-            <img src="/assets/images/facility/main-sales-pic.jpg" alt="Helicopter Rebuild" />
+            <img src={pageImages['rebuilds-hero']?.[0]?.url || '/assets/images/facility/main-sales-pic.jpg'} alt="Helicopter Rebuild" />
           </div>
           <div className="rb__hero-text">
             <div className="rb__grid-lines" />
@@ -403,12 +504,12 @@ function Rebuilds() {
           <Reveal>
             <div className="rb__section-label">Models</div>
           </Reveal>
-          <div className="rb__models-grid">
+          <div className="rb__models-grid" data-cms-section="rebuilds-models">
             {rebuildModels.map((m, i) => (
               <Reveal key={i} delay={i * 0.1}>
                 <div className="rb__model-card">
                   <div className="rb__model-img">
-                    <img src={m.image} alt={m.model} />
+                    <img src={pageImages['rebuilds-models']?.[i]?.url || m.image} alt={m.model} />
                   </div>
                   <div className="rb__model-body">
                     <h3>{m.model}</h3>
@@ -428,7 +529,7 @@ function Rebuilds() {
             ))}
           </div>
           <Reveal delay={0.1}>
-            <BeforeAfter />
+            <BeforeAfter pageImages={pageImages} />
           </Reveal>
         </div>
       </section>
@@ -483,7 +584,137 @@ function Rebuilds() {
               </Reveal>
               <Reveal delay={0.2}>
                 <div className="rb__cta-actions">
-                  <Link to="/contact?subject=rebuild" className="rb__btn rb__btn--primary rb__btn--large">Contact Sales Team</Link>
+                  <div className="fd-sales__rebuild-interest" style={{width:'100%'}}>
+                    {!rebuildFormOpen && !rebuildSubmitted && (
+                      <button className="fd-sales__intent-btn fd-sales__intent-btn--full" onClick={() => setRebuildFormOpen(true)}>
+                        <span className="fd-sales__intent-icon">↗</span>
+                        <span className="fd-sales__intent-title">Register Rebuild Interest</span>
+                        <span className="fd-sales__intent-sub">Own an aircraft, want us to source one, or looking for something available now — start here.</span>
+                      </button>
+                    )}
+
+                    {rebuildFormOpen && !rebuildIntent && !rebuildSubmitted && (
+                      <div className="fd-sales__rebuild-intents" ref={rebuildIntentsRef}>
+                        <div className="fd-sales__rebuild-intents-header">
+                          <span className="fd-sales__unmanned-form-badge">What brings you here?</span>
+                          <button type="button" className="fd-sales__unmanned-back" onClick={() => setRebuildFormOpen(false)}>← Back</button>
+                        </div>
+                        <div className="fd-sales__rebuild-intents-grid">
+                          <button className="fd-sales__intent-btn" onClick={() => setRebuildIntent('own')}>
+                            <span className="fd-sales__intent-icon">→</span>
+                            <span className="fd-sales__intent-title">I Have an Aircraft to Rebuild</span>
+                            <span className="fd-sales__intent-sub">You own the airframe and want a full or partial rebuild — we'll discuss scope, timeline, and cost.</span>
+                          </button>
+                          <button className="fd-sales__intent-btn" onClick={() => setRebuildIntent('source')}>
+                            <span className="fd-sales__intent-icon">+</span>
+                            <span className="fd-sales__intent-title">Source an Aircraft for a Rebuild</span>
+                            <span className="fd-sales__intent-sub">You don't have an aircraft yet — we'll find and acquire the right airframe before the rebuild begins.</span>
+                          </button>
+                          <button className="fd-sales__intent-btn" onClick={() => setRebuildIntent('available')}>
+                            <span className="fd-sales__intent-icon">◎</span>
+                            <span className="fd-sales__intent-title">Is a Rebuild Available Now?</span>
+                            <span className="fd-sales__intent-sub">Looking for a recently completed or near-completion rebuild ready to fly — tell us your preferences.</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {rebuildIntent && !rebuildSubmitted && (
+                      <form className="fd-sales__unmanned-form" ref={rebuildFormRef} onSubmit={handleRebuildSubmit}>
+                        <div className="fd-sales__unmanned-form-header">
+                          <span className="fd-sales__unmanned-form-badge">
+                            {rebuildIntent === 'own' ? 'I Have an Aircraft' : rebuildIntent === 'source' ? 'Source an Aircraft' : 'Available Now'}
+                          </span>
+                          <button type="button" className="fd-sales__unmanned-back" onClick={() => { setRebuildIntent(null); setRebuildError(''); }}>← Change</button>
+                        </div>
+
+                        {rebuildIntent === 'own' && (
+                          <>
+                            <div className="fd-sales__unmanned-form-row">
+                              <div className="fd-sales__unmanned-field">
+                                <label className="fd-sales__unmanned-label">Aircraft Type</label>
+                                <input className="fd-sales__unmanned-input" type="text" placeholder="e.g. Robinson R44 Raven II" value={rbAircraftType} onChange={e => setRbAircraftType(e.target.value)} />
+                              </div>
+                              <div className="fd-sales__unmanned-field">
+                                <label className="fd-sales__unmanned-label">Registration <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                                <input className="fd-sales__unmanned-input" type="text" placeholder="e.g. G-HQAV" value={rbReg} onChange={e => setRbReg(e.target.value)} />
+                              </div>
+                              <div className="fd-sales__unmanned-field">
+                                <label className="fd-sales__unmanned-label">Year <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                                <input className="fd-sales__unmanned-input" type="text" placeholder="e.g. 2015" value={rbYear} onChange={e => setRbYear(e.target.value)} />
+                              </div>
+                            </div>
+                            <div className="fd-sales__unmanned-field">
+                              <label className="fd-sales__unmanned-label">Desired Work <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                              <textarea className="fd-sales__unmanned-input fd-sales__unmanned-textarea" placeholder="e.g. Zero-time engine, full repaint, avionics upgrade, interior retrim…" rows={3} value={rbWork} onChange={e => setRbWork(e.target.value)} />
+                            </div>
+                          </>
+                        )}
+
+                        {rebuildIntent === 'source' && (
+                          <div className="fd-sales__unmanned-form-row fd-sales__unmanned-form-row--2col">
+                            <div className="fd-sales__unmanned-field">
+                              <label className="fd-sales__unmanned-label">Aircraft Type Wanted</label>
+                              <input className="fd-sales__unmanned-input" type="text" placeholder="e.g. Robinson R66 Turbine" value={rbSourceType} onChange={e => setRbSourceType(e.target.value)} />
+                            </div>
+                            <div className="fd-sales__unmanned-field">
+                              <label className="fd-sales__unmanned-label">Budget <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                              <input className="fd-sales__unmanned-input" type="text" placeholder="e.g. 200,000" value={rbBudget} onChange={e => setRbBudget(e.target.value)} />
+                            </div>
+                          </div>
+                        )}
+
+                        {rebuildIntent === 'available' && (
+                          <div className="fd-sales__unmanned-form-row fd-sales__unmanned-form-row--2col">
+                            <div className="fd-sales__unmanned-field">
+                              <label className="fd-sales__unmanned-label">Preferred Type <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                              <input className="fd-sales__unmanned-input" type="text" placeholder="e.g. R44, R66, any…" value={rbPrefType} onChange={e => setRbPrefType(e.target.value)} />
+                            </div>
+                            <div className="fd-sales__unmanned-field">
+                              <label className="fd-sales__unmanned-label">Budget <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                              <input className="fd-sales__unmanned-input" type="text" placeholder="e.g. 350,000" value={rbAvailBudget} onChange={e => setRbAvailBudget(e.target.value)} />
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="fd-sales__unmanned-form-row">
+                          <div className="fd-sales__unmanned-field">
+                            <label className="fd-sales__unmanned-label">Name</label>
+                            <input className="fd-sales__unmanned-input" type="text" placeholder="Full name" value={rbName} onChange={e => setRbName(e.target.value)} />
+                          </div>
+                          <div className="fd-sales__unmanned-field">
+                            <label className="fd-sales__unmanned-label">Email <span style={{color:'#c00'}}>*</span></label>
+                            <input className="fd-sales__unmanned-input" type="email" placeholder="you@example.com" required value={rbEmail} onChange={e => setRbEmail(e.target.value)} />
+                          </div>
+                          <div className="fd-sales__unmanned-field">
+                            <label className="fd-sales__unmanned-label">Phone <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                            <input className="fd-sales__unmanned-input" type="tel" placeholder="+44" value={rbPhone} onChange={e => setRbPhone(e.target.value)} />
+                          </div>
+                        </div>
+                        <div className="fd-sales__unmanned-field">
+                          <label className="fd-sales__unmanned-label">Additional Notes <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                          <textarea className="fd-sales__unmanned-input fd-sales__unmanned-textarea" placeholder="Anything else we should know…" rows={3} value={rbNotes} onChange={e => setRbNotes(e.target.value)} />
+                        </div>
+
+                        {rebuildError && <p className="fd-sales__unmanned-error">{rebuildError}</p>}
+                        <div className="fd-sales__unmanned-form-footer">
+                          <button type="submit" className="fd-sales__unmanned-submit" disabled={rebuildSubmitting}>
+                            {rebuildSubmitting ? 'Sending…' : 'Submit Enquiry'}
+                          </button>
+                          <span className="fd-sales__unmanned-form-note">We'll be in touch shortly.</span>
+                        </div>
+                      </form>
+                    )}
+
+                    {rebuildSubmitted && (
+                      <div className="fd-sales__unmanned-success">
+                        <span className="fd-sales__unmanned-success-icon">✓</span>
+                        <p className="fd-sales__unmanned-success-title">Enquiry Received</p>
+                        <p className="fd-sales__unmanned-success-sub">Thank you — a member of our team will be in touch to discuss your rebuild.</p>
+                      </div>
+                    )}
+                  </div>
+
                   <a href="tel:+441895833838" className="rb__cta-phone">
                     <span>Or call directly</span>
                     <strong>+44 (0) 1895 833 838</strong>
@@ -1143,4 +1374,79 @@ const pageStyles = `
 }
 .rb__cta-phone span { font-size: 0.7rem; color: #999; }
 .rb__cta-phone strong { font-family: 'Share Tech Mono', monospace; font-size: 1.1rem; }
+
+/* Rebuild interest form (shared with home page) */
+.fd-sales__rebuild-interest { margin-top: 1.5rem; }
+.fd-sales__intent-btn {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;
+  background: #faf9f6; border: 1px solid #e0deda; padding: 1.25rem 1.5rem;
+  cursor: pointer; text-align: left; transition: border-color 0.2s, background 0.2s; width: 100%;
+}
+.fd-sales__intent-btn:hover { border-color: #1a1a1a; background: #f3f1ed; }
+.fd-sales__intent-btn--full { max-width: 100%; }
+.fd-sales__intent-icon { font-size: 1.2rem; color: #1a1a1a; }
+.fd-sales__intent-title { font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; font-weight: 700; color: #1a1a1a; }
+.fd-sales__intent-sub { font-size: 0.78rem; color: #888; line-height: 1.5; }
+.fd-sales__rebuild-intents { background: #fff; border: 1px solid #e0deda; padding: 2rem; }
+.fd-sales__rebuild-intents-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #e8e6e2;
+}
+.fd-sales__rebuild-intents-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+@media (max-width: 768px) { .fd-sales__rebuild-intents-grid { grid-template-columns: 1fr; } }
+.fd-sales__unmanned-form {
+  background: #fff; border: 1px solid #e0deda; padding: 2rem; text-align: left;
+  margin-top: 1.5rem; width: 100%; max-width: 640px; margin-left: auto; margin-right: auto; box-sizing: border-box;
+}
+.fd-sales__unmanned-form-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.75rem; padding-bottom: 1rem; border-bottom: 1px solid #e8e6e2;
+}
+.fd-sales__unmanned-form-badge {
+  font-family: 'Share Tech Mono', monospace; font-size: 0.58rem; letter-spacing: 0.2em;
+  text-transform: uppercase; background: #1a1a1a; color: #fff; padding: 0.3rem 0.7rem;
+}
+.fd-sales__unmanned-back {
+  background: none; border: none; color: #bbb; font-family: 'Share Tech Mono', monospace;
+  font-size: 0.62rem; letter-spacing: 0.1em; cursor: pointer; padding: 0; transition: color 0.2s;
+}
+.fd-sales__unmanned-back:hover { color: #1a1a1a; }
+.fd-sales__unmanned-form-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem; align-items: end; }
+.fd-sales__unmanned-form-row--2col { grid-template-columns: repeat(2, 1fr); }
+.fd-sales__unmanned-field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+.fd-sales__unmanned-form-row .fd-sales__unmanned-field { margin-bottom: 0; }
+.fd-sales__unmanned-label { font-family: 'Share Tech Mono', monospace; font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: #999; white-space: nowrap; }
+.fd-sales__unmanned-optional { color: #ccc; font-size: 0.55rem; text-transform: none; letter-spacing: 0; font-family: 'Space Grotesk', sans-serif; }
+.fd-sales__unmanned-input {
+  background: #faf9f6; border: 1px solid #e0ddd8; padding: 0.7rem 0.9rem; color: #1a1a1a;
+  font-family: 'Space Grotesk', sans-serif; font-size: 0.88rem; transition: border-color 0.2s; width: 100%; box-sizing: border-box;
+}
+.fd-sales__unmanned-input::placeholder { color: #bbb; }
+.fd-sales__unmanned-input:focus { outline: none; border-color: #1a1a1a; }
+.fd-sales__unmanned-textarea { resize: vertical; min-height: 80px; }
+.fd-sales__unmanned-error { font-size: 0.78rem; color: #c00; margin-bottom: 0.75rem; }
+.fd-sales__unmanned-form-footer { display: flex; align-items: center; gap: 1.25rem; padding-top: 1.25rem; border-top: 1px solid #e8e6e2; margin-top: 0.5rem; }
+.fd-sales__unmanned-submit {
+  padding: 0.8rem 2rem; background: #1a1a1a; border: none; color: #fff;
+  font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; transition: background 0.2s;
+}
+.fd-sales__unmanned-submit:hover:not(:disabled) { background: #333; }
+.fd-sales__unmanned-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+.fd-sales__unmanned-form-note { font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; letter-spacing: 0.05em; color: #bbb; }
+.fd-sales__unmanned-success { text-align: center; padding: 2rem; max-width: 420px; margin: 1.5rem auto 0; }
+.fd-sales__unmanned-success-icon {
+  display: flex; align-items: center; justify-content: center;
+  width: 48px; height: 48px; background: #1a1a1a; color: #fff;
+  border-radius: 50%; font-size: 1.1rem; margin: 0 auto 1rem;
+}
+.fd-sales__unmanned-success-title {
+  font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: -0.01em; color: #1a1a1a; margin-bottom: 0.5rem;
+}
+.fd-sales__unmanned-success-sub { font-size: 0.82rem; color: #888; line-height: 1.6; margin: 0; }
+@media (max-width: 640px) {
+  .fd-sales__unmanned-form-row,
+  .fd-sales__unmanned-form-row--2col { grid-template-columns: 1fr; }
+}
 `;

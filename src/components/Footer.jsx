@@ -17,7 +17,7 @@ function Footer() {
               />
             </Link>
             <p className="hq-footer__tagline">
-              Robinson helicopter specialists since 2010. Experience the world from above.
+              Robinson helicopter specialists since 2011. Experience the world from above.
             </p>
             <div className="hq-footer__contact">
               <a href="tel:+441895833373" className="hq-footer__contact-item">

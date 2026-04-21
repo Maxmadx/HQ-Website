@@ -6,7 +6,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-function FinalDraftHeader() {
+function FinalDraftHeader({ hideMenu = false }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [colorDark, setColorDark] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -102,7 +102,7 @@ function FinalDraftHeader() {
             </ul>
           </div>
           <div className="hq-menu-section">
-            <h3>Contact</h3>
+            <h3><Link to="/contact" onClick={closeMenu}>Contact</Link></h3>
             <ul>
               <li><Link to="/contact" onClick={closeMenu}>Contact Us</Link></li>
               <li><Link to="/contact/careers" onClick={closeMenu}>Careers</Link></li>
@@ -120,16 +120,18 @@ function FinalDraftHeader() {
           '--spotlight-height': `${spotlightHeight}px`
         }}
       >
-        <button
-          className={`hq-menu-btn ${colorDark ? 'color-dark' : ''} ${scrolled ? 'scrolled' : ''} ${menuOpen ? 'open' : ''}`}
-          onClick={toggleMenu}
-          aria-label="Toggle menu"
-          aria-expanded={menuOpen}
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+        {!hideMenu && (
+          <button
+            className={`hq-menu-btn ${colorDark ? 'color-dark' : ''} ${scrolled ? 'scrolled' : ''} ${menuOpen ? 'open' : ''}`}
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+            aria-expanded={menuOpen}
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        )}
         <div className="Header-inner Header-inner--top" data-nc-group="top">
           <div data-nc-container="top-left"></div>
           <div data-nc-container="top-center">

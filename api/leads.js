@@ -1,7 +1,7 @@
 'use strict';
 
 const express = require('express');
-const rateLimit = require('express-rate-limit');
+const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
 const admin = require('./firebase-admin');
 
 const router = express.Router();
@@ -12,7 +12,7 @@ const leadsLimiter = rateLimit({
   max: 5,
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => req.ip || 'unknown',
+  keyGenerator: (req) => ipKeyGenerator(req),
   handler: (_req, res) => res.status(429).json({ error: 'Too many requests' }),
 });
 

@@ -1,31 +1,38 @@
 import { useState, useEffect, useRef } from 'react';
-
-// Pricing configuration
-const PRICING = {
-  shared: {
-    day: 199,
-    sunset: 249,
-    night: 299,
-  },
-  private: {
-    day: 1495,
-    sunset: 1695,
-    night: 1895,
-  },
-};
+import { useNavigate } from 'react-router-dom';
+import { usePricing } from '../hooks/usePricing';
 
 function LondonTourTicket() {
+  const navigate = useNavigate();
+  const { p } = usePricing();
   const [experience, setExperience] = useState('shared');
   const [timeOfDay, setTimeOfDay] = useState('day');
   const [quantity, setQuantity] = useState(1);
+  const [compact, setCompact] = useState(false);
   const ticketRef = useRef(null);
+  const naturalHeightRef = useRef(0);
 
-  // Calculate price based on selections
+  useEffect(() => {
+    // Capture natural (non-compact) height after first paint
+    if (ticketRef.current) {
+      naturalHeightRef.current = ticketRef.current.offsetHeight;
+    }
+    const check = () => {
+      const header = document.querySelector('.Header');
+      const headerH = header ? header.offsetHeight : 70;
+      setCompact(window.innerHeight - headerH < naturalHeightRef.current + 20);
+    };
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  // Calculate price based on selections (returns pounds)
   const calculatePrice = () => {
     if (experience === 'private') {
-      return PRICING.private[timeOfDay];
+      return p(`london_tour_private_${timeOfDay}`) / 100;
     }
-    return PRICING.shared[timeOfDay] * quantity;
+    return (p(`london_tour_shared_${timeOfDay}`) / 100) * quantity;
   };
 
   // Handle quantity changes
@@ -43,38 +50,6 @@ function LondonTourTicket() {
       setQuantity(1);
     }
   }, [experience]);
-
-  // 3D tilt effect on desktop
-  useEffect(() => {
-    const ticket = ticketRef.current;
-    if (!ticket) return;
-
-    const handleMouseMove = (e) => {
-      if (window.innerWidth <= 768) return;
-
-      const rect = ticket.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-      const rotateX = (y - centerY) / 200;
-      const rotateY = (centerX - x) / 200;
-
-      ticket.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-    };
-
-    const handleMouseLeave = () => {
-      ticket.style.transform = 'rotateX(0) rotateY(0)';
-    };
-
-    ticket.addEventListener('mousemove', handleMouseMove);
-    ticket.addEventListener('mouseleave', handleMouseLeave);
-
-    return () => {
-      ticket.removeEventListener('mousemove', handleMouseMove);
-      ticket.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, []);
 
   const priceLabel = experience === 'private' ? 'Total Price' : 'Per Person';
   const qtyLegend = experience === 'private' ? 'Passengers (up to 4)' : 'Passengers';
@@ -108,8 +83,6 @@ function LondonTourTicket() {
           width: 100%;
           display: flex;
           position: relative;
-          transform-style: preserve-3d;
-          transition: transform 0.1s ease-out;
           filter: drop-shadow(0 20px 35px rgba(0,0,0,0.12));
         }
 
@@ -238,10 +211,6 @@ function LondonTourTicket() {
           mask-size: 100% 51%;
           mask-position: top, bottom;
           mask-repeat: no-repeat;
-        }
-
-        .details-section:hover {
-          transform: translateX(5px) rotate(0.3deg);
         }
 
         .perforation {
@@ -492,13 +461,71 @@ function LondonTourTicket() {
           padding: 8px 10px;
           border-radius: 5px;
           border-left: 3px solid #b38728;
-          margin-bottom: auto;
           font-size: 9px;
           color: #666;
         }
 
+        .refund-notice--inner {
+          margin-bottom: auto;
+        }
+
+        .refund-notice--outer {
+          background: transparent;
+          border: none;
+          padding: 0;
+          font-size: 9px;
+          color: #666;
+          text-align: center;
+        }
+
+        .ticket-extras {
+          display: none;
+          flex-direction: column;
+          align-items: stretch;
+          max-width: 400px;
+          width: 100%;
+          margin-top: 1rem;
+          background: #fff;
+          border: 1px solid #e8e6e2;
+          border-top: 3px solid #b38728;
+          border-radius: 8px;
+          padding: 1rem;
+          text-align: center;
+        }
+
+        .ticket-extras .features-list {
+          margin-bottom: 0.75rem;
+        }
+
+        .ticket-extras .features-list li {
+          justify-content: center;
+        }
+
+        .ticket-extras hr {
+          border: none;
+          border-top: 1px solid #e8e6e2;
+          margin: 0 0 0.75rem;
+        }
+
         .refund-notice strong {
           color: #000;
+        }
+
+        .ltour-ticket__gift-note {
+          margin-top: 0;
+          padding-top: 0.6rem;
+          border-top: 1px solid #e8e6e2;
+          margin-bottom: 0.6rem;
+          padding-bottom: 0.6rem;
+          border-bottom: 1px solid #e8e6e2;
+          font-size: 9px;
+          color: #666;
+          text-align: center;
+          line-height: 1.5;
+        }
+
+        .ltour-ticket__gift-note strong {
+          color: #b38728;
         }
 
         .price-bar {
@@ -553,6 +580,7 @@ function LondonTourTicket() {
             flex-direction: column;
             transform: none !important;
             max-width: 400px;
+            filter: drop-shadow(0 6px 10px rgba(0,0,0,0.06));
           }
 
           .visual-section {
@@ -628,11 +656,101 @@ function LondonTourTicket() {
           .airport-code {
             display: none;
           }
+
+          .tour-title {
+            text-align: center;
+          }
+
+          .ticket-legend {
+            text-align: center;
+          }
+
+          .features-list--inner,
+          .refund-notice--inner {
+            display: none;
+          }
+
+          .ticket-extras {
+            display: flex;
+          }
+
+          .features-list {
+            text-align: center;
+          }
+
+          .features-list li {
+            justify-content: center;
+          }
+
+          .qty-control {
+            justify-content: space-between;
+          }
+
+          .qty-btn {
+            width: 36px;
+            height: 36px;
+            font-size: 20px;
+          }
+
+          .qty-display {
+            width: 40px;
+            font-size: 16px;
+          }
+        }
+
+        .is-compact .refund-notice--inner {
+          display: none;
+        }
+
+        .is-compact .ticket-extras {
+          display: flex;
+        }
+
+        .is-compact .features-list--outer {
+          display: none;
+        }
+
+        .is-compact .visual-section {
+          min-height: 200px;
+        }
+
+        .is-compact .details-section {
+          padding: 14px;
+        }
+
+        .is-compact .tour-title {
+          margin-bottom: 7px;
+        }
+
+        .is-compact .ticket-fieldset {
+          margin-bottom: 5px;
+        }
+
+        .is-compact .controls-row {
+          margin-bottom: 5px;
+        }
+
+        .is-compact .radio-card label,
+        .is-compact .time-option label {
+          padding: 5px;
+        }
+
+        .is-compact .features-list {
+          margin-bottom: 4px;
+        }
+
+        .is-compact .features-list li {
+          margin-bottom: 2px;
+        }
+
+        .is-compact .price-bar {
+          padding-top: 7px;
+          margin-top: 7px;
         }
       `}</style>
 
-      <div className="london-ticket">
-        <main className="ticket-wrapper" ref={ticketRef}>
+      <div className={`london-ticket${compact ? ' is-compact' : ''}`} style={{ flexDirection: 'column', alignItems: 'center' }}>
+        <main className="ticket-wrapper" id="ticket-wrapper" ref={ticketRef}>
           <section className="visual-section">
             <div className="heli-wrapper">
               <picture>
@@ -651,7 +769,7 @@ function LondonTourTicket() {
             </div>
           </section>
 
-          <section className="details-section">
+          <section className="details-section" id="ticket-details">
             <div className="perforation"></div>
             <div className="airport-code">LDN CTY</div>
 
@@ -763,13 +881,13 @@ function LondonTourTicket() {
                 </fieldset>
               </div>
 
-              <ul className="features-list">
+              <ul className="features-list features-list--inner">
                 <li>50 Minute Flight Time</li>
                 <li>Champagne Reception</li>
                 <li>Turbine Engine Helicopter</li>
               </ul>
 
-              <div className="refund-notice">
+              <div className="refund-notice refund-notice--inner">
                 <strong>Fully Refundable</strong> &amp; Subject to weather and availability
               </div>
 
@@ -778,11 +896,30 @@ function LondonTourTicket() {
                   <small>{priceLabel}</small>
                   <div className="price-value">£{calculatePrice()}</div>
                 </div>
-                <button type="button" className="redeem-btn">Confirm Ticket</button>
+                <button
+                  type="button"
+                  className="redeem-btn"
+                  onClick={() => navigate(
+                    `/london-tour-checkout?experience=${experience}&timeOfDay=${timeOfDay}&quantity=${quantity}&price=${calculatePrice()}`
+                  )}
+                >Confirm Ticket</button>
               </div>
             </form>
           </section>
         </main>
+        <div className="ticket-extras">
+          <ul className="features-list features-list--outer">
+            <li>50 Minute Flight Time</li>
+            <li>Champagne Reception</li>
+            <li>Turbine Engine Helicopter</li>
+          </ul>
+          <div className="ltour-ticket__gift-note">
+            <strong>Gift Vouchers Available</strong> — The perfect present for aviation enthusiasts
+          </div>
+          <div className="refund-notice refund-notice--outer">
+            <strong>Fully Refundable</strong> &amp; Subject to weather and availability
+          </div>
+        </div>
       </div>
     </>
   );

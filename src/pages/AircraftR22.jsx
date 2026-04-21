@@ -12,6 +12,9 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { usePageImages } from '../hooks/usePageImages';
+import { useCmsHighlight } from '../hooks/useCmsHighlight';
+import { SECTION_MAP } from '../lib/imageSections';
 
 // Import styles
 import '../assets/css/main.css';
@@ -310,6 +313,10 @@ function HistoryTimeline({ events }) {
 // MAIN PAGE COMPONENT
 // ============================================================================
 function AircraftR22() {
+  useCmsHighlight();
+  const pageImages = usePageImages('r22');
+  const cmsGallery = (pageImages['r22-gallery'] ?? SECTION_MAP['r22-gallery'].images).map(img => ({ src: img.url, alt: img.alt }));
+
   const heroRef = useRef(null);
   const [activeSpec, setActiveSpec] = useState(null);
   const [activeVariant, setActiveVariant] = useState(0);
@@ -349,6 +356,10 @@ function AircraftR22() {
     { year: '2024', title: '4,800+ Built', description: 'Over 4,800 R22 helicopters delivered worldwide, making it the most popular training helicopter ever produced.' },
   ];
 
+  // Shared R22 family downloads
+  const R22_BROCHURE = 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/RH_R22_US_Digital_Corporate_Brochure_Feb_2026_76bb67b86e.pdf';
+  const R22_EOC = 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/r22_eoc_2026_5cc7166f5c.pdf';
+
   // R22 variants
   const variants = [
     {
@@ -357,6 +368,7 @@ function AircraftR22() {
       engine: 'O-320-B2C (160 HP)',
       description: 'The original production model that established the R22 as the world\'s most cost-effective training helicopter.',
       features: ['Lycoming O-320 engine', '2-blade main rotor', 'Standard instrumentation'],
+      pdfs: { brochure: R22_BROCHURE, eoc: R22_EOC },
     },
     {
       name: 'R22 Beta II',
@@ -364,6 +376,7 @@ function AircraftR22() {
       engine: 'O-360-J2A (180 HP)',
       description: 'The current production model featuring increased power, improved rotor blades, and enhanced safety systems.',
       features: ['20% more power', 'Improved rotor dynamics', 'Enhanced safety features', 'Better hot & high performance'],
+      pdfs: { brochure: R22_BROCHURE, eoc: R22_EOC },
     },
     {
       name: 'R22 Mariner',
@@ -371,6 +384,7 @@ function AircraftR22() {
       engine: 'O-360-J2A (180 HP)',
       description: 'A specialized float-equipped variant designed for water operations and maritime applications.',
       features: ['Pop-out floats', 'Corrosion protection', 'Marine equipment', 'Water landing capability'],
+      pdfs: { brochure: R22_BROCHURE, eoc: R22_EOC },
     },
   ];
 
@@ -512,17 +526,6 @@ function AircraftR22() {
           </motion.p>
         </motion.div>
 
-        <motion.div
-          className="r22-hero__scroll"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-        >
-          <span>Discover More</span>
-          <div className="r22-hero__scroll-line">
-            <div className="r22-hero__scroll-dot" />
-          </div>
-        </motion.div>
       </section>
 
       {/* ========== SECTION 2: INTRODUCTION ========== */}
@@ -859,6 +862,32 @@ function AircraftR22() {
                     <li key={i}>{feature}</li>
                   ))}
                 </ul>
+                {variants[activeVariant].pdfs && (
+                  <div className="r22-variants__pdfs">
+                    {variants[activeVariant].pdfs.brochure && (
+                      <a
+                        href={variants[activeVariant].pdfs.brochure}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="r22-variants__pdf-pill"
+                      >
+                        <i className="fas fa-file-pdf" aria-hidden="true"></i>
+                        <span>Brochure</span>
+                      </a>
+                    )}
+                    {variants[activeVariant].pdfs.eoc && (
+                      <a
+                        href={variants[activeVariant].pdfs.eoc}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="r22-variants__pdf-pill"
+                      >
+                        <i className="fas fa-file-pdf" aria-hidden="true"></i>
+                        <span>Operating Costs</span>
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
             </motion.div>
           </AnimatePresence>
@@ -959,7 +988,7 @@ function AircraftR22() {
       </section>
 
       {/* ========== SECTION 9: GALLERY ========== */}
-      <section className="r22-gallery">
+      <section className="r22-gallery" data-cms-section="r22-gallery">
         <div className="r22-gallery__container">
           <Reveal>
             <div className="r22-section-header">
@@ -972,7 +1001,7 @@ function AircraftR22() {
           </Reveal>
 
           <div className="r22-gallery__grid">
-            {galleryImages.map((image, index) => (
+            {cmsGallery.map((image, index) => (
               <Reveal key={index} delay={index * 0.1}>
                 <motion.div
                   className="r22-gallery__item"
@@ -1146,7 +1175,7 @@ function AircraftR22() {
           height: 100%;
           z-index: 1;
           display: flex;
-          align-items: flex-end;
+          align-items: center;
           justify-content: center;
         }
 
@@ -1944,6 +1973,47 @@ function AircraftR22() {
           width: 8px;
           height: 8px;
           background: #1a1a1a;
+        }
+
+        .r22-variants__pdfs {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          margin-top: 1.5rem;
+        }
+
+        .r22-variants__pdf-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.45rem 0.95rem;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.78rem;
+          font-weight: 500;
+          color: #1a1a1a;
+          background: #fff;
+          border: 1px solid rgba(0,0,0,0.12);
+          border-radius: 100px;
+          text-decoration: none;
+          letter-spacing: 0.01em;
+          transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+        }
+
+        .r22-variants__pdf-pill i {
+          font-size: 0.85rem;
+          color: #c8102e;
+          transition: color 0.2s;
+        }
+
+        .r22-variants__pdf-pill:hover {
+          background: #1a1a1a;
+          color: #fff;
+          border-color: #1a1a1a;
+          transform: translateY(-1px);
+        }
+
+        .r22-variants__pdf-pill:hover i {
+          color: #fff;
         }
 
         /* ===== TRAINING SECTION ===== */

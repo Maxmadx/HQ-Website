@@ -662,7 +662,7 @@ const SelfFlyHireSection = () => {
   const v15CarouselRef = useRef(null);
   const sfhCarouselRef = useRef(null);
   const sfhDesktopCarouselDownRef = useRef(null);
-  const sfhDesktopCarouselUpRef = useRef(null);
+  const sfhDesktopCarouselDownRef2 = useRef(null);
 
   // Infinite auto-scroll carousel for mobile
   useEffect(() => {
@@ -704,16 +704,16 @@ const SelfFlyHireSection = () => {
     return () => { cancelAnimationFrame(rafId); track.removeEventListener('pointerdown', onPD); track.removeEventListener('pointermove', onPM); track.removeEventListener('pointerup', onPU); track.removeEventListener('pointercancel', onPU); window.removeEventListener('resize', measure); };
   }, []);
 
-  // Infinite auto-scroll carousel for desktop intro panel — two columns (down + up)
+  // Infinite auto-scroll carousel for desktop intro panel — two columns both going down
   useEffect(() => {
     const trackDown = sfhDesktopCarouselDownRef.current;
-    const trackUp = sfhDesktopCarouselUpRef.current;
-    if (!trackDown || !trackUp) return;
+    const trackDown2 = sfhDesktopCarouselDownRef2.current;
+    if (!trackDown || !trackDown2) return;
     const BASE_SPEED = 30;
     const DAMPING = 3;
     const st = {
-      down: { offset: 0, velocity: BASE_SPEED, setWidth: 0 },
-      up:   { offset: 0, velocity: BASE_SPEED, setWidth: 0 },
+      col1: { offset: 0, velocity: BASE_SPEED, setWidth: 0 },
+      col2: { offset: 0, velocity: BASE_SPEED, setWidth: 0 },
       isDragging: false, lastPointerY: 0, lastTime: 0,
     };
     let rafId = 0;
@@ -723,37 +723,37 @@ const SelfFlyHireSection = () => {
       col.setWidth = h;
     };
     const measure = () => {
-      measureCol(trackDown, st.down);
-      measureCol(trackUp, st.up);
-      if (st.up.setWidth > 0 && st.up.offset === 0) st.up.offset = st.up.setWidth / 3;
+      measureCol(trackDown, st.col1);
+      measureCol(trackDown2, st.col2);
+      if (st.col2.setWidth > 0 && st.col2.offset === 0) st.col2.offset = st.col2.setWidth / 2;
     };
     const tick = (time) => {
       rafId = requestAnimationFrame(tick);
       if (!st.lastTime) { st.lastTime = time; return; }
-      if (st.down.setWidth <= 0 || st.up.setWidth <= 0) { measure(); st.lastTime = time; return; }
+      if (st.col1.setWidth <= 0 || st.col2.setWidth <= 0) { measure(); st.lastTime = time; return; }
       const dt = Math.min((time - st.lastTime) / 1000, 0.1);
       st.lastTime = time;
       if (!st.isDragging) {
-        st.down.velocity += (BASE_SPEED - st.down.velocity) * DAMPING * dt;
-        st.up.velocity += (BASE_SPEED - st.up.velocity) * DAMPING * dt;
+        st.col1.velocity += (BASE_SPEED - st.col1.velocity) * DAMPING * dt;
+        st.col2.velocity += (BASE_SPEED - st.col2.velocity) * DAMPING * dt;
       }
-      st.down.offset += st.down.velocity * dt;
-      if (st.down.offset >= st.down.setWidth) st.down.offset -= st.down.setWidth;
-      if (st.down.offset < 0) st.down.offset += st.down.setWidth;
-      trackDown.style.transform = `translateY(${st.down.offset - st.down.setWidth}px)`;
-      st.up.offset += st.up.velocity * dt;
-      if (st.up.offset >= st.up.setWidth) st.up.offset -= st.up.setWidth;
-      if (st.up.offset < 0) st.up.offset += st.up.setWidth;
-      trackUp.style.transform = `translateY(${-st.up.offset}px)`;
+      st.col1.offset += st.col1.velocity * dt;
+      if (st.col1.offset >= st.col1.setWidth) st.col1.offset -= st.col1.setWidth;
+      if (st.col1.offset < 0) st.col1.offset += st.col1.setWidth;
+      trackDown.style.transform = `translateY(${st.col1.offset - st.col1.setWidth}px)`;
+      st.col2.offset += st.col2.velocity * dt;
+      if (st.col2.offset >= st.col2.setWidth) st.col2.offset -= st.col2.setWidth;
+      if (st.col2.offset < 0) st.col2.offset += st.col2.setWidth;
+      trackDown2.style.transform = `translateY(${st.col2.offset - st.col2.setWidth}px)`;
     };
     const clip = trackDown.closest('.sfh-map__intro-carousel-clip');
     if (!clip) return;
-    const onPD = (e) => { st.isDragging = true; st.lastPointerY = e.clientY; st.down.velocity = 0; st.up.velocity = 0; clip.setPointerCapture(e.pointerId); };
+    const onPD = (e) => { st.isDragging = true; st.lastPointerY = e.clientY; st.col1.velocity = 0; st.col2.velocity = 0; clip.setPointerCapture(e.pointerId); };
     const onPM = (e) => {
       if (!st.isDragging) return;
       const dy = e.clientY - st.lastPointerY; st.lastPointerY = e.clientY;
-      st.down.offset += dy; st.down.velocity = dy * 60;
-      st.up.offset -= dy;   st.up.velocity = -dy * 60;
+      st.col1.offset += dy; st.col1.velocity = dy * 60;
+      st.col2.offset += dy; st.col2.velocity = dy * 60;
     };
     const onPU = () => { st.isDragging = false; };
     measure();
@@ -843,12 +843,12 @@ const SelfFlyHireSection = () => {
         .sfh-map__intro-carousel-col { flex: 1; position: relative; overflow: hidden; }
         .sfh-map__intro-carousel { position: absolute; top: 0; left: 0; right: 0; display: flex; flex-direction: column; gap: 10px; will-change: transform; touch-action: none; user-select: none; -webkit-user-select: none; }
         .sfh-map__intro-carousel-item { flex: 0 0 auto; border-radius: 6px; overflow: hidden; }
-        .sfh-map__intro-carousel-item img { width: 100%; height: 180px; object-fit: cover; display: block; filter: saturate(0.85); pointer-events: none; }
+        .sfh-map__intro-carousel-item img { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; display: block; filter: saturate(0.85); pointer-events: none; }
         .sfh-map__intro-text { grid-column: 2; grid-row: 1; min-width: 0; padding: 0 2rem 0 48px; }
         .sfh-map__mobile-carousel-wrap { display: none; }
         @media (max-width: 768px) {
           .sfh-map__intro { grid-template-columns: 1fr; }
-          .sfh-map__intro-text { grid-column: 1; grid-row: auto; padding: 2rem 1.5rem 0; max-width: none; }
+          .sfh-map__intro-text { grid-column: 1; grid-row: auto; padding: 2rem 1rem 0; max-width: none; }
           .sfh-map__intro-img { display: none; }
           .sfh-map__intro-bg { display: none; }
           .sfh-map__intro-border { display: none; }
@@ -981,7 +981,7 @@ const SelfFlyHireSection = () => {
             font-family: 'Space Grotesk', sans-serif;
           }
           .sfh-v15-mobile__above-map {
-            padding: 1.5rem 1.5rem 0.5rem;
+            padding: 1.5rem 1rem 0.5rem;
           }
           .sfh-v15-mobile__map-and-bar {
             height: 75vh;
@@ -1065,7 +1065,7 @@ const SelfFlyHireSection = () => {
             color: #777;
           }
           .sfh-v15-mobile__body {
-            padding: 1.25rem 1.5rem 2rem;
+            padding: 1.25rem 1rem 2rem;
           }
           .sfh-v15-mobile__desc {
             font-size: 0.82rem;
@@ -1150,7 +1150,7 @@ const SelfFlyHireSection = () => {
                 </div>
               </div>
               <div className="sfh-map__intro-carousel-col">
-                <div className="sfh-map__intro-carousel" ref={sfhDesktopCarouselUpRef}>
+                <div className="sfh-map__intro-carousel" ref={sfhDesktopCarouselDownRef2}>
                   {[0, 1].map(set => sfhCmsIntroCarousel.filter((_, i) => i % 2 === 1).map((img, i) => (
                     <div className="sfh-map__intro-carousel-item" key={`${set}-${i}`}>
                       <img src={img.url} alt={img.alt} loading="lazy" />
@@ -1373,7 +1373,7 @@ const SelfFlyHireSection = () => {
                 <div className="sfh-v15-mobile__endless">Endless Destinations...</div>
 
                 <p className="sfh-v15-mobile__desc" style={{ marginTop: '1rem' }}>No crew, no waiting, no compromise. Available by the hour, day or week.</p>
-                <Link to="/contact?subject=hire" className="sfh-v15-mobile__cta">Enquire About Hire</Link>
+                <Link to="/self-fly-hire" className="sfh-v15-mobile__cta">Enquire About Hire</Link>
               </div>
             </div>
           );
@@ -1628,7 +1628,7 @@ function Experimentation() {
 
   // Blog state
   const personasScrollRef = useRef(null);
-  const personasThumbRef = useRef(null);
+  const personasDotsRef = useRef(null);
   const [blogPersona, setBlogPersona] = useState('press');
   const [blogVisible, setBlogVisible] = useState(6);
   const [blogSort, setBlogSort] = useState('popular');
@@ -1920,23 +1920,32 @@ function Experimentation() {
   const visiblePosts = sortedPosts.slice(0, blogVisible);
   const hasMorePosts = sortedPosts.length > blogVisible;
 
-  // Init custom personas scrollbar thumb
+  // Init personas scroll dots
+  const updatePersonaDots = () => {
+    const el = personasScrollRef.current;
+    const dotsEl = personasDotsRef.current;
+    if (!el || !dotsEl) return;
+    const total = BLOG_PERSONAS.length;
+    const ratio = el.scrollLeft / Math.max(el.scrollWidth - el.clientWidth, 1);
+    const activeIdx = Math.round(ratio * (total - 1));
+    dotsEl.querySelectorAll('.lhq__persona-dot').forEach((dot, i) => {
+      dot.classList.toggle('lhq__persona-dot--active', i === activeIdx);
+    });
+  };
   useEffect(() => {
     const el = personasScrollRef.current;
-    const thumb = personasThumbRef.current;
-    if (!el || !thumb) return;
-    const update = () => {
-      if (el.scrollWidth <= el.clientWidth) { thumb.style.display = 'none'; return; }
-      thumb.style.display = '';
-      const thumbW = Math.max(el.clientWidth * (el.clientWidth / el.scrollWidth), 32);
-      thumb.style.width = thumbW + 'px';
-      const ratio = el.scrollLeft / (el.scrollWidth - el.clientWidth);
-      thumb.style.transform = `translateX(${ratio * (el.clientWidth - thumbW)}px)`;
-    };
-    update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
+    if (!el) return;
+    updatePersonaDots();
+    window.addEventListener('resize', updatePersonaDots);
+    return () => window.removeEventListener('resize', updatePersonaDots);
   }, []);
+
+  const scrollPersonas = (dir) => {
+    const el = personasScrollRef.current;
+    if (!el) return;
+    const cardWidth = el.firstElementChild?.offsetWidth || el.clientWidth * 0.8;
+    el.scrollBy({ left: dir * cardWidth, behavior: 'smooth' });
+  };
 
   const handlePersonaClick = (id) => {
     if (blogPersona === id) {
@@ -2619,7 +2628,7 @@ function Experimentation() {
       image: trainingTabImages[3]?.url ?? '/assets/images/gallery/carousel/rotating-3.jpg',
       description: 'Holding a Commercial Pilot Licence, CPL(H) gives you the status of professional helicopter pilot. To achieve this, 155 hrs of flying time post licence is required, of which 50 hrs must be Pilot In Command (PIC).',
       cta: 'Learn More',
-      link: '/training',
+      link: '/training/commercial',
       duration: '155+ hours',
       tag: 'Professional',
     },
@@ -3688,10 +3697,10 @@ function Experimentation() {
                   </div>
                 ))}
                 {[
-                  { num: String(zigzagSlides.length + hscrollSlides.length + 1).padStart(2, '0'), tag: 'Specialist', title: 'SuperYacht Ops & Private Owner Management', description: 'Deck ops, pilot provisioning, maintenance coordination, and worldwide logistics for yacht-based helicopters.', duration: 'Bespoke', link: '/contact?subject=special-ops', cta: 'Enquire', image: cmsTrainingSpecialist[0]?.url ?? '/assets/images/lifestyle/superyacht-ops.jpg' },
-                  { num: String(zigzagSlides.length + hscrollSlides.length + 2).padStart(2, '0'), tag: 'Specialist', title: 'Pilot Provisioning', description: 'Crewing, safety pilots, and ferry flights. Fully rated, insured and experienced across the Robinson range.', duration: 'Bespoke', link: '/contact?subject=pilot-services', cta: 'Enquire', image: cmsTrainingSpecialist[1]?.url ?? '/assets/images/gallery/flying/flying--1.jpg' },
-                  { num: String(zigzagSlides.length + hscrollSlides.length + 3).padStart(2, '0'), tag: 'Advanced', title: 'Advanced Training', description: 'Autorotations with Captain Q, confined area training, mountain flying, and safety courses.', duration: 'Various', link: '/contact?subject=training', cta: 'Enquire', image: cmsTrainingSpecialist[2]?.url ?? '/assets/images/gallery/flying/flying-.jpg' },
-                  { num: String(zigzagSlides.length + hscrollSlides.length + 4).padStart(2, '0'), tag: 'Advisory', title: 'Aircraft Consulting', description: 'Pre-purchase inspections, ownership advice, fleet planning, and bespoke acquisition services for private and corporate clients.', duration: 'Bespoke', link: '/contact?subject=consulting', cta: 'Enquire', image: cmsTrainingSpecialist[3]?.url ?? '/assets/images/facility/hq-0354.jpg' },
+                  { num: String(zigzagSlides.length + hscrollSlides.length + 1).padStart(2, '0'), tag: 'Specialist', title: 'SuperYacht Ops & Private Owner Management', description: 'Deck ops, pilot provisioning, maintenance coordination, and worldwide logistics for yacht-based helicopters.', duration: 'Bespoke', link: '/superyacht-ops', cta: 'Enquire', image: cmsTrainingSpecialist[0]?.url ?? '/assets/images/lifestyle/superyacht-ops.jpg' },
+                  { num: String(zigzagSlides.length + hscrollSlides.length + 2).padStart(2, '0'), tag: 'Specialist', title: 'Pilot Provisioning', description: 'Crewing, safety pilots, and ferry flights. Fully rated, insured and experienced across the Robinson range.', duration: 'Bespoke', link: '/pilot-provisioning', cta: 'Enquire', image: cmsTrainingSpecialist[1]?.url ?? '/assets/images/gallery/flying/flying--1.jpg' },
+                  { num: String(zigzagSlides.length + hscrollSlides.length + 3).padStart(2, '0'), tag: 'Advanced', title: 'Advanced Training', description: 'Autorotations with Captain Q, confined area training, mountain flying, and safety courses.', duration: 'Various', link: '/training/advanced', cta: 'Enquire', image: cmsTrainingSpecialist[2]?.url ?? '/assets/images/gallery/flying/flying-.jpg' },
+                  { num: String(zigzagSlides.length + hscrollSlides.length + 4).padStart(2, '0'), tag: 'Advisory', title: 'Aircraft Consulting', description: 'Pre-purchase inspections, ownership advice, fleet planning, and bespoke acquisition services for private and corporate clients.', duration: 'Bespoke', link: '/aircraft-consulting', cta: 'Enquire', image: cmsTrainingSpecialist[3]?.url ?? '/assets/images/facility/hq-0354.jpg' },
                 ].map((item, i) => (
                   <div key={`serv-${i}`} className="fd-zigzag__card" data-cms-section={i === 0 ? 'home-training-specialist' : undefined}>
                     <div className="fd-zigzag__card-image"><img src={item.image} alt={item.title} /></div>
@@ -4159,8 +4168,9 @@ function Experimentation() {
           <span className={`fd-sales__chevron ${salesExpanded.preowned ? 'fd-sales__chevron--open' : ''}`}><i className="fas fa-chevron-down"></i></span>
         </h3>
         <div className={`fd-sales__collapse ${salesExpanded.preowned ? 'fd-sales__collapse--open' : ''}`}>
+        <h4 className="fd-sales__section-title">Why HQ?</h4>
         <p className="fd-sales__section-desc" style={{ marginBottom: '1.5rem' }}>
-          Our clients regularly trade, upgrade and renew their fleets — which means we always have access to quality pre-owned aircraft at every stage of life. Many come directly from owners whose maintenance we've managed for years, so we know every hour, every component and every logbook entry. When the right aircraft isn't already on our doorstep, we'll source it — inspecting the airframe, engine and avionics on-site before it ever reaches you. Looking for something specific? Talk to our sales team and we'll begin the search.
+          Our clients regularly trade, upgrade and renew their fleets — which means we always have access to quality pre-owned aircraft at every stage of life. Many come directly from owners whose maintenance we've managed for years, so we know every hour, every component and every logbook entry. When the right aircraft isn't already on our doorstep, we'll source it — inspecting the airframe, engine and avionics on-site before it ever reaches you.
         </p>
         <div className="fd-sales__preowned-layout">
         <div className="fd-sales__listings-header">
@@ -4844,37 +4854,37 @@ function Experimentation() {
           {/* Header */}
           <div className="lhq__header">
             <div className="lhq__header-line" />
-            <h2 className="lhq__title">Latest from HQ</h2>
+            <p className="lhq__subtitle">Latest from HQ</p>
             <div className="lhq__header-line" />
           </div>
-          <p className="lhq__subtitle">Insights, guides and stories from the hangar</p>
+          <h2 className="lhq__title">
+            <span className="lhq__title-word lhq__title-word--1">Insights,</span>
+            <span className="lhq__title-word lhq__title-word--2">guides and stories</span>
+            <span className="lhq__title-word lhq__title-word--3">from the hangar</span>
+          </h2>
 
           {/* Tier 1: Persona Cards */}
           <div className="lhq__personas-wrap">
-            <div className="lhq__personas" ref={personasScrollRef} onScroll={() => {
-              const el = personasScrollRef.current;
-              const thumb = personasThumbRef.current;
-              if (!el || !thumb) return;
-              const ratio = el.scrollLeft / (el.scrollWidth - el.clientWidth);
-              const trackWidth = el.clientWidth;
-              const thumbWidth = Math.max(trackWidth * (el.clientWidth / el.scrollWidth), 32);
-              thumb.style.width = thumbWidth + 'px';
-              thumb.style.transform = `translateX(${ratio * (trackWidth - thumbWidth)}px)`;
-            }}>
-              {BLOG_PERSONAS.map((persona) => (
-                <button
-                  key={persona.id}
-                  className={`lhq__persona ${blogPersona === persona.id ? 'lhq__persona--active' : ''}`}
-                  onClick={() => handlePersonaClick(persona.id)}
-                >
-                  <span className="lhq__persona-icon">{persona.icon}</span>
-                  <span className="lhq__persona-headline">{persona.headline}</span>
-                  <span className="lhq__persona-subtitle">{persona.subtitle}</span>
-                </button>
-              ))}
-            </div>
-            <div className="lhq__personas-track" aria-hidden="true">
-              <div className="lhq__personas-thumb" ref={personasThumbRef} />
+            <div className="lhq__personas-row">
+              <button className="lhq__personas-chevron lhq__personas-chevron--prev" onClick={() => scrollPersonas(-1)} aria-label="Previous">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="10,3 5,8 10,13"/></svg>
+              </button>
+              <div className="lhq__personas" ref={personasScrollRef} onScroll={updatePersonaDots}>
+                {BLOG_PERSONAS.map((persona) => (
+                  <button
+                    key={persona.id}
+                    className={`lhq__persona ${blogPersona === persona.id ? 'lhq__persona--active' : ''}`}
+                    onClick={() => handlePersonaClick(persona.id)}
+                  >
+                    <span className="lhq__persona-icon">{persona.icon}</span>
+                    <span className="lhq__persona-headline">{persona.headline}</span>
+                    <span className="lhq__persona-subtitle">{persona.subtitle}</span>
+                  </button>
+                ))}
+              </div>
+              <button className="lhq__personas-chevron lhq__personas-chevron--next" onClick={() => scrollPersonas(1)} aria-label="Next">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6,3 11,8 6,13"/></svg>
+              </button>
             </div>
           </div>
 
@@ -4910,7 +4920,6 @@ function Experimentation() {
                 <button className="lhq__search-clear" onClick={() => setBlogSearch('')}>&times;</button>
               )}
             </div>
-            <span className="lhq__sort-count">{sortedPosts.length} articles</span>
           </div>
 
           {/* Post List */}
@@ -4960,9 +4969,6 @@ function Experimentation() {
                 Load more articles
               </button>
             )}
-            <Link to="/blog" className="lhq__view-all">
-              View all {allPublished.length} articles &rarr;
-            </Link>
           </div>
         </div>
       </section>
@@ -5420,11 +5426,11 @@ function Experimentation() {
           .fd-about-mobile-standalone {
             display: block;
             background: #fff;
-            padding: 3rem 1.5rem 1.5rem;
+            padding: 3rem 1rem 1rem;
           }
           .fd-about-mobile-standalone__video {
             display: block;
-            margin: 1.5rem -1.5rem;
+            margin: 1.5rem -1rem;
           }
           .fd-about-mobile-standalone__video .fd-about__video {
             margin-bottom: 0;
@@ -6594,6 +6600,12 @@ function Experimentation() {
           pointer-events: auto;
         }
 
+        /* Keep burger lines dark on desktop (mobile gets #333 via navigation.css media query,
+           but desktop defaults to #fff — override so burger is always visible) */
+        .fd-header-burger.hq-menu-btn span {
+          background: #333;
+        }
+
         .fd-nav__header {
           display: flex;
           align-items: center;
@@ -6872,6 +6884,15 @@ function Experimentation() {
           color: #666;
           max-width: 600px;
           margin: 0 auto;
+        }
+
+        .fd-training-header__desc {
+          display: none;
+        }
+        @media (max-width: 768px) {
+          .fd-training-header__desc {
+            display: block;
+          }
         }
 
         /* ===== SCROLL PATH WRAPPER ===== */
@@ -7919,6 +7940,19 @@ function Experimentation() {
           width: 100%;
           padding: 4rem 2rem 120px;
         }
+        .fd-exped__cinematic-content::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 55%;
+          height: 25%;
+          background: radial-gradient(ellipse at center, rgba(250,249,246,0.75) 0%, rgba(250,249,246,0.2) 60%, transparent 85%);
+          filter: blur(4px);
+          pointer-events: none;
+          z-index: -1;
+        }
 
         .fd-exped__pre-title {
           display: block;
@@ -7927,6 +7961,10 @@ function Experimentation() {
           letter-spacing: 0.3em;
           color: #888;
           margin-bottom: 1rem;
+          text-shadow:
+            0 0 12px #faf9f6,
+            0 0 28px #faf9f6,
+            0 0 50px rgba(250,249,246,0.9);
         }
 
         .fd-exped__title {
@@ -7941,6 +7979,11 @@ function Experimentation() {
           text-transform: uppercase;
           line-height: 1;
           letter-spacing: -0.02em;
+          text-shadow:
+            0 0 18px #faf9f6,
+            0 0 36px #faf9f6,
+            0 0 60px rgba(250,249,246,0.95),
+            0 0 90px rgba(250,249,246,0.8);
         }
 
         .fd-exped__title-word--1 { color: #1a1a1a; }
@@ -7953,6 +7996,10 @@ function Experimentation() {
           color: #666;
           max-width: 600px;
           margin: 0 auto;
+          text-shadow:
+            0 0 10px #faf9f6,
+            0 0 22px #faf9f6,
+            0 0 40px rgba(250,249,246,0.85);
         }
 
         /* Stats Bar */
@@ -8434,6 +8481,8 @@ function Experimentation() {
         @media (max-width: 900px) {
           .fd-exped__cinematic-content {
             padding-bottom: 0;
+            padding-left: 1rem;
+            padding-right: 1rem;
           }
           .fd-exped__cinematic {
             overflow: hidden;
@@ -8445,24 +8494,22 @@ function Experimentation() {
           }
           .fd-exped__title-word {
             text-shadow:
-              -8px -8px 0 #faf9f6, 8px -8px 0 #faf9f6,
-              -8px  8px 0 #faf9f6, 8px  8px 0 #faf9f6,
-               0   -8px 0 #faf9f6, 0    8px 0 #faf9f6,
-              -8px  0   0 #faf9f6, 8px  0   0 #faf9f6;
+              0 0 18px #faf9f6,
+              0 0 36px #faf9f6,
+              0 0 60px rgba(250,249,246,0.9),
+              0 0 90px rgba(250,249,246,0.7);
           }
           .fd-exped__pre-title {
             text-shadow:
-              -8px -8px 0 #faf9f6, 8px -8px 0 #faf9f6,
-              -8px  8px 0 #faf9f6, 8px  8px 0 #faf9f6,
-               0   -8px 0 #faf9f6, 0    8px 0 #faf9f6,
-              -8px  0   0 #faf9f6, 8px  0   0 #faf9f6;
+              0 0 12px #faf9f6,
+              0 0 28px #faf9f6,
+              0 0 50px rgba(250,249,246,0.85);
           }
           .fd-exped__cinematic-desc {
             text-shadow:
-              -4px -4px 0 #faf9f6, 4px -4px 0 #faf9f6,
-              -4px  4px 0 #faf9f6, 4px  4px 0 #faf9f6,
-               0   -4px 0 #faf9f6, 0    4px 0 #faf9f6,
-              -4px  0   0 #faf9f6, 4px  0   0 #faf9f6;
+              0 0 10px #faf9f6,
+              0 0 22px #faf9f6,
+              0 0 40px rgba(250,249,246,0.8);
           }
         }
 
@@ -9775,8 +9822,8 @@ function Experimentation() {
             width: 100%;
             min-width: 0;
             padding-bottom: 0;
-            margin-left: 10px;
-            margin-right: 10px;
+            margin-left: 14px;
+            margin-right: 14px;
           }
 
           .fd-sales__carousel-wrap > .rb-stats__chevron {
@@ -10142,7 +10189,7 @@ function Experimentation() {
           /* Show mobile V9 layout */
           .clubhouse__mobile-v9 {
             display: block;
-            padding: 0 1.5rem;
+            padding: 0 1rem;
           }
 
           .clubhouse__mobile-v9 .clubhouse__title {
@@ -10154,9 +10201,9 @@ function Experimentation() {
           .clubhouse__mobile-carousel-wrap {
             display: block;
             overflow: hidden;
-            margin: 0 -1.5rem 1.25rem;
-            mask-image: linear-gradient(to right, transparent 1.5rem, black 2rem, black calc(100% - 2rem), transparent calc(100% - 1.5rem));
-            -webkit-mask-image: linear-gradient(to right, transparent 1.5rem, black 2rem, black calc(100% - 2rem), transparent calc(100% - 1.5rem));
+            margin: 0 -1rem 1.25rem;
+            mask-image: linear-gradient(to right, transparent 1rem, black 1.5rem, black calc(100% - 1.5rem), transparent calc(100% - 1rem));
+            -webkit-mask-image: linear-gradient(to right, transparent 1rem, black 1.5rem, black calc(100% - 1.5rem), transparent calc(100% - 1rem));
           }
 
           .clubhouse__mobile-carousel {
@@ -14436,7 +14483,8 @@ function Experimentation() {
           .fd-sales__subsection > .fd-sales__section-title { padding-left: 29px; padding-right: 29px; }
           .fd-sales__section-desc { padding-left: 1rem; padding-right: 1rem; }
           .fd-sales__collapse > * { padding-left: 0; padding-right: 0; box-sizing: border-box; }
-          .fd-sales__collapse > .fd-sales__section-desc { padding-left: 24px; padding-right: 24px; }
+          .fd-sales__collapse > .fd-sales__section-title { padding-left: 1rem; }
+          .fd-sales__collapse > .fd-sales__section-desc { padding-left: 1rem; padding-right: 1rem; }
           .fd-sales__card:hover { transform: none; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-color: #e8e6e2; }
           .fd-sales__card:hover .fd-sales__card-image img { transform: none; }
           .fd-sales__card-image { aspect-ratio: 16/10; padding: 0.5rem; }
@@ -15760,18 +15808,32 @@ function Experimentation() {
 
         /* ===== LATEST FROM HQ BLOG SECTION ===== */
         .lhq__header {
-          display: flex; align-items: center; gap: 1.5rem; margin-bottom: 0.75rem;
+          display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem;
         }
         .lhq__header-line {
-          flex: 1; height: 1px; background: #d4d0ca;
+          flex: 1; height: 1px; background: #d4d0ca; display: none;
+        }
+        @media (max-width: 900px) {
+          .lhq__header-line { display: block; }
         }
         .lhq__title {
-          font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 700;
-          color: #1a1a1a; white-space: nowrap; letter-spacing: -0.02em;
+          margin: 0 0 40px; text-align: center;
         }
+        .lhq__title-word {
+          display: block;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: clamp(2.2rem, 5vw, 3.8rem);
+          font-weight: 700;
+          text-transform: uppercase;
+          line-height: 1;
+          letter-spacing: -0.02em;
+        }
+        .lhq__title-word--1 { color: #1a1a1a; }
+        .lhq__title-word--2 { color: #4a4a4a; }
+        .lhq__title-word--3 { color: #7a7a7a; }
         .lhq__subtitle {
           text-align: center; font-family: 'Share Tech Mono', monospace; font-size: 0.7rem;
-          text-transform: uppercase; letter-spacing: 0.15em; color: rgba(0,0,0,0.4); margin-bottom: 2.5rem;
+          text-transform: uppercase; letter-spacing: 0.15em; color: rgba(0,0,0,0.4); margin: 0;
         }
 
         /* Persona Cards */
@@ -15811,25 +15873,30 @@ function Experimentation() {
         }
         .lhq__sort-toggle {
           position: relative; display: inline-flex; background: #f0efec;
-          border: 1px solid #d4d0ca; overflow: hidden; box-sizing: border-box;
+          border: 1px solid #d4d0ca; box-sizing: border-box;
+          flex: none;
         }
         .lhq__sort-btn {
-          all: unset; cursor: pointer; position: relative; z-index: 1;
+          appearance: none; -webkit-appearance: none;
+          display: block; cursor: pointer; position: relative; z-index: 1;
+          background: transparent; border: none; border-radius: 0;
           font-family: 'Share Tech Mono', monospace; font-size: 0.65rem;
-          text-transform: uppercase; letter-spacing: 0.1em;
+          text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap;
           padding: 0.5rem 1.25rem; transition: color 0.25s ease, background 0.25s ease;
-          color: rgba(0,0,0,0.45); background: transparent;
-          flex: 1; text-align: center;
+          color: rgba(0,0,0,0.45); box-sizing: border-box;
         }
         .lhq__sort-btn--active { color: #fff; background: #1a1a1a; }
         .lhq__sort-count {
           font-family: 'Share Tech Mono', monospace; font-size: 0.6rem;
-          color: rgba(0,0,0,0.3); letter-spacing: 0.06em; margin-left: auto; white-space: nowrap;
+          color: rgba(0,0,0,0.3); letter-spacing: 0.06em; white-space: nowrap;
+        }
+        @media (max-width: 768px) {
+          .lhq__sort-count { display: none; }
         }
 
         /* Search */
         .lhq__search-wrap {
-          position: relative; display: flex; align-items: center; flex: 1; max-width: 280px;
+          position: relative; display: flex; align-items: center; flex: 1;
         }
         .lhq__search-icon {
           position: absolute; left: 0.75rem; width: 14px; height: 14px;
@@ -15902,12 +15969,11 @@ function Experimentation() {
         /* Actions */
         .lhq__actions {
           display: flex; align-items: center; justify-content: space-between;
-          padding-top: 1rem; border-top: 1px solid #e8e6e2;
         }
         .lhq__load-more {
-          all: unset; cursor: pointer;
+          all: unset; cursor: pointer; display: block; width: 100%; box-sizing: border-box;
           font-family: 'Share Tech Mono', monospace; font-size: 0.65rem;
-          text-transform: uppercase; letter-spacing: 0.12em;
+          text-transform: uppercase; letter-spacing: 0.12em; text-align: center;
           padding: 0.6rem 1.5rem; border: 1px solid #1a1a1a;
           transition: all 0.2s;
         }
@@ -15920,7 +15986,24 @@ function Experimentation() {
         }
         .lhq__view-all:hover { color: #1a1a1a; }
 
-        .lhq__personas-track { display: none; }
+        .lhq__personas-chevron { display: none; }
+
+        /* Chevrons for non-touch devices in scrollable state */
+        @media (max-width: 900px) and (pointer: fine) {
+          .lhq__personas-row {
+            display: flex; align-items: stretch;
+          }
+          .lhq__personas-chevron {
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; width: 2.5rem;
+            background: #f0efec; border: 1px solid #d4d0ca; cursor: pointer;
+            font-size: 1.5rem; color: #1a1a1a; padding: 0;
+          }
+          .lhq__personas-chevron--prev { border-right: none; }
+          .lhq__personas-chevron--next { border-left: none; }
+          .lhq__personas-chevron:hover { background: #e8e7e4; }
+        }
+
         /* Mobile Responsive */
         @media (max-width: 900px) {
           .lhq__personas {
@@ -15933,25 +16016,7 @@ function Experimentation() {
             margin: 0;
           }
           .lhq__personas::-webkit-scrollbar { display: none; }
-          .lhq__personas-track {
-            display: block;
-            height: 3px;
-            background: #e8e6e2;
-            border-radius: 2px;
-            margin: 5px 0 0;
-            position: relative;
-          }
-          .lhq__sort-bar { margin-top: 1.5rem; }
-          .lhq__personas-thumb {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 40%;
-            background: #1a1a1a;
-            border-radius: 2px;
-            transition: width 0.1s;
-          }
+          .lhq__sort-bar { margin-top: 1.5rem; margin-bottom: 1.5rem; }
           .lhq__persona {
             padding: 0.5rem 0.6rem;
             border-right: 1px solid #d4d0ca;
@@ -15970,8 +16035,13 @@ function Experimentation() {
           .lhq__compact-img { width: 64px; height: 64px; }
           .lhq__actions { flex-direction: column; gap: 1rem; align-items: stretch; text-align: center; }
           .lhq__view-all { margin-left: 0; }
-          .lhq__sort-bar { flex-wrap: wrap; }
-          .lhq__search-wrap { max-width: 100%; order: 3; width: 100%; }
+          .lhq__list { border-top: none; }
+        }
+        @media (max-width: 460px) {
+          .lhq__sort-bar { flex-wrap: wrap; margin-bottom: 0; }
+          .lhq__search-wrap { max-width: 100%; order: 1; width: 100%; }
+          .lhq__sort-toggle { order: 2; width: 100%; }
+          .lhq__sort-toggle .lhq__sort-btn { flex: 1; text-align: center; }
         }
 
         /* ================================================================

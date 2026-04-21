@@ -567,6 +567,7 @@ function ExpeditionBarcode({
           text-align: left;
           padding-left: 0.35rem;
           margin-bottom: 0.25rem;
+          white-space: nowrap;
         }
 
         .exp-barcode__meta {
@@ -876,7 +877,7 @@ function ExpeditionBarcode({
           .exp-barcode__scroll-row {
             flex-wrap: wrap;
             justify-content: center;
-            gap: 0.75rem;
+            gap: 0.25rem;
           }
 
           .exp-barcode__grid-wrapper {
@@ -895,9 +896,11 @@ function ExpeditionBarcode({
             margin-left: 0;
           }
 
-          /* Tighten the card grid column gap */
+          /* Tighten the card grid column gap and fix column widths to match */
           .exp-barcode__grid {
             gap: 0.5rem;
+            grid-template-columns: repeat(4, calc(50% - 0.25rem));
+            justify-content: center;
           }
         }
       `}</style>

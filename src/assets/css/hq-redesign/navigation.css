@@ -111,7 +111,7 @@
   left: 0;
   right: 0;
   background: #fff;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: none;
   z-index: 99998;
   transform: translateY(-100%);
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -122,14 +122,33 @@
 
 .hq-menu-panel.open {
   transform: translateY(0);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 .hq-menu-grid {
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 40px;
+  /* 6 sections × 1fr = 1 row. Gap tighter than before so 6 columns are comfortably readable. */
+  grid-template-columns: repeat(6, 1fr);
+  gap: 24px;
+}
+
+/* The hamburger replaces the inline nav at 1024px. At that point the panel
+   should open in 2 rows (3 cols) not 1 row, giving desktop-nav → 2-row panel → 3-row panel. */
+@media (max-width: 1024px) {
+  .hq-menu-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+
+/* Below ~500px three columns drop below ~140px; drop to 2 columns (3 rows of 2). */
+@media (max-width: 500px) {
+  .hq-menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
 }
 
 .hq-menu-section h3 {
@@ -1195,6 +1214,14 @@
   box-shadow: none !important;
 }
 
+@media (max-width: 768px) {
+  .Mobile-bar--top,
+  .Mobile-bar--bottom {
+    border-bottom: none !important;
+    box-shadow: none !important;
+  }
+}
+
 /* White spotlight centered behind logo */
 /* Radial fade: left, right, and down (no top fade) */
 /* Vertical completes FIRST, then horizontal continues */
@@ -1283,6 +1310,7 @@
   position: relative;
   z-index: 2;
 }
+
 
 /* Smaller header when scrolled */
 .Header--scrolled .Header-inner--top {

@@ -30,6 +30,8 @@ import ExpeditionVideoSlider from '../components/Expeditions/ExpeditionVideoSlid
 // CMS hook
 import { usePageText } from '../hooks/usePageText';
 import { useFaqs } from '../hooks/useFaqs';
+import { usePageImages } from '../hooks/usePageImages';
+import { useCmsHighlight } from '../hooks/useCmsHighlight';
 
 /**
  * EXPEDITIONS PAGE HEADER COMPONENT
@@ -531,6 +533,7 @@ function HighlightReel() {
   const linesRef = useRef(null);
   const isInView = useInView(videoRef, { once: true, amount: 0.3 });
   const linesInView = useInView(linesRef, { once: true, amount: 0.5, margin: "0px 0px -200px 0px" });
+  const pageImages = usePageImages('expeditions');
 
   // YouTube video ID for the highlight reel compilation
   const highlightVideoId = 'gREwO1BDxXA'; // "Fly" video - replace with actual highlight reel
@@ -560,9 +563,9 @@ function HighlightReel() {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           {!isPlaying ? (
-            <div className="fexp-highlight__placeholder">
+            <div className="fexp-highlight__placeholder" data-cms-section="expeditions-highlight">
               <img
-                src="/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp"
+                src={pageImages['expeditions-highlight']?.[0]?.url || '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp'}
                 alt="Expedition Highlights"
               />
               <div className="fexp-highlight__overlay">
@@ -716,9 +719,9 @@ function SafetySection() {
 }
 
 // 7. Helicopter Fleet
-function FleetSection() {
+function FleetSection({ pageImages = {} }) {
   return (
-    <section className="fexp-fleet">
+    <section className="fexp-fleet" data-cms-section="expeditions-fleet">
       <div className="fexp-fleet__container">
         <Reveal>
           <div className="fexp-section-header fexp-section-header--light">
@@ -735,7 +738,7 @@ function FleetSection() {
             <Reveal key={i} delay={i * 0.15}>
               <div className="fexp-fleet__card">
                 <div className="fexp-fleet__image">
-                  <img src={heli.image} alt={heli.model} />
+                  <img src={pageImages['expeditions-fleet']?.[i]?.url || heli.image} alt={heli.model} />
                 </div>
                 <div className="fexp-fleet__info">
                   <h3>{heli.model}</h3>
@@ -1294,6 +1297,8 @@ function FinalExpeditions() {
   const heroRef = useRef(null);
   const [openFaq, setOpenFaq] = useState(null);
   const [activeRegion, setActiveRegion] = useState('polar');
+  const pageImages = usePageImages('expeditions');
+  useCmsHighlight();
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ['start start', 'end start'],
@@ -1432,14 +1437,14 @@ function FinalExpeditions() {
       <ExpeditionsHeader />
 
       {/* ========== HERO: Expedition Passport ========== */}
-      <section ref={heroRef} className="fexp-hero">
+      <section ref={heroRef} className="fexp-hero" data-cms-section="expeditions-hero">
         <motion.div
           className="fexp-hero__bg"
           initial={{ scale: 1.1, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 1.5 }}
         >
-          <img src="/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp" alt="" />
+          <img src={pageImages['expeditions-hero']?.[0]?.url || '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp'} alt="" />
         </motion.div>
         <div className="fexp-hero__overlay" />
 

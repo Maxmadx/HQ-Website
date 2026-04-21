@@ -17,13 +17,20 @@ import { db } from '../lib/firebase';
 
 // ── Fallback values (pence) — must match seed-pricing.js ─────────────────────
 const FALLBACK = {
+  // London helicopter tours
+  london_tour_shared_day:     19900,
+  london_tour_shared_sunset:  24900,
+  london_tour_shared_night:   29900,
+  london_tour_private_day:   149500,
+  london_tour_private_sunset: 169500,
+  london_tour_private_night:  189500,
   // Discovery flights
   discovery_r22_30min: 18000,
   discovery_r22_60min: 36000,
   discovery_r44_30min: 30500,
   discovery_r44_60min: 60500,
-  discovery_r66_30min: 45000,
-  discovery_r66_60min: 85000,
+  discovery_r66_30min: 31500,
+  discovery_r66_60min: 63500,
   // Training hourly rates
   training_r22_hr: 27500,
   training_r44_hr: 39500,
@@ -33,15 +40,29 @@ const FALLBACK = {
   type_rating_r44: 320000,
   type_rating_r66: 950000,
   // Self-fly hire
-  sfh_r22_wet:   30000,
-  sfh_r22_block: 28500,
-  sfh_r44_wet:   45000,
-  sfh_r44_block: 42500,
-  sfh_r66_wet:   75000,
-  sfh_r66_block: 71000,
+  sfh_r22_wet:   29500,
+  sfh_r22_block: 28000,
+  sfh_r44_wet:   54000,
+  sfh_r44_block: 51000,
+  sfh_r66_wet:   57000,
+  sfh_r66_block: 54000,
   // Additional services
   addon_safety_pilot: 15000,
   addon_customs:       7500,
+  // Training course display prices
+  training_discovery_day:  29900,
+  training_ppl_from:      1500000,
+  training_ground_school:  150000,
+  // Hangarage
+  hangarage_r22_day:    7500,  hangarage_r22_week:   35000,  hangarage_r22_month:   95000,
+  hangarage_r44_day:   12000,  hangarage_r44_week:   55000,  hangarage_r44_month:  150000,
+  hangarage_as350_day: 16000,  hangarage_as350_week: 75000,  hangarage_as350_month: 220000,
+  hangarage_aw109_day: 25000,  hangarage_aw109_week: 120000, hangarage_aw109_month: 350000,
+  // Valet services
+  valet_r22_mini:   16000,  valet_r22_full:   22000,  valet_r22_deluxe:   36000,
+  valet_r66_mini:   18000,  valet_r66_full:   30000,  valet_r66_deluxe:   45000,
+  valet_as350_mini: 26000,  valet_as350_full: 40000,  valet_as350_deluxe: 60000,
+  valet_a139_mini:  39000,  valet_a139_full:  60000,  valet_a139_deluxe:  90000,
   // PPL cost estimates
   costs_training_from: 1600000,
   costs_training_to:   2000000,

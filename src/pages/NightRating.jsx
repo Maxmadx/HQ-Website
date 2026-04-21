@@ -179,9 +179,9 @@ function NightRatingHeader() {
 }
 
 // Animated reveal wrapper
-function Reveal({ children, delay = 0, direction = 'up' }) {
+function Reveal({ children, delay = 0, direction = 'up', duration = 0.8 }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
+  const isInView = useInView(ref, { once: true, amount: 0.05 });
 
   const variants = {
     hidden: {
@@ -202,7 +202,7 @@ function Reveal({ children, delay = 0, direction = 'up' }) {
       initial="hidden"
       animate={isInView ? 'visible' : 'hidden'}
       variants={variants}
-      transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration, delay, ease: [0.16, 1, 0.3, 1] }}
     >
       {children}
     </motion.div>
@@ -230,6 +230,52 @@ function generateStars(count) {
 function NightRating() {
   const heroRef = useRef(null);
   const [openFaq, setOpenFaq] = useState(null);
+  const nrGridRef = useRef(null);
+  const [nrActiveCard, setNrActiveCard] = useState(0);
+
+  // Enquiry form state
+  const [enquiryOpen, setEnquiryOpen] = useState(false);
+  const [enquirySubmitted, setEnquirySubmitted] = useState(false);
+  const [enquirySubmitting, setEnquirySubmitting] = useState(false);
+  const [enquiryError, setEnquiryError] = useState('');
+  const [enqName, setEnqName] = useState('');
+  const [enqEmail, setEnqEmail] = useState('');
+  const [enqPhone, setEnqPhone] = useState('');
+  const [enqLicence, setEnqLicence] = useState('');
+  const [enqHours, setEnqHours] = useState('');
+  const [enqMessage, setEnqMessage] = useState('');
+
+  async function handleEnquirySubmit(e) {
+    e.preventDefault();
+    if (!enqName || !enqEmail) { setEnquiryError('Name and email are required.'); return; }
+    setEnquirySubmitting(true);
+    setEnquiryError('');
+    try {
+      const message = [
+        enqLicence ? `Current licence: ${enqLicence}` : '',
+        enqHours ? `Total flight hours: ${enqHours}` : '',
+        enqMessage ? `Message: ${enqMessage}` : '',
+      ].filter(Boolean).join('\n');
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: enqName,
+          email: enqEmail,
+          phone: enqPhone,
+          subject: 'Night Rating Enquiry',
+          message,
+          source: 'night-rating-cta',
+        }),
+      });
+      if (!res.ok) throw new Error('Request failed');
+      setEnquirySubmitted(true);
+    } catch {
+      setEnquiryError('Something went wrong. Please try again or call us directly.');
+    } finally {
+      setEnquirySubmitting(false);
+    }
+  }
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ['start start', 'end start'],
@@ -411,8 +457,18 @@ function NightRating() {
             </div>
           </Reveal>
 
-          <div className="nr-overview__grid">
-            <Reveal delay={0.1}>
+          <div
+            className="nr-overview__grid"
+            ref={nrGridRef}
+            onScroll={() => {
+              const el = nrGridRef.current;
+              if (!el) return;
+              const total = el.scrollWidth - el.clientWidth;
+              const idx = Math.round((el.scrollLeft / total) * 2);
+              setNrActiveCard(Math.max(0, Math.min(2, idx)));
+            }}
+          >
+            <Reveal delay={0} duration={0.3}>
               <div className="nr-overview__card">
                 <span className="nr-overview__card-num">01</span>
                 <h3>Practical Flexibility</h3>
@@ -424,7 +480,7 @@ function NightRating() {
                 </p>
               </div>
             </Reveal>
-            <Reveal delay={0.2}>
+            <Reveal delay={0.05} duration={0.3}>
               <div className="nr-overview__card">
                 <span className="nr-overview__card-num">02</span>
                 <h3>A Different World</h3>
@@ -436,7 +492,7 @@ function NightRating() {
                 </p>
               </div>
             </Reveal>
-            <Reveal delay={0.3}>
+            <Reveal delay={0.1} duration={0.3}>
               <div className="nr-overview__card">
                 <span className="nr-overview__card-num">03</span>
                 <h3>Sharper Skills</h3>
@@ -448,6 +504,11 @@ function NightRating() {
                 </p>
               </div>
             </Reveal>
+          </div>
+          <div className="nr-overview__dots">
+            {[0, 1, 2].map(i => (
+              <span key={i} className={`nr-overview__dot${nrActiveCard === i ? ' nr-overview__dot--active' : ''}`} />
+            ))}
           </div>
         </div>
       </section>
@@ -478,18 +539,6 @@ function NightRating() {
             ))}
           </div>
 
-          <Reveal delay={0.5}>
-            <div className="nr-prereq__note">
-              <span className="nr-prereq__note-label">Recommendation</span>
-              <p>
-                Beyond the regulatory minimums, we recommend that students are genuinely comfortable
-                with all aspects of daytime flight before beginning night training. Your basic
-                handling should be instinctive, your navigation skills reliable, and your general
-                airmanship sound. If you have not flown recently, consider a few daytime refresher
-                flights first.
-              </p>
-            </div>
-          </Reveal>
         </div>
       </section>
 
@@ -523,23 +572,6 @@ function NightRating() {
             ))}
           </div>
 
-          <Reveal delay={0.5}>
-            <div className="nr-process__timeline">
-              <div className="nr-process__timeline-track">
-                {processSteps.map((_, i) => (
-                  <React.Fragment key={i}>
-                    <div className="nr-process__timeline-dot" />
-                    {i < processSteps.length - 1 && <div className="nr-process__timeline-line" />}
-                  </React.Fragment>
-                ))}
-              </div>
-              <div className="nr-process__timeline-label">
-                <span>Ground School</span>
-                <span>5 Hours Flight</span>
-                <span>Certified</span>
-              </div>
-            </div>
-          </Reveal>
         </div>
       </section>
 
@@ -622,17 +654,89 @@ function NightRating() {
                 and check whether you meet the prerequisites. Training is typically conducted
                 during winter months when early darkness makes scheduling practical.
               </p>
-              <div className="nr-cta__buttons">
-                <a href="/contact?subject=night-rating" className="nr-btn nr-btn--primary nr-btn--white">
-                  Enquire Now
-                </a>
-                <Link to="/training" className="nr-cta__link">
-                  View All Training
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </Link>
-              </div>
+
+              {!enquiryOpen && !enquirySubmitted && (
+                <div className="nr-cta__buttons">
+                  <button
+                    type="button"
+                    className="nr-btn nr-btn--primary nr-btn--white"
+                    onClick={() => setEnquiryOpen(true)}
+                  >
+                    Enquire Now
+                  </button>
+                  <Link to="/training" className="nr-cta__link">
+                    View All Training
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </Link>
+                </div>
+              )}
+
+              {enquiryOpen && !enquirySubmitted && (
+                <form className="nr-enquiry-form" onSubmit={handleEnquirySubmit}>
+                  <div className="nr-enquiry-form__header">
+                    <span className="nr-enquiry-form__badge">Night Rating Enquiry</span>
+                    <button type="button" className="nr-enquiry-form__back" onClick={() => { setEnquiryOpen(false); setEnquiryError(''); }}>
+                      ← Back
+                    </button>
+                  </div>
+
+                  <div className="nr-enquiry-form__row">
+                    <div className="nr-enquiry-form__field">
+                      <label className="nr-enquiry-form__label">Name <span className="nr-enquiry-form__required">*</span></label>
+                      <input className="nr-enquiry-form__input" type="text" placeholder="Full name" value={enqName} onChange={e => setEnqName(e.target.value)} required />
+                    </div>
+                    <div className="nr-enquiry-form__field">
+                      <label className="nr-enquiry-form__label">Email <span className="nr-enquiry-form__required">*</span></label>
+                      <input className="nr-enquiry-form__input" type="email" placeholder="you@example.com" value={enqEmail} onChange={e => setEnqEmail(e.target.value)} required />
+                    </div>
+                    <div className="nr-enquiry-form__field">
+                      <label className="nr-enquiry-form__label">Phone</label>
+                      <input className="nr-enquiry-form__input" type="tel" placeholder="+44" value={enqPhone} onChange={e => setEnqPhone(e.target.value)} />
+                    </div>
+                  </div>
+
+                  <div className="nr-enquiry-form__row">
+                    <div className="nr-enquiry-form__field">
+                      <label className="nr-enquiry-form__label">Current Licence</label>
+                      <select className="nr-enquiry-form__input nr-enquiry-form__select" value={enqLicence} onChange={e => setEnqLicence(e.target.value)}>
+                        <option value="">Select licence</option>
+                        <option value="Student Pilot">Student Pilot</option>
+                        <option value="PPL(H)">PPL(H)</option>
+                        <option value="CPL(H)">CPL(H)</option>
+                        <option value="ATPL(H)">ATPL(H)</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                    <div className="nr-enquiry-form__field">
+                      <label className="nr-enquiry-form__label">Total Flight Hours</label>
+                      <input className="nr-enquiry-form__input" type="number" placeholder="e.g. 120" min="0" value={enqHours} onChange={e => setEnqHours(e.target.value)} />
+                    </div>
+                  </div>
+
+                  <div className="nr-enquiry-form__field">
+                    <label className="nr-enquiry-form__label">Message <span className="nr-enquiry-form__optional">(optional)</span></label>
+                    <textarea className="nr-enquiry-form__input nr-enquiry-form__textarea" placeholder="Any questions, preferred dates, or other details…" rows={3} value={enqMessage} onChange={e => setEnqMessage(e.target.value)} />
+                  </div>
+
+                  {enquiryError && <p className="nr-enquiry-form__error">{enquiryError}</p>}
+
+                  <div className="nr-enquiry-form__footer">
+                    <button type="submit" className="nr-btn nr-btn--primary" disabled={enquirySubmitting}>
+                      {enquirySubmitting ? 'Sending…' : 'Send Enquiry'}
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {enquirySubmitted && (
+                <div className="nr-enquiry-form__success">
+                  <div className="nr-enquiry-form__success-icon">✓</div>
+                  <p className="nr-enquiry-form__success-title">Enquiry Received</p>
+                  <p className="nr-enquiry-form__success-body">We'll be in touch shortly. In the meantime feel free to call us on <a href="tel:+441895833373">+44 1895 833 373</a>.</p>
+                </div>
+              )}
             </Reveal>
           </div>
         </div>
@@ -986,6 +1090,10 @@ function NightRating() {
           margin: 0;
         }
 
+        .nr-overview__dots {
+          display: none;
+        }
+
         /* ===== PREREQUISITES ===== */
         .nr-prereq {
           padding: 5rem 2rem;
@@ -1002,11 +1110,18 @@ function NightRating() {
           grid-template-columns: repeat(2, 1fr);
           gap: 1.5rem;
           margin-bottom: 2rem;
+          align-items: stretch;
+        }
+
+        .nr-prereq__grid > div {
+          height: 100%;
         }
 
         .nr-prereq__card {
           display: flex;
           align-items: center;
+          height: 100%;
+          box-sizing: border-box;
           gap: 1.25rem;
           padding: 1.5rem;
           background: #fff;
@@ -1042,29 +1157,7 @@ function NightRating() {
           margin: 0;
         }
 
-        .nr-prereq__note {
-          background: #fff;
-          border-left: 3px solid #1a1a1a;
-          padding: 1.5rem;
-        }
-
-        .nr-prereq__note-label {
-          display: block;
-          font-size: 0.65rem;
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
-          color: #999;
-          margin-bottom: 0.75rem;
-        }
-
-        .nr-prereq__note p {
-          font-size: 0.95rem;
-          color: #666;
-          line-height: 1.7;
-          margin: 0;
-        }
-
-        /* ===== PROCESS SECTION ===== */
+/* ===== PROCESS SECTION ===== */
         .nr-process {
           padding: 5rem 2rem;
           background: #1a1a1a;
@@ -1133,43 +1226,7 @@ function NightRating() {
           margin: 0;
         }
 
-        /* Process Timeline */
-        .nr-process__timeline {
-          margin-top: 3rem;
-          padding-top: 2rem;
-          border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .nr-process__timeline-track {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 1rem;
-        }
-
-        .nr-process__timeline-dot {
-          width: 12px;
-          height: 12px;
-          background: #fff;
-          border-radius: 50%;
-        }
-
-        .nr-process__timeline-line {
-          flex: 1;
-          height: 2px;
-          background: linear-gradient(90deg, #fff, rgba(255,255,255,0.3));
-        }
-
-        .nr-process__timeline-label {
-          display: flex;
-          justify-content: space-between;
-          font-size: 0.65rem;
-          color: rgba(255,255,255,0.5);
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
-        }
-
-        /* ===== FAQ SECTION ===== */
+/* ===== FAQ SECTION ===== */
         .nr-faq {
           padding: 5rem 2rem;
           background: var(--hq-background, #faf9f6);
@@ -1320,6 +1377,166 @@ function NightRating() {
           transform: translateX(3px);
         }
 
+        /* ===== ENQUIRY FORM ===== */
+        .nr-enquiry-form {
+          margin-top: 2rem;
+          background: #fff;
+          border: 1px solid #e8e6e2;
+          padding: 2rem;
+          text-align: left;
+        }
+
+        .nr-enquiry-form__header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 1.5rem;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid #e8e6e2;
+        }
+
+        .nr-enquiry-form__badge {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.6rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: #999;
+        }
+
+        .nr-enquiry-form__back {
+          background: none;
+          border: none;
+          color: #bbb;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.62rem;
+          letter-spacing: 0.1em;
+          cursor: pointer;
+          padding: 0;
+          transition: color 0.2s;
+        }
+        .nr-enquiry-form__back:hover { color: #1a1a1a; }
+
+        .nr-enquiry-form__row {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+          gap: 1rem;
+          margin-bottom: 1rem;
+        }
+
+        .nr-enquiry-form__field {
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+          margin-bottom: 1rem;
+        }
+
+        .nr-enquiry-form__row .nr-enquiry-form__field {
+          margin-bottom: 0;
+        }
+
+        .nr-enquiry-form__label {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.58rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: #999;
+        }
+
+        .nr-enquiry-form__required { color: #c00; }
+        .nr-enquiry-form__optional { color: #bbb; font-size: 0.55rem; text-transform: none; letter-spacing: 0; font-family: 'Space Grotesk', sans-serif; }
+
+        .nr-enquiry-form__input {
+          background: #faf9f6;
+          border: 1px solid #e0ddd8;
+          padding: 0.65rem 0.85rem;
+          color: #1a1a1a;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.88rem;
+          width: 100%;
+          box-sizing: border-box;
+          transition: border-color 0.2s;
+        }
+        .nr-enquiry-form__input::placeholder { color: #bbb; }
+        .nr-enquiry-form__input:focus { outline: none; border-color: #999; }
+        .nr-enquiry-form__input option { background: #fff; color: #1a1a1a; }
+
+        .nr-enquiry-form__select {
+          appearance: none;
+          -webkit-appearance: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 0.85rem center;
+          padding-right: 2.5rem;
+          cursor: pointer;
+        }
+
+        .nr-enquiry-form__textarea { resize: vertical; min-height: 80px; }
+
+        .nr-enquiry-form__error {
+          color: #c00;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.68rem;
+          margin-bottom: 0.75rem;
+        }
+
+        .nr-enquiry-form__footer {
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
+          padding-top: 1.25rem;
+          border-top: 1px solid #e8e6e2;
+        }
+
+        @media (max-width: 768px) {
+          .nr-enquiry-form__footer .nr-btn {
+            width: 100%;
+          }
+        }
+
+        .nr-enquiry-form__success {
+          margin-top: 2rem;
+          padding: 2rem;
+          background: #fff;
+          border: 1px solid #e8e6e2;
+          text-align: center;
+        }
+
+        .nr-enquiry-form__success-icon {
+          width: 44px;
+          height: 44px;
+          border: 1px solid #e8e6e2;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.1rem;
+          color: #1a1a1a;
+          margin: 0 auto 1rem;
+        }
+
+        .nr-enquiry-form__success-title {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          color: #1a1a1a;
+          letter-spacing: 0.06em;
+          margin-bottom: 0.5rem;
+        }
+
+        .nr-enquiry-form__success-body {
+          font-size: 0.85rem;
+          color: #666;
+          line-height: 1.7;
+          margin: 0;
+        }
+
+        .nr-enquiry-form__success-body a {
+          color: #1a1a1a;
+          text-decoration: none;
+        }
+        .nr-enquiry-form__success-body a:hover { color: #333; }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
           .nr-overview__grid {
@@ -1328,6 +1545,8 @@ function NightRating() {
 
           .nr-prereq__grid {
             grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
           }
         }
 
@@ -1364,14 +1583,47 @@ function NightRating() {
             gap: 0.5rem;
           }
 
-          .nr-faq__item {
-            flex-direction: column;
-            gap: 0.5rem;
-          }
-
           .nr-cta__buttons {
             flex-direction: column;
             gap: 1rem;
+          }
+
+          .nr-overview__grid {
+            display: flex;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            gap: 0;
+            padding-bottom: 0.5rem;
+            align-items: stretch;
+          }
+          .nr-overview__grid::-webkit-scrollbar { display: none; }
+          .nr-overview__grid > div {
+            flex: 0 0 100%;
+            scroll-snap-align: center;
+            display: flex;
+            flex-direction: column;
+          }
+          .nr-overview__grid .nr-overview__card {
+            flex: 1;
+          }
+          .nr-overview__dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding-top: 1rem;
+          }
+          .nr-overview__dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ccc8c1;
+            transition: background 0.2s;
+          }
+          .nr-overview__dot--active {
+            background: #1a1a1a;
           }
         }
       `}</style>

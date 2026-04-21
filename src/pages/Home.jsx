@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { usePageImages } from '../hooks/usePageImages';
-import WallOfCoolSection from '../components/Trust/WallOfCoolSection';
 
 function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -282,81 +281,6 @@ function Home() {
                   <p style={{ textAlign: 'center', whiteSpace: 'pre-wrap' }}>
                     Unlock your true potential in the skies with HQ Aviation, where world-class helicopter training meets a vibrant club atmosphere at our Denham Aerodrome base. From your very first Trial Lesson to achieving your Private (PPL) or Commercial (CPL) licences, Night Ratings, and Type Ratings, our expert instructors guide you through every rotor-turn using our pristine fleet of Robinson R22, R44, and R66 helicopters. Founded by world-record holder Captain Quentin Smith, we don't just teach you to fly; we welcome you into a passionate aviation family, ensuring your journey—whether for a hobby or a professional career—is as safe as it is exhilarating.
                   </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Wall of Cool Teaser */}
-            <div className="sqs-block reveal-element">
-              <div className="sqs-block-content">
-                <div className="hq-woc-teaser">
-                  {/* Left: copy */}
-                  <div style={{
-                    padding: '1.75rem 2rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    gap: '0.55rem',
-                  }}>
-                    <span style={{
-                      fontFamily: "'Share Tech Mono', monospace",
-                      fontSize: '0.6rem',
-                      letterSpacing: '0.22em',
-                      textTransform: 'uppercase',
-                      color: '#888',
-                    }}>
-                      Community · Real flights, real people
-                    </span>
-                    <h3 style={{
-                      fontFamily: "'Space Grotesk', sans-serif",
-                      fontSize: '1.05rem',
-                      fontWeight: 700,
-                      textTransform: 'uppercase',
-                      letterSpacing: '-0.02em',
-                      lineHeight: 1.2,
-                      color: '#1a1a1a',
-                      margin: 0,
-                    }}>
-                      See flying at HQ<br />through our community
-                    </h3>
-                    <p style={{
-                      fontFamily: "'Space Grotesk', sans-serif",
-                      fontSize: '0.82rem',
-                      color: '#888',
-                      lineHeight: 1.65,
-                      maxWidth: '340px',
-                      margin: 0,
-                    }}>
-                      First solos, scenic cross-countries, night flights — captured and shared by the pilots who fly with us every day.
-                    </p>
-                  </div>
-                  {/* Right: CTA */}
-                  <div className="hq-woc-teaser__right" style={{
-                    padding: '1.75rem 2rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.75rem',
-                    background: '#faf9f6',
-                  }}>
-                    <a
-                      href="#wall-of-cool"
-                      className="hq-btn hq-btn--primary"
-                      style={{ width: '100%', textAlign: 'center', display: 'block' }}
-                    >
-                      Wall of Cool <span aria-hidden="true">→</span>
-                    </a>
-                    <span style={{
-                      fontFamily: "'Share Tech Mono', monospace",
-                      fontSize: '0.58rem',
-                      letterSpacing: '0.1em',
-                      color: '#aaa',
-                      textAlign: 'center',
-                    }}>
-                      Community photos · Updated regularly
-                    </span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -672,10 +596,6 @@ function Home() {
         </div>
       </section>
 
-      {/* Wall of Cool Section */}
-      <div id="wall-of-cool">
-        <WallOfCoolSection />
-      </div>
 
       {/* Contact Section */}
       <section id="contact" className="Index-page">

@@ -43,7 +43,7 @@ export default function AdminListings() {
             <thead>
               <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
                 {['Model', 'Reg', 'Year', 'Price', 'Status', 'Featured', ''].map((h) => (
-                  <th key={h} style={{ padding: '0.75rem 1rem', textAlign: 'left', color: '#374151', fontWeight: 600 }}>
+                  <th key={h} style={{ padding: '0.75rem 1rem', textAlign: h === 'Featured' ? 'center' : 'left', color: '#374151', fontWeight: 600 }}>
                     {h}
                   </th>
                 ))}

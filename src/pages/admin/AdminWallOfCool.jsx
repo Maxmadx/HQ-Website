@@ -539,23 +539,6 @@ function LiveWallGrid({ items, dragId, dragOverId, editingId, editForm, updating
               ) : (
                 <>
                   {item.caption && <p style={{ fontSize: '0.78rem', color: '#374151', margin: '0 0 6px', lineHeight: 1.3 }}>{item.caption}</p>}
-                  {/* Move buttons */}
-                  <div style={{ display: 'flex', gap: 4, marginBottom: 4 }}>
-                    <button
-                      onClick={() => onMove(idx, -1)}
-                      disabled={idx === 0}
-                      style={{ ...actionBtn, background: '#f3f4f6', color: '#374151', flex: 1, opacity: idx === 0 ? 0.3 : 1 }}
-                    >
-                      ←
-                    </button>
-                    <button
-                      onClick={() => onMove(idx, 1)}
-                      disabled={idx === items.length - 1}
-                      style={{ ...actionBtn, background: '#f3f4f6', color: '#374151', flex: 1, opacity: idx === items.length - 1 ? 0.3 : 1 }}
-                    >
-                      →
-                    </button>
-                  </div>
                   <div style={{ display: 'flex', gap: 4 }}>
                     <button
                       onClick={() => { setEditingId(item.id); setEditForm({ caption: item.caption || '', alt: item.alt || '' }); }}

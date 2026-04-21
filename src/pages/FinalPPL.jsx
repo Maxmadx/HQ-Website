@@ -276,7 +276,8 @@ function AnimatedNumber({ value, suffix = '' }) {
 
 function FinalPPL() {
   const heroRef = useRef(null);
-  const visitCarouselRef = useRef(null);
+  const groundGridRef = useRef(null);
+  const [groundPage, setGroundPage] = useState(0);
   const [openFaq, setOpenFaq] = useState(null);
   const pageImages = usePageImages('ppl');
   useCmsHighlight();
@@ -291,57 +292,6 @@ function FinalPPL() {
     window.scrollTo(0, 0);
   }, []);
 
-  // Visit gallery: infinite auto-scroll carousel (mobile only)
-  useEffect(() => {
-    const track = visitCarouselRef.current;
-    if (!track) return;
-
-    const BASE_SPEED = 30;
-    const DAMPING = 3;
-    const state = { offset: 0, velocity: BASE_SPEED, isDragging: false, lastTime: 0, lastPointerX: 0, setWidth: 0 };
-    let rafId = 0;
-
-    const measure = () => {
-      const half = track.children.length / 2;
-      let w = 0;
-      for (let i = 0; i < half; i++) w += track.children[i].offsetWidth + 12;
-      state.setWidth = w;
-    };
-
-    const tick = (time) => {
-      rafId = requestAnimationFrame(tick);
-      if (!state.lastTime) { state.lastTime = time; return; }
-      if (state.setWidth <= 0) { measure(); state.lastTime = time; return; }
-      const dt = Math.min((time - state.lastTime) / 1000, 0.1);
-      state.lastTime = time;
-      if (!state.isDragging) state.velocity += (BASE_SPEED - state.velocity) * DAMPING * dt;
-      state.offset += state.velocity * dt;
-      if (state.offset >= state.setWidth) state.offset -= state.setWidth;
-      if (state.offset < 0) state.offset += state.setWidth;
-      track.style.transform = `translateX(${-state.offset}px)`;
-    };
-
-    const onPointerDown = (e) => { state.isDragging = true; state.lastPointerX = e.clientX; state.velocity = 0; track.setPointerCapture(e.pointerId); };
-    const onPointerMove = (e) => { if (!state.isDragging) return; const dx = e.clientX - state.lastPointerX; state.lastPointerX = e.clientX; state.offset -= dx; state.velocity = -dx * 60; };
-    const onPointerUp = () => { state.isDragging = false; };
-
-    measure();
-    rafId = requestAnimationFrame(tick);
-    track.addEventListener('pointerdown', onPointerDown);
-    track.addEventListener('pointermove', onPointerMove);
-    track.addEventListener('pointerup', onPointerUp);
-    track.addEventListener('pointercancel', onPointerUp);
-    window.addEventListener('resize', measure);
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      track.removeEventListener('pointerdown', onPointerDown);
-      track.removeEventListener('pointermove', onPointerMove);
-      track.removeEventListener('pointerup', onPointerUp);
-      track.removeEventListener('pointercancel', onPointerUp);
-      window.removeEventListener('resize', measure);
-    };
-  }, []);
 
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
@@ -592,7 +542,15 @@ function FinalPPL() {
             </div>
           </Reveal>
 
-          <div className="fppl-ground__grid">
+          <div
+            className="fppl-ground__grid"
+            ref={groundGridRef}
+            onScroll={() => {
+              const el = groundGridRef.current;
+              if (!el) return;
+              setGroundPage(Math.round(el.scrollLeft / el.clientWidth));
+            }}
+          >
             {[
               { num: '01', title: 'Air Law', desc: 'Regulations & procedures' },
               { num: '02', title: 'Navigation', desc: 'Charts & flight planning' },
@@ -604,19 +562,34 @@ function FinalPPL() {
               { num: '08', title: 'Communications', desc: 'Radio procedures' },
               { num: '09', title: 'Aircraft Knowledge', desc: 'Systems & engines' },
             ].map((subject, i) => (
-              <Reveal key={i} delay={i * 0.05}>
-                <motion.div
-                  className="fppl-ground__card"
-                  whileHover={{ y: -3 }}
-                  transition={{ type: 'spring', stiffness: 400 }}
-                >
-                  <span className="fppl-ground__num">{subject.num}</span>
-                  <div className="fppl-ground__text">
-                    <h4>{subject.title}</h4>
-                    <p>{subject.desc}</p>
-                  </div>
-                </motion.div>
-              </Reveal>
+              <motion.div
+                key={i}
+                className="fppl-ground__card"
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0 }}
+                transition={{ duration: 0.2, delay: i * 0.015, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ y: -3 }}
+              >
+                <span className="fppl-ground__num">{subject.num}</span>
+                <div className="fppl-ground__text">
+                  <h4>{subject.title}</h4>
+                  <p>{subject.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          <div className="fppl-ground__dots">
+            {[0, 1, 2].map(i => (
+              <button
+                key={i}
+                className={`fppl-ground__dot${groundPage === i ? ' fppl-ground__dot--active' : ''}`}
+                onClick={() => {
+                  const el = groundGridRef.current;
+                  if (!el) return;
+                  el.scrollTo({ left: el.clientWidth * i, behavior: 'smooth' });
+                }}
+              />
             ))}
           </div>
 
@@ -656,45 +629,79 @@ function FinalPPL() {
               </div>
             </Reveal>
 
-            <Reveal delay={0.1}>
-              <div className="fppl-visit__gallery gallery-v3">
-                <div className="fppl-visit__gallery-track">
-                  {[
-                    { src: '/assets/images/gallery/carousel/rotating1.jpg', alt: 'Helicopter in flight' },
-                    { src: '/assets/images/gallery/carousel/rotating2.jpg', alt: 'Scenic flying' },
-                    { src: '/assets/images/gallery/flying/foggy-evening-flying.jpg', alt: 'Evening flight' },
-                    { src: '/assets/images/gallery/carousel/rotating8.jpg', alt: 'Helicopter adventure' },
-                  ].map((img, i) => (
-                    <motion.div
-                      key={i}
-                      className="fppl-visit__gallery-item"
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                      viewport={{ once: true }}
-                    >
-                      <img src={img.src} alt={img.alt} />
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-              <div className="fppl-visit__mobile-carousel-wrap">
-                <div className="fppl-visit__mobile-carousel" ref={visitCarouselRef}>
-                  {[0, 1].map(set => [
-                    { src: '/assets/images/gallery/carousel/rotating1.jpg', alt: 'Helicopter in flight' },
-                    { src: '/assets/images/gallery/carousel/rotating2.jpg', alt: 'Scenic flying' },
-                    { src: '/assets/images/gallery/flying/foggy-evening-flying.jpg', alt: 'Evening flight' },
-                    { src: '/assets/images/gallery/carousel/rotating8.jpg', alt: 'Helicopter adventure' },
-                  ].map((img, i) => (
-                    <div className="fppl-visit__mobile-carousel-item" key={`${set}-${i}`}>
-                      <img src={img.src} alt={img.alt} loading="lazy" draggable="false" />
+            <Reveal>
+              <div className="fppl-discovery-card">
+              <section id="discovery" className="fppl-discovery fppl-discovery--compact" data-cms-section="ppl-cta">
+                <div className="fppl-discovery__inner">
+                  <div className="fppl-discovery__image">
+                    <img alt="Discovery flight over countryside" src={pageImages['ppl-cta']?.[0]?.url || '/assets/images/gallery/carousel/rotating1.jpg'} style={{ transform: 'none' }} />
+                    <div className="fppl-discovery__image-overlay"></div>
+                    <div className="fppl-discovery__price fppl-discovery__price--image">
+                      <span className="fppl-discovery__price-from">From</span>
+                      <span className="fppl-discovery__price-amount">{fmt('discovery_r22_30min')}</span>
                     </div>
-                  )))}
+                  </div>
+                  <div className="fppl-discovery__content">
+                    <div className="fppl-discovery__header">
+                      <span className="fppl-pre-text">Your First Flight</span>
+                      <h2><span className="fppl-text--dark">Discovery</span> <span className="fppl-text--mid">Flight</span></h2>
+                    </div>
+                    <p className="fppl-discovery__desc">Not sure if flying is for you? A Discovery Flight puts you in the seat and at the controls in under an hour — no experience needed, no commitment required.</p>
+                    <div className="fppl-discovery__selling-points fppl-discovery__selling-points--below">
+                      <div className="fppl-discovery__point">
+                        <span className="fppl-discovery__point-icon">⏱</span>
+                        <span className="fppl-discovery__point-text">30 min airborne</span>
+                      </div>
+                      <div className="fppl-discovery__point">
+                        <span className="fppl-discovery__point-icon">✓</span>
+                        <span className="fppl-discovery__point-text">
+                          <span className="fppl-discovery__pt-wide">Counts toward PPL</span>
+                          <span className="fppl-discovery__pt-narrow">Counts for PPL</span>
+                        </span>
+                      </div>
+                      <div className="fppl-discovery__point">
+                        <span className="fppl-discovery__point-icon">◎</span>
+                        <span className="fppl-discovery__point-text">
+                          <span className="fppl-discovery__pt-wide">You take the controls</span>
+                          <span className="fppl-discovery__pt-narrow">You're In Control</span>
+                        </span>
+                      </div>
+                    </div>
+                    <div className="fppl-discovery__compact-row">
+                      <div className="fppl-discovery__booking">
+                        <div className="fppl-discovery__price fppl-discovery__price--booking">
+                          <span className="fppl-discovery__price-from">From</span>
+                          <span className="fppl-discovery__price-amount">{fmt('discovery_r22_30min')}</span>
+                        </div>
+                        <a href="/training/trial-lessons" className="fppl-discovery__book-btn">
+                          <span className="fppl-discovery__book-btn-text">See More Details</span>
+                          <span className="fppl-discovery__book-btn-arrow">→</span>
+                        </a>
+                      </div>
+                      <div className="fppl-discovery__selling-points fppl-discovery__selling-points--inline">
+                        <div className="fppl-discovery__point">
+                          <span className="fppl-discovery__point-icon">⏱</span>
+                          <span className="fppl-discovery__point-text">30 min airborne</span>
+                        </div>
+                        <div className="fppl-discovery__point">
+                          <span className="fppl-discovery__point-icon">✓</span>
+                          <span className="fppl-discovery__point-text">
+                            <span className="fppl-discovery__pt-wide">Counts toward PPL</span>
+                            <span className="fppl-discovery__pt-narrow">Counts for PPL</span>
+                          </span>
+                        </div>
+                        <div className="fppl-discovery__point">
+                          <span className="fppl-discovery__point-icon">◎</span>
+                          <span className="fppl-discovery__point-text">
+                            <span className="fppl-discovery__pt-wide">You take the controls</span>
+                            <span className="fppl-discovery__pt-narrow">You're In Control</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.15}>
+              </section>
               <div className="fppl-visit__note-card">
                 <div className="fppl-visit__note-wrap">
                   <span className="fppl-visit__note-title">If You Love Helicopters</span>
@@ -703,7 +710,9 @@ function FinalPPL() {
                   </p>
                 </div>
               </div>
+              </div>{/* end fppl-discovery-card */}
             </Reveal>
+
           </div>
         </div>
       </section>
@@ -803,7 +812,7 @@ function FinalPPL() {
             <Reveal>
               <div className="df-faq__header">
                 <span className="df-label">Common Questions</span>
-                <h2>FAQ</h2>
+                <h2>Frequently Asked</h2>
               </div>
             </Reveal>
 
@@ -847,48 +856,6 @@ function FinalPPL() {
         </Reveal>
       </section>
 
-      {/* ========== DISCOVERY FLIGHT ========== */}
-      <section id="discovery" className="fppl-discovery fppl-discovery--compact" data-cms-section="ppl-cta">
-        <div className="fppl-discovery__inner">
-          <div className="fppl-discovery__image">
-            <img alt="Discovery flight over countryside" src={pageImages['ppl-cta']?.[0]?.url || '/assets/images/gallery/carousel/rotating1.jpg'} style={{ transform: 'none' }} />
-            <div className="fppl-discovery__image-overlay"></div>
-          </div>
-          <div className="fppl-discovery__content">
-            <div className="fppl-discovery__header">
-              <span className="fppl-pre-text">Your First Flight</span>
-              <h2><span className="fppl-text--dark">Discovery</span> <span className="fppl-text--mid">Flight</span></h2>
-            </div>
-            <p className="fppl-discovery__desc">Not sure if flying is for you? A Discovery Flight puts you in the seat and at the controls in under an hour — no experience needed, no commitment required.</p>
-            <div className="fppl-discovery__compact-row">
-              <div className="fppl-discovery__selling-points">
-                <div className="fppl-discovery__point">
-                  <span className="fppl-discovery__point-icon">⏱</span>
-                  <span className="fppl-discovery__point-text">30 min airborne</span>
-                </div>
-                <div className="fppl-discovery__point">
-                  <span className="fppl-discovery__point-icon">✓</span>
-                  <span className="fppl-discovery__point-text">Counts toward PPL</span>
-                </div>
-                <div className="fppl-discovery__point">
-                  <span className="fppl-discovery__point-icon">🎮</span>
-                  <span className="fppl-discovery__point-text">You take the controls</span>
-                </div>
-              </div>
-              <div className="fppl-discovery__booking">
-                <div className="fppl-discovery__price">
-                  <span className="fppl-discovery__price-from">From</span>
-                  <span className="fppl-discovery__price-amount">{fmt('discovery_r22_30min')}</span>
-                </div>
-                <a href="/training/trial-lessons" className="fppl-discovery__book-btn">
-                  <span className="fppl-discovery__book-btn-text">See More Details</span>
-                  <span className="fppl-discovery__book-btn-arrow">→</span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       </div>{/* end fppl__faq-discovery-wrap */}
 
@@ -1338,7 +1305,7 @@ function FinalPPL() {
           background: #faf9f6;
           padding: 1rem;
           border: 1px solid rgba(0,0,0,0.12);
-          border-radius: 0 6px 6px 0;
+          border-radius: 6px;
           position: relative;
         }
 
@@ -1350,6 +1317,7 @@ function FinalPPL() {
           width: 3px;
           height: 100%;
           background: #1a1a1a;
+          border-radius: 6px 0 0 6px;
         }
 
         /* display:contents makes q-top transparent to the parent flex layout;
@@ -1462,7 +1430,7 @@ function FinalPPL() {
           padding: 0.5rem 1rem;
           border: 1px solid rgba(0,0,0,0.12);
           border-left: 3px solid #1a1a1a;
-          border-radius: 0 6px 6px 0;
+          border-radius: 6px;
         }
 
         .fppl-intro__instructor-name {
@@ -1506,11 +1474,11 @@ function FinalPPL() {
         .fppl-ground__grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 1px;
-          background: #e8e6e2;
-          border-radius: 8px;
-          padding: 2px;
-          overflow: hidden;
+          gap: 6px;
+        }
+
+        .fppl-ground__dots {
+          display: none;
         }
 
         .fppl-ground__card {
@@ -1521,6 +1489,7 @@ function FinalPPL() {
           align-items: flex-start;
           cursor: default;
           border-radius: 8px;
+          border: 1px solid rgba(0,0,0,0.08);
         }
 
         .fppl-ground__num {
@@ -1709,7 +1678,7 @@ function FinalPPL() {
         }
 
         .df-location__header {
-          display: none;
+          display: block;
           margin-bottom: 1.5rem;
           text-align: center;
         }
@@ -1719,6 +1688,7 @@ function FinalPPL() {
             display: block;
           }
         }
+
 
         .df-location__header h2 {
           font-size: 1.5rem;
@@ -1862,11 +1832,16 @@ function FinalPPL() {
         }
 
         /* ===== DISCOVERY CTA ===== */
+        .fppl-discovery-card {
+          border: 1px solid rgba(0,0,0,0.28);
+          border-radius: 8px;
+        }
+
         .fppl-discovery {
           background: #3a3a3a;
           position: relative;
           overflow: hidden;
-          border-radius: 0;
+          border-radius: 8px 8px 0 0;
         }
 
         .fppl-discovery::after {
@@ -1882,14 +1857,14 @@ function FinalPPL() {
         .fppl-discovery__inner {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          min-height: 550px;
-          border-radius: 0;
+          height: 300px;
+          border-radius: 8px 8px 0 0;
         }
 
         .fppl-discovery__image {
           position: relative;
           overflow: hidden;
-          border-radius: 0;
+          border-radius: 8px 0 0 0;
         }
 
         .fppl-discovery__image img {
@@ -1902,7 +1877,11 @@ function FinalPPL() {
           position: absolute;
           inset: 0;
           background: linear-gradient(90deg, rgba(26,26,26,0.3) 0%, transparent 50%);
-          border-radius: 0;
+          border-radius: 8px 0 0 0;
+        }
+
+        .fppl-discovery__price--image {
+          display: none;
         }
 
         .fppl-discovery__content {
@@ -1911,7 +1890,7 @@ function FinalPPL() {
           flex-direction: column;
           justify-content: center;
           color: #fff;
-          border-radius: 0;
+          border-radius: 0 8px 0 0;
         }
 
         .fppl-discovery__content .fppl-pre-text {
@@ -2067,14 +2046,27 @@ function FinalPPL() {
           justify-content: space-between;
           gap: 2rem;
           padding-top: 1.25rem;
+          margin-top: auto;
           border-top: 1px solid rgba(255,255,255,0.15);
           border-radius: 0;
         }
 
         .fppl-discovery__selling-points {
           display: flex;
-          flex-wrap: wrap;
+          flex-wrap: nowrap;
           gap: 0.75rem 1.5rem;
+        }
+
+        .fppl-discovery__selling-points--below {
+          display: none;
+        }
+
+        .fppl-discovery__selling-points--inline {
+          order: -1;
+        }
+
+        .fppl-discovery__pt-narrow {
+          display: none;
         }
 
         .fppl-discovery__point {
@@ -2161,7 +2153,7 @@ function FinalPPL() {
         }
 
         .fppl-visit__content-wrap {
-          padding: 40px 2rem 30px;
+          padding: 40px clamp(0px, calc(50vw - 153px), 2rem) 30px;
         }
 
         /* Gallery Styles */
@@ -2270,19 +2262,14 @@ function FinalPPL() {
           display: contents;
         }
 
-        /* Mobile gallery carousel — hidden on desktop */
-        .fppl-visit__mobile-carousel-wrap {
-          display: none;
-        }
-
         .fppl-visit__content {
-          max-width: 900px;
+          max-width: 100%;
           margin: 0 auto;
         }
 
         .fppl-visit__header {
           text-align: center;
-          margin-bottom: 3rem;
+          margin-bottom: 1.25rem;
         }
 
         .fppl-visit__header h2 {
@@ -2400,8 +2387,7 @@ function FinalPPL() {
 
         .fppl-visit__note-card {
           background: #faf9f6;
-          border: 1px solid rgba(0,0,0,0.12);
-          border-radius: 8px;
+          border-radius: 0 0 8px 8px;
           padding: 1.25rem 1.5rem;
         }
 
@@ -2437,6 +2423,24 @@ function FinalPPL() {
         }
 
         /* ===== RESPONSIVE ===== */
+        @media (max-width: 1400px) {
+          .fppl-discovery__selling-points--below {
+            display: flex;
+          }
+
+          .fppl-discovery__selling-points--inline {
+            display: none;
+          }
+
+          .fppl-discovery__booking {
+            width: 100%;
+          }
+
+          .fppl-discovery__book-btn {
+            margin-left: auto;
+          }
+        }
+
         @media (max-width: 1024px) {
           .fppl-hero__panel {
             display: none;
@@ -2513,14 +2517,56 @@ function FinalPPL() {
             gap: 1rem;
           }
 
-          .fppl-ground__grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 850px) {
           .fppl-ground__grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: unset;
+            grid-template-rows: repeat(3, auto);
+            grid-auto-flow: column;
+            grid-auto-columns: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            scroll-snap-type: x mandatory;
+            background: transparent;
+            padding: 0;
+            gap: 6px;
+          }
+
+          .fppl-ground__grid::-webkit-scrollbar {
+            display: none;
+          }
+
+          .fppl-ground__grid > * {
+            scroll-snap-align: start;
+          }
+
+          .fppl-ground__dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding-top: 14px;
+          }
+
+          .fppl-ground__dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            border: none;
+            padding: 0;
+            background: #d0cdc8;
+            cursor: pointer;
+            transition: background 0.2s;
+          }
+
+          .fppl-ground__dot--active {
+            background: #1a1a1a;
+          }
+
+          .fppl-ground__exams {
+            margin-top: 0.75rem;
           }
 
           .fppl-intro {
@@ -2632,6 +2678,51 @@ function FinalPPL() {
             padding-top: 2.5rem;
           }
 
+          .fppl-discovery__inner {
+            display: flex;
+            flex-direction: column;
+            height: unset;
+          }
+
+          .fppl-discovery__image {
+            height: 200px;
+          }
+
+          .fppl-discovery__image img {
+            object-position: center 20%;
+          }
+
+          .fppl-discovery__price--image {
+            display: flex;
+            position: absolute;
+            bottom: 0.75rem;
+            left: 0.75rem;
+            flex-direction: column;
+            background: rgba(0,0,0,0.45);
+            padding: 0.35rem 0.6rem;
+            border-radius: 4px;
+          }
+
+          .fppl-discovery__price--booking {
+            display: none;
+          }
+
+          .fppl-discovery__book-btn {
+            width: 100%;
+            justify-content: center;
+          }
+
+          .fppl-discovery__selling-points--below {
+            display: none;
+          }
+
+          .fppl-discovery__selling-points--inline {
+            display: flex;
+            order: 0;
+            justify-content: space-between;
+            width: 100%;
+          }
+
           .fppl-pre-text {
             display: flex;
             align-items: center;
@@ -2650,39 +2741,6 @@ function FinalPPL() {
 
           .fppl-visit__gallery {
             display: none;
-          }
-
-          .fppl-visit__mobile-carousel-wrap {
-            display: block;
-            overflow: hidden;
-            margin: 1rem -1rem 1.5rem;
-            -webkit-mask-image: linear-gradient(to right, transparent 0.5rem, black 1rem, black calc(100% - 1rem), transparent calc(100% - 0.5rem));
-          }
-
-          .fppl-visit__mobile-carousel {
-            display: flex;
-            gap: 12px;
-            will-change: transform;
-            cursor: grab;
-            user-select: none;
-            -webkit-user-select: none;
-          }
-
-          .fppl-visit__mobile-carousel:active {
-            cursor: grabbing;
-          }
-
-          .fppl-visit__mobile-carousel-item {
-            flex: 0 0 65vw;
-            min-width: 0;
-            border-radius: 6px;
-            overflow: hidden;
-          }
-
-          .fppl-visit__mobile-carousel-item img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
           }
 
           .fppl-hero__overlay {
@@ -2727,7 +2785,7 @@ function FinalPPL() {
           }
 
           .fppl-discovery__content {
-            padding: 2rem 1.5rem;
+            padding: 2rem 1.5rem 18px;
           }
 
           .fppl-discovery__header h2 {
@@ -2772,13 +2830,13 @@ function FinalPPL() {
           }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 555px) {
           .fppl-discovery__inner {
             grid-template-columns: 30% 70%;
           }
 
           .fppl-discovery__content {
-            padding: 1.5rem 1rem;
+            padding: 1.5rem 0.75rem;
           }
 
           .fppl-discovery__header h2 {
@@ -2791,20 +2849,25 @@ function FinalPPL() {
           }
 
           .fppl-discovery__selling-points {
-            gap: 0.4rem 0.75rem;
+            gap: 0.25rem 0.5rem;
+          }
+
+          .fppl-discovery__point {
+            gap: 0.25rem;
           }
 
           .fppl-discovery__point-text {
-            font-size: 0.7rem;
+            font-size: 0.62rem;
           }
 
           .fppl-discovery__point-icon {
-            font-size: 0.75rem;
+            font-size: 0.62rem;
           }
 
           .fppl-discovery__booking {
-            flex-direction: column;
-            align-items: flex-start;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
             gap: 0.75rem;
           }
 
@@ -2888,6 +2951,16 @@ function FinalPPL() {
 
           .fppl-summary__included-text {
             font-size: 0.75rem;
+          }
+        }
+
+        @media (max-width: 440px) {
+          .fppl-discovery__pt-wide {
+            display: none;
+          }
+
+          .fppl-discovery__pt-narrow {
+            display: inline;
           }
         }
       `}</style>

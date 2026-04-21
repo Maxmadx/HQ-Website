@@ -303,7 +303,7 @@ const HeroSectionFinal = () => {
               <div className="hsf__meta">
                 <span>EST. 2010</span>
                 <span className="hsf__dot" />
-                <UnionJack size={12} />
+                <UnionJack size={89} />
                 <span className="hsf__dot" />
                 <span>LONDON</span>
               </div>

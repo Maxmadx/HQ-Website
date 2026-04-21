@@ -11,6 +11,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { usePageImages } from '../hooks/usePageImages';
+import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { usePageText } from '../hooks/usePageText';
 import { useFaqs } from '../hooks/useFaqs';
 
@@ -890,6 +891,7 @@ const salesModelSectionId = {
 
 function Sales() {
   const pageImages = usePageImages('sales');
+  useCmsHighlight();
   const { t } = usePageText('sales');
   const [openFaq, setOpenFaq] = useState(null);
   const { faqs } = useFaqs('sales', { visibleOnly: true });
@@ -988,7 +990,7 @@ function Sales() {
       <SalesHeader />
 
       {/* ========== HERO: Flagship R88 ========== */}
-      <section ref={heroRef} className="sales-hero">
+      <section ref={heroRef} className="sales-hero" data-cms-section="sales-aircraft-hero">
         <motion.div
           className="sales-hero__bg"
           initial={{ scale: 1.1, opacity: 0 }}
@@ -1105,7 +1107,7 @@ function Sales() {
       </section>
 
       {/* ========== NEW AIRCRAFT LINEUP ========== */}
-      <section id="models" className="sales-lineup">
+      <section id="models" className="sales-lineup" data-cms-section="sales-aircraft-cutout">
         <div className="sales-lineup__container">
           <Reveal>
             <div className="sales-lineup__header">
@@ -1605,46 +1607,46 @@ function Sales() {
               </svg>
             </button>
 
-            <div className="sales-gallery__scroll" ref={galleryRef}>
+            <div className="sales-gallery__scroll" ref={galleryRef} data-cms-section="sales-gallery">
               <motion.div className="sales-gallery__item sales-gallery__item--tall" whileHover={{ scale: 1.02 }}>
-                <img src="/assets/images/new-aircraft/r88/rhc-r88-atmospheric-effect-front-view-218022.jpg" alt="R88" />
+                <img src={pageImages['sales-gallery']?.[0]?.url || '/assets/images/new-aircraft/r88/rhc-r88-atmospheric-effect-front-view-218022.jpg'} alt="R88" />
                 <span className="sales-gallery__label">R88 — The Future</span>
               </motion.div>
               <div className="sales-gallery__stack">
                 <motion.div className="sales-gallery__item sales-gallery__item--small" whileHover={{ scale: 1.02 }}>
-                  <img src="/assets/images/new-aircraft/r66/rhc-r66-nxg-pv-left-side-wide-view-13611.jpg" alt="R66" />
+                  <img src={pageImages['sales-gallery']?.[1]?.url || '/assets/images/new-aircraft/r66/rhc-r66-nxg-pv-left-side-wide-view-13611.jpg'} alt="R66" />
                   <span className="sales-gallery__label">R66 Palo Verde</span>
                 </motion.div>
                 <motion.div className="sales-gallery__item sales-gallery__item--small" whileHover={{ scale: 1.02 }}>
-                  <img src="/assets/images/new-aircraft/r66/rhc-r66-nxg-riviera-dramatic-overhead-13365.jpg" alt="R66 Interior" />
+                  <img src={pageImages['sales-gallery']?.[2]?.url || '/assets/images/new-aircraft/r66/rhc-r66-nxg-riviera-dramatic-overhead-13365.jpg'} alt="R66 Interior" />
                   <span className="sales-gallery__label">R66 Overhead</span>
                 </motion.div>
               </div>
               <motion.div className="sales-gallery__item sales-gallery__item--wide" whileHover={{ scale: 1.02 }}>
-                <img src="/assets/images/new-aircraft/r88/rhc-r88-left-pilot-seat-full-frame-13570.jpg" alt="R88 Cockpit" />
+                <img src={pageImages['sales-gallery']?.[3]?.url || '/assets/images/new-aircraft/r88/rhc-r88-left-pilot-seat-full-frame-13570.jpg'} alt="R88 Cockpit" />
                 <span className="sales-gallery__label">R88 Cockpit</span>
               </motion.div>
               <div className="sales-gallery__stack">
                 <motion.div className="sales-gallery__item sales-gallery__item--small" whileHover={{ scale: 1.02 }}>
-                  <img src="/assets/images/new-aircraft/r88/rhc-r88-glass-flight-displays-right-side-cyclic-13216.jpg" alt="Avionics" />
+                  <img src={pageImages['sales-gallery']?.[4]?.url || '/assets/images/new-aircraft/r88/rhc-r88-glass-flight-displays-right-side-cyclic-13216.jpg'} alt="Avionics" />
                   <span className="sales-gallery__label">Glass Cockpit</span>
                 </motion.div>
                 <motion.div className="sales-gallery__item sales-gallery__item--small" whileHover={{ scale: 1.02 }}>
-                  <img src="/assets/images/new-aircraft/r66/rhc-r66-nxg-riviera-center-spotlight-vertical-format-14184-2.jpg" alt="R66 Riviera" />
+                  <img src={pageImages['sales-gallery']?.[5]?.url || '/assets/images/new-aircraft/r66/rhc-r66-nxg-riviera-center-spotlight-vertical-format-14184-2.jpg'} alt="R66 Riviera" />
                   <span className="sales-gallery__label">R66 Riviera</span>
                 </motion.div>
               </div>
               <motion.div className="sales-gallery__item sales-gallery__item--tall" whileHover={{ scale: 1.02 }}>
-                <img src="/assets/images/new-aircraft/r44/raven-ii-front-alpha.png" alt="R44 Raven II" />
+                <img src={pageImages['sales-gallery']?.[6]?.url || '/assets/images/new-aircraft/r44/raven-ii-front-alpha.png'} alt="R44 Raven II" />
                 <span className="sales-gallery__label">R44 Raven II</span>
               </motion.div>
               <div className="sales-gallery__stack">
                 <motion.div className="sales-gallery__item sales-gallery__item--small" whileHover={{ scale: 1.02 }}>
-                  <img src="/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png" alt="R22 Beta II" />
+                  <img src={pageImages['sales-gallery']?.[7]?.url || '/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png'} alt="R22 Beta II" />
                   <span className="sales-gallery__label">R22 Beta II</span>
                 </motion.div>
                 <motion.div className="sales-gallery__item sales-gallery__item--small" whileHover={{ scale: 1.02 }}>
-                  <img src="/assets/images/new-aircraft/r88/r88-jellybean-left.png" alt="R88 Profile" />
+                  <img src={pageImages['sales-gallery']?.[8]?.url || '/assets/images/new-aircraft/r88/r88-jellybean-left.png'} alt="R88 Profile" />
                   <span className="sales-gallery__label">R88 Profile</span>
                 </motion.div>
               </div>

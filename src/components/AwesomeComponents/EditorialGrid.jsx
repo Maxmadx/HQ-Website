@@ -225,6 +225,30 @@ export const EditorialGrid = () => {
     setUploadedFiles(prev => prev.filter((_, i) => i !== idx));
   }, []);
 
+  // Lightbox state (desktop photo grid)
+  const [lbOpen, setLbOpen] = useState(false);
+  const [lbIndex, setLbIndex] = useState(0);
+
+  const openLightbox = useCallback((index) => {
+    setLbIndex(index);
+    setLbOpen(true);
+  }, []);
+
+  const closeLightbox = useCallback(() => setLbOpen(false), []);
+
+  // Keyboard nav for lightbox
+  useEffect(() => {
+    if (!lbOpen) return;
+    const currentImages = galleryPages[currentPage] || [];
+    const handleKey = (e) => {
+      if (e.key === 'Escape') { closeLightbox(); return; }
+      if (e.key === 'ArrowLeft') setLbIndex(prev => (prev - 1 + currentImages.length) % currentImages.length);
+      if (e.key === 'ArrowRight') setLbIndex(prev => (prev + 1) % currentImages.length);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [lbOpen, currentPage, galleryPages, closeLightbox]);
+
   // Fullscreen gallery state
   const [fsOpen, setFsOpen] = useState(false);
   const [fsSlide, setFsSlide] = useState(0);
@@ -274,6 +298,20 @@ export const EditorialGrid = () => {
       anims.forEach((a) => { a.playbackRate = fsSpeed; });
     });
   }, [fsSpeed]);
+
+  // Preload images 2 pages ahead so they're in cache before the user swipes to them
+  useEffect(() => {
+    for (let ahead = 1; ahead <= 2; ahead++) {
+      const nextPage = galleryPages[currentPage + ahead];
+      if (!nextPage) break;
+      nextPage.forEach(({ src, type }) => {
+        if (src && type !== 'video') {
+          const img = new Image();
+          img.src = src;
+        }
+      });
+    }
+  }, [currentPage, galleryPages]);
 
   const goToPage = useCallback((i) => {
     setCurrentPage(Math.max(0, Math.min(galleryPages.length - 1, i)));
@@ -448,8 +486,8 @@ export const EditorialGrid = () => {
       <div className="editorial-grid__desktop-gallery">
         <div className="editorial-grid__photo-grid">
           {(galleryPages[currentPage] || []).map((cell, i) => (
-            <div key={`${currentPage}-${i}`} className="editorial-grid__photo-cell">
-              <img src={cell.src} alt={cell.alt} loading="lazy" />
+            <div key={`${currentPage}-${i}`} className="editorial-grid__photo-cell" onClick={() => openLightbox(i)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && openLightbox(i)}>
+              <img src={cell.src} alt={cell.alt} loading="eager" />
             </div>
           ))}
         </div>
@@ -470,6 +508,112 @@ export const EditorialGrid = () => {
 
     </div>
 
+
+    {/* Lightbox */}
+    {lbOpen && createPortal((() => {
+      const images = galleryPages[currentPage] || [];
+      const img = images[lbIndex];
+      return (
+        <div className="woc-lb__backdrop" onClick={closeLightbox}>
+          <button className="woc-lb__close" onClick={closeLightbox} aria-label="Close">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          {images.length > 1 && (
+            <button className="woc-lb__chevron woc-lb__chevron--prev" onClick={(e) => { e.stopPropagation(); setLbIndex(prev => (prev - 1 + images.length) % images.length); }} aria-label="Previous">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+          )}
+          <div className="woc-lb__img-wrap" onClick={(e) => e.stopPropagation()}>
+            <img src={img?.src} alt={img?.alt || ''} className="woc-lb__img" key={lbIndex} />
+          </div>
+          {images.length > 1 && (
+            <button className="woc-lb__chevron woc-lb__chevron--next" onClick={(e) => { e.stopPropagation(); setLbIndex(prev => (prev + 1) % images.length); }} aria-label="Next">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          )}
+          <div className="woc-lb__counter">{lbIndex + 1} / {images.length}</div>
+          <style>{`
+            .woc-lb__backdrop {
+              position: fixed;
+              inset: 0;
+              z-index: 9999;
+              background: rgba(0,0,0,0.92);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              animation: wocLbFade 0.2s ease;
+            }
+            @keyframes wocLbFade { from { opacity: 0; } to { opacity: 1; } }
+            .woc-lb__img-wrap {
+              max-width: 90vw;
+              max-height: 90vh;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+            .woc-lb__img {
+              max-width: 90vw;
+              max-height: 90vh;
+              object-fit: contain;
+              display: block;
+              animation: wocLbSlide 0.25s ease;
+            }
+            @keyframes wocLbSlide { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
+            .woc-lb__close {
+              position: fixed;
+              top: 1.5rem;
+              right: 1.5rem;
+              width: 40px;
+              height: 40px;
+              border: 1px solid rgba(255,255,255,0.2);
+              border-radius: 50%;
+              background: rgba(0,0,0,0.4);
+              backdrop-filter: blur(8px);
+              color: rgba(255,255,255,0.85);
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: background 0.2s, color 0.2s;
+              z-index: 2;
+            }
+            .woc-lb__close:hover { background: rgba(255,255,255,0.12); color: #fff; }
+            .woc-lb__chevron {
+              position: fixed;
+              top: 50%;
+              transform: translateY(-50%);
+              width: 44px;
+              height: 44px;
+              border: 1px solid rgba(255,255,255,0.2);
+              border-radius: 50%;
+              background: rgba(0,0,0,0.4);
+              backdrop-filter: blur(8px);
+              color: rgba(255,255,255,0.85);
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: background 0.2s, color 0.2s;
+              z-index: 2;
+            }
+            .woc-lb__chevron:hover { background: rgba(255,255,255,0.12); color: #fff; }
+            .woc-lb__chevron--prev { left: 1.5rem; }
+            .woc-lb__chevron--next { right: 1.5rem; }
+            .woc-lb__counter {
+              position: fixed;
+              bottom: 1.5rem;
+              left: 50%;
+              transform: translateX(-50%);
+              font-family: 'Share Tech Mono', monospace;
+              font-size: 0.65rem;
+              letter-spacing: 0.12em;
+              color: rgba(255,255,255,0.45);
+            }
+            @media (max-width: 768px) { .woc-lb__backdrop { display: none; } }
+          `}</style>
+        </div>
+      );
+    })(), document.body)}
 
     {/* Upload modal */}
     {uploadOpen && createPortal(
@@ -1221,6 +1365,7 @@ export const EditorialGrid = () => {
       .editorial-grid__photo-cell {
         overflow: hidden;
         background: #e5e7eb;
+        cursor: pointer;
       }
 
       .editorial-grid__photo-cell img {
@@ -1361,6 +1506,15 @@ export const EditorialGrid = () => {
           grid-template-columns: 1fr;
           justify-items: center;
           padding: 1rem 1.5rem;
+          background: #1a1a1a;
+          border-bottom: 1px solid rgba(255,255,255,0.12);
+          box-shadow: none;
+        }
+        .editorial-grid__header .editorial-grid__pretitle {
+          color: rgba(255,255,255,0.5);
+        }
+        .editorial-grid__header .editorial-grid__tagline {
+          color: #fff;
         }
 
         .editorial-grid__header-spacer,
@@ -1404,6 +1558,16 @@ export const EditorialGrid = () => {
           flex: 0 0 70vw;
           min-height: 100%;
           height: 100%;
+        }
+      }
+
+      @media (max-width: 620px) {
+        .editorial-grid__footer {
+          flex-wrap: wrap;
+        }
+        .editorial-grid__issue {
+          flex: 0 0 100%;
+          text-align: center;
         }
       }
     `}</style>

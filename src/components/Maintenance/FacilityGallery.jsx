@@ -7,6 +7,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { usePageImages } from '../../hooks/usePageImages';
 
 const facilityImages = [
   { id: 1, src: '/assets/images/facility/hangar-main.jpg', alt: 'Main Hangar' },
@@ -31,6 +32,7 @@ const carouselImages = [
 ];
 
 const FacilityGallery = ({ carouselOnly = false }) => {
+  const pageImages = usePageImages('maintenance');
   return (
     <section className="fgal">
       {!carouselOnly && (
@@ -40,7 +42,7 @@ const FacilityGallery = ({ carouselOnly = false }) => {
               <h2>Our Facility</h2>
               <div className="fgal__line"></div>
             </div>
-            <div className="fgal__grid">
+            <div className="fgal__grid" data-cms-section="maintenance-facility-gallery">
               {facilityImages.map((img, i) => (
                 <motion.div
                   key={img.id}
@@ -51,7 +53,7 @@ const FacilityGallery = ({ carouselOnly = false }) => {
                   viewport={{ once: true }}
                 >
                   <div className="fgal__img">
-                    <img src={img.src} alt={img.alt} />
+                    <img src={pageImages['maintenance-facility-gallery']?.[i]?.url || img.src} alt={img.alt} />
                   </div>
                   <span>{img.alt}</span>
                 </motion.div>

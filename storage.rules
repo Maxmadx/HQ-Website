@@ -55,6 +55,13 @@ service firebase.storage {
       allow write: if request.auth.uid == userId && isValidImage();
     }
 
+    // Misc item images
+    match /misc_items/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidImage();
+      allow delete: if isAdmin();
+    }
+
     // Admin listing images
     match /listings/{allPaths=**} {
       allow read: if true;

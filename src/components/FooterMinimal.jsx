@@ -54,8 +54,7 @@ function FooterMinimal() {
 
         <div className="footer-minimal__hours">
           <span className="footer-minimal__hours-label">Opening Hours</span>
-          <span>Mon – Fri: 9:00 – 17:00</span>
-          <span>Sat – Sun: 10:00 – 16:00</span>
+          <span>Mon – Sun, 08:30 – 17:00</span>
         </div>
       </div>
 
@@ -66,7 +65,7 @@ function FooterMinimal() {
           <img src="/assets/images/icons/Union Jack.svg" alt="UK" className="footer-minimal__flag" />
           <span>0.5059°W</span>
         </div>
-        <div className="footer-minimal__year">Est. 2010</div>
+        <div className="footer-minimal__year">Est. 2011</div>
       </div>
 
       <div className="footer-minimal__bottom-line"></div>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 const AIRCRAFT_CATALOGUE = [
   { make: 'Robinson', models: ['R22 Beta I', 'R22 Beta II', 'R22 Mariner', 'R44 Raven I', 'R44 Raven II', 'R44 Cadet', 'R44 Clipper', 'R66 Turbine'] },
@@ -24,6 +24,18 @@ export default function AircraftAlertSignup() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    if (!intent) return;
+    setTimeout(() => {
+      if (!formRef.current) return;
+      const isMobile = window.innerWidth <= 768;
+      const offset = isMobile ? 80 : 160;
+      const targetY = window.scrollY + formRef.current.getBoundingClientRect().top - offset;
+      window.scrollTo({ top: targetY, behavior: 'smooth' });
+    }, 100);
+  }, [intent]);
 
   // Buyer state
   const [expandedMakes, setExpandedMakes] = useState([]);
@@ -165,6 +177,13 @@ export default function AircraftAlertSignup() {
         <div className="alert-adv__inner">
 
           {!intent && (
+            <div className="alert-adv__intro">
+              <p className="alert-adv__intro-title">Register Interest</p>
+              <p className="alert-adv__intro-text">The best helicopters rarely reach public listings. Tell us what you're looking for — or what you're ready to move on — and we'll work our network quietly on your behalf.</p>
+            </div>
+          )}
+
+          {!intent && (
             <div className="alert-adv__intent-col">
               <button className="alert-adv__intent-btn" onClick={() => setIntent('buy')}>
                 <span className="alert-adv__intent-icon">→</span>
@@ -181,7 +200,7 @@ export default function AircraftAlertSignup() {
 
           {/* BUY FORM */}
           {intent === 'buy' && (
-            <form className="alert-adv__form" onSubmit={handleBuySubmit}>
+            <form className="alert-adv__form" ref={formRef} onSubmit={handleBuySubmit}>
               <div className="alert-adv__form-header">
                 <span className="alert-adv__form-badge">Buyer Registration</span>
                 <button type="button" className="alert-adv__back-btn" onClick={() => setIntent(null)}>← Change</button>
@@ -285,7 +304,7 @@ export default function AircraftAlertSignup() {
 
           {/* SELL FORM */}
           {intent === 'sell' && (
-            <form className="alert-adv__form" onSubmit={handleSellSubmit}>
+            <form className="alert-adv__form" ref={formRef} onSubmit={handleSellSubmit}>
               <div className="alert-adv__form-header">
                 <span className="alert-adv__form-badge alert-adv__form-badge--sell">Seller Registration</span>
                 <button type="button" className="alert-adv__back-btn" onClick={() => setIntent(null)}>← Change</button>
@@ -412,7 +431,7 @@ const styles = `
 }
 .alert-adv__intro-title {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-size: 1.1rem;
   font-weight: 700;
   color: #1a1a1a;
   text-transform: uppercase;
@@ -788,11 +807,26 @@ const styles = `
 .alert-adv__contact-fallback a:hover { color: #1a1a1a; }
 .alert-adv__contact-fallback span { color: #ddd; }
 @media (max-width: 768px) {
-  .alert-adv { padding: 2rem 1.25rem; }
-  .alert-adv__intent-col { grid-template-columns: 1fr; }
-  .alert-adv__form { padding: 1.5rem; }
+  .alert-adv { padding: 0 1rem 1rem; }
+  .alert-adv__intro { text-align: left; }
+  .alert-adv__intro-title { font-size: 1.1rem; }
+  .alert-adv__intent-col { grid-template-columns: 1fr; margin-top: 0.75rem; }
+  .alert-adv__form { padding: 1rem; }
   .alert-adv__makes-grid { grid-template-columns: 1fr 1fr; }
   .alert-adv__form-footer { flex-direction: column; align-items: flex-start; }
+  .fd-sales__preowned-layout {
+    display: flex;
+    flex-direction: column;
+  }
+  .fd-sales__preowned-layout .fd-sales__carousel-wrap {
+    order: 1;
+  }
+  .fd-sales__preowned-layout .alert-adv {
+    order: 2;
+  }
+  .fd-sales__preowned-layout .alert-adv::before {
+    display: none;
+  }
 }
 @media (max-width: 480px) {
   .alert-adv__makes-grid { grid-template-columns: 1fr; }

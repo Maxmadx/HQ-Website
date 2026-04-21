@@ -23,7 +23,10 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, useInView, useScroll, useTransform, AnimatePresence, LayoutGroup } from 'framer-motion';
+import { usePageImages } from '../hooks/usePageImages';
+import { useCmsHighlight } from '../hooks/useCmsHighlight';
+import { SECTION_MAP } from '../lib/imageSections';
 
 // Import styles
 import '../assets/css/main.css';
@@ -253,12 +256,12 @@ const r66SpecsExtended = [
 ];
 
 const historyTimeline = [
-  { year: '2007', title: 'First Flight', description: 'The R66 prototype took to the skies, marking Robinson\'s entry into the turbine helicopter market.' },
-  { year: '2010', title: 'FAA Certification', description: 'Received FAA Type Certificate, becoming Robinson\'s first turbine-powered helicopter.' },
-  { year: '2011', title: 'Production Begins', description: 'Full-scale production commenced at the Torrance, California factory.' },
-  { year: '2012', title: 'EASA Certification', description: 'European Aviation Safety Agency certification opened global markets.' },
-  { year: '2019', title: '1,000th Delivery', description: 'Robinson delivered the 1,000th R66, cementing its position in the turbine market.' },
-  { year: '2024', title: 'NXG Avionics', description: 'The R66 received the new NXG glass cockpit avionics suite as standard.' },
+  { year: '2007', title: 'First Flight', description: 'The R66 prototype took to the skies, marking Robinson\'s entry into the turbine helicopter market.', status: 'completed' },
+  { year: '2010', title: 'FAA Certification', description: 'Received FAA Type Certificate, becoming Robinson\'s first turbine-powered helicopter.', status: 'completed' },
+  { year: '2011', title: 'Production Begins', description: 'Full-scale production commenced at the Torrance, California factory.', status: 'completed' },
+  { year: '2012', title: 'EASA Certification', description: 'European Aviation Safety Agency certification opened global markets.', status: 'completed' },
+  { year: '2019', title: '1,000th Delivery', description: 'Robinson delivered the 1,000th R66, cementing its position in the turbine market.', status: 'completed' },
+  { year: '2024', title: 'NXG Avionics', description: 'The R66 received the new NXG glass cockpit avionics suite as standard.', status: 'completed' },
 ];
 
 const flightCharacteristics = [
@@ -286,13 +289,13 @@ const nxgCockpitFeatures = [
     icon: 'fa-desktop',
   },
   {
-    title: 'Dual Touchscreen Navigators',
-    description: 'Garmin GTN touchscreen navigators provide intuitive flight planning, moving map displays, and seamless integration with the autopilot system.',
+    title: 'GTN 650Xi Touchscreen Navigator',
+    description: 'Garmin GTN 650Xi touchscreen navigator provides intuitive flight planning, moving map displays, and seamless integration with the autopilot system.',
     icon: 'fa-hand-pointer',
   },
   {
     title: 'G500H TXi Flight Display',
-    description: 'Primary flight display showing attitude, airspeed, altitude, and vertical speed with synthetic vision technology for enhanced terrain awareness.',
+    description: 'Primary flight display showing attitude, airspeed, altitude and vertical speed, with optional synthetic vision for enhanced terrain awareness.',
     icon: 'fa-tachometer-alt',
   },
   {
@@ -304,10 +307,10 @@ const nxgCockpitFeatures = [
 
 const nxgStandardFeatures = [
   'Garmin G500H TXi Flight Display',
-  'Dual GTN 650Xi Touchscreen Navigators',
+  'Garmin GTN 650Xi Touchscreen Navigator',
   'Hand-Stitched Leather Seating',
   'Impact-Resistant Windshield',
-  'GFC 600H Two-Axis Autopilot',
+  'GFC 600H Two-Axis Autopilot (option)',
   'GTX 345 ADS-B Transponder',
   'Integrated Engine Monitoring',
   'USB Charging Ports',
@@ -336,24 +339,101 @@ const autopilotModes = [
   },
 ];
 
+// Shared R66 family downloads (Robinson publishes per NxG trim; we use Riviera's publicly-hosted PDFs as the family defaults)
+const R66_FAMILY_BROCHURE = 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/RH_R66_Nx_G_US_Digital_Corporate_Brochure_Feb_2026_9632b53472.pdf';
+// Robinson publishes a dedicated EOC sheet for each of the three NxG civilian
+// trims. R66 Police and Military Trainer do not have a public EOC or brochure
+// published on robinsonheli.com — their `eoc` field is omitted so the button
+// isn't rendered.
+const R66_PALO_VERDE_EOC = 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/r66_nxg_palo_verde_2026_256ac8c7ca.pdf';
+const R66_SOUTHWOOD_EOC  = 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/r66_nxg_southwood_2026_d1df6e9083.pdf';
+const R66_RIVIERA_EOC    = 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/r66_nxg_riviera_2026_108204ceda.pdf';
+
 const r66Variants = [
   {
-    name: 'Southwood',
-    description: 'A classic earth-tone color scheme featuring warm brown and tan accents. This elegant configuration pairs beautifully with beige leather interiors and wood-grain trim.',
-    image: '/assets/images/new-aircraft/r66/r66-cutout.png',
-    features: ['Warm Brown & Tan Exterior', 'Beige Leather Interior', 'Wood-Grain Trim Option', 'Classic Aesthetic'],
+    name: 'NxG Palo Verde',
+    subtitle: 'Rugged but Refined',
+    tagline: 'Rugged but refined.',
+    description: 'The R66 is known for its reliability, value, ease of maintenance and low operating costs. The five-seat Palo Verde builds on that foundation with modern technology, upgraded interior finishes and refined styling — delivering turbine performance and everyday usability in a package designed for the long haul.',
+    image: '/assets/images/new-aircraft/r66/variants/r66-turbine.png',
+    icon: 'fa-helicopter',
+    useCases: ['Stylish, reliable, and safe'],
+    features: [
+      { icon: 'fa-desktop',        text: 'Full Garmin glass cockpit' },
+      { icon: 'fa-couch',          text: 'Hand-stitched leather seating' },
+      { icon: 'fa-robot',          text: "Industry's first two-axis autopilot" },
+      { icon: 'fa-shield-alt',     text: 'Impact-resistant windshield' },
+      { icon: 'fa-paint-roller',   text: 'All-new, contemporary exterior paint scheme' },
+    ],
+    pdfs: { brochure: R66_FAMILY_BROCHURE, eoc: R66_PALO_VERDE_EOC },
   },
   {
-    name: 'Palo Verde',
-    description: 'A striking blue color scheme inspired by the clear desert skies. The Palo Verde features metallic blue tones complemented by silver accents for a modern, sophisticated appearance.',
-    image: '/assets/images/new-aircraft/r66/blue-r66-palo-verde-left-v4.png',
-    features: ['Metallic Blue Exterior', 'Silver Accent Striping', 'Dark Leather Interior', 'Contemporary Design'],
+    name: 'NxG Southwood',
+    subtitle: 'Mission Ready',
+    tagline: 'Feature-filled and mission ready.',
+    description: 'The Southwood comes with a host of standard features to accomplish any mission. Standard equipment includes the Garmin G500H 700P/700P TXi glass cockpit, Garmin GTN 635Xi GPS/COM, a Garmin 2-axis autopilot, a polycarbonate impact-resistant windshield, leather seats, tinted windows, air conditioning, and more.',
+    image: '/assets/images/new-aircraft/r66/variants/r66-southwood.png',
+    icon: 'fa-star',
+    useCases: ['Built to accomplish any mission'],
+    features: [
+      { icon: 'fa-desktop',    text: 'Garmin G500H 700P/700P TXi glass cockpit' },
+      { icon: 'fa-satellite',  text: 'Garmin GTN 635Xi GPS/COM' },
+      { icon: 'fa-robot',      text: '2-Axis Garmin Autopilot' },
+      { icon: 'fa-shield-alt', text: 'Polycarbonate Impact-Resistant Windshield Standard' },
+      { icon: 'fa-snowflake',  text: 'Air Conditioning' },
+    ],
+    pdfs: { brochure: R66_FAMILY_BROCHURE, eoc: R66_SOUTHWOOD_EOC },
   },
   {
-    name: 'Riviera',
-    description: 'An elegant white and grey color scheme that exudes luxury and refinement. The Riviera is the perfect choice for executive transport and VIP operations.',
-    image: '/assets/images/new-aircraft/r66/rhc-r66-nxg-riviera-center-spotlight-vertical-format-14184-2.jpg',
-    features: ['Pearl White Exterior', 'Grey Accent Striping', 'Premium Leather Interior', 'Executive Aesthetic'],
+    name: 'NxG Riviera',
+    subtitle: 'Limited Edition',
+    tagline: 'Limited edition, upscale interior.',
+    description: "The Riviera is Robinson's top-of-the line R66, only available for order through Spring 2026. This fully loaded helicopter features unique interior finishes, impact-resistant windshield, all-glass Garmin avionics, and a 3-axis autopilot. Only available on the Riviera trim, a Midnight + Umber interior, with contemporary wood flooring, an Alcantara headliner, and midnight leather seats accented with laser-etched suede inserts.",
+    image: '/assets/images/new-aircraft/r66/variants/r66-riviera.png',
+    icon: 'fa-gem',
+    useCases: ["Robinson's top-of-the-line R66"],
+    features: [
+      { icon: 'fa-desktop',    text: 'All-glass Garmin avionics' },
+      { icon: 'fa-robot',      text: '3-axis autopilot' },
+      { icon: 'fa-shield-alt', text: 'Impact-resistant windshield' },
+      { icon: 'fa-couch',      text: 'Midnight + Umber interior with Alcantara headliner' },
+      { icon: 'fa-tree',       text: 'Contemporary wood flooring' },
+    ],
+    pdfs: { brochure: R66_FAMILY_BROCHURE, eoc: R66_RIVIERA_EOC },
+  },
+  {
+    name: 'NxG Police',
+    subtitle: 'Built to Protect & Serve',
+    tagline: 'Built to protect & serve.',
+    description: 'Fully outfitted and ready for service on delivery, the four-seat R66 NxG Police gives law enforcement every advantage at roughly one-third the acquisition cost and half the operating cost of comparable helicopters. A Rolls-Royce RR300 turbine, state-of-the-art imaging, advanced navigation and up to three hours of flight time mean more proactive patrolling and faster reaction times — backed by Robinson\'s vertically integrated parts supply.',
+    image: '/assets/images/new-aircraft/r66/variants/r66-police.png',
+    icon: 'fa-shield-alt',
+    useCases: ['Patrol', 'Tracking suspects', 'Supporting tactical teams'],
+    features: [
+      { icon: 'fa-dollar-sign', text: 'Cost-Effective' },
+      { icon: 'fa-route',       text: 'Proactive Patrol' },
+      { icon: 'fa-clock',       text: 'Maximized Airtime' },
+      { icon: 'fa-microchip',   text: 'Advanced Technology' },
+      { icon: 'fa-cogs',        text: 'Reliable Parts' },
+    ],
+    pdfs: { brochure: R66_FAMILY_BROCHURE },
+  },
+  {
+    name: 'Military Trainer',
+    subtitle: 'Training Platform',
+    tagline: 'The future of military flight training.',
+    description: "Built on Robinson's proven R66 platform, the Military Trainer delivers an ideal balance of safety, performance, and affordability to train the next generation of military aviators. Designed, engineered, and manufactured in Torrance, California, means maximum availability with dependable parts support.",
+    image: '/assets/images/new-aircraft/r66/variants/r66-military-trainer.png',
+    icon: 'fa-user-graduate',
+    useCases: ['Preparing aviators for a wide array of operational environments'],
+    features: [
+      { icon: 'fa-graduation-cap',  text: 'Building Core Aviator Skills' },
+      { icon: 'fa-dollar-sign',     text: 'Maximum Availability at the Lowest Cost' },
+      { icon: 'fa-desktop',         text: 'All-glass cockpit with Garmin G500H TXi and GTN750 avionics' },
+      { icon: 'fa-robot',           text: 'Advanced 3-axis autopilot' },
+      { icon: 'fa-moon',            text: 'NVG compatibility' },
+    ],
+    pdfs: { brochure: R66_FAMILY_BROCHURE },
   },
 ];
 
@@ -384,11 +464,28 @@ const turbineBenefits = [
   },
 ];
 
-const expeditionAchievements = [
-  { label: 'Helicopters', value: '6', suffix: '' },
-  { label: 'Poles Reached', value: '3', suffix: '' },
-  { label: 'Flight Hours', value: '200', suffix: '+' },
-  { label: 'Miles Covered', value: '3000', suffix: '+' },
+const expeditionSlides = [
+  {
+    image: '/assets/images/expeditions/six-helis-in-North-Pole.jpg',
+    alt: 'Five R66 Helicopters at the North Pole',
+    paragraphs: [
+      "Expedition of five R66 helicopters to the Magnetic North Pole, Geographic North Pole and Pole of Inaccessibility, proving the R66's capability in extreme cold.",
+    ],
+  },
+  {
+    image: '/assets/images/expeditions/antartica.jpg',
+    alt: 'R66 expedition through Iceland and Greenland',
+    paragraphs: [
+      "Iceland and Greenland: glacial terrain tested without issue.",
+    ],
+  },
+  {
+    image: '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp',
+    alt: 'R66 expedition traversing Africa',
+    paragraphs: [
+      'Across Africa: high heat, high altitude, the R66 performing flawlessly.',
+    ],
+  },
 ];
 
 const galleryImages = [
@@ -405,10 +502,68 @@ const galleryImages = [
 // ============================================================================
 function R66Hero() {
   const heroRef = useRef(null);
+  const videoRef = useRef(null);
+  const [videoReady, setVideoReady] = useState(false);
+  const pageImages = usePageImages('r66');
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ['start start', 'end start'],
   });
+
+  useEffect(() => {
+    const iframe = videoRef.current;
+    if (!iframe) return;
+    const send = (func, args = []) => {
+      try {
+        iframe.contentWindow?.postMessage(
+          JSON.stringify({ event: 'command', func, args }),
+          '*'
+        );
+      } catch (e) { /* ignore */ }
+    };
+    const subscribeToStateChanges = () => {
+      try {
+        iframe.contentWindow?.postMessage(
+          JSON.stringify({ event: 'listening', id: 'r66-hero-video', channel: 'widget' }),
+          '*'
+        );
+        iframe.contentWindow?.postMessage(
+          JSON.stringify({ event: 'command', func: 'addEventListener', args: ['onStateChange'] }),
+          '*'
+        );
+      } catch (e) { /* ignore */ }
+    };
+    const sendPlaybackRate = () => send('setPlaybackRate', [2]);
+    const handleMessage = (e) => {
+      if (typeof e.data !== 'string') return;
+      if (!e.origin.includes('youtube')) return;
+      try {
+        const data = JSON.parse(e.data);
+        // state 1 = playing — reveal the video only once it's actually playing
+        if (data?.event === 'onStateChange' && data?.info === 1) {
+          setVideoReady(true);
+        }
+        // Also trigger on any infoDelivery that reports playerState === 1
+        if (data?.event === 'infoDelivery' && data?.info?.playerState === 1) {
+          setVideoReady(true);
+        }
+      } catch (e) { /* ignore non-JSON messages */ }
+    };
+    window.addEventListener('message', handleMessage);
+    // YouTube iframe needs a moment after load; retry a few times to catch ready state.
+    const timers = [600, 1400, 2600, 4500].map((ms) => setTimeout(() => {
+      subscribeToStateChanges();
+      sendPlaybackRate();
+    }, ms));
+    iframe.addEventListener('load', () => {
+      subscribeToStateChanges();
+      sendPlaybackRate();
+    });
+    return () => {
+      timers.forEach(clearTimeout);
+      window.removeEventListener('message', handleMessage);
+    };
+  }, []);
 
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
@@ -416,7 +571,7 @@ function R66Hero() {
   const overlayOpacity = useTransform(scrollYProgress, [0, 0.3], [0.3, 0.7]);
 
   return (
-    <section ref={heroRef} className="r66-hero">
+    <section ref={heroRef} className="r66-hero" data-cms-section="r66-hero">
       <motion.div
         className="r66-hero__bg"
         initial={{ scale: 1.1, opacity: 0 }}
@@ -424,8 +579,19 @@ function R66Hero() {
         transition={{ duration: 1.5 }}
       >
         <img
-          src="/assets/images/new-aircraft/r66/rhc-r66-nxg-riviera-center-spotlight-vertical-format-14184-2.jpg"
+          src={pageImages['r66-hero']?.[0]?.url || '/assets/images/new-aircraft/r66/rhc-r66-nxg-riviera-center-spotlight-vertical-format-14184-2.jpg'}
           alt="Robinson R66 Turbine Helicopter"
+        />
+        <iframe
+          ref={videoRef}
+          className={`r66-hero__video${videoReady ? ' r66-hero__video--ready' : ''}`}
+          src="https://www.youtube.com/embed/rmklfP_SF3o?autoplay=1&mute=1&loop=1&playlist=rmklfP_SF3o&controls=0&modestbranding=1&playsinline=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&enablejsapi=1&start=1"
+          title="R66 in flight"
+          frameBorder="0"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowFullScreen
+          aria-hidden="true"
+          tabIndex={-1}
         />
       </motion.div>
 
@@ -514,17 +680,68 @@ function R66Hero() {
         </motion.div>
       </motion.div>
 
-      <motion.div
-        className="r66-hero__scroll"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.8 }}
-      >
-        <span>Scroll to explore</span>
-        <div className="r66-hero__scroll-line">
-          <div className="r66-hero__scroll-dot" />
-        </div>
-      </motion.div>
+    </section>
+  );
+}
+
+// ============================================================================
+// SECTION 1B: Highlights
+// ============================================================================
+function R66Highlights() {
+  const ref = useRef(null);
+  const [blurPx, setBlurPx] = useState(0);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const update = () => {
+      const next = el.nextElementSibling;
+      if (!next) return;
+      const rect = el.getBoundingClientRect();
+      const nextRect = next.getBoundingClientRect();
+      const height = rect.height;
+      if (height <= 0) return;
+      // Blur grows as intro rises over highlights (0 → 16px)
+      const progress = Math.max(0, Math.min(1, (height - nextRect.top) / height));
+      setBlurPx(progress * 16);
+    };
+
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
+  }, []);
+
+  return (
+    <section
+      ref={ref}
+      className="r66-highlights"
+      style={{ filter: `blur(${blurPx}px)`, WebkitFilter: `blur(${blurPx}px)` }}
+    >
+      <div className="r66-highlights__container">
+        <Reveal>
+          <div className="r66-highlights__header">
+            <span className="r66-pre-text">AT A GLANCE</span>
+            <h2 className="r66-highlights__headline">
+              <span className="r66-text--dark">Taking a look</span>{' '}
+              <span className="r66-text--mid">at the R66</span>
+            </h2>
+          </div>
+        </Reveal>
+        <Reveal delay={0.1} direction="right">
+          <div className="r66-highlights__image">
+            <img
+              src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-front-v4.png"
+              alt="Robinson R66 front-quarter view in Palo Verde blue livery"
+              loading="lazy"
+            />
+          </div>
+        </Reveal>
+      </div>
     </section>
   );
 }
@@ -533,8 +750,110 @@ function R66Hero() {
 // SECTION 2: Introduction
 // ============================================================================
 function R66Introduction() {
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    // Compute a negative "top" so intro only pins when its bottom reaches the
+    // viewport bottom — intro scrolls normally first (internal sticky left
+    // column works), then specs rises up over the pinned intro.
+    const update = () => {
+      const el = sectionRef.current;
+      if (!el) return;
+      const vh = window.innerHeight;
+      const introH = el.offsetHeight;
+
+      // Default: pin when intro's bottom reaches viewport bottom (R44 fallback).
+      let stickTop = Math.min(0, vh - introH);
+
+      // Preferred: pin later so at pin, the expedition container's top lines
+      // up with the pre-text (held at catch-top by the sticky left column).
+      //   stickTop = catchTop - expeditionOffsetFromIntro
+      const expedition = el.querySelector('.r66-expedition__container');
+      const preText = el.querySelector('.r66-pre-text');
+      if (expedition && preText) {
+        const introRect = el.getBoundingClientRect();
+        const expOffsetFromIntro = expedition.getBoundingClientRect().top - introRect.top;
+        // Match CSS: top: max(10vh, var(--catch-top, 90px)) on .r66-intro__content
+        const catchTopVar = parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue('--catch-top')
+        );
+        const catchTop = Math.max(vh * 0.1, Number.isFinite(catchTopVar) ? catchTopVar : 90);
+        const alignedStickTop = Math.min(0, catchTop - expOffsetFromIntro);
+        // Use whichever pins LATER (more negative) so the user can actually
+        // scroll the expedition all the way up to the pre-text line.
+        stickTop = Math.min(stickTop, alignedStickTop);
+      }
+
+      document.documentElement.style.setProperty('--r66-intro-stick-top', `${stickTop}px`);
+    };
+    update();
+
+    // Progressively blur + darken intro as specs rises, but ONLY after the
+    // expedition container has reached its sticky pin at catch-top. Before
+    // that, we're still scrolling through the intro content naturally and
+    // no blur should apply. We gate directly on expedition's live position
+    // so the start point is accurate regardless of stickTop fallback math.
+    const MAX_BLUR = 10;
+    const nextSection = document.querySelector('.r66-specs');
+
+    const onScroll = () => {
+      const el = sectionRef.current;
+      if (!el || !nextSection) return;
+      const rect = nextSection.getBoundingClientRect();
+      const vh = window.innerHeight;
+
+      const expedition = el.querySelector('.r66-expedition__container');
+      const catchTopVar = parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue('--catch-top')
+      );
+      const catchTop = Math.max(vh * 0.1, Number.isFinite(catchTopVar) ? catchTopVar : 90);
+
+      // Hard gate: if expedition hasn't reached catch-top yet, stay clear.
+      if (expedition) {
+        const expTop = expedition.getBoundingClientRect().top;
+        if (expTop > catchTop) {
+          el.style.setProperty('--r66-intro-blur', '0px');
+          el.style.setProperty('--r66-intro-darken', '0');
+          return;
+        }
+      }
+
+      // After expedition has pinned, progress ramps 0→1 as specs rises from
+      // its pin-moment position to the viewport top.
+      // At pin: specs.top = catchTop + (introH - expOffsetFromIntro).
+      const introRect = el.getBoundingClientRect();
+      const introH = el.offsetHeight;
+      const expOffset = expedition
+        ? expedition.getBoundingClientRect().top - introRect.top
+        : 0;
+      const specsTopAtPin = Math.max(1, catchTop + introH - expOffset);
+      const progress = Math.min(1, Math.max(0, 1 - rect.top / specsTopAtPin));
+      el.style.setProperty('--r66-intro-blur', `${progress * MAX_BLUR}px`);
+      // Ease-in for darken: stays relatively light for most of the scroll,
+      // then ramps up quickly toward the end. Remap so full dark is reached
+      // before progress=1 (the tail of progress stays pinned at black).
+      const DARK_COMPLETE = 0.95;
+      const adjusted = Math.min(1, progress / DARK_COMPLETE);
+      const darken = Math.pow(adjusted, 8);
+      el.style.setProperty('--r66-intro-darken', `${darken}`);
+    };
+    onScroll();
+
+    window.addEventListener('resize', update);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    const ro = new ResizeObserver(update);
+    if (sectionRef.current) ro.observe(sectionRef.current);
+    return () => {
+      window.removeEventListener('resize', update);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      ro.disconnect();
+    };
+  }, []);
+
   return (
-    <section className="r66-intro">
+    <section ref={sectionRef} className="r66-intro">
       <div className="r66-intro__container">
         <div className="r66-intro__content">
           <Reveal>
@@ -563,18 +882,20 @@ function R66Introduction() {
             </p>
           </Reveal>
         </div>
-        <Reveal delay={0.4} direction="right">
-          <div className="r66-intro__image r66-fleet__image-wrap">
-            <img
-              src="/assets/images/facility/r66-lineup.png"
-              alt="HQ Aviation R66 fleet lineup"
-            />
-            <div className="r66-fleet__caption">
-              <span className="r66-fleet__caption-label">HQ Aviation</span>
-              <span className="r66-fleet__caption-text">Some of Our R66s</span>
+        <div className="r66-intro__right">
+          <Reveal delay={0.4} direction="right">
+            <div className="r66-intro__image">
+              <img
+                src="/assets/images/facility/r66-lineup.png"
+                alt="HQ Aviation R66 fleet lineup"
+              />
             </div>
-          </div>
-        </Reveal>
+          </Reveal>
+          <div className="r66-intro__divider" />
+          <R66History />
+          <div className="r66-intro__divider" />
+          <R66Expedition />
+        </div>
       </div>
     </section>
   );
@@ -584,14 +905,11 @@ function R66Introduction() {
 // SECTION 3: History Timeline
 // ============================================================================
 function R66History() {
-  const timelineRef = useRef(null);
-
   return (
-    <section className="r66-history">
-      <div className="r66-history__container">
+    <section className="r66-timeline">
+      <div className="r66-timeline__container">
         <Reveal>
           <div className="r66-section-header">
-            <span className="r66-pre-text">DEVELOPMENT</span>
             <h2>
               <span className="r66-text--dark">History</span>{' '}
               <span className="r66-text--mid">of the</span>{' '}
@@ -600,21 +918,29 @@ function R66History() {
           </div>
         </Reveal>
 
-        <div className="r66-history__timeline-wrap">
-          <div className="r66-history__timeline" ref={timelineRef}>
-            <div className="r66-history__timeline-inner">
-              {historyTimeline.map((event, i) => (
-                <div key={i} className="r66-history__item">
-                  <div className="r66-history__dot" />
-                  <div className="r66-history__year">{event.year}</div>
-                  <div className="r66-history__content">
+        <div className="r66-timeline__track">
+          <div className="r66-timeline__line">
+            <div className="r66-timeline__line-progress" />
+          </div>
+
+          {historyTimeline.map((event, i) => (
+            <Reveal key={i} delay={i * 0.12}>
+              <div className={`r66-timeline__item r66-timeline__item--${event.status || 'completed'}`}>
+                <div className="r66-timeline__marker">
+                  {event.status === 'active' && <div className="r66-timeline__pulse" />}
+                  {event.status === 'upcoming' && <div className="r66-timeline__dot" />}
+                  {(!event.status || event.status === 'completed') && <i className="fas fa-check"></i>}
+                </div>
+                <div className="r66-timeline__content">
+                  <span className="r66-timeline__year">{event.year}</span>
+                  <div className="r66-timeline__text">
                     <h4>{event.title}</h4>
                     <p>{event.description}</p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
+              </div>
+            </Reveal>
+          ))}
         </div>
       </div>
     </section>
@@ -628,103 +954,162 @@ function R66Specifications() {
   const [activeSpec, setActiveSpec] = useState(null);
   const [isExtendedRange, setIsExtendedRange] = useState(false);
   const r66Specs = isExtendedRange ? r66SpecsExtended : r66SpecsStandard;
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    // Sticky-at-end pattern so .r66-variants rises up over the pinned specs
+    // section (same shape as R66Introduction).
+    const update = () => {
+      const el = sectionRef.current;
+      if (!el) return;
+      const vh = window.innerHeight;
+      const specsH = el.offsetHeight;
+      const stickTop = Math.min(0, vh - specsH);
+      document.documentElement.style.setProperty('--r66-specs-stick-top', `${stickTop}px`);
+    };
+    update();
+
+    // Progressively blur + lighten specs as variants rises. Same pacing as
+    // the intro->specs transition: ease-in with DARK_COMPLETE=0.95, pow 8.
+    const MAX_BLUR = 10;
+    const nextSection = document.querySelector('.r66-variants');
+
+    const onScroll = () => {
+      const el = sectionRef.current;
+      if (!el || !nextSection) return;
+      const rect = nextSection.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const progress = Math.min(1, Math.max(0, (vh - rect.top) / vh));
+      el.style.setProperty('--r66-specs-blur', `${progress * MAX_BLUR}px`);
+      const DARK_COMPLETE = 0.95;
+      const adjusted = Math.min(1, progress / DARK_COMPLETE);
+      const eased = Math.pow(adjusted, 8);
+      el.style.setProperty('--r66-specs-lighten', `${eased}`);
+      el.style.pointerEvents = eased >= 0.98 ? 'none' : '';
+    };
+    onScroll();
+
+    window.addEventListener('resize', update);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    const ro = new ResizeObserver(update);
+    if (sectionRef.current) ro.observe(sectionRef.current);
+    return () => {
+      window.removeEventListener('resize', update);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      ro.disconnect();
+    };
+  }, []);
 
   return (
-    <section className="r66-specs">
+    <section ref={sectionRef} className="r66-specs">
       <div className="r66-specs__container">
-        <Reveal>
-          <div className="r66-section-header">
-            <span className="r66-pre-text">PERFORMANCE DATA</span>
-            <h2>
-              <span className="r66-text--dark">Technical</span>{' '}
-              <span className="r66-text--mid">Specifications</span>
-            </h2>
-          </div>
-        </Reveal>
-
-        <div className="r66-specs__columns">
-          <div className="r66-specs__right">
-            <div className="r66-specs__blueprint-card">
-              <img
-                src="/assets/images/new-aircraft/r66/r66bluprint.jpg"
-                alt="R66 Blueprint"
-                className="r66-specs__blueprint"
-              />
-            </div>
-            <div className="r66-specs__overlay-data">
-              <div className="r66-specs__overlay-item">
-                <span>LENGTH</span>
-                <span>29.5 ft</span>
-              </div>
-              <div className="r66-specs__overlay-item">
-                <span>HEIGHT</span>
-                <span>11.7 ft</span>
-              </div>
-              <div className="r66-specs__overlay-item">
-                <span>MAX WEIGHT</span>
-                <span>2,700 lbs</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="r66-specs__table">
-            <div className="r66-specs__row r66-specs__row--header">
-              <div className="r66-specs__cell">Specification</div>
-              <div className="r66-specs__cell">R66 Turbine
-                <label className="r66-specs__aux-label">
-                  <input
-                    type="checkbox"
-                    checked={isExtendedRange}
-                    onChange={(e) => setIsExtendedRange(e.target.checked)}
-                    className="r66-specs__aux-checkbox"
-                  />
-                  <span className="r66-specs__aux-check">
-                    {isExtendedRange && <span>✓</span>}
-                  </span>
-                  <span className="r66-specs__aux-text">+ Extended Range</span>
-                </label>
-              </div>
-            </div>
-            {r66Specs.map((spec, i) => {
-              const isHighlighted = isExtendedRange && ['Range', 'Fuel Capacity', 'Endurance'].includes(spec.label);
-              return (
-                <div key={i} className="r66-specs__row">
-                  <div className="r66-specs__cell r66-specs__cell--label">{spec.label}</div>
-                  <div className={`r66-specs__cell${isHighlighted ? ' r66-specs__cell--highlighted' : ''}`}>{spec.value}</div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <Reveal>
-          <div className="r66-proven__stats-bar">
-            {turbineBenefits.map((b, i) => (
-              <React.Fragment key={i}>
-                {i > 0 && <div className="r66-proven__stat-divider" />}
-                <div className="r66-proven__stat">
-                  <span className="r66-proven__stat-value">{b.stat}</span>
-                  <span className="r66-proven__stat-label">{b.statLabel}</span>
-                </div>
-              </React.Fragment>
-            ))}
-          </div>
-        </Reveal>
-
-        <div className="r66-proven__grid">
-          {flightCharacteristics.map((item, i) => (
-            <Reveal key={i} delay={i * 0.08}>
-              <div className="r66-proven__card">
-                {item.icon && (
-                  <div className="r66-proven__card-icon">
-                    <i className={`fas ${item.icon}`}></i>
-                  </div>
-                )}
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
+        <div className="r66-specs__split">
+          <div className="r66-specs__split-left">
+            <Reveal>
+              <div className="r66-section-header">
+                <span className="r66-pre-text">PERFORMANCE DATA</span>
+                <h2>
+                  <span className="r66-text--dark">Technical</span>{' '}
+                  <span className="r66-text--mid">Specifications</span>
+                </h2>
               </div>
             </Reveal>
-          ))}
+
+            <div className="r66-specs__columns">
+              <div className="r66-specs__right">
+                <div className="r66-specs__blueprint-card">
+                  <img
+                    src="/assets/images/new-aircraft/r66/r66bluprint.jpg"
+                    alt="R66 Blueprint"
+                    className="r66-specs__blueprint"
+                  />
+                </div>
+                <div className="r66-specs__overlay-data">
+                  <div className="r66-specs__overlay-item">
+                    <span>LENGTH</span>
+                    <span>29.5 ft</span>
+                  </div>
+                  <div className="r66-specs__overlay-item">
+                    <span>HEIGHT</span>
+                    <span>11.7 ft</span>
+                  </div>
+                  <div className="r66-specs__overlay-item">
+                    <span>MAX WEIGHT</span>
+                    <span>2,700 lbs</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="r66-specs__split-right">
+            <div className="r66-specs__table">
+              <div className="r66-specs__row r66-specs__row--header">
+                <div className="r66-specs__cell">Specification</div>
+                <div className="r66-specs__cell">
+                  <label className="r66-specs__aux-label">
+                    <input
+                      type="checkbox"
+                      checked={isExtendedRange}
+                      onChange={(e) => setIsExtendedRange(e.target.checked)}
+                      className="r66-specs__aux-checkbox"
+                    />
+                    <span className="r66-specs__aux-check">
+                      {isExtendedRange && <span>✓</span>}
+                    </span>
+                    <span className="r66-specs__aux-text">+ Extended Range</span>
+                  </label>
+                </div>
+              </div>
+              {r66Specs.map((spec, i) => {
+                const isHighlighted = isExtendedRange && ['Range', 'Fuel Capacity', 'Endurance'].includes(spec.label);
+                return (
+                  <div key={i} className="r66-specs__row">
+                    <div className="r66-specs__cell r66-specs__cell--label">{spec.label}</div>
+                    <div className={`r66-specs__cell${isHighlighted ? ' r66-specs__cell--highlighted' : ''}`}>{spec.value}</div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="r66-specs__split-divider" />
+
+            <Reveal>
+              <div className="r66-proven__stats-bar">
+                {turbineBenefits
+                  .filter((b) => b.statLabel !== 'Hour TBO')
+                  .map((b, i) => (
+                    <React.Fragment key={i}>
+                      {i > 0 && <div className="r66-proven__stat-divider" />}
+                      <div className="r66-proven__stat">
+                        <span className="r66-proven__stat-value">{b.stat}</span>
+                        <span className="r66-proven__stat-label">{b.statLabel}</span>
+                      </div>
+                    </React.Fragment>
+                  ))}
+              </div>
+            </Reveal>
+
+            <div className="r66-specs__split-divider" />
+
+            <div className="r66-proven__grid">
+              {flightCharacteristics.map((item, i) => (
+                <Reveal key={i} delay={i * 0.08}>
+                  <div className="r66-proven__card">
+                    {item.icon && (
+                      <div className="r66-proven__card-icon">
+                        <i className={`fas ${item.icon}`}></i>
+                      </div>
+                    )}
+                    <h3>{item.title}</h3>
+                    <p>{item.description}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -742,7 +1127,7 @@ function R66NXGCockpit() {
           <div className="r66-nxg__left">
             <Reveal>
               <div className="r66-section-header">
-                <span className="r66-pre-text">NOW STANDARD ON ALL R66</span>
+                <span className="r66-pre-text">STANDARD ON NEW NxG R66s</span>
                 <h2>
                   <span className="r66-text--dark">NXG</span>{' '}
                   <span className="r66-text--mid">Glass</span>{' '}
@@ -752,9 +1137,9 @@ function R66NXGCockpit() {
             </Reveal>
             <Reveal delay={0.1}>
               <p className="r66-nxg__intro">
-                The NXG avionics package transforms the R66 cockpit with a full Garmin glass suite,
-                hand-stitched leather seating, and the industry's first two-axis autopilot in a light
-                turbine helicopter. Now standard on every new R66.
+                The NxG avionics package transforms the R66 cockpit with a full Garmin glass
+                suite, hand-stitched leather seating and a factory-integrated two-axis autopilot
+                option — now the standard spec on new-production R66s.
               </p>
             </Reveal>
             <Reveal delay={0.2}>
@@ -792,19 +1177,17 @@ function R66NXGCockpit() {
           </div>
         </div>
 
-        <Reveal delay={0.5}>
-          <div className="r66-nxg__standard">
-            <h3>NXG Standard Equipment</h3>
-            <div className="r66-nxg__standard-grid">
-              {nxgStandardFeatures.map((feature, i) => (
-                <div key={i} className="r66-nxg__standard-item">
-                  <i className="fas fa-check"></i>
-                  <span>{feature}</span>
-                </div>
-              ))}
-            </div>
+        <div className="r66-nxg__standard">
+          <h3>NXG Standard Equipment</h3>
+          <div className="r66-nxg__standard-grid">
+            {nxgStandardFeatures.map((feature, i) => (
+              <div key={i} className="r66-nxg__standard-item">
+                <i className="fas fa-check"></i>
+                <span>{feature}</span>
+              </div>
+            ))}
           </div>
-        </Reveal>
+        </div>
       </div>
     </section>
   );
@@ -918,36 +1301,66 @@ function R66Autopilot() {
 // SECTION 8: Captain Quentin Smith Achievement Section
 // ============================================================================
 function R66Expedition() {
+  const [index, setIndex] = useState(0);
+  const total = expeditionSlides.length;
+  const slide = expeditionSlides[index];
+  const go = (dir) => setIndex((i) => (i + dir + total) % total);
+
   return (
     <section className="r66-expedition">
       <div className="r66-expedition__container">
-        <div className="r66-expedition__image">
-          <img
-            src="/assets/images/expeditions/six-helis-in-North-Pole.jpg"
-            alt="Six R66 Helicopters at the North Pole"
-          />
-        </div>
-
         <div className="r66-expedition__content">
-          <span className="r66-expedition__pre">Proven in the Field</span>
-          <h2 className="r66-expedition__title">Captain Quentin Smith</h2>
-          <div className="r66-expedition__rule" />
-          <p className="r66-expedition__lead">
-            Led an expedition of six R66 helicopters to the Magnetic North Pole, Geographic North Pole,
-            and Pole of Inaccessibility — proving the R66's capability in extreme conditions.
-          </p>
+          <h2 className="r66-expedition__title">Proven in the Field</h2>
 
-          <div className="r66-expedition__stats">
-            {expeditionAchievements.map((stat, i) => (
-              <div key={i} className="r66-expedition__stat">
-                <span className="r66-expedition__stat-value">
-                  <AnimatedNumber value={stat.value} suffix={stat.suffix} />
-                </span>
-                <span className="r66-expedition__stat-label">{stat.label}</span>
-              </div>
+          <div className="r66-expedition__carousel">
+            <button
+              type="button"
+              className="r66-expedition__chevron r66-expedition__chevron--prev"
+              onClick={() => go(-1)}
+              aria-label="Previous expedition"
+            >
+              <svg width="14" height="22" viewBox="0 0 14 22" fill="none" aria-hidden="true">
+                <path d="M12 2L2 11l10 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+
+            <div className="r66-expedition__image" key={slide.image}>
+              <img src={slide.image} alt={slide.alt} />
+            </div>
+
+            <button
+              type="button"
+              className="r66-expedition__chevron r66-expedition__chevron--next"
+              onClick={() => go(1)}
+              aria-label="Next expedition"
+            >
+              <svg width="14" height="22" viewBox="0 0 14 22" fill="none" aria-hidden="true">
+                <path d="M2 2l10 9-10 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
+
+          <div className="r66-expedition__dots" role="tablist" aria-label="Expedition slides">
+            {expeditionSlides.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                role="tab"
+                aria-selected={i === index}
+                aria-label={`Go to expedition ${i + 1}`}
+                className={`r66-expedition__dot${i === index ? ' r66-expedition__dot--active' : ''}`}
+                onClick={() => setIndex(i)}
+              />
             ))}
           </div>
 
+          <div className="r66-expedition__rule" />
+
+          <div className="r66-expedition__copy" key={index}>
+            {slide.paragraphs.map((p, i) => (
+              <p key={i} className="r66-expedition__lead">{p}</p>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -973,50 +1386,122 @@ function R66Variants() {
           </div>
         </Reveal>
 
-        <div className="r66-variants__tabs">
-          {r66Variants.map((variant, i) => (
-            <button
-              key={i}
-              className={`r66-variants__tab ${activeVariant === i ? 'active' : ''}`}
-              onClick={() => setActiveVariant(i)}
-            >
-              {variant.name}
-            </button>
-          ))}
+        <LayoutGroup id="r66-variants">
+          <div className="r66-variants__card">
+            <div className="r66-variants__tabs">
+              {r66Variants.map((variant, i) => (
+                <button
+                  key={i}
+                  className={`r66-variants__tab ${activeVariant === i ? 'active' : ''}`}
+                  onClick={() => setActiveVariant(i)}
+                >
+                  {/* Thumbnail only when not active — shares layoutId with the hero image so it flies to/from the hero slot */}
+                  {activeVariant !== i && (
+                    <motion.span
+                      className="r66-variants__tab-thumb"
+                      aria-hidden="true"
+                      layoutId={`r66-variant-img-${i}`}
+                      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      <img src={variant.image} alt="" loading="lazy" />
+                    </motion.span>
+                  )}
+                  <motion.span
+                    className="r66-variants__tab-label"
+                    layout
+                    transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <span className="r66-variants__tab-sub">{variant.subtitle}</span>
+                    <span className="r66-variants__tab-name">{variant.name}</span>
+                  </motion.span>
+                </button>
+              ))}
+            </div>
+
+            <div className="r66-variants__content">
+              {/* Hero image stays outside AnimatePresence so the shared layoutId can connect to the active tab's thumbnail */}
+              <div className="r66-variants__image">
+                <div className="r66-variants__image-headline">
+                  <div className="r66-variants__image-headline-inner">
+                    <span className="r66-variants__eyebrow">{r66Variants[activeVariant].subtitle}</span>
+                    <h3>R66 {r66Variants[activeVariant].name}</h3>
+                    <p className="r66-variants__tagline">{r66Variants[activeVariant].tagline}</p>
+                    <div className="r66-variants__divider" />
+                  </div>
+                </div>
+                <motion.span
+                  key={activeVariant}
+                  className="r66-variants__image-inner"
+                  layoutId={`r66-variant-img-${activeVariant}`}
+                  transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <img
+                    src={r66Variants[activeVariant].image}
+                    alt={`${r66Variants[activeVariant].name} configuration`}
+                  />
+                </motion.span>
+                <div className="r66-variants__use-case-tags">
+                  {r66Variants[activeVariant].useCases.map((uc, i) => (
+                    <span key={i} className="r66-variants__use-case-tag">{uc}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="r66-variants__info">
+                <div className="r66-variants__info-left">
+                  <p className="r66-variants__description">{r66Variants[activeVariant].description}</p>
+                  {r66Variants[activeVariant].pdfs && (
+                    <div className="r66-variants__pdfs">
+                      {r66Variants[activeVariant].pdfs.brochure && (
+                        <a
+                          href={r66Variants[activeVariant].pdfs.brochure}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="r66-variants__pdf-pill"
+                        >
+                          <i className="fas fa-file-pdf" aria-hidden="true"></i>
+                          <span>Brochure</span>
+                        </a>
+                      )}
+                      {r66Variants[activeVariant].pdfs.eoc && (
+                        <a
+                          href={r66Variants[activeVariant].pdfs.eoc}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="r66-variants__pdf-pill"
+                        >
+                          <i className="fas fa-file-pdf" aria-hidden="true"></i>
+                          <span>Operating Costs</span>
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="r66-variants__info-right">
+                  <ul className="r66-variants__features">
+                    {r66Variants[activeVariant].features.map((feature, i) => (
+                      <li key={i}>
+                        <span className="r66-variants__feature-icon" aria-hidden="true">
+                          <i className={`fas ${feature.icon}`}></i>
+                        </span>
+                        <span>{feature.text}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </LayoutGroup>
+
+        <div className="r66-variants__cta">
+          <a href="#enquire" className="r66-variants__cta-button">
+            Register Interest
+            <i className="fas fa-arrow-right" aria-hidden="true"></i>
+          </a>
         </div>
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeVariant}
-            className="r66-variants__content"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4 }}
-          >
-            <div className="r66-variants__image">
-              <img
-                src={r66Variants[activeVariant].image}
-                alt={r66Variants[activeVariant].name}
-              />
-            </div>
-            <div className="r66-variants__info">
-              <h3>{r66Variants[activeVariant].name}</h3>
-              <p>{r66Variants[activeVariant].description}</p>
-              <ul className="r66-variants__features">
-                {r66Variants[activeVariant].features.map((feature, i) => (
-                  <li key={i}>
-                    <i className="fas fa-check"></i>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-              <Link to="/contact" className="r66-btn r66-btn--primary">
-                Request Configuration
-              </Link>
-            </div>
-          </motion.div>
-        </AnimatePresence>
       </div>
     </section>
   );
@@ -1055,6 +1540,30 @@ function R66WhyTurbine() {
           ))}
         </div>
 
+        <Reveal delay={0.3}>
+          <div className="r66-turbine__cost">
+            <div className="r66-turbine__cost-header">
+              <span className="r66-pre-text">Real-World Operating Cost</span>
+              <h3>
+                Roughly <span className="r66-turbine__cost-accent">£400–£550 per hour</span> direct operating cost
+              </h3>
+            </div>
+            <p className="r66-turbine__cost-lead">
+              Turbine economics look different to piston — but with the RR300 they stay
+              predictable. Jet-A burn is the dominant line item, reserves are set against
+              a 2,000-hour TBO, and the single-engine turbine architecture keeps
+              scheduled maintenance simple. For operators stepping up from an R44, the
+              R66 typically adds capability and comfort without the running cost jumping
+              the way it does on twin-engine turbines.
+            </p>
+            <ul className="r66-turbine__cost-list">
+              <li><i className="fas fa-gas-pump"></i><span>~20–22 US gal/hr Jet-A — dominant line item</span></li>
+              <li><i className="fas fa-tools"></i><span>Reserves against a 2,000-hour RR300 TBO</span></li>
+              <li><i className="fas fa-infinity"></i><span>Global Robinson &amp; Rolls-Royce parts availability</span></li>
+            </ul>
+          </div>
+        </Reveal>
+
       </div>
     </section>
   );
@@ -1065,13 +1574,33 @@ function R66WhyTurbine() {
 // ============================================================================
 function R66Gallery() {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [galleryPage, setGalleryPage] = useState(0);
+  const galleryScrollRef = useRef(null);
+  const pageImages = usePageImages('r66');
+  const cmsGallery = (pageImages['r66-gallery'] ?? SECTION_MAP['r66-gallery'].images).map(img => ({ src: img.url, alt: img.alt }));
+
+  const itemsPerPage = 3;
+  const numGalleryPages = Math.max(1, Math.ceil(cmsGallery.length / itemsPerPage));
+
+  const handleGalleryScroll = () => {
+    const el = galleryScrollRef.current;
+    if (!el) return;
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    if (maxScroll <= 0) return;
+    setGalleryPage(Math.round((el.scrollLeft / maxScroll) * (numGalleryPages - 1)));
+  };
+
+  const scrollGallery = (direction) => {
+    const el = galleryScrollRef.current;
+    if (!el) return;
+    el.scrollBy({ left: direction * el.clientWidth, behavior: 'smooth' });
+  };
 
   return (
-    <section className="r66-gallery">
+    <section className="r66-gallery" data-cms-section="r66-gallery">
       <div className="r66-gallery__container">
         <Reveal>
           <div className="r66-section-header r66-section-header--center">
-            <span className="r66-pre-text">VISUALS</span>
             <h2>
               <span className="r66-text--dark">R66</span>{' '}
               <span className="r66-text--mid">Gallery</span>
@@ -1079,22 +1608,64 @@ function R66Gallery() {
           </div>
         </Reveal>
 
-        <div className="r66-gallery__grid">
-          {galleryImages.map((image, i) => (
-            <Reveal key={i} delay={i * 0.1}>
-              <motion.div
-                className="r66-gallery__item"
-                whileHover={{ scale: 1.02 }}
-                onClick={() => setSelectedImage(image)}
-              >
-                <img src={image.src} alt={image.alt} />
-                <div className="r66-gallery__overlay">
-                  <i className="fas fa-expand"></i>
-                </div>
-              </motion.div>
-            </Reveal>
-          ))}
+        <div className="r66-gallery__scroll-wrapper">
+          <button
+            type="button"
+            className="r66-gallery__chevron r66-gallery__chevron--prev"
+            aria-label="Previous gallery images"
+            onClick={() => scrollGallery(-1)}
+            disabled={galleryPage === 0}
+          >
+            <i className="fas fa-chevron-left"></i>
+          </button>
+
+          <div className="r66-gallery__scroll" ref={galleryScrollRef} onScroll={handleGalleryScroll}>
+            <div className="r66-gallery__grid">
+              {cmsGallery.map((image, i) => (
+                <Reveal key={i} delay={i * 0.1}>
+                  <motion.div
+                    className="r66-gallery__item"
+                    whileHover={{ scale: 1.02 }}
+                    onClick={() => setSelectedImage(image)}
+                  >
+                    <img src={image.src} alt={image.alt} />
+                    <div className="r66-gallery__overlay">
+                      <i className="fas fa-expand"></i>
+                    </div>
+                  </motion.div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="r66-gallery__chevron r66-gallery__chevron--next"
+            aria-label="Next gallery images"
+            onClick={() => scrollGallery(1)}
+            disabled={galleryPage >= numGalleryPages - 1}
+          >
+            <i className="fas fa-chevron-right"></i>
+          </button>
         </div>
+
+        {numGalleryPages > 1 && (
+          <div className="r66-gallery__dots">
+            {Array.from({ length: numGalleryPages }).map((_, i) => (
+              <button
+                key={i}
+                className={`r66-gallery__dot${i === galleryPage ? ' r66-gallery__dot--active' : ''}`}
+                aria-label={`Go to gallery page ${i + 1}`}
+                onClick={() => {
+                  const el = galleryScrollRef.current;
+                  if (!el) return;
+                  const maxScroll = el.scrollWidth - el.clientWidth;
+                  el.scrollTo({ left: (i / (numGalleryPages - 1)) * maxScroll, behavior: 'smooth' });
+                }}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       <AnimatePresence>
@@ -1130,36 +1701,240 @@ function R66Gallery() {
 // ============================================================================
 // SECTION 10: CTA
 // ============================================================================
-function R66CTA() {
+function R66Select({ options, value, onChange }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  const selected = options.find(o => o.value === value) || options[0];
+
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
   return (
-    <section className="r66-cta">
+    <div className="r66-select" ref={ref}>
+      <button type="button" className="r66-select__trigger" onClick={() => setOpen(o => !o)}>
+        <span>{selected.label}</span>
+        <svg className={`r66-select__chevron${open ? ' r66-select__chevron--open' : ''}`} width="12" height="8" viewBox="0 0 12 8" fill="none">
+          <path d="M1 1l5 5 5-5" stroke="rgba(255,255,255,0.6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+      {open && (
+        <ul className="r66-select__menu">
+          {options.map(o => (
+            <li
+              key={o.value}
+              className={`r66-select__option${o.value === value ? ' r66-select__option--active' : ''}`}
+              onClick={() => { onChange(o.value); setOpen(false); }}
+            >
+              {o.label}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+const r66CtaContent = {
+  purchase: {
+    preText: 'OWN THE TURBINE',
+    preTextShort: 'OWNERSHIP',
+    headingDark: 'Ready to',
+    headingLight: 'Experience the R66?',
+    lead: "Robinson's first turbine delivers 5-seat capability, proven reliability across 1.5M+ fleet flight hours, and the industry's lowest turbine operating cost. Speak with our sales team about configurations, delivery positions, and ownership packages.",
+    benefits: [
+      { icon: 'fa-helicopter',      text: 'Configure Your Ideal R66 Variant' },
+      { icon: 'fa-handshake',       text: 'Direct Consultation With Sales Team' },
+      { icon: 'fa-shield-alt',      text: 'Factory Warranty & Denham Support' },
+      { icon: 'fa-plane-departure', text: 'Demo Flight at Denham Aerodrome' },
+    ],
+    formTitle: 'Enquire About Aircraft',
+    selectOptions: [
+      { value: 'purchase',    label: 'Interested in Purchasing' },
+      { value: 'demo',        label: 'Request a Demo Flight' },
+      { value: 'information', label: 'Requesting Information' },
+      { value: 'other',       label: 'Other Inquiry' },
+    ],
+    selectDefault: 'purchase',
+  },
+  training: {
+    preText: 'BECOME TURBINE-RATED',
+    preTextShort: 'LEARN TO FLY',
+    headingDark: 'Fly a',
+    headingLight: 'Turbine Helicopter',
+    lead: "Transition onto the R66 with HQ Aviation's experienced instructors. Type rating, PPL conversions, and self-fly hire from Denham Aerodrome — all on our own R66 fleet.",
+    benefits: [
+      { icon: 'fa-user-graduate',       text: 'R66 Type Rating Courses' },
+      { icon: 'fa-plane-departure',     text: 'Self-Fly Hire From Our Fleet' },
+      { icon: 'fa-chalkboard-teacher',  text: 'Experienced Turbine Instructors' },
+    ],
+    formTitle: 'Start Your Training',
+    selectOptions: [
+      { value: 'type-rating', label: 'R66 Type Rating' },
+      { value: 'ppl',         label: 'PPL Training' },
+      { value: 'self-fly',    label: 'Self-Fly Hire' },
+      { value: 'other',       label: 'Other Inquiry' },
+    ],
+    selectDefault: 'type-rating',
+  },
+};
+
+function R66CTA() {
+  const [useType, setUseType] = useState('purchase');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    interest: 'purchase',
+    message: '',
+  });
+  const [formStatus, setFormStatus] = useState('idle');
+
+  const content = r66CtaContent[useType];
+
+  const handleToggle = (type) => {
+    setUseType(type);
+    setFormData(prev => ({ ...prev, interest: r66CtaContent[type].selectDefault }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormStatus('sending');
+    const interestLabel = content.selectOptions.find(o => o.value === formData.interest)?.label || formData.interest;
+    const messageParts = [];
+    if (interestLabel) messageParts.push(`Interest: ${interestLabel}`);
+    if (formData.message) messageParts.push(formData.message);
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          subject: `R66 Enquiry — ${useType === 'purchase' ? 'Purchase' : 'Training'}`,
+          message: messageParts.join('\n'),
+          source: 'R66 Enquiry',
+        }),
+      });
+      setFormStatus(res.ok ? 'success' : 'error');
+    } catch {
+      setFormStatus('error');
+    }
+  };
+
+  return (
+    <section id="enquire" className="r66-cta">
       <div className="r66-cta__container">
-        <Reveal>
-          <span className="r66-pre-text">NEXT STEPS</span>
-          <h2>
-            <span className="r66-text--dark">Ready to</span>{' '}
-            <span className="r66-text--mid">Experience</span>{' '}
-            <span className="r66-text--light">the R66?</span>
-          </h2>
-          <p>
-            Whether you're looking to purchase a new R66, join an expedition,
-            or simply learn more about turbine helicopter ownership, we're here to help.
-          </p>
-        </Reveal>
+        <div className="r66-cta__content">
+          <Reveal>
+            <div className="r66-section-header">
+              <span className="r66-pre-text r66-pre-text--light">
+                <span className="r66-pre-text__full">{content.preText}</span>
+                <span className="r66-pre-text__short">{content.preTextShort}</span>
+              </span>
+              <h2>
+                <span style={{ color: '#fff' }}>{content.headingDark}</span>{' '}
+                <span style={{ color: 'rgba(255,255,255,0.7)' }}>{content.headingLight}</span>
+              </h2>
+            </div>
+          </Reveal>
 
-        <Reveal delay={0.2}>
-          <div className="r66-cta__actions">
-            <Link to="/contact" className="r66-btn r66-btn--primary">
-              Enquire about Aircraft
-            </Link>
-            <Link to="/training/ppl" className="r66-btn r66-btn--secondary">
-              Learn to Fly
-            </Link>
-          </div>
-        </Reveal>
+          <Reveal delay={0.2}>
+            <p className="r66-cta__lead">{content.lead}</p>
+          </Reveal>
 
-        <Reveal delay={0.4}>
-          <div className="r66-cta__contact">
+          <Reveal delay={0.3}>
+            <div className="r66-cta__benefits-card">
+              <div className="r66-cta__benefits">
+                {content.benefits.map((b, i) => (
+                  <div key={i} className="r66-cta__benefit">
+                    <i className={`fas ${b.icon}`}></i>
+                    <span>{b.text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+        </div>
+
+        <Reveal delay={0.4} direction="right">
+          {formStatus === 'success' ? (
+            <div className="r66-cta__form r66-cta__success">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              <p>Thank you for your enquiry! Our team will contact you shortly.</p>
+            </div>
+          ) : (
+            <form className="r66-cta__form" onSubmit={handleSubmit}>
+              <h3>{content.formTitle}</h3>
+              <div className="r66-cta__form-group">
+                <input
+                  type="text"
+                  placeholder="Full Name *"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                />
+              </div>
+              <div className="r66-cta__form-group">
+                <input
+                  type="email"
+                  placeholder="Email Address *"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                />
+              </div>
+              <div className="r66-cta__form-group">
+                <input
+                  type="tel"
+                  placeholder="Phone Number"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                />
+              </div>
+              <div className="r66-cta__form-group">
+                <R66Select
+                  value={formData.interest}
+                  onChange={(val) => setFormData({ ...formData, interest: val })}
+                  options={content.selectOptions}
+                />
+              </div>
+              <div className="r66-cta__form-group">
+                <textarea
+                  placeholder="Additional Comments"
+                  rows="3"
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                />
+              </div>
+              {formStatus === 'error' && (
+                <p className="r66-cta__error">
+                  Something went wrong — please try again or email{' '}
+                  <a href="mailto:sales@hqaviation.com">sales@hqaviation.com</a>
+                </p>
+              )}
+              <button
+                type="submit"
+                className="r66-btn r66-btn--submit"
+                disabled={formStatus === 'sending'}
+              >
+                {formStatus === 'sending' ? 'Sending…' : 'Submit Enquiry'}
+                <i className="fas fa-paper-plane"></i>
+              </button>
+            </form>
+          )}
+        </Reveal>
+      </div>
+
+      <Reveal delay={0.6}>
+        <div className="r66-cta__contact">
+          <div className="r66-cta__contact-inner">
             <div className="r66-cta__contact-item">
               <i className="fas fa-phone"></i>
               <span>+44 1895 833 373</span>
@@ -1173,8 +1948,8 @@ function R66CTA() {
               <span>Denham Aerodrome, UK</span>
             </div>
           </div>
-        </Reveal>
-      </div>
+        </div>
+      </Reveal>
     </section>
   );
 }
@@ -1304,12 +2079,38 @@ const R66Styles = () => (
       position: absolute;
       inset: 0;
       z-index: 0;
+      overflow: hidden;
     }
 
     .r66-hero__bg img {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
+      z-index: 0;
+    }
+
+    .r66-hero__video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(1.8);
+      width: 100vw;
+      height: 56.25vw;
+      min-height: 100vh;
+      min-width: 177.78vh;
+      pointer-events: none;
+      border: 0;
+      z-index: 1;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.6s ease;
+    }
+
+    .r66-hero__video--ready {
+      opacity: 1;
+      visibility: visible;
     }
 
     .r66-hero__overlay {
@@ -1379,7 +2180,7 @@ const R66Styles = () => (
       line-height: 1.6;
       color: rgba(255, 255, 255, 0.9);
       max-width: 600px;
-      margin: 0 auto 3rem;
+      margin: 0 auto 2rem;
     }
 
     .r66-hero__badges {
@@ -1417,11 +2218,15 @@ const R66Styles = () => (
 
     .r66-hero__scroll {
       position: absolute;
-      bottom: 3rem;
+      bottom: 1.25rem;
       left: 50%;
       transform: translateX(-50%);
       z-index: 2;
       text-align: center;
+    }
+
+    @media (max-height: 780px) {
+      .r66-hero__scroll { display: none; }
     }
 
     .r66-hero__scroll span {
@@ -1460,20 +2265,179 @@ const R66Styles = () => (
     }
 
     /* ====================================================================
+       HIGHLIGHTS SECTION
+       ==================================================================== */
+    .r66-highlights {
+      position: sticky;
+      top: 0;
+      padding: 2.5rem 2rem;
+      background: linear-gradient(to right, #faf9f6 50%, #ececec 50%);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    }
+
+    .r66-highlights::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 40px;
+      transform: translateX(-39px);
+      background: linear-gradient(to left,
+        rgba(0, 0, 0, 0.05) 0%,
+        rgba(0, 0, 0, 0.02) 40%,
+        rgba(0, 0, 0, 0) 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .r66-highlights__container {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) 2fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .r66-highlights__header {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .r66-highlights__headline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 500;
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    .r66-highlights__image {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .r66-highlights__image img {
+      width: 100%;
+      max-width: 640px;
+      max-height: 320px;
+      height: auto;
+      object-fit: contain;
+      display: block;
+    }
+
+    @media (max-width: 900px) {
+      .r66-highlights {
+        background: #faf9f6;
+      }
+      .r66-highlights::before {
+        display: none;
+      }
+      .r66-highlights__container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      .r66-highlights__image {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .r66-highlights {
+        padding: 2rem 1.5rem;
+      }
+      .r66-highlights__image img {
+        max-height: 220px;
+      }
+    }
+
+    /* ====================================================================
+       STICKY STACK WRAPPER (bounds the sticky highlights + intro so they
+       un-pin at the bottom of specs instead of persisting over the rest
+       of the page)
+       ==================================================================== */
+    .r66-sticky-stack {
+      position: relative;
+    }
+
+    /* ====================================================================
        INTRODUCTION SECTION
        ==================================================================== */
     .r66-intro {
-      padding: 8rem 2rem;
-      background: #faf9f6;
+      /* Sticky-at-end pattern (mirrors /aircraft/r44): intro scrolls normally
+         so the internal sticky left column works, then pins only when its
+         bottom reaches the viewport bottom so specs can rise up over it.
+         --r66-intro-stick-top is set in JS to min(0, viewportH - introH). */
+      position: sticky;
+      top: var(--r66-intro-stick-top, 0);
+      padding: 3rem 2rem 5rem;
+      background: linear-gradient(to right, rgba(236, 236, 236, 0.82) 50%, rgba(250, 249, 246, 0.82) 50%);
+      backdrop-filter: blur(24px) saturate(1.05);
+      -webkit-backdrop-filter: blur(24px) saturate(1.05);
+      /* Scroll-linked blur; darken is applied via ::after overlay so it
+         actually lands on a solid dark frame at progress=1 (instead of
+         fading out alongside a whole-element opacity fade). */
+      filter: blur(var(--r66-intro-blur, 0px));
+    }
+
+    .r66-intro::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 40px;
+      transform: translateX(-1px);
+      background: linear-gradient(to right,
+        rgba(0, 0, 0, 0.05) 0%,
+        rgba(0, 0, 0, 0.02) 40%,
+        rgba(0, 0, 0, 0) 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Dark overlay that fades in as specs rises, so intro visually turns
+       into the dark specs palette before specs physically covers it. */
+    .r66-intro::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, #0a0a0a 50%, #000 50%);
+      opacity: var(--r66-intro-darken, 0);
+      pointer-events: none;
+      z-index: 2;
     }
 
     .r66-intro__container {
+      position: relative;
+      z-index: 1;
       max-width: 1400px;
       margin: 0 auto;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 4rem;
-      align-items: center;
+      align-items: start;
+    }
+
+    .r66-intro__content { order: 2; }
+    .r66-intro__right { order: 1; margin-top: 4rem; }
+
+    @media (min-width: 901px) {
+      .r66-intro__content {
+        position: sticky;
+        top: max(10vh, var(--catch-top, 90px));
+      }
+    }
+
+    .r66-intro__divider {
+      width: 60px;
+      height: 1px;
+      background: rgba(0, 0, 0, 0.15);
+      margin: 2.5rem auto;
     }
 
     .r66-intro__headline {
@@ -1504,131 +2468,255 @@ const R66Styles = () => (
     /* ====================================================================
        HISTORY TIMELINE SECTION
        ==================================================================== */
-    .r66-history {
-      padding: 8rem 2rem;
-      background: #fff;
+    .r66-timeline {
+      padding: 0;
+      background: transparent;
     }
 
-    .r66-history__container {
-      max-width: 1200px;
+    .r66-timeline__container {
+      max-width: 100%;
       margin: 0 auto;
     }
 
-    .r66-history__timeline {
-      margin-top: 4rem;
-      overflow-x: auto;
-      scroll-behavior: smooth;
-      scrollbar-width: thin;
-      scrollbar-color: #c0b8aa transparent;
-      padding-bottom: 8px;
-    }
-    .r66-history__timeline::-webkit-scrollbar { height: 4px; }
-    .r66-history__timeline::-webkit-scrollbar-track { background: transparent; }
-    .r66-history__timeline::-webkit-scrollbar-thumb { background: #c0b8aa; border-radius: 2px; }
-
-    .r66-history__timeline-inner {
-      display: flex;
-      gap: 0;
-      padding: 0 3rem;
-      margin-bottom: 12px;
-    }
-
-    .r66-history__timeline-wrap {
+    .r66-timeline__track {
       position: relative;
+      margin-top: 2rem;
     }
-    .r66-history__timeline-wrap::after {
-      content: '';
+
+    .r66-timeline__line {
+      position: absolute;
+      left: 24px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #ddd;
+    }
+
+    .r66-timeline__line-progress {
       position: absolute;
       top: 0;
-      right: 0;
-      bottom: 0;
-      width: 60px;
-      background: linear-gradient(to right, transparent, #fff);
-      pointer-events: none;
-      z-index: 3;
-    }
-
-    .r66-history__item {
-      flex: 1 0 280px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      position: relative;
-      padding: 0 1.5rem;
-    }
-    .r66-history__item::before {
-      content: '';
-      position: absolute;
-      top: 5px;
       left: 0;
-      right: 0;
-      height: 2px;
-      background: #e0ddd8;
-      z-index: 0;
-    }
-    .r66-history__item:first-child::before {
-      left: -3rem;
-    }
-    .r66-history__item:last-child::before {
-      right: -3rem;
+      width: 100%;
+      height: 100%;
+      background: #1a1a1a;
     }
 
-    .r66-history__dot {
+    .r66-timeline__item {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .r66-timeline__marker {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border: 2px solid #ddd;
+      border-radius: 50%;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .r66-timeline__item--completed .r66-timeline__marker {
+      background: #1a1a1a;
+      border-color: #1a1a1a;
+      color: #fff;
+    }
+
+    .r66-timeline__item--active .r66-timeline__marker {
+      background: #fff;
+      border-color: #1a1a1a;
+      border-width: 3px;
+    }
+
+    .r66-timeline__pulse {
       width: 12px;
       height: 12px;
       background: #1a1a1a;
       border-radius: 50%;
-      flex-shrink: 0;
-      position: relative;
-      z-index: 2;
-      margin-bottom: 1rem;
+      animation: pulse 2s infinite;
     }
 
-    .r66-history__year {
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.7; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .r66-timeline__dot {
+      width: 8px;
+      height: 8px;
+      background: #ddd;
+      border-radius: 50%;
+    }
+
+    .r66-timeline__content {
+      padding-top: 0.5rem;
+    }
+
+    .r66-timeline__year {
+      display: inline-block;
       font-family: 'Share Tech Mono', monospace;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #1a1a1a;
-      margin-bottom: 0.5rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      background: #1a1a1a;
+      color: #fff;
+      padding: 0.25rem 0.75rem;
+      margin-bottom: 0;
     }
 
-    .r66-history__content {
-      min-width: 220px;
+    .r66-timeline__text {
+      margin-top: 0;
+      padding-top: 12px;
     }
 
-    .r66-history__content h4 {
+    .r66-timeline__item--upcoming .r66-timeline__year {
+      background: #ddd;
+      color: #666;
+    }
+
+    .r66-timeline__content h4 {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 1rem;
+      font-size: 1.15rem;
       font-weight: 500;
       color: #1a1a1a;
-      margin: 0 0 0.35rem;
+      margin: 0 0 0.5rem;
     }
 
-    .r66-history__content p {
+    .r66-timeline__content p {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.8rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
       color: #666;
-      line-height: 1.5;
       margin: 0;
-    }
-
-    @media (min-width: 1100px) {
-      .r66-history__item {
-        flex: 1 0 220px;
-      }
-      .r66-history__content p {
-        font-size: 0.85rem;
-      }
     }
 
     /* ====================================================================
        SPECIFICATIONS SECTION
        ==================================================================== */
     .r66-specs {
-      padding: 8rem 2rem 0;
-      background: #1a1a1a;
+      /* Sticky-at-end (same pattern as intro) so variants can rise over it
+         once we've finished scrolling through the specs content. */
+      position: sticky;
+      top: var(--r66-specs-stick-top, 0);
+      padding: 5rem 2rem;
+      background: linear-gradient(to right, #282828 50%, #1c1c1c 50%);
       color: #fff;
+      filter: blur(var(--r66-specs-blur, 0px));
+    }
+
+    /* Light overlay that fades in as variants rises, so specs visually turns
+       into variants' pale palette before variants physically covers it. */
+    .r66-specs::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: #faf9f6;
+      opacity: var(--r66-specs-lighten, 0);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    @media (min-width: 901px) {
+      .r66-specs::before {
+        content: '';
+        position: absolute;
+        right: 50%;
+        top: 0;
+        bottom: 0;
+        width: 40px;
+        transform: translateX(1px);
+        background: linear-gradient(to left,
+          rgba(0, 0, 0, 0.08) 0%,
+          rgba(0, 0, 0, 0.03) 40%,
+          rgba(0, 0, 0, 0) 100%);
+        pointer-events: none;
+        z-index: 0;
+      }
+    }
+
+    .r66-specs__container {
+      position: relative;
+      z-index: 1;
+    }
+
+    .r66-specs__split {
+      display: block;
+    }
+
+    @media (min-width: 901px) {
+      .r66-specs__split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: start;
+      }
+
+      /* Prevent grid items from overflowing their column when inner content has intrinsic min-widths */
+      .r66-specs__split-left,
+      .r66-specs__split-right {
+        min-width: 0;
+      }
+
+      .r66-specs__split-left {
+        position: sticky;
+        top: max(10vh, var(--catch-top, 90px));
+      }
+
+      /* In the split, stack blueprint and table vertically since each side is narrower */
+      .r66-specs__split-left .r66-specs__columns {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      /* Stack proven cards vertically in the single right column */
+      .r66-specs__split-right .r66-proven__grid {
+        grid-template-columns: 1fr;
+      }
+
+      /* Shrink the stats-bar to fit the narrower right column so it doesn't overflow */
+      .r66-specs__split-right .r66-proven__stats-bar {
+        flex-wrap: wrap;
+        gap: 1.25rem 1.5rem;
+        padding: 1.75rem 1.25rem;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .r66-specs__split-right .r66-proven__stat {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      .r66-specs__split-right .r66-proven__stat-value {
+        font-size: 1.5rem;
+      }
+
+      .r66-specs__split-right .r66-proven__stat-label {
+        white-space: normal;
+      }
+
+      .r66-specs__split-right .r66-proven__stat-divider {
+        display: none;
+      }
+
+      /* Keep table cells within the column */
+      .r66-specs__split-right .r66-specs__cell {
+        min-width: 0;
+        word-break: break-word;
+      }
+    }
+
+    .r66-specs__split-divider {
+      width: 60px;
+      height: 1px;
+      background: rgba(255,255,255,0.15);
+      margin: 2.5rem auto;
     }
     .r66-specs .r66-pre-text { color: rgba(255,255,255,0.5); }
     .r66-specs .r66-text--dark { color: #fff; }
@@ -1665,7 +2753,7 @@ const R66Styles = () => (
       border: 1px solid rgba(255,255,255,0.2);
       border-radius: 4px;
       cursor: pointer;
-      margin-left: 0.75rem;
+      margin-right: auto;
       font-size: 0.75rem;
       transition: all 0.2s ease;
       width: fit-content;
@@ -1702,6 +2790,7 @@ const R66Styles = () => (
       font-family: 'Share Tech Mono', monospace;
       font-size: 0.65rem;
       color: rgba(255,255,255,0.7);
+      white-space: nowrap;
     }
 
     .r66-specs__aux-badge {
@@ -1751,6 +2840,10 @@ const R66Styles = () => (
       gap: 0.35rem;
     }
 
+    .r66-specs__row:not(.r66-specs__row--header) .r66-specs__cell:first-child {
+      border-right: 1px solid rgba(255,255,255,0.18);
+    }
+
     .r66-specs__cell--label {
       font-weight: 500;
       color: rgba(255,255,255,0.5);
@@ -1784,8 +2877,8 @@ const R66Styles = () => (
     }
 
     .r66-specs__blueprint-card {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: #fff;
+      border: 1px solid #e8e6e2;
       border-radius: 8px;
       padding: 1.5rem;
       flex: 1;
@@ -1834,7 +2927,7 @@ const R66Styles = () => (
        PROVEN PERFORMANCE SECTION
        ==================================================================== */
     .r66-proven {
-      padding: 6rem 2rem;
+      padding: 4rem 2rem;
       background: #1a1a1a;
       color: #fff;
     }
@@ -1854,6 +2947,7 @@ const R66Styles = () => (
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 8px;
       margin-top: 3rem;
+      margin-bottom: 3rem;
     }
 
     .r66-proven__stat {
@@ -1876,6 +2970,7 @@ const R66Styles = () => (
       text-transform: uppercase;
       color: rgba(255,255,255,0.45);
       margin-top: 0.25rem;
+      white-space: nowrap;
     }
 
     .r66-proven__stat-divider {
@@ -1975,8 +3070,11 @@ const R66Styles = () => (
 
     .r66-fleet__image-wrap {
       position: relative;
-      border-radius: 6px;
+      border-radius: 10px;
       overflow: hidden;
+      border: 1px solid #e8e6e2;
+      box-shadow: 0 18px 45px -20px rgba(26, 26, 26, 0.25),
+                  0 4px 14px rgba(0, 0, 0, 0.06);
     }
 
     .r66-fleet__image-wrap img {
@@ -2015,17 +3113,19 @@ const R66Styles = () => (
     }
 
     .r66-expedition {
-      padding: 4rem 2rem;
-      background: #faf9f6;
+      padding: 4rem 0 0;
+      background: transparent;
+    }
+
+    @media (min-width: 901px) {
+      .r66-expedition {
+        padding-top: 0;
+      }
     }
 
     .r66-expedition__container {
       max-width: 900px;
       margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      align-items: center;
       background: #fff;
       border-radius: 10px;
       border: 1px solid #e8e6e2;
@@ -2033,9 +3133,16 @@ const R66Styles = () => (
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
     }
 
+    .r66-expedition__carousel {
+      position: relative;
+      margin: 1rem 0 0.75rem;
+    }
+
     .r66-expedition__image {
       border-radius: 6px;
       overflow: hidden;
+      aspect-ratio: 5 / 2;
+      animation: r66-expedition-fade 0.45s ease;
     }
     .r66-expedition__image img {
       width: 100%;
@@ -2043,6 +3150,76 @@ const R66Styles = () => (
       object-fit: cover;
       display: block;
       border-radius: 6px;
+    }
+
+    @keyframes r66-expedition-fade {
+      from { opacity: 0; transform: scale(1.015); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .r66-expedition__chevron {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      background: rgba(10, 10, 10, 0.45);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      color: #fff;
+      cursor: pointer;
+      z-index: 2;
+      transition: background 0.25s ease, border-color 0.25s ease,
+                  transform 0.25s ease, box-shadow 0.25s ease;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+    }
+    .r66-expedition__chevron:hover,
+    .r66-expedition__chevron:focus-visible {
+      background: rgba(10, 10, 10, 0.7);
+      border-color: #fff;
+      transform: translateY(-50%) scale(1.06);
+      outline: none;
+    }
+    .r66-expedition__chevron:active {
+      transform: translateY(-50%) scale(0.96);
+    }
+    .r66-expedition__chevron svg {
+      display: block;
+      width: 12px;
+      height: 18px;
+    }
+    .r66-expedition__chevron--prev { left: 0.75rem; }
+    .r66-expedition__chevron--next { right: 0.75rem; }
+
+    .r66-expedition__dots {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin: 0 0 1rem;
+    }
+    .r66-expedition__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 0;
+      padding: 0;
+      background: #d8d4cc;
+      cursor: pointer;
+      transition: background 0.25s ease, transform 0.25s ease;
+    }
+    .r66-expedition__dot:hover { background: #b8b2a7; }
+    .r66-expedition__dot--active {
+      background: #1a1a1a;
+      transform: scale(1.15);
+    }
+
+    .r66-expedition__copy {
+      animation: r66-expedition-fade 0.45s ease;
     }
 
     .r66-expedition__content {
@@ -2068,6 +3245,7 @@ const R66Styles = () => (
       color: #1a1a1a;
       margin: 0 0 1rem;
       letter-spacing: -0.01em;
+      text-align: center;
     }
 
     .r66-expedition__rule {
@@ -2142,7 +3320,12 @@ const R66Styles = () => (
        VARIANTS SECTION
        ==================================================================== */
     .r66-variants {
-      padding: 8rem 2rem;
+      /* Rises above every pinned/sticky earlier section (highlights, intro,
+         specs). Relative + z-index 50 creates a stacking context that sits
+         above the rest. */
+      position: relative;
+      z-index: 50;
+      padding: 5rem 2rem;
       background: #faf9f6;
     }
 
@@ -2151,90 +3334,665 @@ const R66Styles = () => (
       margin: 0 auto;
     }
 
+    .r66-variants__card {
+      position: relative;
+      margin-top: 3rem;
+      padding: 0;
+      background: #ffffff;
+      border: 1px solid rgba(0,0,0,0.07);
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+
+    .r66-variants__card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: #1a1a1a;
+    }
+
     .r66-variants__tabs {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin: 3rem 0;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      margin: 0;
+      padding: 0;
+      background: #fbfaf7;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
     }
 
     .r66-variants__tab {
-      padding: 0.75rem 2rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.85rem;
+      padding: 1.25rem 1.25rem 1.1rem;
+      min-height: 160px;
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.9rem;
-      font-weight: 500;
+      text-align: left;
+      color: #6b6b6b;
       background: transparent;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      border: none;
+      border-right: 1px solid rgba(0,0,0,0.06);
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: color 0.25s ease, background 0.25s ease;
+    }
+
+    .r66-variants__tab:last-child { border-right: none; }
+
+    .r66-variants__tab::after {
+      content: '';
+      position: absolute;
+      left: 1.25rem;
+      right: 1.25rem;
+      bottom: 0;
+      height: 2px;
+      background: #1a1a1a;
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.3s ease;
     }
 
     .r66-variants__tab:hover {
-      border-color: #1a1a1a;
+      background: #f6f3ed;
+      color: #1a1a1a;
+    }
+
+    .r66-variants__tab:hover .r66-variants__tab-thumb img {
+      filter: grayscale(0%);
+      opacity: 1;
     }
 
     .r66-variants__tab.active {
-      background: #1a1a1a;
-      border-color: #1a1a1a;
-      color: #fff;
+      background: #ffffff;
+      color: #1a1a1a;
+      justify-content: center;
+    }
+
+    .r66-variants__tab.active::after {
+      transform: scaleX(1);
+    }
+
+    .r66-variants__tab-thumb {
+      display: block;
+      width: 100%;
+      height: 72px;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .r66-variants__tab-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      filter: grayscale(60%);
+      opacity: 0.65;
+      transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .r66-variants__tab.active .r66-variants__tab-thumb img {
+      filter: grayscale(0%);
+      opacity: 1;
+    }
+
+    .r66-variants__tab-label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      line-height: 1.2;
+      min-width: 0;
+      width: 100%;
+    }
+
+    .r66-variants__tab-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #9a9a9a;
+    }
+
+    .r66-variants__tab.active .r66-variants__tab-sub {
+      color: #1a1a1a;
+    }
+
+    .r66-variants__tab-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      color: inherit;
     }
 
     .r66-variants__content {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      align-items: center;
-      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 0;
     }
 
-    .r66-variants__image img {
+    .r66-variants__image {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0.5rem 3rem;
+      min-height: 300px;
+      background:
+        radial-gradient(ellipse at center, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 70%),
+        linear-gradient(135deg, #ececea 0%, #ffffff 70%);
+      overflow: visible;
+    }
+
+    .r66-variants__image::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .r66-variants__image-inner {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      width: 55%;
+      max-width: 560px;
+      height: 300px;
+      z-index: 1;
+    }
+
+    .r66-variants__image-inner img {
       width: 100%;
-      max-height: 400px;
+      height: 100%;
       object-fit: contain;
+      filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));
+    }
+
+    .r66-variants__image-headline {
+      position: absolute;
+      top: 50%;
+      left: 3rem;
+      transform: translateY(-50%);
+      z-index: 3;
+      pointer-events: none;
+      width: 40%;
+      max-width: 420px;
+    }
+
+    .r66-variants__image-headline-inner {
+      display: block;
+    }
+
+    .r66-variants__image-headline .r66-variants__eyebrow {
+      display: inline-block;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #a67b3f;
+      margin-bottom: 1rem;
+    }
+
+    .r66-variants__image-headline h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      color: #111111;
+      margin: 0 0 0.75rem;
+    }
+
+    .r66-variants__image-headline .r66-variants__tagline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      font-style: italic;
+      color: #8a8a8a;
+      margin: 0 0 1.25rem;
+    }
+
+    .r66-variants__image-headline .r66-variants__divider {
+      width: 64px;
+      height: 2px;
+      background: #a67b3f;
+    }
+
+    .r66-variants__image-index {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,0.4);
+      z-index: 2;
+    }
+
+    .r66-variants__info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: stretch;
+      padding: 2.75rem 3rem 3rem;
+      background: #ffffff;
+      border-top: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .r66-variants__info-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .r66-variants__info-right {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .r66-variants__eyebrow {
+      display: inline-block;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      margin-bottom: 0.75rem;
     }
 
     .r66-variants__info h3 {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 2rem;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
       font-weight: 500;
+      line-height: 1.1;
       color: #1a1a1a;
-      margin: 0 0 1rem;
+      margin: 0 0 0.75rem;
+      letter-spacing: -0.01em;
     }
 
-    .r66-variants__info p {
+    .r66-variants__tagline {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.1rem;
+      font-size: 1rem;
+      font-style: italic;
+      color: #7a7a7a;
+      margin: 0 0 1.25rem;
+      letter-spacing: 0.01em;
+    }
+
+    .r66-variants__divider {
+      width: 50px;
+      height: 2px;
+      background: #1a1a1a;
+      margin: 0 0 1.5rem;
+      border-radius: 2px;
+    }
+
+    .r66-variants__description {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
       line-height: 1.7;
-      color: #666;
-      margin-bottom: 2rem;
+      color: #555;
+      margin: 0;
+    }
+
+    .r66-variants__pdfs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+    }
+
+    .r66-variants__pdf-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.95rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 100px;
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+    }
+
+    .r66-variants__pdf-pill i {
+      font-size: 0.85rem;
+      color: #c8102e;
+      transition: color 0.2s;
+    }
+
+    .r66-variants__pdf-pill:hover {
+      background: #1a1a1a;
+      color: #fff;
+      border-color: #1a1a1a;
+      transform: translateY(-1px);
+    }
+
+    .r66-variants__pdf-pill:hover i {
+      color: #fff;
+    }
+
+    .r66-variants__use-cases {
+      margin: 0 0 1.75rem;
+    }
+
+    .r66-variants__use-cases-label {
+      display: block;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 0.6rem;
+    }
+
+    .r66-variants__use-case-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .r66-variants__image .r66-variants__use-case-tags {
+      position: absolute;
+      right: 3rem;
+      bottom: 1.25rem;
+      justify-content: flex-end;
+      z-index: 2;
+    }
+
+    .r66-variants__use-case-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.35rem 0.75rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem;
+      color: #4a4a4a;
+      background: #fbfaf7;
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 100px;
+      letter-spacing: 0.01em;
     }
 
     .r66-variants__features {
       list-style: none;
       padding: 0;
-      margin: 0 0 2rem;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      gap: 0.6rem;
     }
 
     .r66-variants__features li {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.7rem;
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 1rem;
+      font-size: 0.9rem;
       color: #4a4a4a;
-      padding: 0.5rem 0;
+      padding: 0;
     }
 
-    .r66-variants__features i {
+    .r66-variants__feature-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      min-width: 26px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.05);
       color: #1a1a1a;
+      font-size: 0.7rem;
+      flex-shrink: 0;
+    }
+
+    .r66-variants__cta {
+      display: flex;
+      margin-top: 0;
+    }
+
+    .r66-variants__cta-button {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      padding: 1.1rem 2rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #fff;
+      background: #1a1a1a;
+      border: 1px solid rgba(0,0,0,0.07);
+      border-top: none;
+      border-radius: 0 0 4px 4px;
+      text-decoration: none;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+    .r66-variants__cta-button:hover {
+      background: #fff;
+      color: #1a1a1a;
+    }
+
+    .r66-variants__cta-button i {
+      font-size: 0.75rem;
+      transition: transform 0.2s ease;
+    }
+
+    .r66-variants__cta-button:hover i {
+      transform: translateX(3px);
+    }
+
+    .r66-variants__cta-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .r66-variants__cta-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color 0.2s ease, gap 0.2s ease;
+    }
+
+    .r66-variants__cta-link:hover {
+      color: #4a4a4a;
+      gap: 0.75rem;
+    }
+
+    .r66-variants__cta-link svg {
+      transition: transform 0.2s ease;
+    }
+
+    .r66-variants__options {
+      margin-top: 4rem;
+    }
+
+    .r66-variants__options-header {
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .r66-variants__options-header h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
+      font-weight: 500;
+      color: #1a1a1a;
+      margin: 0.5rem 0 1rem;
+      letter-spacing: -0.01em;
+    }
+
+    .r66-variants__options-header p {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      line-height: 1.7;
+      color: #666;
+      margin: 0;
+    }
+
+    .r66-variants__options-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .r66-variants__option {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.9rem;
+      padding: 1.1rem 1.15rem;
+      background: #ffffff;
+      border: 1px solid rgba(0,0,0,0.07);
+      border-radius: 10px;
+      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .r66-variants__option:hover {
+      border-color: #1a1a1a;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+    }
+
+    .r66-variants__option-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.05);
+      color: #1a1a1a;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .r66-variants__option-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      min-width: 0;
+    }
+
+    .r66-variants__option-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #1a1a1a;
+      line-height: 1.25;
+    }
+
+    .r66-variants__option-detail {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem;
+      line-height: 1.35;
+      color: #7a7a7a;
+    }
+
+    @media (max-width: 1100px) {
+      .r66-variants__options-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .r66-variants__image {
+        min-height: 260px;
+        padding: 2rem 1.5rem;
+      }
+      .r66-variants__info {
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+        padding: 2.25rem 1.75rem;
+      }
+    }
+
+    @media (max-width: 1000px) {
+      .r66-variants__tabs {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .r66-variants__tab:nth-child(3n) { border-right: none; }
+      .r66-variants__tab:nth-child(n+4) {
+        border-top: 1px solid rgba(0,0,0,0.06);
+      }
+    }
+
+    @media (max-width: 700px) {
+      .r66-variants__tabs {
+        grid-template-columns: 1fr;
+      }
+      .r66-variants__tab {
+        flex-direction: row;
+        align-items: center;
+        min-height: 0;
+        padding: 1rem 1.25rem;
+        border-right: none;
+        border-bottom: 1px solid rgba(0,0,0,0.06);
+        border-top: none;
+      }
+      .r66-variants__tab:last-child { border-bottom: none; }
+      .r66-variants__tab-thumb {
+        width: 84px;
+        height: 48px;
+        flex-shrink: 0;
+      }
+      .r66-variants__tab::after {
+        left: 0;
+        right: auto;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        height: auto;
+        transform: scaleY(0);
+        transform-origin: top center;
+      }
+      .r66-variants__tab.active::after {
+        transform: scaleY(1);
+      }
+      .r66-variants__features {
+        justify-content: flex-start;
+        flex: 0 0 auto;
+      }
+      .r66-variants__options-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     /* ====================================================================
        WHY TURBINE SECTION
        ==================================================================== */
     .r66-turbine {
-      padding: 8rem 2rem;
+      padding: 5rem 2rem;
       background: #fff;
     }
 
@@ -2335,6 +4093,72 @@ const R66Styles = () => (
       gap: 0.5rem;
     }
 
+    .r66-turbine__cost {
+      margin: 3rem auto 0;
+      max-width: 960px;
+      padding: 2rem 2.25rem;
+      background: #faf9f6;
+      border: 1px solid #eee;
+      border-radius: 4px;
+    }
+
+    .r66-turbine__cost-header { margin-bottom: 1.25rem; }
+
+    .r66-turbine__cost-header .r66-pre-text {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .r66-turbine__cost-header h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin: 0;
+      line-height: 1.3;
+    }
+
+    .r66-turbine__cost-accent { color: #c8102e; }
+
+    .r66-turbine__cost-lead {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: #4a4a4a;
+      margin: 0 0 1.25rem;
+    }
+
+    .r66-turbine__cost-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .r66-turbine__cost-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #4a4a4a;
+    }
+
+    .r66-turbine__cost-list i {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #1a1a1a;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 0.75rem;
+    }
+
     .r66-turbine__bar {
       height: 36px;
       display: flex;
@@ -2361,7 +4185,10 @@ const R66Styles = () => (
        NXG GLASS COCKPIT SECTION
        ==================================================================== */
     .r66-nxg {
-      padding: 8rem 2rem;
+      /* Rises above earlier sticky/pinned sections. See .r66-variants. */
+      position: relative;
+      z-index: 50;
+      padding: 5rem 2rem;
       background: #1a1a1a;
       color: #fff;
     }
@@ -2530,7 +4357,7 @@ const R66Styles = () => (
        AUTOPILOT & TECHNOLOGY SECTION
        ==================================================================== */
     .r66-autopilot {
-      padding: 8rem 2rem;
+      padding: 5rem 2rem;
       background: #faf9f6;
     }
 
@@ -2761,7 +4588,10 @@ const R66Styles = () => (
        GALLERY SECTION
        ==================================================================== */
     .r66-gallery {
-      padding: 8rem 2rem;
+      /* Rises above earlier sticky/pinned sections. See .r66-variants. */
+      position: relative;
+      z-index: 50;
+      padding: 3rem 2rem 5rem;
       background: #faf9f6;
     }
 
@@ -2770,19 +4600,99 @@ const R66Styles = () => (
       margin: 0 auto;
     }
 
+    .r66-gallery__scroll-wrapper {
+      position: relative;
+      margin-top: 3rem;
+    }
+
+    .r66-gallery__scroll {
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .r66-gallery__chevron {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      color: #1a1a1a;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .r66-gallery__chevron:hover:not(:disabled) {
+      background: #1a1a1a;
+      color: #fff;
+    }
+
+    .r66-gallery__chevron:disabled {
+      opacity: 0.3;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .r66-gallery__chevron--prev { left: -22px; }
+    .r66-gallery__chevron--next { right: -22px; }
+
+    .r66-gallery__scroll::-webkit-scrollbar {
+      display: none;
+    }
+
     .r66-gallery__grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-auto-flow: column;
+      grid-auto-columns: 420px;
       gap: 1.5rem;
-      margin-top: 3rem;
+      width: max-content;
+    }
+
+    .r66-gallery__grid > * {
+      scroll-snap-align: start;
+      min-width: 0;
     }
 
     .r66-gallery__item {
       position: relative;
       aspect-ratio: 4/3;
+      width: 100%;
       overflow: hidden;
       border-radius: 4px;
       cursor: pointer;
+    }
+
+    .r66-gallery__dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding: 1.5rem 0 0;
+    }
+
+    .r66-gallery__dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ccc;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .r66-gallery__dot--active {
+      background: #1a1a1a;
     }
 
     .r66-gallery__item img {
@@ -2865,47 +4775,359 @@ const R66Styles = () => (
        CTA SECTION
        ==================================================================== */
     .r66-cta {
-      padding: 8rem 2rem;
-      background: #fff;
-      text-align: center;
+      /* Rises above earlier sticky/pinned sections. See .r66-variants. */
+      position: relative;
+      z-index: 50;
+      padding: 5rem 2rem;
+      background: #1a1a1a;
+    }
+
+    .r66-cta__toggle {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto 3rem;
+    }
+
+    .r66-cta__toggle-btn {
+      flex: 0 0 auto;
+      padding: 0.65rem 2rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .r66-cta__toggle-btn:first-child {
+      border-radius: 4px 0 0 4px;
+      border-right: none;
+    }
+
+    .r66-cta__toggle-btn:last-child {
+      border-radius: 0 4px 4px 0;
+    }
+
+    .r66-cta__toggle-btn--active {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    .r66-cta__toggle-btn:not(.r66-cta__toggle-btn--active):hover {
+      color: rgba(255, 255, 255, 0.7);
+      border-color: rgba(255, 255, 255, 0.25);
     }
 
     .r66-cta__container {
-      max-width: 900px;
+      max-width: 1200px;
       margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: stretch;
     }
 
-    .r66-cta h2 {
+    @media (min-width: 1025px) {
+      .r66-cta__content {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      /* The benefits card's Reveal wrapper is the last child of .r66-cta__content — grow it to match the form's height */
+      .r66-cta__content > div:last-child {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .r66-cta__content > div:last-child > .r66-cta__benefits-card {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-bottom: 0;
+      }
+
+      /* Form side — make the Reveal wrapper and the form itself fill the full row height */
+      .r66-cta__container > div:last-child:not(.r66-cta__content) {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .r66-cta__container > div:last-child:not(.r66-cta__content) > .r66-cta__form,
+      .r66-cta__container > div:last-child:not(.r66-cta__content) > form.r66-cta__form {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Push the submit button to the bottom of the form */
+      .r66-cta__form .r66-btn--submit {
+        margin-top: auto;
+      }
+    }
+
+    .r66-cta .r66-pre-text--light {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .r66-cta .r66-pre-text__short { display: none; }
+
+    .r66-cta__content h2 {
       font-family: 'Space Grotesk', sans-serif;
       font-size: clamp(2rem, 4vw, 3rem);
       font-weight: 500;
       line-height: 1.2;
-      margin-bottom: 1.5rem;
+      margin: 0;
+      color: #fff;
     }
 
-    .r66-cta p {
+    .r66-cta__lead {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.1rem;
-      line-height: 1.7;
-      color: #666;
-      max-width: 600px;
-      margin: 0 auto 3rem;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: rgba(255, 255, 255, 0.7);
+      margin: 2rem 0;
     }
 
-    .r66-cta__actions {
+    .r66-cta__benefits-card {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .r66-cta__benefits {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 4rem;
+    }
+
+    .r66-cta__benefit {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .r66-cta__benefit i {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      min-height: 40px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      color: #fff;
+      font-size: 0.9rem;
+    }
+
+    .r66-cta__form {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 2.5rem;
+    }
+
+    .r66-cta__success {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    .r66-cta__success p {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.85);
+      margin: 0;
+    }
+
+    .r66-cta__error {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      color: #fca5a5;
+      margin: 0 0 1rem;
+    }
+
+    .r66-cta__error a {
+      color: #fca5a5;
+      text-decoration: underline;
+    }
+
+    .r66-cta__form h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: #fff;
+      margin: 0 0 2rem;
+      text-align: center;
+    }
+
+    .r66-cta__form-group {
+      margin-bottom: 1rem;
+    }
+
+    .r66-cta__form input,
+    .r66-cta__form textarea {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      color: #fff;
+      transition: all 0.3s ease;
+    }
+
+    .r66-cta__form input::placeholder,
+    .r66-cta__form textarea::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .r66-cta__form input:focus,
+    .r66-cta__form textarea:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .r66-cta__form textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .r66-select {
+      position: relative;
+      width: 100%;
+    }
+
+    .r66-select__trigger {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .r66-select__trigger:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .r66-select__chevron {
+      flex-shrink: 0;
+      margin-left: 0.75rem;
+      transition: transform 0.2s ease;
+    }
+
+    .r66-select__chevron--open { transform: rotate(180deg); }
+
+    .r66-select__menu {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: #1e1e1e;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      list-style: none;
+      margin: 0;
+      padding: 0.35rem 0;
+      z-index: 100;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    .r66-select__option {
+      padding: 0.75rem 1.25rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.75);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .r66-select__option:hover {
+      background: rgba(255, 255, 255, 0.07);
+      color: #fff;
+    }
+
+    .r66-select__option--active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .r66-btn--submit {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 1rem 2rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      background: #fff;
+      color: #1a1a1a;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .r66-btn--submit:hover {
+      background: #f5f5f5;
+      transform: translateY(-1px);
+    }
+
+    .r66-btn--submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
     }
 
     .r66-cta__contact {
+      max-width: 1200px;
+      margin: 3rem auto 0;
+      padding-top: 3rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .r66-cta__contact-inner {
       display: flex;
       justify-content: center;
-      gap: 3rem;
-      padding-top: 3rem;
-      border-top: 1px solid #eee;
+      gap: 4rem;
+      flex-wrap: wrap;
     }
 
     .r66-cta__contact-item {
@@ -2914,11 +5136,23 @@ const R66Styles = () => (
       gap: 0.75rem;
       font-family: 'Space Grotesk', sans-serif;
       font-size: 0.95rem;
-      color: #666;
+      color: rgba(255, 255, 255, 0.7);
     }
 
     .r66-cta__contact-item i {
-      color: #1a1a1a;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    @media (max-width: 1024px) {
+      .r66-cta__container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .r66-cta { padding: 4rem 1.25rem; }
+      .r66-cta__form { padding: 1.75rem; }
+      .r66-cta__contact-inner { gap: 1.5rem; flex-direction: column; align-items: center; }
     }
 
     /* ====================================================================
@@ -2941,7 +5175,7 @@ const R66Styles = () => (
       }
 
       .r66-gallery__grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-auto-columns: 340px;
       }
 
       .r66-nxg__content {
@@ -2987,10 +5221,6 @@ const R66Styles = () => (
         height: 1px;
       }
 
-      .r66-history__item {
-        grid-template-columns: 80px 40px 1fr;
-      }
-
       .r66-flight__grid,
       .r66-turbine__grid {
         grid-template-columns: 1fr;
@@ -3009,7 +5239,12 @@ const R66Styles = () => (
       }
 
       .r66-gallery__grid {
-        grid-template-columns: 1fr;
+        grid-auto-columns: 80vw;
+        gap: 1rem;
+      }
+
+      .r66-gallery__chevron {
+        display: none;
       }
 
       .r66-cta__actions {
@@ -3083,7 +5318,6 @@ const R66Styles = () => (
       }
 
       .r66-intro,
-      .r66-history,
       .r66-specs,
       .r66-flight,
       .r66-nxg,
@@ -3128,6 +5362,7 @@ const R66Styles = () => (
 // MAIN PAGE COMPONENT
 // ============================================================================
 function AircraftR66() {
+  useCmsHighlight();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -3138,13 +5373,13 @@ function AircraftR66() {
       <R66Header />
       <main>
         <R66Hero />
-        <R66Introduction />
-        <R66History />
-        <R66Specifications />
+        <div className="r66-sticky-stack">
+          <R66Highlights />
+          <R66Introduction />
+          <R66Specifications />
+          <R66Variants />
+        </div>
         <R66NXGCockpit />
-        <R66Fleet />
-        <R66Expedition />
-        <R66Variants />
         <R66Gallery />
         <R66CTA />
       </main>

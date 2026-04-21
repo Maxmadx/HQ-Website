@@ -39,3 +39,12 @@ build/
 
 # Superpowers brainstorm artefacts
 .superpowers/
+
+# Firebase deploy cache
+.firebase/
+
+# Claude Code local state
+.claude-playwright/
+
+# Local research / scratch assets
+R44-Claude/

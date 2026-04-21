@@ -210,7 +210,7 @@ export default function AdminListingEdit() {
               <label style={labelStyle}>Status</label>
               <select style={fieldStyle} value={form.status} onChange={(e) => set('status', e.target.value)}>
                 <option value="for_sale">For Sale</option>
-                <option value="reserved">Reserved</option>
+                <option value="reserved">Under Offer</option>
                 <option value="sold">Sold</option>
                 <option value="coming_soon">Coming Soon</option>
               </select>

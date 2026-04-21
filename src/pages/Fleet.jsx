@@ -31,6 +31,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { usePageImages } from '../hooks/usePageImages';
+import { useCmsHighlight } from '../hooks/useCmsHighlight';
 
 // Import styles
 import '../assets/css/main.css';
@@ -346,6 +348,7 @@ const timelineEvents = [
 // ============================================================================
 function FleetHero() {
   const heroRef = useRef(null);
+  const pageImages = usePageImages('fleet');
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ['start start', 'end start'],
@@ -357,14 +360,14 @@ function FleetHero() {
   const overlayOpacity = useTransform(scrollYProgress, [0, 0.3], [0.4, 0.7]);
 
   return (
-    <section ref={heroRef} className="fleet-hero">
+    <section ref={heroRef} className="fleet-hero" data-cms-section="fleet-hero">
       <motion.div
         className="fleet-hero__bg"
         initial={{ scale: 1.1, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1.5 }}
       >
-        <img src="/assets/images/facility/busy-hangar.jpg" alt="HQ Aviation Fleet" />
+        <img src={pageImages['fleet-hero']?.[0]?.url || '/assets/images/facility/busy-hangar.jpg'} alt="HQ Aviation Fleet" />
       </motion.div>
 
       <motion.div
@@ -988,11 +991,12 @@ function FleetGallery() {
 // ============================================================================
 function FleetHighlight() {
   const h500 = fleetData.find(a => a.id === 'h500');
+  const pageImages = usePageImages('fleet');
 
   return (
-    <section className="fleet-highlight">
+    <section className="fleet-highlight" data-cms-section="fleet-highlight">
       <div className="fleet-highlight__bg">
-        <img src="/assets/images/gallery/carousel/rotating6.jpg" alt="MD 500 Helicopter" />
+        <img src={pageImages['fleet-highlight']?.[0]?.url || '/assets/images/gallery/carousel/rotating6.jpg'} alt="MD 500 Helicopter" />
       </div>
       <div className="fleet-highlight__overlay" />
 
@@ -1518,6 +1522,7 @@ function FleetDiscovery() {
 // MAIN FLEET PAGE COMPONENT
 // ============================================================================
 function Fleet() {
+  useCmsHighlight();
   // Scroll to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);

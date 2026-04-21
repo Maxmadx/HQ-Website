@@ -37,6 +37,14 @@ const PRICING = [
   { id: 'discovery_r66_30min', label: 'R66 Discovery Flight (30 min)', category: 'discovery', price: 31500, description: '30-minute trial lesson in a Robinson R66' },
   { id: 'discovery_r66_60min', label: 'R66 Discovery Flight (60 min)', category: 'discovery', price: 63500, description: '60-minute trial lesson in a Robinson R66' },
 
+  // ── London Helicopter Tours — charged via Stripe ───────────────────────────
+  { id: 'london_tour_shared_day',     label: 'London Tour — Shared Daytime',        category: 'london_tour', price:  19900, description: 'Per-person price. Fly with other guests, daytime departure.' },
+  { id: 'london_tour_shared_sunset',  label: 'London Tour — Shared Sunset',         category: 'london_tour', price:  24900, description: 'Per-person price. Fly with other guests, sunset departure.' },
+  { id: 'london_tour_shared_night',   label: 'London Tour — Shared Night',          category: 'london_tour', price:  29900, description: 'Per-person price. Fly with other guests, night departure.' },
+  { id: 'london_tour_private_day',    label: 'London Tour — Private Charter Day',   category: 'london_tour', price: 149500, description: 'Flat charter price for the whole aircraft, daytime.' },
+  { id: 'london_tour_private_sunset', label: 'London Tour — Private Charter Sunset',category: 'london_tour', price: 169500, description: 'Flat charter price for the whole aircraft, sunset.' },
+  { id: 'london_tour_private_night',  label: 'London Tour — Private Charter Night', category: 'london_tour', price: 189500, description: 'Flat charter price for the whole aircraft, night.' },
+
   // ── Training Hourly Rates — display only ────────────────────────────────────
   { id: 'training_r22_hr', label: 'R22 Training (per hour)',  category: 'training', price: 27500, description: 'Dual instruction rate in Robinson R22' },
   { id: 'training_r44_hr', label: 'R44 Training (per hour)',  category: 'training', price: 39500, description: 'Dual instruction rate in Robinson R44' },

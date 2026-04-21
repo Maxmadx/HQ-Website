@@ -17,6 +17,7 @@ import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { usePageText } from '../hooks/usePageText';
 import { useFaqs } from '../hooks/useFaqs';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { arrivalStyles } from '../components/ArrivalSection';
 
 // Import styles
 import '../assets/css/main.css';
@@ -995,21 +996,6 @@ function DiscoveryGallery() {
 
   return (
     <section className="df-gallery">
-      <div className="df-gallery__track">
-        {images.map((img, i) => (
-          <motion.div
-            key={i}
-            className="df-gallery__item"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-            viewport={{ once: true }}
-          >
-            <img src={img.src} alt={img.alt} />
-          </motion.div>
-        ))}
-      </div>
-
       <div className="df-gallery__mobile-carousel-wrap">
         <div className="df-gallery__mobile-carousel" ref={mobileCarouselRef}>
           {[0, 1].map(set => images.map((img, i) => (
@@ -1033,6 +1019,7 @@ function LocationAndFAQ() {
 
   return (
     <section className="df-location-faq" data-cms-section="faqs-discovery">
+      <style>{arrivalStyles}</style>
       <div className="df-location-faq__container">
         {/* Left: Location */}
         <div className="df-location-faq__left">
@@ -1042,25 +1029,72 @@ function LocationAndFAQ() {
                 <span className="df-label">Visit Us</span>
                 <h2>Denham Aerodrome</h2>
               </div>
-              <div className="df-location__map">
-                <div className="df-location__map-placeholder">
-                  <i className="fas fa-map-marked-alt"></i>
-                  <span>Interactive Map</span>
+              <div className="arrival__card">
+                <div className="arrival__map">
+                  <div className="arrival__map-inner">
+                    <iframe
+                      title="HQ Aviation Denham Aerodrome"
+                      src="https://maps.google.com/maps?q=HQ+Aviation,+Denham+Aerodrome,+UB9+5DF&ll=51.578,0.05&t=&z=9&ie=UTF8&iwloc=&output=embed"
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen=""
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="df-location__info">
-                <p className="df-location__desc">
-                  Just 20 minutes from Central London, our purpose-built facility is easily accessible from the M40 and M25.
-                </p>
-                <div className="df-location__details">
-                  <div className="df-location__detail">
-                    <span className="df-location__detail-label">Address</span>
-                    <p>HQ Aviation<br />Tilehouse Lane<br />Denham, UB9 5DF</p>
+                <div className="arrival__info">
+                  <div className="arrival__rule"></div>
+                  <div className="arrival__details">
+                    <div className="arrival__detail">
+                      <span className="arrival__detail-icon"><i className="fas fa-map-marker-alt"></i></span>
+                      <div>
+                        <span className="arrival__detail-label">Address</span>
+                        <p className="arrival__detail-text">Hangar E, Denham Aerodrome<br />Uxbridge, London, UB9 5DF</p>
+                      </div>
+                    </div>
+                    <div className="arrival__detail">
+                      <span className="arrival__detail-icon"><i className="fas fa-phone-alt"></i></span>
+                      <div>
+                        <span className="arrival__detail-label">Operations</span>
+                        <p className="arrival__detail-text"><a href="tel:+441895833373" className="arrival__detail-link">+44 1895 833373</a></p>
+                      </div>
+                    </div>
+                    <div className="arrival__detail">
+                      <span className="arrival__detail-icon"><i className="fas fa-wrench"></i></span>
+                      <div>
+                        <span className="arrival__detail-label">Maintenance</span>
+                        <p className="arrival__detail-text"><a href="tel:+441895832833" className="arrival__detail-link">+44 1895 832833</a></p>
+                      </div>
+                    </div>
+                    <div className="arrival__detail">
+                      <span className="arrival__detail-icon"><i className="fas fa-envelope"></i></span>
+                      <div>
+                        <span className="arrival__detail-label">Email</span>
+                        <p className="arrival__detail-text"><a href="mailto:Operations@HQAviation.com" className="arrival__detail-link">Operations@HQAviation.com</a></p>
+                      </div>
+                    </div>
+                    <div className="arrival__detail">
+                      <span className="arrival__detail-icon"><i className="fas fa-clock"></i></span>
+                      <div>
+                        <span className="arrival__detail-label">Hours</span>
+                        <p className="arrival__detail-text">Monday – Sunday<br />09:00 – 17:00</p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="df-location__detail">
-                    <span className="df-location__detail-label">Getting Here</span>
-                    <p>5 min from M40 J1<br />20 min from M25 J16<br />Free Parking</p>
+                  <div className="arrival__rating">
+                    <div className="arrival__rating-stars">
+                      <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                    </div>
+                    <div className="arrival__rating-text">
+                      <span className="arrival__rating-score">4.9</span>
+                      <span className="arrival__rating-total"> / 5</span>
+                    </div>
                   </div>
+                </div>
+                <div className="arrival__actions">
+                  <a href="https://maps.google.com/?q=HQ+Aviation+Denham" target="_blank" rel="noopener noreferrer" className="arrival__cta">Get Directions <span>→</span></a>
                 </div>
               </div>
             </div>
@@ -1196,10 +1230,9 @@ function DiscoveryFlight() {
       <DiscoveryHeader />
       <DiscoveryHero />
       <ValueProposition />
-      <InstructorSection />
-      <MobileGalleryStrip />
-      <WhatToExpect />
       <DiscoveryGallery />
+      <InstructorSection />
+      <WhatToExpect />
       <LocationAndFAQ />
       <FooterMinimal />
 
@@ -1216,7 +1249,10 @@ function DiscoveryFlight() {
         }
 
         .df-label {
-          display: block;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          white-space: nowrap;
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.7rem;
           text-transform: uppercase;
@@ -1225,18 +1261,44 @@ function DiscoveryFlight() {
           margin-bottom: 0.75rem;
         }
 
+        .df-label::before,
+        .df-label::after {
+          content: '';
+          flex: 1;
+          height: 1px;
+          background: #e0ddd8;
+          min-width: 20px;
+        }
+
         .df-pre-text {
-          display: block;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          white-space: nowrap;
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.7rem;
           text-transform: uppercase;
           letter-spacing: 0.2em;
           color: #999;
           margin-bottom: 0.75rem;
+        }
+
+        .df-pre-text::before,
+        .df-pre-text::after {
+          content: '';
+          flex: 1;
+          height: 1px;
+          background: #e0ddd8;
+          min-width: 20px;
         }
 
         .df-pre-text--light {
           color: rgba(255,255,255,0.5);
+        }
+
+        .df-pre-text--light::before,
+        .df-pre-text--light::after {
+          background: rgba(255,255,255,0.2);
         }
 
         .df-text--dark { color: #1a1a1a; }
@@ -1391,13 +1453,25 @@ function DiscoveryFlight() {
         }
 
         .df-hero__label {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          white-space: nowrap;
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.7rem;
           letter-spacing: 0.2em;
           text-transform: uppercase;
           color: #999;
-          display: block;
           margin-bottom: 1.5rem;
+        }
+
+        .df-hero__label::before,
+        .df-hero__label::after {
+          content: '';
+          flex: 1;
+          height: 1px;
+          background: #e0ddd8;
+          min-width: 20px;
         }
 
         .df-hero__headline {
@@ -1596,7 +1670,7 @@ function DiscoveryFlight() {
 
         /* ===== VALUE PROPOSITION ===== */
         .df-value {
-          padding: 5rem 2rem 4rem;
+          padding: 5rem 2rem 32px;
           background: #fff;
         }
 
@@ -1621,6 +1695,7 @@ function DiscoveryFlight() {
           font-size: 1.1rem;
           line-height: 1.8;
           color: #666;
+          margin-bottom: 0;
         }
 
         .df-value__stats {
@@ -2264,95 +2339,58 @@ function DiscoveryFlight() {
         }
 
         /* ===== GALLERY ===== */
-        .df-gallery__mobile-carousel-wrap { display: none; }
         .df-mobile-strip { display: none; }
+
+        .df-gallery__mobile-carousel-wrap {
+          display: block;
+          overflow: hidden;
+          margin-bottom: 32px;
+          mask-image: linear-gradient(to right, transparent 1.5rem, black 2rem, black calc(100% - 2rem), transparent calc(100% - 1.5rem));
+          -webkit-mask-image: linear-gradient(to right, transparent 1.5rem, black 2rem, black calc(100% - 2rem), transparent calc(100% - 1.5rem));
+        }
+
+        .df-gallery__mobile-carousel {
+          display: flex;
+          flex-wrap: nowrap;
+          gap: 16px;
+          will-change: transform;
+          cursor: grab;
+          touch-action: pan-y;
+          user-select: none;
+          -webkit-user-select: none;
+        }
+
+        .df-gallery__mobile-carousel:active { cursor: grabbing; }
+
+        .df-gallery__mobile-carousel-item {
+          flex: 0 0 360px;
+          min-width: 0;
+          border-radius: 8px;
+          overflow: hidden;
+        }
+
+        .df-gallery__mobile-carousel-item img {
+          width: 100%;
+          height: 280px;
+          object-fit: cover;
+          display: block;
+          pointer-events: none;
+        }
 
         .df-gallery {
           position: relative;
-          width: 100vw;
-          margin-left: 50%;
-          transform: translateX(-50%);
+          background: #fff;
+          padding: 2.5rem 2rem 2.5rem;
         }
 
-        .df-gallery::before,
-        .df-gallery::after {
-          content: '';
-          position: absolute;
-          left: 0;
-          right: 0;
-          height: 25%;
-          z-index: 6;
-          pointer-events: none;
-        }
 
-        .df-gallery::before {
-          top: 0;
-          background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 100%);
-        }
 
-        .df-gallery::after {
-          bottom: 0;
-          background: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 100%);
-        }
-
-        .df-gallery__track {
-          display: flex;
-          gap: 0;
-          position: relative;
-        }
-
-        .df-gallery__track::before,
-        .df-gallery__track::after {
-          content: '';
-          position: absolute;
-          top: 0;
-          width: 30%;
-          height: 100%;
-          z-index: 5;
-          pointer-events: none;
-        }
-
-        .df-gallery__track::before {
-          left: 0;
-          background: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 40%, transparent 100%);
-        }
-
-        .df-gallery__track::after {
-          right: 0;
-          background: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 40%, transparent 100%);
-        }
-
-        .df-gallery__item {
-          flex: 1;
-          min-width: 0;
-          aspect-ratio: 16/9;
-          overflow: hidden;
-          position: relative;
-        }
-
-        .df-gallery__item img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transition: transform 0.6s ease;
-        }
-
-        .df-gallery__item:hover img {
-          transform: scale(1.05);
-        }
-
-        .df-gallery__item:not(:last-child)::after {
-          content: '';
-          position: absolute;
-          top: 0;
-          right: 0;
-          width: 3px;
-          height: 100%;
-          background: linear-gradient(to bottom, transparent 15%, rgba(128,128,128,0.25) 50%, transparent 85%);
-          z-index: 3;
-        }
 
         /* ===== LOCATION & FAQ ===== */
+        .df-location .arrival__card {
+          margin-left: 0;
+          margin-right: 0;
+        }
         .df-location-faq {
           padding: 2.5rem 2rem 4rem;
           background: #fff;
@@ -2402,6 +2440,7 @@ function DiscoveryFlight() {
 
         .df-location__header {
           margin-bottom: 1.5rem;
+          text-align: center;
         }
 
         .df-location__header h2 {
@@ -2409,18 +2448,30 @@ function DiscoveryFlight() {
           font-weight: 700;
           text-transform: uppercase;
           margin: 0;
+          text-align: center;
         }
 
         .df-location__map {
-          background: linear-gradient(135deg, #e8e6e2 0%, #d8d6d2 100%);
-          min-height: 180px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 4px;
-          margin-bottom: 1.5rem;
           position: relative;
           overflow: hidden;
+          min-height: 260px;
+          background: #e8e6e2;
+          border: 1px solid #e8e6e2;
+          border-radius: 8px;
+          margin-bottom: 1.5rem;
+        }
+
+        .df-location__map-inner {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+        }
+
+        .df-location__map-inner iframe {
+          width: 100%;
+          height: 100%;
+          display: block;
         }
 
         .df-location__map::before {
@@ -2493,6 +2544,36 @@ function DiscoveryFlight() {
         /* FAQ */
         .df-faq__header {
           margin-bottom: 2rem;
+          text-align: center;
+        }
+
+        @media (min-width: 1025px) {
+          .df-faq__header .df-label {
+            display: block;
+          }
+          .df-faq__header .df-label::before,
+          .df-faq__header .df-label::after {
+            display: none;
+          }
+          .df-faq__header h2 {
+            text-align: center;
+          }
+          .df-location__header .df-label {
+            display: block;
+          }
+          .df-location__header .df-label::before,
+          .df-location__header .df-label::after {
+            display: none;
+          }
+        }
+
+        @media (max-width: 1024px) {
+          .df-faq__header h2 {
+            text-align: center;
+          }
+          .df-location__header h2 {
+            text-align: center;
+          }
         }
 
         .df-faq__header h2 {
@@ -2792,6 +2873,19 @@ function DiscoveryFlight() {
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
+          .df-gallery {
+            padding-left: 0;
+            padding-right: 0;
+          }
+
+          .df-gallery__mobile-carousel-wrap {
+            margin-bottom: 0;
+          }
+
+          .df-value {
+            padding-bottom: 1px;
+          }
+
           .df-hero__overlay {
             background: linear-gradient(180deg, rgba(250,249,246,0.97) 0%, rgba(250,249,246,0.92) 60%, rgba(250,249,246,0.7) 100%);
           }
@@ -2887,6 +2981,12 @@ function DiscoveryFlight() {
 
           .df-instructor__card {
             flex-direction: column;
+            align-items: center;
+          }
+
+          .df-instructor__info {
+            align-self: stretch;
+            width: 100%;
           }
 
           .df-instructor__title--desktop { display: none; }
@@ -2917,40 +3017,18 @@ function DiscoveryFlight() {
           }
 
           /* Gallery section hidden on mobile — replaced by MobileGalleryStrip above */
-          .df-gallery { display: none; }
 
-          .df-gallery__mobile-carousel-wrap {
-            display: block;
-            overflow: hidden;
-            mask-image: linear-gradient(to right, transparent 0, black 1.5rem, black calc(100% - 1.5rem), transparent 100%);
-            -webkit-mask-image: linear-gradient(to right, transparent 0, black 1.5rem, black calc(100% - 1.5rem), transparent 100%);
-          }
 
           .df-gallery__mobile-carousel {
-            display: flex;
             gap: 12px;
-            will-change: transform;
-            cursor: grab;
-            touch-action: pan-y;
-            user-select: none;
-            -webkit-user-select: none;
           }
-
-          .df-gallery__mobile-carousel:active { cursor: grabbing; }
 
           .df-gallery__mobile-carousel-item {
             flex: 0 0 72vw;
-            min-width: 0;
-            border-radius: 8px;
-            overflow: hidden;
           }
 
           .df-gallery__mobile-carousel-item img {
-            width: 100%;
             height: 220px;
-            object-fit: cover;
-            display: block;
-            pointer-events: none;
           }
 
           .df-location-faq__container {
@@ -2959,9 +3037,7 @@ function DiscoveryFlight() {
           }
 
           .df-location-faq__divider {
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(to right, transparent, #e0deda 20%, #e0deda 80%, transparent);
+            display: none;
           }
 
           .df-location-faq__actions {
@@ -3005,8 +3081,7 @@ function DiscoveryFlight() {
           }
 
           .df-faq__item {
-            flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.75rem;
           }
 
           .df-final-cta__buttons {
@@ -3027,10 +3102,6 @@ function DiscoveryFlight() {
         }
 
         @media (max-width: 480px) {
-          .df-hero__ticket {
-            max-width: 280px;
-          }
-
           /* Selector note — stretch lines to screen edges only at very narrow widths */
           .df-selector__note {
             margin-left: -2rem;

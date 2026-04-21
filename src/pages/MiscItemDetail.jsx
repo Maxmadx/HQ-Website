@@ -18,14 +18,14 @@ const CSS = `
     padding-top: 60px;
   }
   .mid-left {
-    width: 45%;
-    max-width: 600px;
+    flex: 1;
     position: sticky;
     top: 60px;
     height: calc(100vh - 60px);
     display: flex;
     flex-direction: column;
     border-right: 1px solid #eee;
+    margin: 45px;
   }
   .mid-back {
     display: inline-flex;
@@ -51,7 +51,7 @@ const CSS = `
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f5f4f0;
+    background: transparent;
   }
   .mid-carousel { position: relative; width: 100%; height: 100%; }
   .mid-slide {
@@ -78,7 +78,7 @@ const CSS = `
   .mid-placeholder {
     width: 100%; height: 100%;
     display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(135deg, #f5f4f0, #eae8e2);
+    background: transparent;
   }
   .mid-thumbs {
     display: flex; justify-content: center; gap: 8px; padding: 16px 30px;
@@ -91,7 +91,7 @@ const CSS = `
   .mid-thumb:hover, .mid-thumb--active { opacity: 1; border-color: #1a1a1a; }
   .mid-thumb img { width: 100%; height: 100%; object-fit: cover; }
   .mid-right {
-    flex: 1; overflow-y: auto; padding: 40px 50px 80px;
+    flex: 1; overflow-y: auto; padding: 45px 45px 80px; margin: 45px;
   }
   .mid-eyebrow {
     font-family: 'Share Tech Mono', monospace;

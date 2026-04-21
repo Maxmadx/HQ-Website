@@ -11,6 +11,8 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { useFaqs } from '../hooks/useFaqs';
+import { usePageImages } from '../hooks/usePageImages';
+import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 
@@ -242,28 +244,23 @@ function AircraftCard({ aircraft, isActive, onClick, onEnquire }) {
     <motion.div
       className={`tr-aircraft-card ${isActive ? 'tr-aircraft-card--active' : ''}`}
       onClick={onClick}
-      layout
-      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
     >
-      <AnimatePresence mode="wait">
-        {!isActive ? (
-          // Collapsed State
-          <motion.div
-            key="collapsed"
-            className="tr-aircraft-card__collapsed"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="tr-aircraft-card__image">
-              <img src={aircraft.image} alt={aircraft.model} />
-              <div className="tr-aircraft-card__overlay">
-                <span className="tr-aircraft-card__select">Select Type</span>
-              </div>
+      {!isActive && (
+        <motion.div
+          className="tr-aircraft-card__collapsed"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2 }}
+        >
+          <div className="tr-aircraft-card__image">
+            <img src={aircraft.image} alt={aircraft.model} />
+            <div className="tr-aircraft-card__overlay">
+              <span className="tr-aircraft-card__select">Select Type</span>
             </div>
-            <div className="tr-aircraft-card__content">
-              <h4 className="tr-aircraft-card__model">{aircraft.model}</h4>
+          </div>
+          <div className="tr-aircraft-card__content">
+            <h4 className="tr-aircraft-card__model">{aircraft.model}</h4>
+            <div className="tr-aircraft-card__specs-row">
               <div className="tr-aircraft-card__specs">
                 {aircraft.specs.map((spec, i) => (
                   <div key={i} className="tr-aircraft-card__spec">
@@ -272,68 +269,51 @@ function AircraftCard({ aircraft, isActive, onClick, onEnquire }) {
                   </div>
                 ))}
               </div>
+              <button className="tr-aircraft-card__arrow">→</button>
             </div>
-          </motion.div>
-        ) : (
-          // Expanded State
-          <motion.div
-            key="expanded"
-            className="tr-aircraft-card__expanded"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+          </div>
+        </motion.div>
+      )}
+      {isActive && (
+        <div className="tr-aircraft-card__expanded">
+          <div className="tr-aircraft-card__expanded-header">
+            <div className="tr-aircraft-card__expanded-title">
+              <h4>{aircraft.model} Type Rating</h4>
+              <button
+                className="tr-aircraft-card__close"
+                onClick={(e) => { e.stopPropagation(); onClick(); }}
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <p className="tr-aircraft-card__expanded-desc">{aircraft.description}</p>
+
+          <button
+            type="button"
+            className="tr-enquire-btn"
+            aria-label={`Enquire about ${aircraft.model} type rating`}
+            onClick={(e) => { e.stopPropagation(); onEnquire?.(aircraft.model); }}
           >
-            <div className="tr-aircraft-card__expanded-header">
-              <div className="tr-aircraft-card__expanded-title">
-                <h4>{aircraft.model} Type Rating</h4>
-                <button
-                  className="tr-aircraft-card__close"
-                  onClick={(e) => { e.stopPropagation(); onClick(); }}
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-
-            <p className="tr-aircraft-card__expanded-desc">{aircraft.description}</p>
-
-            <div className="tr-aircraft-card__expanded-specs">
-              <div className="tr-aircraft-card__expanded-spec">
-                <span className="tr-aircraft-card__expanded-value">{aircraft.groundHours}</span>
-                <span className="tr-aircraft-card__expanded-label">Ground Hours</span>
-              </div>
-              <div className="tr-aircraft-card__expanded-spec">
-                <span className="tr-aircraft-card__expanded-value">{aircraft.flightHours}</span>
-                <span className="tr-aircraft-card__expanded-label">Flight Hours</span>
-              </div>
-              <div className="tr-aircraft-card__expanded-spec">
-                <span className="tr-aircraft-card__expanded-value">1</span>
-                <span className="tr-aircraft-card__expanded-label">Skill Test</span>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              className="tr-enquire-btn"
-              aria-label={`Enquire about ${aircraft.model} type rating`}
-              onClick={(e) => { e.stopPropagation(); onEnquire?.(aircraft.model); }}
-            >
-              <span className="tr-enquire-btn__icon">↗</span>
-              <span className="tr-enquire-btn__title">Enquire About This Type Rating</span>
-              <span className="tr-enquire-btn__sub">Tell us your experience level and goals. We'll get back to you within 24 hours.</span>
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <span className="tr-enquire-btn__icon">↗</span>
+            <span className="tr-enquire-btn__title">Enquire About This Type Rating</span>
+            <span className="tr-enquire-btn__sub">Tell us your experience level and goals. We'll get back to you within 24 hours.</span>
+          </button>
+        </div>
+      )}
     </motion.div>
   );
 }
 
 function TypeRating() {
   const heroRef = useRef(null);
+  const processStepsRef = useRef(null);
+  const [processPage, setProcessPage] = useState(0);
   const [openFaq, setOpenFaq] = useState(null);
-  const [selectedAircraft, setSelectedAircraft] = useState(0);
+  const pageImages = usePageImages('type-rating');
+  useCmsHighlight();
+  const [selectedAircraft, setSelectedAircraft] = useState(null);
 
   // Enquiry form state
   const [enquiryAircraft, setEnquiryAircraft] = useState('');
@@ -348,10 +328,18 @@ function TypeRating() {
     if (!formVisible) {
       setFormVisible(true);
       setTimeout(() => {
-        enquiryFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const el = enquiryFormRef.current;
+        if (el) {
+          const y = el.getBoundingClientRect().top + window.scrollY - 40;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
       }, 100);
     } else {
-      enquiryFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const el = enquiryFormRef.current;
+        if (el) {
+          const y = el.getBoundingClientRect().top + window.scrollY - 40;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
     }
   }
 
@@ -402,15 +390,22 @@ function TypeRating() {
   const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
   const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
 
-  // Aircraft fleet data
+  // Aircraft fleet data — images overridable via admin
+  const fleetBaseImages = [
+    '/assets/images/fleet/r22-g-ulze.png',
+    '/assets/images/fleet/r44-g-mxpi.png',
+    '/assets/images/fleet/r66-g-tlmi.png',
+    '/assets/images/fleet/hughes-500.jpg',
+    '/assets/images/fleet/as350-squirrel.jpg',
+    '/assets/images/fleet/bell-407.jpg',
+  ];
   const fleet = [
     {
       model: 'Robinson R22',
-      image: '/assets/images/fleet/r22-g-ulze.png',
+      image: pageImages['type-rating-fleet']?.[0]?.url || '/assets/images/fleet/r22-g-ulze.png',
       specs: [
         { value: '2', label: 'Seats' },
         { value: '102', label: 'Knots' },
-        { value: '5', label: 'Min Hours' },
       ],
       description: 'The ideal training helicopter. Lightweight and responsive, the R22 teaches precision flying and develops sharp skills that transfer to any aircraft.',
       groundHours: 8,
@@ -418,11 +413,10 @@ function TypeRating() {
     },
     {
       model: 'Robinson R44',
-      image: '/assets/images/fleet/r44-g-mxpi.png',
+      image: pageImages['type-rating-fleet']?.[1]?.url || '/assets/images/fleet/r44-g-mxpi.png',
       specs: [
         { value: '4', label: 'Seats' },
         { value: '130', label: 'Knots' },
-        { value: '5', label: 'Min Hours' },
       ],
       description: 'The world\'s best-selling helicopter. Spacious, powerful, and versatile—perfect for touring, business travel, and family flying.',
       groundHours: 8,
@@ -430,11 +424,10 @@ function TypeRating() {
     },
     {
       model: 'Robinson R66',
-      image: '/assets/images/fleet/r66-g-tlmi.png',
+      image: pageImages['type-rating-fleet']?.[2]?.url || '/assets/images/fleet/r66-g-tlmi.png',
       specs: [
         { value: '5', label: 'Seats' },
         { value: '140', label: 'Knots' },
-        { value: '5', label: 'Min Hours' },
       ],
       description: 'Turbine power and unmatched performance. The R66 delivers exceptional range, speed, and reliability for serious pilots.',
       groundHours: 10,
@@ -442,11 +435,10 @@ function TypeRating() {
     },
     {
       model: 'Hughes 500',
-      image: '/assets/images/fleet/hughes-500.jpg',
+      image: pageImages['type-rating-fleet']?.[3]?.url || '/assets/images/fleet/hughes-500.jpg',
       specs: [
-        { value: '5', label: 'Seats' },
+        { value: '4', label: 'Seats' },
         { value: '130', label: 'Knots' },
-        { value: '5', label: 'Min Hours' },
       ],
       description: 'The iconic light turbine helicopter. Renowned for its agility and performance, the Hughes 500 is a favourite among experienced pilots seeking a responsive, capable aircraft.',
       groundHours: 10,
@@ -454,11 +446,10 @@ function TypeRating() {
     },
     {
       model: 'AS350 Squirrel',
-      image: '/assets/images/fleet/as350-squirrel.jpg',
+      image: pageImages['type-rating-fleet']?.[4]?.url || '/assets/images/fleet/as350-squirrel.jpg',
       specs: [
         { value: '6', label: 'Seats' },
         { value: '130', label: 'Knots' },
-        { value: '5', label: 'Min Hours' },
       ],
       description: 'The legendary single-engine workhorse. The AS350 combines exceptional performance with proven reliability—a favourite for utility, tours, and aerial work worldwide.',
       groundHours: 10,
@@ -466,11 +457,10 @@ function TypeRating() {
     },
     {
       model: 'Bell 407',
-      image: '/assets/images/fleet/bell-407.jpg',
+      image: pageImages['type-rating-fleet']?.[5]?.url || '/assets/images/fleet/bell-407.jpg',
       specs: [
         { value: '7', label: 'Seats' },
         { value: '140', label: 'Knots' },
-        { value: '5', label: 'Min Hours' },
       ],
       description: 'Premium single-turbine performance. The Bell 407 combines spacious cabin comfort with outstanding power and speed—a favourite for corporate and charter operations.',
       groundHours: 12,
@@ -521,14 +511,14 @@ function TypeRating() {
       <TypeRatingHeader />
 
       {/* ========== HERO SECTION ========== */}
-      <section ref={heroRef} className="tr-hero">
+      <section ref={heroRef} className="tr-hero" data-cms-section="type-rating-hero">
         <motion.div
           className="tr-hero__bg"
           initial={{ scale: 1.1, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 1.5 }}
         >
-          <img src="/assets/images/fleet/r66-turbine-flying.jpg" alt="Robinson R66 in flight" />
+          <img src={pageImages['type-rating-hero']?.[0]?.url || '/assets/images/gallery/carousel/rotating8.jpg'} alt="Helicopter cockpit" />
         </motion.div>
         <div className="tr-hero__overlay" />
 
@@ -609,7 +599,7 @@ function TypeRating() {
       </section>
 
       {/* ========== WHAT IS TYPE RATING ========== */}
-      <section className="tr-intro">
+      <section className="tr-intro" data-cms-section="type-rating-intro">
         <div className="tr-intro__container">
           <Reveal>
             <div className="tr-intro__header">
@@ -626,11 +616,20 @@ function TypeRating() {
               </p>
             </div>
           </Reveal>
+          <Reveal delay={0.2}>
+            <div className="tr-intro__image">
+              <img src={pageImages['type-rating-intro']?.[0]?.url || '/assets/images/gallery/carousel/rotating6.jpg'} alt="Helicopter in flight" />
+              <div className="tr-intro__image-caption">
+                <span className="tr-intro__image-caption-num">6</span>
+                <span>Aircraft types available</span>
+              </div>
+            </div>
+          </Reveal>
         </div>
       </section>
 
       {/* ========== FLEET / AIRCRAFT SELECTION ========== */}
-      <section className="tr-fleet" id="fleet">
+      <section className="tr-fleet" id="fleet" data-cms-section="type-rating-fleet">
         <div className="tr-fleet__container">
           <div className="tr-fleet__grid">
             {fleet.map((aircraft, i) => (
@@ -774,40 +773,41 @@ function TypeRating() {
             </div>
           </Reveal>
 
-          <div className="tr-process__steps">
+          <div
+            className="tr-process__steps"
+            ref={processStepsRef}
+            onScroll={() => {
+              const el = processStepsRef.current;
+              if (!el) return;
+              setProcessPage(Math.round(el.scrollLeft / el.clientWidth));
+            }}
+          >
             {processSteps.map((step, i) => (
-              <Reveal key={i} delay={i * 0.1}>
-                <div className="tr-process__step">
-                  <div className="tr-process__step-num">{step.num}</div>
-                  <div className="tr-process__step-content">
-                    <div className="tr-process__step-header">
-                      <h4>{step.title}</h4>
-                      <span className="tr-process__step-duration">{step.duration}</span>
-                    </div>
-                    <p>{step.description}</p>
+              <div key={i} className="tr-process__step">
+                <div className="tr-process__step-num">{step.num}</div>
+                <div className="tr-process__step-content">
+                  <div className="tr-process__step-header">
+                    <h4>{step.title}</h4>
+                    <span className="tr-process__step-duration">{step.duration}</span>
                   </div>
+                  <p>{step.description}</p>
                 </div>
-              </Reveal>
+              </div>
             ))}
           </div>
-
-          <Reveal delay={0.5}>
-            <div className="tr-process__timeline">
-              <div className="tr-process__timeline-track">
-                {processSteps.map((_, i) => (
-                  <React.Fragment key={i}>
-                    <div className="tr-process__timeline-dot" />
-                    {i < processSteps.length - 1 && <div className="tr-process__timeline-line" />}
-                  </React.Fragment>
-                ))}
-              </div>
-              <div className="tr-process__timeline-label">
-                <span>Start</span>
-                <span>3-5 Days</span>
-                <span>Certified</span>
-              </div>
-            </div>
-          </Reveal>
+          <div className="tr-process__dots">
+            {processSteps.map((_, i) => (
+              <button
+                key={i}
+                className={`tr-process__dot${processPage === i ? ' tr-process__dot--active' : ''}`}
+                onClick={() => {
+                  const el = processStepsRef.current;
+                  if (!el) return;
+                  el.scrollTo({ left: el.clientWidth * i, behavior: 'smooth' });
+                }}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -854,48 +854,6 @@ function TypeRating() {
           </div>
         </section>
       )}
-
-      {/* ========== CTA SECTION ========== */}
-      <section className="tr-cta">
-        <div className="tr-cta__inner">
-          <div className="tr-cta__image">
-            <motion.img
-              src="/assets/images/gallery/carousel/rotating6.jpg"
-              alt="Helicopter flying"
-              initial={{ scale: 1.05 }}
-              whileInView={{ scale: 1 }}
-              transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-              viewport={{ once: true }}
-            />
-            <div className="tr-cta__image-overlay" />
-          </div>
-
-          <div className="tr-cta__content">
-            <Reveal>
-              <span className="tr-pre-text tr-pre-text--light">Ready to Expand?</span>
-              <h2>
-                <span className="tr-text--white">Start Your</span>{' '}
-                <span className="tr-text--white-mid">Type Rating</span>
-              </h2>
-              <p>
-                Get in touch to discuss your type rating goals. Our team will help you
-                choose the right aircraft and create a training schedule that works for you.
-              </p>
-              <div className="tr-cta__buttons">
-                <a href="/contact?subject=type-rating" className="tr-btn tr-btn--primary tr-btn--white">
-                  Contact Us
-                </a>
-                <Link to="/training" className="tr-cta__link">
-                  View All Training
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </Link>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
 
       {/* ========== FOOTER ========== */}
       <FooterMinimal />
@@ -949,8 +907,21 @@ function TypeRating() {
           line-height: 1.7;
         }
 
+        .tr-section-header--light {
+          margin-bottom: 24px;
+        }
+
         .tr-section-header--light p {
           color: rgba(255,255,255,0.7);
+        }
+
+        .tr-section-header--light::after {
+          content: '';
+          display: block;
+          width: 48px;
+          height: 1px;
+          background: rgba(255,255,255,0.35);
+          margin: 1.25rem auto 0;
         }
 
         /* Buttons */
@@ -1177,12 +1148,50 @@ function TypeRating() {
         .tr-intro__container {
           max-width: 1100px;
           margin: 0 auto;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 4rem;
+          align-items: stretch;
         }
 
         .tr-intro__header {
-          text-align: center;
-          max-width: 700px;
-          margin: 0 auto 3rem;
+          margin: 0;
+        }
+
+        .tr-intro__image {
+          position: relative;
+        }
+
+        .tr-intro__image img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+
+        .tr-intro__image-caption {
+          position: absolute;
+          bottom: -20px;
+          right: -20px;
+          background: rgba(26,26,26,0.55);
+          color: #fff;
+          padding: 1.5rem 2rem;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .tr-intro__image-caption-num {
+          font-size: 2rem;
+          font-weight: 700;
+          line-height: 1;
+        }
+
+        .tr-intro__image-caption span:last-child {
+          font-size: 0.72rem;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          opacity: 0.7;
+          margin-top: 0.25rem;
         }
 
         .tr-intro__header h2 {
@@ -1337,10 +1346,11 @@ function TypeRating() {
         /* Aircraft Card - Transforms when selected */
         .tr-aircraft-card {
           background: var(--hq-background, #faf9f6);
-          border: 2px solid transparent;
+          border: 1px solid rgba(0,0,0,0.5);
           border-radius: 8px;
           overflow: hidden;
           cursor: pointer;
+          position: relative;
           transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -1349,9 +1359,9 @@ function TypeRating() {
         }
 
         .tr-aircraft-card--active {
+          overflow: visible;
           background: #1a1a1a;
-          border-color: #1a1a1a;
-          box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+          border-color: transparent;
         }
 
         /* Collapsed State */
@@ -1403,12 +1413,42 @@ function TypeRating() {
 
         .tr-aircraft-card__content {
           padding: 1.25rem;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .tr-aircraft-card__specs-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.75rem;
+        }
+
+        .tr-aircraft-card__arrow {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 72px;
+          flex-shrink: 0;
+          align-self: stretch;
+          background: #fff;
+          color: #1a1a1a;
+          border: 1px solid #1a1a1a;
+          border-radius: 4px;
+          font-size: 1.1rem;
+          cursor: pointer;
+          transition: background 0.2s ease;
+        }
+
+        .tr-aircraft-card__arrow:hover {
+          background: #f0efec;
         }
 
         .tr-aircraft-card__model {
           font-size: 1rem;
           font-weight: 600;
-          margin: 0 0 1rem;
+          margin: 0;
           text-transform: uppercase;
         }
 
@@ -1438,6 +1478,15 @@ function TypeRating() {
 
         /* Expanded State */
         .tr-aircraft-card__expanded {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 10;
+          background: #1a1a1a;
+          border: 1px solid #1a1a1a;
+          border-radius: 8px;
+          box-shadow: 0 12px 40px rgba(0,0,0,0.2);
           padding: 1.5rem;
         }
 
@@ -1538,19 +1587,18 @@ function TypeRating() {
         .tr-process__steps {
           display: flex;
           flex-direction: column;
-          gap: 0;
+          gap: 8px;
         }
 
         .tr-process__step {
           display: flex;
           gap: 1.5rem;
-          padding: 1.5rem 0;
-          border-bottom: 1px solid rgba(255,255,255,0.1);
+          padding: 1.5rem;
+          background: rgba(255,255,255,0.06);
+          border: 1px solid rgba(255,255,255,0.1);
+          border-radius: 8px;
         }
 
-        .tr-process__step:last-child {
-          border-bottom: none;
-        }
 
         .tr-process__step-num {
           font-family: 'Share Tech Mono', monospace;
@@ -1591,6 +1639,10 @@ function TypeRating() {
           color: rgba(255,255,255,0.6);
           line-height: 1.6;
           margin: 0;
+        }
+
+        .tr-process__dots {
+          display: none;
         }
 
         /* Process Timeline */
@@ -2171,6 +2223,12 @@ function TypeRating() {
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
+          .tr-intro__container {
+            grid-template-columns: 1fr;
+          }
+          .tr-intro__image-caption {
+            right: 0;
+          }
           .tr-intro__grid,
           .tr-fleet__grid,
           .tr-pricing__grid {
@@ -2238,9 +2296,78 @@ function TypeRating() {
             padding: 3rem 2rem;
           }
 
+          .tr-intro {
+            padding-bottom: 2.5rem;
+          }
+
+          .tr-process {
+            padding-left: 1rem;
+            padding-right: 1rem;
+          }
+
+          .tr-fleet {
+            padding-top: 24px;
+          }
+
+          .tr-process__steps {
+            flex-direction: row;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            width: 100%;
+          }
+
+          .tr-process__steps::-webkit-scrollbar {
+            display: none;
+          }
+
           .tr-process__step {
+            min-width: 100%;
+            width: 100%;
+            box-sizing: border-box;
+            flex-shrink: 0;
+            scroll-snap-align: start;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            border-bottom: none;
+            padding: 1.5rem 1.5rem;
+            overflow: hidden;
+          }
+
+          .tr-process__step-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+          }
+
+          .tr-process__step-content {
+            width: 100%;
+            overflow-wrap: break-word;
+            word-break: break-word;
+          }
+
+          .tr-process__dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding-top: 14px;
+          }
+
+          .tr-process__dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            transition: background 0.2s;
+          }
+
+          .tr-process__dot--active {
+            background: #fff;
           }
 
           .tr-fleet__details-breakdown {
@@ -2254,8 +2381,7 @@ function TypeRating() {
           }
 
           .tr-faq__item {
-            flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.75rem;
           }
 
           .tr-cta__buttons {

@@ -1,0 +1,433 @@
+{
+  "meta": {
+    "purpose": "Structured benefits/selling points for the Robinson R22, R44 and R66 — for use in sales copy, detail pages, brochures and side-by-side comparisons.",
+    "generated": "2026-04-21",
+    "conventions": {
+      "headline": "Short bullet-ready line (5–12 words).",
+      "body": "Supporting sentence — expand the headline with a concrete fact.",
+      "categoryOrder": "Most commercially persuasive first."
+    }
+  },
+
+  "r22": {
+    "name": "Robinson R22",
+    "tagline": "The world's training helicopter.",
+    "configuration": "Two-seat, side-by-side, piston",
+    "powerplant": "Lycoming O-360 — derated, naturally aspirated, 4-cylinder",
+    "tbo": "2,200 hours",
+    "cruise": "~96 kt",
+    "fuelBurn": "~8–9 US gal/hr AvGas 100LL",
+    "firstCertified": "1979",
+    "builtToDate": "4,800+",
+    "acquisitionNew": "~$350k–$450k (Beta II, 2026)",
+    "directOperatingCost": "~£100–£130/hr",
+
+    "benefits": {
+      "entryEconomics": [
+        { "headline": "Lowest new-build acquisition cost of any certified helicopter", "body": "A new Beta II lists well below any competing two-seat piston — roughly half the price of a new Cabri G2." },
+        { "headline": "Lowest direct operating cost in certified rotary aviation", "body": "Roughly £100–£130/hr all-in, with fuel as the single largest line." },
+        { "headline": "Fuel burn around 8–9 US gal/hr", "body": "Less than most cars and a third of the smallest certified turbine." },
+        { "headline": "Lowest insurance premium for student hours on type", "body": "Underwriters price the R22 more aggressively than any other trainer because every insurer has data on it." },
+        { "headline": "Smallest hangar footprint of any certified two-seater", "body": "Fits diagonally inside a standard 6×6m single-car GA hangar." },
+        { "headline": "Overhaul cost per hour lowest in class", "body": "Lycoming O-360 overhauls are the cheapest in certified helicopter aviation." }
+      ],
+
+      "trainingValue": [
+        { "headline": "The default PPL(H) trainer worldwide", "body": "More hours have been logged teaching ab-initio students on the R22 than on any airframe ever built." },
+        { "headline": "Robinson Safety Course — a week at the factory", "body": "Torrance runs the only factory-taught pilot safety course in general aviation, included by most insurers." },
+        { "headline": "Low-inertia rotor teaches correct technique", "body": "Pilots trained on an R22 transition up the Robinson ladder — and to competitors — with real handling discipline." },
+        { "headline": "Instructors available at virtually every helicopter school", "body": "No planning a syllabus around instructor availability — there's always one." },
+        { "headline": "SFAR 73 compliance bakes in safety training", "body": "In the US every R22 student and instructor must meet a published, enforced training standard — the gold standard for airframe-specific training." },
+        { "headline": "Lowest-cost hour-building for commercial candidates", "body": "Nothing else comes close for the CPL(H) hour-building phase." }
+      ],
+
+      "designAndEngineering": [
+        { "headline": "Two-blade teetering rotor — simple by philosophy", "body": "Frank Robinson's design principle: every part earns its place or it's deleted." },
+        { "headline": "No hydraulic servos", "body": "Direct mechanical flight controls — nothing to leak, fail or reset." },
+        { "headline": "Belt-drive main transmission", "body": "Inspectable, replaceable, low-cost — unique in certified helicopters." },
+        { "headline": "Open-tube welded frame", "body": "Damage is visible on inspection, not hidden inside a monocoque fairing." },
+        { "headline": "Lycoming O-360 is the most common GA piston engine on Earth", "body": "Shared with Cessna 172/180s and thousands of other airframes — you are never short of parts, a workshop, or a trained engineer." },
+        { "headline": "Every life-limited part is published", "body": "No hidden calendar items, no surprises at annual." }
+      ],
+
+      "partsAndSupport": [
+        { "headline": "Largest parts catalogue for any piston helicopter", "body": "Robinson ships from Torrance direct; regional dealers stock the fast-movers." },
+        { "headline": "Parts in production — not NOS", "body": "Unlike a used Schweizer or Enstrom, every R22 part is still factory-new." },
+        { "headline": "Global dealer network in 70+ countries", "body": "Factory-trained service at almost any GA-capable airfield." },
+        { "headline": "Factory-run maintenance courses", "body": "Torrance trains engineers on the airframe directly — your shop can be factory-certified." }
+      ],
+
+      "market": [
+        { "headline": "4,800+ built — the largest installed base in the class", "body": "Every major market has a used market with real depth and real liquidity." },
+        { "headline": "Resale values are published and predictable", "body": "You don't trade an R22 blind — there's comparable-sale data going back 40 years." },
+        { "headline": "You can always find a buyer", "body": "The used R22 market never dries up because the training demand never does." }
+      ],
+
+      "missions": [
+        { "headline": "Private owner-flyer two-seater", "body": "The lowest-cost way to keep a helicopter current, legally and practically." },
+        { "headline": "Agricultural / livestock mustering", "body": "The backbone of cattle mustering in Australia, NZ, South Africa, South America." },
+        { "headline": "Photo & film camera ship", "body": "Cheap to operate, small enough to get into tight positions, doors-off capable." },
+        { "headline": "Pipeline & powerline inspection", "body": "Low operating cost makes slow, repetitive survey work commercially viable." }
+      ],
+
+      "safety": [
+        { "headline": "Safety Notices published openly", "body": "Every service-learned lesson is publicly documented — no hidden failure lore." },
+        { "headline": "Published component life limits", "body": "Every time-limited part has a retirement hour — no calendar surprises." },
+        { "headline": "Mature type — failure modes are catalogued", "body": "A type-rated engineer has seen almost every fault the R22 can produce." },
+        { "headline": "Auto-rotation teaching standard", "body": "The R22's low rotor inertia is a feature — it forces correct entry technique that transfers to every other airframe." }
+      ]
+    },
+
+    "comparisonPoints": [
+      {
+        "competitor": "Guimbal Cabri G2",
+        "points": [
+          "Lower acquisition cost — typically 35–40% cheaper new.",
+          "Lower hourly operating cost.",
+          "Larger installed base (4,800+ vs ~300) — orders of magnitude more parts, instructors and data.",
+          "Resale market is mature and liquid worldwide.",
+          "SFAR 73 and Robinson Safety Course — no equivalent structured safety programme exists for the Cabri."
+        ]
+      },
+      {
+        "competitor": "Schweizer 269/300 (now Sikorsky S300C)",
+        "points": [
+          "Lower acquisition cost.",
+          "Lower fuel burn (R22 ~8–9 gph vs ~12–14 gph).",
+          "Parts in production under a mature factory programme.",
+          "Resale market deeper than the entire Schweizer fleet."
+        ]
+      },
+      {
+        "competitor": "Enstrom 280FX",
+        "points": [
+          "Lower acquisition cost.",
+          "Simpler airframe (three-blade Enstrom is heavier and more complex).",
+          "Much larger support and instructor network.",
+          "Robinson still manufacturing at scale — Enstrom support has been intermittent."
+        ]
+      },
+      {
+        "competitor": "Hughes/MD 269 (used)",
+        "points": [
+          "Newer type, parts in production.",
+          "Lower overhaul cost.",
+          "More instructors rated on type."
+        ]
+      },
+      {
+        "competitor": "Bell 47 (used)",
+        "points": [
+          "Modern airframe, not a 1950s design.",
+          "Factory support — spares still rolling off the production line.",
+          "Higher cruise, longer range, lower fuel burn."
+        ]
+      }
+    ]
+  },
+
+  "r44": {
+    "name": "Robinson R44",
+    "tagline": "The world's best-selling general aviation helicopter since 1999.",
+    "configuration": "Four-seat, piston",
+    "powerplant": "Lycoming O-540 (Raven I) or IO-540 fuel-injected (Raven II)",
+    "tbo": "2,200 hours",
+    "cruise": "~110–115 kt (Raven II)",
+    "fuelBurn": "~15 US gal/hr AvGas 100LL",
+    "firstCertified": "1992",
+    "builtToDate": "6,500+",
+    "acquisitionNew": "~$600k–$850k (varies by variant and spec)",
+    "directOperatingCost": "~£170–£230/hr",
+    "variants": ["Raven I", "Raven II", "Cadet (2-seat trainer)", "Clipper I/II (pop-out floats)", "R44 Utility (2026 heavy-duty interior)"],
+
+    "benefits": {
+      "marketPosition": [
+        { "headline": "The world's best-selling GA helicopter — every year since 1999", "body": "Outsells every other civilian helicopter, turbine and piston, annually." },
+        { "headline": "6,500+ built — largest installed base of any four-seat helicopter", "body": "In every inhabited continent, at every price point, every age cohort." },
+        { "headline": "Resale is liquid at every age", "body": "You can sell a 20-year-old R44 in a weekend." },
+        { "headline": "Lease-back ready", "body": "Flight schools actively want to put paid hours on private R44s — your airframe can earn while you own it." }
+      ],
+
+      "economics": [
+        { "headline": "Piston operating cost with turbine mission capability", "body": "Roughly half the hourly cost of a single turbine, with 3–4 seats of useful load." },
+        { "headline": "Fuel burn ~15 gph in cruise", "body": "Less fuel than a light-twin Cessna 310; far less than any comparable turbine." },
+        { "headline": "Robinson publishes Estimated Operating Cost sheets annually", "body": "Variant by variant — Raven I, Raven II, Cadet each have their own published figures." },
+        { "headline": "Fixed TBO and published overhaul pricing", "body": "Your per-hour reserve is set on day one and doesn't drift." },
+        { "headline": "Financeable through mainstream GA lenders", "body": "Lenders have decades of R44 loan performance — pricing and terms are standardised." },
+        { "headline": "Insurance premiums are predictable and competitive", "body": "Underwriters know the type, the missions, and the loss history." }
+      ],
+
+      "missionVersatility": [
+        { "headline": "Realistic four-seat point-to-point transport", "body": "350+ nm range with aux tanks; London to Edinburgh non-stop in one fuel load at Raven II speeds." },
+        { "headline": "Training platform — PPL(H) and CPL(H)", "body": "Cadet variant built specifically for schools." },
+        { "headline": "Aerial tour operator workhorse", "body": "Most small heli-tour operators worldwide run R44s." },
+        { "headline": "ENG / news / camera ship", "body": "Doors-off, nose-mount camera options, low noise signature, cheap to station." },
+        { "headline": "Police patrol and observation", "body": "Low-cost urban rotary surveillance platform — FLIR and spotlight kits available." },
+        { "headline": "Utility / agricultural (new Utility interior, March 2026)", "body": "Heavy-duty rubber floor, doors-off spec, cargo-ready — factory-built." },
+        { "headline": "Amphibious via Clipper floats", "body": "Coastal tours, island work, water rescue." }
+      ],
+
+      "performance": [
+        { "headline": "Raven II hot-and-high capability", "body": "Fuel-injected IO-540 holds power at altitude and in hot conditions where carburetted piston singles fade." },
+        { "headline": "14,000 ft service ceiling", "body": "Comfortably clears most alpine passes." },
+        { "headline": "Useful load 800–900 lb", "body": "Four adults with bags; or two adults with a week's luggage, fuel, and reserve." },
+        { "headline": "Cruise 110–115 kt", "body": "Quick enough to make point-to-point travel genuinely faster than road." }
+      ],
+
+      "maintenance": [
+        { "headline": "Lycoming IO-540 is a standard-catalogue GA powerplant", "body": "Any piston aviation shop can overhaul it — not a specialist engine." },
+        { "headline": "No complex hydraulics (Raven I)", "body": "Direct mechanical controls; Raven II uses simple assisted controls with no hydraulic servos to fail." },
+        { "headline": "Belt-drive main transmission", "body": "Inspectable, replaceable at scheduled intervals, documented." },
+        { "headline": "Parts in production at full factory scale", "body": "Unlike the Bell 206, you are never waiting on out-of-production spares." }
+      ],
+
+      "partsAndSupport": [
+        { "headline": "Robinson dealer network in 70+ countries", "body": "Factory-trained service almost anywhere you can land." },
+        { "headline": "Parts shipped from Torrance next-day globally", "body": "Robinson holds inventory specifically for AOG response." },
+        { "headline": "Engineer training delivered at the factory", "body": "Shops can send staff to Torrance to certify directly on the airframe." }
+      ],
+
+      "pilotEcosystem": [
+        { "headline": "More R44-rated pilots available to hire than any comparable type", "body": "Operators never struggle to staff." },
+        { "headline": "Robinson Safety Course for R44 offered worldwide", "body": "Insurance-recognised, factory-delivered — not a third-party substitute." },
+        { "headline": "Transition from R22 is straightforward", "body": "Most R22-rated pilots convert to R44 in a few hours." }
+      ],
+
+      "heritage": [
+        { "headline": "Frank Robinson's definitive airframe", "body": "The fullest expression of simple, dependable, affordable design." },
+        { "headline": "Circumnavigated the globe — twice", "body": "Jennifer Murray crew 1997; Murray solo 2000 (Guinness World Record, age 60)." },
+        { "headline": "Reached both poles under piston power", "body": "Smith & Brooks: North Pole 2002, South Pole 2005 — the first piston helicopter ever to do either, and the only piston helicopter to do both." },
+        { "headline": "Decades of service data", "body": "Every variant, every mission, every climate — all documented." }
+      ],
+
+      "safety": [
+        { "headline": "Safety Notices published openly and kept current", "body": "Every service-learned issue is in the open, not concealed by the factory." },
+        { "headline": "Published component life limits", "body": "Every time-limited part has a retirement hour — no calendar mystery." },
+        { "headline": "SFAR 73 / Robinson Safety Course", "body": "The only airframe-specific safety training programme enforced by regulation and insurers." }
+      ]
+    },
+
+    "comparisonPoints": [
+      {
+        "competitor": "Robinson R22",
+        "points": [
+          "Four seats instead of two.",
+          "Real useful range (350+ nm vs ~200 nm).",
+          "110-115 kt cruise vs ~96 kt.",
+          "Hot-and-high capability (Raven II) that the R22 cannot match.",
+          "Still piston-cheap to operate."
+        ]
+      },
+      {
+        "competitor": "Robinson R66 (turbine)",
+        "points": [
+          "Roughly half the acquisition cost.",
+          "Roughly half the fuel burn.",
+          "Piston simplicity — any GA piston shop can work on it.",
+          "AvGas 100LL vs Jet-A — irrelevant for most private operators, decisive in some regions.",
+          "Overhaul cost roughly one-third that of a turbine.",
+          "Lower insurance premium."
+        ]
+      },
+      {
+        "competitor": "Bell 206 JetRanger (used market)",
+        "points": [
+          "Piston operating cost vs turbine.",
+          "Parts in production at full factory scale — not NOS or substitutes.",
+          "Modern cockpit options available.",
+          "Factory support and safety programme active and funded.",
+          "Lower acquisition cost even on the used market for comparable age."
+        ]
+      },
+      {
+        "competitor": "Cabri G2",
+        "points": [
+          "Four seats vs two — a different mission class entirely.",
+          "Longer range, higher cruise, greater payload.",
+          "Massively larger support, parts and pilot ecosystem.",
+          "Deeper resale market."
+        ]
+      },
+      {
+        "competitor": "Enstrom 480B",
+        "points": [
+          "Piston (Raven II) runs roughly half the Enstrom 480B turbine's operating cost.",
+          "Larger global support network.",
+          "Deeper resale market.",
+          "Robinson's factory safety course vs no structured equivalent."
+        ]
+      },
+      {
+        "competitor": "MD500 / MD520N (used)",
+        "points": [
+          "Piston economics vs turbine.",
+          "Parts still in production.",
+          "Cheaper to acquire and operate by a wide margin.",
+          "Simpler systems."
+        ]
+      },
+      {
+        "competitor": "Schweizer 333 (used)",
+        "points": [
+          "R44 is piston (cheaper to run) and 4-seat with a usable mission profile.",
+          "Factory still in production — Schweizer/Sikorsky turbine support has waned.",
+          "Deep used market vs a shrinking one."
+        ]
+      }
+    ]
+  },
+
+  "r66": {
+    "name": "Robinson R66",
+    "tagline": "Turbine reliability at Robinson economics.",
+    "configuration": "Five-seat (1 pilot + 4 passengers), single-engine turbine",
+    "powerplant": "Rolls-Royce RR300 turboshaft (flat-rated)",
+    "tbo": "2,000 hours (engine)",
+    "cruise": "~125 kt",
+    "fuelBurn": "~23–25 US gal/hr Jet-A",
+    "firstCertified": "2010",
+    "builtToDate": "1,500+",
+    "acquisitionNew": "~$1.1M–$1.4M (varies by variant)",
+    "directOperatingCost": "~£400–£500/hr",
+    "variants": ["Standard", "Turbine Marine (pop-out floats)", "IFR trainer (single-pilot IFR)", "News", "Police", "Utility (Hi-Skid)", "Cargo Hook"],
+
+    "benefits": {
+      "turbineAdvantages": [
+        { "headline": "Rolls-Royce RR300 — flat-rated, overbuilt, industry-proven", "body": "Delivers full rated power deep into hot and high conditions; derated in cruise for long component life." },
+        { "headline": "Jet-A available globally", "body": "Far more widely stocked than AvGas 100LL — a decisive advantage in Africa, Asia, Latin America, and at most international airports." },
+        { "headline": "No mixture, no carb heat, no shock cooling", "body": "Simpler pilot workload, fewer failure modes, no mismanagement risk on start-up or descent." },
+        { "headline": "Smooth and quiet cabin", "body": "Turbine character — no engine vibration, no exhaust pulse." },
+        { "headline": "Longer component lives than piston equivalents", "body": "Fewer reciprocating parts; overhaul scope is contained and standardised." }
+      ],
+
+      "missionCapability": [
+        { "headline": "Five seats with real useful load", "body": "Pilot and four passengers with fuel and baggage at density altitudes a piston single can't clear." },
+        { "headline": "Lockable, external-access cargo hold", "body": "300 lb capacity behind the cabin — unique in this class; R66 is the only light single with a real bag hold." },
+        { "headline": "Single-pilot IFR capable (R66 IFR)", "body": "Not just IFR-legal — certified for single-pilot operation in IMC." },
+        { "headline": "Garmin G500H TXi flight display standard", "body": "Synthetic vision, integrated engine monitoring, touchscreen navigation." },
+        { "headline": "Cargo hook for external load", "body": "Construction, fire-fighting, utility lift missions supported from the factory." },
+        { "headline": "Factory Utility / Hi-Skid variant", "body": "Long skids, cargo hook, crew shuttle configuration available new." },
+        { "headline": "Turbine Marine variant for coastal and island work", "body": "Pop-out floats, corrosion-protected airframe." }
+      ],
+
+      "economics": [
+        { "headline": "Cheapest certified single-engine turbine on the new market", "body": "Roughly one-third the acquisition cost of a new H125." },
+        { "headline": "Operating cost roughly half an Airbus H125 / AStar", "body": "A third of an EC135 twin — on a similar owner-flyer mission profile." },
+        { "headline": "Robinson publishes annual Estimated Operating Cost sheets for R66", "body": "Same transparency as the piston line — variant-specific, updated yearly." },
+        { "headline": "Financeable through mainstream GA lenders", "body": "R66 has been in service long enough that lenders have loss data and standard terms." },
+        { "headline": "Strong resale for a light turbine", "body": "Installed base now deep enough that R66 used values are predictable." },
+        { "headline": "Insurance priced comparably to R44 hull", "body": "The simpler R66 systems and mature operating record keep turbine premiums realistic." }
+      ],
+
+      "performance": [
+        { "headline": "125 kt cruise speed", "body": "15–20 kt faster than an R44, 40 kt faster than an R22 — point-to-point flight starts making real sense." },
+        { "headline": "350 nm range typical", "body": "3-hour endurance; London to Geneva non-stop." },
+        { "headline": "14,000 ft service ceiling with real performance at altitude", "body": "Unlike a piston single, the R66 doesn't become an anchor at density altitude." },
+        { "headline": "Useful load ~1,200 lb", "body": "Pilot, four passengers, baggage, and a full fuel load — all in." },
+        { "headline": "Strong hot-and-high performance", "body": "Flat-rated turbine delivers rated power deep into summer density altitudes." }
+      ],
+
+      "systemsAndCockpit": [
+        { "headline": "Garmin G500H TXi PFD/MFD standard", "body": "Touchscreen primary and multifunction displays, synthetic vision." },
+        { "headline": "Digital engine monitoring and FADEC-like engine management", "body": "Engine limits enforced automatically; no pilot overspeed/overtemp risk in routine ops." },
+        { "headline": "Low switch count and clean panel by design", "body": "Robinson's simplicity philosophy preserved in the turbine." },
+        { "headline": "Moving-map, TAWS, ADS-B integrated from factory", "body": "Not retrofits — factory-installed and certified." }
+      ],
+
+      "ownershipAndSupport": [
+        { "headline": "Robinson factory support for every R66 worldwide", "body": "Torrance runs warranty, parts, engineer training and safety programmes directly." },
+        { "headline": "Rolls-Royce RR300 is a supported, maturing powerplant", "body": "Approved overhaul facilities in the US, Europe and Asia; engine parts in production." },
+        { "headline": "Robinson dealer network in 70+ countries", "body": "Same support footprint as the piston line — rare for a light turbine." },
+        { "headline": "Factory training in Torrance for pilots and engineers", "body": "Safety Course includes R66-specific syllabus; maintenance course covers turbine airframe." }
+      ],
+
+      "marketPosition": [
+        { "headline": "1,500+ built — largest installed base of its class", "body": "No other sub-$2M turbine single has this scale." },
+        { "headline": "Used market exists and is liquid", "body": "A 10-year-old R66 is no longer a gamble on resale." },
+        { "headline": "Flagship of the Robinson range", "body": "The visible top of the ladder for owners and operators who have graduated through R22 and R44." }
+      ],
+
+      "safety": [
+        { "headline": "Robinson Safety Course, R66-specific", "body": "Factory-delivered, insurance-recognised, includes turbine operation syllabus." },
+        { "headline": "Turbine engine reliability", "body": "Fewer reciprocating parts, no carb heat management, no shock cooling." },
+        { "headline": "Published component life limits and Safety Notices", "body": "Same open-data philosophy as R22/R44 — nothing hidden." },
+        { "headline": "Single-pilot IFR option", "body": "A capability most light turbines of this price cannot match." },
+        { "headline": "Mature type — 15+ years in service", "body": "Known failure modes, documented maintenance experience, type-rated engineers everywhere." }
+      ]
+    },
+
+    "comparisonPoints": [
+      {
+        "competitor": "Robinson R44 (piston)",
+        "points": [
+          "Turbine reliability — fewer moving parts, no shock-cooling, no mixture management.",
+          "Five seats vs four.",
+          "Real lockable cargo hold — not just foot-wells.",
+          "Jet-A globally available; AvGas 100LL increasingly scarce.",
+          "Single-pilot IFR option — unavailable on R44.",
+          "Hot/high performance the R44 cannot deliver at loaded weights."
+        ]
+      },
+      {
+        "competitor": "Bell 505 Jet Ranger X",
+        "points": [
+          "Lower acquisition cost.",
+          "Lower operating cost.",
+          "Significantly larger global support network.",
+          "Simpler systems, fewer failure modes.",
+          "Factory safety course vs no equivalent.",
+          "Deeper used market for resale."
+        ]
+      },
+      {
+        "competitor": "Airbus H125 / AS350 AStar",
+        "points": [
+          "Roughly one-third the acquisition cost.",
+          "Roughly half the operating cost.",
+          "Similar five-seat mission profile for owner-flyers.",
+          "Simpler maintenance — fewer specialist items.",
+          "Lower insurance premium."
+        ]
+      },
+      {
+        "competitor": "Airbus H130 / EC130",
+        "points": [
+          "Roughly one-quarter the acquisition cost.",
+          "Roughly a third the operating cost.",
+          "Far simpler systems — lower pilot workload.",
+          "Mission profile suits private/owner-flyer use equally well."
+        ]
+      },
+      {
+        "competitor": "MD500 series",
+        "points": [
+          "Newer type with factory support programme.",
+          "Parts in production at factory scale.",
+          "Single-pilot IFR option available (R66 IFR).",
+          "Larger global engineer network.",
+          "Lower operating cost."
+        ]
+      },
+      {
+        "competitor": "Bell 206 JetRanger (used)",
+        "points": [
+          "Newer airframe with a factory still producing it.",
+          "Modern glass cockpit standard.",
+          "Parts in production — no NOS pricing.",
+          "Factory support active, safety course running, dealer network current.",
+          "Better dispatch reliability (parts flow and warranty coverage)."
+        ]
+      },
+      {
+        "competitor": "Enstrom 480B Turbine",
+        "points": [
+          "Larger cabin and baggage capability.",
+          "Significantly larger global support and pilot network.",
+          "Robinson factory-delivered safety programme.",
+          "Stronger resale market.",
+          "Mature type with broader service history."
+        ]
+      }
+    ]
+  }
+}

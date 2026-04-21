@@ -79,6 +79,7 @@ import MobileSecondSection from './pages/MobileSecondSection';
 import SFHVariations from './pages/SFHVariations';
 import Wireframes from './pages/Wireframes';
 import AccordionVariations from './pages/AccordionVariations';
+import R66BenefitsVariations from './pages/R66BenefitsVariations';
 import Checkout from './pages/Checkout';
 import BookingConfirmed from './pages/BookingConfirmed';
 import LondonTourCheckout from './pages/LondonTourCheckout';
@@ -142,6 +143,7 @@ function App() {
         <Route path="/sfh-variations" element={<SFHVariations />} />
         <Route path="/wireframes" element={<Wireframes />} />
         <Route path="/accordion-variations" element={<AccordionVariations />} />
+        <Route path="/r66-benefits-variations" element={<R66BenefitsVariations />} />
         <Route path="/about-us-variations" element={<AboutUsVariations />} />
         <Route path="/flying-variations" element={<FlyingVariations />} />
         <Route path="/final-draft" element={<FinalDraft />} />

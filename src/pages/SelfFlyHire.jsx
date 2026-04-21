@@ -6,12 +6,14 @@
  * Colors: #faf9f6 (warm white), #1a1a1a (charcoal), #2563eb (accent)
  */
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { usePageImages } from '../hooks/usePageImages';
-import { usePageText } from '../hooks/usePageText';
+import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { useFaqs } from '../hooks/useFaqs';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 // Import styles
 import '../assets/css/main.css';
@@ -165,567 +167,667 @@ function SelfFlyHireHeader() {
   );
 }
 
-// Animated reveal wrapper
-function Reveal({ children, delay = 0, direction = 'up' }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
+// ─── Data ────────────────────────────────────────────────────────────────────
 
-  const variants = {
-    hidden: {
-      opacity: 0,
-      y: direction === 'up' ? 40 : direction === 'down' ? -40 : 0,
-      x: direction === 'left' ? 40 : direction === 'right' ? -40 : 0,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      x: 0,
-    },
-  };
-
-  return (
-    <motion.div
-      ref={ref}
-      initial="hidden"
-      animate={isInView ? 'visible' : 'hidden'}
-      variants={variants}
-      transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-// Animated counter
-function AnimatedNumber({ value, suffix = '' }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
-  useEffect(() => {
-    if (isInView) {
-      const num = parseInt(value.replace(/[^0-9]/g, ''));
-      const duration = 2000;
-      const steps = 60;
-      const increment = num / steps;
-      let current = 0;
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= num) {
-          setCount(num);
-          clearInterval(timer);
-        } else {
-          setCount(Math.floor(current));
-        }
-      }, duration / steps);
-      return () => clearInterval(timer);
-    }
-  }, [isInView, value]);
-
-  return <span ref={ref}>{count}{suffix}</span>;
-}
-
-// Fleet data
-const fleetData = [
+const FLEET = [
   {
-    model: 'R22',
-    image: '/assets/images/fleet/r22-g-ulze.png',
-    seats: 2,
-    speed: '96 kts',
-    range: '185 nm',
-    hourlyRate: '£275',
-    description: 'Perfect for solo adventures or training continuation. Light, nimble, and economical.',
-    features: ['Garmin GPS', 'Intercom System', 'Leather Seats']
+    id: 'r22',
+    model: 'Robinson R22',
+    label: '01',
+    tagline: 'The Perfect Solo Machine',
+    seats: '2',
+    cruise: '96 kts',
+    range: '190 nm',
+    rate: '£375 / hr',
+    description: "Ideal for pilots looking to stay current or explore solo. The R22 is the world's most popular training helicopter — nimble, economical, and endlessly rewarding to fly.",
+    image: '/assets/images/gallery/carousel/rotating1.jpg',
+    features: ['2 seats', 'Lycoming O-320 engine', 'Ideal for currency flying', 'Up to 3hrs endurance'],
   },
   {
-    model: 'R44 Raven II',
-    image: '/assets/images/fleet/r44-g-mxpi.png',
-    seats: 4,
-    speed: '113 kts',
+    id: 'r44',
+    model: 'Robinson R44',
+    label: '02',
+    tagline: 'The Versatile Workhorse',
+    seats: '4',
+    cruise: '109 kts',
     range: '300 nm',
-    hourlyRate: '£395',
-    description: 'Our most popular hire aircraft. Ideal for day trips, golf outings, and family flights.',
-    features: ['Air Conditioning', 'Garmin G500', 'Leather Interior', 'USB Charging']
+    rate: '£495 / hr',
+    description: "Four seats, strong cruise performance, and enough range to reach France. The R44 is the choice for pilot currency, leisure trips, and cross-country adventures.",
+    image: '/assets/images/facility/hq-0153.jpg',
+    features: ['4 seats', 'Lycoming IO-540 engine', 'UK & Europe capable', 'Up to 3hrs endurance'],
   },
   {
-    model: 'R66 Turbine',
-    image: '/assets/images/fleet/r66-g-tlmi.png',
-    seats: 5,
-    speed: '120 kts',
+    id: 'r66',
+    model: 'Robinson R66',
+    label: '03',
+    tagline: 'Turbine Performance Unleashed',
+    seats: '5',
+    cruise: '120 kts',
     range: '350 nm',
-    hourlyRate: '£595',
-    description: 'Turbine reliability with exceptional performance. Perfect for longer journeys and higher altitudes.',
-    features: ['Turbine Engine', 'Garmin G500H', 'Premium Interior', 'Enhanced Safety Features']
-  }
-];
-
-// Requirements data
-const requirements = [
-  {
-    icon: '01',
-    title: 'Valid PPL(H)',
-    desc: 'Current Private Pilot License for helicopters with valid medical certificate'
+    rate: '£595 / hr',
+    description: "Turbine reliability meets Robinson simplicity. The R66 is the pinnacle of piston-to-turbine transition — exceptional range, five seats, and a Garmin G500H avionics suite.",
+    image: '/assets/images/expeditions/north-pole.jpg',
+    features: ['5 seats', 'Rolls-Royce RR300 turbine', 'Garmin G500H avionics', 'Up to 5hrs endurance'],
   },
-  {
-    icon: '02',
-    title: 'Type Rating',
-    desc: 'Current type rating for the aircraft you wish to hire (R22, R44, or R66)'
-  },
-  {
-    icon: '03',
-    title: 'Currency Check',
-    desc: 'Recent flight experience or checkout flight with our instructors'
-  },
-  {
-    icon: '04',
-    title: 'Insurance',
-    desc: 'Comprehensive insurance included in all hire rates'
-  }
 ];
 
-// Benefits data
-const benefits = [
-  { stat: '30+', label: 'Aircraft Available', desc: 'The largest Robinson fleet in Europe' },
-  { stat: '7', label: 'Days a Week', desc: 'Flexible scheduling to suit your plans' },
-  { stat: '2,000+', label: 'Destinations', desc: 'Fly anywhere in the UK and Europe' }
+const DESTINATIONS = [
+  { name: 'Goodwood',        time: '25 min',   region: 'South England'   },
+  { name: 'Oxford',          time: '25 min',   region: 'South England'   },
+  { name: 'Cambridge',       time: '30 min',   region: 'East England'    },
+  { name: 'Brighton',        time: '30 min',   region: 'South England'   },
+  { name: 'Cotswolds',       time: '35 min',   region: 'South England'   },
+  { name: 'Silverstone',     time: '35 min',   region: 'Midlands'        },
+  { name: 'Channel Islands', time: '1h 15m',   region: 'Channel Islands' },
+  { name: 'Le Touquet',      time: '45 min',   region: 'France'          },
+  { name: 'Lake District',   time: '1h 50m',   region: 'North England'   },
+  { name: 'Paris',           time: '1h 30m',   region: 'France'          },
+  { name: 'Amsterdam',       time: '1h 45m',   region: 'Europe'          },
+  { name: 'Edinburgh',       time: '3h',        region: 'Scotland'        },
 ];
 
-// Destinations data
-const destinationsWithCms = [
-  // UK destinations
-  { name: 'Goodwood', type: 'UK', time: '25 mins', image: '/assets/images/gallery/carousel/rotating4.jpg' },
-  { name: 'Cotswolds', type: 'UK', time: '35 mins', image: '/assets/images/gallery/carousel/rotating5.jpg' },
-  { name: 'Cambridge', type: 'UK', time: '30 mins', image: '/assets/images/gallery/carousel/rotating2.jpg' },
-  { name: 'Oxford', type: 'UK', time: '25 mins', image: '/assets/images/gallery/carousel/rotating3.jpg' },
-  { name: 'Lake District', type: 'UK', time: '1h 50m', image: '/assets/images/gallery/carousel/rotating6.jpg' },
-  { name: 'Channel Islands', type: 'UK', time: '1h 15m', image: '/assets/images/gallery/carousel/rotating7.jpg' },
-  { name: 'St Andrews', type: 'UK', time: '2h 45m', image: '/assets/images/gallery/carousel/rotating8.jpg' },
-  { name: 'Brighton', type: 'UK', time: '30 mins', image: '/assets/images/gallery/carousel/rotating9.jpg' },
-  { name: 'Bath', type: 'UK', time: '45 mins', image: '/assets/images/gallery/carousel/rotating10.jpg' },
-  { name: 'Cardiff', type: 'UK', time: '1h 10m', image: '/assets/images/gallery/carousel/rotating2.jpg' },
-  { name: 'Edinburgh', type: 'UK', time: '3h', image: '/assets/images/gallery/carousel/rotating3.jpg' },
-  { name: 'Silverstone', type: 'UK', time: '35 mins', image: '/assets/images/gallery/carousel/rotating4.jpg' },
-  // Europe destinations
-  { name: 'Le Touquet', type: 'France', time: '45 mins', image: '/assets/images/gallery/carousel/rotating5.jpg' },
-  { name: 'Paris', type: 'France', time: '1h 30m', image: '/assets/images/gallery/carousel/rotating6.jpg' },
-  { name: 'Deauville', type: 'France', time: '1h', image: '/assets/images/gallery/carousel/rotating7.jpg' },
-  { name: 'Chantilly', type: 'France', time: '1h 15m', image: '/assets/images/gallery/carousel/rotating8.jpg' },
-  { name: 'Reims', type: 'France', time: '1h 25m', image: '/assets/images/gallery/carousel/rotating9.jpg' },
-  { name: 'Bruges', type: 'Europe', time: '1h 10m', image: '/assets/images/gallery/carousel/rotating10.jpg' },
-  { name: 'Amsterdam', type: 'Europe', time: '1h 45m', image: '/assets/images/gallery/carousel/rotating2.jpg' },
-  { name: 'Brussels', type: 'Europe', time: '1h 20m', image: '/assets/images/gallery/carousel/rotating3.jpg' },
+const REQUIREMENTS = [
+  { num: '01', title: 'Valid PPL(H)',       body: 'A current Private Pilot Licence (Helicopters) with a valid Class 2 medical certificate.' },
+  { num: '02', title: 'Current Type Rating', body: 'A current type rating for the aircraft you wish to fly — R22, R44 or R66.' },
+  { num: '03', title: 'Recent Currency',    body: "Minimum recent experience requirements met. If you're not current, we offer a checkout flight with one of our instructors." },
+  { num: '04', title: 'Insurance Included', body: 'Third-party liability insurance is included in your hire rate. No additional policy required.' },
 ];
 
-function SelfFlyHire() {
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+
+export default function SelfFlyHire() {
   const pageImages = usePageImages('sfh');
-  const { t } = usePageText('sfh');
-
-  const sfhSectionFor = {
-    'R22':          'sfh-aircraft-r22',
-    'R44 Raven II': 'sfh-aircraft-r44',
-    'R66 Turbine':  'sfh-aircraft-r66',
-  };
-
+  useCmsHighlight();
   const heroUrl  = pageImages['sfh-hero']?.[0]?.url  ?? '/assets/images/gallery/carousel/rotating1.jpg';
-  const introUrl = pageImages['sfh-intro']?.[0]?.url ?? '/assets/images/facility/fleet-lineup.jpg';
-  const ctaUrl   = pageImages['sfh-cta']?.[0]?.url   ?? '/assets/images/gallery/carousel/rotating8.jpg';
+  const introUrl = pageImages['sfh-intro']?.[0]?.url ?? '/assets/images/facility/hq-0153.jpg';
 
-  const fleetWithCms = fleetData.map((aircraft, i) => ({
-    ...aircraft,
-    image: pageImages['sfh-fleet']?.[i]?.url ?? aircraft.image,
-  }));
-
-  const destImgs = pageImages['sfh-destinations'] ?? [];
-  const destinationsWithCms = destinationsWithCms.map((dest, i) => ({
-    ...dest,
-    image: destImgs.length > 0 ? (destImgs[i % destImgs.length]?.url ?? dest.image) : dest.image,
-  }));
-  const heroRef = useRef(null);
+  const [activeFleet, setActiveFleet] = useState(0);
+  const [aircraftDropdownOpen, setAircraftDropdownOpen] = useState(false);
+  const aircraftDropdownRef = useRef(null);
   const [openFaq, setOpenFaq] = useState(null);
-  const [activeFleet, setActiveFleet] = useState(1);
-  const [destFilter, setDestFilter] = useState('All');
-  const [visibleDests, setVisibleDests] = useState(6);
-  const [destsExpanded, setDestsExpanded] = useState(false);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ['start start', 'end start'],
-  });
+  const [destPage, setDestPage] = useState(0);
+  const destGridRef = useRef(null);
+  const [pricingNotesPage, setPricingNotesPage] = useState(0);
+  const pricingNotesGridRef = useRef(null);
+  const fleetImgRef = useRef(null);
+  const fleetTopBodyRef = useRef(null);
+  const fleetSpecsRef = useRef(null);
+  const DEST_PAGES = Math.ceil(DESTINATIONS.length / 4); // 2 rows × 2 cols per view = 4 cards per page
+  const { faqs } = useFaqs('sfh', { visibleOnly: true });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', aircraft: '', dates: '', message: '' });
+  const [formStatus, setFormStatus] = useState(null);
+  const [sfhPrices, setSfhPrices] = useState({});
 
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
-  const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
+  useEffect(() => { window.scrollTo(0, 0); }, []);
 
-  // Scroll to top on mount
   useEffect(() => {
-    window.scrollTo(0, 0);
+    const handleClickOutside = (e) => {
+      if (aircraftDropdownRef.current && !aircraftDropdownRef.current.contains(e.target)) {
+        setAircraftDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const { faqs } = useFaqs('sfh', { visibleOnly: true });
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, 'pricing'), (snap) => {
+      const map = {};
+      snap.docs.forEach((d) => { map[d.id] = d.data(); });
+      setSfhPrices(map);
+    });
+    return unsub;
+  }, []);
+
+  const updateSpecsPadding = useCallback(() => {
+    const img = fleetImgRef.current;
+    const topBody = fleetTopBodyRef.current;
+    const specsEl = fleetSpecsRef.current;
+    if (!img || !topBody || !specsEl) return;
+    // Reset first so we measure natural content height without prior padding
+    specsEl.style.paddingBottom = '0px';
+    const imgH = img.offsetHeight;
+    if (!imgH) return; // image not yet loaded
+    const topBodyH = topBody.offsetHeight;
+    const specsNaturalH = specsEl.offsetHeight;
+    const raw = imgH - topBodyH - specsNaturalH;
+    const padding = window.innerWidth > 1024
+      ? Math.max(24, raw)
+      : Math.min(14, Math.max(0, raw));
+    specsEl.style.paddingBottom = padding + 'px';
+  }, []);
+
+  useEffect(() => {
+    updateSpecsPadding();
+    window.addEventListener('resize', updateSpecsPadding);
+    return () => window.removeEventListener('resize', updateSpecsPadding);
+  }, [activeFleet, updateSpecsPadding]);
+
+  function getRate(aircraftId) {
+    const doc = sfhPrices[`sfh_${aircraftId}_wet`];
+    if (!doc?.price) return null;
+    return `£${Math.round(doc.price / 100).toLocaleString('en-GB')} / hr`;
+  }
+
+  const setField = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setFormStatus('sending');
+    const messageParts = [];
+    if (form.aircraft) messageParts.push(`Aircraft: ${form.aircraft}`);
+    if (form.dates) messageParts.push(`Preferred dates: ${form.dates}`);
+    if (form.message) messageParts.push(form.message);
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          subject: 'Self-Fly Hire Enquiry',
+          message: messageParts.join('\n'),
+          source: 'Self-Fly Hire',
+        }),
+      });
+      setFormStatus(res.ok ? 'success' : 'error');
+    } catch {
+      setFormStatus('error');
+    }
+  }
+
+  const activeAircraft = FLEET[activeFleet];
 
   return (
-    <div className="sfh">
+    <div className="sfh2-page">
       <SelfFlyHireHeader />
 
-      {/* ========== HERO SECTION ========== */}
-      <section ref={heroRef} className="sfh-hero">
-        <motion.div
-          className="sfh-hero__bg"
-          initial={{ scale: 1.1, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.5 }}
-        >
-          <img src={heroUrl} alt="" />
-        </motion.div>
-        <div className="sfh-hero__overlay" />
-
-        <motion.div
-          className="sfh-hero__content"
-          style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
-        >
-          <div className="sfh-hero__left">
-            <motion.span
-              className="sfh-hero__label"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              {t('sfh-hero', 'pre_label')}
-            </motion.span>
-
-            <div className="sfh-hero__headline">
-              <motion.span
-                className="sfh-hero__word sfh-hero__word--1"
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              >
-                {t('sfh-hero', 'headline_1')}
-              </motion.span>
-              <motion.span
-                className="sfh-hero__word sfh-hero__word--2"
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              >
-                {t('sfh-hero', 'headline_2')}
-              </motion.span>
+      {/* ── Hero ───────────────────────────────────────────────── */}
+      <section className="sfh2-hero" data-cms-section="sfh-hero">
+        <div className="sfh2-hero__bg">
+          <img src={heroUrl} alt="HQ Aviation self-fly hire" />
+        </div>
+        <div className="sfh2-hero__overlay" />
+        <div className="sfh2-hero__content">
+          <motion.div
+            className="sfh2-hero__inner"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <span className="sfh2-hero__pre">Self-Fly Hire</span>
+            <h1 className="sfh2-hero__headline">
+              Your Sky.<br />Your Rules.
+            </h1>
+            <p className="sfh2-hero__sub">
+              Fly from Denham Aerodrome. One of Europe's largest Robinson fleets,
+              available to licensed pilots, on your schedule.
+            </p>
+            <div className="sfh2-hero__ctas">
+              <a href="#enquire" className="sfh2-btn sfh2-btn--primary">Enquire About Hire</a>
+              <a href="#fleet"   className="sfh2-btn sfh2-btn--outline">View Fleet</a>
             </div>
-
-            <motion.div
-              className="sfh-hero__divider-line"
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            />
-
-            <motion.p
-              className="sfh-hero__sub"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1 }}
-            >
-              {t('sfh-hero', 'subtitle')}
-            </motion.p>
-
-            <motion.div
-              className="sfh-hero__stats"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2 }}
-            >
-              <div className="sfh-hero__stat">
-                <span className="sfh-hero__stat-value">{t('sfh-hero', 'stat_1_value')}</span>
-                <span className="sfh-hero__stat-label">{t('sfh-hero', 'stat_1_label')}</span>
-              </div>
-              <div className="sfh-hero__stat-divider" />
-              <div className="sfh-hero__stat">
-                <span className="sfh-hero__stat-value">{t('sfh-hero', 'stat_2_value')}</span>
-                <span className="sfh-hero__stat-label">{t('sfh-hero', 'stat_2_label')}</span>
-              </div>
-              <div className="sfh-hero__stat-divider" />
-              <div className="sfh-hero__stat">
-                <span className="sfh-hero__stat-value">{t('sfh-hero', 'stat_3_value')}</span>
-                <span className="sfh-hero__stat-label">{t('sfh-hero', 'stat_3_label')}</span>
-              </div>
-            </motion.div>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* ========== INTRO SECTION ========== */}
-      <section className="sfh-intro">
-        <div className="sfh-intro__container">
-          <div className="sfh-intro__image">
-            <img
-              src={introUrl}
-              alt="HQ Aviation helicopter fleet lined up"
-            />
-          </div>
-
-          <div className="sfh-intro__right">
-            <Reveal>
-              <div className="sfh-intro__header">
-                <span className="sfh-pre-text">{t('sfh-intro', 'pre_label')}</span>
-                <h2>{t('sfh-intro', 'heading')}</h2>
-                <p>{t('sfh-intro', 'description')}</p>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.2}>
-              <div className="sfh-process__steps sfh-process__steps--horizontal" style={{ marginTop: '1.5rem' }}>
-                <div className="sfh-process__step">
-                  <div className="sfh-process__step-num">01</div>
-                  <div className="sfh-process__step-content">
-                    <h4>Call Operations</h4>
-                    <p className="sfh-process__desc">Confirm Booking</p>
-                    <span className="sfh-process__time">1-2 mins</span>
-                  </div>
-                </div>
-                <div className="sfh-process__arrow">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                  </svg>
-                </div>
-                <div className="sfh-process__step sfh-process__step--fly">
-                  <div className="sfh-process__step-num">02</div>
-                  <div className="sfh-process__step-content">
-                    <h4>Fly</h4>
-                    <p className="sfh-process__desc">Arrive at your aircraft already on the pad ready for your imminent departure.</p>
-                  </div>
-                </div>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.3}>
-              <div className="sfh-intro__benefits">
-                {benefits.map((benefit, i) => (
-                  <div key={i} className="sfh-intro__benefit">
-                    <span className="sfh-intro__benefit-stat"><AnimatedNumber value={benefit.stat} /></span>
-                    <span className="sfh-intro__benefit-label">{benefit.label}</span>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-          </div>
+          </motion.div>
+        </div>
+        <div className="sfh2-hero__stats">
+          <div className="sfh2-hero__stat">7 Days a Week</div>
+          <div className="sfh2-hero__stat-divider" />
+          <div className="sfh2-hero__stat">2,000+ Destinations</div>
         </div>
       </section>
 
-      {/* ========== FLEET SECTION ========== */}
-      <section className="sfh-fleet">
-        <div className="sfh-fleet__container">
-          <Reveal>
-            <div className="sfh-section-header">
-              <span className="sfh-pre-text">Our Fleet</span>
-              <h2>
-                <span className="sfh-text--dark">Choose</span>{' '}
-                <span className="sfh-text--mid">Your</span>{' '}
-                <span className="sfh-text--light">Aircraft</span>
-              </h2>
-            </div>
-          </Reveal>
+      {/* ── Intro ──────────────────────────────────────────────── */}
+      <section className="sfh2-intro" data-cms-section="sfh-intro">
+        <div className="sfh2-intro__inner">
+          <motion.div
+            className="sfh2-intro__image-wrap"
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <img src={introUrl} alt="HQ Aviation fleet at Denham" className="sfh2-intro__image" />
+          </motion.div>
+          <motion.div
+            className="sfh2-intro__text"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <span className="sfh2-pre-label">What Is Self-Fly Hire</span>
+            <h2 className="sfh2-section-heading">Fly on Your Terms</h2>
+            <p className="sfh2-body-text">
+              Self fly hire puts you in complete command. If you hold a valid PPL(H) and a
+              current type rating, you can take one of our immaculately maintained Robinson
+              helicopters and go wherever you choose: no instructor, no itinerary, no compromise.
+            </p>
+            <p className="sfh2-body-text">
+              Based at Denham Aerodrome in Buckinghamshire, our fleet gives you direct access
+              to hundreds of destinations across the UK and Europe. Weekend escapes, day trips,
+              or simply keeping your licence current. The aircraft is yours.
+            </p>
+          </motion.div>
+        </div>
+      </section>
 
-          <div className="sfh-fleet__selector">
-            {fleetWithCms.map((aircraft, i) => (
+      {/* ── Fleet ──────────────────────────────────────────────── */}
+      <section className="sfh2-fleet" id="fleet" data-cms-section="sfh-fleet">
+        <div className="sfh2-fleet__inner">
+          <motion.div
+            className="sfh2-fleet__header"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <span className="sfh2-pre-label">Our Aircraft</span>
+            <h2 className="sfh2-section-heading">Choose Your Helicopter</h2>
+          </motion.div>
+
+          <div className="sfh2-fleet__tabs">
+            {FLEET.map((aircraft, i) => (
               <button
-                key={i}
-                className={`sfh-fleet__tab ${activeFleet === i ? 'sfh-fleet__tab--active' : ''}`}
+                key={aircraft.id}
+                className={`sfh2-fleet__tab ${activeFleet === i ? 'active' : ''}`}
                 onClick={() => setActiveFleet(i)}
               >
-                <span className="sfh-fleet__tab-num">{String(i + 1).padStart(2, '0')}</span>
-                <span className="sfh-fleet__tab-model">{t(sfhSectionFor[aircraft.model], 'name')}</span>
+                <span className="sfh2-fleet__tab-num">{aircraft.label}</span>
+                <span className="sfh2-fleet__tab-name">{aircraft.model}</span>
               </button>
             ))}
           </div>
 
-          <Reveal delay={0.1}>
-            <div className="sfh-fleet__card">
-              <div className="sfh-fleet__image">
-                <img src={fleetWithCms[activeFleet].image} alt={t(sfhSectionFor[fleetWithCms[activeFleet].model], 'name')} />
-                <div className="sfh-fleet__image-overlay">
-                  <span className="sfh-fleet__model">{t(sfhSectionFor[fleetWithCms[activeFleet].model], 'name')}</span>
-                </div>
-              </div>
-              <div className="sfh-fleet__info">
-                <div className="sfh-fleet__specs">
-                  <div className="sfh-fleet__spec">
-                    <span className="sfh-fleet__spec-value">{t(sfhSectionFor[fleetWithCms[activeFleet].model], 'seats')}</span>
-                    <span className="sfh-fleet__spec-label">Seats</span>
-                  </div>
-                  <div className="sfh-fleet__spec-divider" />
-                  <div className="sfh-fleet__spec">
-                    <span className="sfh-fleet__spec-value">{t(sfhSectionFor[fleetWithCms[activeFleet].model], 'speed')}</span>
-                    <span className="sfh-fleet__spec-label">Cruise Speed</span>
-                  </div>
-                  <div className="sfh-fleet__spec-divider" />
-                  <div className="sfh-fleet__spec">
-                    <span className="sfh-fleet__spec-value">{t(sfhSectionFor[fleetWithCms[activeFleet].model], 'range')}</span>
-                    <span className="sfh-fleet__spec-label">Range</span>
-                  </div>
-                </div>
-                <p className="sfh-fleet__desc">{t(sfhSectionFor[fleetWithCms[activeFleet].model], 'description')}</p>
-                <div className="sfh-fleet__features">
-                  {['feature_1', 'feature_2', 'feature_3', 'feature_4'].map((fKey) => {
-                    const val = t(sfhSectionFor[fleetWithCms[activeFleet].model], fKey);
-                    return val ? <span key={fKey} className="sfh-fleet__feature">{val}</span> : null;
-                  })}
-                </div>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-
-        <div className="sfh-destinations__container">
-          <Reveal>
-            <div className="sfh-destinations__collapsible-card">
-              <button
-                className="sfh-destinations__toggle"
-                onClick={() => setDestsExpanded(!destsExpanded)}
-              >
-                <div>
-                  <span className="sfh-pre-text" style={{ marginBottom: 0 }}>{t('sfh-destinations', 'pre_label')}</span>
-                  <h2 style={{ margin: '0.25rem 0 0' }}>{t('sfh-destinations', 'heading')}</h2>
-                </div>
-                <span className={`sfh-destinations__toggle-icon ${destsExpanded ? 'sfh-destinations__toggle-icon--open' : ''}`}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M6 9l6 6 6-6"/>
-                  </svg>
-                </span>
-              </button>
-
-              <div className={`sfh-destinations__collapse ${destsExpanded ? 'sfh-destinations__collapse--open' : ''}`}>
-                <p className="sfh-section-desc" style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                  {t('sfh-destinations', 'description')}
-                </p>
-
-          <Reveal delay={0.1}>
-            <div className="sfh-destinations__filters">
-              {['All', 'UK', 'Europe', 'France'].map((filter) => (
-                <button
-                  key={filter}
-                  className={`sfh-destinations__filter ${destFilter === filter ? 'sfh-destinations__filter--active' : ''}`}
-                  onClick={() => { setDestFilter(filter); setVisibleDests(6); }}
-                >
-                  {filter}
-                </button>
-              ))}
-            </div>
-          </Reveal>
-
-          <div className="sfh-destinations__grid">
-            {destinationsWithCms
-              .filter(d => destFilter === 'All' || d.type === destFilter || (destFilter === 'Europe' && (d.type === 'Europe' || d.type === 'France')))
-              .slice(0, visibleDests)
-              .map((dest, i) => (
-                <Reveal key={dest.name} delay={i * 0.05}>
-                  <div className="sfh-destinations__card">
-                    <div className="sfh-destinations__image">
-                      <img src={dest.image} alt={dest.name} />
-                      <div className="sfh-destinations__overlay">
-                        <span className="sfh-destinations__time">{dest.time}</span>
-                      </div>
-                    </div>
-                    <div className="sfh-destinations__info">
-                      <span className="sfh-destinations__type">{dest.type}</span>
-                      <h4>{dest.name}</h4>
-                    </div>
-                  </div>
-                </Reveal>
-              ))}
+          <div className="sfh2-fleet__tab-nav sfh2-fleet__tab-nav--desktop">
+            <button
+              className="sfh2-fleet__tab-chevron"
+              onClick={() => setActiveFleet((activeFleet - 1 + FLEET.length) % FLEET.length)}
+              aria-label="Previous aircraft"
+            >
+              <i className="fas fa-chevron-left"></i>
+            </button>
+            <span className="sfh2-fleet__tab-current">
+              <span className="sfh2-fleet__tab-nav-num">{FLEET[activeFleet].label}</span>
+              {FLEET[activeFleet].model}
+            </span>
+            <button
+              className="sfh2-fleet__tab-chevron"
+              onClick={() => setActiveFleet((activeFleet + 1) % FLEET.length)}
+              aria-label="Next aircraft"
+            >
+              <i className="fas fa-chevron-right"></i>
+            </button>
           </div>
 
-          {visibleDests < destinationsWithCms.filter(d => destFilter === 'All' || d.type === destFilter || (destFilter === 'Europe' && (d.type === 'Europe' || d.type === 'France'))).length && (
-            <Reveal delay={0.2}>
-              <div className="sfh-destinations__load-more">
-                <button
-                  className="sfh-destinations__chevron"
-                  onClick={() => setVisibleDests(prev => prev + 6)}
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M6 9l6 6 6-6"/>
-                  </svg>
-                  <span>Load More</span>
-                </button>
+          <div className="sfh2-fleet__card">
+          <motion.div
+            key={activeAircraft.id}
+            className="sfh2-fleet__panel"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+          >
+            <div className="sfh2-fleet__panel-image">
+              <img ref={fleetImgRef} src={pageImages['sfh-fleet']?.[activeFleet]?.url || activeAircraft.image} alt={activeAircraft.model} onLoad={updateSpecsPadding} />
+            </div>
+            <div ref={fleetTopBodyRef} className="sfh2-fleet__panel-top-body">
+              <div className="sfh2-fleet__panel-top">
+                <span className="sfh2-fleet__panel-label">{activeAircraft.label}</span>
+                <h3 className="sfh2-fleet__panel-model">{activeAircraft.model}</h3>
+                <div className="sfh2-fleet__tab-nav sfh2-fleet__tab-nav--mobile">
+                  <button
+                    className="sfh2-fleet__tab-chevron"
+                    onClick={() => setActiveFleet((activeFleet - 1 + FLEET.length) % FLEET.length)}
+                    aria-label="Previous aircraft"
+                  >
+                    <i className="fas fa-chevron-left"></i>
+                  </button>
+                  <span className="sfh2-fleet__tab-current">
+                    <span className="sfh2-fleet__tab-nav-num">{FLEET[activeFleet].label}</span>
+                    {FLEET[activeFleet].model}
+                  </span>
+                  <button
+                    className="sfh2-fleet__tab-chevron"
+                    onClick={() => setActiveFleet((activeFleet + 1) % FLEET.length)}
+                    aria-label="Next aircraft"
+                  >
+                    <i className="fas fa-chevron-right"></i>
+                  </button>
+                </div>
+                <p className="sfh2-fleet__panel-tagline">{activeAircraft.tagline}</p>
+                <span className="sfh2-fleet__panel-rate">
+                  {getRate(activeAircraft.id) ?? activeAircraft.rate}
+                  <span className="sfh2-fleet__panel-rate-vat"> exc. VAT</span>
+                </span>
               </div>
-            </Reveal>
-          )}
+              <ul className="sfh2-fleet__features">
+                {activeAircraft.features.map((f) => (
+                  <li key={f} className="sfh2-fleet__feature">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div ref={fleetSpecsRef} className="sfh2-fleet__panel-specs-area">
+              <div className="sfh2-fleet__specs">
+                <div className="sfh2-fleet__spec">
+                  <span className="sfh2-fleet__spec-label">Seats</span>
+                  <span className="sfh2-fleet__spec-value">{activeAircraft.seats}</span>
+                </div>
+                <div className="sfh2-fleet__spec">
+                  <span className="sfh2-fleet__spec-label">Cruise</span>
+                  <span className="sfh2-fleet__spec-value">{activeAircraft.cruise}</span>
+                </div>
+                <div className="sfh2-fleet__spec">
+                  <span className="sfh2-fleet__spec-label">Range</span>
+                  <span className="sfh2-fleet__spec-value">{activeAircraft.range}</span>
+                </div>
               </div>
             </div>
-          </Reveal>
+          </motion.div>
+          <div className="sfh2-fleet__panel-sub">
+            <p className="sfh2-fleet__panel-desc">{activeAircraft.description}</p>
+            <a
+              href="#enquire"
+              className="sfh2-btn sfh2-btn--fleet-cta"
+              onClick={() => setForm(f => ({ ...f, aircraft: activeAircraft.id.toUpperCase() }))}
+            >Enquire About This Aircraft</a>
+          </div>
+          </div>
+          <p className="sfh2-fleet__footnote">* Other aircraft available upon request</p>
         </div>
       </section>
 
-      {/* Hire Rates section moved to /components (ComponentShowcase) as SelfFlyHireRates */}
-
-      {/* Booking process moved into sfh-intro__right */}
-
-      {/* Destination Partners section moved to /components (ComponentShowcase) as DestinationPartners */}
-      {/* Safety/Maintained section removed */}
-
-      {/* Gallery section removed */}
-
-      {/* Additional Services section moved to /components (ComponentShowcase) */}
-
-
-      {/* ========== FAQ & LOCATION SECTION ========== */}
-      <section className="sfh-faq-location" data-cms-section="faqs-sfh">
-        <div className="sfh-faq-location__container">
-          <div className="sfh-faq-location__map">
-            <Reveal>
-              <div className="sfh-section-header">
-                <span className="sfh-pre-text">Visit Us</span>
-                <h2>
-                  <span className="sfh-text--dark">Find Us</span>
-                </h2>
-              </div>
-            </Reveal>
-            <div className="sfh-faq-location__map-frame">
-              <img
-                src="/assets/images/maps/denham-map.png"
-                alt="Denham Aerodrome location map"
-                className="sfh-faq-location__map-image"
-              />
-              <div className="sfh-faq-location__map-info">
-                <h4>Denham Aerodrome</h4>
-                <p>Tilehouse Lane, Denham, UB9 5DF</p>
-                <div className="sfh-faq-location__actions">
-                  <span className="sfh-faq-location__icao">EGLD</span>
-                  <a
-                    href="https://www.google.com/maps/dir//Denham+Aerodrome"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="sfh-btn sfh-btn--outline sfh-btn--small"
-                  >
-                    Get Directions
-                  </a>
-                </div>
-              </div>
+      {/* ── Pricing Notes ──────────────────────────────────────── */}
+      <section className="sfh2-pricing-notes">
+        <div className="sfh2-pricing-notes__inner">
+          <div
+            className="sfh2-pricing-notes__grid"
+            ref={pricingNotesGridRef}
+            onScroll={() => {
+              const el = pricingNotesGridRef.current;
+              if (!el) return;
+              setPricingNotesPage(Math.round(el.scrollLeft / el.clientWidth));
+            }}
+          >
+            <div className="sfh2-pricing-notes__card">
+              <p><strong>Happy Hour Flying:</strong> Off-peak rates for flexible pilots who can fly at shorter notice.</p>
+            </div>
+            <div className="sfh2-pricing-notes__card">
+              <p><strong>Mission Rate Flying:</strong> When fleet aircraft need repositioning or ferrying, qualified pilots can join at mission rates.</p>
+            </div>
+            <div className="sfh2-pricing-notes__card">
+              <p><strong>Bulk Hour Discounts:</strong> Discounted training rates are available when hours are purchased in larger blocks.</p>
             </div>
           </div>
-          <div className="sfh-faq-location__faq">
-            <Reveal>
-              <div className="sfh-section-header">
-                <span className="sfh-pre-text">{t('sfh-faq', 'pre_label')}</span>
-                <h2>
-                  <span className="sfh-text--dark">{t('sfh-faq', 'heading')}</span>
-                </h2>
-              </div>
-            </Reveal>
+          <div className="sfh2-pricing-notes__dots">
+            {[0, 1, 2].map((i) => (
+              <span
+                key={i}
+                className={`sfh2-pricing-notes__dot${pricingNotesPage === i ? ' sfh2-pricing-notes__dot--active' : ''}`}
+                onClick={() => {
+                  pricingNotesGridRef.current?.scrollTo({ left: i * pricingNotesGridRef.current.clientWidth, behavior: 'smooth' });
+                }}
+              />
+            ))}
+          </div>
+          <p className="sfh2-pricing-notes__footnote">* Other aircraft available upon request</p>
+        </div>
+      </section>
 
-            <div className="sfh-faq__list">
-              {faqs.map((faq, i) => (
+      {/* ── Destinations ───────────────────────────────────────── */}
+      <section className="sfh2-destinations">
+        <div className="sfh2-destinations__inner">
+          <motion.div
+            className="sfh2-destinations__header"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <span className="sfh2-pre-label">Where You Can Go</span>
+            <h2 className="sfh2-section-heading">Where Will You Go?</h2>
+            <p className="sfh2-destinations__intro">
+              The UK and beyond are on your doorstep. Below is just a sample of where our
+              pilots fly. If it has a landing site, you can get there.
+            </p>
+          </motion.div>
+
+          <div
+            className="sfh2-destinations__grid"
+            ref={destGridRef}
+            onScroll={() => {
+              const el = destGridRef.current;
+              if (!el) return;
+              setDestPage(Math.round(el.scrollLeft / el.clientWidth));
+            }}
+          >
+            {DESTINATIONS.map((dest, i) => (
+              <motion.div
+                key={dest.name}
+                className="sfh2-destinations__card"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.05 }}
+                transition={{ duration: 0.3, delay: (i % 4) * 0.05, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div className="sfh2-destinations__card-region">{dest.region}</div>
+                <div className="sfh2-destinations__card-name">{dest.name}</div>
+                <div className="sfh2-destinations__card-time">{dest.time}</div>
+              </motion.div>
+            ))}
+          </div>
+          <div className="sfh2-destinations__dots">
+            {Array.from({ length: DEST_PAGES }).map((_, i) => (
+              <span
+                key={i}
+                className={`sfh2-destinations__dot${destPage === i ? ' sfh2-destinations__dot--active' : ''}`}
+                onClick={() => {
+                  destGridRef.current?.scrollTo({ left: i * destGridRef.current.clientWidth, behavior: 'smooth' });
+                }}
+              />
+            ))}
+          </div>
+
+          <p className="sfh2-destinations__footer">
+            Plus thousands more — you pick the destination.
+          </p>
+        </div>
+      </section>
+
+      {/* ── Enquiry Form ───────────────────────────────────────── */}
+      <section className="sfh2-enquiry" id="enquire">
+        <div className="sfh2-enquiry__inner">
+          <motion.div
+            className="sfh2-enquiry__heading"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <span className="sfh2-pre-label">Get in Touch</span>
+            <h2 className="sfh2-section-heading">Enquire About Hire</h2>
+            <p className="sfh2-enquiry__sub">
+              Tell us what you have in mind and we'll come back to you within one business day.
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="sfh2-enquiry__card"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="sfh2-enquiry__card-header">
+              <span className="sfh2-enquiry__card-label">Hire Enquiry</span>
+              <span className="sfh2-enquiry__card-note sfh2-enquiry__card-note--desktop">We respond within one business day</span>
+              <span className="sfh2-enquiry__card-note sfh2-enquiry__card-note--mobile">Within one business day</span>
+            </div>
+            <div className="sfh2-enquiry__card-body">
+            {formStatus === 'success' ? (
+              <div className="sfh2-enquiry__success">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                <p>Enquiry received — we'll be back in touch within one business day.</p>
+              </div>
+            ) : (
+              <form className="sfh2-enquiry__form" onSubmit={handleSubmit} noValidate>
+                <div className="sfh2-enquiry__row">
+                  <div className="sfh2-enquiry__field">
+                    <label htmlFor="sfh-name">Full Name</label>
+                    <input
+                      id="sfh-name"
+                      type="text"
+                      value={form.name}
+                      onChange={setField('name')}
+                      required
+                      placeholder="Your full name"
+                      autoComplete="name"
+                    />
+                  </div>
+                  <div className="sfh2-enquiry__field">
+                    <label htmlFor="sfh-email">Email Address</label>
+                    <input
+                      id="sfh-email"
+                      type="email"
+                      value={form.email}
+                      onChange={setField('email')}
+                      required
+                      placeholder="your@email.com"
+                      autoComplete="email"
+                    />
+                  </div>
+                </div>
+                <div className="sfh2-enquiry__row">
+                  <div className="sfh2-enquiry__field">
+                    <label htmlFor="sfh-phone">
+                      Phone <span className="sfh2-enquiry__optional">(optional)</span>
+                    </label>
+                    <input
+                      id="sfh-phone"
+                      type="tel"
+                      value={form.phone}
+                      onChange={setField('phone')}
+                      placeholder="+44 7700 000 000"
+                      autoComplete="tel"
+                    />
+                  </div>
+                  <div className="sfh2-enquiry__field" ref={aircraftDropdownRef}>
+                    <label>Aircraft Preference</label>
+                    <div className={`sfh2-dropdown${aircraftDropdownOpen ? ' sfh2-dropdown--open' : ''}`}>
+                      <button
+                        type="button"
+                        className="sfh2-dropdown__trigger"
+                        onClick={() => setAircraftDropdownOpen(o => !o)}
+                      >
+                        <span>{form.aircraft ? { R22: 'Robinson R22', R44: 'Robinson R44', R66: 'Robinson R66' }[form.aircraft] : 'No preference'}</span>
+                        <svg className="sfh2-dropdown__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                      </button>
+                      {aircraftDropdownOpen && (
+                        <ul className="sfh2-dropdown__menu">
+                          {[
+                            { value: '', label: 'No preference' },
+                            { value: 'R22', label: 'Robinson R22' },
+                            { value: 'R44', label: 'Robinson R44' },
+                            { value: 'R66', label: 'Robinson R66' },
+                          ].map(opt => (
+                            <li
+                              key={opt.value}
+                              className={`sfh2-dropdown__option${form.aircraft === opt.value ? ' sfh2-dropdown__option--active' : ''}`}
+                              onClick={() => { setField('aircraft')({ target: { value: opt.value } }); setAircraftDropdownOpen(false); }}
+                            >
+                              {opt.label}
+                              {form.aircraft === opt.value && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="sfh2-enquiry__field">
+                  <label htmlFor="sfh-dates">
+                    Preferred Dates <span className="sfh2-enquiry__optional">(optional)</span>
+                  </label>
+                  <input
+                    id="sfh-dates"
+                    type="text"
+                    value={form.dates}
+                    onChange={setField('dates')}
+                    placeholder="e.g. 3–5 May, flexible, ASAP"
+                  />
+                </div>
+                <div className="sfh2-enquiry__field">
+                  <label htmlFor="sfh-message">Message</label>
+                  <textarea
+                    id="sfh-message"
+                    value={form.message}
+                    onChange={setField('message')}
+                    rows={5}
+                    placeholder="Where are you hoping to fly? Anything else we should know…"
+                  />
+                </div>
+                {formStatus === 'error' && (
+                  <p className="sfh2-enquiry__error">
+                    Something went wrong — please try again or email{' '}
+                    <a href="mailto:hire@hqaviation.com">hire@hqaviation.com</a>
+                  </p>
+                )}
+                <button
+                  type="submit"
+                  className="sfh2-btn sfh2-btn--submit"
+                  disabled={formStatus === 'sending'}
+                >
+                  {formStatus === 'sending' ? 'Sending…' : 'Send Enquiry'}
+                </button>
+              </form>
+            )}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── FAQ ────────────────────────────────────────────────── */}
+      <section className="sfh2-faq" data-cms-section="faqs-sfh">
+        <div className="sfh2-faq__inner">
+          <motion.div
+            className="sfh2-faq__header"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true }}
+          >
+            <span className="sfh2-faq__pre-label">Common Questions</span>
+            <h2>Frequently Asked</h2>
+          </motion.div>
+
+          <div className="sfh2-faq__list">
+            {faqs.map((faq, i) => (
+              <motion.div
+                key={faq.id}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
+                viewport={{ once: true }}
+              >
                 <div
-                  key={faq.id}
-                  className={`sfh-faq__item ${openFaq === i ? 'sfh-faq__item--open' : ''}`}
+                  className={`sfh2-faq__item ${openFaq === i ? 'sfh2-faq__item--open' : ''}`}
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 >
-                  <div className="sfh-faq__number">{String(i + 1).padStart(2, '0')}</div>
-                  <div className="sfh-faq__content">
+                  <div className="sfh2-faq__number">{String(i + 1).padStart(2, '0')}</div>
+                  <div className="sfh2-faq__content">
                     <h4>
                       {faq.question}
-                      <span className="sfh-faq__toggle">{openFaq === i ? '−' : '+'}</span>
+                      <span className="sfh2-faq__toggle">{openFaq === i ? '−' : '+'}</span>
                     </h4>
                     <motion.div
-                      className="sfh-faq__answer"
+                      className="sfh2-faq__answer"
                       initial={false}
                       animate={{ height: openFaq === i ? 'auto' : 0, opacity: openFaq === i ? 1 : 0 }}
                       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
@@ -734,3350 +836,1345 @@ function SelfFlyHire() {
                     </motion.div>
                   </div>
                 </div>
-              ))}
-            </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ========== CTA SECTION ========== */}
-      <section className="sfh-cta">
-        <div className="sfh-cta__inner">
-          <div className="sfh-cta__image">
-            <motion.img
-              src={ctaUrl}
-              alt="Helicopter in flight"
-              initial={{ scale: 1.05 }}
-              whileInView={{ scale: 1 }}
-              transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-              viewport={{ once: true }}
-            />
-            <div className="sfh-cta__image-overlay" />
-          </div>
-
-          <div className="sfh-cta__content">
-            <div className="sfh-cta__header">
-              <span className="sfh-pre-text">{t('sfh-cta', 'pre_label')}</span>
-              <h2>{t('sfh-cta', 'heading')}</h2>
-            </div>
-
-            <p className="sfh-cta__desc">
-              {t('sfh-cta', 'description')}
-            </p>
-
-            <div className="sfh-cta__contact">
-              <a href={`tel:${t('sfh-cta', 'phone_value').replace(/\s/g, '')}`} className="sfh-cta__contact-item">
-                <span className="sfh-cta__contact-label">{t('sfh-cta', 'phone_label')}</span>
-                <span className="sfh-cta__contact-value">{t('sfh-cta', 'phone_value')}</span>
-              </a>
-              <div className="sfh-cta__contact-divider" />
-              <a href={`mailto:${t('sfh-cta', 'email_value')}`} className="sfh-cta__contact-item">
-                <span className="sfh-cta__contact-label">{t('sfh-cta', 'email_label')}</span>
-                <span className="sfh-cta__contact-value">{t('sfh-cta', 'email_value')}</span>
-              </a>
-            </div>
-
-            <div className="sfh-cta__buttons">
-              <a href="/contact?subject=hire" className="sfh-btn sfh-btn--primary sfh-btn--large">
-                {t('sfh-cta', 'cta_primary')}
-              </a>
-              <Link to="/training/ppl" className="sfh-btn sfh-btn--outline">
-                {t('sfh-cta', 'cta_secondary')}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== FOOTER ========== */}
       <FooterMinimal />
 
-      {/* ========== STYLES ========== */}
       <style>{`
-        /* ===== BASE ===== */
-        .sfh {
-          font-family: 'Space Grotesk', -apple-system, sans-serif;
-          background: #faf9f6;
+        /* ── Reset / Base ──────────────────────────────────────── */
+        .sfh2-page {
+          font-family: 'Space Grotesk', sans-serif;
           color: #1a1a1a;
+          background: #faf9f6;
         }
 
-        .sfh-pre-text {
+        /* ── Reusable primitives ───────────────────────────────── */
+        .sfh2-pre-label {
           display: block;
-          font-size: 0.7rem;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.65rem;
+          font-weight: 700;
           text-transform: uppercase;
-          letter-spacing: 0.25em;
+          letter-spacing: 0.15em;
           color: #999;
-          margin-bottom: 1rem;
+          margin-bottom: 0.75rem;
         }
-
-        .sfh-text--dark { color: #1a1a1a; }
-        .sfh-text--mid { color: #4a4a4a; }
-        .sfh-text--light { color: #7a7a7a; }
-
-        .sfh-section-header {
-          text-align: center;
-          max-width: 700px;
-          margin: 0 auto 3rem;
+        .sfh2-pre-label--light {
+          color: #9ca3af;
         }
-
-        .sfh-section-header h2 {
+        .sfh2-section-heading {
+          font-family: 'Space Grotesk', sans-serif;
           font-size: clamp(2rem, 4vw, 3rem);
-          margin: 0.5rem 0;
-          line-height: 1.1;
-          text-transform: uppercase;
           font-weight: 700;
-        }
-
-        .sfh-section-desc {
-          color: #666;
-          font-size: 1rem;
-          margin-top: 1rem;
-        }
-
-        /* Buttons */
-        .sfh-btn {
-          display: inline-block;
-          padding: 1rem 2rem;
-          font-size: 0.75rem;
-          font-weight: 400;
-          text-decoration: none;
           text-transform: uppercase;
-          letter-spacing: 0.1em;
-          border: none;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          font-family: inherit;
-          text-align: center;
-        }
-
-        .sfh-btn--primary {
-          background: #1a1a1a;
-          color: #fff;
-        }
-
-        .sfh-btn--primary:hover {
-          background: #333;
-          color: #fff;
-        }
-
-        .sfh-btn--outline {
-          background: transparent;
-          color: #1a1a1a;
-          border: 2px solid #1a1a1a;
-        }
-
-        .sfh-btn--outline:hover {
-          background: #1a1a1a;
-          color: #fff;
-        }
-
-        .sfh-btn--large {
-          padding: 1.1rem 2.5rem;
-          font-size: 0.8rem;
-        }
-
-        /* ===== HERO ===== */
-        .sfh-hero {
-          min-height: 100vh;
-          position: relative;
-          display: flex;
-          flex-direction: column;
-          overflow: hidden;
-          background: #faf9f6;
-        }
-
-        .sfh-hero__bg {
-          position: absolute;
-          inset: 0;
-          z-index: 1;
-        }
-
-        .sfh-hero__bg img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .sfh-hero__overlay {
-          position: absolute;
-          inset: 0;
-          z-index: 2;
-          background: linear-gradient(90deg, rgba(250,249,246,0.97) 0%, rgba(250,249,246,0.92) 45%, rgba(250,249,246,0.4) 100%);
-        }
-
-        .sfh-hero__content {
-          position: relative;
-          z-index: 3;
-          flex: 1;
-          display: flex;
-          align-items: center;
-          padding: 2rem 4rem 2rem;
-        }
-
-        .sfh-hero__left {
-          max-width: 550px;
-        }
-
-        .sfh-hero__label {
-          font-size: 0.7rem;
-          font-weight: 400;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: #999;
-          display: block;
-          margin-bottom: 1.5rem;
-        }
-
-        .sfh-hero__headline {
-          display: flex;
-          flex-direction: column;
-          line-height: 1;
-          margin-bottom: 1.5rem;
-        }
-
-        .sfh-hero__word {
-          font-weight: 700;
-          font-size: clamp(3rem, 8vw, 5.5rem);
           letter-spacing: -0.02em;
-          text-transform: uppercase;
-        }
-
-        .sfh-hero__word--1 { color: #1a1a1a; }
-        .sfh-hero__word--2 { color: #4a4a4a; }
-
-        .sfh-hero__divider-line {
-          width: 80px;
-          height: 2px;
-          background: #1a1a1a;
-          margin-bottom: 1.5rem;
-          transform-origin: left;
-        }
-
-        .sfh-hero__sub {
-          font-size: 1.1rem;
-          color: #666;
-          line-height: 1.8;
-          max-width: 420px;
-          margin-bottom: 2rem;
-        }
-
-        .sfh-hero__stats {
-          display: flex;
-          align-items: center;
-          gap: 1.5rem;
-        }
-
-        .sfh-hero__stat {
-          text-align: center;
-        }
-
-        .sfh-hero__stat-value {
-          display: block;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 1.5rem;
-          font-weight: 700;
           color: #1a1a1a;
+          margin: 0 0 1.5rem;
+          line-height: 1.1;
+        }
+        .sfh2-section-heading--light {
+          color: #fff;
+        }
+        .sfh2-body-text {
+          font-size: 0.95rem;
+          line-height: 1.7;
+          color: #555;
+          margin: 0 0 1rem;
         }
 
-        .sfh-hero__stat-label {
-          font-size: 0.65rem;
-          color: #888;
+        /* ── Buttons ───────────────────────────────────────────── */
+        .sfh2-btn {
+          display: inline-block;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.7rem;
+          font-weight: 700;
           text-transform: uppercase;
-          letter-spacing: 0.1em;
-        }
-
-        .sfh-hero__stat-divider {
-          width: 1px;
-          height: 30px;
-          background: linear-gradient(to bottom, transparent, #e8e6e2, transparent);
-        }
-
-        /* ===== INTRO ===== */
-        .sfh-intro {
-          padding: 5rem 2rem;
-          background: #fff;
-          position: relative;
-        }
-
-        .sfh-intro::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-intro__container {
-          max-width: 1100px;
-          margin: 0 auto;
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 3rem;
-          align-items: start;
-        }
-
-        .sfh-intro__image {
-          position: sticky;
-          top: 120px;
-          border-radius: 6px;
-          max-height: 400px;
-        }
-
-        .sfh-intro__image img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          display: block;
-          border-radius: 6px;
-          max-height: 400px;
-        }
-
-        .sfh-intro__right {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .sfh-intro__header {
-          text-align: left;
-          margin: 0;
-        }
-
-        .sfh-intro__header h2 {
-          font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-          margin: 0.5rem 0 1.5rem;
-          text-transform: uppercase;
-        }
-
-        .sfh-intro__header p {
-          color: #666;
-          font-size: 1rem;
-          line-height: 1.8;
-        }
-
-        .sfh-intro__benefits {
-          display: flex;
-          gap: 2rem;
-          flex-wrap: wrap;
-          margin-top: 1.5rem;
-        }
-
-        .sfh-intro__benefit {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          text-align: left;
-          padding: 0;
-          background: transparent;
+          letter-spacing: 0.12em;
+          padding: 0.85rem 2rem;
+          border-radius: 2px;
+          text-decoration: none;
+          cursor: pointer;
+          transition: background 0.2s, color 0.2s, border-color 0.2s, opacity 0.2s;
           border: none;
         }
-
-        .sfh-intro__benefit-stat {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 1.25rem;
-          font-weight: 700;
-          color: #1a1a1a;
-          line-height: 1;
-        }
-
-        .sfh-intro__benefit-label {
-          font-size: 0.7rem;
-          font-weight: 500;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-          color: #666;
-        }
-
-        /* ===== FLEET ===== */
-        .sfh-fleet {
-          padding: 2.5rem 1.5rem;
-          background: #faf9f6;
-          position: relative;
-        }
-
-        .sfh-fleet::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-fleet__container {
-          max-width: 1000px;
-          margin: 0 auto;
-        }
-
-        .sfh-fleet__selector {
-          display: flex;
-          justify-content: center;
-          gap: 0.35rem;
-          margin-bottom: 1rem;
-        }
-
-        .sfh-fleet__tab {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          padding: 0.5rem 1rem;
+        .sfh2-btn--primary {
           background: #fff;
-          border: 1px solid #e8e6e2;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          border-radius: 6px;
-        }
-
-        .sfh-fleet__tab:hover {
-          border-color: #1a1a1a;
-        }
-
-        .sfh-fleet__tab--active {
-          background: #1a1a1a;
-          border-color: #1a1a1a;
-        }
-
-        .sfh-fleet__tab--active .sfh-fleet__tab-num,
-        .sfh-fleet__tab--active .sfh-fleet__tab-model {
-          color: #fff;
-        }
-
-        .sfh-fleet__tab-num {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.7rem;
-          color: #999;
-        }
-
-        .sfh-fleet__tab-model {
-          font-size: 0.8rem;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
           color: #1a1a1a;
         }
-
-        .sfh-fleet__card {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 1.5rem;
-          background: #fff;
-          border-radius: 8px;
-          overflow: hidden;
-          border: 1px solid #e8e6e2;
-        }
-
-        .sfh-fleet__image {
-          position: relative;
-          min-height: 220px;
-        }
-
-        .sfh-fleet__image img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .sfh-fleet__image-overlay {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          padding: 1.5rem;
-          background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-        }
-
-        .sfh-fleet__model {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #fff;
-          text-transform: uppercase;
-        }
-
-        .sfh-fleet__info {
-          padding: 1.25rem;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .sfh-fleet__specs {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          margin-bottom: 0.75rem;
-          padding-bottom: 0.75rem;
-          border-bottom: 1px solid #e8e6e2;
-        }
-
-        .sfh-fleet__spec {
-          text-align: center;
-        }
-
-        .sfh-fleet__spec-value {
-          display: block;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 1.25rem;
-          font-weight: 700;
-          color: #1a1a1a;
-        }
-
-        .sfh-fleet__spec-label {
-          font-size: 0.65rem;
-          color: #888;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-        }
-
-        .sfh-fleet__spec-divider {
-          width: 1px;
-          height: 30px;
+        .sfh2-btn--primary:hover {
           background: #e8e6e2;
         }
-
-        .sfh-fleet__desc {
-          color: #666;
-          font-size: 0.85rem;
-          line-height: 1.6;
-          margin-bottom: 0.75rem;
-        }
-
-        .sfh-fleet__features {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.35rem;
-        }
-
-        .sfh-fleet__feature {
-          padding: 0.4rem 0.8rem;
-          background: #faf9f6;
-          font-size: 0.7rem;
-          color: #666;
-          border-radius: 4px;
-        }
-
-        .sfh-fleet__price {
-          margin-top: auto;
-          padding-top: 1.5rem;
-          border-top: 1px solid #e8e6e2;
-        }
-
-        .sfh-fleet__price-label {
-          font-size: 0.7rem;
-          color: #888;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-        }
-
-        .sfh-fleet__price-value {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 2rem;
-          font-weight: 700;
-          color: #1a1a1a;
-          margin: 0 0.25rem;
-        }
-
-        .sfh-fleet__price-unit {
-          font-size: 0.9rem;
-          color: #666;
-        }
-
-        /* ===== RATES ===== */
-        .sfh-rates {
-          padding: 2.5rem 1.5rem;
-          background: #fff;
-          position: relative;
-        }
-
-        .sfh-rates::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-rates__container {
-          max-width: 900px;
-          margin: 0 auto;
-        }
-
-        .sfh-rates__grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 0.75rem;
-          margin-bottom: 1rem;
-        }
-
-        .sfh-rates__card {
-          background: #faf9f6;
-          padding: 1rem 1.25rem;
-          text-align: center;
-          border: 1px solid #e0deda;
-          border-radius: 8px;
-        }
-
-        .sfh-rates__card-header {
-          margin-bottom: 0.75rem;
-        }
-
-        .sfh-rates__card-model {
-          display: block;
-          font-size: 1rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          color: #1a1a1a;
-          margin-bottom: 0.15rem;
-        }
-
-        .sfh-rates__card-seats {
-          font-size: 0.65rem;
-          color: #888;
-        }
-
-        .sfh-rates__card-price {
-          margin-bottom: 0.75rem;
-        }
-
-        .sfh-rates__card-amount {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 1.75rem;
-          font-weight: 700;
-          color: #1a1a1a;
-        }
-
-        .sfh-rates__card-unit {
-          font-size: 0.75rem;
-          color: #666;
-        }
-
-        .sfh-rates__card-features {
-          list-style: none;
-          padding: 0;
-          margin: 0 0 0.75rem;
-        }
-
-        .sfh-rates__card-features li {
-          font-size: 0.7rem;
-          color: #666;
-          padding: 0.3rem 0;
-          border-bottom: 1px solid #e8e6e2;
-        }
-
-        .sfh-rates__card-features li:last-child {
-          border-bottom: none;
-        }
-
-        .sfh-rates__note {
-          display: flex;
-          align-items: flex-start;
-          gap: 0.75rem;
-          padding: 0.75rem 1rem;
-          background: #faf9f6;
-          border-radius: 8px;
-        }
-
-        .sfh-rates__note-icon {
-          width: 18px;
-          height: 18px;
-          background: #1a1a1a;
+        .sfh2-btn--outline {
+          background: transparent;
           color: #fff;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 0.6rem;
-          font-weight: 700;
-          flex-shrink: 0;
+          border: 1px solid rgba(255,255,255,0.5);
         }
-
-        .sfh-rates__note p {
-          margin: 0;
-          font-size: 0.7rem;
-          color: #666;
-          line-height: 1.5;
+        .sfh2-btn--outline:hover {
+          border-color: #fff;
+          background: rgba(255,255,255,0.08);
         }
-
-        /* ===== REQUIREMENTS ===== */
-        .sfh-requirements {
-          padding: 5rem 2rem;
-          background: #faf9f6;
-          position: relative;
-        }
-
-        .sfh-requirements::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-requirements__container {
-          max-width: 900px;
-          margin: 0 auto;
-        }
-
-        .sfh-requirements__grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 1.5rem;
-          margin-bottom: 3rem;
-        }
-
-        .sfh-requirements__card {
-          display: flex;
-          gap: 1.25rem;
+        .sfh2-btn--fleet-cta {
           background: #fff;
-          padding: 1.5rem;
-          border-left: 3px solid #1a1a1a;
-          border-radius: 0 8px 8px 0;
-        }
-
-        .sfh-requirements__num {
-          width: 44px;
-          height: 44px;
-          background: #1a1a1a;
-          color: #fff;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.85rem;
-          flex-shrink: 0;
-        }
-
-        .sfh-requirements__text h4 {
-          margin: 0 0 0.5rem;
-          font-size: 1rem;
-          font-weight: 600;
-        }
-
-        .sfh-requirements__text p {
-          margin: 0;
-          font-size: 0.85rem;
-          color: #666;
-          line-height: 1.5;
-        }
-
-        .sfh-requirements__cta {
-          text-align: center;
-          padding: 2rem;
-          background: #fff;
-          border-radius: 8px;
-          border: 1px solid #e8e6e2;
-        }
-
-        .sfh-requirements__cta p {
-          margin: 0 0 1.5rem;
-          color: #666;
-        }
-
-        /* ===== PROCESS ===== */
-        .sfh-process {
-          padding: 2rem 1.5rem;
-          background: #fff;
-          position: relative;
-        }
-
-        .sfh-process::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-process__container {
-          max-width: 800px;
-          margin: 0 auto;
-        }
-
-        .sfh-process__steps {
-          display: flex;
-          flex-direction: column;
-          gap: 0;
-        }
-
-        .sfh-process__steps--horizontal {
-          flex-direction: row;
-          align-items: center;
-          justify-content: center;
-          gap: 0.75rem;
-        }
-
-        .sfh-process__steps--horizontal .sfh-process__step {
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-          border: 1px solid #e0deda;
-          border-radius: 8px;
-          padding: 1rem 1.25rem;
-          flex: 1;
-          min-height: 120px;
-          display: flex;
-          justify-content: flex-start;
-        }
-
-        .sfh-process__steps--horizontal .sfh-process__step--fly {
-          flex: 1;
-          border: 2px solid #1a1a1a;
-          background: #faf9f6;
-        }
-
-        .sfh-process__steps--horizontal .sfh-process__step-num {
-          width: 36px;
-          height: 36px;
-          font-size: 0.85rem;
-          margin-bottom: 0.5rem;
-        }
-
-        .sfh-process__steps--horizontal .sfh-process__step-content h4 {
-          font-size: 0.9rem;
-          margin-bottom: 0.25rem;
-        }
-
-        .sfh-process__time {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.7rem;
-          color: #888;
-          background: #f0efec;
-          padding: 0.2rem 0.5rem;
-          border-radius: 4px;
-          margin-top: 0.25rem;
-          display: inline-block;
-        }
-
-        .sfh-process__arrow {
-          color: #ccc;
-          flex-shrink: 0;
-        }
-
-        .sfh-process__desc {
-          margin: 0;
-          font-size: 0.75rem;
-          color: #666;
-          line-height: 1.4;
-          max-width: 160px;
-        }
-
-        .sfh-process__steps--horizontal .sfh-process__desc {
-          text-align: center;
-        }
-
-        .sfh-process__step {
-          display: flex;
-          gap: 1.5rem;
-          padding: 1.5rem;
-          background: #faf9f6;
-          border-left: 3px solid #1a1a1a;
-          border-radius: 0 8px 8px 0;
-        }
-
-        .sfh-process__step-num {
-          width: 50px;
-          height: 50px;
-          background: #1a1a1a;
-          color: #fff;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 1rem;
-          font-weight: 700;
-          flex-shrink: 0;
-        }
-
-        .sfh-process__step-content h4 {
-          margin: 0 0 0.5rem;
-          font-size: 1.1rem;
-          font-weight: 600;
-        }
-
-        .sfh-process__step-content p {
-          margin: 0;
-          font-size: 0.9rem;
-          color: #666;
-          line-height: 1.6;
-        }
-
-        .sfh-process__connector {
-          width: 3px;
-          height: 20px;
-          background: #e8e6e2;
-          margin-left: 24px;
-        }
-
-        /* ===== FAQ ===== */
-        .sfh-faq {
-          padding: 5rem 2rem;
-          background: #faf9f6;
-          position: relative;
-        }
-
-        .sfh-faq::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-faq__container {
-          max-width: 800px;
-          margin: 0 auto;
-        }
-
-        .sfh-faq__list {
-          display: flex;
-          flex-direction: column;
-          gap: 0;
-        }
-
-        .sfh-faq__item {
-          display: flex;
-          gap: 1.5rem;
-          padding: 1.25rem 0;
-          border-bottom: 1px solid #e8e6e2;
-          cursor: pointer;
-          transition: background 0.2s ease;
+          color: #1a1a1a;
+          margin-top: 0;
           border-radius: 0;
         }
-
-        .sfh-faq__item:hover {
-          background: rgba(0,0,0,0.01);
+        .sfh2-btn--fleet-cta:hover {
+          background: #1a1a1a;
+          color: #fff;
         }
-
-        .sfh-faq__item--open {
-          background: rgba(0,0,0,0.02);
-        }
-
-        .sfh-faq__number {
-          font-family: 'Share Tech Mono', monospace;
+        .sfh2-btn--submit {
+          background: #1a1a1a;
+          color: #fff;
+          align-self: flex-start;
           font-size: 0.75rem;
-          color: #ccc;
-          flex-shrink: 0;
-          padding-top: 0.1rem;
+        }
+        .sfh2-btn--submit:hover:not(:disabled) {
+          background: #333;
+        }
+        .sfh2-btn--submit:disabled {
+          opacity: 0.55;
+          cursor: wait;
         }
 
-        .sfh-faq__content {
+        /* ── Hero ──────────────────────────────────────────────── */
+        .sfh2-hero {
+          position: relative;
+          height: 100vh;
+          min-height: 600px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+        }
+        .sfh2-hero__bg {
+          position: absolute;
+          inset: 0;
+        }
+        .sfh2-hero__bg img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+        }
+        .sfh2-hero__overlay {
+          position: absolute;
+          inset: 0;
+          background: rgba(0,0,0,0.45);
+        }
+        .sfh2-hero__content {
+          position: relative;
+          z-index: 2;
+          padding: 0 2rem 7rem;
+          display: flex;
+          align-items: flex-end;
           flex: 1;
         }
-
-        .sfh-faq__content h4 {
-          margin: 0;
+        .sfh2-hero__inner {
+          max-width: 1200px;
+          margin: 0 auto;
+          width: 100%;
+        }
+        .sfh2-hero__pre {
+          display: block;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.65rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.18em;
+          color: rgba(255,255,255,0.65);
+          margin-bottom: 1rem;
+        }
+        .sfh2-hero__headline {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: clamp(3rem, 8vw, 6.5rem);
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: -0.03em;
+          color: #fff;
+          margin: 0 0 1.25rem;
+          line-height: 1;
+        }
+        .sfh2-hero__sub {
           font-size: 1rem;
-          font-weight: 600;
+          line-height: 1.65;
+          color: rgba(255,255,255,0.8);
+          max-width: 540px;
+          margin: 0 0 2rem;
+        }
+        .sfh2-hero__ctas {
           display: flex;
-          justify-content: space-between;
-          align-items: center;
           gap: 1rem;
+          flex-wrap: wrap;
+        }
+        .sfh2-hero__stats {
+          position: relative;
+          z-index: 2;
+          display: flex;
+          align-items: center;
+          gap: 0;
+          background: rgba(0,0,0,0.55);
+          backdrop-filter: blur(8px);
+          border-top: 1px solid rgba(255,255,255,0.1);
+          padding: 1.1rem 2rem;
+        }
+        .sfh2-hero__stat {
+          flex: 1;
+          text-align: center;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.7rem;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          color: rgba(255,255,255,0.8);
+        }
+        .sfh2-hero__stat-divider {
+          width: 1px;
+          height: 1.2rem;
+          background: rgba(255,255,255,0.2);
         }
 
-        .sfh-faq__toggle {
-          font-size: 1.25rem;
-          font-weight: 300;
-          color: #999;
-          flex-shrink: 0;
-        }
-
-        .sfh-faq__answer {
-          overflow: hidden;
-        }
-
-        .sfh-faq__answer p {
-          margin: 0.75rem 0 0;
-          color: #666;
-          line-height: 1.7;
-          font-size: 0.95rem;
-        }
-
-        /* ===== FAQ & LOCATION MERGED ===== */
-        .sfh-faq-location {
-          padding: 2.5rem 1.5rem;
+        /* ── Intro ─────────────────────────────────────────────── */
+        .sfh2-intro {
+          padding: 5rem 2rem;
           background: #faf9f6;
         }
-
-        .sfh-faq-location__container {
+        .sfh2-intro__inner {
           max-width: 1200px;
           margin: 0 auto;
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 2rem;
-          align-items: start;
+          gap: 5rem;
+          align-items: center;
         }
-
-        .sfh-faq-location__map {
+        .sfh2-intro__image-wrap {
+          overflow: hidden;
+          border-radius: 12px;
+        }
+        .sfh2-intro__image {
+          width: 100%;
+          aspect-ratio: 16/9;
+          object-fit: cover;
+          object-position: center 72%;
+          display: block;
+        }
+        .sfh2-intro__text {
+          padding: 1rem 0;
+        }
+        .sfh2-intro__facts {
+          list-style: none;
+          margin: 2rem 0 0;
+          padding: 0;
           display: flex;
           flex-direction: column;
-        }
-
-        .sfh-faq-location__map .sfh-section-header {
-          margin-bottom: 1rem;
-        }
-
-        .sfh-faq-location__map-frame {
-          position: relative;
-          border-radius: 8px;
-          overflow: hidden;
-          flex: 1;
-          min-height: 350px;
-        }
-
-        .sfh-faq-location__map-frame iframe {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-        }
-
-        .sfh-faq-location__map-image {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          object-position: 25% 30%;
-          transform: scale(1.5);
-        }
-
-        .sfh-faq-location__map-info {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          padding: 1.25rem;
-          background: rgba(26,26,26,0.95);
-          color: #fff;
-        }
-
-        .sfh-faq-location__map-info h4 {
-          margin: 0 0 0.25rem;
-          font-size: 1rem;
-          font-weight: 600;
-          color: #fff;
-        }
-
-        .sfh-faq-location__map-info p {
-          margin: 0 0 0.5rem;
-          font-size: 0.8rem;
-          color: rgba(255,255,255,0.7);
-        }
-
-        .sfh-faq-location__icao {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.7rem;
-          background: rgba(255,255,255,0.15);
-          padding: 0;
-          border-radius: 4px;
-          margin-right: 10px;
-          height: 32px;
-          padding: 0 0.75rem;
-          box-sizing: border-box;
-        }
-
-        .sfh-faq-location__actions {
-          display: flex;
-          align-items: center;
-          margin-top: 0.75rem;
-        }
-
-        .sfh-faq-location__map-info .sfh-btn--small {
-          height: 32px;
-          padding: 0 0.75rem;
-          font-size: 0.7rem;
-          color: #fff;
-          border-color: #fff;
-          display: inline-flex;
-          align-items: center;
-          box-sizing: border-box;
-        }
-
-        .sfh-faq-location__map-info .sfh-btn--small:hover {
-          background: #fff;
-          color: #1a1a1a;
-        }
-
-        .sfh-faq-location__faq {
-          padding: 0;
-        }
-
-        .sfh-faq-location__faq .sfh-section-header {
-          margin-bottom: 1rem;
-        }
-
-        .sfh-faq-location__faq .sfh-faq__list {
           gap: 0;
+          border-top: 1px solid #e8e6e2;
         }
-
-        .sfh-faq-location__faq .sfh-faq__item {
-          padding: 0.75rem 0;
-        }
-
-        .sfh-faq-location__faq .sfh-faq__content h4 {
-          font-size: 0.9rem;
-        }
-
-        .sfh-faq-location__faq .sfh-faq__answer p {
-          font-size: 0.85rem;
-        }
-
-        @media (max-width: 900px) {
-          .sfh-faq-location__container {
-            grid-template-columns: 1fr;
-          }
-
-          .sfh-faq-location__map {
-            min-height: 300px;
-          }
-        }
-
-        /* ===== CTA ===== */
-        .sfh-cta {
-          background: #1a1a1a;
-          position: relative;
-          overflow: hidden;
-          border-radius: 0;
-        }
-
-        .sfh-cta__inner {
-          display: grid;
-          grid-template-columns: 40% 60%;
-          min-height: 500px;
-        }
-
-        .sfh-cta__image {
-          position: relative;
-          overflow: hidden;
-          border-radius: 0;
-        }
-
-        .sfh-cta__image img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .sfh-cta__image-overlay {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(90deg, rgba(26,26,26,0.3) 0%, transparent 50%);
-          border-radius: 0;
-        }
-
-        .sfh-cta__content {
-          padding: 3rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          color: #fff;
-        }
-
-        .sfh-cta__content .sfh-pre-text {
-          color: rgba(255,255,255,0.5);
-        }
-
-        .sfh-cta__header h2 {
-          font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-          font-weight: 700;
-          text-transform: uppercase;
-          line-height: 1.1;
-          margin: 0 0 1.5rem;
-        }
-
-        .sfh-cta__header .sfh-text--dark { color: #fff; }
-        .sfh-cta__header .sfh-text--mid { color: rgba(255,255,255,0.7); }
-        .sfh-cta__header .sfh-text--light { color: rgba(255,255,255,0.5); }
-
-        .sfh-cta__desc {
-          color: rgba(255,255,255,0.7);
-          font-size: 1rem;
-          line-height: 1.7;
-          margin-bottom: 2rem;
-        }
-
-        .sfh-cta__contact {
-          display: flex;
-          align-items: center;
-          gap: 2rem;
-          margin-bottom: 2rem;
-          padding-bottom: 2rem;
-          border-bottom: 1px solid rgba(255,255,255,0.15);
-        }
-
-        .sfh-cta__contact-item {
-          text-decoration: none;
-        }
-
-        .sfh-cta__contact-label {
-          display: block;
-          font-size: 0.65rem;
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
-          color: rgba(255,255,255,0.5);
-          margin-bottom: 0.25rem;
-        }
-
-        .sfh-cta__contact-value {
-          display: block;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 1rem;
-          color: #fff;
-        }
-
-        .sfh-cta__contact-divider {
-          width: 1px;
-          height: 40px;
-          background: rgba(255,255,255,0.2);
-        }
-
-        .sfh-cta__buttons {
-          display: flex;
-          gap: 1rem;
-        }
-
-        .sfh-cta__buttons .sfh-btn--primary {
-          background: #fff;
-          color: #1a1a1a;
-        }
-
-        .sfh-cta__buttons .sfh-btn--primary:hover {
-          background: #f0f0f0;
-        }
-
-        .sfh-cta__buttons .sfh-btn--outline {
-          color: #fff;
-          border-color: rgba(255,255,255,0.5);
-        }
-
-        .sfh-cta__buttons .sfh-btn--outline:hover {
-          background: rgba(255,255,255,0.1);
-          border-color: #fff;
-        }
-
-        /* ===== DESTINATIONS ===== */
-        .sfh-destinations__collapsible-card {
-          background: #faf9f6;
-          border: 1px solid #e8e6e2;
-          border-radius: 8px;
-          overflow: hidden;
-        }
-        .sfh-destinations__toggle {
-          width: 100%;
-          padding: 1.5rem 2rem;
-          background: none;
-          border: none;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          text-align: left;
-        }
-        .sfh-destinations__toggle:hover {
-          background: rgba(0,0,0,0.02);
-        }
-        .sfh-destinations__toggle h2 {
-          font-size: clamp(1rem, 2vw, 1.4rem);
-        }
-        .sfh-destinations__toggle-icon {
-          transition: transform 0.3s ease;
-          color: #999;
-          flex-shrink: 0;
-        }
-        .sfh-destinations__toggle-icon--open {
-          transform: rotate(180deg);
-        }
-        .sfh-destinations__collapse {
-          max-height: 0;
-          overflow: hidden;
-          transition: max-height 0.5s ease;
-        }
-        .sfh-destinations__collapse--open {
-          max-height: 3000px;
-        }
-        .sfh-destinations__collapse > * {
-          padding-left: 0.5rem;
-          padding-right: 0.5rem;
-        }
-
-        .sfh-destinations {
-          padding: 5rem 2rem;
-          background: #fff;
-          position: relative;
-        }
-
-        .sfh-destinations::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-destinations__container {
-          max-width: 1000px;
-          margin: 1.5rem auto 0;
-        }
-
-        .sfh-destinations__grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1.5rem;
-          padding-bottom: 20px;
-        }
-
-        .sfh-destinations__card {
-          position: relative;
-          overflow: hidden;
-          border-radius: 8px;
-          cursor: pointer;
-        }
-
-        .sfh-destinations__image {
-          position: relative;
-          aspect-ratio: 4/3;
-        }
-
-        .sfh-destinations__image img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transition: transform 0.5s ease;
-        }
-
-        .sfh-destinations__card:hover .sfh-destinations__image img {
-          transform: scale(1.05);
-        }
-
-        .sfh-destinations__overlay {
-          position: absolute;
-          top: 1rem;
-          right: 1rem;
-          background: rgba(255,255,255,0.95);
-          padding: 0.5rem 0.75rem;
-          border-radius: 4px;
-        }
-
-        .sfh-destinations__time {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.75rem;
-          color: #1a1a1a;
-        }
-
-        .sfh-destinations__info {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          padding: 1.5rem;
-          background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-        }
-
-        .sfh-destinations__type {
-          display: block;
-          font-size: 0.65rem;
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
-          color: rgba(255,255,255,0.7);
-          margin-bottom: 0.25rem;
-        }
-
-        .sfh-destinations__info h4 {
-          margin: 0;
-          font-size: 1.25rem;
-          color: #fff;
-          font-weight: 600;
-        }
-
-        .sfh-destinations__filters {
-          display: flex;
-          justify-content: center;
-          gap: 0.5rem;
-          margin-bottom: 1.5rem;
-        }
-
-        .sfh-destinations__filter {
-          padding: 0.5rem 1rem;
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 0.75rem;
-          font-weight: 500;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          background: #fff;
-          border: 1px solid #e8e6e2;
-          color: #666;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          border-radius: 4px;
-        }
-
-        .sfh-destinations__filter:hover {
-          border-color: #1a1a1a;
-          color: #1a1a1a;
-        }
-
-        .sfh-destinations__filter--active {
-          background: #1a1a1a;
-          border-color: #1a1a1a;
-          color: #fff;
-        }
-
-        .sfh-destinations__load-more {
-          display: flex;
-          justify-content: center;
-          margin-top: 1.5rem;
-          margin-bottom: 12px;
-        }
-
-        .sfh-destinations__chevron {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.25rem;
-          padding: 0.5rem 1.5rem;
-          background: transparent;
-          border: 1px solid #e8e6e2;
-          color: #666;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          border-radius: 4px;
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 0.7rem;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-        }
-
-        .sfh-destinations__chevron:hover {
-          border-color: #1a1a1a;
-          color: #1a1a1a;
-        }
-
-        .sfh-destinations__chevron svg {
-          animation: bounceDown 1.5s ease-in-out infinite;
-        }
-
-        @keyframes bounceDown {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(4px); }
-        }
-
-        /* ===== SAFETY ===== */
-        .sfh-safety {
-          padding: 5rem 2rem;
-          background: #faf9f6;
-          position: relative;
-        }
-
-        .sfh-safety--compact {
-          padding: 2rem 1.5rem;
-        }
-
-        .sfh-safety::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-safety__container {
-          max-width: 1100px;
-          margin: 0 auto;
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 4rem;
-          align-items: center;
-        }
-
-        .sfh-safety__container--compact {
-          display: block;
-          max-width: 700px;
-          text-align: center;
-        }
-
-        .sfh-safety__header h2 {
-          font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-          margin: 0.5rem 0 1.5rem;
-          text-transform: uppercase;
-          font-weight: 700;
-        }
-
-        .sfh-safety__container--compact .sfh-safety__header h2 {
-          margin-bottom: 0.75rem;
-        }
-
-        .sfh-safety__desc {
-          color: #666;
-          line-height: 1.8;
-          margin-bottom: 2rem;
-        }
-
-        .sfh-safety__container--compact .sfh-safety__desc {
-          margin-bottom: 0;
-          font-size: 0.9rem;
-        }
-
-        .sfh-safety__features {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-        }
-
-        .sfh-safety__feature {
-          display: flex;
-          gap: 1rem;
-          padding: 1rem;
-          background: #fff;
-          border-left: 3px solid #1a1a1a;
-          border-radius: 0 8px 8px 0;
-        }
-
-        .sfh-safety__feature-num {
-          width: 36px;
-          height: 36px;
-          background: #1a1a1a;
-          color: #fff;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.75rem;
-          flex-shrink: 0;
-        }
-
-        .sfh-safety__feature h4 {
-          margin: 0 0 0.25rem;
-          font-size: 0.95rem;
-        }
-
-        .sfh-safety__feature p {
-          margin: 0;
-          font-size: 0.8rem;
-          color: #888;
-        }
-
-        .sfh-safety__image {
-          border-radius: 8px;
-          overflow: hidden;
-        }
-
-        .sfh-safety__image img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        /* ===== HOURS ===== */
-        .sfh-hours {
-          padding: 5rem 2rem;
-          background: #fff;
-          position: relative;
-        }
-
-        .sfh-hours::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-hours__container {
-          max-width: 900px;
-          margin: 0 auto;
-        }
-
-        .sfh-hours__grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1.5rem;
-        }
-
-        .sfh-hours__card {
-          background: #faf9f6;
-          padding: 2rem;
-          text-align: center;
-          border-left: 3px solid #1a1a1a;
-          border-radius: 0 8px 8px 0;
-        }
-
-        .sfh-hours__card--special {
-          border-left-color: #2563eb;
-        }
-
-        .sfh-hours__icon {
-          margin-bottom: 1.5rem;
-        }
-
-        .sfh-hours__icon span {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.85rem;
-          font-weight: 700;
-          color: #1a1a1a;
-          letter-spacing: 0.1em;
-        }
-
-        .sfh-hours__times {
-          margin-bottom: 1rem;
-        }
-
-        .sfh-hours__time {
-          display: block;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 1.25rem;
-          color: #1a1a1a;
-          margin-bottom: 0.25rem;
-        }
-
-        .sfh-hours__note {
-          font-size: 0.7rem;
-          color: #888;
-        }
-
-        .sfh-hours__special-note {
-          margin: 0.5rem 0 0;
-          font-size: 0.8rem;
-          color: #2563eb;
-        }
-
-        /* ===== WEATHER ===== */
-        .sfh-weather {
-          padding: 5rem 2rem;
-          background: #faf9f6;
-          position: relative;
-        }
-
-        .sfh-weather::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-weather__container {
-          max-width: 700px;
-          margin: 0 auto;
-        }
-
-        .sfh-weather__table {
-          background: #fff;
-          border-radius: 8px;
-          overflow: hidden;
-          margin-bottom: 2rem;
-        }
-
-        .sfh-weather__row {
-          display: grid;
-          grid-template-columns: 1fr 1fr 1fr;
-          border-bottom: 1px solid #e8e6e2;
-        }
-
-        .sfh-weather__row:last-child {
-          border-bottom: none;
-        }
-
-        .sfh-weather__row--header {
-          background: #1a1a1a;
-        }
-
-        .sfh-weather__row--header span {
-          color: #fff;
-          font-size: 0.75rem;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-        }
-
-        .sfh-weather__row span {
-          padding: 1rem 1.25rem;
-          font-size: 0.9rem;
-        }
-
-        .sfh-weather__cell--label {
-          font-weight: 600;
-        }
-
-        .sfh-weather__resources {
-          display: flex;
-          justify-content: center;
-          gap: 1rem;
-        }
-
-        .sfh-weather__link {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          padding: 0.75rem 1.25rem;
-          background: #fff;
-          border: 1px solid #e8e6e2;
-          border-radius: 8px;
-          text-decoration: none;
-          color: #1a1a1a;
-          font-size: 0.85rem;
-          transition: all 0.3s ease;
-        }
-
-        .sfh-weather__link:hover {
-          border-color: #1a1a1a;
-        }
-
-        .sfh-weather__link-icon {
-          font-size: 1rem;
-        }
-
-        /* ===== FUEL ===== */
-        .sfh-fuel {
-          padding: 5rem 2rem;
-          background: #1a1a1a;
-          position: relative;
-        }
-
-        .sfh-fuel__inner {
-          max-width: 700px;
-          margin: 0 auto;
-          text-align: center;
-        }
-
-        .sfh-fuel__content h2 {
-          font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-          margin: 0.5rem 0 1.5rem;
-          text-transform: uppercase;
-          font-weight: 700;
-        }
-
-        .sfh-fuel__content .sfh-pre-text {
-          color: rgba(255,255,255,0.5);
-        }
-
-        .sfh-fuel__content .sfh-text--dark { color: #fff; }
-        .sfh-fuel__content .sfh-text--mid { color: rgba(255,255,255,0.7); }
-
-        .sfh-fuel__content p {
-          color: rgba(255,255,255,0.7);
-          line-height: 1.8;
-          margin-bottom: 2rem;
-        }
-
-        .sfh-fuel__points {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 1rem;
-          text-align: left;
-        }
-
-        .sfh-fuel__point {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          color: #fff;
-          font-size: 0.9rem;
-        }
-
-        .sfh-fuel__point-icon {
-          color: #4ade80;
-          font-size: 1rem;
-        }
-
-        /* ===== INSURANCE ===== */
-        .sfh-insurance {
-          padding: 5rem 2rem;
-          background: #fff;
-          position: relative;
-        }
-
-        .sfh-insurance::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-insurance__container {
-          max-width: 900px;
-          margin: 0 auto;
-        }
-
-        .sfh-insurance__grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1.5rem;
-          margin-bottom: 2rem;
-        }
-
-        .sfh-insurance__card {
-          background: #faf9f6;
-          padding: 2rem;
-          text-align: center;
-          border-left: 3px solid #1a1a1a;
-          border-radius: 0 8px 8px 0;
-        }
-
-        .sfh-insurance__card h4 {
-          margin: 0 0 1rem;
-          font-size: 0.85rem;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-          color: #666;
-        }
-
-        .sfh-insurance__value {
-          display: block;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 2rem;
-          font-weight: 700;
-          color: #1a1a1a;
-          margin-bottom: 0.5rem;
-        }
-
-        .sfh-insurance__desc {
-          font-size: 0.8rem;
-          color: #888;
-          margin: 0;
-        }
-
-        .sfh-insurance__excess {
-          background: #faf9f6;
-          padding: 2rem;
-          border-radius: 8px;
-          text-align: center;
-        }
-
-        .sfh-insurance__excess h4 {
-          margin: 0 0 1.5rem;
-          font-size: 1rem;
-        }
-
-        .sfh-insurance__excess-grid {
-          display: flex;
-          justify-content: center;
-          gap: 3rem;
-          margin-bottom: 1rem;
-        }
-
-        .sfh-insurance__excess-item {
-          text-align: center;
-        }
-
-        .sfh-insurance__excess-model {
-          display: block;
-          font-size: 0.75rem;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          color: #888;
-          margin-bottom: 0.25rem;
-        }
-
-        .sfh-insurance__excess-amount {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 1.25rem;
-          font-weight: 700;
-          color: #1a1a1a;
-        }
-
-        .sfh-insurance__excess-note {
-          font-size: 0.8rem;
-          color: #2563eb;
-          margin: 0;
-        }
-
-        /* ===== CURRENCY ===== */
-        .sfh-currency {
-          padding: 5rem 2rem;
-          background: #faf9f6;
-          position: relative;
-        }
-
-        .sfh-currency::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-currency__container {
-          max-width: 700px;
-          margin: 0 auto;
-        }
-
-        .sfh-currency__content h2 {
-          font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-          margin: 0.5rem 0 1.5rem;
-          text-transform: uppercase;
-          font-weight: 700;
-        }
-
-        .sfh-currency__desc {
-          color: #666;
-          line-height: 1.8;
-          margin-bottom: 2rem;
-        }
-
-        .sfh-currency__requirements {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-          margin-bottom: 2rem;
-        }
-
-        .sfh-currency__req {
-          background: #fff;
-          padding: 1.5rem;
-          border-left: 3px solid #1a1a1a;
-          border-radius: 0 8px 8px 0;
-        }
-
-        .sfh-currency__req-header {
+        .sfh2-intro__facts li {
           display: flex;
           align-items: baseline;
-          gap: 0.75rem;
-          margin-bottom: 0.5rem;
-        }
-
-        .sfh-currency__req-hours {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 2rem;
-          font-weight: 700;
-          color: #1a1a1a;
-        }
-
-        .sfh-currency__req-label {
-          font-size: 0.9rem;
-          color: #666;
-        }
-
-        .sfh-currency__req p {
-          margin: 0;
-          font-size: 0.85rem;
-          color: #888;
-        }
-
-        .sfh-currency__checkout {
-          background: #fff;
-          padding: 2rem;
-          border-radius: 8px;
-          text-align: center;
-          border: 1px solid #e8e6e2;
-        }
-
-        .sfh-currency__checkout h4 {
-          margin: 0 0 0.5rem;
-        }
-
-        .sfh-currency__checkout p {
-          margin: 0 0 1.5rem;
-          color: #666;
-          font-size: 0.9rem;
-        }
-
-        /* ===== INTERNATIONAL ===== */
-        .sfh-international {
-          padding: 5rem 2rem;
-          background: #fff;
-          position: relative;
-        }
-
-        .sfh-international::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-international__container {
-          max-width: 800px;
-          margin: 0 auto;
-        }
-
-        .sfh-international__steps {
-          display: flex;
-          flex-direction: column;
           gap: 1rem;
-          margin-bottom: 2rem;
-        }
-
-        .sfh-international__step {
-          display: flex;
-          gap: 1.5rem;
-          padding: 1.5rem;
-          background: #faf9f6;
-          border-left: 3px solid #1a1a1a;
-          border-radius: 0 8px 8px 0;
-        }
-
-        .sfh-international__step-num {
-          width: 44px;
-          height: 44px;
-          background: #1a1a1a;
-          color: #fff;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.85rem;
-          flex-shrink: 0;
-        }
-
-        .sfh-international__step-content h4 {
-          margin: 0 0 0.5rem;
-          font-size: 1rem;
-        }
-
-        .sfh-international__step-content p {
-          margin: 0;
-          font-size: 0.85rem;
-          color: #666;
-        }
-
-        .sfh-international__popular {
-          background: #faf9f6;
-          padding: 2rem;
-          border-radius: 8px;
-          text-align: center;
-        }
-
-        .sfh-international__popular h4 {
-          margin: 0 0 1.5rem;
-          font-size: 0.85rem;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          color: #666;
-        }
-
-        .sfh-international__destinations {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: center;
-          gap: 0.75rem;
-        }
-
-        .sfh-international__destinations span {
-          padding: 0.5rem 1rem;
-          background: #fff;
-          border: 1px solid #e8e6e2;
-          border-radius: 4px;
-          font-size: 0.85rem;
-        }
-
-        /* ===== TESTIMONIALS ===== */
-        .sfh-testimonials {
-          padding: 5rem 2rem;
-          background: #faf9f6;
-          position: relative;
-        }
-
-        .sfh-testimonials::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-testimonials__container {
-          max-width: 1000px;
-          margin: 0 auto;
-        }
-
-        .sfh-testimonials__grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1.5rem;
-        }
-
-        .sfh-testimonials__card {
-          background: #fff;
-          padding: 2rem;
-          border-left: 3px solid #1a1a1a;
-          border-radius: 0 8px 8px 0;
-          position: relative;
-        }
-
-        .sfh-testimonials__quote {
-          position: absolute;
-          top: 0.5rem;
-          left: 1.5rem;
-          font-family: Georgia, serif;
-          font-size: 4rem;
-          color: #e8e6e2;
-          line-height: 1;
-        }
-
-        .sfh-testimonials__card p {
-          margin: 0 0 1.5rem;
-          color: #666;
-          line-height: 1.7;
-          font-size: 0.95rem;
-          position: relative;
-          z-index: 1;
-        }
-
-        .sfh-testimonials__author {
-          display: flex;
-          flex-direction: column;
-          gap: 0.25rem;
-        }
-
-        .sfh-testimonials__name {
-          font-weight: 600;
-          color: #1a1a1a;
-        }
-
-        .sfh-testimonials__role {
-          font-size: 0.8rem;
-          color: #888;
-        }
-
-        .sfh-testimonials__hours {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.75rem;
-          color: #999;
-        }
-
-        /* ===== GALLERY ===== */
-        .sfh-gallery {
-          padding: 5rem 2rem;
-          background: #fff;
-          position: relative;
-        }
-
-        .sfh-gallery::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-gallery__container {
-          max-width: 1100px;
-          margin: 0 auto;
-        }
-
-        .sfh-gallery__grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 1rem;
-        }
-
-        .sfh-gallery__item {
-          aspect-ratio: 1;
-          overflow: hidden;
-          border-radius: 8px;
-        }
-
-        .sfh-gallery__item img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transition: transform 0.5s ease;
-        }
-
-        .sfh-gallery__item:hover img {
-          transform: scale(1.1);
-        }
-
-        /* ===== COMPARISON ===== */
-        .sfh-comparison {
-          padding: 5rem 2rem;
-          background: #faf9f6;
-          position: relative;
-        }
-
-        .sfh-comparison::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-comparison__container {
-          max-width: 800px;
-          margin: 0 auto;
-        }
-
-        .sfh-comparison__table {
-          background: #fff;
-          border-radius: 8px;
-          overflow: hidden;
-        }
-
-        .sfh-comparison__header,
-        .sfh-comparison__row {
-          display: grid;
-          grid-template-columns: 1.5fr 1fr 1fr 1fr;
-        }
-
-        .sfh-comparison__header {
-          background: #1a1a1a;
-        }
-
-        .sfh-comparison__header .sfh-comparison__cell {
-          color: #fff;
-          font-size: 0.85rem;
-          font-weight: 600;
-          text-transform: uppercase;
-        }
-
-        .sfh-comparison__row {
+          padding: 0.9rem 0;
           border-bottom: 1px solid #e8e6e2;
         }
-
-        .sfh-comparison__row:last-child {
-          border-bottom: none;
-        }
-
-        .sfh-comparison__cell {
-          padding: 1rem 1.25rem;
-          font-size: 0.9rem;
-        }
-
-        .sfh-comparison__cell--label {
-          font-weight: 600;
-          color: #1a1a1a;
-        }
-
-        /* ===== ADDONS ===== */
-        .sfh-addons {
-          padding: 5rem 2rem;
-          background: #fff;
-          position: relative;
-        }
-
-        .sfh-addons::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-addons__container {
-          max-width: 900px;
-          margin: 0 auto;
-        }
-
-        .sfh-addons__grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1.5rem;
-        }
-
-        .sfh-addons__card {
-          background: #faf9f6;
-          padding: 1.5rem;
-          border-left: 3px solid #1a1a1a;
-          border-radius: 0 8px 8px 0;
-        }
-
-        .sfh-addons__header {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          margin-bottom: 0.75rem;
-        }
-
-        .sfh-addons__header h4 {
-          margin: 0;
-          font-size: 0.95rem;
-        }
-
-        .sfh-addons__price {
+        .sfh2-intro__fact-label {
           font-family: 'Share Tech Mono', monospace;
-          font-size: 0.85rem;
-          color: #1a1a1a;
-          font-weight: 700;
-        }
-
-        .sfh-addons__card p {
-          margin: 0;
-          font-size: 0.8rem;
-          color: #888;
-        }
-
-        /* ===== VOUCHERS ===== */
-        .sfh-vouchers {
-          padding: 0;
-          background: #faf9f6;
-          position: relative;
-        }
-
-        .sfh-vouchers__inner {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-        }
-
-        .sfh-vouchers__image {
-          height: 500px;
-        }
-
-        .sfh-vouchers__image img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .sfh-vouchers__content {
-          padding: 4rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-        }
-
-        .sfh-vouchers__content h2 {
-          font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-          margin: 0.5rem 0 1.5rem;
-          text-transform: uppercase;
-          font-weight: 700;
-        }
-
-        .sfh-vouchers__content p {
-          color: #666;
-          line-height: 1.8;
-          margin-bottom: 2rem;
-        }
-
-        .sfh-vouchers__options {
-          display: flex;
-          gap: 1.5rem;
-          margin-bottom: 2rem;
-        }
-
-        .sfh-vouchers__option {
-          text-align: center;
-          padding: 1rem 1.5rem;
-          background: #fff;
-          border: 1px solid #e8e6e2;
-          border-radius: 8px;
-        }
-
-        .sfh-vouchers__amount {
-          display: block;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #1a1a1a;
-        }
-
-        .sfh-vouchers__desc {
-          font-size: 0.75rem;
-          color: #888;
-        }
-
-        /* ===== BLOCK BOOKING ===== */
-        .sfh-block {
-          padding: 5rem 2rem;
-          background: #fff;
-          position: relative;
-        }
-
-        .sfh-block--compact {
-          padding: 1.5rem;
-          background: #f5f4f0;
-        }
-
-        .sfh-block--compact::before {
-          display: none;
-        }
-
-        .sfh-block__compact-content {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 1.5rem;
-          max-width: 900px;
-          margin: 0 auto;
-        }
-
-        .sfh-block__compact-text h3 {
-          margin: 0 0 0.25rem;
-          font-size: 1rem;
-          font-weight: 600;
-        }
-
-        .sfh-block__compact-text p {
-          margin: 0;
-          font-size: 0.85rem;
-          color: #666;
-        }
-
-        .sfh-block__compact-text strong {
-          color: #1a1a1a;
-        }
-
-        @media (max-width: 600px) {
-          .sfh-block__compact-content {
-            flex-direction: column;
-            text-align: center;
-          }
-        }
-
-        .sfh-block::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-block__container {
-          max-width: 900px;
-          margin: 0 auto;
-        }
-
-        .sfh-block__tiers {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1.5rem;
-        }
-
-        .sfh-block__tier {
-          background: #faf9f6;
-          padding: 2rem;
-          text-align: center;
-          border-radius: 8px;
-          position: relative;
-        }
-
-        .sfh-block__tier--popular {
-          background: #1a1a1a;
-          color: #fff;
-        }
-
-        .sfh-block__tier-badge {
-          position: absolute;
-          top: -10px;
-          left: 50%;
-          transform: translateX(-50%);
-          padding: 0.25rem 0.75rem;
-          background: #e8e6e2;
           font-size: 0.65rem;
           text-transform: uppercase;
-          letter-spacing: 0.1em;
-          color: #666;
-          border-radius: 4px;
+          letter-spacing: 0.12em;
+          color: #9ca3af;
+          min-width: 70px;
+          flex-shrink: 0;
         }
-
-        .sfh-block__tier--popular .sfh-block__tier-badge {
-          background: #2563eb;
-          color: #fff;
-        }
-
-        .sfh-block__tier-hours {
-          font-size: 0.85rem;
-          color: #888;
-          margin: 1rem 0 0.5rem;
-        }
-
-        .sfh-block__tier--popular .sfh-block__tier-hours {
-          color: rgba(255,255,255,0.7);
-        }
-
-        .sfh-block__tier-discount {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 2rem;
-          font-weight: 700;
-          margin-bottom: 1.5rem;
-        }
-
-        .sfh-block__tier ul {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-        }
-
-        .sfh-block__tier li {
-          padding: 0.5rem 0;
-          font-size: 0.85rem;
-          border-bottom: 1px solid #e8e6e2;
-        }
-
-        .sfh-block__tier--popular li {
-          border-color: rgba(255,255,255,0.2);
-        }
-
-        .sfh-block__tier li:last-child {
-          border-bottom: none;
-        }
-
-        /* ===== RESOURCES ===== */
-        .sfh-resources {
-          padding: 5rem 2rem;
-          background: #faf9f6;
-          position: relative;
-        }
-
-        .sfh-resources::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-resources__container {
-          max-width: 900px;
-          margin: 0 auto;
-        }
-
-        .sfh-resources__grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1.5rem;
-        }
-
-        .sfh-resources__card {
-          background: #fff;
-          padding: 2rem;
-          text-align: center;
-          border-radius: 8px;
-          text-decoration: none;
-          transition: all 0.3s ease;
-          border: 1px solid #e8e6e2;
-        }
-
-        .sfh-resources__card:hover {
-          border-color: #1a1a1a;
-          transform: translateY(-2px);
-        }
-
-        .sfh-resources__icon {
-          font-size: 2rem;
-          margin-bottom: 1rem;
-        }
-
-        .sfh-resources__card h4 {
-          margin: 0 0 0.5rem;
+        .sfh2-intro__fact-value {
+          font-size: 0.9rem;
           color: #1a1a1a;
-          font-size: 1rem;
+          font-weight: 500;
         }
 
-        .sfh-resources__card p {
-          margin: 0;
-          font-size: 0.8rem;
-          color: #888;
-        }
-
-        /* ===== PARTNERS ===== */
-        .sfh-partners {
-          padding: 5rem 2rem;
+        /* ── Fleet ─────────────────────────────────────────────── */
+        .sfh2-fleet {
           background: #fff;
-          position: relative;
-        }
-
-        .sfh-partners::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-partners__container {
-          max-width: 900px;
-          margin: 0 auto;
-        }
-
-        .sfh-partners__grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1.5rem;
-        }
-
-        .sfh-partners__card {
-          background: #faf9f6;
-          padding: 1.5rem;
-          text-align: center;
-          border-left: 3px solid #1a1a1a;
-          border-radius: 0 8px 8px 0;
-        }
-
-        .sfh-partners__card h4 {
-          margin: 0 0 0.25rem;
-          font-size: 1.1rem;
-        }
-
-        .sfh-partners__type {
-          display: block;
-          font-size: 0.75rem;
-          color: #888;
-          margin-bottom: 0.75rem;
-        }
-
-        .sfh-partners__benefit {
-          display: inline-block;
-          padding: 0.35rem 0.75rem;
-          background: #1a1a1a;
-          color: #fff;
-          font-size: 0.7rem;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-          border-radius: 4px;
-        }
-
-        /* ===== EXPERIENCE ===== */
-        .sfh-experience {
           padding: 5rem 2rem;
-          background: #1a1a1a;
-          position: relative;
         }
-
-        .sfh-experience__inner {
-          max-width: 1000px;
+        .sfh2-fleet__inner {
+          max-width: 1200px;
           margin: 0 auto;
         }
-
-        .sfh-experience__header {
+        .sfh2-fleet__header {
           text-align: center;
           margin-bottom: 3rem;
         }
-
-        .sfh-experience__header .sfh-pre-text {
-          color: rgba(255,255,255,0.5);
+        .sfh2-fleet__tabs {
+          display: flex;
+          gap: 0;
+          border-bottom: 1px solid #e8e6e2;
+          margin-bottom: 3rem;
+          justify-content: center;
         }
-
-        .sfh-experience__header h2 {
-          font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-          text-transform: uppercase;
-          font-weight: 700;
-          margin: 0.5rem 0;
-        }
-
-        .sfh-experience__header .sfh-text--dark { color: #fff; }
-        .sfh-experience__header .sfh-text--mid { color: rgba(255,255,255,0.7); }
-
-        .sfh-experience__stats {
-          display: grid;
-          grid-template-columns: repeat(6, 1fr);
-          gap: 2rem;
-        }
-
-        .sfh-experience__stat {
-          text-align: center;
-        }
-
-        .sfh-experience__value {
-          display: block;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 2rem;
-          font-weight: 700;
-          color: #fff;
-          margin-bottom: 0.5rem;
-        }
-
-        .sfh-experience__label {
-          font-size: 0.75rem;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          color: rgba(255,255,255,0.6);
-        }
-
-        /* ===== TEAM ===== */
-        .sfh-team {
-          padding: 5rem 2rem;
-          background: #faf9f6;
-          position: relative;
-        }
-
-        .sfh-team::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-team__container {
-          max-width: 900px;
-          margin: 0 auto;
-        }
-
-        .sfh-team__grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1.5rem;
-        }
-
-        .sfh-team__card {
-          background: #fff;
-          padding: 2rem;
-          text-align: center;
-          border-radius: 8px;
-        }
-
-        .sfh-team__avatar {
-          width: 60px;
-          height: 60px;
-          background: #1a1a1a;
-          color: #fff;
-          border-radius: 50%;
+        .sfh2-fleet__tab {
           display: flex;
           align-items: center;
-          justify-content: center;
+          gap: 0.75rem;
+          padding: 1rem 1.75rem;
+          background: none;
+          border: none;
+          border-bottom: 2px solid transparent;
+          cursor: pointer;
+          transition: border-color 0.2s, opacity 0.2s;
+          margin-bottom: -1px;
+          color: rgba(0,0,0,0.4);
+          font-family: 'Space Grotesk', sans-serif;
+        }
+        .sfh2-fleet__tab:hover {
+          color: rgba(0,0,0,0.7);
+        }
+        .sfh2-fleet__tab.active {
+          border-bottom-color: #1a1a1a;
+          color: #1a1a1a;
+        }
+        .sfh2-fleet__tab-num {
           font-family: 'Share Tech Mono', monospace;
-          font-size: 1.25rem;
-          margin: 0 auto 1rem;
-        }
-
-        .sfh-team__card h4 {
-          margin: 0 0 0.25rem;
-          font-size: 1rem;
-        }
-
-        .sfh-team__role {
-          display: block;
-          font-size: 0.75rem;
-          text-transform: uppercase;
+          font-size: 0.6rem;
           letter-spacing: 0.1em;
-          color: #2563eb;
-          margin-bottom: 0.75rem;
         }
-
-        .sfh-team__card p {
-          margin: 0;
-          font-size: 0.85rem;
-          color: #888;
+        .sfh2-fleet__tab-name {
+          font-size: 0.8rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
         }
-
-        /* Compact Team Styles */
-        .sfh-team--compact {
-          padding: 1.5rem 2rem;
-          background: #f5f4f1;
+        .sfh2-fleet__tab-nav {
+          display: none;
+          align-items: stretch;
+          border-bottom: 1px solid #e8e6e2;
+          margin-bottom: 3rem;
         }
-
-        .sfh-team--compact::before {
+        .sfh2-fleet__tab-nav--desktop {
           display: none;
         }
-
-        .sfh-team--compact .sfh-team__container {
-          max-width: 1000px;
+        .sfh2-fleet__tab-nav--mobile {
+          display: none;
         }
-
-        .sfh-team__inline {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 2rem;
-          flex-wrap: wrap;
-        }
-
-        .sfh-team__label {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.7rem;
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
-          color: #888;
-        }
-
-        .sfh-team__members {
-          display: flex;
-          gap: 2rem;
-          flex-wrap: wrap;
-          flex: 1;
-          justify-content: center;
-        }
-
-        .sfh-team__member-compact {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.15rem;
-        }
-
-        .sfh-team__name {
-          font-size: 0.85rem;
-          font-weight: 600;
-          color: #1a1a1a;
-        }
-
-        .sfh-team__role-compact {
+        .sfh2-fleet__tab-chevron {
+          all: unset;
+          cursor: pointer;
+          padding: 0 1.25rem 0.75rem;
+          color: #bbb;
           font-size: 0.65rem;
+          transition: color 0.2s;
+          display: flex;
+          align-items: center;
+          flex-shrink: 0;
+        }
+        .sfh2-fleet__tab-chevron:hover { color: #1a1a1a; }
+        .sfh2-fleet__tab-current {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.75rem;
+          font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.05em;
-          color: #888;
-        }
-
-        /* ===== CONTACT FORM ===== */
-        .sfh-contact {
-          padding: 5rem 2rem;
-          background: #fff;
-          position: relative;
-        }
-
-        .sfh-contact::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-contact__container {
-          max-width: 1000px;
-          margin: 0 auto;
-          display: grid;
-          grid-template-columns: 1fr 1.5fr;
-          gap: 4rem;
-        }
-
-        .sfh-contact__content h2 {
-          font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-          margin: 0.5rem 0 1.5rem;
-          text-transform: uppercase;
-          font-weight: 700;
-        }
-
-        .sfh-contact__content p {
-          color: #666;
-          line-height: 1.7;
-          margin-bottom: 2rem;
-        }
-
-        .sfh-contact__details {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-        }
-
-        .sfh-contact__detail {
-          padding-bottom: 1rem;
-          border-bottom: 1px solid #e8e6e2;
-        }
-
-        .sfh-contact__detail-label {
-          display: block;
-          font-size: 0.7rem;
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
-          color: #999;
-          margin-bottom: 0.25rem;
-        }
-
-        .sfh-contact__detail a,
-        .sfh-contact__detail span {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.95rem;
           color: #1a1a1a;
-          text-decoration: none;
+          flex: 1;
+          text-align: center;
+          padding-bottom: 0.75rem;
+          border-bottom: 2px solid #1a1a1a;
+          margin-bottom: -1px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.6rem;
         }
-
-        .sfh-contact__form {
-          background: #faf9f6;
-          padding: 2rem;
-          border-radius: 8px;
-        }
-
-        .sfh-contact__row {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 1rem;
-          margin-bottom: 1rem;
-        }
-
-        .sfh-contact__field {
-          margin-bottom: 1rem;
-        }
-
-        .sfh-contact__field label {
-          display: block;
-          font-size: 0.75rem;
-          text-transform: uppercase;
+        .sfh2-fleet__tab-nav-num {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.6rem;
+          color: #9ca3af;
           letter-spacing: 0.1em;
-          color: #666;
-          margin-bottom: 0.5rem;
         }
-
-        .sfh-contact__field input,
-        .sfh-contact__field select,
-        .sfh-contact__field textarea {
-          width: 100%;
-          padding: 0.75rem 1rem;
-          border: 1px solid #e8e6e2;
-          border-radius: 4px;
-          font-family: inherit;
-          font-size: 0.9rem;
-          background: #fff;
-          transition: border-color 0.3s ease;
-        }
-
-        .sfh-contact__field input:focus,
-        .sfh-contact__field select:focus,
-        .sfh-contact__field textarea:focus {
-          outline: none;
-          border-color: #1a1a1a;
-        }
-
-        .sfh-contact__field textarea {
-          resize: vertical;
-        }
-
-        /* ===== LOCATION ===== */
-        .sfh-location {
-          background: #faf9f6;
-          position: relative;
-        }
-
-        .sfh-location__inner {
+        .sfh2-fleet__panel {
           display: grid;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: 60% 1fr;
+          grid-template-areas: "image top-body" "image specs";
+          gap: 0;
         }
-
-        .sfh-location__map {
-          min-height: 400px;
+        .sfh2-fleet__panel-image {
+          grid-area: image;
+          background: #f5f4f0;
+          border-right: 1px solid #1a1a1a;
+          overflow: hidden;
         }
-
-        .sfh-location__map iframe {
+        .sfh2-fleet__panel-image img {
           width: 100%;
           height: 100%;
+          object-fit: cover;
+          object-position: center;
+          display: block;
         }
-
-        .sfh-location__content {
-          padding: 4rem;
+        .sfh2-fleet__card {
+          border: 1.5px solid #1a1a1a;
+        }
+        .sfh2-fleet__footnote {
+          display: none;
+        }
+        .sfh2-pricing-notes__footnote {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.7rem;
+          color: #9ca3af;
+          margin: 0.75rem 0 0;
+        }
+        .sfh2-fleet__panel-sub {
+          display: grid;
+          grid-template-columns: 60% 1fr;
+          background: #faf9f6;
+          border-top: 1px solid #1a1a1a;
+        }
+        .sfh2-fleet__panel-sub .sfh2-fleet__panel-desc {
+          padding: 1.5rem 2.5rem;
+          margin: 0;
+          border-right: 1px solid #1a1a1a;
+        }
+        .sfh2-fleet__panel-sub .sfh2-btn--fleet-cta {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
+          padding: 1.5rem 2rem;
+          border-top: none;
+        }
+        .sfh2-fleet__panel-specs-area {
+          grid-area: specs;
+          background: #faf9f6;
+          padding: 0 2rem 0;
           display: flex;
           flex-direction: column;
-          justify-content: center;
+          justify-content: flex-end;
+          align-items: stretch;
         }
-
-        .sfh-location__content h2 {
-          font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-          margin: 0.5rem 0 1.5rem;
-          text-transform: uppercase;
-          font-weight: 700;
+        .sfh2-fleet__panel-specs-area .sfh2-fleet__specs {
+          width: 100%;
+          margin-bottom: 0;
         }
-
-        .sfh-location__content p {
-          color: #666;
-          line-height: 1.7;
-          margin-bottom: 2rem;
-        }
-
-        .sfh-location__info {
+        .sfh2-fleet__panel-top-body {
+          grid-area: top-body;
+          padding: 1.5rem 2rem 0.75rem;
           display: flex;
-          gap: 2rem;
-          margin-bottom: 2rem;
+          flex-direction: column;
+          justify-content: space-between;
+          background: #faf9f6;
         }
-
-        .sfh-location__info-item {
+        .sfh2-fleet__panel-top {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+        .sfh2-fleet__panel-label {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.6rem;
+          text-transform: uppercase;
+          letter-spacing: 0.15em;
+          color: #9ca3af;
+          display: block;
+          margin-bottom: 0.5rem;
+        }
+        .sfh2-fleet__panel-model {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1.5rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: -0.02em;
+          color: #1a1a1a;
+          margin: 0 0 0.25rem;
+        }
+        .sfh2-fleet__panel-tagline {
+          font-size: 0.85rem;
+          color: #666;
+          margin: 0 0 0.75rem;
+          font-style: italic;
+        }
+        .sfh2-fleet__panel-rate {
+          display: inline-flex;
+          align-items: baseline;
+          gap: 0.5rem;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 1rem;
+          color: #1a1a1a;
+          background: #f3f4f6;
+          border: 1px solid #e8e6e2;
+          padding: 0.35rem 0.85rem;
+          letter-spacing: 0.05em;
+        }
+        .sfh2-fleet__panel-rate-vat {
+          font-size: 0.6rem;
+          font-family: 'Space Grotesk', sans-serif;
+          font-weight: 500;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: #999;
+        }
+        .sfh2-fleet__panel-desc {
+          font-size: 0.9rem;
+          line-height: 1.65;
+          color: #666;
+          margin: 0.75rem 0;
+          flex: 1;
+        }
+        .sfh2-fleet__specs {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 0;
+          border: 1px solid #e8e6e2;
+          margin-bottom: 1rem;
+        }
+        .sfh2-fleet__spec {
+          padding: 0.75rem 1rem;
+          border-right: 1px solid #e8e6e2;
           display: flex;
           flex-direction: column;
           gap: 0.25rem;
         }
+        .sfh2-fleet__spec:last-child {
+          border-right: none;
+        }
+        .sfh2-fleet__spec-label {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.55rem;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          color: #666;
+        }
+        .sfh2-fleet__spec-value {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.95rem;
+          color: #1a1a1a;
+          white-space: nowrap;
+        }
+        .sfh2-fleet__features {
+          list-style: none;
+          margin: 1.5rem 0 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+          justify-content: space-between;
+        }
+        .sfh2-fleet__feature {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          font-size: 0.82rem;
+          color: #666;
+        }
+        .sfh2-fleet__feature svg {
+          color: #9ca3af;
+          flex-shrink: 0;
+        }
 
-        .sfh-location__info-label {
+        /* ── Pricing Notes ─────────────────────────────────────── */
+        .sfh2-pricing-notes {
+          background: #fff;
+          padding: 0 2rem 3rem;
+          border-top: none;
+        }
+        .sfh2-pricing-notes__inner {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+        .sfh2-pricing-notes__grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        }
+        .sfh2-pricing-notes__card {
+          border: 1px solid #e8e6e2;
+          padding: 1.25rem 1.5rem;
+          background: #faf9f6;
+        }
+        .sfh2-pricing-notes__card p {
+          font-size: 0.9rem;
+          line-height: 1.7;
+          color: #333;
+          margin: 0;
+        }
+        .sfh2-pricing-notes__card strong {
+          font-family: 'Space Grotesk', sans-serif;
+          color: #1a1a1a;
+        }
+        .sfh2-pricing-notes__dots {
+          display: none;
+        }
+        .sfh2-pricing-notes__footnotes {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+        .sfh2-pricing-notes__footnotes p {
+          font-family: 'Share Tech Mono', monospace;
           font-size: 0.7rem;
+          color: #9ca3af;
+          margin: 0;
+          letter-spacing: 0.03em;
+        }
+
+        /* ── Destinations ──────────────────────────────────────── */
+        .sfh2-destinations {
+          background: #faf9f6;
+          padding: 5rem 2rem;
+        }
+        .sfh2-destinations__inner {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+        .sfh2-destinations__header {
+          max-width: 600px;
+          margin-bottom: 3rem;
+        }
+        .sfh2-destinations__intro {
+          font-size: 0.95rem;
+          line-height: 1.7;
+          color: #555;
+          margin: 0 0 0.5rem;
+        }
+        .sfh2-destinations__base-note {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.7rem;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          color: #9ca3af;
+          margin: 0;
+        }
+        .sfh2-destinations__grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 1px;
+          background: #e8e6e2;
+          border: 1px solid #e8e6e2;
+        }
+        .sfh2-destinations__card {
+          background: #fff;
+          padding: 1.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
+          transition: background 0.2s;
+        }
+        .sfh2-destinations__card:hover {
+          background: #faf9f6;
+        }
+        .sfh2-destinations__card-region {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.6rem;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          color: #9ca3af;
+        }
+        .sfh2-destinations__card-name {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1rem;
+          font-weight: 600;
+          color: #1a1a1a;
+        }
+        .sfh2-destinations__card-time {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.85rem;
+          color: #666;
+          margin-top: auto;
+          padding-top: 0.5rem;
+        }
+        .sfh2-destinations__dots {
+          display: none;
+        }
+        .sfh2-destinations__footer {
+          text-align: center;
+          margin: 2.5rem 0 0;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.7rem;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          color: #9ca3af;
+        }
+
+        /* ── Process ───────────────────────────────────────────── */
+        .sfh2-process {
+          background: #fff;
+          padding: 5rem 2rem;
+          border-top: 1px solid #e8e6e2;
+          border-bottom: 1px solid #e8e6e2;
+        }
+        .sfh2-process__inner {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+        .sfh2-process__header {
+          text-align: center;
+          margin-bottom: 4rem;
+        }
+        .sfh2-process__steps {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 0;
+          border: 1px solid #e8e6e2;
+        }
+        .sfh2-process__step {
+          padding: 3rem 2.5rem;
+          border-right: 1px solid #e8e6e2;
+        }
+        .sfh2-process__step:last-child {
+          border-right: none;
+        }
+        .sfh2-process__num {
+          display: block;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 2.5rem;
+          color: #e8e6e2;
+          line-height: 1;
+          margin-bottom: 1.25rem;
+        }
+        .sfh2-process__title {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1.1rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          color: #1a1a1a;
+          margin: 0 0 0.75rem;
+        }
+        .sfh2-process__body {
+          font-size: 0.9rem;
+          line-height: 1.7;
+          color: #666;
+          margin: 0;
+        }
+
+        /* ── Requirements ──────────────────────────────────────── */
+        .sfh2-requirements {
+          background: #faf9f6;
+          padding: 5rem 2rem;
+        }
+        .sfh2-requirements__inner {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+        .sfh2-requirements__header {
+          margin-bottom: 3rem;
+        }
+        .sfh2-requirements__grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1px;
+          background: #e8e6e2;
+          border: 1px solid #e8e6e2;
+        }
+        .sfh2-requirements__card {
+          background: #fff;
+          padding: 2.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+        .sfh2-requirements__num {
+          display: block;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 2rem;
+          color: #e8e6e2;
+          line-height: 1;
+          margin-bottom: 0.5rem;
+        }
+        .sfh2-requirements__title {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          color: #1a1a1a;
+          margin: 0;
+        }
+        .sfh2-requirements__body {
+          font-size: 0.9rem;
+          line-height: 1.65;
+          color: #666;
+          margin: 0;
+        }
+        .sfh2-requirements__note {
+          margin: 2rem 0 0;
+          font-size: 0.85rem;
+          color: #9ca3af;
+          text-align: center;
+        }
+
+        /* ── FAQ ───────────────────────────────────────────────── */
+        .sfh2-faq {
+          padding: 6rem 2rem;
+          background: #faf9f6;
+        }
+        .sfh2-faq__inner {
+          max-width: 800px;
+          margin: 0 auto;
+        }
+        .sfh2-faq__pre-label {
+          display: block;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.65rem;
+          font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 0.15em;
           color: #999;
+          margin-bottom: 0.5rem;
         }
-
-        .sfh-location__info-item span:last-child {
-          font-size: 0.9rem;
+        .sfh2-faq__header {
+          margin-bottom: 3rem;
+        }
+        .sfh2-faq__header h2 {
+          font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+          font-weight: 700;
+          color: #1a1a1a;
+          margin: 0;
+          text-transform: uppercase;
+        }
+        .sfh2-faq__list {
+          display: flex;
+          flex-direction: column;
+        }
+        .sfh2-faq__item {
+          display: flex;
+          gap: 1.5rem;
+          align-items: flex-start;
+          padding: 1.5rem 0;
+          border-bottom: 1px solid #e8e6e2;
+          cursor: pointer;
+          transition: opacity 0.2s;
+        }
+        .sfh2-faq__item:hover {
+          opacity: 0.75;
+        }
+        .sfh2-faq__number {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.75rem;
+          color: #bbb;
+          letter-spacing: 0.05em;
+          padding-top: 0.2rem;
+          flex-shrink: 0;
+          width: 2rem;
+        }
+        .sfh2-faq__item--open .sfh2-faq__number {
           color: #1a1a1a;
         }
-
-        /* ===== FINAL CTA ===== */
-        .sfh-final-cta {
-          padding: 5rem 2rem;
-          background: #faf9f6;
-          text-align: center;
-          position: relative;
+        .sfh2-faq__content {
+          flex: 1;
         }
-
-        .sfh-final-cta::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(80%, 600px);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, #e0deda, transparent);
-        }
-
-        .sfh-final-cta__container {
-          max-width: 600px;
-          margin: 0 auto;
-        }
-
-        .sfh-final-cta h2 {
-          font-size: clamp(2rem, 4vw, 3rem);
-          margin: 0.5rem 0 1.5rem;
-          text-transform: uppercase;
-          font-weight: 700;
-        }
-
-        .sfh-final-cta p {
-          color: #666;
-          line-height: 1.7;
-          margin-bottom: 2rem;
-        }
-
-        .sfh-final-cta__buttons {
+        .sfh2-faq__content h4 {
           display: flex;
-          justify-content: center;
+          justify-content: space-between;
+          align-items: center;
           gap: 1rem;
+          margin: 0;
+          font-size: 1rem;
+          font-weight: 600;
+          color: #1a1a1a;
+          line-height: 1.4;
+        }
+        .sfh2-faq__toggle {
+          font-size: 1.25rem;
+          font-weight: 300;
+          color: #999;
+          flex-shrink: 0;
+          width: 20px;
+          text-align: center;
+        }
+        .sfh2-faq__item--open .sfh2-faq__toggle {
+          color: #1a1a1a;
+        }
+        .sfh2-faq__answer {
+          overflow: hidden;
+        }
+        .sfh2-faq__answer p {
+          color: #666;
+          font-size: 0.9rem;
+          line-height: 1.75;
+          margin: 0.75rem 0 0;
         }
 
-        /* ===== RESPONSIVE ===== */
+        /* ── Enquiry ───────────────────────────────────────────── */
+        .sfh2-enquiry {
+          background: #fff;
+          padding: 5rem 2rem;
+        }
+        .sfh2-enquiry__inner {
+          max-width: 1200px;
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: 1fr 2fr;
+          gap: 5rem;
+          align-items: start;
+        }
+        .sfh2-enquiry__heading {
+          padding-top: 0.5rem;
+        }
+        .sfh2-enquiry__sub {
+          font-size: 0.9rem;
+          line-height: 1.7;
+          color: #666;
+          margin: 0;
+        }
+        .sfh2-enquiry__card {
+          background: #faf9f6;
+          border: 1.5px solid #1a1a1a;
+        }
+        .sfh2-enquiry__card-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0.9rem 2.5rem;
+          border-bottom: 1px solid #1a1a1a;
+          background: #1a1a1a;
+        }
+        .sfh2-enquiry__card-label {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.65rem;
+          text-transform: uppercase;
+          letter-spacing: 0.2em;
+          color: #fff;
+        }
+        .sfh2-enquiry__card-note--mobile {
+          display: none;
+        }
+        .sfh2-enquiry__card-note {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.6rem;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          color: #888;
+        }
+        .sfh2-enquiry__card-body {
+          padding: 0;
+        }
+        .sfh2-enquiry__form {
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+          padding: 2rem 2rem 14px;
+        }
+        .sfh2-enquiry__row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1.25rem;
+        }
+        .sfh2-enquiry__field {
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+        }
+        .sfh2-enquiry__field label {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.65rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          color: #555;
+        }
+        .sfh2-enquiry__optional {
+          font-weight: 400;
+          text-transform: none;
+          letter-spacing: 0;
+          color: #999;
+        }
+        .sfh2-enquiry__field input,
+        .sfh2-enquiry__field select,
+        .sfh2-enquiry__field textarea {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.9rem;
+          color: #1a1a1a;
+          background: #fff;
+          border: 1px solid #e8e6e2;
+          border-radius: 0;
+          padding: 0.75rem 1rem;
+          outline: none;
+          transition: border-color 0.2s;
+          resize: vertical;
+          width: 100%;
+          box-sizing: border-box;
+          -webkit-appearance: none;
+          appearance: none;
+        }
+        .sfh2-dropdown {
+          position: relative;
+          width: 100%;
+        }
+        .sfh2-dropdown__trigger {
+          all: unset;
+          box-sizing: border-box;
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.9rem;
+          font-weight: 500;
+          color: #1a1a1a;
+          background: #fff;
+          border: 1px solid #e8e6e2;
+          padding: 0.75rem 1rem;
+          cursor: pointer;
+          transition: border-color 0.2s;
+        }
+        .sfh2-dropdown__chevron {
+          flex-shrink: 0;
+          transition: transform 0.2s;
+        }
+        .sfh2-dropdown--open .sfh2-dropdown__chevron {
+          transform: rotate(180deg);
+        }
+        .sfh2-dropdown__menu {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: #fff;
+          border: 1px solid #e8e6e2;
+          border-top: none;
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          z-index: 100;
+        }
+        .sfh2-dropdown__option {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.85rem;
+          color: #1a1a1a;
+          padding: 0.75rem 1rem;
+          cursor: pointer;
+          border-bottom: 1px solid #e8e6e2;
+          transition: background 0.15s;
+        }
+        .sfh2-dropdown__option:last-child {
+          border-bottom: none;
+        }
+        .sfh2-dropdown__option:hover {
+          background: #faf9f6;
+        }
+        .sfh2-dropdown__option--active {
+          font-weight: 600;
+          background: #faf9f6;
+        }
+        .sfh2-enquiry__field input:focus,
+        .sfh2-enquiry__field select:focus,
+        .sfh2-enquiry__field textarea:focus {
+          border-color: #1a1a1a;
+          background: #fff;
+        }
+        .sfh2-enquiry__error {
+          font-size: 0.82rem;
+          color: #991b1b;
+          margin: 0;
+        }
+        .sfh2-enquiry__error a {
+          color: #991b1b;
+        }
+        .sfh2-enquiry__success {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 1.25rem;
+          padding: 3rem 2rem;
+          text-align: center;
+        }
+        .sfh2-enquiry__success p {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1rem;
+          color: #1a1a1a;
+          margin: 0;
+          line-height: 1.6;
+        }
+
+        /* ── Responsive ────────────────────────────────────────── */
         @media (max-width: 1024px) {
-          .sfh-intro__container {
+          .sfh2-enquiry__inner {
             grid-template-columns: 1fr;
+            gap: 2.5rem;
           }
-          .sfh-intro__header {
-            text-align: center;
-          }
-          .sfh-intro__benefits {
-            justify-content: center;
-            gap: 1rem;
-          }
-
-          .sfh-fleet__card {
+          .sfh2-fleet__panel {
             grid-template-columns: 1fr;
+            grid-template-areas: "image" "top-body" "specs";
           }
-
-          .sfh-fleet__image {
-            min-height: 250px;
+          .sfh2-fleet__panel-image img {
+            width: 100%;
+            height: auto;
           }
-
-          .sfh-cta__inner {
-            grid-template-columns: 1fr;
-          }
-
-          .sfh-cta__image {
-            height: 250px;
-          }
-
-          .sfh-destinations__grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-
-          .sfh-safety__container {
-            grid-template-columns: 1fr;
-            gap: 2rem;
-          }
-
-          .sfh-safety__image {
-            order: -1;
-            height: 300px;
-          }
-
-          .sfh-hours__grid {
-            grid-template-columns: 1fr;
-          }
-
-          .sfh-insurance__grid {
-            grid-template-columns: 1fr;
-          }
-
-          .sfh-testimonials__grid {
-            grid-template-columns: 1fr;
-          }
-
-          .sfh-gallery__grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-
-          .sfh-addons__grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-
-          .sfh-vouchers__inner {
-            grid-template-columns: 1fr;
-          }
-
-          .sfh-vouchers__image {
-            height: 300px;
-          }
-
-          .sfh-block__tiers {
-            grid-template-columns: 1fr;
-          }
-
-          .sfh-resources__grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-
-          .sfh-partners__grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-
-          .sfh-experience__stats {
+          .sfh2-destinations__grid {
             grid-template-columns: repeat(3, 1fr);
-          }
-
-          .sfh-team__grid {
-            grid-template-columns: 1fr;
-          }
-
-          .sfh-contact__container {
-            grid-template-columns: 1fr;
-            gap: 2rem;
-          }
-
-          .sfh-location__inner {
-            grid-template-columns: 1fr;
-          }
-
-          .sfh-location__map {
-            height: 300px;
           }
         }
 
         @media (max-width: 768px) {
-          .sfh-hero__content {
-            padding: 5rem 2rem 2rem;
-            justify-content: center;
+          .sfh2-enquiry__form {
+            padding: 1.25rem 1.25rem 14px;
           }
-
-          .sfh-hero__left {
-            text-align: center;
-            max-width: 100%;
+          .sfh2-enquiry__card-header {
+            padding-left: 1.25rem;
+            padding-right: 1.25rem;
           }
-
-          .sfh-hero__headline {
-            align-items: center;
+          .sfh2-enquiry__card-note--desktop { display: none; }
+          .sfh2-enquiry__card-note--mobile { display: inline; }
+          .sfh2-hero__headline {
+            font-size: clamp(2.5rem, 10vw, 4rem);
           }
-
-          .sfh-hero__divider-line {
-            margin: 1.5rem auto;
+          .sfh2-hero__stats {
+            padding: 0.9rem 1.5rem;
           }
-
-          .sfh-hero__sub {
-            margin: 0 auto 2rem;
-            text-align: center;
+          .sfh2-hero__stat {
+            font-size: 0.6rem;
           }
-
-          .sfh-hero__stats {
-            justify-content: center;
+          .sfh2-hero__content {
+            padding: 0 1.5rem 6rem;
           }
-
-          .sfh-hero__overlay {
-            background: linear-gradient(180deg, rgba(250,249,246,0.97) 0%, rgba(250,249,246,0.92) 60%, rgba(250,249,246,0.7) 100%);
-          }
-
-          .sfh-intro__benefits {
-            gap: 1.5rem;
-          }
-
-          .sfh-fleet__selector {
-            flex-direction: column;
-          }
-
-          .sfh-rates__grid {
+          .sfh2-intro__inner {
             grid-template-columns: 1fr;
+            gap: 2.5rem;
           }
-
-          .sfh-requirements__grid {
-            grid-template-columns: 1fr;
+          .sfh2-intro__image {
+            aspect-ratio: 16/9;
           }
-
-          .sfh-cta__contact {
-            flex-direction: column;
-            gap: 1rem;
-          }
-
-          .sfh-cta__contact-divider {
-            width: 40px;
-            height: 1px;
-          }
-
-          .sfh-cta__buttons {
-            flex-direction: column;
-          }
-
-          .sfh-cta__buttons .sfh-btn {
-            width: 100%;
-          }
-
-          .sfh-destinations__grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-
-          .sfh-process__steps--horizontal {
-            flex-direction: column;
-            gap: 0.5rem;
-          }
-
-          .sfh-process__steps--horizontal .sfh-process__step {
-            flex-direction: row;
-            max-width: 100%;
-            text-align: left;
-            min-height: auto;
-          }
-
-          .sfh-process__steps--horizontal .sfh-process__step--fly {
-            max-width: 100%;
-          }
-
-          .sfh-process__arrow {
+          .sfh2-fleet__tabs {
             display: none;
           }
-
-          .sfh-destinations__filters {
-            flex-wrap: wrap;
+          .sfh2-fleet__tab-nav--desktop {
+            display: none;
           }
-
-          .sfh-fuel__points {
+          .sfh2-fleet__tab-nav--mobile {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+          }
+          .sfh2-fleet__tab-nav--mobile .sfh2-fleet__tab-chevron {
+            font-size: 1rem;
+            padding: 0.75rem 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .sfh2-fleet__tab-nav--mobile .sfh2-fleet__tab-current {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: none;
+            padding-bottom: 0;
+          }
+          .sfh2-fleet__panel-model,
+          .sfh2-fleet__panel-label {
+            display: none;
+          }
+          .sfh2-fleet__panel-tagline {
+            text-align: center;
+          }
+          .sfh2-fleet__spec:first-child {
+            display: none;
+          }
+          .sfh2-fleet__panel-top-body {
+            padding: 0 1.75rem 0.5rem;
+          }
+          .sfh2-fleet__panel-sub {
+            grid-template-columns: 1fr;
+            border-top: none;
+          }
+          .sfh2-fleet__panel-sub .sfh2-fleet__panel-desc {
+            border-right: none;
+            border-bottom: none;
+            padding: 0.75rem 1.75rem 1rem;
+          }
+          .sfh2-fleet__panel-sub .sfh2-btn--fleet-cta {
+            padding: 1.25rem 1.75rem;
+            border-top: 1px solid #1a1a1a;
+          }
+          .sfh2-process__steps {
             grid-template-columns: 1fr;
           }
-
-          .sfh-insurance__excess-grid {
-            flex-direction: column;
+          .sfh2-process__step {
+            border-right: none;
+            border-bottom: 1px solid #e8e6e2;
+          }
+          .sfh2-process__step:last-child {
+            border-bottom: none;
+          }
+          .sfh2-requirements__grid {
+            grid-template-columns: 1fr;
+          }
+          .sfh2-pricing-notes {
+            padding-bottom: 14px;
+          }
+          .sfh2-fleet__footnote {
+            display: block;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            color: #9ca3af;
+            margin: 0.75rem 0 0;
+          }
+          .sfh2-pricing-notes__footnote {
+            display: none;
+          }
+          .sfh2-pricing-notes__grid {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            gap: 0;
+            margin-bottom: 0;
+          }
+          .sfh2-pricing-notes__grid::-webkit-scrollbar {
+            display: none;
+          }
+          .sfh2-pricing-notes__card {
+            flex: 0 0 100%;
+            margin-right: 1rem;
+            scroll-snap-align: start;
+          }
+          .sfh2-pricing-notes__card:last-child {
+            margin-right: 0;
+          }
+          .sfh2-pricing-notes__dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding-top: 14px;
+          }
+          .sfh2-pricing-notes__dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ccc8c1;
+            transition: background 0.2s;
+            cursor: pointer;
+          }
+          .sfh2-pricing-notes__dot--active {
+            background: #1a1a1a;
+          }
+          .sfh2-destinations__grid {
+            grid-template-columns: unset;
+            grid-template-rows: repeat(2, auto);
+            grid-auto-flow: column;
+            grid-auto-columns: 50%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            scroll-snap-type: x mandatory;
+          }
+          .sfh2-destinations__grid::-webkit-scrollbar {
+            display: none;
+          }
+          .sfh2-destinations__card {
+            scroll-snap-align: start;
+          }
+          .sfh2-destinations__dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding-top: 14px;
+          }
+          .sfh2-destinations__dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ccc8c1;
+            transition: background 0.2s;
+            cursor: pointer;
+          }
+          .sfh2-destinations__dot--active {
+            background: #1a1a1a;
+          }
+          .sfh2-destinations__dots {
+            display: flex;
+          }
+          .sfh2-enquiry__row {
+            grid-template-columns: 1fr;
+          }
+          .sfh2-btn--submit {
+            width: 100%;
+            text-align: center;
+          }
+          .sfh2-section-heading {
+            font-size: clamp(1.75rem, 6vw, 2.5rem);
+            text-align: center;
+          }
+          .sfh2-faq h2 {
+            text-align: center;
+          }
+          .sfh2-intro,
+          .sfh2-fleet,
+          .sfh2-destinations,
+          .sfh2-process,
+          .sfh2-enquiry {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+          }
+          .sfh2-enquiry {
+            padding-bottom: 0;
+          }
+          .sfh2-intro {
+            padding-bottom: 0;
+          }
+          .sfh2-fleet {
+            padding-top: 36px;
+            padding-bottom: 14px;
+          }
+          .sfh2-faq {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+          }
+          .sfh2-pre-label,
+          .sfh2-faq__pre-label {
+            display: flex;
+            align-items: center;
             gap: 1rem;
+            white-space: nowrap;
           }
-
-          .sfh-comparison__header,
-          .sfh-comparison__row {
-            grid-template-columns: 1.2fr 1fr 1fr 1fr;
+          .sfh2-pre-label::before,
+          .sfh2-pre-label::after,
+          .sfh2-faq__pre-label::before,
+          .sfh2-faq__pre-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #bbb;
+            min-width: 20px;
           }
+        }
 
-          .sfh-comparison__cell {
-            padding: 0.75rem;
-            font-size: 0.8rem;
+        @media (max-width: 335px) {
+          .sfh2-fleet {
+            padding-left: clamp(0px, calc(2rem - (335px - 100vw) / 2), 2rem);
+            padding-right: clamp(0px, calc(2rem - (335px - 100vw) / 2), 2rem);
           }
-
-          .sfh-addons__grid {
-            grid-template-columns: 1fr;
-          }
-
-          .sfh-vouchers__content {
-            padding: 2rem;
-          }
-
-          .sfh-vouchers__options {
-            flex-direction: column;
-            gap: 1rem;
-          }
-
-          .sfh-resources__grid {
-            grid-template-columns: 1fr;
-          }
-
-          .sfh-partners__grid {
-            grid-template-columns: 1fr;
-          }
-
-          .sfh-experience__stats {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-          }
-
-          .sfh-contact__row {
-            grid-template-columns: 1fr;
-          }
-
-          .sfh-location__content {
-            padding: 2rem;
-          }
-
-          .sfh-location__info {
-            flex-direction: column;
-            gap: 1rem;
-          }
-
-          .sfh-final-cta__buttons {
-            flex-direction: column;
-          }
-
-          .sfh-gallery__grid {
-            grid-template-columns: repeat(2, 1fr);
+        }
+        @media (max-width: 360px) {
+          .sfh2-enquiry {
+            padding-left: clamp(2px, calc(2rem - (360px - 100vw) / 2), 2rem);
+            padding-right: clamp(2px, calc(2rem - (360px - 100vw) / 2), 2rem);
           }
         }
 
         @media (max-width: 480px) {
-          .sfh-experience__stats {
-            grid-template-columns: repeat(2, 1fr);
+          .sfh2-hero__ctas {
+            flex-direction: column;
           }
-
-          .sfh-experience__value {
-            font-size: 1.5rem;
+          .sfh2-btn {
+            text-align: center;
           }
-
-          .sfh-comparison__header,
-          .sfh-comparison__row {
-            grid-template-columns: 1fr 0.8fr 0.8fr 0.8fr;
+          .sfh2-hero__stat-divider {
+            display: none;
           }
-
-          .sfh-comparison__cell {
-            padding: 0.5rem;
-            font-size: 0.7rem;
-          }
-
-          .sfh-gallery__grid {
-            grid-template-columns: 1fr;
+          .sfh2-hero__stats {
+            gap: 0.5rem;
           }
         }
       `}</style>
     </div>
   );
 }
-
-export default SelfFlyHire;

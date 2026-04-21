@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import { usePageImages } from '../hooks/usePageImages';
+import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { usePageText } from '../hooks/usePageText';
 
 function Training() {
   const pageImages = usePageImages('training');
+  useCmsHighlight();
   const { t } = usePageText('training');
   const courses = [
     {
@@ -81,7 +83,7 @@ function Training() {
                 Book a Trial Lesson
               </Link>
             </div>
-            <div>
+            <div data-cms-section="training-intro">
               <img
                 src={pageImages['training-intro']?.[0]?.url ?? '/assets/images/training/helicopter-training.webp'}
                 alt="Helicopter Flight Training at HQ Aviation"
@@ -121,7 +123,7 @@ function Training() {
       <section className="section">
         <div className="container">
           <div className="grid grid--2 gap-8 items-center">
-            <div>
+            <div data-cms-section="training-trial-lesson">
               <img
                 src={pageImages['training-trial-lesson']?.[0]?.url ?? '/assets/images/training/trial-lesson.webp'}
                 alt="Trial Helicopter Lesson"

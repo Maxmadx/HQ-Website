@@ -1,33 +1,40 @@
 import { Link } from 'react-router-dom';
+import { usePageImages } from '../hooks/usePageImages';
+import { useCmsHighlight } from '../hooks/useCmsHighlight';
+import { SECTION_MAP } from '../lib/imageSections';
 
 function AircraftSales() {
+  useCmsHighlight();
+  const pageImages = usePageImages('aircraft-sales');
+  const cmsCards = pageImages['aircraft-sales-cards'] ?? SECTION_MAP['aircraft-sales-cards'].images;
+
   const aircraft = [
     {
       name: 'R22 Beta II',
       subtitle: 'Training Excellence',
       description: 'The world\'s most popular training helicopter. Perfect for students and schools.',
-      image: '/assets/images/r22.jpg',
+      image: cmsCards[0]?.url || '/assets/images/r22.jpg',
       link: '/aircraft-sales/new/r22'
     },
     {
       name: 'R44 Series',
       subtitle: 'Versatile Performance',
       description: 'Available in Raven I, Raven II, and Cadet configurations for various missions.',
-      image: '/assets/images/r44.jpg',
+      image: cmsCards[1]?.url || '/assets/images/r44.jpg',
       link: '/aircraft-sales/new/r44'
     },
     {
       name: 'R66 Turbine',
       subtitle: 'Turbine Power',
       description: 'The NxG series brings next-generation features to the proven R66 platform.',
-      image: '/assets/images/r66.jpg',
+      image: cmsCards[2]?.url || '/assets/images/r66.jpg',
       link: '/aircraft-sales/new/r66'
     },
     {
       name: 'R88',
       subtitle: 'Coming Soon',
       description: 'Robinson\'s newest and largest helicopter. Eight seats, turbine powered.',
-      image: '/assets/images/r88.jpg',
+      image: cmsCards[3]?.url || '/assets/images/r88.jpg',
       link: '/aircraft-sales/new/r88'
     }
   ];
@@ -56,7 +63,7 @@ function AircraftSales() {
             <span className="text-accent text-sm text-uppercase font-bold">New Aircraft</span>
             <h2>Robinson Helicopter Range</h2>
           </div>
-          <div className="grid grid--4">
+          <div className="grid grid--4" data-cms-section="aircraft-sales-cards">
             {aircraft.map((item) => (
               <div key={item.name} className="card aircraft-card">
                 <div className="card__image">

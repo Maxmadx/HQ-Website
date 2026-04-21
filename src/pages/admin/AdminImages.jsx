@@ -375,6 +375,7 @@ function CardsSection({ sectionId, section, images, onImagesChange }) {
 
 function SectionCard({ section, images, fromFirestore, onImagesChange }) {
   const [col, bg] = TYPE_COLOR[section.type] || ['#374151', '#f3f4f6'];
+  const pageUrl = PAGE_URL[section.page];
 
   return (
     <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '10px', overflow: 'hidden', marginBottom: '1rem' }}>
@@ -388,6 +389,16 @@ function SectionCard({ section, images, fromFirestore, onImagesChange }) {
           <p style={{ margin: 0, fontSize: '0.75rem', color: '#6b7280' }}>{section.hint}</p>
         </div>
         <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          {pageUrl && (
+            <a
+              href={`${pageUrl}?highlight=${section.id}`}
+              target="_blank"
+              rel="noreferrer"
+              style={{ fontSize: '0.68rem', fontWeight: 600, color: 'rgb(96,165,250)', textDecoration: 'none', padding: '2px 6px', borderRadius: '4px', background: 'rgb(239,246,255)', whiteSpace: 'nowrap' }}
+            >
+              Find on page ↗
+            </a>
+          )}
           {fromFirestore ? (
             <span style={S.tag('#065f46', '#d1fae5')}>● Live</span>
           ) : (
@@ -414,7 +425,26 @@ function SectionCard({ section, images, fromFirestore, onImagesChange }) {
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 
-const PAGE_ORDER = ['home', 'training', 'maintenance', 'expeditions', 'about'];
+const PAGE_ORDER = [
+  'home', 'training', 'discovery', 'ppl', 'type-rating',
+  'sfh', 'sales', 'rebuilds', 'expeditions', 'maintenance',
+  'about', 'helicopter-tour',
+];
+
+const PAGE_URL = {
+  home:              '/',
+  training:          '/training',
+  discovery:         '/training/trial-lessons',
+  ppl:               '/training/ppl',
+  'type-rating':     '/training/type-rating',
+  sfh:               '/self-fly-hire',
+  sales:             '/sales/new',
+  rebuilds:          '/sales/rebuilds',
+  expeditions:       '/expeditions',
+  maintenance:       '/maintenance',
+  about:             '/about',
+  'helicopter-tour': '/helicopter-tour-of-london',
+};
 
 export default function AdminImages() {
   // sectionImages: { [sectionId]: images[] }
@@ -515,7 +545,7 @@ export default function AdminImages() {
       <div style={{ display: 'flex', gap: '0.2rem', background: '#f3f4f6', borderRadius: '8px', padding: '0.25rem', marginBottom: '1.5rem', width: 'fit-content', flexWrap: 'wrap' }}>
         {tabPages.map((p) => (
           <button key={p} onClick={() => setActivePage(p)} style={tabStyle(activePage === p)}>
-            {p === 'all' ? 'All Pages' : PAGE_LABELS[p]}
+            {p === 'all' ? 'All Pages' : (PAGE_URL[p] || p)}
           </button>
         ))}
       </div>
@@ -527,8 +557,9 @@ export default function AdminImages() {
           <div key={page} style={{ marginBottom: '2.5rem' }}>
             {/* Page heading */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '2px solid #f3f4f6' }}>
-              <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: '#111827' }}>{PAGE_LABELS[page]}</h2>
-              <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{sections.length} section{sections.length !== 1 ? 's' : ''}</span>
+              <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: '#111827', fontFamily: 'monospace' }}>{PAGE_URL[page] || page}</h2>
+              <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{PAGE_LABELS[page]}</span>
+              <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>· {sections.length} section{sections.length !== 1 ? 's' : ''}</span>
             </div>
 
             {sections.map((section) => (

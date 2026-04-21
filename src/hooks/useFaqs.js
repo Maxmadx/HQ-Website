@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
 /**
@@ -14,20 +14,25 @@ export function useFaqs(pageKey, { visibleOnly = false } = {}) {
 
   useEffect(() => {
     if (!pageKey) return;
+    // Intentionally no orderBy — avoids requiring a composite index.
+    // Sorting is done client-side after fetch.
     const q = query(
       collection(db, 'faqs'),
       where('page', '==', pageKey),
-      orderBy('displayOrder', 'asc'),
     );
     const unsub = onSnapshot(
       q,
       (snap) => {
         let docs = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
         if (visibleOnly) docs = docs.filter((f) => f.visible);
+        docs.sort((a, b) => (a.displayOrder ?? 999) - (b.displayOrder ?? 999));
         setFaqs(docs);
         setLoading(false);
       },
-      () => setLoading(false),
+      (err) => {
+        console.error('[useFaqs] query error:', err.message);
+        setLoading(false);
+      },
     );
     return unsub;
   }, [pageKey, visibleOnly]);

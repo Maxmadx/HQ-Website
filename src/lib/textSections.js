@@ -380,7 +380,7 @@ export const TEXT_SECTIONS = [
     hint: 'Frequently asked questions on the Discovery Flight page',
     fields: [
       { id: 'pre_label', label: 'Pre-label', type: 'text',    default: 'Common Questions' },
-      { id: 'heading',   label: 'Heading',   type: 'heading', default: 'FAQ' },
+      { id: 'heading',   label: 'Heading',   type: 'heading', default: 'Frequently Asked' },
       { id: 'q1', label: 'Q1 — Question', type: 'text',      default: 'Do I need any prior experience?' },
       { id: 'a1', label: 'Q1 — Answer',   type: 'paragraph', default: 'No prior experience is required. Our instructors will guide you through everything from the pre-flight briefing to hands-on flying. Discovery flights are designed for complete beginners.' },
       { id: 'q2', label: 'Q2 — Question', type: 'text',      default: 'Can I bring passengers?' },

@@ -4,7 +4,7 @@
  * Route: /award-variations
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Picker from '../components/Picker';
 
 const AWARDS = [
@@ -20,9 +20,43 @@ const AWARDS = [
 const TRACK_CSS = `
   display: flex; gap: 0.75rem; overflow-x: auto; scroll-snap-type: x mandatory;
   padding-bottom: 1rem; -webkit-overflow-scrolling: touch;
-  mask-image: linear-gradient(to right, black 80%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
 `;
+
+/* Scroll container with dynamic left/right fades that disappear at the edges */
+function FadeTrack({ className, children }) {
+  const ref = useRef(null);
+  const [atStart, setAtStart] = useState(true);
+  const [atEnd, setAtEnd] = useState(false);
+
+  const check = () => {
+    const el = ref.current;
+    if (!el) return;
+    setAtStart(el.scrollLeft <= 2);
+    setAtEnd(el.scrollLeft >= el.scrollWidth - el.clientWidth - 2);
+  };
+
+  useEffect(() => { check(); }, []);
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <div style={{
+        position: 'absolute', top: 0, bottom: 16, left: 0, width: '4rem',
+        background: 'linear-gradient(to right, #faf9f6, transparent)',
+        pointerEvents: 'none', zIndex: 1,
+        opacity: atStart ? 0 : 1, transition: 'opacity 0.2s',
+      }} />
+      <div style={{
+        position: 'absolute', top: 0, bottom: 16, right: 0, width: '4rem',
+        background: 'linear-gradient(to left, #faf9f6, transparent)',
+        pointerEvents: 'none', zIndex: 1,
+        opacity: atEnd ? 0 : 1, transition: 'opacity 0.2s',
+      }} />
+      <div ref={ref} className={className} onScroll={check}>
+        {children}
+      </div>
+    </div>
+  );
+}
 const SCROLLBAR_CSS = (prefix) => `
   .${prefix}__track::-webkit-scrollbar { height: 4px; }
   .${prefix}__track::-webkit-scrollbar-track { background: transparent; }
@@ -52,7 +86,7 @@ function AwardsV1() {
         .aw-v1__sub { font-family: 'Share Tech Mono', monospace; font-size: 0.48rem; letter-spacing: 0.08em; text-transform: uppercase; color: #a09080; }
       `}</style>
       <h3 className="aw-v1__title">Recommendations</h3>
-      <div className="aw-v1__track">
+      <FadeTrack className="aw-v1__track">
         {AWARDS.map((m, i) => (
           <div key={i} className="aw-v1__card">
             <i className={m.icon} />
@@ -61,7 +95,7 @@ function AwardsV1() {
             <span className="aw-v1__sub">{m.sub}</span>
           </div>
         ))}
-      </div>
+      </FadeTrack>
     </section>
   );
 }
@@ -88,7 +122,7 @@ function AwardsV2() {
         .aw-v2__sub { font-family: 'Share Tech Mono', monospace; font-size: 0.48rem; letter-spacing: 0.08em; text-transform: uppercase; color: #666; }
       `}</style>
       <h3 className="aw-v2__title">Recommendations</h3>
-      <div className="aw-v2__track">
+      <FadeTrack className="aw-v2__track">
         {AWARDS.map((m, i) => (
           <div key={i} className="aw-v2__card">
             <i className={m.icon} />
@@ -97,7 +131,7 @@ function AwardsV2() {
             <span className="aw-v2__sub">{m.sub}</span>
           </div>
         ))}
-      </div>
+      </FadeTrack>
     </section>
   );
 }
@@ -125,7 +159,7 @@ function AwardsV3() {
         .aw-v3__sub { font-family: 'Share Tech Mono', monospace; font-size: 0.48rem; letter-spacing: 0.08em; text-transform: uppercase; color: #a09080; }
       `}</style>
       <h3 className="aw-v3__title">Recommendations</h3>
-      <div className="aw-v3__track">
+      <FadeTrack className="aw-v3__track">
         {AWARDS.map((m, i) => (
           <div key={i} className="aw-v3__card">
             <span className="aw-v3__year">{m.year}</span>
@@ -134,7 +168,7 @@ function AwardsV3() {
             <span className="aw-v3__sub">{m.sub}</span>
           </div>
         ))}
-      </div>
+      </FadeTrack>
     </section>
   );
 }
@@ -162,7 +196,7 @@ function AwardsV4() {
         .aw-v4__meta { font-family: 'Share Tech Mono', monospace; font-size: 0.45rem; letter-spacing: 0.08em; text-transform: uppercase; color: #a09080; }
       `}</style>
       <h3 className="aw-v4__title">Recommendations</h3>
-      <div className="aw-v4__track">
+      <FadeTrack className="aw-v4__track">
         {AWARDS.map((m, i) => (
           <div key={i} className="aw-v4__card">
             <div className="aw-v4__icon"><i className={m.icon} /></div>
@@ -172,7 +206,7 @@ function AwardsV4() {
             </div>
           </div>
         ))}
-      </div>
+      </FadeTrack>
     </section>
   );
 }
@@ -198,7 +232,7 @@ function AwardsV5() {
         .aw-v5__card i { display: none; }
       `}</style>
       <h3 className="aw-v5__title">Recommendations</h3>
-      <div className="aw-v5__track">
+      <FadeTrack className="aw-v5__track">
         {AWARDS.map((m, i) => (
           <div key={i} className="aw-v5__card">
             <span className="aw-v5__year">{m.year}</span>
@@ -206,7 +240,7 @@ function AwardsV5() {
             <span className="aw-v5__sub">{m.sub}</span>
           </div>
         ))}
-      </div>
+      </FadeTrack>
     </section>
   );
 }
@@ -235,7 +269,7 @@ function AwardsV6() {
         .aw-v6__sub { font-family: 'Share Tech Mono', monospace; font-size: 0.48rem; letter-spacing: 0.08em; text-transform: uppercase; color: #a09080; }
       `}</style>
       <h3 className="aw-v6__title">Recommendations</h3>
-      <div className="aw-v6__track">
+      <FadeTrack className="aw-v6__track">
         {AWARDS.map((m, i) => (
           <div key={i} className="aw-v6__card">
             <div className="aw-v6__icon"><i className={m.icon} /></div>
@@ -244,7 +278,7 @@ function AwardsV6() {
             <span className="aw-v6__sub">{m.sub}</span>
           </div>
         ))}
-      </div>
+      </FadeTrack>
     </section>
   );
 }
@@ -272,7 +306,7 @@ function AwardsV7() {
         .aw-v7__sub { font-family: 'Share Tech Mono', monospace; font-size: 0.48rem; letter-spacing: 0.08em; text-transform: uppercase; color: #a09080; }
       `}</style>
       <h3 className="aw-v7__title">Recommendations</h3>
-      <div className="aw-v7__track">
+      <FadeTrack className="aw-v7__track">
         {AWARDS.map((m, i) => (
           <div key={i} className="aw-v7__card">
             <span className="aw-v7__year">{m.year}</span>
@@ -280,7 +314,7 @@ function AwardsV7() {
             <span className="aw-v7__sub">{m.sub}</span>
           </div>
         ))}
-      </div>
+      </FadeTrack>
     </section>
   );
 }
@@ -308,7 +342,7 @@ function AwardsV8() {
         .aw-v8__meta { font-family: 'Share Tech Mono', monospace; font-size: 0.45rem; letter-spacing: 0.08em; text-transform: uppercase; color: #a09080; }
       `}</style>
       <h3 className="aw-v8__title">Recommendations</h3>
-      <div className="aw-v8__track">
+      <FadeTrack className="aw-v8__track">
         {AWARDS.map((m, i) => (
           <div key={i} className="aw-v8__card">
             <i className={m.icon} />
@@ -318,7 +352,7 @@ function AwardsV8() {
             </div>
           </div>
         ))}
-      </div>
+      </FadeTrack>
     </section>
   );
 }
@@ -348,7 +382,7 @@ function AwardsV9() {
         .aw-v9__sub { font-family: 'Share Tech Mono', monospace; font-size: 0.45rem; letter-spacing: 0.08em; text-transform: uppercase; color: #a09080; display: block; margin-top: 0.1rem; }
       `}</style>
       <h3 className="aw-v9__title">Recommendations</h3>
-      <div className="aw-v9__track">
+      <FadeTrack className="aw-v9__track">
         {AWARDS.map((m, i) => (
           <div key={i} className="aw-v9__card">
             <span className="aw-v9__num">{String(i + 1).padStart(2, '0')}</span>
@@ -359,7 +393,7 @@ function AwardsV9() {
             </div>
           </div>
         ))}
-      </div>
+      </FadeTrack>
     </section>
   );
 }
@@ -388,7 +422,7 @@ function AwardsV10() {
         .aw-v10__sub { font-family: 'Share Tech Mono', monospace; font-size: 0.48rem; letter-spacing: 0.08em; text-transform: uppercase; color: #a09080; }
       `}</style>
       <h3 className="aw-v10__title">Recommendations</h3>
-      <div className="aw-v10__track">
+      <FadeTrack className="aw-v10__track">
         {AWARDS.map((m, i) => (
           <div key={i} className="aw-v10__card">
             <i className={m.icon} />
@@ -397,7 +431,7 @@ function AwardsV10() {
             <span className="aw-v10__sub">{m.sub}</span>
           </div>
         ))}
-      </div>
+      </FadeTrack>
     </section>
   );
 }

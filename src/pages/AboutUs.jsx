@@ -2,7 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useInView } from 'framer-motion';
 import { usePageImages } from '../hooks/usePageImages';
+import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { usePageText } from '../hooks/usePageText';
+import { SECTION_MAP } from '../lib/imageSections';
 
 const milestones = [
   { year: '1990', title: 'HQ Aviation Founded', desc: 'Captain Quentin Smith establishes HQ Aviation at Denham Aerodrome, beginning a legacy in Robinson helicopter training, sales, and maintenance.' },
@@ -17,6 +19,7 @@ const milestones = [
 
 function AboutUs() {
   const pageImages = usePageImages('about');
+  useCmsHighlight();
   const { t } = usePageText('about');
   const [activeMs, setActiveMs] = useState(0);
   const timelineRef = useRef(null);
@@ -57,9 +60,9 @@ function AboutUs() {
     <div className="au">
 
       {/* ===== HERO ===== */}
-      <section className="au__hero">
+      <section className="au__hero" data-cms-section="about-hero">
         <div className="au__hero-bg">
-          <img src="/assets/images/facility/busy-hangar.jpg" alt="" />
+          <img src={pageImages['about-hero']?.[0]?.url || '/assets/images/facility/busy-hangar.jpg'} alt="" />
           <div className="au__hero-overlay" />
         </div>
         <div className="au__hero-content">
@@ -109,7 +112,7 @@ function AboutUs() {
               grown into the UK's leading Robinson helicopter specialists.
             </p>
             <p className="au__story-desc">
-              For over three decades, we've trained hundreds of pilots, sold and maintained Robinson
+              We've trained hundreds of pilots, sold and maintained Robinson
               helicopters across the fleet — R22, R44, and R66 — and led expeditions to some of the
               most remote places on earth.
             </p>
@@ -122,24 +125,24 @@ function AboutUs() {
           </div>
           <div className="au__story-bg" />
           <div className="au__story-bg-border" />
-          <div className="au__story-gallery">
+          <div className="au__story-gallery" data-cms-section="about-story-gallery">
             <div className="au__story-img au__story-img--wide">
-              <img src="/assets/images/facility/hq-aviation-helicopter-hangar.webp" alt="HQ Aviation Hangar" loading="lazy" />
+              <img src={pageImages['about-story-gallery']?.[0]?.url || '/assets/images/facility/hq-aviation-helicopter-hangar.webp'} alt="HQ Aviation Hangar" loading="lazy" />
             </div>
             <div className="au__story-img">
-              <img src="/assets/images/facility/hq-0345.jpg" alt="The clubhouse" loading="lazy" />
+              <img src={pageImages['about-story-gallery']?.[1]?.url || '/assets/images/facility/hq-0345.jpg'} alt="The clubhouse" loading="lazy" />
             </div>
             <div className="au__story-img">
-              <img src="/assets/images/facility/hq-0053.jpg" alt="Aviation memorabilia" loading="lazy" />
+              <img src={pageImages['about-story-gallery']?.[2]?.url || '/assets/images/facility/hq-0053.jpg'} alt="Aviation memorabilia" loading="lazy" />
             </div>
             <div className="au__story-img au__story-img--tall">
-              <img src="/assets/images/facility/hq-0391.jpg" alt="Expedition photos" loading="lazy" />
+              <img src={pageImages['about-story-gallery']?.[3]?.url || '/assets/images/facility/hq-0391.jpg'} alt="Expedition photos" loading="lazy" />
             </div>
             <div className="au__story-img">
-              <img src="/assets/images/facility/hq-0354.jpg" alt="Globe on desk" loading="lazy" />
+              <img src={pageImages['about-story-gallery']?.[4]?.url || '/assets/images/facility/hq-0354.jpg'} alt="Globe on desk" loading="lazy" />
             </div>
             <div className="au__story-img au__story-img--wide">
-              <img src="/assets/images/facility/hq-0300.jpg" alt="R66 cockpit" loading="lazy" />
+              <img src={pageImages['about-story-gallery']?.[5]?.url || '/assets/images/facility/hq-0300.jpg'} alt="R66 cockpit" loading="lazy" />
             </div>
           </div>
         </div>
@@ -147,15 +150,15 @@ function AboutUs() {
 
 
       {/* ===== CAPTAIN Q — Parallax image break ===== */}
-      <section className="au__parallax">
+      <section className="au__parallax" data-cms-section="about-captain-q">
         <div className="au__parallax-img">
-          <img src="/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp" alt="Captain Q — South Pole expedition" />
+          <img src={pageImages['about-captain-q']?.[0]?.url || '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp'} alt="Captain Q — South Pole expedition" />
         </div>
         <h2 className="au__parallax-title">Captain Q</h2>
       </section>
 
       {/* ===== CAPTAIN Q — Content ===== */}
-      <section className="au__captain" ref={captainRef}>
+      <section className="au__captain" ref={captainRef} data-cms-section="about-founder">
         <div className="au__captain-inner">
           <div className={`au__captain-image ${captainInView ? 'au__captain-image--visible' : ''}`}>
             <img src={pageImages['about-founder']?.[0]?.url ?? '/assets/images/team/world-helicopter-champion-quentin-smith.webp'} alt="Captain Quentin Smith" />
@@ -196,9 +199,9 @@ function AboutUs() {
 
 
       {/* ===== THE CLUBHOUSE — Parallax Break ===== */}
-      <section className="au__parallax au__parallax--club">
+      <section className="au__parallax au__parallax--club" data-cms-section="about-clubhouse-parallax">
         <div className="au__parallax-img">
-          <img src="/assets/images/facility/hq-0345.jpg" alt="The HQ Aviation Clubhouse" />
+          <img src={pageImages['about-clubhouse-parallax']?.[0]?.url || '/assets/images/facility/hq-0345.jpg'} alt="The HQ Aviation Clubhouse" />
         </div>
         <h2 className="au__parallax-title">The Clubhouse</h2>
       </section>
@@ -241,18 +244,18 @@ function AboutUs() {
               ))}
             </div>
           </div>
-          <div className={`au__clubhouse-gallery ${clubhouseInView ? 'au__clubhouse-gallery--visible' : ''}`}>
+          <div className={`au__clubhouse-gallery ${clubhouseInView ? 'au__clubhouse-gallery--visible' : ''}`} data-cms-section="about-clubhouse-gallery">
             <div className="au__clubhouse-img au__clubhouse-img--main">
-              <img src="/assets/images/facility/hq-0391.jpg" alt="HQ Aviation interior" loading="lazy" />
+              <img src={pageImages['about-clubhouse-gallery']?.[0]?.url || '/assets/images/facility/hq-0391.jpg'} alt="HQ Aviation interior" loading="lazy" />
             </div>
             <div className="au__clubhouse-img">
-              <img src="/assets/images/gallery/events/img_2131.jpg" alt="HQ social events" loading="lazy" />
+              <img src={pageImages['about-clubhouse-gallery']?.[1]?.url || '/assets/images/gallery/events/img_2131.jpg'} alt="HQ social events" loading="lazy" />
             </div>
             <div className="au__clubhouse-img">
-              <img src="/assets/images/gallery/events/img_1358-copy-281-29.jpg" alt="Community gathering" loading="lazy" />
+              <img src={pageImages['about-clubhouse-gallery']?.[2]?.url || '/assets/images/gallery/events/img_1358-copy-281-29.jpg'} alt="Community gathering" loading="lazy" />
             </div>
             <div className="au__clubhouse-img au__clubhouse-img--wide">
-              <img src="/assets/images/facility/hq-0300.jpg" alt="R66 cockpit detail" loading="lazy" />
+              <img src={pageImages['about-clubhouse-gallery']?.[3]?.url || '/assets/images/facility/hq-0300.jpg'} alt="R66 cockpit detail" loading="lazy" />
             </div>
           </div>
         </div>
@@ -351,7 +354,7 @@ function AboutUs() {
 
 
       {/* ===== WHAT WE DO ===== */}
-      <section className="au__services" ref={servicesRef}>
+      <section className="au__services" ref={servicesRef} data-cms-section="about-services">
         <div className="au__services-inner">
           <div className="au__section-header">
             <span className="au__pretitle">What We Do</span>
@@ -361,10 +364,10 @@ function AboutUs() {
           </div>
           <div className="au__services-grid">
             {[
-              { title: 'Flight Training', desc: 'PPL(H), CPL(H), type ratings, night ratings, and instructor ratings. From first flight to career pilot.', link: '/training', cta: 'Explore Training', img: '/assets/images/facility/hq-0053.jpg' },
-              { title: 'Aircraft Sales', desc: 'New and pre-owned Robinson helicopters. As an Authorized Dealer, we offer factory-direct R22, R44, and R66 aircraft.', link: '/aircraft-sales', cta: 'View Aircraft', img: '/assets/images/facility/main-sales-pic.jpg' },
-              { title: 'Maintenance', desc: 'Robinson Authorized Service Centre. Full overhauls, 100-hour inspections, avionics upgrades, and bespoke rebuilds.', link: '/services/maintenance', cta: 'View Services', img: '/assets/images/facility/g-ccfc-hq-robinson-overhaul.webp' },
-              { title: 'Expeditions', desc: 'Helicopter expeditions to the most extraordinary places on earth. Led by Captain Q, from the poles to the peaks.', link: '/expeditions', cta: 'View Expeditions', img: '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp' },
+              { title: 'Flight Training', desc: 'PPL(H), CPL(H), type ratings, night ratings, and instructor ratings. From first flight to career pilot.', link: '/training', cta: 'Explore Training', img: pageImages['about-services']?.[0]?.url || '/assets/images/facility/hq-0053.jpg' },
+              { title: 'Aircraft Sales', desc: 'New and pre-owned Robinson helicopters. As an Authorized Dealer, we offer factory-direct R22, R44, and R66 aircraft.', link: '/aircraft-sales', cta: 'View Aircraft', img: pageImages['about-services']?.[1]?.url || '/assets/images/facility/main-sales-pic.jpg' },
+              { title: 'Maintenance', desc: 'Robinson Authorized Service Centre. Full overhauls, 100-hour inspections, avionics upgrades, and bespoke rebuilds.', link: '/services/maintenance', cta: 'View Services', img: pageImages['about-services']?.[2]?.url || '/assets/images/facility/g-ccfc-hq-robinson-overhaul.webp' },
+              { title: 'Expeditions', desc: 'Helicopter expeditions to the most extraordinary places on earth. Led by Captain Q, from the poles to the peaks.', link: '/expeditions', cta: 'View Expeditions', img: pageImages['about-services']?.[3]?.url || '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp' },
             ].map((svc, i) => (
               <div key={i} className={`au__svc ${servicesInView ? 'au__svc--visible' : ''}`} style={{ transitionDelay: `${i * 0.1}s` }}>
                 <div className="au__svc-img">
@@ -387,7 +390,7 @@ function AboutUs() {
 
 
       {/* ===== FLEET OVERVIEW ===== */}
-      <section className="au__fleet" ref={fleetRef}>
+      <section className="au__fleet" ref={fleetRef} data-cms-section="about-fleet">
         <div className="au__fleet-inner">
           <div className="au__section-header">
             <span className="au__pretitle">The Fleet</span>
@@ -487,7 +490,7 @@ function AboutUs() {
               return (
                 <>
                   <div className="au__fleet-img">
-                    <img src={a.img} alt={a.model} />
+                    <img src={pageImages['about-fleet']?.[activeFleet]?.url || a.img} alt={a.model} />
                   </div>
                   <div className="au__fleet-info">
                     <h3 className="au__fleet-model">{a.model}</h3>
@@ -515,9 +518,9 @@ function AboutUs() {
 
 
       {/* ===== EXPLORER'S CLUB — Parallax ===== */}
-      <section className="au__parallax">
+      <section className="au__parallax" data-cms-section="about-explorer-parallax">
         <div className="au__parallax-img">
-          <img src="/assets/images/expeditions/antartica.jpg" alt="Helicopter expedition to Antarctica" />
+          <img src={pageImages['about-explorer-parallax']?.[0]?.url || '/assets/images/expeditions/antartica.jpg'} alt="Helicopter expedition to Antarctica" />
         </div>
         <h2 className="au__parallax-title">The Explorer's Club</h2>
       </section>
@@ -558,8 +561,8 @@ function AboutUs() {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </Link>
           </div>
-          <div className="au__explorer-image">
-            <img src="/assets/images/expeditions/six-helis-in-North-Pole.jpg" alt="Fleet of helicopters at the North Pole" loading="lazy" />
+          <div className="au__explorer-image" data-cms-section="about-explorer">
+            <img src={pageImages['about-explorer']?.[0]?.url || '/assets/images/expeditions/six-helis-in-North-Pole.jpg'} alt="Fleet of helicopters at the North Pole" loading="lazy" />
           </div>
         </div>
       </section>
@@ -625,20 +628,13 @@ function AboutUs() {
 
 
       {/* ===== CERTIFICATIONS TRUST BAR ===== */}
-      <section className="au__certs">
+      <section className="au__certs" data-cms-section="about-certs">
         <div className="au__certs-inner">
           <span className="au__pretitle" style={{ textAlign: 'center' }}>Accreditations & Memberships</span>
           <div className="au__certs-logos">
-            {[
-              { src: '/assets/images/logos/certifications/caa.jpg', alt: 'Civil Aviation Authority' },
-              { src: '/assets/images/logos/certifications/easa1.png', alt: 'EASA' },
-              { src: '/assets/images/logos/certifications/faa-logo.jpg', alt: 'Federal Aviation Administration' },
-              { src: '/assets/images/logos/certifications/rhc.png', alt: 'Robinson Helicopter Company' },
-              { src: '/assets/images/logos/certifications/hcgb-logo.png', alt: 'Helicopter Club of Great Britain' },
-              { src: '/assets/images/logos/certifications/fai-logo.png', alt: 'Fédération Aéronautique Internationale' },
-            ].map((logo, i) => (
+            {(pageImages['about-certs'] ?? SECTION_MAP['about-certs'].images).map((logo, i) => (
               <div key={i} className="au__certs-logo">
-                <img src={logo.src} alt={logo.alt} loading="lazy" />
+                <img src={logo.url} alt={logo.alt} loading="lazy" />
               </div>
             ))}
           </div>
@@ -647,10 +643,10 @@ function AboutUs() {
 
 
       {/* ===== ROBINSON AUTHORIZED ===== */}
-      <section className="au__robinson" ref={robinsonRef}>
+      <section className="au__robinson" ref={robinsonRef} data-cms-section="about-robinson">
         <div className={`au__robinson-inner ${robinsonInView ? 'au__robinson-inner--visible' : ''}`}>
           <div className="au__robinson-badge">
-            <img src="/assets/images/logos/certifications/robinson.jpg" alt="Robinson Helicopter Company" />
+            <img src={pageImages['about-robinson']?.[0]?.url || '/assets/images/logos/certifications/robinson.jpg'} alt="Robinson Helicopter Company" />
           </div>
           <div className="au__robinson-content">
             <span className="au__pretitle">Official Partnership</span>
@@ -681,9 +677,9 @@ function AboutUs() {
 
 
       {/* ===== CTA ===== */}
-      <section className="au__cta">
+      <section className="au__cta" data-cms-section="about-cta">
         <div className="au__cta-bg">
-          <img src="/assets/images/facility/hq-0089.jpg" alt="" />
+          <img src={pageImages['about-cta']?.[0]?.url || '/assets/images/facility/hq-0089.jpg'} alt="" />
           <div className="au__cta-overlay" />
         </div>
         <div className="au__cta-content">

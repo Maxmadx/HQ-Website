@@ -32,6 +32,8 @@ import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'fra
 import '../assets/css/main.css';
 import '../assets/css/components.css';
 import { usePageText } from '../hooks/usePageText';
+import { usePageImages } from '../hooks/usePageImages';
+import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import FooterMinimal from '../components/FooterMinimal';
 import FacilityGallery from '../components/Maintenance/FacilityGallery';
 import PartsEnquiry from '../components/Maintenance/PartsEnquiry';
@@ -268,6 +270,8 @@ function ParallaxSection({ image, number, label, largeText }) {
 function HeroSection() {
   const { t } = usePageText('maintenance');
   const heroRef = useRef(null);
+  const pageImages = usePageImages('maintenance');
+  useCmsHighlight();
 
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -278,14 +282,14 @@ function HeroSection() {
   const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
 
   return (
-    <section ref={heroRef} className="maint-hero">
+    <section ref={heroRef} className="maint-hero" data-cms-section="maintenance-hero">
       <motion.div
         className="maint-hero__bg"
         initial={{ scale: 1.1, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1.5 }}
       >
-        <img src="/assets/images/facility/hq-0056.jpg" alt="Helicopter maintenance" />
+        <img src={pageImages['maintenance-hero']?.[0]?.url || '/assets/images/facility/hq-0056.jpg'} alt="Helicopter maintenance" />
       </motion.div>
       <div className="maint-hero__overlay" />
       <div className="maint-hero__blueprint-grid" />
@@ -409,11 +413,41 @@ function PhilosophySection() {
   const [partsSubmitted, setPartsSubmitted] = useState(false);
   const [partsOpen, setPartsOpen] = useState(false);
 
-  const handlePartsSubmit = (e) => {
+  const [partsSubmitting, setPartsSubmitting] = useState(false);
+  const [partsError, setPartsError] = useState(false);
+
+  const handlePartsSubmit = async (e) => {
     e.preventDefault();
     if (!partsForm.email || !partsForm.part) return;
-    setPartsSubmitted(true);
-    setTimeout(() => setPartsSubmitted(false), 4000);
+    setPartsSubmitting(true);
+    setPartsError(false);
+    const messageParts = [];
+    if (partsForm.aircraft) messageParts.push(`Aircraft: ${partsForm.aircraft}`);
+    messageParts.push(`Part: ${partsForm.part}`);
+    messageParts.push(`Urgency: ${partsForm.urgency}`);
+    if (partsForm.description) messageParts.push(`Details: ${partsForm.description}`);
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: partsForm.email,
+          email: partsForm.email,
+          subject: 'Parts Enquiry',
+          message: messageParts.join('\n'),
+          source: 'Maintenance — Parts Enquiry',
+        }),
+      });
+      if (res.ok) {
+        setPartsSubmitted(true);
+      } else {
+        setPartsError(true);
+      }
+    } catch {
+      setPartsError(true);
+    } finally {
+      setPartsSubmitting(false);
+    }
   };
 
   return (
@@ -456,11 +490,6 @@ function PhilosophySection() {
                 <p>Long-term relationships built on expertise</p>
               </div>
             </div>
-          </Reveal>
-          <Reveal delay={0.4}>
-            <Link to="/contact?subject=maintenance" className="maint-btn maint-btn--primary" style={{ marginTop: '1.5rem' }}>
-              Book Maintenance <i className="fas fa-arrow-right" style={{ fontSize: '0.65rem' }}></i>
-            </Link>
           </Reveal>
         </div>
 
@@ -570,9 +599,12 @@ function PhilosophySection() {
                         <i className="fas fa-check"></i> Enquiry sent — we'll be in touch shortly
                       </div>
                     ) : (
-                      <button type="submit" className="maint-btn maint-btn--primary" style={{ width: '100%', justifyContent: 'center' }}>
-                        Send Parts Enquiry <i className="fas fa-arrow-right" style={{ fontSize: '0.65rem' }}></i>
-                      </button>
+                      <>
+                        <button type="submit" className="maint-btn maint-btn--primary" style={{ width: '100%', justifyContent: 'center', opacity: partsSubmitting ? 0.7 : 1, cursor: partsSubmitting ? 'wait' : 'pointer' }} disabled={partsSubmitting}>
+                          {partsSubmitting ? 'Sending…' : <> Send Parts Enquiry <i className="fas fa-arrow-right" style={{ fontSize: '0.65rem' }}></i></>}
+                        </button>
+                        {partsError && <p style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#c0392b', textAlign: 'center' }}>Something went wrong — please try again.</p>}
+                      </>
                     )}
                   </div>
                 </form>
@@ -1062,20 +1094,21 @@ function Timeline() {
 // ============================================
 
 function CertificationBadges() {
+  const pageImages = usePageImages('maintenance');
   const certs = [
     { logo: '/assets/images/logos/certifications/caa-logo.png', name: 'UK CAA Certified' },
     { logo: '/assets/images/robinson-assets/logos/rhc_authorized-service-center-logo-logo-yellow-rotor-black-type.svg', name: 'Robinson Authorized Service Centre' },
   ];
 
   return (
-    <section className="maint-certs">
+    <section className="maint-certs" data-cms-section="maintenance-cert-logo">
       <div className="maint-certs__container">
         <Reveal>
           <div className="maint-certs__grid maint-certs__grid--two">
             {certs.map((cert, i) => (
               <div key={i} className="maint-certs__card">
                 <div className="maint-certs__logo">
-                  <img src={cert.logo} alt={cert.name} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                  <img src={pageImages['maintenance-cert-logo']?.[i]?.url || cert.logo} alt={cert.name} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
                   <div className="maint-certs__logo-fallback" style={{ display: 'none' }}>
                     <i className="fas fa-certificate"></i>
                   </div>
@@ -5200,6 +5233,132 @@ const styles = `
 `;
 
 // ============================================
+// MAINTENANCE ENQUIRY FORM
+// ============================================
+
+function MaintenanceEnquiryForm() {
+  const [formOpen, setFormOpen] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [aircraftType, setAircraftType] = useState('');
+  const [reg, setReg] = useState('');
+  const [notes, setNotes] = useState('');
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!email) { setError('Email is required'); return; }
+    setSubmitting(true);
+    setError('');
+    try {
+      const body = [
+        `Aircraft: ${aircraftType || 'Not specified'}`,
+        reg ? `Registration: ${reg}` : '',
+        notes ? `Notes: ${notes}` : '',
+      ].filter(Boolean).join('\n');
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name, email, phone,
+          subject: 'Maintenance Enquiry',
+          message: body || 'No additional information provided.',
+          source: 'maintenance-enquiry',
+        }),
+      });
+      if (!res.ok) throw new Error('Request failed');
+      setSubmitted(true);
+    } catch {
+      setError('Something went wrong. Please try again or call us directly.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <div style={{ background: '#f0efec', padding: '0 2rem 2rem' }}>
+      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        <div style={{ width: '100%' }}>
+
+          {!formOpen && !submitted && (
+            <button className="fd-sales__intent-btn fd-sales__intent-btn--full" onClick={() => setFormOpen(true)}>
+              <span className="fd-sales__intent-icon">↗</span>
+              <span className="fd-sales__intent-title">Start Your Maintenance with HQ</span>
+              <span className="fd-sales__intent-sub">50-hour, 100-hour, annual, or full overhaul — tell us what your aircraft needs and we'll take it from there.</span>
+            </button>
+          )}
+
+          {formOpen && !submitted && (
+            <form className="fd-sales__unmanned-form" onSubmit={handleSubmit}>
+              <div className="fd-sales__unmanned-form-header">
+                <span className="fd-sales__unmanned-form-badge">Maintenance Enquiry</span>
+                <button type="button" className="fd-sales__unmanned-back" onClick={() => { setFormOpen(false); setError(''); }}>← Back</button>
+              </div>
+
+              <div className="fd-sales__unmanned-form-row fd-sales__unmanned-form-row--2col">
+                <div className="fd-sales__unmanned-field">
+                  <label className="fd-sales__unmanned-label">Aircraft Type</label>
+                  <input className="fd-sales__unmanned-input" type="text" placeholder="e.g. Robinson R44 Raven II" value={aircraftType} onChange={e => setAircraftType(e.target.value)} />
+                </div>
+                <div className="fd-sales__unmanned-field">
+                  <label className="fd-sales__unmanned-label">Registration <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                  <input className="fd-sales__unmanned-input" type="text" placeholder="e.g. G-HQAV" value={reg} onChange={e => setReg(e.target.value)} />
+                </div>
+              </div>
+
+              <div className="fd-sales__unmanned-form-row">
+                <div className="fd-sales__unmanned-field">
+                  <label className="fd-sales__unmanned-label">Name</label>
+                  <input className="fd-sales__unmanned-input" type="text" placeholder="Full name" value={name} onChange={e => setName(e.target.value)} />
+                </div>
+                <div className="fd-sales__unmanned-field">
+                  <label className="fd-sales__unmanned-label">Email <span style={{ color: '#c00' }}>*</span></label>
+                  <input className="fd-sales__unmanned-input" type="email" placeholder="you@example.com" required value={email} onChange={e => setEmail(e.target.value)} />
+                </div>
+                <div className="fd-sales__unmanned-field">
+                  <label className="fd-sales__unmanned-label">Phone <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                  <input className="fd-sales__unmanned-input" type="tel" placeholder="+44" value={phone} onChange={e => setPhone(e.target.value)} />
+                </div>
+              </div>
+
+              <div className="fd-sales__unmanned-field">
+                <label className="fd-sales__unmanned-label">Additional Notes <span className="fd-sales__unmanned-optional">(optional)</span></label>
+                <textarea className="fd-sales__unmanned-input fd-sales__unmanned-textarea" placeholder="Any other details — defects noticed, parts needed, access constraints…" rows={3} value={notes} onChange={e => setNotes(e.target.value)} />
+              </div>
+
+              {error && <p className="fd-sales__unmanned-error">{error}</p>}
+              <div className="fd-sales__unmanned-form-footer">
+                <button type="submit" className="fd-sales__unmanned-submit" disabled={submitting}>
+                  {submitting ? 'Sending…' : 'Submit Enquiry'}
+                </button>
+                <span className="fd-sales__unmanned-form-note">We'll be in touch shortly.</span>
+              </div>
+            </form>
+          )}
+
+          {submitted && (
+            <div className="fd-sales__unmanned-success">
+              <span className="fd-sales__unmanned-success-icon">✓</span>
+              <p className="fd-sales__unmanned-success-title">Enquiry Received</p>
+              <p className="fd-sales__unmanned-success-sub">Thank you — a member of our maintenance team will be in touch to confirm the details.</p>
+            </div>
+          )}
+        </div>
+
+        <a href="tel:+441895833838" className="rb__cta-phone">
+          <span>Or call directly</span>
+          <strong>+44 (0) 1895 833 838</strong>
+        </a>
+      </div>
+    </div>
+  );
+}
+
+// ============================================
 // TURNAROUND & CERTIFICATIONS SECTION
 // ============================================
 
@@ -5219,6 +5378,7 @@ function TurnaroundTimes() {
   ];
 
   return (
+    <>
     <section className="maint-turnaround">
       <div className="maint-turnaround__container">
         {/* Left: Turnaround Times */}
@@ -5350,8 +5510,56 @@ function TurnaroundTimes() {
             flex: none;
           }
         }
+        .fd-sales__intent-btn {
+          display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;
+          background: #faf9f6; border: 1px solid #e0deda; padding: 1.25rem 1.5rem;
+          cursor: pointer; text-align: left; transition: border-color 0.2s, background 0.2s; width: 100%;
+          text-decoration: none; box-sizing: border-box;
+        }
+        .fd-sales__intent-btn:hover { border-color: #1a1a1a; background: #f3f1ed; }
+        .fd-sales__intent-btn--full { max-width: 100%; }
+        .fd-sales__intent-icon { font-size: 1.2rem; color: #1a1a1a; }
+        .fd-sales__intent-title { font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; font-weight: 700; color: #1a1a1a; }
+        .fd-sales__intent-sub { font-size: 0.78rem; color: #888; line-height: 1.5; }
+        .fd-sales__rebuild-interest { margin-top: 0; }
+        .fd-sales__rebuild-intents { background: #fff; border: 1px solid #e0deda; padding: 2rem; }
+        .fd-sales__rebuild-intents-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #e8e6e2; }
+        .fd-sales__rebuild-intents-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+        .fd-sales__unmanned-form { background: #fff; border: 1px solid #e0deda; padding: 2rem; text-align: left; margin-top: 0; width: 100%; box-sizing: border-box; }
+        .fd-sales__unmanned-form-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.75rem; padding-bottom: 1rem; border-bottom: 1px solid #e8e6e2; }
+        .fd-sales__unmanned-form-badge { font-family: 'Share Tech Mono', monospace; font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; background: #1a1a1a; color: #fff; padding: 0.3rem 0.7rem; }
+        .fd-sales__unmanned-back { background: none; border: none; color: #bbb; font-family: 'Share Tech Mono', monospace; font-size: 0.62rem; letter-spacing: 0.1em; cursor: pointer; padding: 0; transition: color 0.2s; }
+        .fd-sales__unmanned-back:hover { color: #1a1a1a; }
+        .fd-sales__unmanned-form-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem; align-items: end; }
+        .fd-sales__unmanned-form-row--2col { grid-template-columns: repeat(2, 1fr); }
+        .fd-sales__unmanned-field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+        .fd-sales__unmanned-form-row .fd-sales__unmanned-field { margin-bottom: 0; }
+        .fd-sales__unmanned-label { font-family: 'Share Tech Mono', monospace; font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: #999; white-space: nowrap; }
+        .fd-sales__unmanned-optional { color: #ccc; font-size: 0.55rem; text-transform: none; letter-spacing: 0; font-family: 'Space Grotesk', sans-serif; }
+        .fd-sales__unmanned-input { background: #faf9f6; border: 1px solid #e0ddd8; padding: 0.7rem 0.9rem; color: #1a1a1a; font-family: 'Space Grotesk', sans-serif; font-size: 0.88rem; transition: border-color 0.2s; width: 100%; box-sizing: border-box; }
+        .fd-sales__unmanned-input::placeholder { color: #bbb; }
+        .fd-sales__unmanned-input:focus { outline: none; border-color: #1a1a1a; }
+        .fd-sales__unmanned-textarea { resize: vertical; min-height: 80px; }
+        .fd-sales__unmanned-error { font-size: 0.78rem; color: #c00; margin-bottom: 0.75rem; }
+        .fd-sales__unmanned-form-footer { display: flex; align-items: center; gap: 1.25rem; padding-top: 1.25rem; border-top: 1px solid #e8e6e2; margin-top: 0.5rem; }
+        .fd-sales__unmanned-submit { padding: 0.8rem 2rem; background: #1a1a1a; border: none; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; transition: background 0.2s; }
+        .fd-sales__unmanned-submit:hover:not(:disabled) { background: #333; }
+        .fd-sales__unmanned-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+        .fd-sales__unmanned-form-note { font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; letter-spacing: 0.05em; color: #bbb; }
+        .fd-sales__unmanned-success { text-align: center; padding: 2rem; }
+        .fd-sales__unmanned-success-icon { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: #1a1a1a; color: #fff; border-radius: 50%; font-size: 1.1rem; margin: 0 auto 1rem; }
+        .fd-sales__unmanned-success-title { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.01em; color: #1a1a1a; margin-bottom: 0.5rem; }
+        .fd-sales__unmanned-success-sub { font-size: 0.82rem; color: #888; line-height: 1.6; margin: 0; }
+        .rb__cta-phone { display: flex; flex-direction: column; align-items: center; gap: 0.15rem; text-decoration: none; color: #1a1a1a; margin-top: 0.75rem; width: 100%; }
+        .rb__cta-phone span { font-size: 0.7rem; color: #999; }
+        .rb__cta-phone strong { font-family: 'Share Tech Mono', monospace; font-size: 1.1rem; }
+        @media (max-width: 640px) {
+          .fd-sales__unmanned-form-row, .fd-sales__unmanned-form-row--2col { grid-template-columns: 1fr; }
+        }
       `}</style>
     </section>
+    <MaintenanceEnquiryForm />
+    </>
   );
 }
 
@@ -5360,6 +5568,7 @@ function TurnaroundTimes() {
 // ============================================
 
 function SupportedAircraft() {
+  const pageImages = usePageImages('maintenance');
   const aircraft = [
     { model: 'Robinson R22', image: '/assets/images/new-aircraft/r22-beta.webp', notes: 'Beta II, all variants' },
     { model: 'Robinson R44', image: '/assets/images/new-aircraft/r44-raven.webp', notes: 'Raven, Cadet, Clipper' },
@@ -5368,7 +5577,7 @@ function SupportedAircraft() {
   ];
 
   return (
-    <section className="maint-supported">
+    <section className="maint-supported" data-cms-section="maintenance-aircraft">
       <div className="maint-supported__inner">
         <div className="maint-container maint-container--narrow" style={{ textAlign: 'center' }}>
           <Reveal>
@@ -5390,7 +5599,7 @@ function SupportedAircraft() {
             <Reveal key={a.model} delay={i * 0.1}>
               <div className="maint-supported__card">
                 <div className="maint-supported__image">
-                  <img src={a.image} alt={a.model} />
+                  <img src={pageImages['maintenance-aircraft']?.[i]?.url || a.image} alt={a.model} />
                 </div>
                 <div className="maint-supported__model">{a.model}</div>
                 <div className="maint-supported__notes">{a.notes}</div>
@@ -5600,9 +5809,6 @@ function FinalMaintenance() {
 
       {/* ========== SECTION 29: WE BUY ANY ROBINSON (compact test) ========== */}
       <WeBuySectionCompact />
-
-      {/* ========== SECTION 29: WE BUY ANY ROBINSON ========== */}
-      <WeBuySection />
 
       {/* ========== SECTION 30: FOOTER ========== */}
       <FooterMinimal />
