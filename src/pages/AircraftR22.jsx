@@ -287,7 +287,7 @@ function InteractiveSpecsCard({ specs, activeSpec, setActiveSpec }) {
 // ============================================================================
 // TIMELINE COMPONENT
 // ============================================================================
-function HistoryTimeline({ events }) {
+function HistoryTimelineDots({ events }) {
   return (
     <div className="r22-timeline">
       {events.map((event, index) => (
@@ -1965,42 +1965,212 @@ function R22Styles() {
 }
 
 // ============================================================================
-// MAIN PAGE COMPONENT
+// R22 HERO
 // ============================================================================
-function AircraftR22() {
-  useCmsHighlight();
-  const pageImages = usePageImages('r22');
-  const cmsGallery = (pageImages['r22-gallery'] ?? SECTION_MAP['r22-gallery'].images).map(img => ({ src: img.url, alt: img.alt }));
-
+function R22Hero() {
   const heroRef = useRef(null);
-  const [activeSpec, setActiveSpec] = useState(null);
-  const [activeVariant, setActiveVariant] = useState(0);
-  const [lightboxImage, setLightboxImage] = useState(null);
-
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ['start start', 'end start'],
   });
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
   const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
 
-  // Technical specifications
-  const specs = [
-    { label: 'Engine', value: 'Lycoming O-360', unit: '131 HP' },
-    { label: 'Max Speed', value: '118', unit: 'kts' },
-    { label: 'Range', value: '240', unit: 'nm' },
-    { label: 'Useful Load', value: '440', unit: 'lbs' },
-    { label: 'Seats', value: '2', unit: 'persons' },
-    { label: 'Rotor Diameter', value: '25.2', unit: 'ft' },
-  ];
+  return (
+    <section ref={heroRef} className="r22-hero">
+      <motion.div
+        className="r22-hero__bg"
+        initial={{ scale: 1.1, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 1.5 }}
+      >
+        <img
+          src="/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png"
+          alt="Robinson R22 Helicopter"
+        />
+      </motion.div>
+      <div className="r22-hero__overlay" />
 
-  // History timeline
+      <motion.div
+        className="r22-hero__content"
+        style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
+      >
+        <motion.span
+          className="r22-hero__label"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          THE TRAINING LEGEND
+        </motion.span>
+
+        <div className="r22-hero__headline">
+          <motion.span
+            className="r22-hero__word r22-hero__word--1"
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          >
+            ROBINSON
+          </motion.span>
+          <motion.span
+            className="r22-hero__word r22-hero__word--2"
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          >
+            R22
+          </motion.span>
+        </div>
+
+        <motion.div
+          className="r22-hero__divider"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+        />
+
+        <motion.div
+          className="r22-hero__stats"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1 }}
+        >
+          <div className="r22-hero__stat">
+            <span className="r22-hero__stat-value">4,800+</span>
+            <span className="r22-hero__stat-label">Built Worldwide</span>
+          </div>
+          <div className="r22-hero__stat-divider" />
+          <div className="r22-hero__stat">
+            <span className="r22-hero__stat-value">1975</span>
+            <span className="r22-hero__stat-label">First Flight</span>
+          </div>
+          <div className="r22-hero__stat-divider" />
+          <div className="r22-hero__stat">
+            <span className="r22-hero__stat-value">#1</span>
+            <span className="r22-hero__stat-label">Training Helicopter</span>
+          </div>
+        </motion.div>
+
+        <motion.p
+          className="r22-hero__sub"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2 }}
+        >
+          The world's most popular training helicopter. Where legends begin their journey.
+        </motion.p>
+      </motion.div>
+
+    </section>
+  );
+}
+
+// ============================================================================
+// R22 INTRODUCTION
+// ============================================================================
+function R22Introduction() {
+  return (
+    <section className="r22-intro">
+      <div className="r22-intro__container">
+        <Reveal>
+          <div className="r22-intro__header">
+            <span className="r22-pre-text">Since 1979</span>
+            <h2>
+              <span className="r22-text--dark">The World's</span>{' '}
+              <span className="r22-text--mid">Most Popular</span>{' '}
+              <span className="r22-text--light">Training Helicopter</span>
+            </h2>
+          </div>
+        </Reveal>
+
+        <div className="r22-intro__content">
+          <Reveal delay={0.1}>
+            <div className="r22-intro__text">
+              <p>
+                The Robinson R22 revolutionized helicopter training when it first took to the skies in 1975.
+                Frank Robinson's vision of an affordable, reliable, and effective training helicopter changed
+                the industry forever, making helicopter flying accessible to a generation of pilots who might
+                otherwise never have realized their dreams.
+              </p>
+              <p>
+                With over 4,800 aircraft delivered worldwide, the R22 has trained more helicopter pilots than
+                any other aircraft in history. Its demanding flight characteristics develop exceptional pilot
+                skills that transfer seamlessly to larger, more complex helicopters.
+              </p>
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.2}>
+            <div className="r22-intro__image">
+              <img
+                src="/assets/images/new-aircraft/r22/r22-cutout.png"
+                alt="Robinson R22 Helicopter"
+              />
+            </div>
+          </Reveal>
+        </div>
+
+        <Reveal delay={0.3}>
+          <div className="r22-intro__highlights">
+            {[
+              { value: '45', unit: 'min hrs', label: 'To PPL(H)' },
+              { value: '118', unit: 'kts', label: 'Max Speed' },
+              { value: '240', unit: 'nm', label: 'Range' },
+            ].map((item, i) => (
+              <div key={i} className="r22-intro__highlight">
+                <span className="r22-intro__highlight-value">
+                  <AnimatedNumber value={item.value} />
+                  <span className="r22-intro__highlight-unit">{item.unit}</span>
+                </span>
+                <span className="r22-intro__highlight-label">{item.label}</span>
+              </div>
+            ))}
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================================
+// R22 COUNTER (FLEET STATISTICS)
+// ============================================================================
+function R22Counter() {
+  return (
+    <section className="r22-counter">
+      <div className="r22-counter__container">
+        <div className="r22-counter__item">
+          <span className="r22-counter__value">4,800+</span>
+          <span className="r22-counter__label">Aircraft Delivered</span>
+        </div>
+        <div className="r22-counter__item">
+          <span className="r22-counter__value">45+</span>
+          <span className="r22-counter__label">Years In Production</span>
+        </div>
+        <div className="r22-counter__item">
+          <span className="r22-counter__value">#1</span>
+          <span className="r22-counter__label">Training Helicopter</span>
+        </div>
+        <div className="r22-counter__item">
+          <span className="r22-counter__value">100+</span>
+          <span className="r22-counter__label">Countries Operating</span>
+        </div>
+        <div className="r22-counter__item">
+          <span className="r22-counter__value">88%</span>
+          <span className="r22-counter__label">Reduction in Fatal Accidents (1982-1997)</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================================
+// R22 HISTORY TIMELINE
+// ============================================================================
+function R22HistoryTimeline() {
   const historyEvents = [
     { year: '1973', title: 'Design Begins', description: 'Frank D. Robinson begins designing the R22, pursuing his vision of an affordable, reliable light helicopter for the private market.' },
     { year: '1975', title: 'First Flight', description: 'The R22 prototype takes to the skies, demonstrating the viability of Robinson\'s revolutionary design approach.' },
@@ -2011,39 +2181,150 @@ function AircraftR22() {
     { year: '2024', title: '4,800+ Built', description: 'Over 4,800 R22 helicopters delivered worldwide, making it the most popular training helicopter ever produced.' },
   ];
 
-  // Shared R22 family downloads
-  const R22_BROCHURE = 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/RH_R22_US_Digital_Corporate_Brochure_Feb_2026_76bb67b86e.pdf';
-  const R22_EOC = 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/r22_eoc_2026_5cc7166f5c.pdf';
+  return (
+    <section className="r22-history">
+      <div className="r22-history__container">
+        <Reveal>
+          <div className="r22-section-header">
+            <span className="r22-pre-text">Heritage</span>
+            <h2>
+              <span className="r22-text--dark">A Legacy</span>{' '}
+              <span className="r22-text--mid">Of</span>{' '}
+              <span className="r22-text--light">Innovation</span>
+            </h2>
+          </div>
+        </Reveal>
 
-  // R22 variants
-  const variants = [
-    {
-      name: 'R22 Beta',
-      years: '1985-1995',
-      engine: 'O-320-B2C (160 HP)',
-      description: 'The original production model that established the R22 as the world\'s most cost-effective training helicopter.',
-      features: ['Lycoming O-320 engine', '2-blade main rotor', 'Standard instrumentation'],
-      pdfs: { brochure: R22_BROCHURE, eoc: R22_EOC },
-    },
-    {
-      name: 'R22 Beta II',
-      years: '1996-Present',
-      engine: 'O-360-J2A (180 HP)',
-      description: 'The current production model featuring increased power, improved rotor blades, and enhanced safety systems.',
-      features: ['20% more power', 'Improved rotor dynamics', 'Enhanced safety features', 'Better hot & high performance'],
-      pdfs: { brochure: R22_BROCHURE, eoc: R22_EOC },
-    },
-    {
-      name: 'R22 Mariner',
-      years: '1990-2010',
-      engine: 'O-360-J2A (180 HP)',
-      description: 'A specialized float-equipped variant designed for water operations and maritime applications.',
-      features: ['Pop-out floats', 'Corrosion protection', 'Marine equipment', 'Water landing capability'],
-      pdfs: { brochure: R22_BROCHURE, eoc: R22_EOC },
-    },
+        <div className="r22-history__content">
+          <div className="r22-history__image">
+            <Reveal direction="left">
+              <ParallaxImage
+                src="/assets/images/new-aircraft/r22/r22blueprint.jpg"
+                alt="R22 Blueprint"
+              />
+            </Reveal>
+          </div>
+          <div className="r22-history__timeline">
+            <HistoryTimelineDots events={historyEvents} />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================================
+// R22 SPECIFICATIONS
+// ============================================================================
+function R22Specifications() {
+  const [activeSpec, setActiveSpec] = useState(null);
+
+  const specs = [
+    { label: 'Engine', value: 'Lycoming O-360', unit: '131 HP' },
+    { label: 'Max Speed', value: '118', unit: 'kts' },
+    { label: 'Range', value: '240', unit: 'nm' },
+    { label: 'Useful Load', value: '440', unit: 'lbs' },
+    { label: 'Seats', value: '2', unit: 'persons' },
+    { label: 'Rotor Diameter', value: '25.2', unit: 'ft' },
   ];
 
-  // Flight characteristics
+  return (
+    <section className="r22-specs">
+      <div className="r22-specs__container">
+        <Reveal>
+          <div className="r22-section-header">
+            <span className="r22-pre-text">Performance Data</span>
+            <h2>
+              <span className="r22-text--dark">Technical</span>{' '}
+              <span className="r22-text--mid">Specifications</span>
+            </h2>
+          </div>
+        </Reveal>
+
+        <div className="r22-specs__content">
+          <Reveal delay={0.1}>
+            <InteractiveSpecsCard
+              specs={specs}
+              activeSpec={activeSpec}
+              setActiveSpec={setActiveSpec}
+            />
+          </Reveal>
+
+          <Reveal delay={0.2}>
+            <div className="r22-specs__details">
+              <div className="r22-specs__detail-group">
+                <h4>Powerplant</h4>
+                <div className="r22-specs__detail-items">
+                  <div className="r22-specs__detail-item">
+                    <span className="r22-specs__detail-label">Engine</span>
+                    <span className="r22-specs__detail-value">Lycoming O-360 Four-Cylinder</span>
+                  </div>
+                  <div className="r22-specs__detail-item">
+                    <span className="r22-specs__detail-label">Takeoff Power</span>
+                    <span className="r22-specs__detail-value">131 HP</span>
+                  </div>
+                  <div className="r22-specs__detail-item">
+                    <span className="r22-specs__detail-label">Cruise Power</span>
+                    <span className="r22-specs__detail-value">124 HP @ 2,652 RPM</span>
+                  </div>
+                  <div className="r22-specs__detail-item">
+                    <span className="r22-specs__detail-label">Fuel Capacity</span>
+                    <span className="r22-specs__detail-value">26.4 US gal</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="r22-specs__detail-group">
+                <h4>Dimensions</h4>
+                <div className="r22-specs__detail-items">
+                  <div className="r22-specs__detail-item">
+                    <span className="r22-specs__detail-label">Length</span>
+                    <span className="r22-specs__detail-value">28.8 ft (8.8 m)</span>
+                  </div>
+                  <div className="r22-specs__detail-item">
+                    <span className="r22-specs__detail-label">Height</span>
+                    <span className="r22-specs__detail-value">8.9 ft (2.7 m)</span>
+                  </div>
+                  <div className="r22-specs__detail-item">
+                    <span className="r22-specs__detail-label">Main Rotor Diameter</span>
+                    <span className="r22-specs__detail-value">25.2 ft (7.7 m)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="r22-specs__detail-group">
+                <h4>Performance</h4>
+                <div className="r22-specs__detail-items">
+                  <div className="r22-specs__detail-item">
+                    <span className="r22-specs__detail-label">Max Speed (VNE)</span>
+                    <span className="r22-specs__detail-value">118 kts (219 km/h)</span>
+                  </div>
+                  <div className="r22-specs__detail-item">
+                    <span className="r22-specs__detail-label">Cruise Speed</span>
+                    <span className="r22-specs__detail-value">96 kts (178 km/h)</span>
+                  </div>
+                  <div className="r22-specs__detail-item">
+                    <span className="r22-specs__detail-label">Service Ceiling</span>
+                    <span className="r22-specs__detail-value">14,000 ft</span>
+                  </div>
+                  <div className="r22-specs__detail-item">
+                    <span className="r22-specs__detail-label">Hover IGE</span>
+                    <span className="r22-specs__detail-value">8,000 ft</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================================
+// R22 FLIGHT CHARACTERISTICS
+// ============================================================================
+function R22FlightCharacteristics() {
   const flightCharacteristics = [
     {
       title: 'Low Inertia Rotor System',
@@ -2075,6 +2356,323 @@ function AircraftR22() {
     },
   ];
 
+  return (
+    <section className="r22-characteristics">
+      <div className="r22-characteristics__container">
+        <Reveal>
+          <div className="r22-section-header">
+            <span className="r22-pre-text">Flying the R22</span>
+            <h2>
+              <span className="r22-text--dark">Flight</span>{' '}
+              <span className="r22-text--mid">Characteristics</span>
+            </h2>
+            <p className="r22-section-desc">
+              The R22's demanding nature develops exceptional pilot skills. Those who master
+              the R22 find themselves exceptionally prepared for any helicopter they fly thereafter.
+            </p>
+          </div>
+        </Reveal>
+
+        <div className="r22-characteristics__grid">
+          {flightCharacteristics.map((char, index) => (
+            <Reveal key={index} delay={index * 0.1}>
+              <motion.div
+                className="r22-characteristics__card"
+                whileHover={{ y: -4 }}
+                transition={{ type: 'spring', stiffness: 400 }}
+              >
+                <div className="r22-characteristics__icon">
+                  {char.icon}
+                </div>
+                <h4>{char.title}</h4>
+                <p>{char.description}</p>
+              </motion.div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================================
+// R22 CHAMPION (CAPTAIN QUENTIN SMITH)
+// ============================================================================
+function R22Champion() {
+  return (
+    <section className="r22-champion r22-champion--compact">
+      <div className="r22-champion__bg">
+        <img
+          src="/assets/images/used-aircraft/r22/british-team-r22.webp"
+          alt="British Team R22"
+        />
+        <div className="r22-champion__overlay" />
+      </div>
+
+      <div className="r22-champion__container">
+        <div className="r22-champion__content">
+          <Reveal>
+            <h2>
+              <span className="r22-text--white">World Champion</span>{' '}
+              <span className="r22-text--gold">Quentin Smith</span>
+            </h2>
+            <p className="r22-champion__desc">
+              2x World Helicopter Aerobatic Champion flying the Robinson R22.
+              The only pilot to win multiple championships in this aircraft.
+            </p>
+          </Reveal>
+
+          <Reveal delay={0.2}>
+            <div className="r22-champion__stats">
+              <div className="r22-champion__stat">
+                <span className="r22-champion__stat-value">2x</span>
+                <span className="r22-champion__stat-label">World Champion</span>
+              </div>
+              <div className="r22-champion__stat">
+                <span className="r22-champion__stat-value">18,000+</span>
+                <span className="r22-champion__stat-label">Flight Hours</span>
+              </div>
+              <div className="r22-champion__stat">
+                <span className="r22-champion__stat-value">35+</span>
+                <span className="r22-champion__stat-label">Years Flying</span>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================================
+// R22 VARIANTS
+// ============================================================================
+function R22Variants() {
+  const [activeVariant, setActiveVariant] = useState(0);
+
+  // Shared R22 family downloads
+  const R22_BROCHURE = 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/RH_R22_US_Digital_Corporate_Brochure_Feb_2026_76bb67b86e.pdf';
+  const R22_EOC = 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/r22_eoc_2026_5cc7166f5c.pdf';
+
+  const variants = [
+    {
+      name: 'R22 Beta',
+      years: '1985-1995',
+      engine: 'O-320-B2C (160 HP)',
+      description: 'The original production model that established the R22 as the world\'s most cost-effective training helicopter.',
+      features: ['Lycoming O-320 engine', '2-blade main rotor', 'Standard instrumentation'],
+      pdfs: { brochure: R22_BROCHURE, eoc: R22_EOC },
+    },
+    {
+      name: 'R22 Beta II',
+      years: '1996-Present',
+      engine: 'O-360-J2A (180 HP)',
+      description: 'The current production model featuring increased power, improved rotor blades, and enhanced safety systems.',
+      features: ['20% more power', 'Improved rotor dynamics', 'Enhanced safety features', 'Better hot & high performance'],
+      pdfs: { brochure: R22_BROCHURE, eoc: R22_EOC },
+    },
+    {
+      name: 'R22 Mariner',
+      years: '1990-2010',
+      engine: 'O-360-J2A (180 HP)',
+      description: 'A specialized float-equipped variant designed for water operations and maritime applications.',
+      features: ['Pop-out floats', 'Corrosion protection', 'Marine equipment', 'Water landing capability'],
+      pdfs: { brochure: R22_BROCHURE, eoc: R22_EOC },
+    },
+  ];
+
+  return (
+    <section className="r22-variants">
+      <div className="r22-variants__container">
+        <Reveal>
+          <div className="r22-section-header">
+            <span className="r22-pre-text">Models</span>
+            <h2>
+              <span className="r22-text--dark">R22</span>{' '}
+              <span className="r22-text--mid">Variants</span>
+            </h2>
+          </div>
+        </Reveal>
+
+        <div className="r22-variants__tabs">
+          {variants.map((variant, index) => (
+            <button
+              key={index}
+              className={`r22-variants__tab ${activeVariant === index ? 'r22-variants__tab--active' : ''}`}
+              onClick={() => setActiveVariant(index)}
+            >
+              {variant.name}
+            </button>
+          ))}
+        </div>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeVariant}
+            className="r22-variants__content"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="r22-variants__info">
+              <div className="r22-variants__header">
+                <h3>{variants[activeVariant].name}</h3>
+                <span className="r22-variants__years">{variants[activeVariant].years}</span>
+              </div>
+              <p className="r22-variants__engine">{variants[activeVariant].engine}</p>
+              <p className="r22-variants__description">{variants[activeVariant].description}</p>
+              <ul className="r22-variants__features">
+                {variants[activeVariant].features.map((feature, i) => (
+                  <li key={i}>{feature}</li>
+                ))}
+              </ul>
+              {variants[activeVariant].pdfs && (
+                <div className="r22-variants__pdfs">
+                  {variants[activeVariant].pdfs.brochure && (
+                    <a
+                      href={variants[activeVariant].pdfs.brochure}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="r22-variants__pdf-pill"
+                    >
+                      <i className="fas fa-file-pdf" aria-hidden="true"></i>
+                      <span>Brochure</span>
+                    </a>
+                  )}
+                  {variants[activeVariant].pdfs.eoc && (
+                    <a
+                      href={variants[activeVariant].pdfs.eoc}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="r22-variants__pdf-pill"
+                    >
+                      <i className="fas fa-file-pdf" aria-hidden="true"></i>
+                      <span>Operating Costs</span>
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================================
+// R22 TRAINING
+// ============================================================================
+function R22Training() {
+  const trainingBenefits = [
+    { title: 'Cost Effective', value: '50%', desc: 'Lower operating costs than other helicopters' },
+    { title: 'Skill Transfer', value: '100%', desc: 'Skills transfer directly to larger types' },
+    { title: 'Industry Standard', value: '#1', desc: 'Most used training helicopter worldwide' },
+  ];
+
+  return (
+    <section className="r22-training">
+      <div className="r22-training__container">
+        <div className="r22-training__content">
+          <Reveal>
+            <div className="r22-training__header">
+              <span className="r22-pre-text">Learn to Fly</span>
+              <h2>
+                <span className="r22-text--dark">Why R22</span>{' '}
+                <span className="r22-text--mid">For PPL</span>{' '}
+                <span className="r22-text--light">Training</span>
+              </h2>
+            </div>
+          </Reveal>
+
+          <div className="r22-training__grid">
+            <Reveal delay={0.1}>
+              <div className="r22-training__reason">
+                <div className="r22-training__reason-num">01</div>
+                <div className="r22-training__reason-content">
+                  <h4>Cost Effective</h4>
+                  <p>
+                    The R22 offers the lowest operating costs of any production helicopter, making
+                    your path to a PPL(H) more affordable without compromising on quality training.
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.2}>
+              <div className="r22-training__reason">
+                <div className="r22-training__reason-num">02</div>
+                <div className="r22-training__reason-content">
+                  <h4>Develops Superior Skills</h4>
+                  <p>
+                    The R22's responsive controls and low-inertia rotor system demand precision,
+                    developing skills that transfer directly to larger, more complex helicopters.
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.3}>
+              <div className="r22-training__reason">
+                <div className="r22-training__reason-num">03</div>
+                <div className="r22-training__reason-content">
+                  <h4>Industry Standard</h4>
+                  <p>
+                    More pilots have learned to fly helicopters in the R22 than any other aircraft.
+                    It's the benchmark against which all training helicopters are measured.
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.4}>
+              <div className="r22-training__reason">
+                <div className="r22-training__reason-num">04</div>
+                <div className="r22-training__reason-content">
+                  <h4>Proven Safety Record</h4>
+                  <p>
+                    With proper training and adherence to Robinson's safety protocols, the R22
+                    has an excellent safety record spanning decades of service worldwide.
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+
+          <Reveal delay={0.5}>
+            <div className="r22-training__benefits">
+              {trainingBenefits.map((benefit, index) => (
+                <div key={index} className="r22-training__benefit">
+                  <span className="r22-training__benefit-value">{benefit.value}</span>
+                  <span className="r22-training__benefit-title">{benefit.title}</span>
+                  <span className="r22-training__benefit-desc">{benefit.desc}</span>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+        </div>
+
+        <Reveal delay={0.2} direction="right">
+          <div className="r22-training__image">
+            <img
+              src="/assets/images/used-aircraft/r22/hq-r22-lineup.jpg"
+              alt="HQ Aviation R22 Fleet"
+            />
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================================
+// R22 GALLERY
+// ============================================================================
+function R22Gallery({ pageImages }) {
+  const [lightboxImage, setLightboxImage] = useState(null);
+  const cmsGallery = (pageImages['r22-gallery'] ?? SECTION_MAP['r22-gallery'].images).map(img => ({ src: img.url, alt: img.alt }));
+
   // Gallery images
   const galleryImages = [
     { src: '/assets/images/new-aircraft/r22/r22-cutout.png', alt: 'R22 Cutout View' },
@@ -2084,653 +2682,126 @@ function AircraftR22() {
     { src: '/assets/images/used-aircraft/r22/hq-r22-lineup.jpg', alt: 'HQ R22 Fleet' },
   ];
 
-  // Training benefits
-  const trainingBenefits = [
-    { title: 'Cost Effective', value: '50%', desc: 'Lower operating costs than other helicopters' },
-    { title: 'Skill Transfer', value: '100%', desc: 'Skills transfer directly to larger types' },
-    { title: 'Industry Standard', value: '#1', desc: 'Most used training helicopter worldwide' },
-  ];
+  return (
+    <section className="r22-gallery" data-cms-section="r22-gallery">
+      <div className="r22-gallery__container">
+        <Reveal>
+          <div className="r22-section-header">
+            <span className="r22-pre-text">Visual</span>
+            <h2>
+              <span className="r22-text--dark">R22</span>{' '}
+              <span className="r22-text--mid">Gallery</span>
+            </h2>
+          </div>
+        </Reveal>
+
+        <div className="r22-gallery__grid">
+          {cmsGallery.map((image, index) => (
+            <Reveal key={index} delay={index * 0.1}>
+              <motion.div
+                className="r22-gallery__item"
+                whileHover={{ scale: 1.02 }}
+                onClick={() => setLightboxImage(image)}
+              >
+                <img src={image.src} alt={image.alt} />
+                <div className="r22-gallery__overlay">
+                  <span>View</span>
+                </div>
+              </motion.div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {lightboxImage && (
+          <motion.div
+            className="r22-lightbox"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setLightboxImage(null)}
+          >
+            <motion.div
+              className="r22-lightbox__content"
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+            >
+              <img src={lightboxImage.src} alt={lightboxImage.alt} />
+              <button className="r22-lightbox__close" onClick={() => setLightboxImage(null)}>
+                Close
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
+  );
+}
+
+// ============================================================================
+// R22 CTA
+// ============================================================================
+function R22CTA() {
+  return (
+    <section className="r22-cta">
+      <div className="r22-cta__container">
+        <Reveal>
+          <div className="r22-cta__content">
+            <span className="r22-pre-text">Ready to Begin?</span>
+            <h2>
+              <span className="r22-text--dark">Start Your</span>{' '}
+              <span className="r22-text--mid">R22</span>{' '}
+              <span className="r22-text--light">Journey</span>
+            </h2>
+            <p>
+              Whether you're looking to learn to fly, purchase an R22, or simply experience
+              the thrill of helicopter flight, HQ Aviation is here to help you achieve your dreams.
+            </p>
+            <div className="r22-cta__buttons">
+              <Link to="/contact" className="r22-btn r22-btn--primary">
+                Enquire about Aircraft
+              </Link>
+              <Link to="/training/ppl" className="r22-btn r22-btn--outline">
+                Learn to Fly
+              </Link>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================================
+// MAIN PAGE COMPONENT
+// ============================================================================
+function AircraftR22() {
+  useCmsHighlight();
+  const pageImages = usePageImages('r22');
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="r22-page">
       <R22Styles />
       <R22Header />
-
-      {/* ========== SECTION 1: HERO ========== */}
-      <section ref={heroRef} className="r22-hero">
-        <motion.div
-          className="r22-hero__bg"
-          initial={{ scale: 1.1, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.5 }}
-        >
-          <img
-            src="/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png"
-            alt="Robinson R22 Helicopter"
-          />
-        </motion.div>
-        <div className="r22-hero__overlay" />
-
-        <motion.div
-          className="r22-hero__content"
-          style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
-        >
-          <motion.span
-            className="r22-hero__label"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            THE TRAINING LEGEND
-          </motion.span>
-
-          <div className="r22-hero__headline">
-            <motion.span
-              className="r22-hero__word r22-hero__word--1"
-              initial={{ opacity: 0, y: 60 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            >
-              ROBINSON
-            </motion.span>
-            <motion.span
-              className="r22-hero__word r22-hero__word--2"
-              initial={{ opacity: 0, y: 60 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            >
-              R22
-            </motion.span>
-          </div>
-
-          <motion.div
-            className="r22-hero__divider"
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-          />
-
-          <motion.div
-            className="r22-hero__stats"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1 }}
-          >
-            <div className="r22-hero__stat">
-              <span className="r22-hero__stat-value">4,800+</span>
-              <span className="r22-hero__stat-label">Built Worldwide</span>
-            </div>
-            <div className="r22-hero__stat-divider" />
-            <div className="r22-hero__stat">
-              <span className="r22-hero__stat-value">1975</span>
-              <span className="r22-hero__stat-label">First Flight</span>
-            </div>
-            <div className="r22-hero__stat-divider" />
-            <div className="r22-hero__stat">
-              <span className="r22-hero__stat-value">#1</span>
-              <span className="r22-hero__stat-label">Training Helicopter</span>
-            </div>
-          </motion.div>
-
-          <motion.p
-            className="r22-hero__sub"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.2 }}
-          >
-            The world's most popular training helicopter. Where legends begin their journey.
-          </motion.p>
-        </motion.div>
-
-      </section>
-
-      {/* ========== SECTION 2: INTRODUCTION ========== */}
-      <section className="r22-intro">
-        <div className="r22-intro__container">
-          <Reveal>
-            <div className="r22-intro__header">
-              <span className="r22-pre-text">Since 1979</span>
-              <h2>
-                <span className="r22-text--dark">The World's</span>{' '}
-                <span className="r22-text--mid">Most Popular</span>{' '}
-                <span className="r22-text--light">Training Helicopter</span>
-              </h2>
-            </div>
-          </Reveal>
-
-          <div className="r22-intro__content">
-            <Reveal delay={0.1}>
-              <div className="r22-intro__text">
-                <p>
-                  The Robinson R22 revolutionized helicopter training when it first took to the skies in 1975.
-                  Frank Robinson's vision of an affordable, reliable, and effective training helicopter changed
-                  the industry forever, making helicopter flying accessible to a generation of pilots who might
-                  otherwise never have realized their dreams.
-                </p>
-                <p>
-                  With over 4,800 aircraft delivered worldwide, the R22 has trained more helicopter pilots than
-                  any other aircraft in history. Its demanding flight characteristics develop exceptional pilot
-                  skills that transfer seamlessly to larger, more complex helicopters.
-                </p>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.2}>
-              <div className="r22-intro__image">
-                <img
-                  src="/assets/images/new-aircraft/r22/r22-cutout.png"
-                  alt="Robinson R22 Helicopter"
-                />
-              </div>
-            </Reveal>
-          </div>
-
-          <Reveal delay={0.3}>
-            <div className="r22-intro__highlights">
-              {[
-                { value: '45', unit: 'min hrs', label: 'To PPL(H)' },
-                { value: '118', unit: 'kts', label: 'Max Speed' },
-                { value: '240', unit: 'nm', label: 'Range' },
-              ].map((item, i) => (
-                <div key={i} className="r22-intro__highlight">
-                  <span className="r22-intro__highlight-value">
-                    <AnimatedNumber value={item.value} />
-                    <span className="r22-intro__highlight-unit">{item.unit}</span>
-                  </span>
-                  <span className="r22-intro__highlight-label">{item.label}</span>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ========== SECTION 2.5: FLEET STATISTICS ========== */}
-      <section className="r22-counter">
-        <div className="r22-counter__container">
-          <div className="r22-counter__item">
-            <span className="r22-counter__value">4,800+</span>
-            <span className="r22-counter__label">Aircraft Delivered</span>
-          </div>
-          <div className="r22-counter__item">
-            <span className="r22-counter__value">45+</span>
-            <span className="r22-counter__label">Years In Production</span>
-          </div>
-          <div className="r22-counter__item">
-            <span className="r22-counter__value">#1</span>
-            <span className="r22-counter__label">Training Helicopter</span>
-          </div>
-          <div className="r22-counter__item">
-            <span className="r22-counter__value">100+</span>
-            <span className="r22-counter__label">Countries Operating</span>
-          </div>
-          <div className="r22-counter__item">
-            <span className="r22-counter__value">88%</span>
-            <span className="r22-counter__label">Reduction in Fatal Accidents (1982-1997)</span>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 3: HISTORY TIMELINE ========== */}
-      <section className="r22-history">
-        <div className="r22-history__container">
-          <Reveal>
-            <div className="r22-section-header">
-              <span className="r22-pre-text">Heritage</span>
-              <h2>
-                <span className="r22-text--dark">A Legacy</span>{' '}
-                <span className="r22-text--mid">Of</span>{' '}
-                <span className="r22-text--light">Innovation</span>
-              </h2>
-            </div>
-          </Reveal>
-
-          <div className="r22-history__content">
-            <div className="r22-history__image">
-              <Reveal direction="left">
-                <ParallaxImage
-                  src="/assets/images/new-aircraft/r22/r22blueprint.jpg"
-                  alt="R22 Blueprint"
-                />
-              </Reveal>
-            </div>
-            <div className="r22-history__timeline">
-              <HistoryTimeline events={historyEvents} />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 4: TECHNICAL SPECIFICATIONS ========== */}
-      <section className="r22-specs">
-        <div className="r22-specs__container">
-          <Reveal>
-            <div className="r22-section-header">
-              <span className="r22-pre-text">Performance Data</span>
-              <h2>
-                <span className="r22-text--dark">Technical</span>{' '}
-                <span className="r22-text--mid">Specifications</span>
-              </h2>
-            </div>
-          </Reveal>
-
-          <div className="r22-specs__content">
-            <Reveal delay={0.1}>
-              <InteractiveSpecsCard
-                specs={specs}
-                activeSpec={activeSpec}
-                setActiveSpec={setActiveSpec}
-              />
-            </Reveal>
-
-            <Reveal delay={0.2}>
-              <div className="r22-specs__details">
-                <div className="r22-specs__detail-group">
-                  <h4>Powerplant</h4>
-                  <div className="r22-specs__detail-items">
-                    <div className="r22-specs__detail-item">
-                      <span className="r22-specs__detail-label">Engine</span>
-                      <span className="r22-specs__detail-value">Lycoming O-360 Four-Cylinder</span>
-                    </div>
-                    <div className="r22-specs__detail-item">
-                      <span className="r22-specs__detail-label">Takeoff Power</span>
-                      <span className="r22-specs__detail-value">131 HP</span>
-                    </div>
-                    <div className="r22-specs__detail-item">
-                      <span className="r22-specs__detail-label">Cruise Power</span>
-                      <span className="r22-specs__detail-value">124 HP @ 2,652 RPM</span>
-                    </div>
-                    <div className="r22-specs__detail-item">
-                      <span className="r22-specs__detail-label">Fuel Capacity</span>
-                      <span className="r22-specs__detail-value">26.4 US gal</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="r22-specs__detail-group">
-                  <h4>Dimensions</h4>
-                  <div className="r22-specs__detail-items">
-                    <div className="r22-specs__detail-item">
-                      <span className="r22-specs__detail-label">Length</span>
-                      <span className="r22-specs__detail-value">28.8 ft (8.8 m)</span>
-                    </div>
-                    <div className="r22-specs__detail-item">
-                      <span className="r22-specs__detail-label">Height</span>
-                      <span className="r22-specs__detail-value">8.9 ft (2.7 m)</span>
-                    </div>
-                    <div className="r22-specs__detail-item">
-                      <span className="r22-specs__detail-label">Main Rotor Diameter</span>
-                      <span className="r22-specs__detail-value">25.2 ft (7.7 m)</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="r22-specs__detail-group">
-                  <h4>Performance</h4>
-                  <div className="r22-specs__detail-items">
-                    <div className="r22-specs__detail-item">
-                      <span className="r22-specs__detail-label">Max Speed (VNE)</span>
-                      <span className="r22-specs__detail-value">118 kts (219 km/h)</span>
-                    </div>
-                    <div className="r22-specs__detail-item">
-                      <span className="r22-specs__detail-label">Cruise Speed</span>
-                      <span className="r22-specs__detail-value">96 kts (178 km/h)</span>
-                    </div>
-                    <div className="r22-specs__detail-item">
-                      <span className="r22-specs__detail-label">Service Ceiling</span>
-                      <span className="r22-specs__detail-value">14,000 ft</span>
-                    </div>
-                    <div className="r22-specs__detail-item">
-                      <span className="r22-specs__detail-label">Hover IGE</span>
-                      <span className="r22-specs__detail-value">8,000 ft</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 5: FLIGHT CHARACTERISTICS ========== */}
-      <section className="r22-characteristics">
-        <div className="r22-characteristics__container">
-          <Reveal>
-            <div className="r22-section-header">
-              <span className="r22-pre-text">Flying the R22</span>
-              <h2>
-                <span className="r22-text--dark">Flight</span>{' '}
-                <span className="r22-text--mid">Characteristics</span>
-              </h2>
-              <p className="r22-section-desc">
-                The R22's demanding nature develops exceptional pilot skills. Those who master
-                the R22 find themselves exceptionally prepared for any helicopter they fly thereafter.
-              </p>
-            </div>
-          </Reveal>
-
-          <div className="r22-characteristics__grid">
-            {flightCharacteristics.map((char, index) => (
-              <Reveal key={index} delay={index * 0.1}>
-                <motion.div
-                  className="r22-characteristics__card"
-                  whileHover={{ y: -4 }}
-                  transition={{ type: 'spring', stiffness: 400 }}
-                >
-                  <div className="r22-characteristics__icon">
-                    {char.icon}
-                  </div>
-                  <h4>{char.title}</h4>
-                  <p>{char.description}</p>
-                </motion.div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 6: CAPTAIN QUENTIN SMITH ACHIEVEMENT ========== */}
-      <section className="r22-champion r22-champion--compact">
-        <div className="r22-champion__bg">
-          <img
-            src="/assets/images/used-aircraft/r22/british-team-r22.webp"
-            alt="British Team R22"
-          />
-          <div className="r22-champion__overlay" />
-        </div>
-
-        <div className="r22-champion__container">
-          <div className="r22-champion__content">
-            <Reveal>
-              <h2>
-                <span className="r22-text--white">World Champion</span>{' '}
-                <span className="r22-text--gold">Quentin Smith</span>
-              </h2>
-              <p className="r22-champion__desc">
-                2x World Helicopter Aerobatic Champion flying the Robinson R22.
-                The only pilot to win multiple championships in this aircraft.
-              </p>
-            </Reveal>
-
-            <Reveal delay={0.2}>
-              <div className="r22-champion__stats">
-                <div className="r22-champion__stat">
-                  <span className="r22-champion__stat-value">2x</span>
-                  <span className="r22-champion__stat-label">World Champion</span>
-                </div>
-                <div className="r22-champion__stat">
-                  <span className="r22-champion__stat-value">18,000+</span>
-                  <span className="r22-champion__stat-label">Flight Hours</span>
-                </div>
-                <div className="r22-champion__stat">
-                  <span className="r22-champion__stat-value">35+</span>
-                  <span className="r22-champion__stat-label">Years Flying</span>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 7: VARIANTS ========== */}
-      <section className="r22-variants">
-        <div className="r22-variants__container">
-          <Reveal>
-            <div className="r22-section-header">
-              <span className="r22-pre-text">Models</span>
-              <h2>
-                <span className="r22-text--dark">R22</span>{' '}
-                <span className="r22-text--mid">Variants</span>
-              </h2>
-            </div>
-          </Reveal>
-
-          <div className="r22-variants__tabs">
-            {variants.map((variant, index) => (
-              <button
-                key={index}
-                className={`r22-variants__tab ${activeVariant === index ? 'r22-variants__tab--active' : ''}`}
-                onClick={() => setActiveVariant(index)}
-              >
-                {variant.name}
-              </button>
-            ))}
-          </div>
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeVariant}
-              className="r22-variants__content"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="r22-variants__info">
-                <div className="r22-variants__header">
-                  <h3>{variants[activeVariant].name}</h3>
-                  <span className="r22-variants__years">{variants[activeVariant].years}</span>
-                </div>
-                <p className="r22-variants__engine">{variants[activeVariant].engine}</p>
-                <p className="r22-variants__description">{variants[activeVariant].description}</p>
-                <ul className="r22-variants__features">
-                  {variants[activeVariant].features.map((feature, i) => (
-                    <li key={i}>{feature}</li>
-                  ))}
-                </ul>
-                {variants[activeVariant].pdfs && (
-                  <div className="r22-variants__pdfs">
-                    {variants[activeVariant].pdfs.brochure && (
-                      <a
-                        href={variants[activeVariant].pdfs.brochure}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="r22-variants__pdf-pill"
-                      >
-                        <i className="fas fa-file-pdf" aria-hidden="true"></i>
-                        <span>Brochure</span>
-                      </a>
-                    )}
-                    {variants[activeVariant].pdfs.eoc && (
-                      <a
-                        href={variants[activeVariant].pdfs.eoc}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="r22-variants__pdf-pill"
-                      >
-                        <i className="fas fa-file-pdf" aria-hidden="true"></i>
-                        <span>Operating Costs</span>
-                      </a>
-                    )}
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </section>
-
-      {/* ========== SECTION 8: TRAINING ========== */}
-      <section className="r22-training">
-        <div className="r22-training__container">
-          <div className="r22-training__content">
-            <Reveal>
-              <div className="r22-training__header">
-                <span className="r22-pre-text">Learn to Fly</span>
-                <h2>
-                  <span className="r22-text--dark">Why R22</span>{' '}
-                  <span className="r22-text--mid">For PPL</span>{' '}
-                  <span className="r22-text--light">Training</span>
-                </h2>
-              </div>
-            </Reveal>
-
-            <div className="r22-training__grid">
-              <Reveal delay={0.1}>
-                <div className="r22-training__reason">
-                  <div className="r22-training__reason-num">01</div>
-                  <div className="r22-training__reason-content">
-                    <h4>Cost Effective</h4>
-                    <p>
-                      The R22 offers the lowest operating costs of any production helicopter, making
-                      your path to a PPL(H) more affordable without compromising on quality training.
-                    </p>
-                  </div>
-                </div>
-              </Reveal>
-
-              <Reveal delay={0.2}>
-                <div className="r22-training__reason">
-                  <div className="r22-training__reason-num">02</div>
-                  <div className="r22-training__reason-content">
-                    <h4>Develops Superior Skills</h4>
-                    <p>
-                      The R22's responsive controls and low-inertia rotor system demand precision,
-                      developing skills that transfer directly to larger, more complex helicopters.
-                    </p>
-                  </div>
-                </div>
-              </Reveal>
-
-              <Reveal delay={0.3}>
-                <div className="r22-training__reason">
-                  <div className="r22-training__reason-num">03</div>
-                  <div className="r22-training__reason-content">
-                    <h4>Industry Standard</h4>
-                    <p>
-                      More pilots have learned to fly helicopters in the R22 than any other aircraft.
-                      It's the benchmark against which all training helicopters are measured.
-                    </p>
-                  </div>
-                </div>
-              </Reveal>
-
-              <Reveal delay={0.4}>
-                <div className="r22-training__reason">
-                  <div className="r22-training__reason-num">04</div>
-                  <div className="r22-training__reason-content">
-                    <h4>Proven Safety Record</h4>
-                    <p>
-                      With proper training and adherence to Robinson's safety protocols, the R22
-                      has an excellent safety record spanning decades of service worldwide.
-                    </p>
-                  </div>
-                </div>
-              </Reveal>
-            </div>
-
-            <Reveal delay={0.5}>
-              <div className="r22-training__benefits">
-                {trainingBenefits.map((benefit, index) => (
-                  <div key={index} className="r22-training__benefit">
-                    <span className="r22-training__benefit-value">{benefit.value}</span>
-                    <span className="r22-training__benefit-title">{benefit.title}</span>
-                    <span className="r22-training__benefit-desc">{benefit.desc}</span>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-          </div>
-
-          <Reveal delay={0.2} direction="right">
-            <div className="r22-training__image">
-              <img
-                src="/assets/images/used-aircraft/r22/hq-r22-lineup.jpg"
-                alt="HQ Aviation R22 Fleet"
-              />
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ========== SECTION 9: GALLERY ========== */}
-      <section className="r22-gallery" data-cms-section="r22-gallery">
-        <div className="r22-gallery__container">
-          <Reveal>
-            <div className="r22-section-header">
-              <span className="r22-pre-text">Visual</span>
-              <h2>
-                <span className="r22-text--dark">R22</span>{' '}
-                <span className="r22-text--mid">Gallery</span>
-              </h2>
-            </div>
-          </Reveal>
-
-          <div className="r22-gallery__grid">
-            {cmsGallery.map((image, index) => (
-              <Reveal key={index} delay={index * 0.1}>
-                <motion.div
-                  className="r22-gallery__item"
-                  whileHover={{ scale: 1.02 }}
-                  onClick={() => setLightboxImage(image)}
-                >
-                  <img src={image.src} alt={image.alt} />
-                  <div className="r22-gallery__overlay">
-                    <span>View</span>
-                  </div>
-                </motion.div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-
-        {/* Lightbox */}
-        <AnimatePresence>
-          {lightboxImage && (
-            <motion.div
-              className="r22-lightbox"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setLightboxImage(null)}
-            >
-              <motion.div
-                className="r22-lightbox__content"
-                initial={{ scale: 0.9 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0.9 }}
-              >
-                <img src={lightboxImage.src} alt={lightboxImage.alt} />
-                <button className="r22-lightbox__close" onClick={() => setLightboxImage(null)}>
-                  Close
-                </button>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </section>
-
-      {/* ========== SECTION 10: CTA ========== */}
-      <section className="r22-cta">
-        <div className="r22-cta__container">
-          <Reveal>
-            <div className="r22-cta__content">
-              <span className="r22-pre-text">Ready to Begin?</span>
-              <h2>
-                <span className="r22-text--dark">Start Your</span>{' '}
-                <span className="r22-text--mid">R22</span>{' '}
-                <span className="r22-text--light">Journey</span>
-              </h2>
-              <p>
-                Whether you're looking to learn to fly, purchase an R22, or simply experience
-                the thrill of helicopter flight, HQ Aviation is here to help you achieve your dreams.
-              </p>
-              <div className="r22-cta__buttons">
-                <Link to="/contact" className="r22-btn r22-btn--primary">
-                  Enquire about Aircraft
-                </Link>
-                <Link to="/training/ppl" className="r22-btn r22-btn--outline">
-                  Learn to Fly
-                </Link>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ========== FOOTER ========== */}
+      <R22Hero />
+      <R22Introduction />
+      <R22Counter />
+      <R22HistoryTimeline />
+      <R22Specifications />
+      <R22FlightCharacteristics />
+      <R22Champion />
+      <R22Variants />
+      <R22Training />
+      <R22Gallery pageImages={pageImages} />
+      <R22CTA />
       <FooterMinimal />
-
     </div>
   );
 }
