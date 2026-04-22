@@ -826,7 +826,7 @@ function R22Styles() {
         }
 
         /* ===== SPECS VARIANT PICKER (ported from R44) ===== */
-        .r22-specs .r22-variants__card {
+        .r22-variants__card {
           position: relative;
           margin-top: 3rem;
           padding: 0;
@@ -837,7 +837,7 @@ function R22Styles() {
           overflow: hidden;
         }
 
-        .r22-specs .r22-variants__card::before {
+        .r22-variants__card::before {
           content: '';
           position: absolute;
           top: 0;
@@ -847,7 +847,7 @@ function R22Styles() {
           background: #1a1a1a;
         }
 
-        .r22-specs .r22-variants__tabs {
+        .r22-variants__tabs {
           display: grid;
           grid-template-columns: repeat(5, 1fr);
           gap: 0;
@@ -857,7 +857,7 @@ function R22Styles() {
           border-bottom: 1px solid rgba(0,0,0,0.08);
         }
 
-        .r22-specs .r22-variants__tab {
+        .r22-variants__tab {
           position: relative;
           display: flex;
           flex-direction: column;
@@ -876,9 +876,9 @@ function R22Styles() {
           transition: color 0.25s ease, background 0.25s ease;
         }
 
-        .r22-specs .r22-variants__tab:last-child { border-right: none; }
+        .r22-variants__tab:last-child { border-right: none; }
 
-        .r22-specs .r22-variants__tab::after {
+        .r22-variants__tab::after {
           content: '';
           position: absolute;
           left: 1.25rem;
@@ -891,27 +891,27 @@ function R22Styles() {
           transition: transform 0.3s ease;
         }
 
-        .r22-specs .r22-variants__tab:hover {
+        .r22-variants__tab:hover {
           background: #f6f3ed;
           color: #1a1a1a;
         }
 
-        .r22-specs .r22-variants__tab:hover .r22-variants__tab-thumb img {
+        .r22-variants__tab:hover .r22-variants__tab-thumb img {
           filter: grayscale(0%);
           opacity: 1;
         }
 
-        .r22-specs .r22-variants__tab.active {
+        .r22-variants__tab.active {
           background: #ffffff;
           color: #1a1a1a;
           justify-content: center;
         }
 
-        .r22-specs .r22-variants__tab.active::after {
+        .r22-variants__tab.active::after {
           transform: scaleX(1);
         }
 
-        .r22-specs .r22-variants__tab-thumb {
+        .r22-variants__tab-thumb {
           display: block;
           width: 100%;
           height: 72px;
@@ -919,7 +919,7 @@ function R22Styles() {
           pointer-events: none;
         }
 
-        .r22-specs .r22-variants__tab-thumb img {
+        .r22-variants__tab-thumb img {
           width: 100%;
           height: 100%;
           object-fit: contain;
@@ -929,12 +929,12 @@ function R22Styles() {
           transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
         }
 
-        .r22-specs .r22-variants__tab.active .r22-variants__tab-thumb img {
+        .r22-variants__tab.active .r22-variants__tab-thumb img {
           filter: grayscale(0%);
           opacity: 1;
         }
 
-        .r22-specs .r22-variants__tab-label {
+        .r22-variants__tab-label {
           display: flex;
           flex-direction: column;
           gap: 0.2rem;
@@ -943,7 +943,7 @@ function R22Styles() {
           width: 100%;
         }
 
-        .r22-specs .r22-variants__tab-sub {
+        .r22-variants__tab-sub {
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.6rem;
           letter-spacing: 0.14em;
@@ -951,25 +951,25 @@ function R22Styles() {
           color: #9a9a9a;
         }
 
-        .r22-specs .r22-variants__tab.active .r22-variants__tab-sub {
+        .r22-variants__tab.active .r22-variants__tab-sub {
           color: #1a1a1a;
         }
 
-        .r22-specs .r22-variants__tab-name {
+        .r22-variants__tab-name {
           font-size: 0.95rem;
           font-weight: 600;
           letter-spacing: 0.01em;
           color: inherit;
         }
 
-        .r22-specs .r22-variants__content {
+        .r22-variants__content {
           display: flex;
           flex-direction: column;
           gap: 0;
           margin-top: 0;
         }
 
-        .r22-specs .r22-variants__image {
+        .r22-variants__image {
           position: relative;
           display: flex;
           align-items: center;
@@ -982,7 +982,7 @@ function R22Styles() {
           overflow: visible;
         }
 
-        .r22-specs .r22-variants__image::before {
+        .r22-variants__image::before {
           content: '';
           position: absolute;
           inset: 0;
@@ -994,7 +994,7 @@ function R22Styles() {
           pointer-events: none;
         }
 
-        .r22-specs .r22-variants__image-inner {
+        .r22-variants__image-inner {
           position: relative;
           display: flex;
           align-items: center;
@@ -1005,14 +1005,14 @@ function R22Styles() {
           z-index: 1;
         }
 
-        .r22-specs .r22-variants__image-inner img {
+        .r22-variants__image-inner img {
           width: 100%;
           height: 100%;
           object-fit: contain;
           filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));
         }
 
-        .r22-specs .r22-variants__image-headline {
+        .r22-variants__image-headline {
           position: absolute;
           top: 50%;
           left: 3rem;
@@ -1023,11 +1023,11 @@ function R22Styles() {
           max-width: 420px;
         }
 
-        .r22-specs .r22-variants__image-headline-inner {
+        .r22-variants__image-headline-inner {
           display: block;
         }
 
-        .r22-specs .r22-variants__image-headline .r22-variants__eyebrow {
+        .r22-variants__image-headline .r22-variants__eyebrow {
           display: inline-block;
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.7rem;
@@ -1037,7 +1037,7 @@ function R22Styles() {
           margin-bottom: 1rem;
         }
 
-        .r22-specs .r22-variants__image-headline h3 {
+        .r22-variants__image-headline h3 {
           font-family: 'Space Grotesk', sans-serif;
           font-size: clamp(2rem, 4vw, 3rem);
           font-weight: 700;
@@ -1047,7 +1047,7 @@ function R22Styles() {
           margin: 0 0 0.75rem;
         }
 
-        .r22-specs .r22-variants__image-headline .r22-variants__tagline {
+        .r22-variants__image-headline .r22-variants__tagline {
           font-family: 'Space Grotesk', sans-serif;
           font-size: 1.1rem;
           font-style: italic;
@@ -1055,13 +1055,13 @@ function R22Styles() {
           margin: 0 0 1.25rem;
         }
 
-        .r22-specs .r22-variants__image-headline .r22-variants__divider {
+        .r22-variants__image-headline .r22-variants__divider {
           width: 64px;
           height: 2px;
           background: #a67b3f;
         }
 
-        .r22-specs .r22-variants__info {
+        .r22-variants__info {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 3rem;
@@ -1071,18 +1071,18 @@ function R22Styles() {
           border-top: 1px solid rgba(0,0,0,0.06);
         }
 
-        .r22-specs .r22-variants__info-left {
+        .r22-variants__info-left {
           display: flex;
           flex-direction: column;
           justify-content: center;
         }
 
-        .r22-specs .r22-variants__info-right {
+        .r22-variants__info-right {
           display: flex;
           flex-direction: column;
         }
 
-        .r22-specs .r22-variants__eyebrow {
+        .r22-variants__eyebrow {
           display: inline-block;
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.68rem;
@@ -1092,7 +1092,7 @@ function R22Styles() {
           margin-bottom: 0.75rem;
         }
 
-        .r22-specs .r22-variants__info h3 {
+        .r22-variants__info h3 {
           font-family: 'Space Grotesk', sans-serif;
           font-size: clamp(1.8rem, 3vw, 2.4rem);
           font-weight: 500;
@@ -1102,7 +1102,7 @@ function R22Styles() {
           letter-spacing: -0.01em;
         }
 
-        .r22-specs .r22-variants__tagline {
+        .r22-variants__tagline {
           font-family: 'Space Grotesk', sans-serif;
           font-size: 1rem;
           font-style: italic;
@@ -1111,7 +1111,7 @@ function R22Styles() {
           letter-spacing: 0.01em;
         }
 
-        .r22-specs .r22-variants__divider {
+        .r22-variants__divider {
           width: 50px;
           height: 2px;
           background: #1a1a1a;
@@ -1119,7 +1119,7 @@ function R22Styles() {
           border-radius: 2px;
         }
 
-        .r22-specs .r22-variants__description {
+        .r22-variants__description {
           font-family: 'Space Grotesk', sans-serif;
           font-size: 1rem;
           line-height: 1.7;
@@ -1127,14 +1127,14 @@ function R22Styles() {
           margin: 0;
         }
 
-        .r22-specs .r22-variants__pdfs {
+        .r22-variants__pdfs {
           display: flex;
           flex-wrap: wrap;
           gap: 0.5rem;
           margin-top: 1.25rem;
         }
 
-        .r22-specs .r22-variants__pdf-pill {
+        .r22-variants__pdf-pill {
           display: inline-flex;
           align-items: center;
           gap: 0.5rem;
@@ -1151,30 +1151,30 @@ function R22Styles() {
           transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
         }
 
-        .r22-specs .r22-variants__pdf-pill i {
+        .r22-variants__pdf-pill i {
           font-size: 0.85rem;
           color: #c8102e;
           transition: color 0.2s;
         }
 
-        .r22-specs .r22-variants__pdf-pill:hover {
+        .r22-variants__pdf-pill:hover {
           background: #1a1a1a;
           color: #fff;
           border-color: #1a1a1a;
           transform: translateY(-1px);
         }
 
-        .r22-specs .r22-variants__pdf-pill:hover i {
+        .r22-variants__pdf-pill:hover i {
           color: #fff;
         }
 
-        .r22-specs .r22-variants__use-case-tags {
+        .r22-variants__use-case-tags {
           display: flex;
           flex-wrap: wrap;
           gap: 0.4rem;
         }
 
-        .r22-specs .r22-variants__image .r22-variants__use-case-tags {
+        .r22-variants__image .r22-variants__use-case-tags {
           position: absolute;
           right: 3rem;
           bottom: 1.25rem;
@@ -1182,7 +1182,7 @@ function R22Styles() {
           z-index: 2;
         }
 
-        .r22-specs .r22-variants__use-case-tag {
+        .r22-variants__use-case-tag {
           display: inline-flex;
           align-items: center;
           padding: 0.35rem 0.75rem;
@@ -1195,7 +1195,7 @@ function R22Styles() {
           letter-spacing: 0.01em;
         }
 
-        .r22-specs .r22-variants__features {
+        .r22-variants__features {
           list-style: none;
           padding: 0;
           margin: 0;
@@ -1206,7 +1206,7 @@ function R22Styles() {
           gap: 0.6rem;
         }
 
-        .r22-specs .r22-variants__features li {
+        .r22-variants__features li {
           display: flex;
           align-items: center;
           gap: 0.7rem;
@@ -1216,7 +1216,7 @@ function R22Styles() {
           padding: 0;
         }
 
-        .r22-specs .r22-variants__feature-icon {
+        .r22-variants__feature-icon {
           display: inline-flex;
           align-items: center;
           justify-content: center;
@@ -1231,22 +1231,22 @@ function R22Styles() {
         }
 
         @media (max-width: 1000px) {
-          .r22-specs .r22-variants__tabs {
+          .r22-variants__tabs {
             grid-template-columns: repeat(3, 1fr);
           }
-          .r22-specs .r22-variants__tab:nth-child(3n) { border-right: none; }
-          .r22-specs .r22-variants__tab:nth-child(n+4) {
+          .r22-variants__tab:nth-child(3n) { border-right: none; }
+          .r22-variants__tab:nth-child(n+4) {
             border-top: 1px solid rgba(0,0,0,0.06);
           }
         }
 
         @media (max-width: 900px) {
           .r22-specs { padding: 5rem 1.5rem; position: relative; top: auto; }
-          .r22-specs .r22-variants__image {
+          .r22-variants__image {
             min-height: 260px;
             padding: 2rem 1.5rem;
           }
-          .r22-specs .r22-variants__info {
+          .r22-variants__info {
             grid-template-columns: 1fr;
             gap: 1.75rem;
             padding: 2.25rem 1.75rem;
@@ -1254,10 +1254,10 @@ function R22Styles() {
         }
 
         @media (max-width: 700px) {
-          .r22-specs .r22-variants__tabs {
+          .r22-variants__tabs {
             grid-template-columns: 1fr;
           }
-          .r22-specs .r22-variants__tab {
+          .r22-variants__tab {
             flex-direction: row;
             align-items: center;
             min-height: 0;
@@ -1266,13 +1266,13 @@ function R22Styles() {
             border-bottom: 1px solid rgba(0,0,0,0.06);
             border-top: none;
           }
-          .r22-specs .r22-variants__tab:last-child { border-bottom: none; }
-          .r22-specs .r22-variants__tab-thumb {
+          .r22-variants__tab:last-child { border-bottom: none; }
+          .r22-variants__tab-thumb {
             width: 84px;
             height: 48px;
             flex-shrink: 0;
           }
-          .r22-specs .r22-variants__tab::after {
+          .r22-variants__tab::after {
             left: 0;
             right: auto;
             top: 0;
@@ -1282,10 +1282,10 @@ function R22Styles() {
             transform: scaleY(0);
             transform-origin: top center;
           }
-          .r22-specs .r22-variants__tab.active::after {
+          .r22-variants__tab.active::after {
             transform: scaleY(1);
           }
-          .r22-specs .r22-variants__features {
+          .r22-variants__features {
             justify-content: flex-start;
             flex: 0 0 auto;
           }
@@ -1381,153 +1381,6 @@ function R22Styles() {
         @media (max-width: 900px) {
           .r22-champion__inner { grid-template-columns: 1fr; gap: 3rem; }
           .r22-champion { padding: 5rem 1.5rem; }
-        }
-
-        /* ===== VARIANTS SECTION ===== */
-        .r22-variants {
-          padding: 8rem 2rem;
-          background: #fff;
-        }
-
-        .r22-variants__container {
-          max-width: 900px;
-          margin: 0 auto;
-        }
-
-        .r22-variants__tabs {
-          display: flex;
-          justify-content: center;
-          gap: 1rem;
-          margin-bottom: 3rem;
-        }
-
-        .r22-variants__tab {
-          padding: 0.75rem 1.5rem;
-          font-size: 0.75rem;
-          font-weight: 500;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          background: transparent;
-          border: 2px solid #e8e6e2;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          font-family: inherit;
-        }
-
-        .r22-variants__tab:hover {
-          border-color: #1a1a1a;
-        }
-
-        .r22-variants__tab--active {
-          background: #1a1a1a;
-          border-color: #1a1a1a;
-          color: #fff;
-        }
-
-        .r22-variants__content {
-          background: #faf9f6;
-          padding: 3rem;
-          border-radius: 8px;
-        }
-
-        .r22-variants__header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 1rem;
-        }
-
-        .r22-variants__header h3 {
-          font-size: 1.5rem;
-          margin: 0;
-          text-transform: uppercase;
-        }
-
-        .r22-variants__years {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.9rem;
-          color: #888;
-        }
-
-        .r22-variants__engine {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.85rem;
-          color: #666;
-          margin-bottom: 1.5rem;
-        }
-
-        .r22-variants__description {
-          color: #555;
-          font-size: 1rem;
-          line-height: 1.8;
-          margin-bottom: 1.5rem;
-        }
-
-        .r22-variants__features {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 0.75rem;
-        }
-
-        .r22-variants__features li {
-          font-size: 0.9rem;
-          color: #666;
-          padding-left: 1.5rem;
-          position: relative;
-        }
-
-        .r22-variants__features li::before {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 0.5rem;
-          width: 8px;
-          height: 8px;
-          background: #1a1a1a;
-        }
-
-        .r22-variants__pdfs {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.5rem;
-          margin-top: 1.5rem;
-        }
-
-        .r22-variants__pdf-pill {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.5rem;
-          padding: 0.45rem 0.95rem;
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 0.78rem;
-          font-weight: 500;
-          color: #1a1a1a;
-          background: #fff;
-          border: 1px solid rgba(0,0,0,0.12);
-          border-radius: 100px;
-          text-decoration: none;
-          letter-spacing: 0.01em;
-          transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
-        }
-
-        .r22-variants__pdf-pill i {
-          font-size: 0.85rem;
-          color: #c8102e;
-          transition: color 0.2s;
-        }
-
-        .r22-variants__pdf-pill:hover {
-          background: #1a1a1a;
-          color: #fff;
-          border-color: #1a1a1a;
-          transform: translateY(-1px);
-        }
-
-        .r22-variants__pdf-pill:hover i {
-          color: #fff;
         }
 
         /* ===== GALLERY SECTION ===== */
@@ -1680,14 +1533,6 @@ function R22Styles() {
 
           .r22-hero__stat-divider {
             display: none;
-          }
-
-          .r22-variants__tabs {
-            flex-wrap: wrap;
-          }
-
-          .r22-variants__features {
-            grid-template-columns: 1fr;
           }
 
         }
@@ -2373,123 +2218,6 @@ function R22Fleet({ pageImages }) {
 }
 
 // ============================================================================
-// R22 VARIANTS
-// ============================================================================
-function R22Variants() {
-  const [activeVariant, setActiveVariant] = useState(0);
-
-  // Shared R22 family downloads
-  const R22_BROCHURE = 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/RH_R22_US_Digital_Corporate_Brochure_Feb_2026_76bb67b86e.pdf';
-  const R22_EOC = 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/r22_eoc_2026_5cc7166f5c.pdf';
-
-  const variants = [
-    {
-      name: 'R22 Beta',
-      years: '1985-1995',
-      engine: 'O-320-B2C (160 HP)',
-      description: 'The original production model that established the R22 as the world\'s most cost-effective training helicopter.',
-      features: ['Lycoming O-320 engine', '2-blade main rotor', 'Standard instrumentation'],
-      pdfs: { brochure: R22_BROCHURE, eoc: R22_EOC },
-    },
-    {
-      name: 'R22 Beta II',
-      years: '1996-Present',
-      engine: 'O-360-J2A (180 HP)',
-      description: 'The current production model featuring increased power, improved rotor blades, and enhanced safety systems.',
-      features: ['20% more power', 'Improved rotor dynamics', 'Enhanced safety features', 'Better hot & high performance'],
-      pdfs: { brochure: R22_BROCHURE, eoc: R22_EOC },
-    },
-    {
-      name: 'R22 Mariner',
-      years: '1990-2010',
-      engine: 'O-360-J2A (180 HP)',
-      description: 'A specialized float-equipped variant designed for water operations and maritime applications.',
-      features: ['Pop-out floats', 'Corrosion protection', 'Marine equipment', 'Water landing capability'],
-      pdfs: { brochure: R22_BROCHURE, eoc: R22_EOC },
-    },
-  ];
-
-  return (
-    <section className="r22-variants">
-      <div className="r22-variants__container">
-        <Reveal>
-          <div className="r22-section-header">
-            <span className="r22-pre-text">Models</span>
-            <h2>
-              <span className="r22-text--dark">R22</span>{' '}
-              <span className="r22-text--mid">Variants</span>
-            </h2>
-          </div>
-        </Reveal>
-
-        <div className="r22-variants__tabs">
-          {variants.map((variant, index) => (
-            <button
-              key={index}
-              className={`r22-variants__tab ${activeVariant === index ? 'r22-variants__tab--active' : ''}`}
-              onClick={() => setActiveVariant(index)}
-            >
-              {variant.name}
-            </button>
-          ))}
-        </div>
-
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeVariant}
-            className="r22-variants__content"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="r22-variants__info">
-              <div className="r22-variants__header">
-                <h3>{variants[activeVariant].name}</h3>
-                <span className="r22-variants__years">{variants[activeVariant].years}</span>
-              </div>
-              <p className="r22-variants__engine">{variants[activeVariant].engine}</p>
-              <p className="r22-variants__description">{variants[activeVariant].description}</p>
-              <ul className="r22-variants__features">
-                {variants[activeVariant].features.map((feature, i) => (
-                  <li key={i}>{feature}</li>
-                ))}
-              </ul>
-              {variants[activeVariant].pdfs && (
-                <div className="r22-variants__pdfs">
-                  {variants[activeVariant].pdfs.brochure && (
-                    <a
-                      href={variants[activeVariant].pdfs.brochure}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="r22-variants__pdf-pill"
-                    >
-                      <i className="fas fa-file-pdf" aria-hidden="true"></i>
-                      <span>Brochure</span>
-                    </a>
-                  )}
-                  {variants[activeVariant].pdfs.eoc && (
-                    <a
-                      href={variants[activeVariant].pdfs.eoc}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="r22-variants__pdf-pill"
-                    >
-                      <i className="fas fa-file-pdf" aria-hidden="true"></i>
-                      <span>Operating Costs</span>
-                    </a>
-                  )}
-                </div>
-              )}
-            </div>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </section>
-  );
-}
-
-// ============================================================================
 // R22 GALLERY
 // ============================================================================
 function R22Gallery({ pageImages }) {
@@ -2726,7 +2454,6 @@ function AircraftR22() {
       <R22HistoryTimeline />
       <R22Champion pageImages={pageImages} />
       <R22Fleet pageImages={pageImages} />
-      <R22Variants />
       <R22Gallery pageImages={pageImages} />
       <R22CTA />
       <FooterMinimal />
