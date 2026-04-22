@@ -2065,6 +2065,69 @@ function R22Styles() {
           .r22-why__counters { grid-template-columns: repeat(2, 1fr); gap: 2rem 1.5rem; }
           .r22-why { padding: 5rem 1.5rem; }
         }
+        .r22-compare { padding: 8rem 2rem; background: #faf9f6; }
+        .r22-compare__inner { max-width: 1280px; margin: 0 auto; }
+        .r22-compare__pills {
+          display: flex;
+          gap: 0.75rem;
+          justify-content: center;
+          flex-wrap: wrap;
+          margin: 2rem 0 3rem;
+        }
+        .r22-compare__pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.7rem 1.25rem;
+          background: transparent;
+          border: 1px solid rgba(26,26,26,0.2);
+          color: #4a4a4a;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.85rem;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        .r22-compare__pill.is-active {
+          background: #1a1a1a;
+          color: #fff;
+          border-color: #1a1a1a;
+        }
+        .r22-compare__check {
+          display: inline-block;
+          width: 1em;
+          text-align: center;
+        }
+        .r22-compare__table-wrap { overflow-x: auto; }
+        .r22-compare__table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 0.95rem;
+        }
+        .r22-compare__table th, .r22-compare__table td {
+          padding: 1rem 1.25rem;
+          text-align: left;
+          border-bottom: 1px solid rgba(26,26,26,0.08);
+          vertical-align: top;
+        }
+        .r22-compare__table thead th {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.85rem;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          color: #1a1a1a;
+          background: #f2f0ea;
+        }
+        .r22-compare__table tbody th {
+          font-size: 0.8rem;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          color: #7a7a7a;
+          font-weight: 500;
+        }
+        .r22-compare__table tbody td {
+          font-family: 'Share Tech Mono', monospace;
+          color: #1a1a1a;
+        }
     `}</style>
   );
 }
@@ -2851,6 +2914,76 @@ function R22WhyTrainer() {
 }
 
 // ============================================================================
+// R22 VARIANT COMPARISON
+// ============================================================================
+function R22VariantComparison() {
+  const [selectedIds, setSelectedIds] = useState(R22_VARIANT_DATA.map((v) => v.id));
+  const visible = R22_VARIANT_DATA.filter((v) => selectedIds.includes(v.id));
+
+  const toggle = (id) => {
+    setSelectedIds((prev) => {
+      if (prev.includes(id)) {
+        return prev.length > 1 ? prev.filter((x) => x !== id) : prev; // keep at least one
+      }
+      return [...prev, id];
+    });
+  };
+
+  const rows = [
+    { label: 'Years produced', key: 'years' },
+    { label: 'Engine', key: 'engine' },
+    { label: 'Power', key: 'power' },
+    { label: 'MTOW', key: 'mtow' },
+    { label: 'Range', key: 'range' },
+    { label: 'Useful load', key: 'usefulLoad' },
+    { label: 'Landing gear', key: 'floats' },
+    { label: 'Notable', key: 'notable' },
+  ];
+
+  return (
+    <section className="r22-compare">
+      <div className="r22-compare__inner">
+        <div className="r22-section-header">
+          <span className="r22-pre-text">Compare</span>
+          <h2>The R22 family, side by side</h2>
+        </div>
+        <div className="r22-compare__pills">
+          {R22_VARIANT_DATA.map((v) => (
+            <button
+              key={v.id}
+              type="button"
+              className={`r22-compare__pill ${selectedIds.includes(v.id) ? 'is-active' : ''}`}
+              onClick={() => toggle(v.id)}
+            >
+              <span className="r22-compare__check">{selectedIds.includes(v.id) ? '✓' : ''}</span>
+              {v.name}
+            </button>
+          ))}
+        </div>
+        <div className="r22-compare__table-wrap">
+          <table className="r22-compare__table">
+            <thead>
+              <tr>
+                <th></th>
+                {visible.map((v) => <th key={v.id}>{v.name}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.key}>
+                  <th scope="row">{row.label}</th>
+                  {visible.map((v) => <td key={v.id}>{v[row.key]}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================================
 // MAIN PAGE COMPONENT
 // ============================================================================
 function AircraftR22() {
@@ -2873,6 +3006,7 @@ function AircraftR22() {
       </div>
       <R22FlightCharacteristics />
       <R22WhyTrainer />
+      <R22VariantComparison />
       <R22Counter />
       <R22HistoryTimeline />
       <R22Champion />
