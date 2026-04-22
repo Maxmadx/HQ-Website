@@ -319,6 +319,78 @@ const R22_HIGHLIGHTS = [
   { label: 'Built since 1979', value: '4,800+' },
 ];
 
+const R22_VARIANT_DATA = [
+  {
+    id: 'beta',
+    name: 'R22 Beta',
+    years: '1985–1995',
+    engine: 'Lycoming O-320-B2C',
+    power: '160 HP / 124 HP cont.',
+    vne: '102 kts',
+    cruise: '96 kts',
+    range: '240 nm',
+    mtow: '1,370 lb',
+    usefulLoad: '440 lb',
+    hoverIge: '9,400 ft',
+    rotorDia: '25 ft 2 in',
+    fuel: '19.2 US gal',
+    seats: '2',
+    floats: 'Skids',
+    notable: 'Defined the modern trainer market.',
+  },
+  {
+    id: 'beta-ii',
+    name: 'R22 Beta II',
+    years: '1996–Present',
+    engine: 'Lycoming O-360-J2A',
+    power: '145 HP / 131 HP cont.',
+    vne: '102 kts',
+    cruise: '96 kts',
+    range: '240 nm',
+    mtow: '1,370 lb',
+    usefulLoad: '440 lb',
+    hoverIge: '9,400 ft',
+    rotorDia: '25 ft 2 in',
+    fuel: '19.2 US gal',
+    seats: '2',
+    floats: 'Skids',
+    notable: 'Current production model.',
+  },
+  {
+    id: 'mariner',
+    name: 'R22 Mariner',
+    years: '1990–2010',
+    engine: 'Lycoming O-360-J2A',
+    power: '145 HP / 131 HP cont.',
+    vne: '102 kts',
+    cruise: '96 kts',
+    range: '220 nm',
+    mtow: '1,370 lb',
+    usefulLoad: '400 lb',
+    hoverIge: '9,400 ft',
+    rotorDia: '25 ft 2 in',
+    fuel: '19.2 US gal',
+    seats: '2',
+    floats: 'Pop-out floats',
+    notable: 'Float-equipped coastal variant.',
+  },
+];
+
+const R22_SPEC_ROWS = [
+  { label: 'Powerplant', key: 'engine' },
+  { label: 'Power (takeoff / continuous)', key: 'power' },
+  { label: 'Maximum speed (Vne)', key: 'vne' },
+  { label: 'Cruise speed', key: 'cruise' },
+  { label: 'Range (no reserve)', key: 'range' },
+  { label: 'Maximum gross weight', key: 'mtow' },
+  { label: 'Useful load', key: 'usefulLoad' },
+  { label: 'Hover ceiling IGE', key: 'hoverIge' },
+  { label: 'Rotor diameter', key: 'rotorDia' },
+  { label: 'Fuel capacity', key: 'fuel' },
+  { label: 'Seats', key: 'seats' },
+  { label: 'Landing gear', key: 'floats' },
+];
+
 // ============================================================================
 // R22 STYLES
 // ============================================================================
@@ -793,138 +865,85 @@ function R22Styles() {
 
         /* ===== SPECS SECTION ===== */
         .r22-specs {
+          background: #faf9f6;
           padding: 8rem 2rem;
-          background: #fff;
+          position: sticky;
+          top: 0;
         }
-
-        .r22-specs__container {
-          max-width: 1200px;
-          margin: 0 auto;
+        .r22-specs__inner { max-width: 1280px; margin: 0 auto; }
+        .r22-specs__header { margin-bottom: 3rem; }
+        .r22-specs__header h2 {
+          font-size: clamp(2.25rem, 4.5vw, 3.25rem);
+          font-weight: 700;
+          margin: 0.5rem 0 0;
+          line-height: 1.1;
         }
-
-        .r22-specs__content {
+        .r22-specs__split {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 4rem;
+          align-items: start;
         }
-
-        .r22-specs-card {
+        .r22-specs__blueprint img {
+          width: 100%;
+          height: auto;
+          display: block;
+          mix-blend-mode: multiply;
+          opacity: 0.9;
+        }
+        .r22-specs__selector {
+          display: flex;
+          gap: 0.5rem;
+          margin-bottom: 2rem;
+          flex-wrap: wrap;
+        }
+        .r22-specs__chip {
+          padding: 0.6rem 1.1rem;
+          background: transparent;
+          border: 1px solid rgba(26, 26, 26, 0.2);
+          color: #4a4a4a;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.8rem;
+          letter-spacing: 0.08em;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        .r22-specs__chip:hover { border-color: #1a1a1a; color: #1a1a1a; }
+        .r22-specs__chip.is-active {
           background: #1a1a1a;
           color: #fff;
-          padding: 2rem;
-          border-radius: 8px;
+          border-color: #1a1a1a;
         }
-
-        .r22-specs-card__header {
+        .r22-specs__rows {
           display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 2rem;
-          padding-bottom: 1rem;
-          border-bottom: 1px solid rgba(255,255,255,0.1);
+          flex-direction: column;
+          margin: 0;
         }
-
-        .r22-specs-card__label {
-          font-size: 0.65rem;
-          letter-spacing: 0.2em;
-          color: #888;
-        }
-
-        .r22-specs-card__model {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.9rem;
-        }
-
-        .r22-specs-card__grid {
+        .r22-specs__row {
           display: grid;
-          grid-template-columns: repeat(2, 1fr);
+          grid-template-columns: 1fr auto;
           gap: 1rem;
+          padding: 1rem 0;
+          border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+          align-items: baseline;
         }
-
-        .r22-specs-card__item {
-          background: rgba(255,255,255,0.05);
-          padding: 1.25rem;
-          border-radius: 4px;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          border: 1px solid transparent;
-        }
-
-        .r22-specs-card__item:hover,
-        .r22-specs-card__item--active {
-          background: rgba(255,255,255,0.1);
-          border-color: rgba(255,255,255,0.2);
-        }
-
-        .r22-specs-card__item-label {
-          display: block;
-          font-size: 0.6rem;
+        .r22-specs__row dt {
+          font-size: 0.85rem;
+          color: #7a7a7a;
           text-transform: uppercase;
-          letter-spacing: 0.15em;
-          color: #888;
-          margin-bottom: 0.5rem;
+          letter-spacing: 0.1em;
+          margin: 0;
         }
-
-        .r22-specs-card__item-value {
-          display: block;
+        .r22-specs__row dd {
           font-family: 'Share Tech Mono', monospace;
-          font-size: 1.25rem;
-          font-weight: 500;
-        }
-
-        .r22-specs-card__item-unit {
-          font-size: 0.75rem;
-          color: #888;
-          margin-left: 0.25rem;
-        }
-
-        .r22-specs-card__footer {
-          margin-top: 1.5rem;
-          text-align: center;
-        }
-
-        .r22-specs-card__note {
-          font-size: 0.7rem;
-          color: #666;
-        }
-
-        .r22-specs__details {
-          display: flex;
-          flex-direction: column;
-          gap: 2rem;
-        }
-
-        .r22-specs__detail-group h4 {
-          font-size: 0.8rem;
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
-          color: #999;
-          margin: 0 0 1rem;
-          padding-bottom: 0.5rem;
-          border-bottom: 1px solid #e8e6e2;
-        }
-
-        .r22-specs__detail-items {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-        }
-
-        .r22-specs__detail-item {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .r22-specs__detail-label {
-          color: #666;
-          font-size: 0.9rem;
-        }
-
-        .r22-specs__detail-value {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.9rem;
+          font-size: 1rem;
           color: #1a1a1a;
+          margin: 0;
+          text-align: right;
+        }
+        @media (max-width: 900px) {
+          .r22-specs__split { grid-template-columns: 1fr; gap: 2.5rem; }
+          .r22-specs { padding: 5rem 1.5rem; position: relative; top: auto; }
         }
 
         /* ===== CHARACTERISTICS SECTION ===== */
@@ -1518,7 +1537,6 @@ function R22Styles() {
 
           .r22-intro__content,
           .r22-history__content,
-          .r22-specs__content,
           .r22-training__container {
             grid-template-columns: 1fr;
             gap: 3rem;
@@ -2304,104 +2322,46 @@ function R22HistoryTimeline() {
 // R22 SPECIFICATIONS
 // ============================================================================
 function R22Specifications() {
-  const [activeSpec, setActiveSpec] = useState(null);
-
-  const specs = [
-    { label: 'Engine', value: 'Lycoming O-360', unit: '131 HP' },
-    { label: 'Max Speed', value: '118', unit: 'kts' },
-    { label: 'Range', value: '240', unit: 'nm' },
-    { label: 'Useful Load', value: '440', unit: 'lbs' },
-    { label: 'Seats', value: '2', unit: 'persons' },
-    { label: 'Rotor Diameter', value: '25.2', unit: 'ft' },
-  ];
+  const [activeVariantId, setActiveVariantId] = useState('beta-ii');
+  const activeVariant = R22_VARIANT_DATA.find((v) => v.id === activeVariantId);
 
   return (
-    <section className="r22-specs">
-      <div className="r22-specs__container">
-        <Reveal>
-          <div className="r22-section-header">
-            <span className="r22-pre-text">Performance Data</span>
-            <h2>
-              <span className="r22-text--dark">Technical</span>{' '}
-              <span className="r22-text--mid">Specifications</span>
-            </h2>
-          </div>
-        </Reveal>
-
-        <div className="r22-specs__content">
-          <Reveal delay={0.1}>
-            <InteractiveSpecsCard
-              specs={specs}
-              activeSpec={activeSpec}
-              setActiveSpec={setActiveSpec}
+    <section className="r22-specs" data-cms-section="r22-specifications">
+      <div className="r22-specs__inner">
+        <div className="r22-specs__header">
+          <span className="r22-pre-text">Specifications</span>
+          <h2>Anatomy of a trainer</h2>
+        </div>
+        <div className="r22-specs__split">
+          <div className="r22-specs__blueprint">
+            <img
+              src="/assets/images/new-aircraft/r22/r22blueprint.jpg"
+              alt="R22 blueprint"
+              loading="lazy"
             />
-          </Reveal>
-
-          <Reveal delay={0.2}>
-            <div className="r22-specs__details">
-              <div className="r22-specs__detail-group">
-                <h4>Powerplant</h4>
-                <div className="r22-specs__detail-items">
-                  <div className="r22-specs__detail-item">
-                    <span className="r22-specs__detail-label">Engine</span>
-                    <span className="r22-specs__detail-value">Lycoming O-360 Four-Cylinder</span>
-                  </div>
-                  <div className="r22-specs__detail-item">
-                    <span className="r22-specs__detail-label">Takeoff Power</span>
-                    <span className="r22-specs__detail-value">131 HP</span>
-                  </div>
-                  <div className="r22-specs__detail-item">
-                    <span className="r22-specs__detail-label">Cruise Power</span>
-                    <span className="r22-specs__detail-value">124 HP @ 2,652 RPM</span>
-                  </div>
-                  <div className="r22-specs__detail-item">
-                    <span className="r22-specs__detail-label">Fuel Capacity</span>
-                    <span className="r22-specs__detail-value">26.4 US gal</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="r22-specs__detail-group">
-                <h4>Dimensions</h4>
-                <div className="r22-specs__detail-items">
-                  <div className="r22-specs__detail-item">
-                    <span className="r22-specs__detail-label">Length</span>
-                    <span className="r22-specs__detail-value">28.8 ft (8.8 m)</span>
-                  </div>
-                  <div className="r22-specs__detail-item">
-                    <span className="r22-specs__detail-label">Height</span>
-                    <span className="r22-specs__detail-value">8.9 ft (2.7 m)</span>
-                  </div>
-                  <div className="r22-specs__detail-item">
-                    <span className="r22-specs__detail-label">Main Rotor Diameter</span>
-                    <span className="r22-specs__detail-value">25.2 ft (7.7 m)</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="r22-specs__detail-group">
-                <h4>Performance</h4>
-                <div className="r22-specs__detail-items">
-                  <div className="r22-specs__detail-item">
-                    <span className="r22-specs__detail-label">Max Speed (VNE)</span>
-                    <span className="r22-specs__detail-value">118 kts (219 km/h)</span>
-                  </div>
-                  <div className="r22-specs__detail-item">
-                    <span className="r22-specs__detail-label">Cruise Speed</span>
-                    <span className="r22-specs__detail-value">96 kts (178 km/h)</span>
-                  </div>
-                  <div className="r22-specs__detail-item">
-                    <span className="r22-specs__detail-label">Service Ceiling</span>
-                    <span className="r22-specs__detail-value">14,000 ft</span>
-                  </div>
-                  <div className="r22-specs__detail-item">
-                    <span className="r22-specs__detail-label">Hover IGE</span>
-                    <span className="r22-specs__detail-value">8,000 ft</span>
-                  </div>
-                </div>
-              </div>
+          </div>
+          <div className="r22-specs__table">
+            <div className="r22-specs__selector">
+              {R22_VARIANT_DATA.map((v) => (
+                <button
+                  key={v.id}
+                  type="button"
+                  className={`r22-specs__chip ${activeVariantId === v.id ? 'is-active' : ''}`}
+                  onClick={() => setActiveVariantId(v.id)}
+                >
+                  {v.name}
+                </button>
+              ))}
             </div>
-          </Reveal>
+            <dl className="r22-specs__rows">
+              {R22_SPEC_ROWS.map((row) => (
+                <div key={row.key} className="r22-specs__row">
+                  <dt>{row.label}</dt>
+                  <dd>{activeVariant[row.key]}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
         </div>
       </div>
     </section>
