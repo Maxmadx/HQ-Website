@@ -707,51 +707,6 @@ function R22Styles() {
           .r22-intro { padding: 5rem 1.5rem; }
         }
 
-        /* ===== COUNTER SECTION ===== */
-        .r22-counter {
-          padding: 6rem 2rem;
-          background: #1a1a1a;
-        }
-
-        .r22-counter__container {
-          max-width: 1000px;
-          margin: 0 auto;
-          display: flex;
-          justify-content: center;
-          gap: 3rem;
-          flex-wrap: wrap;
-        }
-
-        .r22-counter__item {
-          text-align: center;
-        }
-
-        .r22-counter__value {
-          display: block;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 1.75rem;
-          font-weight: 700;
-          color: #fff;
-        }
-
-        .r22-counter__label {
-          display: block;
-          font-size: 0.65rem;
-          color: rgba(255, 255, 255, 0.6);
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
-          margin-top: 0.25rem;
-        }
-
-        @media (max-width: 768px) {
-          .r22-counter__container {
-            gap: 2rem;
-          }
-          .r22-counter__value {
-            font-size: 1.5rem;
-          }
-        }
-
         /* ===== HISTORY SECTION ===== */
         .r22-history {
           padding: 8rem 2rem;
@@ -1169,115 +1124,6 @@ function R22Styles() {
           color: #fff;
         }
 
-        /* ===== TRAINING SECTION ===== */
-        .r22-training {
-          padding: 6rem 2rem;
-          background: #faf9f6;
-        }
-
-        .r22-training__container {
-          max-width: 1200px;
-          margin: 0 auto;
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 4rem;
-          align-items: center;
-        }
-
-        .r22-training__header {
-          margin-bottom: 2.5rem;
-        }
-
-        .r22-training__header h2 {
-          font-size: clamp(1.75rem, 3vw, 2.5rem);
-          text-transform: uppercase;
-          font-weight: 700;
-          line-height: 1.1;
-        }
-
-        .r22-training__grid {
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
-          margin-bottom: 3rem;
-        }
-
-        .r22-training__reason {
-          display: flex;
-          gap: 1.5rem;
-          padding: 1.5rem;
-          background: #fff;
-          border-radius: 8px;
-          border: 1px solid #e8e6e2;
-        }
-
-        .r22-training__reason-num {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #ddd;
-          flex-shrink: 0;
-        }
-
-        .r22-training__reason-content h4 {
-          font-size: 1rem;
-          margin: 0 0 0.5rem;
-          text-transform: uppercase;
-        }
-
-        .r22-training__reason-content p {
-          color: #666;
-          font-size: 0.9rem;
-          line-height: 1.7;
-          margin: 0;
-        }
-
-        .r22-training__benefits {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1.5rem;
-        }
-
-        .r22-training__benefit {
-          text-align: center;
-          padding: 1.5rem;
-          background: #fff;
-          border-radius: 8px;
-          border: 1px solid #e8e6e2;
-        }
-
-        .r22-training__benefit-value {
-          display: block;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 2rem;
-          font-weight: 700;
-          color: #1a1a1a;
-        }
-
-        .r22-training__benefit-title {
-          display: block;
-          font-size: 0.85rem;
-          font-weight: 600;
-          text-transform: uppercase;
-          margin: 0.5rem 0;
-        }
-
-        .r22-training__benefit-desc {
-          font-size: 0.75rem;
-          color: #888;
-        }
-
-        .r22-training__image {
-          border-radius: 8px;
-          overflow: hidden;
-        }
-
-        .r22-training__image img {
-          width: 100%;
-          height: auto;
-          display: block;
-        }
-
         /* ===== GALLERY SECTION ===== */
         .r22-gallery { padding: 8rem 2rem; background: #faf9f6; }
         .r22-gallery__masonry {
@@ -1396,8 +1242,7 @@ function R22Styles() {
             width: 50%;
           }
 
-          .r22-history__content,
-          .r22-training__container {
+          .r22-history__content {
             grid-template-columns: 1fr;
             gap: 3rem;
           }
@@ -1436,10 +1281,6 @@ function R22Styles() {
           }
 
           .r22-variants__features {
-            grid-template-columns: 1fr;
-          }
-
-          .r22-training__benefits {
             grid-template-columns: 1fr;
           }
 
@@ -2222,38 +2063,6 @@ function R22Introduction() {
 }
 
 // ============================================================================
-// R22 COUNTER (FLEET STATISTICS)
-// ============================================================================
-function R22Counter() {
-  return (
-    <section className="r22-counter">
-      <div className="r22-counter__container">
-        <div className="r22-counter__item">
-          <span className="r22-counter__value">4,800+</span>
-          <span className="r22-counter__label">Aircraft Delivered</span>
-        </div>
-        <div className="r22-counter__item">
-          <span className="r22-counter__value">45+</span>
-          <span className="r22-counter__label">Years In Production</span>
-        </div>
-        <div className="r22-counter__item">
-          <span className="r22-counter__value">#1</span>
-          <span className="r22-counter__label">Training Helicopter</span>
-        </div>
-        <div className="r22-counter__item">
-          <span className="r22-counter__value">100+</span>
-          <span className="r22-counter__label">Countries Operating</span>
-        </div>
-        <div className="r22-counter__item">
-          <span className="r22-counter__value">88%</span>
-          <span className="r22-counter__label">Reduction in Fatal Accidents (1982-1997)</span>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ============================================================================
 // R22 HISTORY TIMELINE
 // ============================================================================
 function R22HistoryTimeline() {
@@ -2608,111 +2417,6 @@ function R22Variants() {
 }
 
 // ============================================================================
-// R22 TRAINING
-// ============================================================================
-function R22Training() {
-  const trainingBenefits = [
-    { title: 'Cost Effective', value: '50%', desc: 'Lower operating costs than other helicopters' },
-    { title: 'Skill Transfer', value: '100%', desc: 'Skills transfer directly to larger types' },
-    { title: 'Industry Standard', value: '#1', desc: 'Most used training helicopter worldwide' },
-  ];
-
-  return (
-    <section className="r22-training">
-      <div className="r22-training__container">
-        <div className="r22-training__content">
-          <Reveal>
-            <div className="r22-training__header">
-              <span className="r22-pre-text">Learn to Fly</span>
-              <h2>
-                <span className="r22-text--dark">Why R22</span>{' '}
-                <span className="r22-text--mid">For PPL</span>{' '}
-                <span className="r22-text--light">Training</span>
-              </h2>
-            </div>
-          </Reveal>
-
-          <div className="r22-training__grid">
-            <Reveal delay={0.1}>
-              <div className="r22-training__reason">
-                <div className="r22-training__reason-num">01</div>
-                <div className="r22-training__reason-content">
-                  <h4>Cost Effective</h4>
-                  <p>
-                    The R22 offers the lowest operating costs of any production helicopter, making
-                    your path to a PPL(H) more affordable without compromising on quality training.
-                  </p>
-                </div>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.2}>
-              <div className="r22-training__reason">
-                <div className="r22-training__reason-num">02</div>
-                <div className="r22-training__reason-content">
-                  <h4>Develops Superior Skills</h4>
-                  <p>
-                    The R22's responsive controls and low-inertia rotor system demand precision,
-                    developing skills that transfer directly to larger, more complex helicopters.
-                  </p>
-                </div>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.3}>
-              <div className="r22-training__reason">
-                <div className="r22-training__reason-num">03</div>
-                <div className="r22-training__reason-content">
-                  <h4>Industry Standard</h4>
-                  <p>
-                    More pilots have learned to fly helicopters in the R22 than any other aircraft.
-                    It's the benchmark against which all training helicopters are measured.
-                  </p>
-                </div>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.4}>
-              <div className="r22-training__reason">
-                <div className="r22-training__reason-num">04</div>
-                <div className="r22-training__reason-content">
-                  <h4>Proven Safety Record</h4>
-                  <p>
-                    With proper training and adherence to Robinson's safety protocols, the R22
-                    has an excellent safety record spanning decades of service worldwide.
-                  </p>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-
-          <Reveal delay={0.5}>
-            <div className="r22-training__benefits">
-              {trainingBenefits.map((benefit, index) => (
-                <div key={index} className="r22-training__benefit">
-                  <span className="r22-training__benefit-value">{benefit.value}</span>
-                  <span className="r22-training__benefit-title">{benefit.title}</span>
-                  <span className="r22-training__benefit-desc">{benefit.desc}</span>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-        </div>
-
-        <Reveal delay={0.2} direction="right">
-          <div className="r22-training__image">
-            <img
-              src="/assets/images/used-aircraft/r22/hq-r22-lineup.jpg"
-              alt="HQ Aviation R22 Fleet"
-            />
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-// ============================================================================
 // R22 GALLERY
 // ============================================================================
 function R22Gallery({ pageImages }) {
@@ -2946,12 +2650,10 @@ function AircraftR22() {
       <R22FlightCharacteristics />
       <R22WhyTrainer />
       <R22VariantComparison />
-      <R22Counter />
       <R22HistoryTimeline />
       <R22Champion pageImages={pageImages} />
       <R22Fleet pageImages={pageImages} />
       <R22Variants />
-      <R22Training />
       <R22Gallery pageImages={pageImages} />
       <R22CTA />
       <FooterMinimal />
