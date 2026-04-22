@@ -539,8 +539,13 @@ function R22Styles() {
         .r22-hero__headline {
           display: flex;
           flex-direction: column;
-          line-height: 1;
           margin-bottom: 1.5rem;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: clamp(3rem, 8vw, 6.5rem);
+          font-weight: 700;
+          letter-spacing: -0.03em;
+          line-height: 0.95;
+          color: #1a1a1a;
         }
 
         .r22-hero__word {
@@ -595,15 +600,6 @@ function R22Styles() {
           font-size: 1.1rem;
           color: #666;
           line-height: 1.7;
-        }
-
-        .r22-hero__title {
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: clamp(3rem, 8vw, 6.5rem);
-          font-weight: 700;
-          letter-spacing: -0.03em;
-          line-height: 0.95;
-          color: #1a1a1a;
         }
 
         .r22-hero__scroll {
