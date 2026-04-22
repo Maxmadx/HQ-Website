@@ -254,31 +254,6 @@ function ParallaxImage({ src, alt, speed = 0.5 }) {
 
 
 // ============================================================================
-// TIMELINE COMPONENT
-// ============================================================================
-function HistoryTimelineDots({ events }) {
-  return (
-    <div className="r22-timeline">
-      {events.map((event, index) => (
-        <Reveal key={index} delay={index * 0.1}>
-          <div className="r22-timeline__item">
-            <div className="r22-timeline__marker">
-              <span className="r22-timeline__year">{event.year}</span>
-              <div className="r22-timeline__dot" />
-            </div>
-            <div className="r22-timeline__content">
-              <h4>{event.title}</h4>
-              <p>{event.description}</p>
-            </div>
-          </div>
-        </Reveal>
-      ))}
-      <div className="r22-timeline__line" />
-    </div>
-  );
-}
-
-// ============================================================================
 // R22 HIGHLIGHTS DATA
 // ============================================================================
 const R22_HIGHLIGHTS = [
@@ -764,60 +739,130 @@ function R22Styles() {
         }
 
         .r22-timeline {
+          padding: 0;
+          background: transparent;
+        }
+
+        .r22-timeline__container {
+          max-width: 100%;
+          margin: 0 auto;
+        }
+
+        .r22-timeline__track {
           position: relative;
-          padding-left: 2.5rem;
+          margin-top: 2rem;
         }
 
         .r22-timeline__line {
           position: absolute;
-          left: 4px;
+          left: 24px;
           top: 0;
           bottom: 0;
           width: 2px;
+          background: #ddd;
+        }
+
+        .r22-timeline__line-progress {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
           background: #1a1a1a;
-          z-index: 0;
         }
 
         .r22-timeline__item {
+          display: flex;
+          gap: 1.5rem;
+          margin-bottom: 2rem;
           position: relative;
-          padding-bottom: 2.5rem;
         }
 
         .r22-timeline__marker {
+          width: 50px;
+          height: 50px;
           display: flex;
           align-items: center;
-          gap: 1rem;
-          margin-bottom: 0.75rem;
-        }
-
-        .r22-timeline__year {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 1.25rem;
-          font-weight: 700;
-          color: #1a1a1a;
-        }
-
-        .r22-timeline__dot {
-          width: 10px;
-          height: 10px;
-          background: #1a1a1a;
+          justify-content: center;
+          background: #fff;
+          border: 2px solid #ddd;
           border-radius: 50%;
-          position: absolute;
-          left: -2.5rem;
-          top: 0.5rem;
+          flex-shrink: 0;
+          position: relative;
           z-index: 1;
         }
 
+        .r22-timeline__item--completed .r22-timeline__marker {
+          background: #1a1a1a;
+          border-color: #1a1a1a;
+          color: #fff;
+        }
+
+        .r22-timeline__item--active .r22-timeline__marker {
+          background: #fff;
+          border-color: #1a1a1a;
+          border-width: 3px;
+        }
+
+        .r22-timeline__pulse {
+          width: 12px;
+          height: 12px;
+          background: #1a1a1a;
+          border-radius: 50%;
+          animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+          0% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.3); opacity: 0.7; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+
+        .r22-timeline__dot {
+          width: 8px;
+          height: 8px;
+          background: #ddd;
+          border-radius: 50%;
+        }
+
+        .r22-timeline__content {
+          padding-top: 0.5rem;
+        }
+
+        .r22-timeline__year {
+          display: inline-block;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.75rem;
+          letter-spacing: 0.15em;
+          background: #1a1a1a;
+          color: #fff;
+          padding: 0.25rem 0.75rem;
+          margin-bottom: 0;
+        }
+
+        .r22-timeline__text {
+          margin-top: 0;
+          padding-top: 12px;
+        }
+
+        .r22-timeline__item--upcoming .r22-timeline__year {
+          background: #ddd;
+          color: #666;
+        }
+
         .r22-timeline__content h4 {
-          font-size: 1.1rem;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1.15rem;
+          font-weight: 500;
+          color: #1a1a1a;
           margin: 0 0 0.5rem;
-          text-transform: uppercase;
         }
 
         .r22-timeline__content p {
-          color: #666;
+          font-family: 'Space Grotesk', sans-serif;
           font-size: 0.95rem;
           line-height: 1.6;
+          color: #666;
           margin: 0;
         }
 
@@ -2164,13 +2209,13 @@ function R22Introduction() {
 // ============================================================================
 function R22HistoryTimeline() {
   const historyEvents = [
-    { year: '1973', title: 'Design Begins', description: 'Frank D. Robinson begins designing the R22, pursuing his vision of an affordable, reliable light helicopter for the private market.' },
-    { year: '1975', title: 'First Flight', description: 'The R22 prototype takes to the skies, demonstrating the viability of Robinson\'s revolutionary design approach.' },
-    { year: '1979', title: 'Production Begins', description: 'Robinson Helicopter Company begins production of the R22, launching the most successful light helicopter program in history.' },
-    { year: '1996', title: 'Beta II Introduction', description: 'The improved R22 Beta II model launches with enhanced performance and safety features.' },
-    { year: '1997', title: 'Safety Milestone', description: 'Fatal accident rate drops to 0.7 per 100,000 flight hours, down from 6.0 in 1982, following implementation of the Robinson Pilot Safety Course.' },
-    { year: '2012', title: 'World Champion Aircraft', description: "Captain Quentin Smith wins the World Helicopter Aerobatic Championship in Russia flying the R22 — the only piston trainer ever to take the title, and the defining moment that confirmed the aircraft's handling pedigree beyond the training arena." },
-    { year: '2024', title: '4,800+ Built', description: 'Over 4,800 R22 helicopters delivered worldwide, making it the most popular training helicopter ever produced.' },
+    { year: '1973', title: 'Design Begins', status: 'completed', description: 'Frank D. Robinson begins designing the R22, pursuing his vision of an affordable, reliable light helicopter for the private market.' },
+    { year: '1975', title: 'First Flight', status: 'completed', description: 'The R22 prototype takes to the skies, demonstrating the viability of Robinson\'s revolutionary design approach.' },
+    { year: '1979', title: 'Production Begins', status: 'completed', description: 'Robinson Helicopter Company begins production of the R22, launching the most successful light helicopter program in history.' },
+    { year: '1996', title: 'Beta II Introduction', status: 'completed', description: 'The improved R22 Beta II model launches with enhanced performance and safety features.' },
+    { year: '1997', title: 'Safety Milestone', status: 'completed', description: 'Fatal accident rate drops to 0.7 per 100,000 flight hours, down from 6.0 in 1982, following implementation of the Robinson Pilot Safety Course.' },
+    { year: '2012', title: 'World Champion Aircraft', status: 'completed', description: "Captain Quentin Smith wins the World Helicopter Aerobatic Championship in Russia flying the R22 — the only piston trainer ever to take the title, and the defining moment that confirmed the aircraft's handling pedigree beyond the training arena." },
+    { year: '2024', title: '4,800+ Built', status: 'active', description: 'Over 4,800 R22 helicopters delivered worldwide, making it the most popular training helicopter ever produced.' },
   ];
 
   return (
@@ -2197,7 +2242,29 @@ function R22HistoryTimeline() {
             </Reveal>
           </div>
           <div className="r22-history__timeline">
-            <HistoryTimelineDots events={historyEvents} />
+            <div className="r22-timeline__track">
+              <div className="r22-timeline__line">
+                <div className="r22-timeline__line-progress" />
+              </div>
+              {historyEvents.map((event, i) => (
+                <Reveal key={i} delay={i * 0.12}>
+                  <div className={`r22-timeline__item r22-timeline__item--${event.status || 'completed'}`}>
+                    <div className="r22-timeline__marker">
+                      {event.status === 'active' && <div className="r22-timeline__pulse" />}
+                      {event.status === 'upcoming' && <div className="r22-timeline__dot" />}
+                      {(!event.status || event.status === 'completed') && <i className="fas fa-check"></i>}
+                    </div>
+                    <div className="r22-timeline__content">
+                      <span className="r22-timeline__year">{event.year}</span>
+                      <div className="r22-timeline__text">
+                        <h4>{event.title}</h4>
+                        <p>{event.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
           </div>
         </div>
       </div>
