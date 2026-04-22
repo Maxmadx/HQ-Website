@@ -2231,7 +2231,7 @@ function R22HistoryTimeline() {
     { year: '1979', title: 'Production Begins', description: 'Robinson Helicopter Company begins production of the R22, launching the most successful light helicopter program in history.' },
     { year: '1996', title: 'Beta II Introduction', description: 'The improved R22 Beta II model launches with enhanced performance and safety features.' },
     { year: '1997', title: 'Safety Milestone', description: 'Fatal accident rate drops to 0.7 per 100,000 flight hours, down from 6.0 in 1982, following implementation of the Robinson Pilot Safety Course.' },
-    { year: '2012', title: 'World Champion Aircraft', description: 'Captain Quentin Smith wins the World Helicopter Aerobatic Championship in Russia flying the R22.' },
+    { year: '2012', title: 'World Champion Aircraft', description: "Captain Quentin Smith wins the World Helicopter Aerobatic Championship in Russia flying the R22 — the only piston trainer ever to take the title, and the defining moment that confirmed the aircraft's handling pedigree beyond the training arena." },
     { year: '2024', title: '4,800+ Built', description: 'Over 4,800 R22 helicopters delivered worldwide, making it the most popular training helicopter ever produced.' },
   ];
 
