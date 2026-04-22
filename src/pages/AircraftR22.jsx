@@ -310,6 +310,16 @@ function HistoryTimelineDots({ events }) {
 }
 
 // ============================================================================
+// R22 HIGHLIGHTS DATA
+// ============================================================================
+const R22_HIGHLIGHTS = [
+  { label: 'Seats', value: '2' },
+  { label: 'MTOW', value: '1,370 lb' },
+  { label: 'Cruise', value: '96 kts' },
+  { label: 'Built since 1979', value: '4,800+' },
+];
+
+// ============================================================================
 // R22 STYLES
 // ============================================================================
 function R22Styles() {
@@ -1962,7 +1972,78 @@ function R22Styles() {
             gap: 0.75rem;
           }
         }
+
+        /* ===== STICKY STACK ===== */
+        .r22-sticky-stack {
+          position: relative;
+        }
+        .r22-highlights {
+          position: sticky;
+          top: 0;
+          z-index: 5;
+          background: rgba(250, 249, 246, 0.92);
+          backdrop-filter: blur(10px);
+          border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+          padding: 1.25rem 2rem;
+        }
+        .r22-highlights__inner {
+          max-width: 1280px;
+          margin: 0 auto;
+          display: flex;
+          align-items: center;
+          gap: 2rem;
+        }
+        .r22-highlights__list {
+          display: flex;
+          gap: 2.5rem;
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          flex: 1;
+          justify-content: flex-end;
+        }
+        .r22-highlights__item {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+        .r22-highlights__value {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 1.25rem;
+          color: #1a1a1a;
+        }
+        .r22-highlights__label {
+          font-size: 0.7rem;
+          text-transform: uppercase;
+          letter-spacing: 0.2em;
+          color: #7a7a7a;
+        }
+        @media (max-width: 768px) {
+          .r22-highlights__inner { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+          .r22-highlights__list { gap: 1.25rem; flex-wrap: wrap; justify-content: flex-start; }
+        }
     `}</style>
+  );
+}
+
+// ============================================================================
+// R22 HIGHLIGHTS
+// ============================================================================
+function R22Highlights() {
+  return (
+    <section className="r22-highlights" aria-label="R22 at a glance">
+      <div className="r22-highlights__inner">
+        <span className="r22-pre-text">At a glance</span>
+        <ul className="r22-highlights__list">
+          {R22_HIGHLIGHTS.map((h) => (
+            <li key={h.label} className="r22-highlights__item">
+              <span className="r22-highlights__value">{h.value}</span>
+              <span className="r22-highlights__label">{h.label}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
   );
 }
 
@@ -2793,11 +2874,14 @@ function AircraftR22() {
       <R22Styles />
       <R22Header />
       <R22Hero />
-      <R22Introduction />
+      <div className="r22-sticky-stack">
+        <R22Highlights />
+        <R22Introduction />
+        <R22Specifications />
+      </div>
+      <R22FlightCharacteristics />
       <R22Counter />
       <R22HistoryTimeline />
-      <R22Specifications />
-      <R22FlightCharacteristics />
       <R22Champion />
       <R22Variants />
       <R22Training />
