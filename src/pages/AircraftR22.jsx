@@ -1416,38 +1416,51 @@ function R22Styles() {
         }
 
         /* ===== CTA SECTION ===== */
-        .r22-cta {
-          padding: 6rem 2rem;
-          background: #faf9f6;
-        }
-
-        .r22-cta__container {
-          max-width: 800px;
-          margin: 0 auto;
-          text-align: center;
-        }
-
-        .r22-cta__content h2 {
-          font-size: clamp(2rem, 4vw, 3rem);
-          text-transform: uppercase;
+        .r22-cta { padding: 8rem 2rem; background: #1a1a1a; color: #fff; }
+        .r22-cta__inner { max-width: 720px; margin: 0 auto; text-align: center; }
+        .r22-cta__inner h2 {
+          font-size: clamp(2.25rem, 4.5vw, 3.25rem);
           font-weight: 700;
-          line-height: 1.1;
-          margin-bottom: 1.5rem;
+          margin: 0.5rem 0 1rem;
+          color: #fff;
         }
-
-        .r22-cta__content p {
-          color: #666;
-          font-size: 1.1rem;
-          line-height: 1.8;
-          margin-bottom: 2.5rem;
-        }
-
-        .r22-cta__buttons {
+        .r22-cta__inner p { font-size: 1.05rem; line-height: 1.7; color: #c8c8c8; margin: 0 0 2.5rem; }
+        .r22-cta__controls {
           display: flex;
           gap: 1rem;
           justify-content: center;
           flex-wrap: wrap;
+          margin-bottom: 1.5rem;
         }
+        .r22-cta__select {
+          padding: 0.9rem 1.25rem;
+          background: rgba(255,255,255,0.08);
+          border: 1px solid rgba(255,255,255,0.2);
+          color: #fff;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.9rem;
+          min-width: 240px;
+        }
+        .r22-btn--primary {
+          display: inline-block;
+          padding: 0.9rem 1.75rem;
+          background: #fff;
+          color: #1a1a1a;
+          text-decoration: none;
+          font-weight: 600;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          font-size: 0.85rem;
+          transition: opacity 0.2s ease;
+        }
+        .r22-btn--primary:hover { opacity: 0.88; }
+        .r22-cta__secondary {
+          color: #c8c8c8;
+          text-decoration: none;
+          font-size: 0.9rem;
+          letter-spacing: 0.08em;
+        }
+        .r22-cta__secondary:hover { color: #fff; }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
@@ -1512,13 +1525,6 @@ function R22Styles() {
             grid-template-columns: 1fr;
           }
 
-          .r22-cta__buttons {
-            flex-direction: column;
-          }
-
-          .r22-cta__buttons .r22-btn {
-            width: 100%;
-          }
         }
 
         /* ===== SAFETY FEATURES SECTION ===== */
@@ -2654,31 +2660,36 @@ function R22Gallery({ pageImages }) {
 // R22 CTA
 // ============================================================================
 function R22CTA() {
+  const options = [
+    { key: 'trial-lesson',   subject: 'training',       label: 'Trial lesson' },
+    { key: 'ppl',            subject: 'training',       label: 'Full PPL(H) training' },
+    { key: 'sales',          subject: 'aircraft-sales', label: 'Aircraft sales' },
+    { key: 'general',        subject: '',               label: 'General enquiry' },
+  ];
+  const [selectedKey, setSelectedKey] = useState('trial-lesson');
+  const selected = options.find((o) => o.key === selectedKey) ?? options[0];
+  const enquireHref = selected.subject ? `/contact?subject=${selected.subject}` : '/contact';
+
   return (
     <section className="r22-cta">
-      <div className="r22-cta__container">
-        <Reveal>
-          <div className="r22-cta__content">
-            <span className="r22-pre-text">Ready to Begin?</span>
-            <h2>
-              <span className="r22-text--dark">Start Your</span>{' '}
-              <span className="r22-text--mid">R22</span>{' '}
-              <span className="r22-text--light">Journey</span>
-            </h2>
-            <p>
-              Whether you're looking to learn to fly, purchase an R22, or simply experience
-              the thrill of helicopter flight, HQ Aviation is here to help you achieve your dreams.
-            </p>
-            <div className="r22-cta__buttons">
-              <Link to="/contact" className="r22-btn r22-btn--primary">
-                Enquire about Aircraft
-              </Link>
-              <Link to="/training/ppl" className="r22-btn r22-btn--outline">
-                Learn to Fly
-              </Link>
-            </div>
-          </div>
-        </Reveal>
+      <div className="r22-cta__inner">
+        <span className="r22-pre-text">Next step</span>
+        <h2>Start your R22 journey</h2>
+        <p>Tell us what you'd like to do. We'll route your enquiry to the right person at HQ.</p>
+        <div className="r22-cta__controls">
+          <select
+            className="r22-cta__select"
+            value={selectedKey}
+            onChange={(e) => setSelectedKey(e.target.value)}
+            aria-label="I'm interested in"
+          >
+            {options.map((o) => (
+              <option key={o.key} value={o.key}>{o.label}</option>
+            ))}
+          </select>
+          <Link to={enquireHref} className="r22-btn r22-btn--primary">Enquire now</Link>
+        </div>
+        <Link to="/training" className="r22-cta__secondary">Explore training →</Link>
       </div>
     </section>
   );
