@@ -391,6 +391,34 @@ const R22_SPEC_ROWS = [
   { label: 'Landing gear', key: 'floats' },
 ];
 
+const R22_WHY_TRAINER = [
+  {
+    eyebrow: 'Economics',
+    title: 'The most affordable way to fly',
+    copy: 'Hourly rates typically run a third of turbine training and around half of heavier piston types. That keeps PPL(H) syllabi attainable and lets students build real hours rather than rationed ones.',
+    stat: { value: '≈£300/hr', caption: 'Typical UK wet rate' },
+  },
+  {
+    eyebrow: 'Skill transfer',
+    title: 'Controls that tell you everything',
+    copy: 'Direct push-rod controls with no hydraulic assistance mean every input is felt. Pilots trained on the R22 read rotor state instinctively — a habit that carries over to every heavier type they fly afterwards.',
+    stat: { value: 'Zero hydraulics', caption: 'Pure mechanical feedback' },
+  },
+  {
+    eyebrow: 'Industry standard',
+    title: 'The textbook light trainer',
+    copy: 'EASA, CAA and FAA syllabi are built around the R22. Instructor ratings, type-specific Awareness Training (SFAR 73 / UK equivalent) and examiner standards all assume it.',
+    stat: { value: '4,800+', caption: 'Delivered worldwide' },
+  },
+];
+
+const R22_WHY_COUNTERS = [
+  { value: '4800', suffix: '+', caption: 'Delivered worldwide' },
+  { value: '300', prefix: '≈£', suffix: '/hr', caption: 'Typical UK wet rate' },
+  { value: '0.7', caption: 'Fatal accidents per 100k hrs (post-SFAR 73)', isDecimal: true },
+  { value: '40', suffix: '+', caption: 'Years in production' },
+];
+
 // ============================================================================
 // R22 STYLES
 // ============================================================================
@@ -1955,6 +1983,88 @@ function R22Styles() {
           .r22-gallery__masonry { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 180px; }
           .r22-gallery__tile.is-wide { grid-column: span 2; }
         }
+
+        /* ===== WHY THE R22 SECTION ===== */
+        .r22-why { padding: 8rem 2rem; background: #f2f0ea; }
+        .r22-why__inner { max-width: 1280px; margin: 0 auto; }
+        .r22-why__grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1.5rem;
+          margin-top: 3rem;
+        }
+        .r22-why__card {
+          padding: 2.5rem 2rem;
+          background: #faf9f6;
+          border: 1px solid rgba(26,26,26,0.08);
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+        .r22-why__card h3 {
+          font-size: 1.4rem;
+          font-weight: 600;
+          margin: 0 0 0.5rem;
+          line-height: 1.25;
+        }
+        .r22-why__card p {
+          font-size: 1rem;
+          line-height: 1.7;
+          color: #4a4a4a;
+          margin: 0;
+          flex: 1;
+        }
+        .r22-why__stat {
+          margin-top: 1.5rem;
+          padding-top: 1.25rem;
+          border-top: 1px solid rgba(26,26,26,0.08);
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+        .r22-why__stat-value {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 1.4rem;
+          color: #1a1a1a;
+        }
+        .r22-why__stat-caption {
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.15em;
+          color: #7a7a7a;
+        }
+        .r22-why__counters {
+          margin-top: 3.5rem;
+          padding-top: 3rem;
+          border-top: 1px solid rgba(26,26,26,0.12);
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 2rem;
+        }
+        .r22-why__counter {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          text-align: center;
+        }
+        .r22-why__counter-value {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+          color: #1a1a1a;
+          line-height: 1;
+        }
+        .r22-why__counter-caption {
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.15em;
+          color: #7a7a7a;
+          line-height: 1.4;
+        }
+        @media (max-width: 900px) {
+          .r22-why__grid { grid-template-columns: 1fr; }
+          .r22-why__counters { grid-template-columns: repeat(2, 1fr); gap: 2rem 1.5rem; }
+          .r22-why { padding: 5rem 1.5rem; }
+        }
     `}</style>
   );
 }
@@ -2696,6 +2806,51 @@ function R22CTA() {
 }
 
 // ============================================================================
+// R22 WHY TRAINER SECTION
+// ============================================================================
+function R22WhyTrainer() {
+  return (
+    <section className="r22-why">
+      <div className="r22-why__inner">
+        <div className="r22-section-header">
+          <span className="r22-pre-text">Why the R22</span>
+          <h2>Why the world trains on the R22</h2>
+        </div>
+        <div className="r22-why__grid">
+          {R22_WHY_TRAINER.map((item) => (
+            <article key={item.eyebrow} className="r22-why__card">
+              <span className="r22-pre-text">{item.eyebrow}</span>
+              <h3>{item.title}</h3>
+              <p>{item.copy}</p>
+              <div className="r22-why__stat">
+                <span className="r22-why__stat-value">{item.stat.value}</span>
+                <span className="r22-why__stat-caption">{item.stat.caption}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+        <div className="r22-why__counters">
+          {R22_WHY_COUNTERS.map((c) => (
+            <div key={c.caption} className="r22-why__counter">
+              <span className="r22-why__counter-value">
+                {c.isDecimal ? (
+                  <>
+                    {c.prefix || ''}{c.value}{c.suffix || ''}
+                  </>
+                ) : (
+                  <AnimatedNumber value={c.value} prefix={c.prefix || ''} suffix={c.suffix || ''} />
+                )}
+              </span>
+              <span className="r22-why__counter-caption">{c.caption}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================================
 // MAIN PAGE COMPONENT
 // ============================================================================
 function AircraftR22() {
@@ -2717,6 +2872,7 @@ function AircraftR22() {
         <R22Specifications />
       </div>
       <R22FlightCharacteristics />
+      <R22WhyTrainer />
       <R22Counter />
       <R22HistoryTimeline />
       <R22Champion />
