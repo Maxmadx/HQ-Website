@@ -642,85 +642,36 @@ function R22Styles() {
         /* ===== INTRO SECTION ===== */
         .r22-intro {
           padding: 8rem 2rem;
-          background: #fff;
-        }
-
-        .r22-intro__container {
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-
-        .r22-intro__header {
-          text-align: center;
-          margin-bottom: 4rem;
-        }
-
-        .r22-intro__header h2 {
-          font-size: clamp(2rem, 4vw, 3rem);
-          text-transform: uppercase;
-          font-weight: 700;
-          line-height: 1.1;
-        }
-
-        .r22-intro__content {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 4rem;
-          align-items: center;
-          margin-bottom: 4rem;
-        }
-
-        .r22-intro__text p {
-          color: #555;
-          font-size: 1.05rem;
-          line-height: 1.8;
-          margin-bottom: 1.5rem;
-        }
-
-        .r22-intro__image {
-          display: flex;
-          justify-content: center;
-        }
-
-        .r22-intro__image img {
-          max-width: 100%;
-          height: auto;
-        }
-
-        .r22-intro__highlights {
-          display: flex;
-          justify-content: center;
-          gap: 4rem;
-          padding: 2rem;
           background: #faf9f6;
-          border-radius: 8px;
         }
-
-        .r22-intro__highlight {
-          text-align: center;
+        .r22-intro__inner {
+          max-width: 1280px;
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: 3fr 2fr;
+          gap: 5rem;
+          align-items: center;
         }
-
-        .r22-intro__highlight-value {
-          display: block;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 2.5rem;
+        .r22-intro__copy h2 {
+          font-size: clamp(2rem, 3.5vw, 2.75rem);
           font-weight: 700;
-          color: #1a1a1a;
+          margin: 0.5rem 0 2rem;
+          line-height: 1.15;
         }
-
-        .r22-intro__highlight-unit {
-          font-size: 1rem;
-          color: #666;
-          margin-left: 0.25rem;
+        .r22-intro__copy p {
+          font-size: 1.05rem;
+          line-height: 1.75;
+          color: #4a4a4a;
+          margin: 0 0 1.25rem;
         }
-
-        .r22-intro__highlight-label {
+        .r22-intro__image img {
+          width: 100%;
+          height: auto;
           display: block;
-          font-size: 0.7rem;
-          color: #999;
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
-          margin-top: 0.5rem;
+        }
+        @media (max-width: 900px) {
+          .r22-intro__inner { grid-template-columns: 1fr; gap: 3rem; }
+          .r22-intro { padding: 5rem 1.5rem; }
         }
 
         /* ===== COUNTER SECTION ===== */
@@ -1535,7 +1486,6 @@ function R22Styles() {
             width: 50%;
           }
 
-          .r22-intro__content,
           .r22-history__content,
           .r22-training__container {
             grid-template-columns: 1fr;
@@ -1586,11 +1536,6 @@ function R22Styles() {
 
           .r22-hero__stat-divider {
             display: none;
-          }
-
-          .r22-intro__highlights {
-            flex-direction: column;
-            gap: 2rem;
           }
 
           .r22-variants__tabs {
@@ -2179,62 +2124,36 @@ function R22Hero() {
 function R22Introduction() {
   return (
     <section className="r22-intro">
-      <div className="r22-intro__container">
-        <Reveal>
-          <div className="r22-intro__header">
-            <span className="r22-pre-text">Since 1979</span>
-            <h2>
-              <span className="r22-text--dark">The World's</span>{' '}
-              <span className="r22-text--mid">Most Popular</span>{' '}
-              <span className="r22-text--light">Training Helicopter</span>
-            </h2>
-          </div>
-        </Reveal>
-
-        <div className="r22-intro__content">
-          <Reveal delay={0.1}>
-            <div className="r22-intro__text">
-              <p>
-                The Robinson R22 revolutionized helicopter training when it first took to the skies in 1975.
-                Frank Robinson's vision of an affordable, reliable, and effective training helicopter changed
-                the industry forever, making helicopter flying accessible to a generation of pilots who might
-                otherwise never have realized their dreams.
-              </p>
-              <p>
-                With over 4,800 aircraft delivered worldwide, the R22 has trained more helicopter pilots than
-                any other aircraft in history. Its demanding flight characteristics develop exceptional pilot
-                skills that transfer seamlessly to larger, more complex helicopters.
-              </p>
-            </div>
-          </Reveal>
-
-          <Reveal delay={0.2}>
-            <div className="r22-intro__image">
-              <img
-                src="/assets/images/new-aircraft/r22/r22-cutout.png"
-                alt="Robinson R22 Helicopter"
-              />
-            </div>
-          </Reveal>
+      <div className="r22-intro__inner">
+        <div className="r22-intro__copy">
+          <span className="r22-pre-text">Origins</span>
+          <h2>Designed by Frank Robinson. Proven by four decades of students.</h2>
+          <p>
+            Frank Robinson drew the R22 in 1973 with a single objective: make personal helicopter
+            flight affordable without compromising integrity. He had left Hughes and Bell in pursuit
+            of a light two-seater that private pilots could actually own and instructors could
+            actually teach on — a gap the industry had failed to close in thirty years.
+          </p>
+          <p>
+            The first flight in 1975 proved the design; production began in 1979. Four decades
+            later, more than 4,800 airframes have been delivered and the R22 remains the default
+            first helicopter for the majority of rotary pilots worldwide. Every Beta II rolling off
+            the Torrance line today is the direct descendant of that original prototype.
+          </p>
+          <p>
+            The reason the design has endured is not nostalgia. It is that the R22's combination of
+            low inertia, direct controls and honest handling creates pilots who understand
+            rotorcraft at a mechanical level — and that understanding transfers to every aircraft
+            they fly afterwards.
+          </p>
         </div>
-
-        <Reveal delay={0.3}>
-          <div className="r22-intro__highlights">
-            {[
-              { value: '45', unit: 'min hrs', label: 'To PPL(H)' },
-              { value: '118', unit: 'kts', label: 'Max Speed' },
-              { value: '240', unit: 'nm', label: 'Range' },
-            ].map((item, i) => (
-              <div key={i} className="r22-intro__highlight">
-                <span className="r22-intro__highlight-value">
-                  <AnimatedNumber value={item.value} />
-                  <span className="r22-intro__highlight-unit">{item.unit}</span>
-                </span>
-                <span className="r22-intro__highlight-label">{item.label}</span>
-              </div>
-            ))}
-          </div>
-        </Reveal>
+        <div className="r22-intro__image">
+          <img
+            src="/assets/images/new-aircraft/r22/r22-cutout.png"
+            alt="R22 cutout"
+            loading="lazy"
+          />
+        </div>
       </div>
     </section>
   );
