@@ -986,6 +986,47 @@ export const SECTIONS = [
     ],
   },
 
+  {
+    id: 'r22-hero',
+    page: 'r22',
+    name: 'R22 Hero Image',
+    hint: 'Hero section on the R22 aircraft page',
+    type: 'single',
+    images: [
+      { id: 'r22h1', url: '/assets/images/new-aircraft/r22/r22-cutout.png', alt: 'R22 hero image' },
+    ],
+  },
+  {
+    id: 'r22-specifications',
+    page: 'r22',
+    name: 'R22 Specifications Blueprint',
+    hint: 'Blueprint image in the specifications section',
+    type: 'single',
+    images: [
+      { id: 'r22s1', url: '/assets/images/new-aircraft/r22/r22blueprint.jpg', alt: 'R22 blueprint' },
+    ],
+  },
+  {
+    id: 'r22-champion',
+    page: 'r22',
+    name: 'R22 Captain Q',
+    hint: 'Portrait in the Captain Q champion section',
+    type: 'single',
+    images: [
+      { id: 'r22c1', url: '/assets/images/used-aircraft/r22/british-team-r22.webp', alt: 'Captain Quentin Smith with R22' },
+    ],
+  },
+  {
+    id: 'r22-fleet',
+    page: 'r22',
+    name: 'R22 Fleet Lineup',
+    hint: 'Full-bleed fleet photo in the fleet section',
+    type: 'single',
+    images: [
+      { id: 'r22f1', url: '/assets/images/used-aircraft/r22/hq-r22-lineup.jpg', alt: 'HQ Aviation R22 fleet lineup' },
+    ],
+  },
+
   // ─── R44 PAGE (/aircraft/r44) ─────────────────────────────────────────────
   {
     id: 'r44-hero',
