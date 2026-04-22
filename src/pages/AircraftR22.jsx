@@ -429,7 +429,7 @@ function R22Styles() {
 
         .r22-pre-text {
           display: block;
-          font-family: 'Share Tech Mono', 'Courier New', monospace;
+          font-family: 'Share Tech Mono', monospace;
           font-size: 0.75rem;
           text-transform: uppercase;
           letter-spacing: 0.25em;
@@ -445,7 +445,7 @@ function R22Styles() {
 
         .r22-section-header {
           text-align: center;
-          max-width: 700px;
+          max-width: 650px;
           margin: 0 auto 3rem;
         }
 
