@@ -1946,8 +1946,6 @@ function R22Styles() {
         @media (max-width: 768px) {
           .r22-highlights__inner { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
           .r22-highlights__list { gap: 1.25rem; flex-wrap: wrap; justify-content: flex-start; }
-        }
-        @media (max-width: 768px) {
           .r22-gallery__masonry { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 180px; }
           .r22-gallery__tile.is-wide { grid-column: span 2; }
         }
@@ -2607,6 +2605,8 @@ function R22Gallery({ pageImages }) {
   // The first two items render as wide (span 2); the rest render regular.
   const WIDE_INDEXES = new Set([0, 1]);
 
+  const getSrc = (img) => img?.src || img?.url || '';
+
   return (
     <section className="r22-gallery" data-cms-section="r22-gallery">
       <div className="r22-gallery__header r22-section-header">
@@ -2616,12 +2616,12 @@ function R22Gallery({ pageImages }) {
       <div className="r22-gallery__masonry">
         {images.map((img, i) => (
           <button
-            key={img.src || i}
+            key={getSrc(img) || i}
             type="button"
             className={`r22-gallery__tile ${WIDE_INDEXES.has(i) ? 'is-wide' : ''}`}
             onClick={() => setLightbox(img)}
           >
-            <img src={img.src} alt={img.alt || ''} loading="lazy" />
+            <img src={getSrc(img)} alt={img.alt || ''} loading="lazy" />
             {img.alt && <span className="r22-gallery__caption">{img.alt}</span>}
           </button>
         ))}
@@ -2642,7 +2642,7 @@ function R22Gallery({ pageImages }) {
               onClick={(e) => { e.stopPropagation(); setLightbox(null); }}
               aria-label="Close"
             >×</button>
-            <img src={lightbox.src} alt={lightbox.alt || ''} />
+            <img src={getSrc(lightbox)} alt={lightbox.alt || ''} />
           </motion.div>
         )}
       </AnimatePresence>
