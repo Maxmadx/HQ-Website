@@ -1980,7 +1980,7 @@ function R22Styles() {
         .r22-highlights {
           position: sticky;
           top: 0;
-          z-index: 5;
+          z-index: 50;
           background: rgba(250, 249, 246, 0.92);
           backdrop-filter: blur(10px);
           border-bottom: 1px solid rgba(26, 26, 26, 0.08);
@@ -2017,6 +2017,10 @@ function R22Styles() {
           text-transform: uppercase;
           letter-spacing: 0.2em;
           color: #7a7a7a;
+        }
+        .r22-highlights .r22-pre-text {
+          display: inline;
+          margin-bottom: 0;
         }
         @media (max-width: 768px) {
           .r22-highlights__inner { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
