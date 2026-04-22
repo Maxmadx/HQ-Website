@@ -1351,104 +1351,68 @@ function R22Styles() {
         }
 
         /* ===== GALLERY SECTION ===== */
-        .r22-gallery {
-          padding: 8rem 2rem;
-          background: #fff;
-        }
-
-        .r22-gallery__container {
-          max-width: 1200px;
+        .r22-gallery { padding: 8rem 2rem; background: #faf9f6; }
+        .r22-gallery__masonry {
+          max-width: 1280px;
           margin: 0 auto;
-        }
-
-        .r22-gallery__grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 1.5rem;
+          grid-auto-rows: 220px;
+          gap: 1rem;
         }
-
-        .r22-gallery__item {
+        .r22-gallery__tile {
           position: relative;
-          overflow: hidden;
-          border-radius: 8px;
+          padding: 0;
+          border: 0;
           cursor: pointer;
-          aspect-ratio: 4/3;
+          overflow: hidden;
+          background: #1a1a1a;
         }
-
-        .r22-gallery__item:nth-child(1) {
-          grid-column: span 2;
-        }
-
-        .r22-gallery__item img {
+        .r22-gallery__tile.is-wide { grid-column: span 2; }
+        .r22-gallery__tile img {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          transition: transform 0.5s ease;
+          transition: transform 0.4s ease, opacity 0.2s ease;
         }
-
-        .r22-gallery__item:hover img {
-          transform: scale(1.05);
-        }
-
-        .r22-gallery__overlay {
+        .r22-gallery__tile:hover img { transform: scale(1.04); opacity: 0.9; }
+        .r22-gallery__caption {
           position: absolute;
-          inset: 0;
-          background: rgba(26,26,26,0.6);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          opacity: 0;
-          transition: opacity 0.3s ease;
-        }
-
-        .r22-gallery__item:hover .r22-gallery__overlay {
-          opacity: 1;
-        }
-
-        .r22-gallery__overlay span {
-          color: #fff;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          padding: 0.75rem 1rem;
           font-size: 0.75rem;
           text-transform: uppercase;
-          letter-spacing: 0.2em;
-          padding: 0.75rem 1.5rem;
-          border: 1px solid #fff;
+          letter-spacing: 0.12em;
+          color: #fff;
+          background: linear-gradient(to top, rgba(0,0,0,0.75), transparent);
+          text-align: left;
+          opacity: 0;
+          transition: opacity 0.2s ease;
         }
-
-        /* Lightbox */
-        .r22-lightbox {
+        .r22-gallery__tile:hover .r22-gallery__caption { opacity: 1; }
+        .r22-gallery__lightbox {
           position: fixed;
           inset: 0;
-          z-index: 9999;
-          background: rgba(0,0,0,0.95);
+          z-index: 200;
+          background: rgba(0,0,0,0.92);
           display: flex;
           align-items: center;
           justify-content: center;
           padding: 2rem;
         }
-
-        .r22-lightbox__content {
-          position: relative;
-          max-width: 90vw;
-          max-height: 90vh;
-        }
-
-        .r22-lightbox__content img {
-          max-width: 100%;
-          max-height: 85vh;
-          object-fit: contain;
-        }
-
-        .r22-lightbox__close {
+        .r22-gallery__lightbox img { max-width: 92vw; max-height: 88vh; object-fit: contain; }
+        .r22-gallery__close {
           position: absolute;
-          top: -40px;
-          right: 0;
-          background: none;
-          border: none;
+          top: 1.5rem; right: 1.5rem;
+          width: 48px; height: 48px;
+          background: rgba(255,255,255,0.12);
+          border: 0;
           color: #fff;
-          font-size: 0.75rem;
-          text-transform: uppercase;
-          letter-spacing: 0.2em;
+          font-size: 1.5rem;
           cursor: pointer;
+          border-radius: 50%;
         }
 
         /* ===== CTA SECTION ===== */
@@ -1511,13 +1475,6 @@ function R22Styles() {
             justify-content: center;
           }
 
-          .r22-gallery__grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-
-          .r22-gallery__item:nth-child(1) {
-            grid-column: span 1;
-          }
         }
 
         @media (max-width: 768px) {
@@ -1552,10 +1509,6 @@ function R22Styles() {
           }
 
           .r22-training__benefits {
-            grid-template-columns: 1fr;
-          }
-
-          .r22-gallery__grid {
             grid-template-columns: 1fr;
           }
 
@@ -1993,6 +1946,10 @@ function R22Styles() {
         @media (max-width: 768px) {
           .r22-highlights__inner { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
           .r22-highlights__list { gap: 1.25rem; flex-wrap: wrap; justify-content: flex-start; }
+        }
+        @media (max-width: 768px) {
+          .r22-gallery__masonry { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 180px; }
+          .r22-gallery__tile.is-wide { grid-column: span 2; }
         }
     `}</style>
   );
@@ -2643,70 +2600,49 @@ function R22Training() {
 // R22 GALLERY
 // ============================================================================
 function R22Gallery({ pageImages }) {
-  const [lightboxImage, setLightboxImage] = useState(null);
-  const cmsGallery = (pageImages['r22-gallery'] ?? SECTION_MAP['r22-gallery'].images).map(img => ({ src: img.url, alt: img.alt }));
+  const [lightbox, setLightbox] = useState(null);
+  const defaults = SECTION_MAP['r22-gallery']?.images || [];
+  const images = (pageImages?.['r22-gallery'] || defaults);
 
-  // Gallery images
-  const galleryImages = [
-    { src: '/assets/images/new-aircraft/r22/r22-cutout.png', alt: 'R22 Cutout View' },
-    { src: '/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png', alt: 'R22 Front View' },
-    { src: '/assets/images/new-aircraft/r22/r22blueprint.jpg', alt: 'R22 Blueprint' },
-    { src: '/assets/images/used-aircraft/r22/british-team-r22.webp', alt: 'British Team R22' },
-    { src: '/assets/images/used-aircraft/r22/hq-r22-lineup.jpg', alt: 'HQ R22 Fleet' },
-  ];
+  // The first two items render as wide (span 2); the rest render regular.
+  const WIDE_INDEXES = new Set([0, 1]);
 
   return (
     <section className="r22-gallery" data-cms-section="r22-gallery">
-      <div className="r22-gallery__container">
-        <Reveal>
-          <div className="r22-section-header">
-            <span className="r22-pre-text">Visual</span>
-            <h2>
-              <span className="r22-text--dark">R22</span>{' '}
-              <span className="r22-text--mid">Gallery</span>
-            </h2>
-          </div>
-        </Reveal>
-
-        <div className="r22-gallery__grid">
-          {cmsGallery.map((image, index) => (
-            <Reveal key={index} delay={index * 0.1}>
-              <motion.div
-                className="r22-gallery__item"
-                whileHover={{ scale: 1.02 }}
-                onClick={() => setLightboxImage(image)}
-              >
-                <img src={image.src} alt={image.alt} />
-                <div className="r22-gallery__overlay">
-                  <span>View</span>
-                </div>
-              </motion.div>
-            </Reveal>
-          ))}
-        </div>
+      <div className="r22-gallery__header r22-section-header">
+        <span className="r22-pre-text">Gallery</span>
+        <h2>The R22 in the wild</h2>
+      </div>
+      <div className="r22-gallery__masonry">
+        {images.map((img, i) => (
+          <button
+            key={img.src || i}
+            type="button"
+            className={`r22-gallery__tile ${WIDE_INDEXES.has(i) ? 'is-wide' : ''}`}
+            onClick={() => setLightbox(img)}
+          >
+            <img src={img.src} alt={img.alt || ''} loading="lazy" />
+            {img.alt && <span className="r22-gallery__caption">{img.alt}</span>}
+          </button>
+        ))}
       </div>
 
-      {/* Lightbox */}
       <AnimatePresence>
-        {lightboxImage && (
+        {lightbox && (
           <motion.div
-            className="r22-lightbox"
+            className="r22-gallery__lightbox"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setLightboxImage(null)}
+            onClick={() => setLightbox(null)}
           >
-            <motion.div
-              className="r22-lightbox__content"
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-            >
-              <img src={lightboxImage.src} alt={lightboxImage.alt} />
-              <button className="r22-lightbox__close" onClick={() => setLightboxImage(null)}>
-                Close
-              </button>
-            </motion.div>
+            <button
+              type="button"
+              className="r22-gallery__close"
+              onClick={(e) => { e.stopPropagation(); setLightbox(null); }}
+              aria-label="Close"
+            >×</button>
+            <img src={lightbox.src} alt={lightbox.alt || ''} />
           </motion.div>
         )}
       </AnimatePresence>
