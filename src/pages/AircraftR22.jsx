@@ -986,140 +986,40 @@ function R22Styles() {
 
         /* ===== CHAMPION SECTION ===== */
         .r22-champion {
-          position: relative;
           padding: 8rem 2rem;
-          min-height: 80vh;
-          display: flex;
+          background: #1a1a1a;
+          color: #fff;
+        }
+        .r22-champion__inner {
+          max-width: 1280px;
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: 3fr 2fr;
+          gap: 5rem;
           align-items: center;
         }
-
-        .r22-champion__bg {
-          position: absolute;
-          inset: 0;
-          z-index: 1;
-        }
-
-        .r22-champion__bg img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .r22-champion__overlay {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(90deg, rgba(26,26,26,0.95) 0%, rgba(26,26,26,0.8) 60%, rgba(26,26,26,0.6) 100%);
-        }
-
-        .r22-champion__container {
-          position: relative;
-          z-index: 2;
-          max-width: 900px;
-          margin: 0 auto;
-        }
-
-        .r22-champion__content h2 {
-          font-size: clamp(2rem, 5vw, 3.5rem);
-          text-transform: uppercase;
+        .r22-champion__copy h2 {
+          font-size: clamp(2.25rem, 4.5vw, 3.25rem);
           font-weight: 700;
+          margin: 0.5rem 0 2rem;
           line-height: 1.1;
-          margin-bottom: 2rem;
-        }
-
-        .r22-champion__achievement {
-          display: flex;
-          gap: 2rem;
-          align-items: flex-start;
-          margin-bottom: 2.5rem;
-        }
-
-        .r22-champion__medal {
-          flex-shrink: 0;
-          width: 100px;
-          height: 100px;
-          color: #d4af37;
-        }
-
-        .r22-champion__details h3 {
-          font-size: 1.25rem;
           color: #fff;
-          margin: 0 0 0.5rem;
-          text-transform: uppercase;
         }
-
-        .r22-champion__location {
-          font-size: 0.85rem;
-          color: #999;
-          margin-bottom: 1rem;
+        .r22-champion__copy p {
+          font-size: 1.05rem;
+          line-height: 1.75;
+          color: #c8c8c8;
+          margin: 0 0 1.25rem;
         }
-
-        .r22-champion__desc {
-          color: rgba(255,255,255,0.8);
-          font-size: 1rem;
-          line-height: 1.8;
-          margin-bottom: 1rem;
-        }
-
-        .r22-champion__distinction {
-          color: #d4af37;
-          font-size: 0.95rem;
-        }
-
-        .r22-champion__quote {
-          background: rgba(255,255,255,0.05);
-          border-left: 3px solid #d4af37;
-          padding: 2rem;
-          margin: 0 0 2.5rem;
-        }
-
-        .r22-champion__quote p {
-          color: rgba(255,255,255,0.9);
-          font-size: 1.15rem;
-          font-style: italic;
-          line-height: 1.8;
-          margin: 0 0 1.5rem;
-        }
-
-        .r22-champion__quote cite {
+        .r22-champion__image img {
+          width: 100%;
+          height: auto;
           display: block;
-          font-style: normal;
+          filter: grayscale(0.2);
         }
-
-        .r22-champion__quote cite strong {
-          display: block;
-          color: #fff;
-          font-size: 0.9rem;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-        }
-
-        .r22-champion__quote cite span {
-          font-size: 0.75rem;
-          color: #888;
-        }
-
-        .r22-champion__stats {
-          display: flex;
-          gap: 3rem;
-        }
-
-        .r22-champion__stat {
-          text-align: center;
-        }
-
-        .r22-champion__stat-value {
-          display: block;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 2rem;
-          font-weight: 700;
-          color: #d4af37;
-        }
-
-        .r22-champion__stat-label {
-          font-size: 0.65rem;
-          color: #888;
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
+        @media (max-width: 900px) {
+          .r22-champion__inner { grid-template-columns: 1fr; gap: 3rem; }
+          .r22-champion { padding: 5rem 1.5rem; }
         }
 
         /* ===== VARIANTS SECTION ===== */
@@ -1504,16 +1404,6 @@ function R22Styles() {
 
           .r22-characteristics__grid {
             grid-template-columns: 1fr;
-          }
-
-          .r22-champion__achievement {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-          }
-
-          .r22-champion__stats {
-            justify-content: center;
           }
 
         }
@@ -2505,46 +2395,40 @@ function R22FlightCharacteristics() {
 // ============================================================================
 // R22 CHAMPION (CAPTAIN QUENTIN SMITH)
 // ============================================================================
-function R22Champion() {
+function R22Champion({ pageImages }) {
+  const defaults = SECTION_MAP['r22-champion']?.images
+    || [{ src: '/assets/images/used-aircraft/r22/british-team-r22.webp', alt: 'Captain Quentin Smith' }];
+  const images = pageImages?.['r22-champion'] || defaults;
+  const hero = images[0];
+  const getSrc = (img) => img?.src || img?.url || '';
+
   return (
-    <section className="r22-champion r22-champion--compact">
-      <div className="r22-champion__bg">
-        <img
-          src="/assets/images/used-aircraft/r22/british-team-r22.webp"
-          alt="British Team R22"
-        />
-        <div className="r22-champion__overlay" />
-      </div>
-
-      <div className="r22-champion__container">
-        <div className="r22-champion__content">
-          <Reveal>
-            <h2>
-              <span className="r22-text--white">World Champion</span>{' '}
-              <span className="r22-text--gold">Quentin Smith</span>
-            </h2>
-            <p className="r22-champion__desc">
-              2x World Helicopter Aerobatic Champion flying the Robinson R22.
-              The only pilot to win multiple championships in this aircraft.
-            </p>
-          </Reveal>
-
-          <Reveal delay={0.2}>
-            <div className="r22-champion__stats">
-              <div className="r22-champion__stat">
-                <span className="r22-champion__stat-value">2x</span>
-                <span className="r22-champion__stat-label">World Champion</span>
-              </div>
-              <div className="r22-champion__stat">
-                <span className="r22-champion__stat-value">18,000+</span>
-                <span className="r22-champion__stat-label">Flight Hours</span>
-              </div>
-              <div className="r22-champion__stat">
-                <span className="r22-champion__stat-value">35+</span>
-                <span className="r22-champion__stat-label">Years Flying</span>
-              </div>
-            </div>
-          </Reveal>
+    <section className="r22-champion" data-cms-section="r22-champion">
+      <div className="r22-champion__inner">
+        <div className="r22-champion__copy">
+          <span className="r22-pre-text">The record holder</span>
+          <h2>Captain Q and the R22</h2>
+          <p>
+            In 2012, Captain Quentin Smith took an R22 to Russia and won the World Helicopter
+            Aerobatic Championship — the only piston trainer ever to claim the title, in a field
+            otherwise contested by purpose-built turbine types. It was not a quiet win. It was a
+            direct statement about what the R22 is capable of when flown by someone who understands
+            it completely.
+          </p>
+          <p>
+            Captain Q's flying predates the championship by decades. He is the first pilot to have
+            circumnavigated the globe pole-to-pole by helicopter, a feat that required every skill
+            the R22 teaches and none of the systems that modern types provide. HQ Aviation's
+            instruction ethos — that a pilot trained properly on the R22 can fly anything — comes
+            directly from this lineage.
+          </p>
+          <p>
+            Every student who trains with us at Denham trains in the aircraft that a world champion
+            chose to prove his point.
+          </p>
+        </div>
+        <div className="r22-champion__image">
+          <img src={getSrc(hero)} alt={hero.alt || 'Captain Quentin Smith'} loading="lazy" />
         </div>
       </div>
     </section>
@@ -3009,7 +2893,7 @@ function AircraftR22() {
       <R22VariantComparison />
       <R22Counter />
       <R22HistoryTimeline />
-      <R22Champion />
+      <R22Champion pageImages={pageImages} />
       <R22Variants />
       <R22Training />
       <R22Gallery pageImages={pageImages} />
