@@ -11,7 +11,7 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, useInView, useScroll, useTransform, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { SECTION_MAP } from '../lib/imageSections';
@@ -290,74 +290,101 @@ const R22_HIGHLIGHTS = [
 
 const R22_VARIANT_DATA = [
   {
+    id: 'alpha',
+    key: 'alpha',
+    name: 'Alpha',
+    subtitle: 'Original Production',
+    tagline: 'Where it all began.',
+    image: '/assets/images/new-aircraft/r22/r22-beta-ii-left.png',
+    useCases: ['Heritage airframe', 'Club fleets'],
+    years: '1979–1981',
+    engine: 'Lycoming O-320-A2C, 150 HP',
+    power: '124 HP / 104 HP cont.',
+    vne: '102 kts',
+    cruise: '96 kts',
+    range: '180 nm',
+    mtow: '1,300 lb',
+    usefulLoad: '450 lb',
+    hoverIge: '9,400 ft',
+    rotorDia: '25 ft 2 in',
+    fuel: '19.2 US gal',
+    seats: '2',
+    floats: 'Skids',
+    landingGear: 'Skids',
+    notable: 'Inaugural production model',
+  },
+  {
     id: 'beta',
-    name: 'R22 Beta',
+    key: 'beta',
+    name: 'Beta',
+    subtitle: 'Carbureted Upgrade',
+    tagline: 'The workhorse trainer.',
+    image: '/assets/images/new-aircraft/r22/r22-beta-ii-left.png',
+    useCases: ['Ab-initio PPL training', 'Hour building'],
     years: '1985–1995',
-    engine: 'Lycoming O-320-B2C',
+    engine: 'Lycoming O-320-B2C, 160 HP',
     power: '160 HP / 124 HP cont.',
     vne: '102 kts',
     cruise: '96 kts',
-    range: '240 nm',
+    range: '200 nm',
     mtow: '1,370 lb',
-    usefulLoad: '440 lb',
+    usefulLoad: '490 lb',
     hoverIge: '9,400 ft',
     rotorDia: '25 ft 2 in',
     fuel: '19.2 US gal',
     seats: '2',
     floats: 'Skids',
-    notable: 'Defined the modern trainer market.',
+    landingGear: 'Skids',
+    notable: 'Uprated engine, longer TBO',
   },
   {
     id: 'beta-ii',
-    name: 'R22 Beta II',
-    years: '1996–Present',
-    engine: 'Lycoming O-360-J2A',
+    key: 'beta-ii',
+    name: 'Beta II',
+    subtitle: 'Current Production',
+    tagline: 'The benchmark piston trainer.',
+    image: '/assets/images/new-aircraft/r22/r22-beta-ii-left.png',
+    useCases: ['Flight schools', 'Private PPL', 'Type-rating machine'],
+    years: '1995–present',
+    engine: 'Lycoming O-360-J2A, 145 HP cont.',
     power: '145 HP / 131 HP cont.',
     vne: '102 kts',
     cruise: '96 kts',
-    range: '240 nm',
+    range: '200 nm',
     mtow: '1,370 lb',
-    usefulLoad: '440 lb',
+    usefulLoad: '490 lb',
     hoverIge: '9,400 ft',
     rotorDia: '25 ft 2 in',
     fuel: '19.2 US gal',
     seats: '2',
     floats: 'Skids',
-    notable: 'Current production model.',
+    landingGear: 'Skids',
+    notable: '2,200-hour TBO; Robinson Safety Course',
   },
   {
     id: 'mariner',
-    name: 'R22 Mariner',
-    years: '1990–2010',
-    engine: 'Lycoming O-360-J2A',
+    key: 'mariner',
+    name: 'Mariner',
+    subtitle: 'Amphibious Variant',
+    tagline: 'The R22, now with floats.',
+    image: '/assets/images/new-aircraft/r22/r22-beta-ii-left.png',
+    useCases: ['Over-water', 'Shoreline ops'],
+    years: '1983–present',
+    engine: 'Lycoming O-360-J2A, 145 HP cont.',
     power: '145 HP / 131 HP cont.',
     vne: '102 kts',
     cruise: '96 kts',
     range: '220 nm',
     mtow: '1,370 lb',
-    usefulLoad: '400 lb',
+    usefulLoad: 'Varies w/ floats',
     hoverIge: '9,400 ft',
     rotorDia: '25 ft 2 in',
     fuel: '19.2 US gal',
     seats: '2',
     floats: 'Pop-out floats',
-    notable: 'Float-equipped coastal variant.',
+    landingGear: 'Pop-out floats',
+    notable: 'Factory-float option, emergency deploy',
   },
-];
-
-const R22_SPEC_ROWS = [
-  { label: 'Powerplant', key: 'engine' },
-  { label: 'Power (takeoff / continuous)', key: 'power' },
-  { label: 'Maximum speed (Vne)', key: 'vne' },
-  { label: 'Cruise speed', key: 'cruise' },
-  { label: 'Range (no reserve)', key: 'range' },
-  { label: 'Maximum gross weight', key: 'mtow' },
-  { label: 'Useful load', key: 'usefulLoad' },
-  { label: 'Hover ceiling IGE', key: 'hoverIge' },
-  { label: 'Rotor diameter', key: 'rotorDia' },
-  { label: 'Fuel capacity', key: 'fuel' },
-  { label: 'Seats', key: 'seats' },
-  { label: 'Landing gear', key: 'floats' },
 ];
 
 const R22_WHY_TRAINER = [
@@ -786,11 +813,9 @@ function R22Styles() {
           margin: 0.5rem 0 0;
           line-height: 1.1;
         }
-        .r22-specs__split {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 4rem;
-          align-items: start;
+        .r22-specs__blueprint {
+          margin: 0 auto 3rem;
+          max-width: 900px;
         }
         .r22-specs__blueprint img {
           width: 100%;
@@ -799,59 +824,471 @@ function R22Styles() {
           mix-blend-mode: multiply;
           opacity: 0.9;
         }
-        .r22-specs__selector {
+
+        /* ===== SPECS VARIANT PICKER (ported from R44) ===== */
+        .r22-specs .r22-variants__card {
+          position: relative;
+          margin-top: 3rem;
+          padding: 0;
+          background: #ffffff;
+          border: 1px solid rgba(0,0,0,0.07);
+          border-radius: 16px;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+          overflow: hidden;
+        }
+
+        .r22-specs .r22-variants__card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: #1a1a1a;
+        }
+
+        .r22-specs .r22-variants__tabs {
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          gap: 0;
+          margin: 0;
+          padding: 0;
+          background: #fbfaf7;
+          border-bottom: 1px solid rgba(0,0,0,0.08);
+        }
+
+        .r22-specs .r22-variants__tab {
+          position: relative;
           display: flex;
-          gap: 0.5rem;
-          margin-bottom: 2rem;
-          flex-wrap: wrap;
-        }
-        .r22-specs__chip {
-          padding: 0.6rem 1.1rem;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 0.85rem;
+          padding: 1.25rem 1.25rem 1.1rem;
+          min-height: 160px;
+          font-family: 'Space Grotesk', sans-serif;
+          text-align: left;
+          color: #6b6b6b;
           background: transparent;
-          border: 1px solid rgba(26, 26, 26, 0.2);
-          color: #4a4a4a;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.8rem;
-          letter-spacing: 0.08em;
+          border: none;
+          border-right: 1px solid rgba(0,0,0,0.06);
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: color 0.25s ease, background 0.25s ease;
         }
-        .r22-specs__chip:hover { border-color: #1a1a1a; color: #1a1a1a; }
-        .r22-specs__chip.is-active {
+
+        .r22-specs .r22-variants__tab:last-child { border-right: none; }
+
+        .r22-specs .r22-variants__tab::after {
+          content: '';
+          position: absolute;
+          left: 1.25rem;
+          right: 1.25rem;
+          bottom: 0;
+          height: 2px;
+          background: #1a1a1a;
+          transform: scaleX(0);
+          transform-origin: left center;
+          transition: transform 0.3s ease;
+        }
+
+        .r22-specs .r22-variants__tab:hover {
+          background: #f6f3ed;
+          color: #1a1a1a;
+        }
+
+        .r22-specs .r22-variants__tab:hover .r22-variants__tab-thumb img {
+          filter: grayscale(0%);
+          opacity: 1;
+        }
+
+        .r22-specs .r22-variants__tab.active {
+          background: #ffffff;
+          color: #1a1a1a;
+          justify-content: center;
+        }
+
+        .r22-specs .r22-variants__tab.active::after {
+          transform: scaleX(1);
+        }
+
+        .r22-specs .r22-variants__tab-thumb {
+          display: block;
+          width: 100%;
+          height: 72px;
+          overflow: hidden;
+          pointer-events: none;
+        }
+
+        .r22-specs .r22-variants__tab-thumb img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          object-position: center;
+          filter: grayscale(60%);
+          opacity: 0.65;
+          transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .r22-specs .r22-variants__tab.active .r22-variants__tab-thumb img {
+          filter: grayscale(0%);
+          opacity: 1;
+        }
+
+        .r22-specs .r22-variants__tab-label {
+          display: flex;
+          flex-direction: column;
+          gap: 0.2rem;
+          line-height: 1.2;
+          min-width: 0;
+          width: 100%;
+        }
+
+        .r22-specs .r22-variants__tab-sub {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.6rem;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: #9a9a9a;
+        }
+
+        .r22-specs .r22-variants__tab.active .r22-variants__tab-sub {
+          color: #1a1a1a;
+        }
+
+        .r22-specs .r22-variants__tab-name {
+          font-size: 0.95rem;
+          font-weight: 600;
+          letter-spacing: 0.01em;
+          color: inherit;
+        }
+
+        .r22-specs .r22-variants__content {
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+          margin-top: 0;
+        }
+
+        .r22-specs .r22-variants__image {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          padding: 0.5rem 3rem;
+          min-height: 300px;
+          background:
+            radial-gradient(ellipse at center, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 70%),
+            linear-gradient(135deg, #ececea 0%, #ffffff 70%);
+          overflow: visible;
+        }
+
+        .r22-specs .r22-variants__image::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background-image:
+            linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+          background-size: 40px 40px;
+          opacity: 0.6;
+          pointer-events: none;
+        }
+
+        .r22-specs .r22-variants__image-inner {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          width: 55%;
+          max-width: 560px;
+          height: 300px;
+          z-index: 1;
+        }
+
+        .r22-specs .r22-variants__image-inner img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));
+        }
+
+        .r22-specs .r22-variants__image-headline {
+          position: absolute;
+          top: 50%;
+          left: 3rem;
+          transform: translateY(-50%);
+          z-index: 3;
+          pointer-events: none;
+          width: 40%;
+          max-width: 420px;
+        }
+
+        .r22-specs .r22-variants__image-headline-inner {
+          display: block;
+        }
+
+        .r22-specs .r22-variants__image-headline .r22-variants__eyebrow {
+          display: inline-block;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.7rem;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: #a67b3f;
+          margin-bottom: 1rem;
+        }
+
+        .r22-specs .r22-variants__image-headline h3 {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: clamp(2rem, 4vw, 3rem);
+          font-weight: 700;
+          line-height: 1.05;
+          letter-spacing: -0.01em;
+          color: #111111;
+          margin: 0 0 0.75rem;
+        }
+
+        .r22-specs .r22-variants__image-headline .r22-variants__tagline {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1.1rem;
+          font-style: italic;
+          color: #8a8a8a;
+          margin: 0 0 1.25rem;
+        }
+
+        .r22-specs .r22-variants__image-headline .r22-variants__divider {
+          width: 64px;
+          height: 2px;
+          background: #a67b3f;
+        }
+
+        .r22-specs .r22-variants__info {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 3rem;
+          align-items: stretch;
+          padding: 2.75rem 3rem 3rem;
+          background: #ffffff;
+          border-top: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .r22-specs .r22-variants__info-left {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+
+        .r22-specs .r22-variants__info-right {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .r22-specs .r22-variants__eyebrow {
+          display: inline-block;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.68rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: #1a1a1a;
+          margin-bottom: 0.75rem;
+        }
+
+        .r22-specs .r22-variants__info h3 {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: clamp(1.8rem, 3vw, 2.4rem);
+          font-weight: 500;
+          line-height: 1.1;
+          color: #1a1a1a;
+          margin: 0 0 0.75rem;
+          letter-spacing: -0.01em;
+        }
+
+        .r22-specs .r22-variants__tagline {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1rem;
+          font-style: italic;
+          color: #7a7a7a;
+          margin: 0 0 1.25rem;
+          letter-spacing: 0.01em;
+        }
+
+        .r22-specs .r22-variants__divider {
+          width: 50px;
+          height: 2px;
+          background: #1a1a1a;
+          margin: 0 0 1.5rem;
+          border-radius: 2px;
+        }
+
+        .r22-specs .r22-variants__description {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1rem;
+          line-height: 1.7;
+          color: #555;
+          margin: 0;
+        }
+
+        .r22-specs .r22-variants__pdfs {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          margin-top: 1.25rem;
+        }
+
+        .r22-specs .r22-variants__pdf-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.45rem 0.95rem;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.78rem;
+          font-weight: 500;
+          color: #1a1a1a;
+          background: #fff;
+          border: 1px solid rgba(0,0,0,0.12);
+          border-radius: 100px;
+          text-decoration: none;
+          letter-spacing: 0.01em;
+          transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+        }
+
+        .r22-specs .r22-variants__pdf-pill i {
+          font-size: 0.85rem;
+          color: #c8102e;
+          transition: color 0.2s;
+        }
+
+        .r22-specs .r22-variants__pdf-pill:hover {
           background: #1a1a1a;
           color: #fff;
           border-color: #1a1a1a;
+          transform: translateY(-1px);
         }
-        .r22-specs__rows {
+
+        .r22-specs .r22-variants__pdf-pill:hover i {
+          color: #fff;
+        }
+
+        .r22-specs .r22-variants__use-case-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.4rem;
+        }
+
+        .r22-specs .r22-variants__image .r22-variants__use-case-tags {
+          position: absolute;
+          right: 3rem;
+          bottom: 1.25rem;
+          justify-content: flex-end;
+          z-index: 2;
+        }
+
+        .r22-specs .r22-variants__use-case-tag {
+          display: inline-flex;
+          align-items: center;
+          padding: 0.35rem 0.75rem;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.78rem;
+          color: #4a4a4a;
+          background: #fbfaf7;
+          border: 1px solid rgba(0,0,0,0.08);
+          border-radius: 100px;
+          letter-spacing: 0.01em;
+        }
+
+        .r22-specs .r22-variants__features {
+          list-style: none;
+          padding: 0;
+          margin: 0;
           display: flex;
           flex-direction: column;
-          margin: 0;
+          justify-content: space-between;
+          flex: 1;
+          gap: 0.6rem;
         }
-        .r22-specs__row {
-          display: grid;
-          grid-template-columns: 1fr auto;
-          gap: 1rem;
-          padding: 1rem 0;
-          border-bottom: 1px solid rgba(26, 26, 26, 0.08);
-          align-items: baseline;
+
+        .r22-specs .r22-variants__features li {
+          display: flex;
+          align-items: center;
+          gap: 0.7rem;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.9rem;
+          color: #4a4a4a;
+          padding: 0;
         }
-        .r22-specs__row dt {
-          font-size: 0.85rem;
-          color: #7a7a7a;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          margin: 0;
-        }
-        .r22-specs__row dd {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 1rem;
+
+        .r22-specs .r22-variants__feature-icon {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 26px;
+          height: 26px;
+          min-width: 26px;
+          border-radius: 6px;
+          background: rgba(0, 0, 0, 0.05);
           color: #1a1a1a;
-          margin: 0;
-          text-align: right;
+          font-size: 0.7rem;
+          flex-shrink: 0;
         }
+
+        @media (max-width: 1000px) {
+          .r22-specs .r22-variants__tabs {
+            grid-template-columns: repeat(3, 1fr);
+          }
+          .r22-specs .r22-variants__tab:nth-child(3n) { border-right: none; }
+          .r22-specs .r22-variants__tab:nth-child(n+4) {
+            border-top: 1px solid rgba(0,0,0,0.06);
+          }
+        }
+
         @media (max-width: 900px) {
-          .r22-specs__split { grid-template-columns: 1fr; gap: 2.5rem; }
           .r22-specs { padding: 5rem 1.5rem; position: relative; top: auto; }
+          .r22-specs .r22-variants__image {
+            min-height: 260px;
+            padding: 2rem 1.5rem;
+          }
+          .r22-specs .r22-variants__info {
+            grid-template-columns: 1fr;
+            gap: 1.75rem;
+            padding: 2.25rem 1.75rem;
+          }
+        }
+
+        @media (max-width: 700px) {
+          .r22-specs .r22-variants__tabs {
+            grid-template-columns: 1fr;
+          }
+          .r22-specs .r22-variants__tab {
+            flex-direction: row;
+            align-items: center;
+            min-height: 0;
+            padding: 1rem 1.25rem;
+            border-right: none;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            border-top: none;
+          }
+          .r22-specs .r22-variants__tab:last-child { border-bottom: none; }
+          .r22-specs .r22-variants__tab-thumb {
+            width: 84px;
+            height: 48px;
+            flex-shrink: 0;
+          }
+          .r22-specs .r22-variants__tab::after {
+            left: 0;
+            right: auto;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            height: auto;
+            transform: scaleY(0);
+            transform-origin: top center;
+          }
+          .r22-specs .r22-variants__tab.active::after {
+            transform: scaleY(1);
+          }
+          .r22-specs .r22-variants__features {
+            justify-content: flex-start;
+            flex: 0 0 auto;
+          }
         }
 
         /* ===== CHARACTERISTICS SECTION ===== */
@@ -1708,9 +2145,10 @@ function R22HistoryTimeline() {
 // R22 SPECIFICATIONS
 // ============================================================================
 function R22Specifications() {
-  const [activeVariantId, setActiveVariantId] = useState('beta-ii');
-  const activeVariant = R22_VARIANT_DATA.find((v) => v.id === activeVariantId)
-    ?? R22_VARIANT_DATA[0];
+  const [activeVariant, setActiveVariant] = useState(
+    Math.max(0, R22_VARIANT_DATA.findIndex((v) => v.id === 'beta-ii'))
+  );
+  const active = R22_VARIANT_DATA[activeVariant] ?? R22_VARIANT_DATA[0];
 
   return (
     <section className="r22-specs" data-cms-section="r22-specifications">
@@ -1719,37 +2157,76 @@ function R22Specifications() {
           <span className="r22-pre-text">Specifications</span>
           <h2>Anatomy of a trainer</h2>
         </div>
-        <div className="r22-specs__split">
-          <div className="r22-specs__blueprint">
-            <img
-              src="/assets/images/new-aircraft/r22/r22blueprint.jpg"
-              alt="R22 blueprint"
-              loading="lazy"
-            />
-          </div>
-          <div className="r22-specs__table">
-            <div className="r22-specs__selector">
-              {R22_VARIANT_DATA.map((v) => (
+        <div className="r22-specs__blueprint">
+          <img
+            src="/assets/images/new-aircraft/r22/r22blueprint.jpg"
+            alt="R22 blueprint"
+            loading="lazy"
+          />
+        </div>
+
+        <LayoutGroup id="r22-variants">
+          <div className="r22-variants__card">
+            <div className="r22-variants__tabs">
+              {R22_VARIANT_DATA.map((variant, i) => (
                 <button
-                  key={v.id}
+                  key={variant.key || variant.id}
                   type="button"
-                  className={`r22-specs__chip ${activeVariantId === v.id ? 'is-active' : ''}`}
-                  onClick={() => setActiveVariantId(v.id)}
+                  className={`r22-variants__tab ${activeVariant === i ? 'active' : ''}`}
+                  onClick={() => setActiveVariant(i)}
                 >
-                  {v.name}
+                  {activeVariant !== i && (
+                    <motion.span
+                      className="r22-variants__tab-thumb"
+                      aria-hidden="true"
+                      layoutId={`r22-variant-img-${i}`}
+                      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      <img src={variant.image} alt="" loading="lazy" />
+                    </motion.span>
+                  )}
+                  <motion.span
+                    className="r22-variants__tab-label"
+                    layout
+                    transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <span className="r22-variants__tab-sub">{variant.subtitle}</span>
+                    <span className="r22-variants__tab-name">{variant.name}</span>
+                  </motion.span>
                 </button>
               ))}
             </div>
-            <dl className="r22-specs__rows">
-              {R22_SPEC_ROWS.map((row) => (
-                <div key={row.key} className="r22-specs__row">
-                  <dt>{row.label}</dt>
-                  <dd>{activeVariant[row.key]}</dd>
+
+            <div className="r22-variants__content">
+              <div className="r22-variants__image">
+                <div className="r22-variants__image-headline">
+                  <div className="r22-variants__image-headline-inner">
+                    <span className="r22-variants__eyebrow">{active.subtitle}</span>
+                    <h3>R22 {active.name}</h3>
+                    <p className="r22-variants__tagline">{active.tagline}</p>
+                    <div className="r22-variants__divider" />
+                  </div>
                 </div>
-              ))}
-            </dl>
+                <motion.span
+                  key={activeVariant}
+                  className="r22-variants__image-inner"
+                  layoutId={`r22-variant-img-${activeVariant}`}
+                  transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <img
+                    src={active.image}
+                    alt={`${active.name} configuration`}
+                  />
+                </motion.span>
+                <div className="r22-variants__use-case-tags">
+                  {active.useCases.map((uc, i) => (
+                    <span key={i} className="r22-variants__use-case-tag">{uc}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </LayoutGroup>
       </div>
     </section>
   );
