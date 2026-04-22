@@ -597,6 +597,15 @@ function R22Styles() {
           line-height: 1.7;
         }
 
+        .r22-hero__title {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: clamp(3rem, 8vw, 6.5rem);
+          font-weight: 700;
+          letter-spacing: -0.03em;
+          line-height: 0.95;
+          color: #1a1a1a;
+        }
+
         .r22-hero__scroll {
           position: absolute;
           bottom: 3rem;
@@ -2029,12 +2038,13 @@ function R22Hero() {
   const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
 
   return (
-    <section ref={heroRef} className="r22-hero">
+    <section ref={heroRef} className="r22-hero" data-cms-section="r22-hero">
       <motion.div
         className="r22-hero__bg"
         initial={{ scale: 1.1, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1.5 }}
+        style={{ scale: heroScale, y: heroY }}
       >
         <img
           src="/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png"
