@@ -299,6 +299,7 @@ const R22_VARIANT_DATA = [
     useCases: ['Heritage airframe', 'Club fleets'],
     years: '1979–1981',
     engine: 'Lycoming O-320-A2C, 150 HP',
+    fuelSystem: 'Carbureted',
     power: '124 HP / 104 HP cont.',
     vne: '102 kts',
     cruise: '96 kts',
@@ -323,6 +324,7 @@ const R22_VARIANT_DATA = [
     useCases: ['Ab-initio PPL training', 'Hour building'],
     years: '1985–1995',
     engine: 'Lycoming O-320-B2C, 160 HP',
+    fuelSystem: 'Carbureted',
     power: '160 HP / 124 HP cont.',
     vne: '102 kts',
     cruise: '96 kts',
@@ -347,6 +349,7 @@ const R22_VARIANT_DATA = [
     useCases: ['Flight schools', 'Private PPL', 'Type-rating machine'],
     years: '1995–present',
     engine: 'Lycoming O-360-J2A, 145 HP cont.',
+    fuelSystem: 'Carbureted',
     power: '145 HP / 131 HP cont.',
     vne: '102 kts',
     cruise: '96 kts',
@@ -371,6 +374,7 @@ const R22_VARIANT_DATA = [
     useCases: ['Over-water', 'Shoreline ops'],
     years: '1983–present',
     engine: 'Lycoming O-360-J2A, 145 HP cont.',
+    fuelSystem: 'Carbureted',
     power: '145 HP / 131 HP cont.',
     vne: '102 kts',
     cruise: '96 kts',
@@ -385,6 +389,25 @@ const R22_VARIANT_DATA = [
     landingGear: 'Pop-out floats',
     notable: 'Factory-float option, emergency deploy',
   },
+];
+
+const R22_COMPARISON_COLUMNS = [
+  { key: 'alpha',   name: 'Alpha',   tag: 'Original',   image: '/assets/images/new-aircraft/r22/r22-beta-ii-left.png' },
+  { key: 'beta',    name: 'Beta',    tag: 'Carbureted', image: '/assets/images/new-aircraft/r22/r22-beta-ii-left.png' },
+  { key: 'beta-ii', name: 'Beta II', tag: 'Current',    image: '/assets/images/new-aircraft/r22/r22-beta-ii-left.png' },
+  { key: 'mariner', name: 'Mariner', tag: 'Amphibious', image: '/assets/images/new-aircraft/r22/r22-beta-ii-left.png' },
+];
+
+const R22_COMPARISON_ROWS = [
+  { label: 'Introduced',       key: 'years' },
+  { label: 'Engine',           key: 'engine' },
+  { label: 'Fuel System',      key: 'fuelSystem', fallback: 'Carbureted' },
+  { label: 'Power',            key: 'power' },
+  { label: 'Max Gross Weight', key: 'mtow' },
+  { label: 'Useful Load',      key: 'usefulLoad' },
+  { label: 'Range',            key: 'range' },
+  { label: 'Landing Gear',     key: 'landingGear' },
+  { label: 'Best For',         key: 'notable' },
 ];
 
 const R22_WHY_TRAINER = [
@@ -1674,68 +1697,264 @@ function R22Styles() {
           .r22-why__counters { grid-template-columns: repeat(2, 1fr); gap: 2rem 1.5rem; }
           .r22-why { padding: 5rem 1.5rem; }
         }
-        .r22-compare { padding: 8rem 2rem; background: #faf9f6; }
-        .r22-compare__inner { max-width: 1280px; margin: 0 auto; }
-        .r22-compare__pills {
+        /* ===== VARIANT COMPARISON ===== */
+        .r22-comparison {
+          position: relative;
+          z-index: 50;
+          padding: 5rem 2rem;
+          background: #faf9f6;
+        }
+
+        .r22-comparison__container {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        .r22-comparison__picker {
+          margin: 2.5rem 0 3rem;
+        }
+
+        .r22-comparison__picker-label {
           display: flex;
-          gap: 0.75rem;
-          justify-content: center;
-          flex-wrap: wrap;
-          margin: 2rem 0 3rem;
-        }
-        .r22-compare__pill {
-          display: inline-flex;
           align-items: center;
-          gap: 0.5rem;
-          padding: 0.7rem 1.25rem;
-          background: transparent;
-          border: 1px solid rgba(26,26,26,0.2);
-          color: #4a4a4a;
+          justify-content: space-between;
+          gap: 1rem;
           font-family: 'Share Tech Mono', monospace;
-          font-size: 0.85rem;
-          cursor: pointer;
-          transition: all 0.2s ease;
+          font-size: 0.7rem;
+          letter-spacing: 0.15em;
+          text-transform: uppercase;
+          color: #888;
+          margin-bottom: 1rem;
         }
-        .r22-compare__pill.is-active {
+
+        .r22-comparison__picker-clear {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.7rem;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: #1a1a1a;
+          background: none;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          text-decoration: underline;
+          text-underline-offset: 3px;
+        }
+
+        .r22-comparison__picker-clear:hover {
+          color: #c8102e;
+        }
+
+        .r22-comparison__picker-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 0.75rem;
+        }
+
+        .r22-comparison__picker-card {
+          display: flex;
+          align-items: center;
+          gap: 0.9rem;
+          padding: 0.85rem 1rem;
+          background: #fff;
+          border: 1px solid #e8e6e2;
+          border-radius: 6px;
+          cursor: pointer;
+          text-align: left;
+          font-family: inherit;
+          transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+
+        .r22-comparison__picker-card:hover {
+          border-color: #1a1a1a;
+          box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+        }
+
+        .r22-comparison__picker-card--active {
+          border-color: #1a1a1a;
           background: #1a1a1a;
           color: #fff;
-          border-color: #1a1a1a;
         }
-        .r22-compare__check {
-          display: inline-block;
-          width: 1em;
-          text-align: center;
+
+        .r22-comparison__picker-card--locked {
+          cursor: not-allowed;
+          opacity: 0.85;
+          box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15);
         }
-        .r22-compare__table-wrap { overflow-x: auto; }
-        .r22-compare__table {
+
+        .r22-comparison__picker-card--locked:hover {
+          box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15);
+        }
+
+        .r22-comparison__picker-check {
+          width: 18px;
+          height: 18px;
+          flex-shrink: 0;
+          border: 1px solid rgba(0,0,0,0.25);
+          border-radius: 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #fff;
+          color: #1a1a1a;
+          font-size: 0.65rem;
+          transition: all 0.2s;
+        }
+
+        .r22-comparison__picker-card--active .r22-comparison__picker-check {
+          background: #fff;
+          border-color: #fff;
+        }
+
+        .r22-comparison__picker-thumb {
+          width: 52px;
+          height: 36px;
+          flex-shrink: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #faf9f6;
+          border-radius: 4px;
+          overflow: hidden;
+        }
+
+        .r22-comparison__picker-card--active .r22-comparison__picker-thumb {
+          background: rgba(255,255,255,0.08);
+        }
+
+        .r22-comparison__picker-thumb img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+        }
+
+        .r22-comparison__picker-text {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+        }
+
+        .r22-comparison__picker-name {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.95rem;
+          font-weight: 500;
+          line-height: 1.2;
+        }
+
+        .r22-comparison__picker-tag {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.6rem;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: #888;
+          margin-top: 0.25rem;
+        }
+
+        .r22-comparison__picker-card--active .r22-comparison__picker-tag {
+          color: rgba(255,255,255,0.65);
+        }
+
+        .r22-comparison__table-wrapper {
+          overflow-x: auto;
+          margin-bottom: 3rem;
+        }
+
+        .r22-comparison__table {
           width: 100%;
           border-collapse: collapse;
-          font-size: 0.95rem;
+          background: #fff;
+          border: 1px solid #e8e6e2;
         }
-        .r22-compare__table th, .r22-compare__table td {
-          padding: 1rem 1.25rem;
+
+        .r22-comparison__table thead {
+          background: #1a1a1a;
+          color: #fff;
+        }
+
+        .r22-comparison__header-label,
+        .r22-comparison__header-variant {
+          padding: 1.25rem 1rem;
           text-align: left;
-          border-bottom: 1px solid rgba(26,26,26,0.08);
-          vertical-align: top;
-        }
-        .r22-compare__table thead th {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.85rem;
-          text-transform: uppercase;
-          letter-spacing: 0.12em;
-          color: #1a1a1a;
-          background: #f2f0ea;
-        }
-        .r22-compare__table tbody th {
-          font-size: 0.8rem;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          color: #7a7a7a;
+          font-size: 0.75rem;
           font-weight: 500;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
         }
-        .r22-compare__table tbody td {
+
+        .r22-comparison__header-label {
+          width: 18%;
+          background: #1a1a1a;
+        }
+
+        .r22-comparison__header-variant {
+          width: 16.4%;
+          text-align: center;
+        }
+
+        .r22-comparison__variant-name {
+          display: block;
+          font-size: 1rem;
+          font-weight: 600;
+          margin-bottom: 0.25rem;
+        }
+
+        .r22-comparison__variant-tag {
+          display: inline-block;
+          font-size: 0.6rem;
+          font-weight: 400;
+          letter-spacing: 0.15em;
+          text-transform: uppercase;
+          padding: 0.2rem 0.5rem;
+          background: rgba(255,255,255,0.15);
+          border-radius: 2px;
+        }
+
+        .r22-comparison__row-label {
+          padding: 1rem;
+          font-size: 0.75rem;
+          font-weight: 500;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: #666;
+          background: #faf9f6;
+          border-bottom: 1px solid #e8e6e2;
+        }
+
+        .r22-comparison__cell {
+          padding: 0.85rem 0.75rem;
           font-family: 'Share Tech Mono', monospace;
+          font-size: 0.8rem;
+          line-height: 1.5;
           color: #1a1a1a;
+          text-align: center;
+          border-bottom: 1px solid #e8e6e2;
+          border-left: 1px solid #e8e6e2;
+        }
+
+        @media (max-width: 1024px) {
+          .r22-comparison__table {
+            font-size: 0.7rem;
+            min-width: 720px;
+          }
+
+          .r22-comparison__header-label,
+          .r22-comparison__header-variant {
+            padding: 0.75rem 0.5rem;
+          }
+
+          .r22-comparison__cell,
+          .r22-comparison__row-label {
+            padding: 0.65rem 0.5rem;
+            font-size: 0.7rem;
+          }
+
+          .r22-comparison__variant-name {
+            font-size: 0.85rem;
+          }
+
+          .r22-comparison__variant-tag {
+            font-size: 0.55rem;
+          }
         }
         .r22-fleet {
           position: relative;
@@ -2361,67 +2580,128 @@ function R22WhyTrainer() {
 // R22 VARIANT COMPARISON
 // ============================================================================
 function R22VariantComparison() {
-  const [selectedIds, setSelectedIds] = useState(R22_VARIANT_DATA.map((v) => v.id));
-  const visible = R22_VARIANT_DATA.filter((v) => selectedIds.includes(v.id));
+  const [selectedKeys, setSelectedKeys] = useState(['beta-ii']);
 
-  const toggle = (id) => {
-    setSelectedIds((prev) => {
-      if (prev.includes(id)) {
-        return prev.length > 1 ? prev.filter((x) => x !== id) : prev; // keep at least one
+  const toggleKey = (key) => {
+    setSelectedKeys((prev) => {
+      if (prev.includes(key)) {
+        // Last remaining column cannot be removed
+        if (prev.length <= 1) return prev;
+        return prev.filter((k) => k !== key);
       }
-      return [...prev, id];
+      return [...prev, key];
     });
   };
 
-  const rows = [
-    { label: 'Years produced', key: 'years' },
-    { label: 'Engine', key: 'engine' },
-    { label: 'Power', key: 'power' },
-    { label: 'MTOW', key: 'mtow' },
-    { label: 'Range', key: 'range' },
-    { label: 'Useful load', key: 'usefulLoad' },
-    { label: 'Landing gear', key: 'floats' },
-    { label: 'Notable', key: 'notable' },
-  ];
+  const selectedColumns = R22_COMPARISON_COLUMNS.filter((c) => selectedKeys.includes(c.key));
+  const hasSelection = selectedColumns.length > 0;
 
   return (
-    <section className="r22-compare">
-      <div className="r22-compare__inner">
-        <div className="r22-section-header">
-          <span className="r22-pre-text">Compare</span>
-          <h2>The R22 family, side by side</h2>
-        </div>
-        <div className="r22-compare__pills">
-          {R22_VARIANT_DATA.map((v) => (
-            <button
-              key={v.id}
-              type="button"
-              className={`r22-compare__pill ${selectedIds.includes(v.id) ? 'is-active' : ''}`}
-              onClick={() => toggle(v.id)}
-            >
-              <span className="r22-compare__check">{selectedIds.includes(v.id) ? '✓' : ''}</span>
-              {v.name}
-            </button>
-          ))}
-        </div>
-        <div className="r22-compare__table-wrap">
-          <table className="r22-compare__table">
-            <thead>
-              <tr>
-                <th></th>
-                {visible.map((v) => <th key={v.id}>{v.name}</th>)}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row) => (
-                <tr key={row.key}>
-                  <th scope="row">{row.label}</th>
-                  {visible.map((v) => <td key={v.id}>{v[row.key]}</td>)}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+    <section className="r22-comparison">
+      <div className="r22-comparison__container">
+        <Reveal>
+          <div className="r22-section-header">
+            <span className="r22-pre-text">Compare</span>
+            <h2>
+              <span className="r22-text--dark">The R22 Family,</span>{' '}
+              <span className="r22-text--mid">Side By Side</span>
+            </h2>
+            <p>
+              Four variants, one airframe. Compare the Alpha, Beta, Beta II and
+              Mariner to land on the R22 that fits your mission — then talk to
+              HQ Aviation about sourcing one.
+            </p>
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.1}>
+          <div className="r22-comparison__picker">
+            <div className="r22-comparison__picker-label">
+              <span>
+                {selectedKeys.length} selected
+              </span>
+              {selectedKeys.length > 1 && (
+                <button
+                  type="button"
+                  className="r22-comparison__picker-clear"
+                  onClick={() => setSelectedKeys(['beta-ii'])}
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+            <div className="r22-comparison__picker-grid">
+              {R22_COMPARISON_COLUMNS.map((col) => {
+                const active = selectedKeys.includes(col.key);
+                const locked = active && selectedKeys.length === 1;
+                return (
+                  <button
+                    key={col.key}
+                    type="button"
+                    onClick={() => toggleKey(col.key)}
+                    className={`r22-comparison__picker-card${active ? ' r22-comparison__picker-card--active' : ''}${locked ? ' r22-comparison__picker-card--locked' : ''}`}
+                    aria-pressed={active}
+                    aria-disabled={locked ? 'true' : undefined}
+                  >
+                    <span className="r22-comparison__picker-check" aria-hidden="true">
+                      {active && <i className="fas fa-check"></i>}
+                    </span>
+                    <span className="r22-comparison__picker-thumb">
+                      <img src={col.image} alt="" loading="lazy" />
+                    </span>
+                    <span className="r22-comparison__picker-text">
+                      <span className="r22-comparison__picker-name">{col.name}</span>
+                      <span className="r22-comparison__picker-tag">{col.tag}</span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </Reveal>
+
+        {hasSelection && (
+          <Reveal delay={0.2}>
+            <div className="r22-comparison__table-wrapper">
+              <table className="r22-comparison__table">
+                <thead>
+                  <tr>
+                    <th className="r22-comparison__header-label">Specification</th>
+                    {selectedColumns.map((col) => (
+                      <th
+                        key={col.key}
+                        className="r22-comparison__header-variant"
+                      >
+                        <span className="r22-comparison__variant-name">{col.name}</span>
+                        <span className="r22-comparison__variant-tag">{col.tag}</span>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {R22_COMPARISON_ROWS.map((row, i) => (
+                    <tr key={i}>
+                      <td className="r22-comparison__row-label">{row.label}</td>
+                      {selectedColumns.map((col) => {
+                        const variant = R22_VARIANT_DATA.find((v) => v.key === col.key);
+                        const value = (variant && variant[row.key]) || row.fallback || '—';
+                        return (
+                          <td
+                            key={col.key}
+                            className="r22-comparison__cell"
+                          >
+                            {value}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Reveal>
+        )}
+
       </div>
     </section>
   );
