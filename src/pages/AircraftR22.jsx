@@ -2323,7 +2323,8 @@ function R22HistoryTimeline() {
 // ============================================================================
 function R22Specifications() {
   const [activeVariantId, setActiveVariantId] = useState('beta-ii');
-  const activeVariant = R22_VARIANT_DATA.find((v) => v.id === activeVariantId);
+  const activeVariant = R22_VARIANT_DATA.find((v) => v.id === activeVariantId)
+    ?? R22_VARIANT_DATA[0];
 
   return (
     <section className="r22-specs" data-cms-section="r22-specifications">
