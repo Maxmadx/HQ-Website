@@ -2018,6 +2018,38 @@ function R22Styles() {
           font-family: 'Share Tech Mono', monospace;
           color: #1a1a1a;
         }
+        .r22-fleet {
+          position: relative;
+          width: 100%;
+          min-height: 55vh;
+          overflow: hidden;
+          background: #1a1a1a;
+        }
+        .r22-fleet__image img {
+          width: 100%;
+          height: 100%;
+          min-height: 55vh;
+          object-fit: cover;
+          display: block;
+          opacity: 0.85;
+        }
+        .r22-fleet__overlay {
+          position: absolute;
+          left: 3rem;
+          bottom: 3rem;
+          max-width: 480px;
+          color: #fff;
+          text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+        }
+        .r22-fleet__overlay p {
+          font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+          font-weight: 500;
+          line-height: 1.4;
+          margin: 0.5rem 0 0;
+        }
+        @media (max-width: 600px) {
+          .r22-fleet__overlay { left: 1.25rem; right: 1.25rem; bottom: 1.25rem; }
+        }
     `}</style>
   );
 }
@@ -2430,6 +2462,29 @@ function R22Champion({ pageImages }) {
         <div className="r22-champion__image">
           <img src={getSrc(hero)} alt={hero.alt || 'Captain Quentin Smith'} loading="lazy" />
         </div>
+      </div>
+    </section>
+  );
+}
+
+// ============================================================================
+// R22 FLEET
+// ============================================================================
+function R22Fleet({ pageImages }) {
+  const defaults = SECTION_MAP['r22-fleet']?.images
+    || [{ src: '/assets/images/used-aircraft/r22/hq-r22-lineup.jpg', alt: 'HQ Aviation R22 fleet lineup' }];
+  const images = pageImages?.['r22-fleet'] || defaults;
+  const hero = images[0];
+  const getSrc = (img) => img?.src || img?.url || '';
+
+  return (
+    <section className="r22-fleet" data-cms-section="r22-fleet">
+      <div className="r22-fleet__image">
+        <img src={getSrc(hero)} alt={hero.alt || ''} loading="lazy" />
+      </div>
+      <div className="r22-fleet__overlay">
+        <span className="r22-pre-text">The Denham fleet</span>
+        <p>Four R22 Beta IIs. Forty years of design discipline on the same apron.</p>
       </div>
     </section>
   );
@@ -2894,6 +2949,7 @@ function AircraftR22() {
       <R22Counter />
       <R22HistoryTimeline />
       <R22Champion pageImages={pageImages} />
+      <R22Fleet pageImages={pageImages} />
       <R22Variants />
       <R22Training />
       <R22Gallery pageImages={pageImages} />
