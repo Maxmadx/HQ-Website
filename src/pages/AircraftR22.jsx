@@ -325,6 +325,7 @@ function R22Styles() {
 
         .r22-pre-text {
           display: block;
+          font-family: 'Share Tech Mono', 'Courier New', monospace;
           font-size: 0.75rem;
           text-transform: uppercase;
           letter-spacing: 0.25em;
@@ -345,7 +346,8 @@ function R22Styles() {
         }
 
         .r22-section-header h2 {
-          font-size: clamp(2rem, 4vw, 3rem);
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: clamp(2.25rem, 4.5vw, 3.25rem);
           margin: 0.5rem 0;
           line-height: 1.1;
           text-transform: uppercase;
@@ -557,7 +559,7 @@ function R22Styles() {
 
         /* ===== INTRO SECTION ===== */
         .r22-intro {
-          padding: 6rem 2rem;
+          padding: 8rem 2rem;
           background: #fff;
         }
 
@@ -641,7 +643,7 @@ function R22Styles() {
 
         /* ===== COUNTER SECTION ===== */
         .r22-counter {
-          padding: 1.5rem 2rem;
+          padding: 6rem 2rem;
           background: #1a1a1a;
         }
 
@@ -686,7 +688,7 @@ function R22Styles() {
 
         /* ===== HISTORY SECTION ===== */
         .r22-history {
-          padding: 6rem 2rem;
+          padding: 8rem 2rem;
           background: #faf9f6;
         }
 
@@ -781,7 +783,7 @@ function R22Styles() {
 
         /* ===== SPECS SECTION ===== */
         .r22-specs {
-          padding: 6rem 2rem;
+          padding: 8rem 2rem;
           background: #fff;
         }
 
@@ -917,7 +919,7 @@ function R22Styles() {
 
         /* ===== CHARACTERISTICS SECTION ===== */
         .r22-characteristics {
-          padding: 6rem 2rem;
+          padding: 8rem 2rem;
           background: #faf9f6;
         }
 
@@ -1109,7 +1111,7 @@ function R22Styles() {
 
         /* ===== VARIANTS SECTION ===== */
         .r22-variants {
-          padding: 6rem 2rem;
+          padding: 8rem 2rem;
           background: #fff;
         }
 
@@ -1365,7 +1367,7 @@ function R22Styles() {
 
         /* ===== GALLERY SECTION ===== */
         .r22-gallery {
-          padding: 6rem 2rem;
+          padding: 8rem 2rem;
           background: #fff;
         }
 
