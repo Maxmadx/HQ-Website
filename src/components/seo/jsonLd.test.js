@@ -47,6 +47,16 @@ describe('buildLocalBusiness', () => {
       Array.isArray(lb.openingHours)
     ).toBe(true);
   });
+
+  it('declares areaServed including London and surrounding counties', () => {
+    const lb = buildLocalBusiness();
+    expect(Array.isArray(lb.areaServed)).toBe(true);
+    const names = lb.areaServed.map((a) => a.name);
+    expect(names).toContain('London');
+    expect(names).toContain('Buckinghamshire');
+    expect(names).toContain('Hertfordshire');
+    expect(names).not.toContain('Greater London');
+  });
 });
 
 describe('buildBreadcrumbList', () => {

@@ -49,6 +49,20 @@ export const GEO = {
 // Schema.org openingHours format: 'Mo-Su' = Mon through Sun.
 export const OPENING_HOURS = ['Mo-Su 08:30-17:00'];
 
+// Service area for local SEO. Names appear in JSON-LD `areaServed` and
+// signal to Google which geographic queries this business is relevant for.
+// Keep "London" (not "Greater London") to focus the strongest signal.
+export const AREA_SERVED = [
+  'London',
+  'Buckinghamshire',
+  'Hertfordshire',
+  'Berkshire',
+  'Surrey',
+  'Middlesex',
+  'Oxfordshire',
+  'United Kingdom',
+];
+
 export const SAME_AS = [
   'https://www.instagram.com/hqaviation',
   'https://www.youtube.com/@HQAviationLtd',
