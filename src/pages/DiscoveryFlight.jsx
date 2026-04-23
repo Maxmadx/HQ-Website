@@ -1016,6 +1016,7 @@ function LocationAndFAQ() {
   const [openFaq, setOpenFaq] = useState(null);
   const { t } = usePageText('discovery');
   const { faqs } = useFaqs('discovery', { visibleOnly: true });
+  const [showAllFaqs, setShowAllFaqs] = useState(false);
 
   return (
     <section className="df-location-faq" data-cms-section="faqs-discovery">
@@ -1117,7 +1118,7 @@ function LocationAndFAQ() {
             {faqs.map((faq, i) => (
               <Reveal key={faq.id} delay={i * 0.1}>
                 <div
-                  className={`df-faq__item ${openFaq === i ? 'df-faq__item--open' : ''}`}
+                  className={`df-faq__item ${openFaq === i ? 'df-faq__item--open' : ''}${i >= 6 && !showAllFaqs ? ' df-faq__item--mobile-hidden' : ''}`}
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 >
                   <div className="df-faq__number">{String(i + 1).padStart(2, '0')}</div>
@@ -1139,6 +1140,11 @@ function LocationAndFAQ() {
               </Reveal>
             ))}
           </div>
+          {faqs.length > 6 && !showAllFaqs && (
+            <button className="df-faq__load-more" onClick={() => setShowAllFaqs(true)}>
+              Load More
+            </button>
+          )}
         </div>
       </div>
 
