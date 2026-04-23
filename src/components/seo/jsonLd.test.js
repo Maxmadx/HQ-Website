@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildOrganization, buildWebSite } from './jsonLd';
+import { buildOrganization, buildWebSite, buildLocalBusiness, buildBreadcrumbList } from './jsonLd';
 
 describe('buildOrganization', () => {
   it('returns Organization with required fields', () => {
@@ -25,8 +25,6 @@ describe('buildWebSite', () => {
     expect(buildWebSite().publisher['@id']).toBe(buildOrganization()['@id']);
   });
 });
-
-import { buildLocalBusiness, buildBreadcrumbList } from './jsonLd';
 
 describe('buildLocalBusiness', () => {
   it('returns LocalBusiness with address and geo', () => {
