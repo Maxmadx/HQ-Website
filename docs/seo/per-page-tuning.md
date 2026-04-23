@@ -7,17 +7,29 @@ This v2 replaces v1 (archived at `per-page-tuning-v1-archived.md`). Recommendati
 
 ---
 
-## Context: where HQ already stands
+## Customer profile (anchors all geographic decisions below)
 
-Pre-launch, but Google already indexes the staging/dev domain enough to surface HQ Aviation for some queries. Notable existing rankings:
+**Helicopter ownership and training is a service people travel for** — buyers are HNW individuals + corporates whose home or office is anywhere from central London out to the M25–M40 wealth belt. *Denham itself has no meaningful customer base.* Geographic targeting accordingly:
 
-- **#1 for "new helicopter dealer uk"** (defend)
-- **#1 for "helicopter dealer near london"** (defend)
-- **#1–2 for "helicopter school denham"** (uncontested local term, defend)
-- **Page 1 for "ppl helicopter london"** (room to climb to top 3)
-- **Page 1 for "robinson helicopter maintenance uk"** (room to climb)
+1. **London** — primary anchor. Highest search volume + highest concentration of HNW buyers. Mayfair, Knightsbridge, Belgravia, Chelsea, Holland Park, Kensington, Hampstead, Highgate, St John's Wood, Notting Hill, Richmond, Chiswick.
+2. **England / UK** — sales queries. Helicopter buyers shop nationally; the dealer's location matters less than the dealer's authorised status.
+3. **Wealthy Home Counties commuter belt** — *the actual catchment for training, maintenance, trial lessons*. Listed by drive time from Denham:
+   - **5–15 min:** Beaconsfield, Gerrards Cross, Chalfont St Giles, Stoke Poges, Burnham, Iver
+   - **15–30 min:** Marlow, Cookham, Bourne End, Amersham, Chesham, Northwood, Chorleywood, Radlett, Rickmansworth, Watford, Slough, Maidenhead, Windsor, Eton
+   - **30–45 min:** Henley-on-Thames, Reading (catchment edge), Cobham, Esher, Oxshott, Wentworth, Sunningdale, Ascot, Sunninghill, Richmond, Twickenham, Hampstead Garden Suburb
+4. **Denham** — *trust signal in body content, not a primary keyword target*. Mention as the physical base, the catchment angle, and the local-pack/GBP anchor — but don't waste title real estate on it.
 
-This means the job is partly **defensive** (don't break the existing ranks) and partly **offensive** (new optimised landing pages where competitors only have homepages).
+## What HQ already ranks for (defend, don't over-invest)
+
+Pre-launch, Google already surfaces HQ Aviation for some queries:
+
+- **#1 for "new helicopter dealer uk"** (defend — high-value)
+- **#1 for "helicopter dealer near london"** (defend — high-value)
+- **Page 1 for "ppl helicopter london"** (push to top 3 — high-value)
+- **Page 1 for "robinson helicopter maintenance uk"** (push to top 3 — high-value)
+- **#1 for "helicopter school denham"** (incidentally — low-volume hyper-local term, costs nothing to keep but not a strategic priority)
+
+The job is partly **defensive** (don't break existing London/UK ranks) and partly **offensive** (new optimised landing pages where competitors only have homepages).
 
 ## The competitive landscape (from SERP research)
 
@@ -98,14 +110,14 @@ For each page I list: **target query · title · meta · H1 · schema · 3 key b
 ### 1. Landing — `/`
 **File:** `src/pages/Experimentation.jsx`
 **Target query:** branded + "robinson helicopter dealer uk" / "robinson helicopters london"
-**Title:** `Robinson Helicopters · London · Sales · Training · Maintenance`
-**Meta description:** `Authorised Robinson Helicopter dealer at Denham Aerodrome, 30 minutes from central London. New R22, R44, R66 and R88 sales. PPL/CPL/type-rating training. CAA Part-145 maintenance. Worldwide expeditions.`
+**Title:** `Robinson Helicopters London · Sales · Training · Maintenance`
+**Meta description:** `Authorised Robinson Helicopter dealer just outside London. New R22, R44, R66 and R88 sales UK-wide. PPL/CPL/type-rating training 30 minutes from central London — convenient from Mayfair, Chelsea, Cobham, Beaconsfield, Marlow. CAA Part-145 maintenance. Worldwide expeditions.`
 **H1:** `HQ Aviation` *(brand-led; visual hero already carries this)*
 **Schema (already wired site-wide):** Organization + WebSite + LocalBusiness
 **Body sections to add or strengthen:**
 - Short "What we do" text section listing the 4 services with one-line descriptions (Helpful Content signal — Google rewards content that lets users "learn enough to achieve their goal")
 - "Robinson Authorised Dealer" badge with link to Robinson's own dealer verification page (verifiable trust signal — see Topic 3 best practices)
-- "Serving London, Buckinghamshire, Hertfordshire, Berkshire and Surrey" line for geo-semantics
+- "Serving London and the wealthy commuter belt — Mayfair, Chelsea, Hampstead, Cobham, Wentworth, Beaconsfield, Marlow, Henley, Ascot — plus all of Buckinghamshire, Hertfordshire, Berkshire, Surrey, Middlesex and Oxfordshire" line for geo-semantics + HNW signalling
 
 **Evidence:** Heli Air's homepage ranks #1 for "robinson helicopter for sale uk" partly because their title ("Helicopter Sales - Heli Air - New and Used Robinson Helicopters, Bell Helicopters") explicitly names the OEM. We can mirror this, but our differentiator is *authorised* (Heli Air isn't).
 
@@ -163,9 +175,9 @@ Per-page values (use as defaults, edit any):
 ### 7. PPL(H) Training — `/training/ppl`
 **File:** `src/pages/FinalPPL.jsx`
 **Target query:** `ppl helicopter london` (HQ already page 1 — climb to top 3)
-**Title:** `PPL(H) Helicopter Training · London (Denham)`
-**Meta description:** `Earn your Private Pilot Licence (Helicopter) at Denham Aerodrome — 30 minutes from central London. CAA-approved Part-FCL Approved Training Organisation. R22 and R44 fleet, structured 45-hour syllabus, examiner-rated instructors.`
-**H1:** `PPL(H) Helicopter Training in London`
+**Title:** `PPL(H) Helicopter Pilot Training · London`
+**Meta description:** `Earn your Private Pilot Licence (Helicopter) just outside London — 30 minutes from Mayfair, 15 from Beaconsfield, 35 from Cobham. CAA-approved Part-FCL Approved Training Organisation. R22 and R44 fleet, 45-hour syllabus, examiner-rated instructors.`
+**H1:** `PPL(H) Helicopter Pilot Training in London`
 
 **Schema:** `Course` (one entry — combined with R44 type-rating + CPL + trial lesson satisfies Google's 3-course minimum) + `FAQPage` (for AI Overview citation, NOT SERP rich snippets — see Critical Fix #2)
 
@@ -173,7 +185,8 @@ Per-page values (use as defaults, edit any):
 - **Transparent cost breakdown** — hourly aircraft rates, ground school, exam fees, CAA medical (~£190), skills test (~£300). Hiding price fails Helpful Content. *[Source: Google Helpful Content guidance](https://developers.google.com/search/docs/fundamentals/creating-helpful-content)*
 - **CAA Part-FCL ATO badge + ATO number** + link to CAA approved-organisation register. Single biggest E-E-A-T lift for YMYL content.
 - **Named Chief Flying Instructor** with credentials and link to CAA pilot-licence register. *[Source: Google Search Quality Rater Guidelines, Sept 2025](https://guidelines.raterhub.com/searchqualityevaluatorguidelines.pdf)*
-- **FAQ block** answering "How long does PPL(H) take?", "How much does it cost?", "What aircraft will I train on?" — self-contained, ≤300 words each, matches visible page text. (For AI Overviews per current FAQ schema policy.)
+- **"Convenient from…" geographic block** with drive times: 30 min from Mayfair / Chelsea, 35 from Cobham / Wentworth, 25 from Marlow / Henley, 15 from Beaconsfield / Gerrards Cross. Captures the HNW commuter-belt "near me" intent and signals you serve the right catchment.
+- **FAQ block** answering "How long does PPL(H) take?", "How much does it cost?", "What aircraft will I train on?", "Where in London do students typically come from?" — self-contained, ≤300 words each, matches visible page text. (For AI Overviews per current FAQ schema policy.)
 
 **Evidence:** Helicopterservices.co.uk wins `/training/private-pilot-licence` slot with benefit-led H1 *"Fly helicopters privately with a PPL(H)"* — softer angle than competitors' keyword-stuffed H1s. Elstree Helicopters wins partly via pricing cards above the fold. We can borrow both: a benefit-led H2/intro under the keyword H1, and visible cost transparency above the fold.
 
@@ -194,7 +207,7 @@ Per-page values (use as defaults, edit any):
 **File:** `src/pages/TypeRating.jsx`
 **Target query:** `robinson type rating uk` / `r66 type rating uk` / `r44 type rating uk`
 **Title:** `Robinson Type Ratings · R22 R44 R66 R88 · London`
-**Meta description:** `Add a Robinson R22, R44, R66 or R88 type rating to your existing helicopter licence. CAA-approved type-rating training at Denham — examiner-rated instructors, full conversion or differences training, recurrency available.`
+**Meta description:** `Add a Robinson R22, R44, R66 or R88 type rating to your existing helicopter licence. CAA-approved type-rating training 30 minutes from central London — examiner-rated instructors, full conversion or differences training, recurrency available.`
 **H1:** `Robinson Type Rating Training`
 **Schema:** array of 4 `Course` entries (one per type) — these alone satisfy the 3-course minimum.
 **Body sections:** matrix of types × course duration × prerequisites × indicative cost; recurrent/refresher schedule; "differences vs full type" decision aid.
@@ -204,8 +217,8 @@ Per-page values (use as defaults, edit any):
 ### 10. Trial Lessons — `/training/trial-lessons`
 **File:** `src/pages/DiscoveryFlight.jsx`
 **Target query:** `helicopter experience london` (dominated by aggregators) + `helicopter trial lesson uk` (more winnable)
-**Title:** `Helicopter Trial Lessons · London (Denham)`
-**Meta description:** `Take the controls of a real Robinson helicopter on a guided trial lesson at Denham Aerodrome, just outside London. 30-minute or 60-minute options in R22, R44 or R66. Available daily. Gift vouchers redeemable any future date.`
+**Title:** `Helicopter Trial Lessons · London`
+**Meta description:** `Take the controls of a real Robinson helicopter on a guided trial lesson just outside London — 30 minutes from Mayfair, easy from Cobham, Marlow, Beaconsfield. 30-minute or 60-minute options in R22, R44 or R66. Available daily. Gift vouchers redeemable any future date.`
 **H1:** `Helicopter Trial Lessons`
 
 **Schema:**
@@ -218,6 +231,7 @@ Per-page values (use as defaults, edit any):
 - **Dual hero CTA** — "Book for myself" / "Buy as a gift" (separates conversion funnels from the first scroll)
 - **Gift voucher mechanics** — validity period, transferability, redemption process (gift buyers shop on these specifics)
 - **What to expect** — duration, weight limits, what to wear, parking, photography, can family watch (all common pre-purchase concerns; resolves intent without forcing a phone call)
+- **"Convenient from…" block** — drive times from Mayfair, Chelsea, Cobham, Wentworth, Beaconsfield, Marlow, Ascot, Henley, Richmond. Trial-lesson buyers are gift-givers in HNW areas — meeting them with their hometown by name signals the right audience match.
 
 **URL note (out of Plan 1 scope):** Adding a separate page at `/helicopter-experience-london` with canonical pointing here would let HQ target both URL slugs. Worth a follow-up plan — `/helicopter-experience-london` exact-matches the dominant gift-market query but gift-buyers + experience-seekers also dominate the same SERP. *[Source: SERP research for Q4]*
 
@@ -228,14 +242,15 @@ Per-page values (use as defaults, edit any):
 ### 11. Maintenance — `/maintenance`
 **File:** `src/pages/FinalMaintenance.jsx`
 **Target query:** `robinson helicopter maintenance uk` (HQ already page 1)
-**Title:** `Robinson Helicopter Maintenance UK · CAA Part-145 · Denham`
-**Meta description:** `Robinson Helicopter Company Authorised Service Center at Denham Aerodrome. CAA Part-145 [number]. Routine inspections, scheduled maintenance, 12-year overhauls, AOG response. R22, R44, R66 and R88. Pickup and ferry available.`
+**Title:** `Robinson Helicopter Maintenance · UK · CAA Part-145`
+**Meta description:** `Robinson Helicopter Company Authorised Service Center near London. CAA Part-145 [number]. Routine inspections, scheduled maintenance, 12-year overhauls, AOG response across the south-east. R22, R44, R66 and R88. Pickup and ferry available UK-wide.`
 **H1:** `Robinson Helicopter Maintenance & Overhauls`
 **Schema:** `Service` (`serviceType: "Helicopter Maintenance"`) + `FAQPage` (AI Overview)
 **Body sections:**
 - **Maintenance schedule per type** (50hr / 100hr / annual / 12-year) — calendar/visual block
 - **Indicative cost transparency** for inspection categories. Owners search on cost; the page that answers wins.
 - **CAA Part-145 number + Robinson Authorised Service Center badge** — both link to verifiable external sources. Major trust signal.
+- **Service catchment block** — owner-pilots based at Fairoaks, White Waltham, Wycombe Air Park, Stapleford, Elstree, Goodwood etc. Pickup and ferry available across the south-east. Names the airfields where target customers actually base their aircraft (much higher signal than naming towns for this audience).
 
 **Evidence:** Heli Air ranks for this query with `/helicopter-maintenance-2/` — title `"Helicopter Maintenance - Robinson, Bell, Airbus - CAMO & P145"`. The `-2` suffix is technical-debt hangover from URL migration; their slug hygiene is poor. HQ's clean `/maintenance` slug + Part-145 + Authorised Service Center claim is structurally stronger.
 
