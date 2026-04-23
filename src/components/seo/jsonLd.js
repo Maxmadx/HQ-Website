@@ -10,6 +10,7 @@ import {
   GEO,
   OPENING_HOURS,
   SAME_AS,
+  AREA_SERVED,
   absoluteUrl,
 } from '../../lib/seoDefaults';
 
@@ -72,6 +73,7 @@ export function buildLocalBusiness() {
       longitude: GEO.longitude,
     },
     openingHours: OPENING_HOURS,
+    areaServed: AREA_SERVED.map((name) => ({ '@type': 'AdministrativeArea', name })),
     priceRange: '£££',
   };
 }
