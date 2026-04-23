@@ -25,6 +25,7 @@ const leadsRouter = require('./api/leads');
 const stripeDiscoveryRouter = require('./api/stripe-discovery');
 const analyticsRouter = require('./api/analytics-api');
 const pressClickRouter = require('./api/press-click');
+const sitemapRouter = require('./api/sitemap');
 
 const app = express();
 app.set('trust proxy', 1); // Read real IP from X-Forwarded-For (required for req.ip behind proxies)
@@ -290,6 +291,11 @@ app.use('/api/analytics', express.json(), analyticsRouter);
 // PRESS CLICK ROUTES
 // ============================================
 app.use('/api/press-click', express.json(), pressClickRouter);
+
+// ============================================
+// SITEMAP — public, no auth (search engines fetch this)
+// ============================================
+app.use(sitemapRouter);
 
 // ============================================
 // WALL OF COOL ROUTES
