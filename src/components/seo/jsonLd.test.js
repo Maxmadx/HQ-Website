@@ -20,4 +20,8 @@ describe('buildWebSite', () => {
     expect(site.potentialAction['@type']).toBe('SearchAction');
     expect(site.potentialAction.target).toContain('{search_term_string}');
   });
+
+  it('publisher @id references the Organization @id', () => {
+    expect(buildWebSite().publisher['@id']).toBe(buildOrganization()['@id']);
+  });
 });
