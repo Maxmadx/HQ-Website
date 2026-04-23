@@ -298,6 +298,7 @@ function FinalPPL() {
   const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
 
   const { faqs } = useFaqs('ppl', { visibleOnly: true });
+  const [showAllFaqs, setShowAllFaqs] = useState(false);
 
   return (
     <div className="fppl">
@@ -820,7 +821,7 @@ function FinalPPL() {
               {faqs.map((faq, i) => (
                 <Reveal key={faq.id} delay={i * 0.1}>
                   <div
-                    className={`df-faq__item ${openFaq === i ? 'df-faq__item--open' : ''}`}
+                    className={`df-faq__item ${openFaq === i ? 'df-faq__item--open' : ''}${i >= 6 && !showAllFaqs ? ' df-faq__item--mobile-hidden' : ''}`}
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   >
                     <div className="df-faq__number">{String(i + 1).padStart(2, '0')}</div>
@@ -842,6 +843,11 @@ function FinalPPL() {
                 </Reveal>
               ))}
             </div>
+            {faqs.length > 6 && !showAllFaqs && (
+              <button className="df-faq__load-more" onClick={() => setShowAllFaqs(true)}>
+                Load More
+              </button>
+            )}
           </div>
         </div>
 
