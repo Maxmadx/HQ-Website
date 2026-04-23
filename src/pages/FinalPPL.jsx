@@ -1651,6 +1651,8 @@ function FinalPPL() {
           flex-direction: column;
         }
         .df-location-faq__right {
+          height: 0;
+          min-height: 100%;
           overflow: hidden;
         }
 
@@ -2851,6 +2853,8 @@ function FinalPPL() {
         @media (max-width: 768px) {
           .df-location-faq__right {
             overflow-y: visible;
+            height: auto;
+            min-height: unset;
           }
           .df-faq__list {
             overflow-y: visible;
