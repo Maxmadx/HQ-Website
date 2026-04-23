@@ -6,7 +6,7 @@ export const ORG_LEGAL_NAME = 'HQ Aviation Ltd';
 export const ORG_DESCRIPTION =
   "UK's premier Robinson Helicopter dealer offering flight training, aircraft sales, maintenance services and worldwide expeditions. Based at Denham Aerodrome, London.";
 export const ORG_LOGO_PATH = '/assets/images/logos/hq/hq-aviation-logo-black.png';
-export const DEFAULT_OG_IMAGE = '/og-default.png';
+export const DEFAULT_OG_IMAGE = '/og-default.jpg';
 export const TWITTER_HANDLE = ''; // none yet
 export const DEFAULT_LANG = 'en-GB';
 export const DEFAULT_LOCALE = 'en_GB';
