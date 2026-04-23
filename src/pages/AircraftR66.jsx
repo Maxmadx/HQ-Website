@@ -34,6 +34,7 @@ import '../assets/css/components.css';
 
 // Import Footer
 import FooterMinimal from '../components/FooterMinimal';
+import R66Case from '../components/R66/R66Case';
 
 // ============================================================================
 // COMPONENT: R66Header
@@ -788,13 +789,13 @@ function R66Introduction() {
     };
     update();
 
-    // Progressively blur + darken intro as specs rises, but ONLY after the
+    // Progressively blur + lighten intro as variants rises, but ONLY after the
     // expedition container has reached its sticky pin at catch-top. Before
     // that, we're still scrolling through the intro content naturally and
     // no blur should apply. We gate directly on expedition's live position
     // so the start point is accurate regardless of stickTop fallback math.
     const MAX_BLUR = 10;
-    const nextSection = document.querySelector('.r66-specs');
+    const nextSection = document.querySelector('.r66-variants');
 
     const onScroll = () => {
       const el = sectionRef.current;
@@ -813,29 +814,29 @@ function R66Introduction() {
         const expTop = expedition.getBoundingClientRect().top;
         if (expTop > catchTop) {
           el.style.setProperty('--r66-intro-blur', '0px');
-          el.style.setProperty('--r66-intro-darken', '0');
+          el.style.setProperty('--r66-intro-lighten', '0');
           return;
         }
       }
 
-      // After expedition has pinned, progress ramps 0→1 as specs rises from
-      // its pin-moment position to the viewport top.
-      // At pin: specs.top = catchTop + (introH - expOffsetFromIntro).
+      // After expedition has pinned, progress ramps 0→1 as variants rises
+      // from its pin-moment position to the viewport top.
+      // At pin: next.top = catchTop + (introH - expOffsetFromIntro).
       const introRect = el.getBoundingClientRect();
       const introH = el.offsetHeight;
       const expOffset = expedition
         ? expedition.getBoundingClientRect().top - introRect.top
         : 0;
-      const specsTopAtPin = Math.max(1, catchTop + introH - expOffset);
-      const progress = Math.min(1, Math.max(0, 1 - rect.top / specsTopAtPin));
+      const nextTopAtPin = Math.max(1, catchTop + introH - expOffset);
+      const progress = Math.min(1, Math.max(0, 1 - rect.top / nextTopAtPin));
       el.style.setProperty('--r66-intro-blur', `${progress * MAX_BLUR}px`);
-      // Ease-in for darken: stays relatively light for most of the scroll,
-      // then ramps up quickly toward the end. Remap so full dark is reached
-      // before progress=1 (the tail of progress stays pinned at black).
-      const DARK_COMPLETE = 0.95;
-      const adjusted = Math.min(1, progress / DARK_COMPLETE);
-      const darken = Math.pow(adjusted, 8);
-      el.style.setProperty('--r66-intro-darken', `${darken}`);
+      // Ease-in for the fade: stays nearly clear for most of the scroll,
+      // then ramps up quickly toward the end. Remap so full opacity is
+      // reached before progress=1 (tail stays pinned at fully covered).
+      const FADE_COMPLETE = 0.95;
+      const adjusted = Math.min(1, progress / FADE_COMPLETE);
+      const lighten = Math.pow(adjusted, 8);
+      el.style.setProperty('--r66-intro-lighten', `${lighten}`);
     };
     onScroll();
 
@@ -954,56 +955,9 @@ function R66Specifications() {
   const [activeSpec, setActiveSpec] = useState(null);
   const [isExtendedRange, setIsExtendedRange] = useState(false);
   const r66Specs = isExtendedRange ? r66SpecsExtended : r66SpecsStandard;
-  const sectionRef = useRef(null);
-
-  useEffect(() => {
-    // Sticky-at-end pattern so .r66-variants rises up over the pinned specs
-    // section (same shape as R66Introduction).
-    const update = () => {
-      const el = sectionRef.current;
-      if (!el) return;
-      const vh = window.innerHeight;
-      const specsH = el.offsetHeight;
-      const stickTop = Math.min(0, vh - specsH);
-      document.documentElement.style.setProperty('--r66-specs-stick-top', `${stickTop}px`);
-    };
-    update();
-
-    // Progressively blur + lighten specs as variants rises. Same pacing as
-    // the intro->specs transition: ease-in with DARK_COMPLETE=0.95, pow 8.
-    const MAX_BLUR = 10;
-    const nextSection = document.querySelector('.r66-variants');
-
-    const onScroll = () => {
-      const el = sectionRef.current;
-      if (!el || !nextSection) return;
-      const rect = nextSection.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const progress = Math.min(1, Math.max(0, (vh - rect.top) / vh));
-      el.style.setProperty('--r66-specs-blur', `${progress * MAX_BLUR}px`);
-      const DARK_COMPLETE = 0.95;
-      const adjusted = Math.min(1, progress / DARK_COMPLETE);
-      const eased = Math.pow(adjusted, 8);
-      el.style.setProperty('--r66-specs-lighten', `${eased}`);
-      el.style.pointerEvents = eased >= 0.98 ? 'none' : '';
-    };
-    onScroll();
-
-    window.addEventListener('resize', update);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    const ro = new ResizeObserver(update);
-    if (sectionRef.current) ro.observe(sectionRef.current);
-    return () => {
-      window.removeEventListener('resize', update);
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      ro.disconnect();
-    };
-  }, []);
 
   return (
-    <section ref={sectionRef} className="r66-specs">
+    <section className="r66-specs">
       <div className="r66-specs__container">
         <div className="r66-specs__split">
           <div className="r66-specs__split-left">
@@ -1372,9 +1326,56 @@ function R66Expedition() {
 // ============================================================================
 function R66Variants() {
   const [activeVariant, setActiveVariant] = useState(0);
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    // Sticky-at-end pattern so .r66-specs rises up over the pinned variants
+    // section (same shape as R66Introduction's handoff to its next section).
+    const update = () => {
+      const el = sectionRef.current;
+      if (!el) return;
+      const vh = window.innerHeight;
+      const variantsH = el.offsetHeight;
+      const stickTop = Math.min(0, vh - variantsH);
+      document.documentElement.style.setProperty('--r66-variants-stick-top', `${stickTop}px`);
+    };
+    update();
+
+    // Progressively blur + darken variants as specs rises. Same pacing as
+    // the intro->variants transition: ease-in with FADE_COMPLETE=0.95, pow 8.
+    const MAX_BLUR = 10;
+    const nextSection = document.querySelector('.r66-specs');
+
+    const onScroll = () => {
+      const el = sectionRef.current;
+      if (!el || !nextSection) return;
+      const rect = nextSection.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const progress = Math.min(1, Math.max(0, (vh - rect.top) / vh));
+      el.style.setProperty('--r66-variants-blur', `${progress * MAX_BLUR}px`);
+      const FADE_COMPLETE = 0.95;
+      const adjusted = Math.min(1, progress / FADE_COMPLETE);
+      const eased = Math.pow(adjusted, 8);
+      el.style.setProperty('--r66-variants-darken', `${eased}`);
+      el.style.pointerEvents = eased >= 0.98 ? 'none' : '';
+    };
+    onScroll();
+
+    window.addEventListener('resize', update);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    const ro = new ResizeObserver(update);
+    if (sectionRef.current) ro.observe(sectionRef.current);
+    return () => {
+      window.removeEventListener('resize', update);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      ro.disconnect();
+    };
+  }, []);
 
   return (
-    <section className="r66-variants">
+    <section ref={sectionRef} className="r66-variants">
       <div className="r66-variants__container">
         <Reveal>
           <div className="r66-section-header r66-section-header--center">
@@ -2370,7 +2371,7 @@ const R66Styles = () => (
     .r66-intro {
       /* Sticky-at-end pattern (mirrors /aircraft/r44): intro scrolls normally
          so the internal sticky left column works, then pins only when its
-         bottom reaches the viewport bottom so specs can rise up over it.
+         bottom reaches the viewport bottom so variants can rise up over it.
          --r66-intro-stick-top is set in JS to min(0, viewportH - introH). */
       position: sticky;
       top: var(--r66-intro-stick-top, 0);
@@ -2378,9 +2379,9 @@ const R66Styles = () => (
       background: linear-gradient(to right, rgba(236, 236, 236, 0.82) 50%, rgba(250, 249, 246, 0.82) 50%);
       backdrop-filter: blur(24px) saturate(1.05);
       -webkit-backdrop-filter: blur(24px) saturate(1.05);
-      /* Scroll-linked blur; darken is applied via ::after overlay so it
-         actually lands on a solid dark frame at progress=1 (instead of
-         fading out alongside a whole-element opacity fade). */
+      /* Scroll-linked blur; the palette fade is applied via ::after overlay
+         so it lands on a solid frame at progress=1 (instead of fading out
+         alongside a whole-element opacity fade). */
       filter: blur(var(--r66-intro-blur, 0px));
     }
 
@@ -2400,14 +2401,14 @@ const R66Styles = () => (
       z-index: 0;
     }
 
-    /* Dark overlay that fades in as specs rises, so intro visually turns
-       into the dark specs palette before specs physically covers it. */
+    /* Light overlay that fades in as variants rises, so intro visually turns
+       into the variants' pale palette before variants physically covers it. */
     .r66-intro::after {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(to right, #0a0a0a 50%, #000 50%);
-      opacity: var(--r66-intro-darken, 0);
+      background: #faf9f6;
+      opacity: var(--r66-intro-lighten, 0);
       pointer-events: none;
       z-index: 2;
     }
@@ -2600,26 +2601,14 @@ const R66Styles = () => (
        SPECIFICATIONS SECTION
        ==================================================================== */
     .r66-specs {
-      /* Sticky-at-end (same pattern as intro) so variants can rise over it
-         once we've finished scrolling through the specs content. */
-      position: sticky;
-      top: var(--r66-specs-stick-top, 0);
+      /* Rises above every pinned/sticky earlier section (highlights, intro,
+         variants). Relative + z-index 50 creates a stacking context that
+         sits above the rest. */
+      position: relative;
+      z-index: 50;
       padding: 5rem 2rem;
       background: linear-gradient(to right, #282828 50%, #1c1c1c 50%);
       color: #fff;
-      filter: blur(var(--r66-specs-blur, 0px));
-    }
-
-    /* Light overlay that fades in as variants rises, so specs visually turns
-       into variants' pale palette before variants physically covers it. */
-    .r66-specs::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: #faf9f6;
-      opacity: var(--r66-specs-lighten, 0);
-      pointer-events: none;
-      z-index: 2;
     }
 
     @media (min-width: 901px) {
@@ -3320,16 +3309,30 @@ const R66Styles = () => (
        VARIANTS SECTION
        ==================================================================== */
     .r66-variants {
-      /* Rises above every pinned/sticky earlier section (highlights, intro,
-         specs). Relative + z-index 50 creates a stacking context that sits
-         above the rest. */
-      position: relative;
-      z-index: 50;
+      /* Sticky-at-end (same pattern as intro) so specs can rise over it once
+         we've finished scrolling through the variants content. */
+      position: sticky;
+      top: var(--r66-variants-stick-top, 0);
       padding: 5rem 2rem;
       background: #faf9f6;
+      filter: blur(var(--r66-variants-blur, 0px));
+    }
+
+    /* Dark overlay that fades in as specs rises, so variants visually turns
+       into the dark specs palette before specs physically covers it. */
+    .r66-variants::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, #282828 50%, #1c1c1c 50%);
+      opacity: var(--r66-variants-darken, 0);
+      pointer-events: none;
+      z-index: 2;
     }
 
     .r66-variants__container {
+      position: relative;
+      z-index: 1;
       max-width: 1200px;
       margin: 0 auto;
     }
@@ -5376,10 +5379,11 @@ function AircraftR66() {
         <div className="r66-sticky-stack">
           <R66Highlights />
           <R66Introduction />
-          <R66Specifications />
           <R66Variants />
+          <R66Specifications />
         </div>
         <R66NXGCockpit />
+        <R66Case />
         <R66Gallery />
         <R66CTA />
       </main>

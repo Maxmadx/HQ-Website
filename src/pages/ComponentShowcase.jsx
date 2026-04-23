@@ -4,6 +4,7 @@ import '../assets/css/approved-components.css';
 
 // Import all approved components
 import TrainingSummary from '../components/Training/TrainingSummary';
+import BeforeAfter from '../components/Rebuilds/BeforeAfter';
 import FacilityGallery from '../components/Maintenance/FacilityGallery';
 import FacilityServicesCarousel from '../components/Maintenance/FacilityServicesCarousel';
 import FacilityServicesDetail from '../components/Maintenance/FacilityServicesDetail';
@@ -804,6 +805,12 @@ const ComponentShowcase = () => {
       <SectionTitle>Animations</SectionTitle>
       <TypewriterEffect />
       <StaggeredReveal />
+
+      {/* Sales / Rebuilds */}
+      <SectionTitle>Sales / Rebuilds</SectionTitle>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 2rem' }}>
+        <BeforeAfter />
+      </div>
 
       {/* Footer */}
       <SectionTitle>Footer</SectionTitle>

@@ -20,7 +20,7 @@ export default function AdminMiscItems() {
   return (
     <AdminLayout>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#111827' }}>Miscellaneous Items</h1>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#111827' }}>HQ Store</h1>
         <Link
           to="/admin/misc/new"
           style={{

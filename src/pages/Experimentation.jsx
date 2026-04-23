@@ -1491,6 +1491,7 @@ function Experimentation() {
   // ── State ───────────────────────────────────────────────────────────────────
   const [aboutLayout, setAboutLayout] = useState(0); // 0=right, 1=above, 2=below, 3=above+below, 4=three-col
   const [activeNavSection, setActiveNavSection] = useState(null);
+  const [openNavDropdown, setOpenNavDropdown] = useState(null);
   const [rebuildStep, setRebuildStep] = useState(0);
   const [salesExpanded, setSalesExpanded] = useState(() => ({ new: window.innerWidth > 768, preowned: false, rebuilt: false, tradein: false, unmanned: false, misc: false }));
   const [unmannedFormOpen, setUnmannedFormOpen] = useState(false);
@@ -2700,26 +2701,40 @@ function Experimentation() {
   // Navigation items for accordion
   const navItems = [
     { id: 'training', label: 'Flying', icon: '01', subItems: [
-      { label: 'Discovery Flight', to: '/training/trial-lessons' },
+      { label: 'Training Overview', to: '/training' },
+      { label: 'Trial Lessons', to: '/training/trial-lessons' },
       { label: 'Private Pilot Licence', to: '/training/ppl' },
+      { label: 'Commercial Pilot Licence', to: '/training/commercial' },
       { label: 'Type Rating', to: '/training/type-rating' },
       { label: 'Night Rating', to: '/training/night-rating' },
+      { label: 'Advanced Training', to: '/training/advanced' },
+      { label: 'Self-Fly Hire', to: '/self-fly-hire' },
+      { label: 'Training FAQ', to: '/training/faq' },
     ]},
     { id: 'expeditions', label: 'Expeditions', icon: '02', subItems: [
       { label: 'Worldwide Expeditions', to: '/expeditions' },
-      { label: 'HQ Trips', to: '/expeditions/calendar' },
+      { label: 'HQ Trips Calendar', to: '/expeditions/calendar' },
+      { label: 'Helicopter Tour of London', to: '/helicopter-tour-of-london' },
     ]},
     { id: 'sales', label: 'Sales', icon: '03', subItems: [
-      { label: 'New Aircraft', to: '/sales/new' },
+      { label: 'New Aircraft', to: '/aircraft-sales' },
+      { label: 'R22 Beta II', to: '/aircraft-sales/new/r22' },
+      { label: 'R44 Raven II', to: '/aircraft-sales/new/r44' },
+      { label: 'R66 Turbine', to: '/aircraft-sales/new/r66' },
+      { label: 'R88', to: '/aircraft-sales/new/r88' },
       { label: 'Pre-Owned', to: '/sales/pre-owned' },
       { label: 'Rebuilds', to: '/sales/rebuilds' },
     ]},
     { id: 'maintenance', label: 'Maintenance', icon: '04', subItems: [
-      { label: 'Servicing', to: '/maintenance' },
+      { label: 'Maintenance Overview', to: '/maintenance' },
       { label: 'Parts', to: '/parts' },
     ]},
     { id: 'contact', label: 'Contact', icon: '05', subItems: [
-      { label: 'Get in Touch', to: '/contact' },
+      { label: 'Contact Us', to: '/contact' },
+      { label: 'About Us', to: '/about-us' },
+      { label: 'Meet the Team', to: '/about-us/team' },
+      { label: 'Captain Q', to: '/about-us/captain-q' },
+      { label: 'Careers', to: '/contact/careers' },
     ]},
     { id: 'pricing', label: 'Pricing', icon: '06', subItems: [
       { label: 'Training', to: '/#pricing' },
@@ -2756,6 +2771,25 @@ function Experimentation() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => { window.removeEventListener('scroll', handleScroll); cancelAnimationFrame(navRaf); };
   }, []);
+
+  // Close mobile nav dropdown on outside click or viewport growth
+  useEffect(() => {
+    if (openNavDropdown === null) return;
+    const handleOutside = (e) => {
+      if (navRef.current && !navRef.current.contains(e.target)) {
+        setOpenNavDropdown(null);
+      }
+    };
+    const handleResize = () => {
+      if (window.innerWidth > 900) setOpenNavDropdown(null);
+    };
+    document.addEventListener('pointerdown', handleOutside);
+    window.addEventListener('resize', handleResize);
+    return () => {
+      document.removeEventListener('pointerdown', handleOutside);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [openNavDropdown]);
 
   // Compact nav: after the nav has been stuck for 200px, hide the "Explore" header
   useEffect(() => {
@@ -3525,7 +3559,7 @@ function Experimentation() {
 
       {/* ===== HORIZONTAL ACCORDION NAVIGATION ===== */}
       <nav
-        className={`fd-nav ${navCompact ? 'fd-nav--compact' : ''} ${(navHidden && !navManuallyShown) || navManuallyClosed ? 'fd-nav--hidden' : ''}`}
+        className={`fd-nav ${navCompact ? 'fd-nav--compact' : ''} ${(navHidden && !navManuallyShown) || navManuallyClosed ? 'fd-nav--hidden' : ''} ${openNavDropdown ? 'fd-nav--panel-open' : ''}`}
         ref={navRef}
       >
         <div className="fd-nav__header">
@@ -3538,11 +3572,19 @@ function Experimentation() {
           {navItems.map((item) => (
             <div
               key={item.id}
-              className={`fd-nav__item-wrap ${activeNavSection === item.id ? 'fd-nav__item-wrap--active' : ''}`}
+              className={`fd-nav__item-wrap ${activeNavSection === item.id ? 'fd-nav__item-wrap--active' : ''} ${openNavDropdown === item.id ? 'fd-nav__item-wrap--open' : ''}`}
             >
               <button
-                className={`fd-nav__item ${activeNavSection === item.id ? 'fd-nav__item--active' : ''}`}
-                onClick={() => scrollToSection(item.id)}
+                className={`fd-nav__item ${activeNavSection === item.id ? 'fd-nav__item--active' : ''} ${openNavDropdown === item.id ? 'fd-nav__item--open' : ''}`}
+                onClick={() => {
+                  const hasSubs = item.subItems && item.subItems.length > 0;
+                  if (window.innerWidth <= 900 && hasSubs) {
+                    setOpenNavDropdown((prev) => (prev === item.id ? null : item.id));
+                  } else {
+                    scrollToSection(item.id);
+                  }
+                }}
+                aria-expanded={openNavDropdown === item.id}
               >
                 <span className="fd-nav__item-icon">{item.icon}</span>
                 <span className="fd-nav__item-label">{item.label}</span>
@@ -3557,6 +3599,30 @@ function Experimentation() {
             </div>
           ))}
         </div>
+
+        {openNavDropdown && (() => {
+          const currentItem = navItems.find((n) => n.id === openNavDropdown);
+          if (!currentItem || !currentItem.subItems || !currentItem.subItems.length) return null;
+          return (
+            <div className="fd-nav__mobile-panel" role="menu">
+              <div className="fd-nav__mobile-panel-head">
+                <span className="fd-nav__mobile-panel-icon">{currentItem.icon}</span>
+                <span className="fd-nav__mobile-panel-title">{currentItem.label}</span>
+              </div>
+              {currentItem.subItems.map((sub) => (
+                <Link
+                  key={sub.to}
+                  to={sub.to}
+                  className="fd-nav__mobile-panel-item"
+                  onClick={() => setOpenNavDropdown(null)}
+                  role="menuitem"
+                >
+                  {sub.label}
+                </Link>
+              ))}
+            </div>
+          );
+        })()}
       </nav>
 
       {/* ===== PARALLAX: TRAINING ===== */}
@@ -4168,7 +4234,7 @@ function Experimentation() {
           <span className={`fd-sales__chevron ${salesExpanded.preowned ? 'fd-sales__chevron--open' : ''}`}><i className="fas fa-chevron-down"></i></span>
         </h3>
         <div className={`fd-sales__collapse ${salesExpanded.preowned ? 'fd-sales__collapse--open' : ''}`}>
-        <h4 className="fd-sales__section-title">Why HQ?</h4>
+        <h4 className="fd-sales__why-hq-title">Why HQ?</h4>
         <p className="fd-sales__section-desc" style={{ marginBottom: '1.5rem' }}>
           Our clients regularly trade, upgrade and renew their fleets — which means we always have access to quality pre-owned aircraft at every stage of life. Many come directly from owners whose maintenance we've managed for years, so we know every hour, every component and every logbook entry. When the right aircraft isn't already on our doorstep, we'll source it — inspecting the airframe, engine and avionics on-site before it ever reaches you.
         </p>
@@ -4649,7 +4715,7 @@ function Experimentation() {
             className={`fd-sales__section-title fd-sales__section-title--toggle ${salesExpanded.misc ? 'fd-sales__section-title--active' : ''}`}
             onClick={() => setSalesExpanded((prev) => ({ ...prev, misc: !prev.misc }))}
           >
-            Miscellaneous
+            HQ Store
             <span className={`fd-sales__chevron ${salesExpanded.misc ? 'fd-sales__chevron--open' : ''}`}>
               <i className="fas fa-chevron-down"></i>
             </span>
@@ -4701,7 +4767,7 @@ function Experimentation() {
 
             <div className="fd-sales__actions">
               <Link to="/misc" className="fd-sales__btn fd-sales__btn--primary">
-                Browse All Miscellaneous Items
+                Browse All HQ Store Items
               </Link>
             </div>
           </div>
@@ -4726,7 +4792,7 @@ function Experimentation() {
         <div className="fd-maint__intro" ref={maintIntroRef}>
           <div className="fd-maint__left">
             <div className="fd-maint__header-sticky" ref={maintHeaderRef}>
-              <span className="fd-sales__pre-title" ref={maintPreTitleRef}>The Robinson Specialists</span>
+              <span className="fd-sales__pre-title" ref={maintPreTitleRef}>{isSalesPretitleNarrow ? 'Robinson Specialists' : 'The Robinson Specialists'}</span>
               <div className="fd-maint__title-fade" ref={maintTitleFadeRef}>
                 <h2 className="fd-sales__title">
                   <span className="fd-sales__title-word fd-sales__title-word--1">Expert</span>
@@ -6583,6 +6649,11 @@ function Experimentation() {
           border-top-color: transparent;
         }
 
+        .fd-nav--panel-open {
+          max-height: none;
+          overflow: visible;
+        }
+
         .fd-nav--hidden {
           max-height: 0;
           opacity: 0;
@@ -6712,6 +6783,63 @@ function Experimentation() {
         .fd-nav__dropdown-item:hover {
           background: #f5f5f2;
           color: #1a1a1a;
+        }
+
+        /* Mobile click-to-open submenu panel */
+        .fd-nav__mobile-panel {
+          display: none;
+        }
+        @media (max-width: 900px) {
+          .fd-nav__dropdown { display: none !important; }
+          .fd-nav__mobile-panel {
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            border-top: 1px solid #e8e6e2;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+            animation: fdNavPanelSlide 0.2s ease;
+            max-height: 60vh;
+            overflow-y: auto;
+          }
+          .fd-nav__mobile-panel-head {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 1rem;
+            background: #faf9f6;
+            border-bottom: 1px solid #e8e6e2;
+          }
+          .fd-nav__mobile-panel-icon {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            color: #999;
+          }
+          .fd-nav__mobile-panel-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #1a1a1a;
+          }
+          .fd-nav__mobile-panel-item {
+            display: block;
+            padding: 0.8rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #1a1a1a;
+            text-decoration: none;
+            border-bottom: 1px solid #f0eeea;
+          }
+          .fd-nav__mobile-panel-item:last-child { border-bottom: none; }
+          .fd-nav__mobile-panel-item:active { background: #f5f5f2; }
+          .fd-nav__item-wrap--open { background: #f5f5f2 !important; }
+          .fd-nav__item-wrap--open .fd-nav__item-label { color: #1a1a1a; }
+        }
+        @keyframes fdNavPanelSlide {
+          from { opacity: 0; transform: translateY(-4px); }
+          to { opacity: 1; transform: translateY(0); }
         }
 
         .fd-nav__item {
@@ -8990,6 +9118,10 @@ function Experimentation() {
           border-color: #1a1a1a;
           background: #faf9f6;
         }
+        .fd-sales__unmanned-coming .fd-sales__intent-btn {
+          margin-left: 2rem;
+          margin-right: 2rem;
+        }
         .fd-sales__intent-icon {
           grid-column: 1;
           grid-row: 1 / span 2;
@@ -9501,6 +9633,16 @@ function Experimentation() {
           .fd-sales__intro + .fd-sales__subsection .fd-sales__section-title {
             margin-top: 100px;
           }
+        }
+
+        .fd-sales__why-hq-title {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1.1rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: #1a1a1a;
+          margin: 3rem 0 1.5rem;
         }
 
         .fd-sales__section-title {
@@ -15817,7 +15959,10 @@ function Experimentation() {
           .lhq__header-line { display: block; }
         }
         .lhq__title {
-          margin: 0 0 40px; text-align: center;
+          margin: 0 0 40px; text-align: left;
+        }
+        @media (max-width: 900px) {
+          .lhq__title { text-align: center; }
         }
         .lhq__title-word {
           display: block;
@@ -15988,8 +16133,8 @@ function Experimentation() {
 
         .lhq__personas-chevron { display: none; }
 
-        /* Chevrons for non-touch devices in scrollable state */
-        @media (max-width: 900px) and (pointer: fine) {
+        /* Chevrons in scrollable state (mobile + touch) */
+        @media (max-width: 900px) {
           .lhq__personas-row {
             display: flex; align-items: stretch;
           }

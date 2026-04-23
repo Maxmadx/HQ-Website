@@ -17,6 +17,7 @@
  */
 
 import React, { useRef, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { usePageImages } from '../hooks/usePageImages';
@@ -511,8 +512,66 @@ function R88Highlights() {
 // SECTION 2: Introduction - Robinson's Bold New Chapter
 // ============================================================================
 function R88Introduction() {
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    // Sticky-at-end pattern (mirrors /aircraft/r66): intro scrolls normally
+    // so its internal sticky text column works, then pins only when its
+    // bottom reaches the viewport bottom so the gallery can rise up over it.
+    // --r88-intro-stick-top = min(0, vh - introH).
+    const update = () => {
+      const el = sectionRef.current;
+      if (!el) return;
+      const vh = window.innerHeight;
+      const introH = el.offsetHeight;
+      const stickTop = Math.min(0, vh - introH);
+      document.documentElement.style.setProperty('--r88-intro-stick-top', `${stickTop}px`);
+    };
+    update();
+
+    // Progressively blur + darken intro as the gallery rises over it.
+    const MAX_BLUR = 10;
+    const nextSection = document.querySelector('.r88-gallery');
+
+    const onScroll = () => {
+      const el = sectionRef.current;
+      if (!el || !nextSection) return;
+      const rect = nextSection.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // Gallery pins at top: catchTop, so its rect.top bottoms out there.
+      // Ramp progress 0→1 as rect.top goes from vh down to catchTop, so the
+      // intro reaches full dark right when the gallery takes over the screen.
+      const catchTopVar = parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue('--catch-top')
+      );
+      const catchTop = Number.isFinite(catchTopVar) ? catchTopVar : 90;
+      const span = Math.max(1, vh - catchTop);
+      const progress = Math.min(1, Math.max(0, 1 - (rect.top - catchTop) / span));
+      el.style.setProperty('--r88-intro-blur', `${progress * MAX_BLUR}px`);
+      // Ease-in darken: stays light most of the way, then ramps up fast so
+      // the intro hits solid dark before the gallery fully covers it.
+      const DARK_COMPLETE = 0.95;
+      const adjusted = Math.min(1, progress / DARK_COMPLETE);
+      const darken = Math.pow(adjusted, 8);
+      el.style.setProperty('--r88-intro-darken', `${darken}`);
+    };
+    onScroll();
+
+    window.addEventListener('resize', update);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    const ro = new ResizeObserver(update);
+    if (sectionRef.current) ro.observe(sectionRef.current);
+    return () => {
+      window.removeEventListener('resize', update);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      ro.disconnect();
+    };
+  }, []);
+
   return (
-    <section className="r88-intro">
+    <section ref={sectionRef} className="r88-intro">
       <div className="r88-intro__container">
         <div className="r88-intro__content">
           <div className="r88-intro__top">
@@ -616,6 +675,17 @@ function R88Introduction() {
               </Reveal>
             ))}
           </div>
+          <Reveal delay={0.8}>
+            <div className="r88-timeline__status">
+              <div className="r88-timeline__status-item r88-timeline__status-item--active">
+                <span className="r88-timeline__status-dot" />
+                <span>Currently in Development</span>
+              </div>
+              <div className="r88-timeline__status-note">
+                Ground runs expected late 2026, first flight to follow shortly after
+              </div>
+            </div>
+          </Reveal>
         </div>
       </div>
     </section>
@@ -908,8 +978,14 @@ const galleryImages = [
 
 function R88Gallery() {
   const [lightboxIdx, setLightboxIdx] = useState(null);
-  const [galleryPage, setGalleryPage] = useState(0);
-  const galleryScrollRef = useRef(null);
+  const [splitProgress, setSplitProgress] = useState(0);
+  const sceneRef = useRef(null);
+  // Headline revealed letter-by-letter as the split progresses. Each letter
+  // has its own threshold along the [letterReveal.start, letterReveal.end]
+  // range of split progress, producing a staggered type-on reveal.
+  const headline = "The Most Capable Aircraft in It's class";
+  const letters = Array.from(headline);
+  const letterReveal = { start: 0.22, end: 0.88 };
   const pageImages = usePageImages('r88');
   const cmsGallery = (pageImages['r88-gallery'] ?? SECTION_MAP['r88-gallery'].images).map((img, i) => ({
     ...galleryImages[i],
@@ -946,58 +1022,135 @@ function R88Gallery() {
     return items;
   })();
 
-  const numGalleryPages = Math.ceil(editorialItems.length / 6);
+  // Split the 4-col grid into two 2-col panes by column position so the
+  // panes can slide apart horizontally. Left pane = cols 0-1, right = cols 2-3.
+  // Original indices are preserved for Reveal staggering + lightbox mapping.
+  const withIdx = editorialItems.map((item, i) => ({ item, i }));
+  const leftTiles = withIdx.filter(({ i }) => i % 4 < 2);
+  const rightTiles = withIdx.filter(({ i }) => i % 4 >= 2);
 
-  const handleGalleryScroll = () => {
-    const el = galleryScrollRef.current;
-    if (!el) return;
-    const maxScroll = el.scrollWidth - el.clientWidth;
-    if (maxScroll <= 0) return;
-    setGalleryPage(Math.round((el.scrollLeft / maxScroll) * (numGalleryPages - 1)));
+  const renderTile = (item, i) => {
+    if (item.kind === 'img') {
+      return (
+        <Reveal key={`img-${i}`} delay={i * 0.03}>
+          <motion.div
+            className="r88-gallery__item"
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.3 }}
+            onClick={() => setLightboxIdx(item.origIdx)}
+          >
+            <img src={item.src} alt={item.alt} loading="lazy" />
+            <div className="r88-gallery__overlay">
+              <span className="r88-gallery__label">{item.label}</span>
+            </div>
+          </motion.div>
+        </Reveal>
+      );
+    }
+    return (
+      <Reveal key={`spec-${i}`} delay={i * 0.03}>
+        <div className="r88-gallery__item r88-gallery__item--spec">
+          <div className="r88-gallery__spec-icon">
+            <i className={`fas ${item.icon}`}></i>
+          </div>
+          <div className="r88-gallery__spec-body">
+            <span className="r88-gallery__spec-label">{item.label}</span>
+            <span className="r88-gallery__spec-value">{item.value}</span>
+          </div>
+        </div>
+      </Reveal>
+    );
   };
 
-  return (
-    <section className="r88-gallery" data-cms-section="r88-gallery">
-      <div className="r88-gallery__container">
-        <div className="r88-gallery__scroll" ref={galleryScrollRef} onScroll={handleGalleryScroll}>
-        <div className="r88-gallery__grid">
-          {editorialItems.map((item, i) => {
-            if (item.kind === 'img') {
-              return (
-                <Reveal key={`img-${i}`} delay={i * 0.03}>
-                  <motion.div
-                    className="r88-gallery__item"
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.3 }}
-                    onClick={() => setLightboxIdx(item.origIdx)}
-                  >
-                    <img src={item.src} alt={item.alt} loading="lazy" />
-                    <div className="r88-gallery__overlay">
-                      <span className="r88-gallery__label">{item.label}</span>
-                    </div>
-                  </motion.div>
-                </Reveal>
-              );
-            }
-            return (
-              <Reveal key={`spec-${i}`} delay={i * 0.03}>
-                <div className="r88-gallery__item r88-gallery__item--spec">
-                  <div className="r88-gallery__spec-icon">
-                    <i className={`fas ${item.icon}`}></i>
-                  </div>
-                  <div className="r88-gallery__spec-body">
-                    <span className="r88-gallery__spec-label">{item.label}</span>
-                    <span className="r88-gallery__spec-value">{item.value}</span>
-                  </div>
-                </div>
-              </Reveal>
-            );
-          })}
-        </div>
-        </div>
-      </div>
+  // Scroll-driven split progress: as the user scrolls through the scene
+  // while the pin is locked, the two panes translate apart horizontally.
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!scene) return;
+    const onScroll = () => {
+      const rect = scene.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const catchTopVar = parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue('--catch-top')
+      );
+      const catchTop = Number.isFinite(catchTopVar) ? catchTopVar : 90;
+      const pinH = vh - catchTop;
+      const splitScroll = Math.max(1, scene.offsetHeight - pinH);
+      // rect.top = catchTop at pin start, decreases to (catchTop - splitScroll)
+      // when the pin is about to release.
+      const scrolled = catchTop - rect.top;
+      const progress = Math.min(1, Math.max(0, scrolled / splitScroll));
+      // Phase split: first half of progress drives the pane split + letter
+      // reveal; second half drives the video expand/fade that uncovers the
+      // reconfigurable scene layered behind.
+      const splitProg = Math.min(1, progress * 2);
+      const expandProg = Math.max(0, Math.min(1, (progress - 0.5) * 2));
+      scene.style.setProperty('--split-progress', splitProg.toString());
+      scene.style.setProperty('--expand-progress', expandProg.toString());
+      setSplitProgress(splitProg);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, []);
 
-      {/* Lightbox */}
+  return (
+    <>
+    <section ref={sceneRef} className="r88-gallery-scene">
+      <div className="r88-gallery-pin">
+        <section className="r88-gallery" data-cms-section="r88-gallery">
+          <div className="r88-gallery__container">
+            {/* Reveal: centered video + letter-by-letter headline that
+                the split-apart panes uncover as the user scrolls. */}
+            <div className="r88-gallery__reveal" aria-hidden="true">
+              <h3 className="r88-gallery__reveal-headline">
+                {letters.map((ch, i) => {
+                  const threshold =
+                    letterReveal.start +
+                    (i / Math.max(1, letters.length - 1)) *
+                      (letterReveal.end - letterReveal.start);
+                  const visible = splitProgress >= threshold;
+                  return (
+                    <span
+                      key={i}
+                      className={`r88-gallery__reveal-letter${
+                        visible ? ' r88-gallery__reveal-letter--visible' : ''
+                      }`}
+                    >
+                      {ch === ' ' ? '\u00A0' : ch}
+                    </span>
+                  );
+                })}
+              </h3>
+              <video
+                className="r88-gallery__reveal-video"
+                src="/assets/images/new-aircraft/r88/capability.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+              />
+            </div>
+            <div className="r88-gallery__grid">
+              <div className="r88-gallery__pane r88-gallery__pane--left">
+                {leftTiles.map(({ item, i }) => renderTile(item, i))}
+              </div>
+              <div className="r88-gallery__pane r88-gallery__pane--right">
+                {rightTiles.map(({ item, i }) => renderTile(item, i))}
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+      {/* Lightbox — rendered at page level so its z-index is not capped by
+          the scene's stacking context (scene has z-index:3). */}
       <AnimatePresence>
         {lightboxIdx !== null && (
           <motion.div
@@ -1044,6 +1197,136 @@ function R88Gallery() {
           </motion.div>
         )}
       </AnimatePresence>
+    </>
+  );
+}
+
+// ============================================================================
+// SECTION 5C: Easily Reconfigurable - Cabin flexibility
+// ============================================================================
+function R88Reconfigurable() {
+  const sceneRef = useRef(null);
+
+  // Scroll-driven animation: the scene pins while the GIF animates from a
+  // tall, left-overlaid state to its compact resting place on the right.
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!scene) return;
+    const onScroll = () => {
+      const rect = scene.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const catchTopVar = parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue('--catch-top')
+      );
+      const catchTop = Number.isFinite(catchTopVar) ? catchTopVar : 90;
+      const pinH = vh - catchTop;
+      // Three phases driven by scroll into the scene:
+      //  1. slide (100vh): image slides in from offscreen-right and
+      //                    comes to rest covering the right half.
+      //  2. hold  (80vh):  image sits still. Avionics features behind
+      //                    the image fade out; left text cross-fades
+      //                    from avionics → reconfigurable.
+      //  3. anim  (80vh):  image shrinks in place (anchored to the
+      //                    right) from --start-w → --end-w.
+      const slide = vh;
+      const hold = vh * 0.8;
+      const anim = vh * 0.8;
+      const scrolled = Math.max(0, catchTop - rect.top);
+      const slideProg = Math.min(1, scrolled / slide);
+      const afterSlide = Math.max(0, scrolled - slide);
+      const holdProg = Math.min(1, afterSlide / hold);
+      const afterHold = Math.max(0, scrolled - slide - hold);
+      const reconfigProg = Math.min(1, afterHold / anim);
+      // Both the text swap (left column) and features fade (right
+      // column, behind the image) run during the hold phase so they
+      // finish before the image starts shrinking.
+      const textSwap = holdProg;
+      const featuresShrink = holdProg;
+
+      scene.style.setProperty('--slide-progress', slideProg.toString());
+      scene.style.setProperty('--reconfig-progress', reconfigProg.toString());
+      scene.style.setProperty('--text-swap', textSwap.toString());
+      scene.style.setProperty('--features-shrink', featuresShrink.toString());
+      // Also expose slide + text-swap on the root so the avionics section
+      // (rendered earlier in the tree) can read them without prop drilling.
+      document.documentElement.style.setProperty('--av-rec-slide', slideProg.toString());
+      document.documentElement.style.setProperty('--av-rec-text-swap', textSwap.toString());
+      document.documentElement.style.setProperty(
+        '--av-rec-features-shrink',
+        featuresShrink.toString()
+      );
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, []);
+
+  return (
+    <section ref={sceneRef} className="r88-reconfigurable-scene">
+      <div className="r88-reconfigurable-pin">
+        <section className="r88-reconfigurable" data-cms-section="r88-reconfigurable">
+          <div className="r88-reconfigurable__container">
+            <div className="r88-reconfigurable__content">
+              <Reveal>
+                <div className="r88-section-header">
+                  <span className="r88-pre-text">CABIN FLEXIBILITY</span>
+                  <h2>
+                    <span className="r88-text--dark">Easily</span>{' '}
+                    <span className="r88-text--mid">Reconfigurable</span>
+                  </h2>
+                </div>
+              </Reveal>
+
+              <Reveal delay={0.1}>
+                <p className="r88-reconfigurable__lead">
+                  Switch the R88 from a full eight-passenger commuter to a cargo hauler,
+                  medevac platform, or executive shuttle without tools or a trip to the
+                  hangar. Every seat row slides on rails, latches into floor tracks, and
+                  removes in seconds — letting a single operator reshape the cabin to
+                  match the mission.
+                </p>
+              </Reveal>
+
+              <div className="r88-reconfigurable__features">
+                {[
+                  { icon: 'fa-users', title: 'Eight-Seat Commuter', copy: 'Full dual-row configuration for charter and transport operations.' },
+                  { icon: 'fa-box-open', title: 'Cargo Mode', copy: 'Remove rear rows in under a minute to open a flat cargo floor.' },
+                  { icon: 'fa-briefcase-medical', title: 'Medevac Ready', copy: 'Accommodates stretcher and attendant seating for EMS missions.' },
+                  { icon: 'fa-chair', title: 'Executive Shuttle', copy: 'Rearrange seating for club-four layouts and VIP transport.' },
+                ].map((f, i) => (
+                  <Reveal key={i} delay={0.15 + i * 0.08}>
+                    <div className="r88-reconfigurable__feature">
+                      <div className="r88-reconfigurable__feature-icon">
+                        <i className={`fas ${f.icon}`}></i>
+                      </div>
+                      <div className="r88-reconfigurable__feature-body">
+                        <h4>{f.title}</h4>
+                        <p>{f.copy}</p>
+                      </div>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+
+            <div className="r88-reconfigurable__visual">
+              <img
+                src="/assets/images/new-aircraft/r88/reconfigurable-mobile.gif"
+                alt="R88 cabin reconfiguring between seating layouts"
+                loading="lazy"
+              />
+              <div className="r88-reconfigurable__visual-badge">
+                <span className="r88-reconfigurable__visual-badge-label">TOOL-FREE</span>
+                <span className="r88-reconfigurable__visual-badge-text">Seat Rails &amp; Floor Tracks</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </section>
   );
 }
@@ -1160,55 +1443,62 @@ function TimelineVideoFacade({ videoId, label, title, onPlay }) {
       )}
       {label && <span className="r88-timeline__video-label">{label}</span>}
 
-      <AnimatePresence>
-        {playing && (
-          <motion.div
-            key="backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="r88-timeline__video-backdrop"
-            onClick={handleClose}
-            aria-hidden="true"
-          />
-        )}
-        {playing && (
-          <motion.div
-            key="lightbox"
-            layoutId={layoutId}
-            transition={transition}
-            className="r88-timeline__video-lightbox"
-          >
-            <div className="r88-timeline__video-frame r88-timeline__video-frame--lightbox">
-              <iframe
-                ref={iframeRef}
-                className="r88-timeline__video-iframe"
-                src={embedSrc}
-                title={`${title} — development footage`}
-                loading="lazy"
-                tabIndex={-1}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              />
-              {/* Transparent mask: swallows hover/click so YouTube never
-                  surfaces its controls, title bar, or end-screen overlays. */}
-              <div
-                className="r88-timeline__video-mask"
-                aria-hidden="true"
-              />
-            </div>
-            <button
-              type="button"
-              className="r88-timeline__video-close"
+      {/* Portal to document.body so position:fixed is truly viewport-fixed,
+          not trapped by any transformed ancestor on the page. Ensures the
+          lightbox centers on the user's current viewport regardless of
+          scroll position when the poster is clicked. */}
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {playing && (
+            <motion.div
+              key="backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="r88-timeline__video-backdrop"
               onClick={handleClose}
-              aria-label="Close video"
+              aria-hidden="true"
+            />
+          )}
+          {playing && (
+            <motion.div
+              key="lightbox"
+              layoutId={layoutId}
+              transition={transition}
+              className="r88-timeline__video-lightbox"
             >
-              ×
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <div className="r88-timeline__video-frame r88-timeline__video-frame--lightbox">
+                <iframe
+                  ref={iframeRef}
+                  className="r88-timeline__video-iframe"
+                  src={embedSrc}
+                  title={`${title} — development footage`}
+                  loading="lazy"
+                  tabIndex={-1}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+                {/* Transparent mask: swallows hover/click so YouTube never
+                    surfaces its controls, title bar, or end-screen overlays. */}
+                <div
+                  className="r88-timeline__video-mask"
+                  aria-hidden="true"
+                />
+              </div>
+              <button
+                type="button"
+                className="r88-timeline__video-close"
+                onClick={handleClose}
+                aria-label="Close video"
+              >
+                ×
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   );
 }
@@ -2032,12 +2322,20 @@ const R88Styles = () => (
        INTRODUCTION SECTION
        ==================================================================== */
     .r88-intro {
-      position: relative;
+      /* Sticky-at-end pattern (mirrors /aircraft/r66): intro scrolls normally
+         so its internal sticky text column works, then pins only when its
+         bottom reaches the viewport bottom so the gallery can rise up over it.
+         --r88-intro-stick-top is set in JS to min(0, viewportH - introH). */
+      position: sticky;
+      top: var(--r88-intro-stick-top, 0);
       z-index: 1;
       padding: 4rem 2rem 0;
       /* Split background mirrors R66/highlights: left half lighter, right
          half warm cream — creates a subtle vertical seam behind the content. */
       background: linear-gradient(to right, #ececec 50%, #faf9f6 50%);
+      /* Scroll-linked blur; darken is applied via ::after overlay so it
+         actually lands on a solid dark frame at progress=1. */
+      filter: blur(var(--r88-intro-blur, 0px));
     }
 
     .r88-intro::before {
@@ -2056,13 +2354,26 @@ const R88Styles = () => (
       z-index: 0;
     }
 
+    /* Dark overlay that fades in as the gallery rises, so intro visually
+       turns into the dark gallery palette before the gallery physically
+       covers it. */
+    .r88-intro::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, #0a0a0a 50%, #000 50%);
+      opacity: var(--r88-intro-darken, 0);
+      pointer-events: none;
+      z-index: 2;
+    }
+
     .r88-intro__container {
       position: relative;
       z-index: 1;
       max-width: 1200px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 1fr 1.2fr;
+      grid-template-columns: 1fr 1fr;
       gap: 0 4rem;
       align-items: start;
     }
@@ -2070,8 +2381,8 @@ const R88Styles = () => (
     /* Swap left/right: visual column renders on the left, text on the right.
        Text column becomes sticky while the visual column (card + timeline)
        scrolls past it. Mirrors the R66 order-swap pattern. */
-    .r88-intro__content { order: 2; }
-    .r88-intro__visual-col { order: 1; }
+    .r88-intro__content { order: 2; padding-left: 3rem; }
+    .r88-intro__visual-col { order: 1; padding-right: 3rem; }
 
     @media (min-width: 901px) {
       .r88-intro__content {
@@ -2709,12 +3020,315 @@ const R88Styles = () => (
     }
 
     /* ====================================================================
+       AVIONICS → RECONFIGURABLE TRANSITION SCENE
+       - wrapper containing the pinned avionics + the reconfigurable scene
+       - constrains avionics' position:sticky so it unpins when the
+         transition ends (rather than staying sticky to <main>) */
+    .r88-av-rec-scene {
+      position: relative;
+      /* Pulled up one viewport so the avionics section (z-index:1) sits
+         directly behind the last 100vh of the gallery scene (z-index:3).
+         As the gallery's dark bg fades out during the video-expand phase,
+         avionics is revealed in place — no blank scroll gap between the
+         disappearing video and the next section. */
+      margin-top: -100vh;
+    }
+
+    /* ====================================================================
+       RECONFIGURABLE SECTION — scroll-pinned scene
+       Three scroll phases (driven in JS):
+       1. slide  — .r88-reconfigurable-pin translates from X=-100% to 0,
+                   sliding in over the pinned avionics from the left
+       2. hold   — image dwells at its full-left start position
+       3. anim   — image travels left → small-right while avionics features
+                   shrink/fade and get covered
+       ==================================================================== */
+    .r88-reconfigurable-scene {
+      position: relative;
+      /* z-index 2 so the reconfigurable-pin paints over the pinned avionics
+         section during the slide-in. */
+      z-index: 2;
+      background: transparent;
+      /* Total scene = pin height + 100vh slide + 80vh hold + 80vh anim. */
+      min-height: calc((100vh - var(--catch-top, 90px)) + 100vh + 80vh + 80vh);
+      /* Pull the scene up by one viewport so the pin activates while the
+         avionics pin is still showing — reconfigurable then slides in from
+         the left OVER the avionics. */
+      margin-top: calc(-1 * (100vh - var(--catch-top, 90px)));
+    }
+
+    .r88-reconfigurable-pin {
+      position: sticky;
+      top: var(--catch-top, 90px);
+      height: calc(100vh - var(--catch-top, 90px));
+      /* Pin itself is transparent — only the image slides; the pin's
+         text content fades in during the text-swap. overflow:visible so
+         the image can sit offscreen-left before sliding in. */
+      overflow: visible;
+    }
+
+    .r88-reconfigurable {
+      height: 100%;
+      padding: 3rem 2rem;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+    }
+
+    .r88-reconfigurable__container {
+      /* Hoisted animation vars — both the visual and the cream cover
+         reference these so they stay in sync. */
+      --p: var(--reconfig-progress, 0);
+      --inv: calc(1 - var(--p));
+      --end-w: 280px;
+      /* Start width covers the whole right side of the viewport — the
+         image slides in from offscreen-right and rests anchored to the
+         right, fully occupying the right half before shrinking. 60vw
+         (vs 50vw) gives a more convincing "covers the whole right side"
+         without drifting toward the centre. */
+      --start-w: 60vw;
+      --end-h: 520px;
+      --start-h: calc(100vh - var(--catch-top, 90px) - 4rem);
+      --w-now: calc(var(--end-w) + (var(--start-w) - var(--end-w)) * var(--inv));
+      --h-now: calc(var(--end-h) + (var(--start-h) - var(--end-h)) * var(--inv));
+      --end-right-inset: 6rem;
+      --visual-left: calc((100% - var(--w-now) - var(--end-right-inset)) * var(--p));
+      --visual-right: calc(var(--visual-left) + var(--w-now));
+
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Cream cover removed for the new avionics→reconfigurable transition:
+       the right half of the pin is intentionally transparent so the
+       avionics features beneath stay visible until the image traverses
+       over them. Left-half coverage is handled by .r88-reconfigurable-pin::before. */
+
+    .r88-reconfigurable__content {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      max-width: 54%;
+      position: relative;
+      z-index: 1;
+      /* Fades in during the SECOND half of the hold phase (text-swap
+         0.5→1 maps to opacity 0→1), after the avionics text has fully
+         faded out — avoids both being visible at reduced opacity. */
+      opacity: calc(max(0, var(--text-swap, 0) * 2 - 1));
+    }
+
+    .r88-reconfigurable__lead {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: #444;
+      max-width: 52ch;
+    }
+
+    .r88-reconfigurable__features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 0.75rem;
+    }
+
+    .r88-reconfigurable__feature {
+      display: flex;
+      gap: 0.85rem;
+      padding: 1rem;
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 8px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .r88-reconfigurable__feature:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .r88-reconfigurable__feature-icon {
+      flex: 0 0 auto;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #1a1a1a;
+      color: #fff;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .r88-reconfigurable__feature-body h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 0 0 0.25rem;
+      color: #1a1a1a;
+      letter-spacing: -0.01em;
+    }
+
+    .r88-reconfigurable__feature-body p {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: #555;
+      margin: 0;
+    }
+
+    /* Visual — scroll-driven size + position.
+       Uses animation vars hoisted onto .r88-reconfigurable__container. */
+    .r88-reconfigurable__visual {
+      position: absolute;
+      z-index: 3;
+      top: 50%;
+      /* Anchored to the right side of the container the whole time —
+         the image slides in from offscreen-right, rests on the right,
+         then shrinks in place from --start-w → --end-w without
+         translating horizontally. */
+      right: var(--end-right-inset);
+      left: auto;
+      width: var(--w-now);
+      height: var(--h-now);
+      /* Slide-in from the right: at slide=0 the image is offscreen
+         right (+100vw); at slide=1 it rests at right:--end-right-inset. */
+      transform: translateY(-50%)
+        translateX(calc((1 - var(--slide-progress, 1)) * 100vw));
+      background: transparent;
+      will-change: transform, width, height;
+    }
+
+    .r88-reconfigurable__visual img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+      position: relative;
+      z-index: 1;
+    }
+
+    .r88-reconfigurable__visual-badge {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      background: rgba(26, 26, 26, 0.92);
+      color: #fff;
+      padding: 0.6rem 0.9rem;
+      border-radius: 6px;
+      backdrop-filter: blur(6px);
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .r88-reconfigurable__visual-badge-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    .r88-reconfigurable__visual-badge-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    @media (max-width: 900px) {
+      /* Drop the pinned animation on mobile — static stacked layout. */
+      .r88-av-rec-scene {
+        margin-top: 0;
+      }
+      .r88-reconfigurable-scene {
+        min-height: 0;
+        margin-top: 0;
+      }
+      .r88-reconfigurable-pin {
+        position: relative;
+        top: 0;
+        height: auto;
+        overflow: visible;
+      }
+      .r88-avionics {
+        /* No sticky on mobile — normal stacked layout. */
+        position: static;
+      }
+      .r88-avionics__left { opacity: 1 !important; }
+      .r88-avionics__features { transform: none !important; opacity: 1 !important; }
+      .r88-reconfigurable__content { opacity: 1 !important; }
+      .r88-reconfigurable {
+        padding: 4rem 1.25rem;
+        height: auto;
+      }
+      .r88-reconfigurable__container {
+        flex-direction: column-reverse;
+        gap: 2.5rem;
+        height: auto;
+      }
+      .r88-reconfigurable__content {
+        max-width: 100%;
+      }
+      .r88-reconfigurable__features {
+        grid-template-columns: 1fr;
+      }
+      .r88-reconfigurable__visual {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 280px;
+        height: 520px;
+        max-width: 100%;
+        margin: 0 auto;
+        transform: none;
+      }
+    }
+
+    /* ====================================================================
        AVIONICS SECTION
        ==================================================================== */
     .r88-avionics {
-      padding: 5rem 2rem;
+      /* Top padding absorbs the header height so the visible content
+         starts at the same place as before, while the dark background
+         extends all the way up to y=0 (behind the fixed header). */
+      padding: calc(5rem + var(--catch-top, 90px)) 2rem 5rem;
       background: #1a1a1a;
       color: #fff;
+      /* Sticky at top:0 so the dark background fills flush up to the
+         header's top edge (no white strip between header and section).
+         The header sits in front via its own higher stacking. z-index:1
+         keeps avionics beneath the reconfigurable-pin during the
+         slide-in transition. */
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    /* Staggered crossfade: avionics text fades out during the FIRST
+       half of the hold phase (text-swap 0→0.5 maps to opacity 1→0).
+       Reconfigurable content fades in during the SECOND half — so the
+       two never appear simultaneously at reduced opacity. */
+    .r88-avionics__left {
+      opacity: calc(1 - min(1, var(--av-rec-text-swap, 0) * 2));
+      transition: opacity 0s;
+    }
+
+    /* Features on the right sit behind the image once it has slid in.
+       They fade out during the FIRST half of the hold phase (same as
+       the avionics text) so by the time the image shrinks, nothing is
+       left underneath to reappear. */
+    .r88-avionics__features {
+      opacity: calc(1 - min(1, var(--av-rec-features-shrink, 0) * 2));
+      will-change: opacity;
     }
 
     .r88-avionics__container {
@@ -2880,22 +3494,197 @@ const R88Styles = () => (
     /* ====================================================================
        GALLERY SECTION
        ==================================================================== */
+    /* ----- Gallery scene: pin + split-to-reveal ------------------------ */
+    /* Scene is a tall scroll region. Inside it, the pin sticks at catch-top
+       and fills (100vh - catch-top). Extra scroll past the pin drives the
+       --split-progress variable (set in JS) which translates the two panes
+       apart horizontally — revealing the section below as they slide off. */
+    .r88-gallery-scene {
+      position: relative;
+      z-index: 3;
+      /* Scene height = pin height (100vh - catchTop) + 100vh of split scroll
+         + 100vh of expand/fade scroll. Progress 0→0.5 drives the split,
+         0.5→1 drives the video expand + fade that exposes the reconfigurable
+         scene layered behind. */
+      height: calc(300vh - var(--catch-top, 90px));
+      /* Non-linear fade: held near 1 until expand=0.70, then slow 0.70→0.85,
+         then fast 0.85→1.00. Quadratic of the post-0.70 portion. */
+      --fade-raw: max(0, calc((var(--expand-progress, 0) - 0.70) / 0.30));
+      --fade-eased: calc(var(--fade-raw) * var(--fade-raw));
+      /* Dark scene bg fades out during the expand phase so the cream
+         reconfigurable section behind can show through. */
+      background: rgba(10, 10, 10, calc(1 - var(--fade-eased)));
+    }
+
+    .r88-gallery-pin {
+      position: sticky;
+      top: var(--catch-top, 90px);
+      height: calc(100vh - var(--catch-top, 90px));
+      overflow: hidden;
+    }
+
     .r88-gallery {
-      padding: 0 2rem 6rem;
-      background: #0a0a0a;
+      position: relative;
+      /* Stack above the pinned intro so the gallery visually rises over it
+         while intro stays fixed at the viewport bottom. */
+      z-index: 3;
+      padding: 1.5rem 2rem;
+      /* Inner bg also fades in sync with the scene so the cream backdrop
+         can come through cleanly. Uses the same eased fade as the scene. */
+      background: rgba(10, 10, 10, calc(1 - var(--fade-eased, 0)));
+      height: 100%;
+      display: flex;
+      align-items: stretch;
     }
 
     .r88-gallery__container {
       max-width: 1200px;
       margin: 0 auto;
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    /* Reveal layer: sits behind the grid so the panes cover it at
+       progress=0. As the panes translate apart, the reveal is exposed
+       through the gap. */
+    .r88-gallery__reveal {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.75rem;
+      padding: 1rem;
+      z-index: 1;
+      pointer-events: none;
+      /* Fade in with the split (0.08→0.3), then fade out with the eased
+         expand curve (held until 0.70, then quadratic). */
+      opacity: min(
+        calc((var(--split-progress, 0) - 0.08) / 0.22),
+        calc(1 - var(--fade-eased, 0))
+      );
+    }
+
+    .r88-gallery__reveal-video {
+      display: block;
+      height: min(62vh, calc(100vh - var(--catch-top, 90px) - 12rem));
+      width: auto;
+      aspect-ratio: 810 / 1080;
+      max-width: 90%;
+      object-fit: cover;
+      border-radius: 18px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+      background: #111;
+      /* Scale from the split-in size, then grow fast during the expand
+         phase so the video looks like it's zooming toward the viewer as
+         it fades out. */
+      transform: scale(
+        calc((0.9 + 0.1 * var(--split-progress, 0))
+             * (1 + 2.5 * var(--expand-progress, 0)))
+      );
+      transform-origin: center;
+      will-change: transform;
+    }
+
+    .r88-gallery__reveal-headline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(0.85rem, 2vw, 1.8rem);
+      font-weight: 500;
+      color: #fff;
+      letter-spacing: -0.01em;
+      text-align: center;
+      margin: 0;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .r88-gallery__reveal-letter {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .r88-gallery__reveal-letter--visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .r88-gallery__grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      /* Two panes side-by-side; each pane is a 2-col sub-grid, so the
+         overall look is still a 4-column grid when progress = 0. */
+      grid-template-columns: 1fr 1fr;
       gap: 0.75rem;
-      margin-top: 0;
-      padding-top: 3rem;
+      height: 100%;
+      /* Panes sit above the reveal so they hide it at progress=0 and
+         expose it as they translate apart. */
+      position: relative;
+      z-index: 2;
+    }
+
+    .r88-gallery__pane {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: repeat(4, 1fr);
+      gap: 0.75rem;
+      min-height: 0;
+      will-change: transform;
+    }
+    /* Each <Reveal> wraps a tile in an extra motion.div, so we need that
+       wrapper to stretch to fill the grid-row track; otherwise the tile
+       collapses to its content height and the 4×4 grid won't fill the pin. */
+    .r88-gallery__pane > * {
+      min-height: 0;
+      min-width: 0;
+      height: 100%;
+    }
+    .r88-gallery__pane > * > .r88-gallery__item {
+      height: 100%;
+      width: 100%;
+    }
+    /* Translate by viewport units so panes slide fully off-screen at
+       progress=1 on any viewport width (50vw is more than each pane's
+       ~600px width on a 1200px container, so the pane clears the pin
+       even on ultrawide displays). */
+    .r88-gallery__pane--left {
+      transform: translate3d(calc(-60vw * var(--split-progress, 0)), 0, 0);
+    }
+    .r88-gallery__pane--right {
+      transform: translate3d(calc(60vw * var(--split-progress, 0)), 0, 0);
+    }
+
+    /* Mobile: disable the pin + split effect; revert to a natural scroll
+       layout (the 4×4 grid at 4/3 aspect tiles is too tall for a pin on
+       short viewports). */
+    @media (max-width: 900px) {
+      .r88-gallery-scene { height: auto; }
+      .r88-gallery-pin {
+        position: static;
+        height: auto;
+        overflow: visible;
+      }
+      .r88-gallery {
+        height: auto;
+        padding: 3rem 1.25rem;
+      }
+      .r88-gallery__container { height: auto; }
+      /* The split reveal relies on the pinned scroll animation — skip on
+         mobile since the pin is disabled and panes no longer translate. */
+      .r88-gallery__reveal { display: none; }
+      .r88-gallery__grid { height: auto; }
+      .r88-gallery__pane {
+        grid-template-rows: auto;
+        transform: none !important;
+      }
+      .r88-gallery__pane > * { height: auto; }
+      .r88-gallery__pane > * > .r88-gallery__item {
+        height: auto;
+        aspect-ratio: 4 / 3;
+      }
     }
 
     .r88-gallery__item {
@@ -2903,7 +3692,11 @@ const R88Styles = () => (
       overflow: hidden;
       border-radius: 4px;
       cursor: pointer;
-      aspect-ratio: 4 / 3;
+      /* Inside the scene pin the grid rows already size the tile — override
+         the 4/3 aspect-ratio so tiles fill their row track. */
+      aspect-ratio: auto;
+      min-height: 0;
+      min-width: 0;
     }
     .r88-gallery__item--wide {
       grid-column: span 2;
@@ -3499,7 +4292,8 @@ const R88Styles = () => (
     }
 
     .r88-timeline__status {
-      margin-top: 4rem;
+      margin-top: 0;
+      margin-bottom: 4rem;
       text-align: left;
     }
 
@@ -4271,10 +5065,17 @@ function AircraftR88() {
         <div className="r88-sticky-stack">
           <R88Highlights />
           <R88Introduction />
+          <R88Gallery />
         </div>
-        <R88Gallery />
+        {/* Avionics → Reconfigurable transition: reconfigurable-pin slides
+            in from the left over the pinned avionics, text/features morph
+            from avionics into reconfigurable, then the reconfigurable
+            image animates rightward covering where features used to be. */}
+        <div className="r88-av-rec-scene">
+          <R88Avionics />
+          <R88Reconfigurable />
+        </div>
         <R88Engine />
-        <R88Avionics />
         <R88CTA />
       </main>
       <FooterMinimal />

@@ -432,19 +432,23 @@ const styles = `
 /* Intent-style submit button */
 .uad-intent-btn {
   display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;
-  background: #faf9f6; border: 1px solid #e0deda; padding: 1.25rem 1.5rem;
+  background: #ffffff; border: 1px solid #e0deda; padding: 1.25rem 1.5rem;
   cursor: pointer; text-align: left;
-  transition: border-color 0.2s, background 0.2s;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
   width: 100%; grid-column: 1 / -1;
 }
-.uad-intent-btn:hover:not(:disabled) { border-color: #1a1a1a; background: #f3f1ed; }
+.uad-intent-btn:hover:not(:disabled) { border-color: #1a1a1a; background: #1a1a1a; }
+.uad-intent-btn:hover:not(:disabled) .uad-intent-icon,
+.uad-intent-btn:hover:not(:disabled) .uad-intent-title,
+.uad-intent-btn:hover:not(:disabled) .uad-intent-sub { color: #ffffff; }
 .uad-intent-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-.uad-intent-icon { font-size: 1.2rem; color: #1a1a1a; }
+.uad-intent-icon { font-size: 1.2rem; color: #1a1a1a; transition: color 0.2s; }
 .uad-intent-title {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 0.9rem; font-weight: 700; color: #1a1a1a;
+  transition: color 0.2s;
 }
-.uad-intent-sub { font-size: 0.78rem; color: #888; line-height: 1.5; }
+.uad-intent-sub { font-size: 0.78rem; color: #888; line-height: 1.5; transition: color 0.2s; }
 
 /* Form error */
 .uad-form-error {
