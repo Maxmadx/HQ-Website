@@ -240,9 +240,6 @@ const customisationOptions = [
   { icon: 'fa-palette', title: 'Paint & Livery', desc: 'Custom colour scheme and livery design. From classic to corporate branding.' },
   { icon: 'fa-microchip', title: 'Avionics Suite', desc: 'Choose from Garmin, Aspen, or hybrid panels. ADS-B, autopilot, HTAWS.' },
   { icon: 'fa-couch', title: 'Interior', desc: 'Leather, fabric, or synthetic. Noise dampening, USB charging, custom trim.' },
-  { icon: 'fa-gas-pump', title: 'Fuel & Range', desc: 'Auxiliary tanks, bladder upgrades, long-range ferry configurations.' },
-  { icon: 'fa-camera', title: 'Equipment', desc: 'Wire strike kits, cargo hooks, camera mounts, pop-out floats.' },
-  { icon: 'fa-shield-alt', title: 'Safety', desc: 'Crash-resistant fuel systems, ELT upgrades, enhanced lighting packages.' },
 ];
 
 
@@ -324,11 +321,12 @@ function BeforeAfter({ pageImages = {} }) {
 
 function FAQ() {
   const [openIndex, setOpenIndex] = useState(null);
+  const [showAllFaqs, setShowAllFaqs] = useState(false);
   const { faqs } = useFaqs('rebuilds', { visibleOnly: true });
 
   return (
     <div className="rb__faq-list" data-cms-section="faqs-rebuilds">
-      {faqs.map((item, i) => (
+      {(showAllFaqs ? faqs : faqs.slice(0, 6)).map((item, i) => (
         <div key={item.id || i} className={`rb__faq-item ${openIndex === i ? 'rb__faq-item--open' : ''}`} onClick={() => setOpenIndex(openIndex === i ? null : i)}>
           <span className="rb__faq-number">{String(i + 1).padStart(2, '0')}</span>
           <div className="rb__faq-content">
@@ -342,6 +340,9 @@ function FAQ() {
           </div>
         </div>
       ))}
+      {!showAllFaqs && faqs.length > 6 && (
+        <button className="rb__faq-load-more" onClick={() => setShowAllFaqs(true)}>Load More</button>
+      )}
     </div>
   );
 }
@@ -360,6 +361,41 @@ function Rebuilds() {
   const [rebuildError, setRebuildError] = useState('');
   const rebuildIntentsRef = useRef(null);
   const rebuildFormRef = useRef(null);
+  const [whySlide, setWhySlide] = useState(0);
+  const whyCarouselRef = useRef(null);
+  const [processSlide, setProcessSlide] = useState(0);
+  const processCarouselRef = useRef(null);
+  const [customSlide, setCustomSlide] = useState(0);
+  const customCarouselRef = useRef(null);
+  const [modelsSlide, setModelsSlide] = useState(0);
+  const modelsCarouselRef = useRef(null);
+
+  function scrollWhyTo(index) {
+    const el = whyCarouselRef.current;
+    if (!el) return;
+    el.scrollTo({ left: el.offsetWidth * index, behavior: 'smooth' });
+    setWhySlide(index);
+  }
+  function handleWhyScroll() {
+    const el = whyCarouselRef.current;
+    if (!el) return;
+    setWhySlide(Math.round(el.scrollLeft / el.offsetWidth));
+  }
+  function handleProcessScroll() {
+    const el = processCarouselRef.current;
+    if (!el) return;
+    setProcessSlide(Math.round(el.scrollLeft / el.offsetWidth));
+  }
+  function handleCustomScroll() {
+    const el = customCarouselRef.current;
+    if (!el) return;
+    setCustomSlide(Math.round(el.scrollLeft / el.offsetWidth));
+  }
+  function handleModelsScroll() {
+    const el = modelsCarouselRef.current;
+    if (!el) return;
+    setModelsSlide(Math.round(el.scrollLeft / el.offsetWidth));
+  }
 
   function scrollToRef(ref) {
     setTimeout(() => {
@@ -455,56 +491,66 @@ function Rebuilds() {
           </div>
           <div className="rb__hero-text">
             <div className="rb__grid-lines" />
-            <span className="rb__pre-title">Robinson Specialists Since 1990</span>
+            <span className="rb__pre-title">Robinson Specialists</span>
             <h1 className="rb__headline">
               <span className="rb__hw rb__hw--1">Reserve</span>{' '}
               <span className="rb__hw rb__hw--2">Your</span>{' '}
               <span className="rb__hw rb__hw--3">Rebuild</span>
             </h1>
             <p className="rb__body">Factory-new condition. Full customisation. Zero-time components. Built to your specification at our CAA-approved facility.</p>
+
+            {/* Why cards — desktop grid / mobile carousel */}
+            <div className="rb__why-cards-wrap">
+              <div className="rb__why-track" ref={whyCarouselRef} onScroll={handleWhyScroll}>
+                <div className="rb__why-card">
+                  <h3>Factory Standard</h3>
+                  <p>A fully rebuilt helicopter delivers new-aircraft condition at a significant saving over factory prices.</p>
+                </div>
+                <div className="rb__why-card">
+                  <h3>Full Customisation</h3>
+                  <p>Choose your avionics, interior, paint scheme, and equipment. Every rebuild is built to your exact specification.</p>
+                </div>
+                <div className="rb__why-card">
+                  <h3>Zero-Time Airframe</h3>
+                  <p>All life-limited components replaced. Fresh overhaul with full component life ahead — and a comprehensive warranty.</p>
+                </div>
+              </div>
+              <div className="rb__why-dots">
+                {[0, 1, 2].map(i => (
+                  <span key={i} className={`rb__why-dot ${whySlide === i ? 'rb__why-dot--active' : ''}`} onClick={() => scrollWhyTo(i)} />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Why Rebuild */}
-      <section className="rb__why">
+      {/* Process + Customise */}
+      <section className="rb__process-customise">
         <div className="rb__container">
           <Reveal>
-            <div className="rb__section-label">Why Rebuild</div>
+            <div className="rb__section-label">Customise Your Build</div>
           </Reveal>
-          <div className="rb__why-grid">
-            <Reveal delay={0.1}>
-              <div className="rb__why-card">
-                <div className="rb__why-icon"><i className="fas fa-pound-sign"></i></div>
-                <h3>Factory-New at Lower Cost</h3>
-                <p>A fully rebuilt helicopter delivers new-aircraft condition at a significant saving over factory prices.</p>
-              </div>
-            </Reveal>
-            <Reveal delay={0.2}>
-              <div className="rb__why-card">
-                <div className="rb__why-icon"><i className="fas fa-sliders-h"></i></div>
-                <h3>Full Customisation</h3>
-                <p>Choose your avionics, interior, paint scheme, and equipment. Every rebuild is built to your exact specification.</p>
-              </div>
-            </Reveal>
-            <Reveal delay={0.3}>
-              <div className="rb__why-card">
-                <div className="rb__why-icon"><i className="fas fa-clock"></i></div>
-                <h3>Zero-Time Airframe</h3>
-                <p>All life-limited components replaced. Fresh overhaul with full component life ahead — and a comprehensive warranty.</p>
-              </div>
-            </Reveal>
+          <div className="rb__custom-grid" ref={customCarouselRef} onScroll={handleCustomScroll}>
+            {customisationOptions.map((opt, i) => (
+              <Reveal key={i} delay={i * 0.08}>
+                <div className="rb__custom-card">
+                  <i className={`fas ${opt.icon}`}></i>
+                  <h4>{opt.title}</h4>
+                  <p>{opt.desc}</p>
+                </div>
+              </Reveal>
+            ))}
           </div>
-        </div>
-      </section>
-
-      {/* Models */}
-      <section className="rb__models">
-        <div className="rb__container">
+          <div className="rb__carousel-dots">
+            {customisationOptions.map((_, i) => (
+              <span key={i} className={`rb__carousel-dot ${customSlide === i ? 'rb__carousel-dot--active' : ''}`} onClick={() => { customCarouselRef.current?.scrollTo({ left: customCarouselRef.current.offsetWidth * i, behavior: 'smooth' }); setCustomSlide(i); }} />
+            ))}
+          </div>
           <Reveal>
-            <div className="rb__section-label">Models</div>
+            <div className="rb__section-label" style={{ marginTop: '3rem' }}>Models</div>
           </Reveal>
-          <div className="rb__models-grid" data-cms-section="rebuilds-models">
+          <div className="rb__models-grid" data-cms-section="rebuilds-models" ref={modelsCarouselRef} onScroll={handleModelsScroll}>
             {rebuildModels.map((m, i) => (
               <Reveal key={i} delay={i * 0.1}>
                 <div className="rb__model-card">
@@ -528,19 +574,15 @@ function Rebuilds() {
               </Reveal>
             ))}
           </div>
-          <Reveal delay={0.1}>
-            <BeforeAfter pageImages={pageImages} />
-          </Reveal>
-        </div>
-      </section>
-
-      {/* Process + Customise */}
-      <section className="rb__process-customise">
-        <div className="rb__container">
+          <div className="rb__carousel-dots">
+            {rebuildModels.map((_, i) => (
+              <span key={i} className={`rb__carousel-dot ${modelsSlide === i ? 'rb__carousel-dot--active' : ''}`} onClick={() => { modelsCarouselRef.current?.scrollTo({ left: modelsCarouselRef.current.offsetWidth * i, behavior: 'smooth' }); setModelsSlide(i); }} />
+            ))}
+          </div>
           <Reveal>
-            <div className="rb__section-label">The Process</div>
+            <div className="rb__section-label" style={{ marginTop: '3rem' }}>The Process</div>
           </Reveal>
-          <div className="rb__process-grid">
+          <div className="rb__process-grid" ref={processCarouselRef} onScroll={handleProcessScroll}>
             {processSteps.map((step, i) => (
               <Reveal key={i} delay={i * 0.1}>
                 <div className="rb__process-step">
@@ -551,18 +593,9 @@ function Rebuilds() {
               </Reveal>
             ))}
           </div>
-          <Reveal>
-            <div className="rb__section-label" style={{ marginTop: '3rem' }}>Customise Your Build</div>
-          </Reveal>
-          <div className="rb__custom-grid">
-            {customisationOptions.map((opt, i) => (
-              <Reveal key={i} delay={i * 0.08}>
-                <div className="rb__custom-card">
-                  <i className={`fas ${opt.icon}`}></i>
-                  <h4>{opt.title}</h4>
-                  <p>{opt.desc}</p>
-                </div>
-              </Reveal>
+          <div className="rb__carousel-dots">
+            {processSteps.map((_, i) => (
+              <span key={i} className={`rb__carousel-dot ${processSlide === i ? 'rb__carousel-dot--active' : ''}`} onClick={() => { processCarouselRef.current?.scrollTo({ left: processCarouselRef.current.offsetWidth * i, behavior: 'smooth' }); setProcessSlide(i); }} />
             ))}
           </div>
         </div>
@@ -726,10 +759,10 @@ function Rebuilds() {
             <div className="rb__cta-faq-right">
               <Reveal>
                 <div className="rb__faq-header">
-                  <span className="rb__pre-title">FAQ</span>
+                  <span className="rb__pre-title">Common Questions</span>
                   <h2 className="rb__headline" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}>
-                    <span className="rb__hw rb__hw--1">Common </span>
-                    <span className="rb__hw rb__hw--2">Questions</span>
+                    <span className="rb__hw rb__hw--1">Frequently </span>
+                    <span className="rb__hw rb__hw--2">Asked</span>
                   </h2>
                 </div>
               </Reveal>
@@ -824,7 +857,7 @@ const pageStyles = `
 
 /* === HERO === */
 .rb__hero {
-  padding: 2rem 0 0;
+  padding: 5rem 0 0;
 }
 .rb__hero-inner {
   display: flex;
@@ -868,47 +901,143 @@ const pageStyles = `
   mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 45%);
 }
 @media (max-width: 768px) {
+  .rb__hero { padding-top: 2rem; }
   .rb__hero-inner { flex-direction: column; min-height: auto; gap: 2rem; }
   .rb__hero-image { height: 300px; }
+  .rb__why-track {
+    display: flex;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0;
+  }
+  .rb__why-track::-webkit-scrollbar { display: none; }
+  .rb__why-card {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    padding: 1rem;
+    border: 1px solid #e8e6e2;
+    background: #fff;
+    gap: 0.5rem;
+  }
+  .rb__why-card h3 {
+    display: block;
+    width: auto;
+    white-space: normal;
+    border: none;
+    border-right: none;
+    padding: 0;
+    vertical-align: unset;
+  }
+  .rb__why-card p {
+    display: block;
+    border: none;
+    border-left: none;
+    padding: 0;
+    vertical-align: unset;
+  }
+  .rb__why-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px; height: 32px;
+    background: #fff;
+    border: 1px solid #e8e6e2;
+    cursor: pointer;
+    z-index: 2;
+    font-size: 0.7rem;
+    color: #1a1a1a;
+  }
+  .rb__why-nav--prev { left: 0; }
+  .rb__why-nav--next { right: 0; }
+  .rb__why-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 0.75rem;
+  }
+  .rb__why-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #d4d0ca;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .rb__why-dot--active { background: #1a1a1a; }
 }
 
-/* === WHY REBUILD === */
-.rb__why {
-  padding: 3rem 0;
+/* === WHY CARDS (hero-embedded) === */
+.rb__why-cards-wrap {
+  position: relative;
+  margin-top: 1.5rem;
 }
-.rb__why-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-}
-.rb__why-card {
-  padding: 2rem;
-  border: 1px solid #e8e6e2;
-  background: #fff;
-}
-.rb__why-icon {
-  width: 40px; height: 40px;
-  display: flex; align-items: center; justify-content: center;
-  background: #1a1a1a; color: #fff;
-  font-size: 0.85rem;
-  margin-bottom: 1.25rem;
+@media (min-width: 769px) {
+  .rb__why-track {
+    display: table;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.4rem;
+  }
+  .rb__why-card {
+    display: table-row;
+  }
+  .rb__why-card h3 {
+    display: table-cell;
+    width: 1%;
+    white-space: nowrap;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #e8e6e2;
+    border-right: none;
+    background: #fff;
+    vertical-align: middle;
+  }
+  .rb__why-card p {
+    display: table-cell;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #e8e6e2;
+    border-left: none;
+    background: #fff;
+    vertical-align: middle;
+  }
 }
 .rb__why-card h3 {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 1rem;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
-  margin: 0 0 0.75rem;
-}
-.rb__why-card p {
-  font-size: 0.9rem;
-  color: #666;
-  line-height: 1.6;
   margin: 0;
 }
-@media (max-width: 768px) {
-  .rb__why-grid { grid-template-columns: 1fr; }
+.rb__why-card p {
+  font-size: 0.75rem;
+  color: #888;
+  line-height: 1.4;
+  margin: 0;
 }
+@media (min-width: 769px) {
+  .rb__why-nav { display: none; }
+  .rb__why-dots { display: none; }
+  .rb__carousel-dots { display: none; }
+}
+.rb__carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 0.75rem;
+}
+.rb__carousel-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #d4d0ca;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.rb__carousel-dot--active { background: #1a1a1a; }
 
 /* === PROCESS === */
 .rb__process {
@@ -948,7 +1077,20 @@ const pageStyles = `
   margin: 0;
 }
 @media (max-width: 768px) {
-  .rb__process-grid { grid-template-columns: 1fr; }
+  .rb__process-grid {
+    display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0;
+  }
+  .rb__process-grid::-webkit-scrollbar { display: none; }
+  .rb__process-grid > * {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+  }
 }
 
 /* === PROCESS + CUSTOMISE === */
@@ -1087,7 +1229,7 @@ const pageStyles = `
 }
 .rb__model-card {
   border: 1px solid #e8e6e2;
-  background: #faf9f6;
+  background: #fff;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1207,7 +1349,21 @@ const pageStyles = `
   color: #1a1a1a;
 }
 @media (max-width: 768px) {
-  .rb__models-grid { grid-template-columns: 1fr; }
+  .rb__models-grid {
+    display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0;
+  }
+  .rb__models-grid::-webkit-scrollbar { display: none; }
+  .rb__models-grid > * {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+  }
+  .rb__process-customise { padding-top: 0; }
 }
 
 /* === DIVIDER === */
@@ -1253,8 +1409,21 @@ const pageStyles = `
 @media (max-width: 768px) {
   .rb__custom-grid { grid-template-columns: 1fr 1fr; }
 }
-@media (max-width: 480px) {
-  .rb__custom-grid { grid-template-columns: 1fr; }
+@media (max-width: 768px) {
+  .rb__custom-grid {
+    display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0;
+  }
+  .rb__custom-grid::-webkit-scrollbar { display: none; }
+  .rb__custom-grid > * {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+  }
 }
 
 /* === CTA + FAQ SIDE BY SIDE === */
@@ -1291,6 +1460,8 @@ const pageStyles = `
   display: flex;
   flex-direction: column;
 }
+.rb__faq-load-more { margin-top: 1.5rem; display: block; width: 100%; padding: 0.9rem 1.5rem; background: transparent; border: 1px solid #1a1a1a; color: #1a1a1a; font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
+.rb__faq-load-more:hover { background: #1a1a1a; color: #fff; }
 .rb__faq-item {
   display: flex;
   gap: 1.5rem;

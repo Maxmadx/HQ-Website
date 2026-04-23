@@ -894,6 +894,7 @@ function Sales() {
   useCmsHighlight();
   const { t } = usePageText('sales');
   const [openFaq, setOpenFaq] = useState(null);
+  const [showAllFaqs, setShowAllFaqs] = useState(false);
   const { faqs } = useFaqs('sales', { visibleOnly: true });
 
   // Per-model CMS image helpers (keyed by index matching aircraftModels order)
@@ -1672,7 +1673,7 @@ function Sales() {
               </div>
             </Reveal>
             <div className="sales-faq__list">
-              {faqs.map((faq, i) => (
+              {(showAllFaqs ? faqs : faqs.slice(0, 6)).map((faq, i) => (
                 <Reveal key={faq.id} delay={i * 0.05}>
                   <div
                     className={`sales-faq__item ${openFaq === i ? 'sales-faq__item--open' : ''}`}
@@ -1698,6 +1699,9 @@ function Sales() {
                 </Reveal>
               ))}
             </div>
+            {!showAllFaqs && faqs.length > 6 && (
+              <button className="sales-faq__load-more" onClick={() => setShowAllFaqs(true)}>Load More</button>
+            )}
           </div>
         </section>
       )}
@@ -4367,6 +4371,9 @@ function Sales() {
           flex-direction: column;
           gap: 0;
         }
+
+        .sales-faq__load-more { margin-top: 1.5rem; display: block; width: 100%; padding: 0.9rem 1.5rem; background: transparent; border: 1px solid #1a1a1a; color: #1a1a1a; font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
+        .sales-faq__load-more:hover { background: #1a1a1a; color: #fff; }
 
         .sales-faq__item {
           border-bottom: 1px solid #e8e6e2;

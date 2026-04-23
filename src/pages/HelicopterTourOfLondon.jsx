@@ -379,6 +379,7 @@ function LondonTourVideo() {
 function HelicopterTourOfLondon() {
   const heroRef = useRef(null);
   const [openFaq, setOpenFaq] = useState(null);
+  const [showAllFaqs, setShowAllFaqs] = useState(false);
 
   const highlightsRef = useRef(null);
   const [highlightIdx, setHighlightIdx] = useState(0);
@@ -597,7 +598,7 @@ function HelicopterTourOfLondon() {
           </Reveal>
 
           <div className="ltour-faq__list">
-            {faqs.map((faq, i) => (
+            {(showAllFaqs ? faqs : faqs.slice(0, 6)).map((faq, i) => (
               <Reveal key={faq.id || i} delay={i * 0.1}>
                 <div
                   className={`ltour-faq__item ${openFaq === i ? 'ltour-faq__item--open' : ''}`}
@@ -622,6 +623,9 @@ function HelicopterTourOfLondon() {
               </Reveal>
             ))}
           </div>
+          {!showAllFaqs && faqs.length > 6 && (
+            <button className="ltour-faq__load-more" onClick={() => setShowAllFaqs(true)}>Load More</button>
+          )}
         </div>
       </section>
 
@@ -1157,6 +1161,9 @@ function HelicopterTourOfLondon() {
           display: flex;
           flex-direction: column;
         }
+
+        .ltour-faq__load-more { margin-top: 1.5rem; display: block; width: 100%; padding: 0.9rem 1.5rem; background: transparent; border: 1px solid #1a1a1a; color: #1a1a1a; font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
+        .ltour-faq__load-more:hover { background: #1a1a1a; color: #fff; }
 
         .ltour-faq__item {
           display: flex;

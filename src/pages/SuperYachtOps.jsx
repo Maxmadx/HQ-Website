@@ -279,6 +279,7 @@ const trust = [
 export default function SuperYachtOps() {
   const heroRef = useRef(null);
   const [openFaq, setOpenFaq] = useState(null);
+  const [showAllFaqs, setShowAllFaqs] = useState(false);
   const pageImages = usePageImages('superyacht-ops');
   useCmsHighlight();
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
@@ -685,7 +686,7 @@ export default function SuperYachtOps() {
           </Reveal>
 
           <div className="syo-faq__list">
-            {faqs.map((faq, i) => (
+            {(showAllFaqs ? faqs : faqs.slice(0, 6)).map((faq, i) => (
               <Reveal key={faq.id} delay={i * 0.05}>
                 <div
                   className={`syo-faq__item${openFaq === i ? ' syo-faq__item--open' : ''}`}
@@ -720,6 +721,9 @@ export default function SuperYachtOps() {
               </Reveal>
             ))}
           </div>
+          {!showAllFaqs && faqs.length > 6 && (
+            <button className="syo-faq__load-more" onClick={() => setShowAllFaqs(true)}>Load More</button>
+          )}
         </div>
       </section>
 
@@ -1393,6 +1397,9 @@ export default function SuperYachtOps() {
           max-width: 800px;
           margin: 0 auto;
         }
+
+        .syo-faq__load-more { margin-top: 1.5rem; display: block; width: 100%; padding: 0.9rem 1.5rem; background: transparent; border: 1px solid #1a1a1a; color: #1a1a1a; font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
+        .syo-faq__load-more:hover { background: #1a1a1a; color: #fff; }
 
         .syo-faq__item {
           display: flex;

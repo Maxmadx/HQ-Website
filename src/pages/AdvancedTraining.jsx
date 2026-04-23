@@ -210,6 +210,7 @@ function Reveal({ children, delay = 0, direction = 'up' }) {
 function AdvancedTraining() {
   const heroRef = useRef(null);
   const [openFaq, setOpenFaq] = useState(null);
+  const [showAllFaqs, setShowAllFaqs] = useState(false);
   const [activeCourse, setActiveCourse] = useState(null);
   const pageImages = usePageImages('advanced-training');
   useCmsHighlight();
@@ -230,39 +231,50 @@ function AdvancedTraining() {
 
   // ── Data ──────────────────────────────────────────────────────────────────
 
-  const courses = [
-    {
-      num: '01', tag: 'Signature Course', title: 'Autorotations with Captain Q',
-      description: 'Autorotations are the helicopter\'s ultimate safety manoeuvre — and they require skill and confidence to execute well. Captain Q\'s autorotation clinic goes beyond routine practice to develop genuine mastery: full autorotations to a landing point, engine-off landings, and practice under genuinely simulated emergency conditions. Available exclusively at HQ.',
-      duration: 'Half day or full day',
-      suitable: 'PPL(H) holders with 50+ hours',
-      enquiry: 'autorotations',
-      image: '/assets/images/gallery/carousel/rotating1.jpg',
-    },
-    {
-      num: '02', tag: 'Skills', title: 'Confined Area Operations',
-      description: 'Flying into and out of restricted spaces — paddocks, clearings, narrow valleys — is one of the most demanding and most useful helicopter skills. HQ\'s confined area training covers reconnaissance, approach planning, power checks, and the go/no-go decision framework used by professional operators.',
-      duration: '2–3 days',
-      suitable: 'PPL(H) holders, 100+ hours recommended',
-      enquiry: 'confined-area',
-      image: '/assets/images/gallery/flying/flying--1.jpg',
-    },
-    {
-      num: '03', tag: 'Terrain', title: 'Mountain Flying',
-      description: 'Mountain flying introduces weather, terrain, density altitude, and turbulence considerations that lowland flying rarely prepares you for. Training covers route planning in mountainous terrain, weather decision-making, slope landings, and the performance margins needed to fly safely in the hills.',
-      duration: '2–4 days',
-      suitable: 'PPL(H) holders, 100+ hours',
-      enquiry: 'mountain-flying',
-      image: '/assets/images/gallery/carousel/rotating8.jpg',
-    },
-    {
-      num: '04', tag: 'Currency', title: 'Safety Courses',
-      description: 'Regular safety-focused refresher sessions covering emergency procedures, decision-making frameworks, accident analysis, and handling drills. Suitable for any PPL holder wanting to sharpen their airmanship — particularly recommended for pilots who fly infrequently or have returned after a break.',
-      duration: 'Half day',
-      suitable: 'All PPL(H) holders',
-      enquiry: 'safety-courses',
-      image: '/assets/images/gallery/carousel/rotating2.jpg',
-    },
+  const skills = [
+    // Emergencies
+    { cat: 'Emergencies', title: 'Full Autorotations', desc: 'Engine-off landings to a point — not just routine practice flares.' },
+    { cat: 'Emergencies', title: 'Tail Rotor Failures', desc: 'Jammed, broken and loss-of-drive scenarios worked through properly.' },
+    { cat: 'Emergencies', title: 'Loss of Tail Rotor Effectiveness', desc: 'Recognising LTE before it bites — and getting out of it if it does.' },
+    { cat: 'Emergencies', title: 'Vortex Ring State Recovery', desc: 'Entry, recognition and the correct recovery technique.' },
+    { cat: 'Emergencies', title: 'Engine Failure Drills', desc: 'Hover, takeoff, cruise and climb — every phase, under pressure.' },
+    { cat: 'Emergencies', title: 'Hydraulic Failure', desc: 'Flying the aircraft heavy-stick and landing it safely.' },
+    { cat: 'Emergencies', title: 'Governor Failure', desc: 'Manual throttle handling when the governor quits.' },
+    { cat: 'Emergencies', title: 'Inadvertent IMC', desc: 'What to do in the first 60 seconds after losing visual reference.' },
+    { cat: 'Emergencies', title: 'Carburettor Icing', desc: 'Detection, prevention and recovery on piston Robinsons.' },
+
+    // Handling & Performance
+    { cat: 'Handling', title: 'Power Management', desc: 'Knowing your margins — and flying inside them with precision.' },
+    { cat: 'Handling', title: 'Quick Stops', desc: 'Aggressive deceleration drills for tight approaches.' },
+    { cat: 'Handling', title: 'Precision Hovering', desc: 'Spot landings, wind corrections and close-quarters control.' },
+    { cat: 'Handling', title: 'Unusual Attitude Recovery', desc: 'Disorienting attitudes and how to get back to level flight.' },
+    { cat: 'Handling', title: 'Low-Inertia Rotor Technique', desc: 'Flying the Robinson rotor system the way it wants to be flown.' },
+    { cat: 'Handling', title: 'Running Landings & Takeoffs', desc: 'When hovering isn\'t an option — performance-limited operations.' },
+
+    // Terrain
+    { cat: 'Terrain', title: 'Mountain Flying', desc: 'Route planning, density altitude and turbulence in the hills.' },
+    { cat: 'Terrain', title: 'Pinnacle Landings', desc: 'Approach and departure from elevated, exposed sites.' },
+    { cat: 'Terrain', title: 'Slope Landings', desc: 'Left-slope, right-slope, nose-up and nose-down techniques.' },
+    { cat: 'Terrain', title: 'Confined Area Operations', desc: 'Reconnaissance, power checks and the go/no-go decision.' },
+    { cat: 'Terrain', title: 'Off-Airport Site Assessment', desc: 'Judging a field or paddock before you commit to landing.' },
+    { cat: 'Terrain', title: 'Over-Water Operations', desc: 'Planning, survival briefing and the specifics of flying blue.' },
+
+    // Conditions
+    { cat: 'Conditions', title: 'Hot-and-High Performance', desc: 'Density altitude maths that actually gets used in the cockpit.' },
+    { cat: 'Conditions', title: 'Night Flying', desc: 'Night currency and the sensory traps of dark-sky operations.' },
+    { cat: 'Conditions', title: 'Crosswind & Gusty Conditions', desc: 'Wind strategy, cyclic input and when to wait it out.' },
+    { cat: 'Conditions', title: 'Weather Decision-Making', desc: 'Reading weather products — and the discipline to turn back.' },
+
+    // Airmanship
+    { cat: 'Airmanship', title: 'Performance Planning', desc: 'Weight and balance, H-V diagram and real mission planning.' },
+    { cat: 'Airmanship', title: 'Single-Pilot CRM', desc: 'Workload management and self-checking when you\'re alone up front.' },
+    { cat: 'Airmanship', title: 'Decision-Making Frameworks', desc: 'The mental models professional pilots actually use.' },
+    { cat: 'Airmanship', title: 'Precision Navigation', desc: 'Map-reading, VFR navigation and in-cockpit nav discipline.' },
+    { cat: 'Airmanship', title: 'Lost Comms & Radio Failure', desc: 'Procedure, lighting signals, and staying calm when radios die.' },
+
+    // Signature
+    { cat: 'Signature', title: 'Aerobatic Principles', desc: 'Insights from Q\'s aerobatic world records — applied to everyday flying.' },
+    { cat: 'Signature', title: 'Long-Range Expedition Planning', desc: 'Lessons from circumnavigating the globe and crossing the poles.' },
   ];
 
   const instructorStats = [
@@ -270,13 +282,6 @@ function AdvancedTraining() {
     { value: '3', label: 'World Records' },
     { value: '18,000+', label: 'Flight Hours' },
     { value: 'CAA', label: 'Authorised Examiner' },
-  ];
-
-  const prerequisites = [
-    { num: '01', title: 'Valid PPL(H) or Higher', desc: 'Minimum entry requirement for all advanced courses' },
-    { num: '02', title: 'Valid Medical Certificate', desc: 'Class 2 or LAPL medical in date' },
-    { num: '03', title: 'Recent Flying Currency', desc: 'Recent flight time recommended — refresher available if needed' },
-    { num: '04', title: 'Open to Learning', desc: 'No strict hour threshold for most courses — just a desire to improve' },
   ];
 
   // ── Render ─────────────────────────────────────────────────────────────────
@@ -406,43 +411,23 @@ function AdvancedTraining() {
         </div>
       </section>
 
-      {/* ========== COURSES SECTION ========== */}
+      {/* ========== WHAT YOU'LL LEARN ========== */}
       <section className="adv-courses">
         <div className="adv-courses__container">
           <Reveal>
             <div className="adv-section-header">
-              <span className="adv-pre-text">The Specialisms</span>
-              <h2 className="adv-section-header__title">Advanced Courses</h2>
+              <span className="adv-pre-text">Training with Captain Q</span>
+              <h2 className="adv-section-header__title">What You'll Learn</h2>
             </div>
           </Reveal>
 
           <div className="adv-courses__grid">
-            {courses.map((course, i) => (
-              <Reveal key={course.num} delay={i * 0.1}>
-                <div className="adv-course-card">
-                  <div className="adv-course-card__top">
-                    <span className="adv-course-card__tag">{course.tag}</span>
-                    <span className="adv-course-card__num">{course.num}</span>
-                  </div>
-                  <h3 className="adv-course-card__title">{course.title}</h3>
-                  <p className="adv-course-card__desc">{course.description}</p>
-                  <div className="adv-course-card__divider" />
-                  <div className="adv-course-card__footer">
-                    <div className="adv-course-card__meta">
-                      <span className="adv-course-card__meta-label">Duration</span>
-                      <span className="adv-course-card__meta-value">{course.duration}</span>
-                    </div>
-                    <div className="adv-course-card__meta">
-                      <span className="adv-course-card__meta-label">Suitable for</span>
-                      <span className="adv-course-card__meta-value">{course.suitable}</span>
-                    </div>
-                    <Link
-                      to={`/contact?subject=${course.enquiry}`}
-                      className="adv-btn adv-btn--outline"
-                    >
-                      Enquire
-                    </Link>
-                  </div>
+            {skills.map((skill, i) => (
+              <Reveal key={skill.title} delay={(i % 6) * 0.05}>
+                <div className="adv-skill-card">
+                  <span className="adv-skill-card__tag">{skill.cat}</span>
+                  <h3 className="adv-skill-card__title">{skill.title}</h3>
+                  <p className="adv-skill-card__desc">{skill.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -490,35 +475,6 @@ function AdvancedTraining() {
         </div>
       </section>
 
-      {/* ========== PREREQUISITES SECTION ========== */}
-      <section className="adv-prereq">
-        <div className="adv-prereq__container">
-          <Reveal>
-            <div className="adv-section-header">
-              <span className="adv-pre-text">Who This Is For</span>
-              <h2 className="adv-section-header__title">Requirements</h2>
-              <p className="adv-section-header__desc">
-                Advanced training at HQ is open to all PPL(H) holders. Different courses have different recommended experience levels — see the course cards above. If in doubt, contact us and we'll advise on which course suits your current hours and ambitions.
-              </p>
-            </div>
-          </Reveal>
-
-          <div className="adv-prereq__grid">
-            {prerequisites.map((prereq, i) => (
-              <Reveal key={prereq.num} delay={i * 0.1}>
-                <div className="adv-prereq__card">
-                  <div className="adv-prereq__icon">{prereq.num}</div>
-                  <div className="adv-prereq__text">
-                    <h4>{prereq.title}</h4>
-                    <p>{prereq.desc}</p>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ========== FAQ SECTION ========== */}
       <section className="adv-faq" data-cms-section="faqs-advanced-training">
         <div className="adv-faq__container">
@@ -532,7 +488,7 @@ function AdvancedTraining() {
           </Reveal>
 
           <div className="adv-faq__list">
-            {faqs.map((faq, i) => (
+            {(showAllFaqs ? faqs : faqs.slice(0, 6)).map((faq, i) => (
               <Reveal key={faq.id} delay={i * 0.05}>
                 <div
                   className={`adv-faq__item ${openFaq === i ? 'adv-faq__item--open' : ''}`}
@@ -562,6 +518,9 @@ function AdvancedTraining() {
               </Reveal>
             ))}
           </div>
+          {!showAllFaqs && faqs.length > 6 && (
+            <button className="adv-faq__load-more" onClick={() => setShowAllFaqs(true)}>Load More</button>
+          )}
         </div>
       </section>
 
@@ -941,107 +900,51 @@ function AdvancedTraining() {
 
         .adv-courses__grid {
           display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 1.5rem;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1rem;
+          margin-top: 2.5rem;
         }
 
-        /* Course Card */
-        .adv-course-card {
+        /* Skill Card */
+        .adv-skill-card {
           background: #fff;
           border: 1px solid #e8e6e2;
-          border-radius: 12px;
-          padding: 2.5rem;
+          border-radius: 10px;
+          padding: 1.5rem 1.5rem 1.75rem;
           display: flex;
           flex-direction: column;
-          transition: box-shadow 0.3s ease, border-color 0.3s ease;
+          gap: 0.55rem;
+          height: 100%;
+          transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
         }
 
-        .adv-course-card:hover {
+        .adv-skill-card:hover {
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
           border-color: #d4d2ce;
+          transform: translateY(-2px);
         }
 
-        .adv-course-card__top {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 1.25rem;
-        }
-
-        .adv-course-card__tag {
-          display: inline-block;
-          background: #f5f5f2;
-          border: 1px solid #e8e6e2;
-          border-radius: 100px;
-          font-size: 0.65rem;
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
-          color: #777;
-          padding: 0.3rem 0.85rem;
-          font-family: 'Share Tech Mono', monospace;
-        }
-
-        .adv-course-card__num {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.75rem;
-          color: #ccc;
-          font-weight: 400;
-        }
-
-        .adv-course-card__title {
-          font-size: 1.2rem;
-          font-weight: 700;
-          color: #1a1a1a;
-          margin: 0 0 0.85rem;
-          line-height: 1.25;
-        }
-
-        .adv-course-card__desc {
-          font-size: 0.92rem;
-          color: #666;
-          line-height: 1.7;
-          margin: 0 0 1.5rem;
-          flex: 1;
-        }
-
-        .adv-course-card__divider {
-          height: 1px;
-          background: #e8e6e2;
-          margin-bottom: 1.5rem;
-        }
-
-        .adv-course-card__footer {
-          display: flex;
-          flex-direction: column;
-          gap: 0.6rem;
-        }
-
-        .adv-course-card__meta {
-          display: flex;
-          gap: 0.5rem;
-          align-items: baseline;
-        }
-
-        .adv-course-card__meta-label {
+        .adv-skill-card__tag {
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.6rem;
           text-transform: uppercase;
-          letter-spacing: 0.12em;
-          color: #aaa;
-          flex-shrink: 0;
-          min-width: 72px;
+          letter-spacing: 0.18em;
+          color: #999;
         }
 
-        .adv-course-card__meta-value {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.65rem;
-          color: #555;
-          line-height: 1.4;
+        .adv-skill-card__title {
+          font-size: 1.05rem;
+          font-weight: 700;
+          color: #1a1a1a;
+          line-height: 1.3;
+          margin: 0;
         }
 
-        .adv-course-card__footer .adv-btn {
-          margin-top: 0.5rem;
-          align-self: flex-start;
+        .adv-skill-card__desc {
+          font-size: 0.85rem;
+          color: #666;
+          line-height: 1.55;
+          margin: 0;
         }
 
         /* ===================================================
@@ -1134,74 +1037,6 @@ function AdvancedTraining() {
         }
 
         /* ===================================================
-           PREREQUISITES
-        =================================================== */
-
-        .adv-prereq {
-          background: #faf9f6;
-          padding: 6rem 4rem;
-          border-top: 1px solid #eeece8;
-        }
-
-        .adv-prereq__container {
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-
-        .adv-prereq__grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 1.25rem;
-        }
-
-        .adv-prereq__card {
-          display: flex;
-          flex-direction: row;
-          align-items: flex-start;
-          gap: 1rem;
-          padding: 1.5rem;
-          background: #fff;
-          border: 1px solid #e8e6e2;
-          border-radius: 8px;
-          transition: box-shadow 0.3s ease;
-        }
-
-        .adv-prereq__card:hover {
-          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
-        }
-
-        .adv-prereq__icon {
-          width: 44px;
-          height: 44px;
-          background: #1a1a1a;
-          color: #fff;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.8rem;
-          font-weight: 700;
-          flex-shrink: 0;
-          border-radius: 2px;
-        }
-
-        .adv-prereq__text h4 {
-          font-size: 0.88rem;
-          font-weight: 600;
-          margin: 0 0 0.35rem;
-          text-transform: uppercase;
-          color: #1a1a1a;
-          line-height: 1.3;
-        }
-
-        .adv-prereq__text p {
-          font-size: 0.8rem;
-          color: #777;
-          line-height: 1.55;
-          margin: 0;
-        }
-
-        /* ===================================================
            FAQ
         =================================================== */
 
@@ -1220,6 +1055,9 @@ function AdvancedTraining() {
           display: flex;
           flex-direction: column;
         }
+
+        .adv-faq__load-more { margin-top: 1.5rem; display: block; width: 100%; padding: 0.9rem 1.5rem; background: transparent; border: 1px solid #1a1a1a; color: #1a1a1a; font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
+        .adv-faq__load-more:hover { background: #1a1a1a; color: #fff; }
 
         .adv-faq__item {
           display: flex;
@@ -1368,6 +1206,10 @@ function AdvancedTraining() {
             padding: 5rem 3rem;
           }
 
+          .adv-courses__grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+
           .adv-instructor {
             padding: 5rem 3rem;
           }
@@ -1379,14 +1221,6 @@ function AdvancedTraining() {
           .adv-instructor__stats {
             grid-template-columns: repeat(2, 1fr);
             gap: 1.25rem;
-          }
-
-          .adv-prereq {
-            padding: 5rem 3rem;
-          }
-
-          .adv-prereq__grid {
-            grid-template-columns: repeat(2, 1fr);
           }
 
           .adv-faq {
@@ -1453,8 +1287,8 @@ function AdvancedTraining() {
             grid-template-columns: 1fr;
           }
 
-          .adv-course-card {
-            padding: 2rem;
+          .adv-skill-card {
+            padding: 1.25rem 1.25rem 1.5rem;
           }
 
           /* Instructor */
@@ -1482,20 +1316,6 @@ function AdvancedTraining() {
 
           .adv-instructor__stat-value {
             font-size: 1.25rem;
-          }
-
-          /* Prerequisites */
-          .adv-prereq {
-            padding: 4rem 1.5rem;
-          }
-
-          .adv-prereq__grid {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-          }
-
-          .adv-prereq__card {
-            padding: 1.25rem;
           }
 
           /* FAQ */
@@ -1539,15 +1359,11 @@ function AdvancedTraining() {
             padding: 3rem 1.25rem;
           }
 
-          .adv-course-card {
-            padding: 1.5rem;
+          .adv-skill-card {
+            padding: 1.25rem;
           }
 
           .adv-instructor {
-            padding: 3rem 1.25rem;
-          }
-
-          .adv-prereq {
             padding: 3rem 1.25rem;
           }
 

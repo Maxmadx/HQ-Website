@@ -113,6 +113,7 @@ function PPL() {
 
   // FAQ items
   const [openFaq, setOpenFaq] = useState(null);
+  const [showAllFaqs, setShowAllFaqs] = useState(false);
   const { faqs } = useFaqs('ppl', { visibleOnly: true });
 
   return (
@@ -373,7 +374,7 @@ function PPL() {
           </RevealSection>
 
           <div className="ppl-faq__list">
-            {faqs.map((faq, index) => (
+            {(showAllFaqs ? faqs : faqs.slice(0, 6)).map((faq, index) => (
               <RevealSection key={faq.id || index} delay={index * 0.1}>
                 <div
                   className={`ppl-faq__item ${openFaq === index ? 'ppl-faq__item--open' : ''}`}
@@ -392,6 +393,9 @@ function PPL() {
               </RevealSection>
             ))}
           </div>
+          {!showAllFaqs && faqs.length > 6 && (
+            <button className="ppl-faq__load-more" onClick={() => setShowAllFaqs(true)}>Load More</button>
+          )}
         </div>
       </section>
 
@@ -1047,6 +1051,9 @@ function PPL() {
           display: flex;
           flex-direction: column;
         }
+
+        .ppl-faq__load-more { margin-top: 1.5rem; display: block; width: 100%; padding: 0.9rem 1.5rem; background: transparent; border: 1px solid #1a1a1a; color: #1a1a1a; font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
+        .ppl-faq__load-more:hover { background: #1a1a1a; color: #fff; }
 
         .ppl-faq__item {
           border-bottom: 1px solid var(--hq-border, #e8e6e2);
