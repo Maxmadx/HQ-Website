@@ -1714,6 +1714,15 @@ function FinalPPL() {
           display: flex;
           flex-direction: column;
           gap: 0;
+          flex: 1;
+          min-height: 0;
+          overflow-y: auto;
+          scrollbar-width: thin;
+          scrollbar-color: #e0deda transparent;
+        }
+
+        .df-faq__load-more {
+          display: none;
         }
 
         .df-faq__item {
@@ -2827,6 +2836,36 @@ function FinalPPL() {
           .fppl-visit__fleet-list {
             flex-wrap: wrap;
             justify-content: center;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .df-faq__list {
+            overflow-y: visible;
+            flex: unset;
+            min-height: unset;
+          }
+          .df-faq__item--mobile-hidden {
+            display: none;
+          }
+          .df-faq__load-more {
+            display: block;
+            width: 100%;
+            margin-top: 1.5rem;
+            padding: 0.9rem 1.5rem;
+            background: transparent;
+            border: 1px solid #1a1a1a;
+            color: #1a1a1a;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease;
+          }
+          .df-faq__load-more:hover {
+            background: #1a1a1a;
+            color: #fff;
           }
         }
 
