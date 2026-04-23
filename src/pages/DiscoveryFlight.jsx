@@ -2417,6 +2417,9 @@ function DiscoveryFlight() {
           display: flex;
           flex-direction: column;
         }
+        .df-location-faq__right {
+          overflow: hidden;
+        }
 
         .df-location-faq__divider {
           width: 1px;
@@ -3065,6 +3068,9 @@ function DiscoveryFlight() {
             display: none;
           }
 
+          .df-location-faq__right {
+            overflow-y: visible;
+          }
           .df-faq__list {
             overflow-y: visible;
             flex: unset;

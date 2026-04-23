@@ -1650,6 +1650,9 @@ function FinalPPL() {
           display: flex;
           flex-direction: column;
         }
+        .df-location-faq__right {
+          overflow: hidden;
+        }
 
         .df-location-faq__divider {
           width: 1px;
@@ -2846,6 +2849,9 @@ function FinalPPL() {
         }
 
         @media (max-width: 768px) {
+          .df-location-faq__right {
+            overflow-y: visible;
+          }
           .df-faq__list {
             overflow-y: visible;
             flex: unset;
