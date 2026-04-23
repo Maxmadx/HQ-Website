@@ -1,5 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { buildOrganization, buildWebSite, buildLocalBusiness, buildBreadcrumbList } from './jsonLd';
+import {
+  buildOrganization,
+  buildWebSite,
+  buildLocalBusiness,
+  buildBreadcrumbList,
+  buildProduct,
+  buildArticle,
+  buildFAQPage,
+} from './jsonLd';
 
 describe('buildOrganization', () => {
   it('returns Organization with required fields', () => {
@@ -52,5 +60,55 @@ describe('buildBreadcrumbList', () => {
     expect(bc.itemListElement).toHaveLength(3);
     expect(bc.itemListElement[0].position).toBe(1);
     expect(bc.itemListElement[2].item).toBe('https://hqaviation.com/aircraft/r66');
+  });
+});
+
+describe('buildProduct', () => {
+  it('returns Product schema', () => {
+    const p = buildProduct({
+      name: 'Robinson R66',
+      description: 'Five-seat turbine',
+      image: '/img/r66.jpg',
+      brand: 'Robinson Helicopters',
+      url: '/aircraft/r66',
+    });
+    expect(p['@type']).toBe('Product');
+    expect(p.name).toBe('Robinson R66');
+    expect(p.image).toBe('https://hqaviation.com/img/r66.jpg');
+    expect(p.brand['@type']).toBe('Brand');
+    expect(p.brand.name).toBe('Robinson Helicopters');
+    expect(p.offers['@type']).toBe('Offer');
+  });
+});
+
+describe('buildArticle', () => {
+  it('returns Article schema with required fields', () => {
+    const a = buildArticle({
+      headline: 'My post',
+      description: 'About flying',
+      image: '/img/post.jpg',
+      datePublished: '2026-04-01',
+      dateModified: '2026-04-10',
+      authorName: 'Jane Pilot',
+      url: '/blog/my-post',
+    });
+    expect(a['@type']).toBe('Article');
+    expect(a.headline).toBe('My post');
+    expect(a.author.name).toBe('Jane Pilot');
+    expect(a.datePublished).toBe('2026-04-01');
+    expect(a.publisher['@id']).toBe('https://hqaviation.com/#organization');
+  });
+});
+
+describe('buildFAQPage', () => {
+  it('returns FAQPage with mainEntity questions', () => {
+    const f = buildFAQPage([
+      { q: 'Where are you?', a: 'Denham.' },
+      { q: 'Cost?', a: 'POA.' },
+    ]);
+    expect(f['@type']).toBe('FAQPage');
+    expect(f.mainEntity).toHaveLength(2);
+    expect(f.mainEntity[0]['@type']).toBe('Question');
+    expect(f.mainEntity[0].acceptedAnswer.text).toBe('Denham.');
   });
 });

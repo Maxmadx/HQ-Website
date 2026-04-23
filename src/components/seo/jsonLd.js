@@ -88,3 +88,49 @@ export function buildBreadcrumbList(items) {
     })),
   };
 }
+
+export function buildProduct({ name, description, image, brand = 'Robinson Helicopters', url, offers }) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name,
+    description,
+    image: absoluteUrl(image),
+    brand: { '@type': 'Brand', name: brand },
+    url: absoluteUrl(url),
+    offers: offers || {
+      '@type': 'Offer',
+      url: absoluteUrl(url),
+      availability: 'https://schema.org/InStock',
+      priceCurrency: 'GBP',
+      priceSpecification: { '@type': 'PriceSpecification', price: 'POA' },
+    },
+  };
+}
+
+export function buildArticle({ headline, description, image, datePublished, dateModified, authorName, url }) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline,
+    description,
+    image: image ? absoluteUrl(image) : undefined,
+    datePublished,
+    dateModified: dateModified || datePublished,
+    author: { '@type': 'Person', name: authorName || ORG_NAME },
+    publisher: { '@id': `${SITE_URL}/#organization` },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': absoluteUrl(url) },
+  };
+}
+
+export function buildFAQPage(items) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map(({ q, a }) => ({
+      '@type': 'Question',
+      name: q,
+      acceptedAnswer: { '@type': 'Answer', text: a },
+    })),
+  };
+}
