@@ -25,3 +25,34 @@ describe('buildWebSite', () => {
     expect(buildWebSite().publisher['@id']).toBe(buildOrganization()['@id']);
   });
 });
+
+import { buildLocalBusiness, buildBreadcrumbList } from './jsonLd';
+
+describe('buildLocalBusiness', () => {
+  it('returns LocalBusiness with address and geo', () => {
+    const lb = buildLocalBusiness();
+    expect(lb['@type']).toBe('LocalBusiness');
+    expect(lb.address['@type']).toBe('PostalAddress');
+    expect(lb.address.addressLocality).toBe('Denham');
+    expect(lb.geo.latitude).toBeCloseTo(51.59181);
+    expect(
+      Array.isArray(lb.openingHoursSpecification) ||
+      typeof lb.openingHours === 'string' ||
+      Array.isArray(lb.openingHours)
+    ).toBe(true);
+  });
+});
+
+describe('buildBreadcrumbList', () => {
+  it('returns ordered list of BreadcrumbItems', () => {
+    const bc = buildBreadcrumbList([
+      { name: 'Home', path: '/' },
+      { name: 'Aircraft', path: '/aircraft' },
+      { name: 'R66', path: '/aircraft/r66' },
+    ]);
+    expect(bc['@type']).toBe('BreadcrumbList');
+    expect(bc.itemListElement).toHaveLength(3);
+    expect(bc.itemListElement[0].position).toBe(1);
+    expect(bc.itemListElement[2].item).toBe('https://hqaviation.com/aircraft/r66');
+  });
+});

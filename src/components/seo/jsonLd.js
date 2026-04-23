@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import {
   SITE_URL,
   ORG_NAME,
@@ -45,5 +44,47 @@ export function buildWebSite() {
       'query-input': 'required name=search_term_string',
     },
     inLanguage: 'en-GB',
+  };
+}
+
+export function buildLocalBusiness() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    '@id': `${SITE_URL}/#localbusiness`,
+    name: ORG_NAME,
+    description: ORG_DESCRIPTION,
+    url: SITE_URL,
+    telephone: PHONE,
+    email: EMAIL,
+    image: absoluteUrl(ORG_LOGO_PATH),
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: ADDRESS.streetAddress,
+      addressLocality: ADDRESS.addressLocality,
+      addressRegion: ADDRESS.addressRegion,
+      postalCode: ADDRESS.postalCode,
+      addressCountry: ADDRESS.addressCountry,
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: GEO.latitude,
+      longitude: GEO.longitude,
+    },
+    openingHours: OPENING_HOURS,
+    priceRange: '£££',
+  };
+}
+
+export function buildBreadcrumbList(items) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, idx) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      name: item.name,
+      item: absoluteUrl(item.path),
+    })),
   };
 }
