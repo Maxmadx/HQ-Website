@@ -267,6 +267,52 @@ function LeasebackIntro() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// SECTION 3: HOW IT WORKS
+// ─────────────────────────────────────────────────────────────────────────────
+
+const HOW_STEPS = [
+  {
+    num: '01',
+    title: 'Aircraft Assessment',
+    description: 'Independent valuation, hours, and condition review.',
+  },
+  {
+    num: '02',
+    title: 'Operating Agreement',
+    description: 'Revenue split, scheduling, and insurance terms agreed in writing.',
+  },
+  {
+    num: '03',
+    title: 'Earn While You Own',
+    description: 'HQ flies and maintains the aircraft on your behalf. You receive monthly statements.',
+  },
+];
+
+function LeasebackHowItWorks() {
+  return (
+    <section className="lb-how" data-cms-section="lb-how">
+      <div className="lb-how__container">
+        <Reveal>
+          <span className="lb-pre-text lb-how__pre">The Process</span>
+          <h2 className="lb-how__heading">From handover to revenue.</h2>
+        </Reveal>
+        <div className="lb-how__steps">
+          {HOW_STEPS.map((step, i) => (
+            <Reveal key={step.num} delay={0.1 + i * 0.1}>
+              <div className="lb-how__step">
+                <span className="lb-how__num">{step.num}</span>
+                <h3 className="lb-how__title">{step.title}</h3>
+                <p className="lb-how__desc">{step.description}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // STYLES
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -425,6 +471,69 @@ function LeasebackStyles() {
         .lb-intro { padding: 80px 24px; }
         .lb-intro__container { grid-template-columns: 1fr; gap: 40px; }
       }
+      /* ── SECTION 3: HOW IT WORKS ───────────────────────────────────────── */
+      .lb-how {
+        background: #1a1a1a;
+        color: #faf9f6;
+        padding: 120px 48px;
+      }
+      .lb-how__container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .lb-how__pre {
+        display: block;
+        margin-bottom: 16px;
+        color: #7a7a7a;
+      }
+      .lb-how__heading {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 500;
+        font-size: clamp(32px, 4vw, 56px);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        margin: 0 0 64px;
+        color: #faf9f6;
+        max-width: 640px;
+      }
+      .lb-how__steps {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 48px;
+        border-top: 1px solid rgba(250,249,246,0.15);
+        padding-top: 48px;
+      }
+      .lb-how__step {
+        position: relative;
+      }
+      .lb-how__num {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: clamp(40px, 5vw, 64px);
+        font-weight: 400;
+        color: #7a7a7a;
+        display: block;
+        margin-bottom: 24px;
+        letter-spacing: -0.02em;
+      }
+      .lb-how__title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 500;
+        font-size: 22px;
+        line-height: 1.2;
+        color: #faf9f6;
+        margin: 0 0 16px;
+      }
+      .lb-how__desc {
+        font-size: 15px;
+        line-height: 1.6;
+        color: #7a7a7a;
+        margin: 0;
+      }
+      @media (max-width: 900px) {
+        .lb-how { padding: 80px 24px; }
+        .lb-how__steps { grid-template-columns: 1fr; gap: 40px; }
+        .lb-how__heading { margin-bottom: 40px; }
+      }
     `}</style>
   );
 }
@@ -445,6 +554,7 @@ export default function Leaseback() {
       <main>
         <LeasebackHero pageImages={pageImages} />
         <LeasebackIntro />
+        <LeasebackHowItWorks />
       </main>
       <FooterMinimal />
     </div>
