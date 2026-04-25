@@ -13,6 +13,8 @@ import { useFaqs } from '../hooks/useFaqs';
 import { usePricing } from '../hooks/usePricing';
 import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
+import Seo from '../components/seo/Seo';
+import { buildCourse, buildBreadcrumbList, buildFAQPage } from '../components/seo/jsonLd';
 
 // Import styles for Header/Navigation
 import '../assets/css/main.css';
@@ -302,6 +304,28 @@ function FinalPPL() {
 
   return (
     <div className="fppl">
+      <Seo
+        title="PPL(H) Helicopter Training · London"
+        description="Earn your PPL(H) at Denham, 30 min from London. CAA Part-FCL ATO. R22, R44 and R66 fleet. Examiner-rated instructors, competitive rates, transparent costs."
+        jsonLd={[
+          buildCourse({
+            name: 'PPL(H) Helicopter Pilot Training',
+            description: 'CAA-approved Part-FCL ATO course at Denham, 30 minutes from London. R22, R44 and R66 fleet, examiner-rated instructors.',
+            url: '/training/ppl',
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Training', path: '/training' },
+            { name: 'PPL(H)', path: '/training/ppl' },
+          ]),
+          ...(faqs.length
+            ? [buildFAQPage(faqs.map((f) => ({ q: f.question, a: f.answer })))]
+            : []),
+        ]}
+      />
+      <h1 style={{ position: 'absolute', left: '-10000px', width: '1px', height: '1px', overflow: 'hidden' }}>
+        PPL(H) Helicopter Pilot Training — London, Denham
+      </h1>
       <PPLHeader />
 
       {/* ========== HERO: Split Layout with Boarding Pass ========== */}

@@ -32,6 +32,7 @@ import { usePageText } from '../hooks/usePageText';
 import { useFaqs } from '../hooks/useFaqs';
 import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
+import Seo from '../components/seo/Seo';
 
 /**
  * EXPEDITIONS PAGE HEADER COMPONENT
@@ -1435,6 +1436,13 @@ function FinalExpeditions() {
 
   return (
     <div className="fexp">
+      <Seo
+        title="Worldwide Helicopter Expeditions"
+        description="Multi-day long-range helicopter expeditions led by HQ Aviation pilots. Cross-Channel, cross-continent, bespoke routes, itinerary, fuel and customs handled."
+      />
+      <h1 style={{ position: 'absolute', left: '-10000px', width: '1px', height: '1px', overflow: 'hidden' }}>
+        Worldwide Helicopter Expeditions — Led by HQ Aviation Pilots, United Kingdom UK
+      </h1>
       <ExpeditionsHeader />
 
       {/* ========== HERO: Expedition Passport ========== */}

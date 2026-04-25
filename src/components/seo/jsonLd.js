@@ -92,7 +92,7 @@ export function buildBreadcrumbList(items) {
 }
 
 export function buildProduct({ name, description, image, brand = 'Robinson Helicopters', url, offers }) {
-  return {
+  const product = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name,
@@ -100,14 +100,11 @@ export function buildProduct({ name, description, image, brand = 'Robinson Helic
     image: absoluteUrl(image),
     brand: { '@type': 'Brand', name: brand },
     url: absoluteUrl(url),
-    offers: offers || {
-      '@type': 'Offer',
-      url: absoluteUrl(url),
-      availability: 'https://schema.org/InStock',
-      priceCurrency: 'GBP',
-      priceSpecification: { '@type': 'PriceSpecification', price: 'POA' },
-    },
   };
+  if (offers) {
+    product.offers = offers;
+  }
+  return product;
 }
 
 export function buildArticle({ headline, description, image, datePublished, dateModified, authorName, url }) {
@@ -133,6 +130,62 @@ export function buildFAQPage(items) {
       '@type': 'Question',
       name: q,
       acceptedAnswer: { '@type': 'Answer', text: a },
+    })),
+  };
+}
+
+export function buildCourse({ name, description, provider = ORG_NAME, url, courseInstance, offers }) {
+  const course = {
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    name,
+    description,
+    provider: {
+      '@type': 'Organization',
+      name: provider,
+      sameAs: SITE_URL,
+    },
+    url: absoluteUrl(url),
+  };
+  if (courseInstance) {
+    course.hasCourseInstance = courseInstance;
+  }
+  if (offers) {
+    course.offers = offers;
+  }
+  return course;
+}
+
+export function buildService({ name, serviceType, description, url, areaServed = 'United Kingdom', provider = ORG_NAME }) {
+  const service = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name,
+    description,
+    provider: {
+      '@type': 'Organization',
+      name: provider,
+      sameAs: SITE_URL,
+    },
+    url: absoluteUrl(url),
+    areaServed,
+  };
+  if (serviceType) {
+    service.serviceType = serviceType;
+  }
+  return service;
+}
+
+export function buildItemList({ name, items }) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name,
+    itemListElement: items.map((item, idx) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      name: item.name,
+      url: absoluteUrl(item.url),
     })),
   };
 }

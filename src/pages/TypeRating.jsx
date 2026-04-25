@@ -15,6 +15,8 @@ import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import Seo from '../components/seo/Seo';
+import { buildCourse, buildBreadcrumbList } from '../components/seo/jsonLd';
 
 // Import styles for Header/Navigation
 import '../assets/css/main.css';
@@ -509,6 +511,50 @@ function TypeRating() {
 
   return (
     <div className="tr">
+      <Seo
+        title="Robinson, Airbus & Hughes Type Ratings"
+        description="Add a Robinson R22, R44, R66, Airbus AS350, EC130 or Hughes 500 type rating. CAA-approved ATO at Denham, near London. Full conversion or differences."
+        jsonLd={[
+          buildCourse({
+            name: 'Robinson R22 Type Rating',
+            description: 'CAA-approved Robinson R22 type rating training at Denham.',
+            url: '/training/type-rating',
+          }),
+          buildCourse({
+            name: 'Robinson R44 Type Rating',
+            description: 'CAA-approved Robinson R44 type rating training at Denham.',
+            url: '/training/type-rating',
+          }),
+          buildCourse({
+            name: 'Robinson R66 Type Rating',
+            description: 'CAA-approved Robinson R66 Turbine type rating training at Denham.',
+            url: '/training/type-rating',
+          }),
+          buildCourse({
+            name: 'Airbus AS350 Type Rating',
+            description: 'CAA-approved Airbus AS350 type rating training at Denham.',
+            url: '/training/type-rating',
+          }),
+          buildCourse({
+            name: 'Airbus EC130 Type Rating',
+            description: 'CAA-approved Airbus EC130 type rating training at Denham.',
+            url: '/training/type-rating',
+          }),
+          buildCourse({
+            name: 'Hughes 500 Type Rating',
+            description: 'CAA-approved Hughes 500 type rating training at Denham.',
+            url: '/training/type-rating',
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Training', path: '/training' },
+            { name: 'Type Ratings', path: '/training/type-rating' },
+          ]),
+        ]}
+      />
+      <h1 style={{ position: 'absolute', left: '-10000px', width: '1px', height: '1px', overflow: 'hidden' }}>
+        Robinson, Airbus & Hughes Helicopter Type Ratings — United Kingdom UK
+      </h1>
       <TypeRatingHeader />
 
       {/* ========== HERO SECTION ========== */}

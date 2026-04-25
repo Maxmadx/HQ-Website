@@ -18,6 +18,8 @@ import { usePageText } from '../hooks/usePageText';
 import { useFaqs } from '../hooks/useFaqs';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { arrivalStyles } from '../components/ArrivalSection';
+import Seo from '../components/seo/Seo';
+import { buildCourse, buildBreadcrumbList } from '../components/seo/jsonLd';
 
 // Import styles
 import '../assets/css/main.css';
@@ -1231,8 +1233,55 @@ function DiscoveryFlight() {
   }, []);
   useCmsHighlight();
 
+  // Live pricing for Offer schema (Tranche 6). usePricing() returns p(id) → pence
+  // (with FALLBACK in usePricing.js if Firestore is unavailable). Pence → pounds.
+  // VAT excluded per the visible pricing table; valueAddedTaxIncluded: false so
+  // Google doesn't double-count tax in the SERP price snippet.
+  const { p: priceOf } = usePricing();
+  const offerCombos = [
+    { key: 'discovery_r22_30min', name: 'Robinson R22 — 30 minute trial lesson' },
+    { key: 'discovery_r22_60min', name: 'Robinson R22 — 60 minute trial lesson' },
+    { key: 'discovery_r44_30min', name: 'Robinson R44 — 30 minute trial lesson' },
+    { key: 'discovery_r44_60min', name: 'Robinson R44 — 60 minute trial lesson' },
+    { key: 'discovery_r66_30min', name: 'Robinson R66 — 30 minute trial lesson' },
+    { key: 'discovery_r66_60min', name: 'Robinson R66 — 60 minute trial lesson' },
+  ];
+  const trialOffers = offerCombos
+    .map((c) => ({ ...c, pence: priceOf(c.key) }))
+    .filter((c) => c.pence > 0)
+    .map((c) => ({
+      '@type': 'Offer',
+      name: c.name,
+      price: (c.pence / 100).toFixed(2),
+      priceCurrency: 'GBP',
+      valueAddedTaxIncluded: false,
+      availability: 'https://schema.org/InStock',
+      url: 'https://hqaviation.com/training/trial-lessons',
+    }));
+
   return (
     <div className="df">
+      <Seo
+        title="Helicopter Experience & Trial Lesson · London"
+        description="Take the controls of a Robinson helicopter at Denham — 30 min from London. One-off experience or first flight lesson. R22, R44 or R66. Gift vouchers."
+        ogImage="/assets/images/r66helis.jpg"
+        jsonLd={[
+          buildCourse({
+            name: 'Helicopter Trial Lesson',
+            description: 'One-off helicopter experience or first flight lesson at Denham, 30 min from London. R22, R44 or R66.',
+            url: '/training/trial-lessons',
+            offers: trialOffers.length ? trialOffers : undefined,
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Training', path: '/training' },
+            { name: 'Trial Lessons', path: '/training/trial-lessons' },
+          ]),
+        ]}
+      />
+      <h1 style={{ position: 'absolute', left: '-10000px', width: '1px', height: '1px', overflow: 'hidden' }}>
+        Helicopter Experience & Trial Lessons — Fly a Robinson, London & United Kingdom UK
+      </h1>
       <DiscoveryHeader />
       <DiscoveryHero />
       <ValueProposition />

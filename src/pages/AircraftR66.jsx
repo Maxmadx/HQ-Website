@@ -27,6 +27,8 @@ import { motion, useInView, useScroll, useTransform, AnimatePresence, LayoutGrou
 import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { SECTION_MAP } from '../lib/imageSections';
+import Seo from '../components/seo/Seo';
+import { buildProduct, buildBreadcrumbList } from '../components/seo/jsonLd';
 
 // Import styles
 import '../assets/css/main.css';
@@ -5372,6 +5374,28 @@ function AircraftR66() {
 
   return (
     <div className="r66-page">
+      <Seo
+        title="Robinson R66 · UK Dealer & RR300 Service"
+        description="Buy a new Robinson R66 Turbine — five-seat single-engine Rolls-Royce RR300 — from HQ Aviation at Denham, a Robinson authorised dealer and RR300 service center."
+        ogImage="/assets/images/r66helis.jpg"
+        jsonLd={[
+          buildProduct({
+            name: 'Robinson R66 Turbine',
+            description: 'New Robinson R66 Turbine — five-seat single-engine Rolls-Royce RR300 turboshaft helicopter.',
+            image: '/og-default.jpg',
+            brand: 'Robinson Helicopter Company',
+            url: '/aircraft/r66',
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'New Aircraft Sales', path: '/sales/new' },
+            { name: 'Robinson R66', path: '/aircraft/r66' },
+          ]),
+        ]}
+      />
+      <h1 style={{ position: 'absolute', left: '-10000px', width: '1px', height: '1px', overflow: 'hidden' }}>
+        Robinson R66 Turbine — UK Authorised Dealer, Service Center & RR300 Service Centre
+      </h1>
       <R66Styles />
       <R66Header />
       <main>

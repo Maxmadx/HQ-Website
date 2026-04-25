@@ -14,6 +14,8 @@ import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { usePageText } from '../hooks/usePageText';
 import { useFaqs } from '../hooks/useFaqs';
+import Seo from '../components/seo/Seo';
+import { buildItemList, buildBreadcrumbList } from '../components/seo/jsonLd';
 
 // Import styles
 import '../assets/css/main.css';
@@ -988,6 +990,28 @@ function Sales() {
 
   return (
     <div className="sales-page">
+      <Seo
+        title="New Robinson Helicopters for Sale · UK"
+        description="Order a new Robinson R22, R44 Raven II, R66 Turbine NxG or R88 from HQ Aviation at Denham — Robinson authorised dealer and service center, CAA Part-145."
+        jsonLd={[
+          buildItemList({
+            name: 'New Robinson Helicopters for Sale',
+            items: [
+              { name: 'Robinson R22 Beta II', url: '/aircraft/r22' },
+              { name: 'Robinson R44 Raven II', url: '/aircraft/r44' },
+              { name: 'Robinson R66 Turbine', url: '/aircraft/r66' },
+              { name: 'Robinson R88 (Pre-Order)', url: '/aircraft/r88' },
+            ],
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'New Aircraft Sales', path: '/sales/new' },
+          ]),
+        ]}
+      />
+      <h1 style={{ position: 'absolute', left: '-10000px', width: '1px', height: '1px', overflow: 'hidden' }}>
+        New Robinson Helicopters for Sale — United Kingdom UK Authorised Dealer
+      </h1>
       <SalesHeader />
 
       {/* ========== HERO: Flagship R88 ========== */}

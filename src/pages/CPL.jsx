@@ -14,6 +14,8 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useFaqs } from '../hooks/useFaqs';
 import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
+import Seo from '../components/seo/Seo';
+import { buildCourse, buildBreadcrumbList } from '../components/seo/jsonLd';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import '../assets/css/main.css';
@@ -289,6 +291,25 @@ function CPL() {
 
   return (
     <div className="cpl">
+      <Seo
+        title="CPL(H) Commercial Helicopter Training · UK"
+        description="Commercial helicopter pilot training at Denham, 30 min from London. CAA-approved CPL(H) hour building opportunities. Examiner-rated instructors."
+        jsonLd={[
+          buildCourse({
+            name: 'CPL(H) Commercial Helicopter Pilot Training',
+            description: 'CAA-approved CPL(H) modular path with hour-building opportunities at Denham. Examiner-rated instructors.',
+            url: '/training/commercial',
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Training', path: '/training' },
+            { name: 'CPL(H)', path: '/training/commercial' },
+          ]),
+        ]}
+      />
+      <h1 style={{ position: 'absolute', left: '-10000px', width: '1px', height: '1px', overflow: 'hidden' }}>
+        CPL(H) Commercial Helicopter Pilot Training & Hour Building — United Kingdom UK
+      </h1>
       <CPLHeader />
 
       {/* ========== HERO SECTION ========== */}
