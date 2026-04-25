@@ -232,6 +232,41 @@ function LeasebackHero({ pageImages }) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// SECTION 2: INTRO — WHAT IS LEASEBACK
+// ─────────────────────────────────────────────────────────────────────────────
+
+function LeasebackIntro() {
+  return (
+    <section className="lb-intro" data-cms-section="lb-intro">
+      <div className="lb-intro__container">
+        <div className="lb-intro__left">
+          <Reveal>
+            <span className="lb-pre-text">The Program</span>
+            <h2 className="lb-intro__heading">A second life for your aircraft.</h2>
+            <p className="lb-intro__body">
+              A leaseback agreement places your aircraft into HQ's commercial operation. We fly it on charter and training work, you receive a share of the revenue earned, and the aircraft remains yours throughout.
+            </p>
+            <p className="lb-intro__body">
+              Maintenance, scheduling, pilot management, and operational compliance all sit with HQ. You retain priority personal use under the terms of your agreement.
+            </p>
+          </Reveal>
+        </div>
+        <div className="lb-intro__right">
+          <Reveal delay={0.15} direction="left">
+            <div className="lb-intro__quote">
+              <span className="lb-pre-text">Why Leaseback</span>
+              <p className="lb-intro__quote-text">
+                "Charter and training operations turn idle ownership cost into productive revenue."
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // STYLES
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -342,6 +377,54 @@ function LeasebackStyles() {
         .lb-hero__content { padding: 0 24px; }
         .lb-hero__headline { font-size: clamp(40px, 12vw, 72px); }
       }
+      /* ── SECTION 2: INTRO ──────────────────────────────────────────────── */
+      .lb-intro {
+        background: #faf9f6;
+        padding: 120px 48px;
+      }
+      .lb-intro__container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 80px;
+        align-items: start;
+      }
+      .lb-intro__left .lb-pre-text { display: block; margin-bottom: 16px; }
+      .lb-intro__heading {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 500;
+        font-size: clamp(32px, 4vw, 56px);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        margin: 0 0 32px;
+        color: #1a1a1a;
+      }
+      .lb-intro__body {
+        font-size: 16px;
+        line-height: 1.7;
+        color: #4a4a4a;
+        margin: 0 0 20px;
+        max-width: 560px;
+      }
+      .lb-intro__body:last-child { margin-bottom: 0; }
+      .lb-intro__quote {
+        border-top: 1px solid #1a1a1a;
+        padding-top: 24px;
+      }
+      .lb-intro__quote .lb-pre-text { display: block; margin-bottom: 16px; }
+      .lb-intro__quote-text {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 20px;
+        line-height: 1.5;
+        font-style: italic;
+        color: #1a1a1a;
+        margin: 0;
+      }
+      @media (max-width: 900px) {
+        .lb-intro { padding: 80px 24px; }
+        .lb-intro__container { grid-template-columns: 1fr; gap: 40px; }
+      }
     `}</style>
   );
 }
@@ -361,6 +444,7 @@ export default function Leaseback() {
       <LeasebackHeader />
       <main>
         <LeasebackHero pageImages={pageImages} />
+        <LeasebackIntro />
       </main>
       <FooterMinimal />
     </div>
