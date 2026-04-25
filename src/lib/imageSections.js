@@ -1168,4 +1168,5 @@ export const PAGE_LABELS = {
   r66:               'R66 Aircraft Page',
   r88:               'R88 Aircraft Page',
   h500:              'H500 Aircraft Page',
+  leaseback:         'Leaseback Page',
 };
