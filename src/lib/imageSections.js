@@ -1113,6 +1113,30 @@ export const SECTIONS = [
     ],
   },
 
+  // ─── LEASEBACK PAGE ────────────────────────────────────────────────────────
+  {
+    id: 'lb-hero',
+    page: 'leaseback',
+    name: 'Leaseback Hero — Background Image',
+    hint: 'Wide editorial aircraft shot behind the hero headline on /leaseback',
+    type: 'single',
+    images: [
+      { id: 'lbh1', url: '/assets/images/new-aircraft/r66/rhc-r66-nxg-pv-left-side-wide-shot-from-rear-13751.jpg', alt: 'Robinson R66 wide rear view' },
+    ],
+  },
+  {
+    id: 'lb-aircraft',
+    page: 'leaseback',
+    name: 'Leaseback — Eligible Aircraft Cards',
+    hint: 'Three cards in the Eligible Aircraft strip — R44, R66, Hughes 500',
+    type: 'cards',
+    slideLabels: ['Robinson R44', 'Robinson R66', 'Hughes 500'],
+    images: [
+      { id: 'lba1', url: '/assets/images/new-aircraft/r44/r44blueprint.jpg', alt: 'Robinson R44 Raven II' },
+      { id: 'lba2', url: '/assets/images/new-aircraft/r66/r66-turbine.png', alt: 'Robinson R66 Turbine' },
+      { id: 'lba3', url: '/assets/images/used-aircraft/other/hughes-369e-gumby.jpg', alt: 'Hughes 500 in flight' },
+    ],
+  },
 
 ];
 
