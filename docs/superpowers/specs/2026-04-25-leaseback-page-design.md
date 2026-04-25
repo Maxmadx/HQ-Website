@@ -41,8 +41,9 @@ export default function Leaseback() {
 - **CSS prefix:** `lb-` for every class on the page (`lb-hero`, `lb-intro`, `lb-how`, `lb-benefits`, `lb-aircraft`).
 - **No shared abstraction extracted from the header.** Sibling pages each ship their own local `*Header` component with identical behaviour — follow that convention.
 - **Animation wrapper:** local `Reveal({ children, delay, direction })` component using `framer-motion` `useInView`, copied verbatim from `Sales.jsx:113` (already used identically across sibling pages).
-- **CMS hooks:** `usePageImages('leaseback')` keys hero and aircraft-strip images so they're admin-editable. Use `useCmsHighlight()` so admin click-to-edit works on this page like every other branded page.
+- **CMS hooks:** `usePageImages('leaseback')` keys hero and aircraft-strip images so they're admin-editable. Use `useCmsHighlight()` so admin click-to-edit works on this page like every other branded page. Requires registering new sections in `src/lib/imageSections.js` (see "CMS image sections" below).
 - **No FAQs section** (lightweight scope) — `useFaqs` is **not** used on this page.
+- **No `Helmet` / SEO meta tags.** None of the sibling branded pages (`AircraftR66`, `AircraftConsulting`, `Sales`, `SuperYachtOps`) use `react-helmet`; this page matches that convention. SEO is not in scope.
 
 ---
 
@@ -91,7 +92,7 @@ In `src/pages/Sales.jsx`, change the Leaseback card's CTA from a contact mailto-
 
 Pattern: full-viewport image background with dark overlay, animated headline, eyebrow, tagline, and a thin divider — modeled on `ac-hero` (`AircraftConsulting.jsx:260`).
 
-- **Background image:** CMS-driven via `usePageImages('leaseback')` — section key `lb-hero`. Default fallback path: an existing wide editorial aircraft shot from `/public/assets/images/` (e.g. an R66 or Hughes 500 wide exterior). The fallback path will be picked during implementation by browsing existing image assets; no new image is required for launch.
+- **Background image:** CMS-driven via `usePageImages('leaseback')` — section id `lb-hero`. Default image: `/assets/images/new-aircraft/r66/rhc-r66-nxg-pv-left-side-wide-shot-from-rear-13751.jpg` (existing asset, wide editorial shot). No new image asset required.
 - **Dark overlay:** `linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.65) 100%)` matching sibling-page heroes.
 - **Eyebrow:** `EARN WHILE YOU OWN` — Share Tech Mono, uppercase, letter-spacing ~`0.3em`, color `#faf9f6`. Matches the eyebrow on the source card.
 - **Headline:** `LEASEBACK PROGRAM` rendered as two animated words (each its own `motion.span`, staggered ~80ms apart, fade-up from `y: 24px`). Lighter than R66's letter-by-letter treatment but on-brand.
@@ -143,7 +144,7 @@ Pattern: editorial process row, modeled on `ac-process` (`AircraftConsulting.jsx
 - Section eyebrow: `ELIGIBLE AIRCRAFT`. Section heading: short.
 - Three editorial cards in a horizontal row on desktop (1-column on mobile, no horizontal scroll).
 - **Each card** is a full `<Link>` block:
-  - Image (CMS-driven, keyed `lb-aircraft-r44`, `lb-aircraft-r66`, `lb-aircraft-h500`).
+  - Image (CMS-driven via single `lb-aircraft` `cards`-type section with three slots — see "CMS image sections" below).
   - Eyebrow: `PISTON` (R44) / `TURBINE` (R66) / `TURBINE` (Hughes 500).
   - Aircraft name in Space Grotesk display weight.
   - One-line role description.
@@ -154,6 +155,20 @@ Pattern: editorial process row, modeled on `ac-process` (`AircraftConsulting.jsx
 ### 6. `FooterMinimal`
 
 Site-standard footer, no special treatment.
+
+---
+
+## CMS image sections
+
+Two new entries added to the `SECTIONS` array in `src/lib/imageSections.js` under a new `// ─── LEASEBACK PAGE` block. Both belong to `page: 'leaseback'`.
+
+- **`lb-hero`** — `type: 'single'`. Default `/assets/images/new-aircraft/r66/rhc-r66-nxg-pv-left-side-wide-shot-from-rear-13751.jpg`.
+- **`lb-aircraft`** — `type: 'cards'`. Three fixed slots, slide labels `['Robinson R44', 'Robinson R66', 'Hughes 500']`. Defaults:
+  - R44 → `/assets/images/new-aircraft/r44/r44-raven-ii-ghagl.jpg`
+  - R66 → `/assets/images/new-aircraft/r66-turbine.webp`
+  - H500 → `/assets/images/aircraft/h500/h500-flight-1.jpg`
+
+All four default paths refer to existing assets verified by `find` against `/public/assets/images/`. The implementation plan must re-verify the paths before referencing them and substitute equivalent existing assets if any are missing at implementation time.
 
 ---
 
@@ -180,8 +195,8 @@ The following are **explicitly out of scope** for this page:
 - **No FAQ section.** `useFaqs` is not imported.
 - **No revenue calculator.** Numbers and hypothetical earnings are not modeled on this page.
 - **No new shared components.** The local `LeasebackHeader` and `Reveal` wrapper are page-local copies, matching the convention of every other standalone-branded page.
-- **No new image assets required for launch.** Hero and aircraft-strip images use existing assets via `usePageImages` with sensible default fallbacks pulled from `/public/assets/images/`.
-- **No SEO schema additions in this spec.** Page title and meta description will be set via the standard `Helmet` pattern used elsewhere if and only if other branded pages on the site already use it; otherwise inherits the site default. (Implementation plan will confirm against the current pattern.)
+- **No new image assets required for launch.** Hero and aircraft-strip images reference existing assets in `/public/assets/images/` via newly-registered CMS sections (see "CMS image sections" above).
+- **No SEO meta tags.** Sibling branded pages do not use `react-helmet`; this page matches that convention.
 
 ---
 
@@ -203,5 +218,6 @@ The following are **explicitly out of scope** for this page:
 - **New file:** `src/pages/Leaseback.jsx` — single-file page, ~350–450 lines including inline `<style jsx>` block.
 - **Modified:** `src/App.jsx` — one new import and one new `<Route>` line.
 - **Modified:** `src/pages/Sales.jsx` — change one `<a>` to `<Link>` at line 1457.
+- **Modified:** `src/lib/imageSections.js` — add two new `SECTIONS` entries (`lb-hero`, `lb-aircraft`) under a new `// ─── LEASEBACK PAGE` block.
 
 No other files touched.
