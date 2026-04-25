@@ -21,6 +21,7 @@ import '../assets/css/components.css';
 
 // Import footer
 import FooterMinimal from '../components/FooterMinimal';
+import HqMenuPanel from '../components/HqMenuPanel';
 
 /**
  * SALES PAGE HEADER
@@ -64,50 +65,7 @@ function SalesHeader() {
 
   return (
     <>
-      <div className={`hq-menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="hq-menu-grid">
-          <div className="hq-menu-section">
-            <h3>About</h3>
-            <ul>
-              <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-              <li><Link to="/about-us" onClick={closeMenu}>About Us</Link></li>
-              <li><Link to="/about-us/team" onClick={closeMenu}>Meet The Team</Link></li>
-              <li><Link to="/about-us/captain-q" onClick={closeMenu}>Quentin Smith</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Aircraft Sales</h3>
-            <ul>
-              <li><Link to="/sales" onClick={closeMenu}>New Aircraft</Link></li>
-              <li><Link to="/aircraft-sales/new/r88" onClick={closeMenu}>R88</Link></li>
-              <li><Link to="/aircraft-sales/new/r66" onClick={closeMenu}>R66</Link></li>
-              <li><Link to="/aircraft-sales/new/r44" onClick={closeMenu}>R44</Link></li>
-              <li><Link to="/aircraft-sales/new/r22" onClick={closeMenu}>R22</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Flight Training</h3>
-            <ul>
-              <li><Link to="/training" onClick={closeMenu}>Training Overview</Link></li>
-              <li><Link to="/training/ppl" onClick={closeMenu}>Private Pilot License</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Services</h3>
-            <ul>
-              <li><Link to="/services" onClick={closeMenu}>Services Overview</Link></li>
-              <li><Link to="/services/maintenance" onClick={closeMenu}>Maintenance</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Contact</h3>
-            <ul>
-              <li><Link to="/contact" onClick={closeMenu}>Contact Us</Link></li>
-              <li><Link to="/contact/pricing" onClick={closeMenu}>Pricing</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <HqMenuPanel open={menuOpen} onClose={closeMenu} />
 
       <button
         className={`hq-menu-btn ${colorDark ? 'color-dark' : ''} ${scrolled ? 'scrolled' : ''} ${menuOpen ? 'open' : ''}`}
@@ -1393,7 +1351,7 @@ function Sales() {
                 <h2>Official Robinson Partner</h2>
                 <p>
                   As an Authorized Robinson Dealer and Service Centre, we provide factory-direct sales,
-                  certified maintenance, and three decades of exclusive Robinson expertise.
+                  certified maintenance, and generations of Robinson Support.
                 </p>
               </div>
               <div className="sales-dealer__features">

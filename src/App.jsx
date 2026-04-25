@@ -58,6 +58,18 @@ import EndOfMarchVersion from './pages/EndOfMarchVersion';
 import SFHTests from './pages/sfhtests/SFHTests';
 import AuthorisedServiceCenterCard from './pages/AuthorisedServiceCenterCard';
 import SlidingGalleryVariations from './pages/SlidingGalleryVariations';
+import WallOfCoolVariations from './pages/WallOfCoolVariations';
+import WallOfCoolTitleVariations from './pages/WallOfCoolTitleVariations';
+import WallOfCoolCenterCardVariations from './pages/WallOfCoolCenterCardVariations';
+import WallOfCoolCenterCardVariations2 from './pages/WallOfCoolCenterCardVariations2';
+import WallOfCoolCenterCardVariations3 from './pages/WallOfCoolCenterCardVariations3';
+import WallOfCoolCenterCardVariations4 from './pages/WallOfCoolCenterCardVariations4';
+import WallOfCoolCompassCard from './pages/WallOfCoolCompassCard';
+import WallOfCoolFinalCard from './pages/WallOfCoolFinalCard';
+import WallOfCoolFinalCardR66 from './pages/WallOfCoolFinalCardR66';
+import WallOfCoolFinalCardSky from './pages/WallOfCoolFinalCardSky';
+import WallOfCoolGradientVariations from './pages/WallOfCoolGradientVariations';
+import WallOfCoolGalleryGradientVariations from './pages/WallOfCoolGalleryGradientVariations';
 import Rebuilds from './pages/Rebuilds';
 import HeroSectionTest from './pages/HeroSectionTest';
 import FlyingVariations from './pages/FlyingVariations';
@@ -149,6 +161,18 @@ function App() {
         <Route path="/flying-variations" element={<FlyingVariations />} />
         <Route path="/final-draft" element={<FinalDraft />} />
         <Route path="/experimentation" element={<Experimentation />} />
+        <Route path="/wall-of-cool-variations" element={<WallOfCoolVariations />} />
+        <Route path="/wall-of-cool-title-variations" element={<WallOfCoolTitleVariations />} />
+        <Route path="/wall-of-cool-center-card-variations" element={<WallOfCoolCenterCardVariations />} />
+        <Route path="/wall-of-cool-center-card-variations-2" element={<WallOfCoolCenterCardVariations2 />} />
+        <Route path="/wall-of-cool-center-card-variations-3" element={<WallOfCoolCenterCardVariations3 />} />
+        <Route path="/wall-of-cool-center-card-variations-4" element={<WallOfCoolCenterCardVariations4 />} />
+        <Route path="/wall-of-cool-compass-card" element={<WallOfCoolCompassCard />} />
+        <Route path="/wall-of-cool-final-card" element={<WallOfCoolFinalCard />} />
+        <Route path="/wall-of-cool-final-card-r66" element={<WallOfCoolFinalCardR66 />} />
+        <Route path="/wall-of-cool-final-card-sky" element={<WallOfCoolFinalCardSky />} />
+        <Route path="/wall-of-cool-gradient-variations" element={<WallOfCoolGradientVariations />} />
+        <Route path="/wall-of-cool-gallery-gradient-variations" element={<WallOfCoolGalleryGradientVariations />} />
         <Route path="/experimentation-2" element={<Experimentation2 />} />
         <Route path="/endofmarchversion" element={<EndOfMarchVersion />} />
         <Route path="/sfhtests" element={<SFHTests />} />
