@@ -313,6 +313,57 @@ function LeasebackHowItWorks() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// SECTION 4: BENEFITS
+// ─────────────────────────────────────────────────────────────────────────────
+
+const BENEFITS = [
+  {
+    title: 'Offset Ownership Costs',
+    description: 'Charter and training revenue offsets fixed costs like insurance and hangarage.',
+  },
+  {
+    title: 'Professional Management',
+    description: 'HQ-employed pilots, scheduled maintenance, and full operational oversight.',
+  },
+  {
+    title: 'Insurance & Liability Handled',
+    description: 'Commercial cover and operating liability sit with HQ during leaseback hours.',
+  },
+  {
+    title: 'Transparent Reporting',
+    description: 'Monthly statements showing flight hours, revenue, and aircraft status.',
+  },
+];
+
+function LeasebackBenefits() {
+  return (
+    <section className="lb-benefits" data-cms-section="lb-benefits">
+      <div className="lb-benefits__container">
+        <Reveal>
+          <span className="lb-pre-text">Why Leaseback</span>
+          <h2 className="lb-benefits__heading">What owners gain.</h2>
+        </Reveal>
+        <div className="lb-benefits__grid">
+          {BENEFITS.map((benefit, i) => (
+            <Reveal key={benefit.title} delay={0.1 + i * 0.08}>
+              <div className="lb-benefits__card">
+                <span className="lb-benefits__icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </span>
+                <h3 className="lb-benefits__title">{benefit.title}</h3>
+                <p className="lb-benefits__desc">{benefit.description}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // STYLES
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -534,6 +585,65 @@ function LeasebackStyles() {
         .lb-how__steps { grid-template-columns: 1fr; gap: 40px; }
         .lb-how__heading { margin-bottom: 40px; }
       }
+      /* ── SECTION 4: BENEFITS ───────────────────────────────────────────── */
+      .lb-benefits {
+        background: #faf9f6;
+        padding: 120px 48px;
+      }
+      .lb-benefits__container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .lb-benefits__heading {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 500;
+        font-size: clamp(32px, 4vw, 56px);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        margin: 16px 0 64px;
+        color: #1a1a1a;
+        max-width: 640px;
+      }
+      .lb-benefits__grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+      }
+      .lb-benefits__card {
+        border-top: 1px solid #1a1a1a;
+        padding: 28px 0 0;
+      }
+      .lb-benefits__icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #1a1a1a;
+        color: #faf9f6;
+        margin-bottom: 20px;
+      }
+      .lb-benefits__title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 500;
+        font-size: 20px;
+        line-height: 1.25;
+        color: #1a1a1a;
+        margin: 0 0 12px;
+      }
+      .lb-benefits__desc {
+        font-size: 15px;
+        line-height: 1.6;
+        color: #4a4a4a;
+        margin: 0;
+        max-width: 440px;
+      }
+      @media (max-width: 900px) {
+        .lb-benefits { padding: 80px 24px; }
+        .lb-benefits__grid { grid-template-columns: 1fr; gap: 24px; }
+        .lb-benefits__heading { margin-bottom: 40px; }
+      }
     `}</style>
   );
 }
@@ -555,6 +665,7 @@ export default function Leaseback() {
         <LeasebackHero pageImages={pageImages} />
         <LeasebackIntro />
         <LeasebackHowItWorks />
+        <LeasebackBenefits />
       </main>
       <FooterMinimal />
     </div>
