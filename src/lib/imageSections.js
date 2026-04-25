@@ -1132,7 +1132,7 @@ export const SECTIONS = [
     type: 'cards',
     slideLabels: ['Robinson R44', 'Robinson R66', 'Hughes 500'],
     images: [
-      { id: 'lba1', url: '/assets/images/new-aircraft/r44/r44blueprint.jpg', alt: 'Robinson R44 Raven II' },
+      { id: 'lba1', url: '/assets/images/used-aircraft/r44/r44-raven-ii-grrob.jpg', alt: 'Robinson R44 Raven II' },
       { id: 'lba2', url: '/assets/images/new-aircraft/r66/r66-turbine.png', alt: 'Robinson R66 Turbine' },
       { id: 'lba3', url: '/assets/images/used-aircraft/other/hughes-369e-gumby.jpg', alt: 'Hughes 500 in flight' },
     ],
