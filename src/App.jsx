@@ -67,6 +67,7 @@ import AdvancedTraining from './pages/AdvancedTraining';
 import SuperYachtOps from './pages/SuperYachtOps';
 import PilotProvisioning from './pages/PilotProvisioning';
 import AircraftConsulting from './pages/AircraftConsulting';
+import Leaseback from './pages/Leaseback';
 import HeroSectionFinal from './pages/HeroSectionFinal';
 import HeroSectionFinalTesting from './pages/HeroSectionFinalTesting';
 import TestingHeroSection from './pages/TestingHeroSection';
@@ -231,6 +232,7 @@ function App() {
         <Route path="/superyacht-ops" element={<SuperYachtOps />} />
         <Route path="/pilot-provisioning" element={<PilotProvisioning />} />
         <Route path="/aircraft-consulting" element={<AircraftConsulting />} />
+        <Route path="/leaseback" element={<Leaseback />} />
 
         <Route path="/" element={<Experimentation />} />
         <Route element={<Layout />}>

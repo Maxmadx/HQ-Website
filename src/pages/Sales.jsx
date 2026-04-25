@@ -1496,9 +1496,9 @@ function Sales() {
                     <span>Professional management</span>
                   </div>
                 </div>
-                <a href="/contact?subject=leaseback" className="sales-btn sales-btn--white">
+                <Link to="/leaseback" className="sales-btn sales-btn--white">
                   Learn More
-                </a>
+                </Link>
               </div>
             </Reveal>
           </div>
