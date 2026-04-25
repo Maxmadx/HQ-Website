@@ -147,14 +147,201 @@ function Reveal({ children, delay = 0, direction = 'up' }) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// SECTION 1: HERO
+// ─────────────────────────────────────────────────────────────────────────────
+
+function LeasebackHero({ pageImages }) {
+  const heroRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
+  const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
+
+  const heroImage =
+    pageImages['lb-hero']?.[0]?.url ||
+    '/assets/images/new-aircraft/r66/rhc-r66-nxg-pv-left-side-wide-shot-from-rear-13751.jpg';
+
+  const words = ['LEASEBACK', 'PROGRAM'];
+
+  return (
+    <section ref={heroRef} className="lb-hero" data-cms-section="lb-hero">
+      <motion.div
+        className="lb-hero__bg"
+        initial={{ scale: 1.08, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <img src={heroImage} alt="HQ Aviation Leaseback Program" />
+      </motion.div>
+      <div className="lb-hero__overlay" />
+
+      <motion.div
+        className="lb-hero__content"
+        style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
+      >
+        <motion.span
+          className="lb-hero__label"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          Earn While You Own
+        </motion.span>
+
+        <h1 className="lb-hero__headline">
+          {words.map((word, i) => (
+            <motion.span
+              key={word}
+              className="lb-hero__word"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 + i * 0.08, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {word}
+            </motion.span>
+          ))}
+        </h1>
+
+        <motion.div
+          className="lb-hero__divider"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ delay: 0.7, duration: 0.8 }}
+        />
+
+        <motion.p
+          className="lb-hero__tagline"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.85 }}
+        >
+          Put your aircraft to work when you're not flying.
+        </motion.p>
+
+        <motion.p
+          className="lb-hero__subtitle"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.0 }}
+        >
+          Earn revenue through charter and training operations, professionally managed by HQ.
+        </motion.p>
+      </motion.div>
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // STYLES
 // ─────────────────────────────────────────────────────────────────────────────
 
 function LeasebackStyles() {
   return (
     <style>{`
-      .lb-page { background: #faf9f6; color: #1a1a1a; font-family: 'Space Grotesk', sans-serif; }
-      .lb-pre-text { font-family: 'Share Tech Mono', monospace; text-transform: uppercase; letter-spacing: 0.3em; font-size: 11px; color: #7a7a7a; }
+      .lb-page {
+        background: #faf9f6;
+        color: #1a1a1a;
+        font-family: 'Space Grotesk', sans-serif;
+      }
+      .lb-pre-text {
+        font-family: 'Share Tech Mono', monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.3em;
+        font-size: 11px;
+        color: #7a7a7a;
+      }
+
+      /* ── SECTION 1: HERO ────────────────────────────────────────────────── */
+      .lb-hero {
+        position: relative;
+        height: 100vh;
+        min-height: 640px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .lb-hero__bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+      }
+      .lb-hero__bg img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+      }
+      .lb-hero__overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.65) 100%);
+        z-index: 1;
+      }
+      .lb-hero__content {
+        position: relative;
+        z-index: 2;
+        max-width: 1200px;
+        width: 100%;
+        padding: 0 48px;
+        color: #faf9f6;
+        text-align: left;
+      }
+      .lb-hero__label {
+        display: inline-block;
+        font-family: 'Share Tech Mono', monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.3em;
+        font-size: 12px;
+        color: #faf9f6;
+        margin-bottom: 28px;
+        opacity: 0.85;
+      }
+      .lb-hero__headline {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 600;
+        font-size: clamp(48px, 8vw, 120px);
+        line-height: 1;
+        letter-spacing: -0.02em;
+        margin: 0 0 32px;
+        color: #faf9f6;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25em;
+      }
+      .lb-hero__word {
+        display: inline-block;
+      }
+      .lb-hero__divider {
+        width: 80px;
+        height: 1px;
+        background: #faf9f6;
+        opacity: 0.5;
+        transform-origin: left center;
+        margin-bottom: 24px;
+      }
+      .lb-hero__tagline {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: clamp(18px, 2vw, 24px);
+        line-height: 1.4;
+        font-weight: 400;
+        color: #faf9f6;
+        margin: 0 0 16px;
+        max-width: 640px;
+      }
+      .lb-hero__subtitle {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 15px;
+        line-height: 1.6;
+        color: #faf9f6;
+        opacity: 0.75;
+        margin: 0;
+        max-width: 540px;
+      }
+      @media (max-width: 768px) {
+        .lb-hero__content { padding: 0 24px; }
+        .lb-hero__headline { font-size: clamp(40px, 12vw, 72px); }
+      }
     `}</style>
   );
 }
@@ -173,7 +360,7 @@ export default function Leaseback() {
       <LeasebackStyles />
       <LeasebackHeader />
       <main>
-        {/* Sections will be added in subsequent tasks */}
+        <LeasebackHero pageImages={pageImages} />
       </main>
       <FooterMinimal />
     </div>
