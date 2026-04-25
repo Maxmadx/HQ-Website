@@ -364,6 +364,72 @@ function LeasebackBenefits() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// SECTION 5: ELIGIBLE AIRCRAFT
+// ─────────────────────────────────────────────────────────────────────────────
+
+const AIRCRAFT_CARDS = [
+  {
+    href: '/aircraft/r44',
+    eyebrow: 'Piston',
+    name: 'Robinson R44',
+    role: 'Four-seat workhorse for charter and training.',
+    fallback: '/assets/images/used-aircraft/r44/r44-raven-ii-grrob.jpg',
+    alt: 'Robinson R44 Raven II',
+  },
+  {
+    href: '/aircraft/r66',
+    eyebrow: 'Turbine',
+    name: 'Robinson R66',
+    role: 'Five-seat turbine — premium charter and instruction.',
+    fallback: '/assets/images/new-aircraft/r66/r66-turbine.png',
+    alt: 'Robinson R66 Turbine',
+  },
+  {
+    href: '/aircraft/h500',
+    eyebrow: 'Turbine',
+    name: 'Hughes 500',
+    role: 'Compact turbine — utility, charter, and specialty work.',
+    fallback: '/assets/images/used-aircraft/other/hughes-369e-gumby.jpg',
+    alt: 'Hughes 500 in flight',
+  },
+];
+
+function LeasebackEligibleAircraft({ pageImages }) {
+  const cardImages = pageImages['lb-aircraft'] || [];
+  return (
+    <section className="lb-aircraft" data-cms-section="lb-aircraft">
+      <div className="lb-aircraft__container">
+        <Reveal>
+          <span className="lb-pre-text">Eligible Aircraft</span>
+          <h2 className="lb-aircraft__heading">Aircraft we can place.</h2>
+        </Reveal>
+        <div className="lb-aircraft__grid">
+          {AIRCRAFT_CARDS.map((card, i) => {
+            const imgUrl = cardImages[i]?.url || card.fallback;
+            const imgAlt = cardImages[i]?.alt || card.alt;
+            return (
+              <Reveal key={card.href} delay={0.1 + i * 0.1}>
+                <Link to={card.href} className="lb-aircraft__card">
+                  <div className="lb-aircraft__img-wrap">
+                    <img src={imgUrl} alt={imgAlt} className="lb-aircraft__img" />
+                  </div>
+                  <div className="lb-aircraft__body">
+                    <span className="lb-pre-text">{card.eyebrow}</span>
+                    <h3 className="lb-aircraft__name">{card.name}</h3>
+                    <p className="lb-aircraft__role">{card.role}</p>
+                    <span className="lb-aircraft__arrow" aria-hidden="true">→</span>
+                  </div>
+                </Link>
+              </Reveal>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // STYLES
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -644,6 +710,87 @@ function LeasebackStyles() {
         .lb-benefits__grid { grid-template-columns: 1fr; gap: 24px; }
         .lb-benefits__heading { margin-bottom: 40px; }
       }
+      /* ── SECTION 5: ELIGIBLE AIRCRAFT ──────────────────────────────────── */
+      .lb-aircraft {
+        background: #faf9f6;
+        padding: 0 48px 120px;
+      }
+      .lb-aircraft__container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .lb-aircraft__heading {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 500;
+        font-size: clamp(32px, 4vw, 56px);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        margin: 16px 0 64px;
+        color: #1a1a1a;
+        max-width: 640px;
+      }
+      .lb-aircraft__grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 32px;
+      }
+      .lb-aircraft__card {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        background: #ffffff;
+        border: 1px solid rgba(26,26,26,0.08);
+        transition: transform 0.4s ease, border-color 0.4s ease;
+      }
+      .lb-aircraft__card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(26,26,26,0.25);
+      }
+      .lb-aircraft__img-wrap {
+        aspect-ratio: 4 / 3;
+        overflow: hidden;
+        background: #1a1a1a;
+      }
+      .lb-aircraft__img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+      }
+      .lb-aircraft__card:hover .lb-aircraft__img { transform: scale(1.04); }
+      .lb-aircraft__body {
+        padding: 24px;
+        position: relative;
+      }
+      .lb-aircraft__body .lb-pre-text { display: block; margin-bottom: 12px; }
+      .lb-aircraft__name {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 500;
+        font-size: 22px;
+        line-height: 1.2;
+        color: #1a1a1a;
+        margin: 0 0 12px;
+      }
+      .lb-aircraft__role {
+        font-size: 14px;
+        line-height: 1.55;
+        color: #4a4a4a;
+        margin: 0 32px 0 0;
+      }
+      .lb-aircraft__arrow {
+        position: absolute;
+        right: 24px;
+        bottom: 24px;
+        font-size: 20px;
+        color: #1a1a1a;
+        transition: transform 0.3s ease;
+      }
+      .lb-aircraft__card:hover .lb-aircraft__arrow { transform: translateX(4px); }
+      @media (max-width: 900px) {
+        .lb-aircraft { padding: 0 24px 80px; }
+        .lb-aircraft__grid { grid-template-columns: 1fr; gap: 20px; }
+        .lb-aircraft__heading { margin-bottom: 40px; }
+      }
     `}</style>
   );
 }
@@ -666,6 +813,7 @@ export default function Leaseback() {
         <LeasebackIntro />
         <LeasebackHowItWorks />
         <LeasebackBenefits />
+        <LeasebackEligibleAircraft pageImages={pageImages} />
       </main>
       <FooterMinimal />
     </div>
