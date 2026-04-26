@@ -101,4 +101,16 @@ describe('validateComparable', () => {
     };
     expect(validateComparable(ok)).toEqual([]);
   });
+
+  it('does not produce a priceNewGbp error when marketStatus is missing', () => {
+    const { marketStatus, ...missing } = valid;
+    const errs = validateComparable(missing);
+    expect(errs).toContain('marketStatus is required');
+    expect(errs).not.toContain('acquisition.priceNewGbp is required unless marketStatus is used-only');
+  });
+
+  it('returns the guard-clause error for non-object input', () => {
+    expect(validateComparable(null)).toEqual(['document must be an object']);
+    expect(validateComparable('string')).toEqual(['document must be an object']);
+  });
 });

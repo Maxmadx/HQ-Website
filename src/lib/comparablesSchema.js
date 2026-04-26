@@ -16,6 +16,7 @@ export function isUsedOnly(doc) {
   return doc?.marketStatus === 'used-only';
 }
 
+// Note: `isRobinson` is also required but is validated separately for boolean type precision.
 const REQUIRED_TOP = ['id', 'manufacturer', 'model', 'displayName', 'class', 'marketStatus', 'fuelType', 'costsConfidence'];
 const NUMERIC_PATHS = [
   'specs.seats', 'specs.cruiseSpeedKts', 'specs.rangeNm', 'specs.usefulLoadLbs', 'specs.fuelCapacityGal',
@@ -37,6 +38,7 @@ export function validateComparable(doc) {
     }
   }
 
+  // isRobinson is required AND must be a boolean — combined check.
   if (typeof doc.isRobinson !== 'boolean') {
     errors.push('isRobinson must be a boolean');
   }
@@ -64,7 +66,7 @@ export function validateComparable(doc) {
     }
   }
 
-  if (!isUsedOnly(doc)) {
+  if (doc.marketStatus && !isUsedOnly(doc)) {
     const priceNew = getPath(doc, 'acquisition.priceNewGbp');
     if (priceNew == null) {
       errors.push('acquisition.priceNewGbp is required unless marketStatus is used-only');
