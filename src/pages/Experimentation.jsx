@@ -8082,6 +8082,14 @@ function Experimentation() {
           .fd-exped {
             position: sticky;
             top: var(--fd-exped-stick-top, 0);
+            /* Force section to fill viewport so the "bottom hits viewport
+               bottom" trigger is mathematically meaningful. Without this
+               the cinematic's 70vh leaves the section shorter than the
+               viewport and stick-top resolves to 0 → pins to top. */
+            min-height: 100vh;
+          }
+          .fd-exped__cinematic {
+            min-height: 100vh;
           }
 
           @media (prefers-reduced-motion: no-preference) {
