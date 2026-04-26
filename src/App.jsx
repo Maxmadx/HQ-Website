@@ -120,6 +120,8 @@ import AdminReviews from './pages/admin/AdminReviews';
 import AdminFaqs from './pages/admin/AdminFaqs';
 import AdminEditImagesMode from './pages/admin/AdminEditImagesMode';
 import AdminEditTextMode from './pages/admin/AdminEditTextMode';
+import AdminComparables from './pages/admin/AdminComparables';
+import AdminComparableEdit from './pages/admin/AdminComparableEdit';
 import PageTracker from './components/PageTracker';
 
 // Import styles
@@ -240,6 +242,8 @@ function App() {
         <Route path="/admin/text" element={<AdminRoute><AdminEditTextMode /></AdminRoute>} />
         <Route path="/admin/listings" element={<AdminRoute><AdminListings /></AdminRoute>} />
         <Route path="/admin/listings/:id" element={<AdminRoute><AdminListingEdit /></AdminRoute>} />
+        <Route path="/admin/comparables" element={<AdminRoute><AdminComparables /></AdminRoute>} />
+        <Route path="/admin/comparables/:id" element={<AdminRoute><AdminComparableEdit /></AdminRoute>} />
         <Route path="/admin/misc" element={<AdminRoute><AdminMiscItems /></AdminRoute>} />
         <Route path="/admin/misc/:id" element={<AdminRoute><AdminMiscItemEdit /></AdminRoute>} />
         <Route path="/admin/misc-marketplace" element={<AdminRoute><AdminMiscMarketplace /></AdminRoute>} />
