@@ -40,6 +40,9 @@ build/
 # Superpowers brainstorm artefacts
 .superpowers/
 
+# Git worktrees (isolated branch workspaces)
+.worktrees/
+
 # Firebase deploy cache
 .firebase/
 
@@ -48,3 +51,4 @@ build/
 
 # Local research / scratch assets
 R44-Claude/
+assets-source/
