@@ -2408,11 +2408,13 @@ function Experimentation() {
       if (!MEDIA.matches) {
         section.style.setProperty('--fd-exped-blur', '0px');
         section.style.setProperty('--fd-exped-darken', '0');
+        section.style.visibility = '';
         return;
       }
       const next = findRisingSection();
       if (!next) return;
       const vh = window.innerHeight;
+      const h = section.offsetHeight;
       const rect = next.getBoundingClientRect();
       const progress = Math.min(1, Math.max(0, (vh - rect.top) / vh));
       // Remap progress so effects stay at 0 until progress >= EFFECT_START,
@@ -2423,6 +2425,12 @@ function Experimentation() {
 
       section.style.setProperty('--fd-exped-blur', `${effective * MAX_BLUR}px`);
       section.style.setProperty('--fd-exped-darken', `${darken}`);
+
+      // Hide the still-pinned section once the rising sibling has fully
+      // covered it. Without this, transparent gaps in any later section
+      // would let .fd-exped bleed through. Sticky positioning continues
+      // to work with visibility: hidden, so scrolling back up restores it.
+      section.style.visibility = (rect.top <= vh - h) ? 'hidden' : 'visible';
     };
 
     const onResize = () => { setStickTop(); onScroll(); };
