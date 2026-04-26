@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import AdminLayout from '../../components/admin/AdminLayout';
-import { useCollection, deleteDocById, updateDocById, useDocument, createDoc } from '../../hooks/useFirestore';
+import { useCollection, deleteDocById, useDocument } from '../../hooks/useFirestore';
 import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { CLASSES, CONFIDENCE, MARKET_STATUS } from '../../lib/comparablesSchema';
@@ -28,6 +28,14 @@ function DefaultsModal({ open, defaults, onClose }) {
   const [hours, setHours] = useState(defaults?.defaults?.hoursPerYear ?? 100);
   const [years, setYears] = useState(defaults?.defaults?.yearsOfOwnership ?? 5);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    setAvgas(defaults?.fuelPrice?.avgas100llGbpPerGal ?? 8.5);
+    setJet(defaults?.fuelPrice?.jetA1GbpPerGal ?? 7.8);
+    setHours(defaults?.defaults?.hoursPerYear ?? 100);
+    setYears(defaults?.defaults?.yearsOfOwnership ?? 5);
+  }, [open, defaults]);
 
   if (!open) return null;
 
@@ -89,7 +97,7 @@ function DefaultsModal({ open, defaults, onClose }) {
 }
 
 export default function AdminComparables() {
-  const { docs: comparables, loading } = useCollection('comparables', 'manufacturer');
+  const { docs: comparables, loading } = useCollection('comparables', 'updatedAt');
   const { data: defaults } = useDocument('comparison_defaults', 'global');
   const [filterClass, setFilterClass] = useState('');
   const [filterSource, setFilterSource] = useState('');

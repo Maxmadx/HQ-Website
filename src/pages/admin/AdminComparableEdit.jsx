@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import AdminLayout from '../../components/admin/AdminLayout';
-import { doc, getDoc, setDoc, deleteDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { CLASSES, FUEL_TYPES, CONFIDENCE, MARKET_STATUS, validateComparable, isUsedOnly } from '../../lib/comparablesSchema';
 
@@ -173,8 +173,13 @@ export default function AdminComparableEdit() {
   async function handleDelete() {
     if (isNew) return;
     if (!window.confirm(`Delete ${form.model}?\n\nInbound URL links with slug "${routeId}" will silently break.`)) return;
-    await deleteDoc(doc(db, 'comparables', routeId));
-    navigate('/admin/comparables');
+    try {
+      await deleteDoc(doc(db, 'comparables', routeId));
+      navigate('/admin/comparables');
+    } catch (err) {
+      console.error('Delete failed', err);
+      setErrors([`Delete failed: ${err.message}`]);
+    }
   }
 
   if (loading) return <AdminLayout><p>Loading…</p></AdminLayout>;

@@ -16,7 +16,7 @@ export default function AircraftComparison() {
     document.title = 'Aircraft Comparison · HQ Aviation';
   }, []);
 
-  const { docs: comparables, loading } = useCollection('comparables');
+  const { docs: comparables, loading, error } = useCollection('comparables');
   const { data: defaults } = useDocument('comparison_defaults', 'global');
   const { selectedIds, hours, years, addModel, removeModel, setHours, setYears } = useComparisonState();
   const [reportOpen, setReportOpen] = useState(false);
@@ -46,9 +46,13 @@ export default function AircraftComparison() {
 
         {loading ? (
           <div className="aircraft-comparison__loading">Loading aircraft data…</div>
-        ) : comparables.length === 0 ? (
+        ) : error ? (
           <div className="aircraft-comparison__error">
             Couldn't load aircraft data — please refresh, or call our team.
+          </div>
+        ) : comparables.length === 0 ? (
+          <div className="aircraft-comparison__placeholder">
+            Aircraft data is being added. Check back soon.
           </div>
         ) : (
           <>
@@ -91,7 +95,7 @@ export default function AircraftComparison() {
               </>
             )}
 
-            <details className="aircraft-comparison__methodology">
+            <details className="aircraft-comparison__methodology" open={selectedAircraft.length === 0}>
               <summary>Sources &amp; methodology</summary>
               <div className="aircraft-comparison__methodology-body">
                 <p>
