@@ -2377,6 +2377,9 @@ function Experimentation() {
     const MAX_BLUR = 10;
     const MAX_DARKEN = 0.55;
     const FADE_COMPLETE = 0.95;
+    // Effects stay at 0 until the rising parallax has covered this fraction
+    // of the viewport. Bump up to start later, down to start earlier.
+    const EFFECT_START = 0.6;
     const MEDIA = window.matchMedia('(min-width: 901px)');
 
     const findRisingSection = () => {
@@ -2409,10 +2412,13 @@ function Experimentation() {
       const vh = window.innerHeight;
       const rect = next.getBoundingClientRect();
       const progress = Math.min(1, Math.max(0, (vh - rect.top) / vh));
-      const adjusted = Math.min(1, progress / FADE_COMPLETE);
+      // Remap progress so effects stay at 0 until progress >= EFFECT_START,
+      // then ramp 0→1 over the remaining range.
+      const effective = Math.max(0, (progress - EFFECT_START) / (1 - EFFECT_START));
+      const adjusted = Math.min(1, effective / FADE_COMPLETE);
       const darken = Math.pow(adjusted, 8) * MAX_DARKEN;
 
-      section.style.setProperty('--fd-exped-blur', `${progress * MAX_BLUR}px`);
+      section.style.setProperty('--fd-exped-blur', `${effective * MAX_BLUR}px`);
       section.style.setProperty('--fd-exped-darken', `${darken}`);
     };
 
