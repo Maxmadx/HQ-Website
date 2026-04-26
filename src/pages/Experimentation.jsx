@@ -2365,6 +2365,74 @@ function Experimentation() {
     return () => window.removeEventListener('resize', sync);
   }, []);
 
+  // Sticky-blur transition: pins .fd-exped at viewport-bottom on desktop,
+  // blurs it, and fades a black overlay in as the next sibling (Sales
+  // parallax) rises over it. Mirrors the R66 variants→specs pattern.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const section = document.querySelector('.fd-exped');
+    if (!section) return;
+
+    const MAX_BLUR = 10;
+    const MAX_DARKEN = 0.55;
+    const FADE_COMPLETE = 0.95;
+    const MEDIA = window.matchMedia('(min-width: 901px)');
+
+    const findRisingSection = () => {
+      const next = section.nextElementSibling;
+      if (next && (next.classList.contains('parallax-section') ||
+                   next.querySelector?.('.parallax-section'))) return next;
+      const sales = document.getElementById('sales');
+      if (!sales) return next;
+      return sales.previousElementSibling || next;
+    };
+
+    const setStickTop = () => {
+      if (!MEDIA.matches) {
+        section.style.removeProperty('--fd-exped-stick-top');
+        return;
+      }
+      const vh = window.innerHeight;
+      const h = section.offsetHeight;
+      section.style.setProperty('--fd-exped-stick-top', `${Math.min(0, vh - h)}px`);
+    };
+
+    const onScroll = () => {
+      if (!MEDIA.matches) {
+        section.style.setProperty('--fd-exped-blur', '0px');
+        section.style.setProperty('--fd-exped-darken', '0');
+        return;
+      }
+      const next = findRisingSection();
+      if (!next) return;
+      const vh = window.innerHeight;
+      const rect = next.getBoundingClientRect();
+      const progress = Math.min(1, Math.max(0, (vh - rect.top) / vh));
+      const adjusted = Math.min(1, progress / FADE_COMPLETE);
+      const darken = Math.pow(adjusted, 8) * MAX_DARKEN;
+
+      section.style.setProperty('--fd-exped-blur', `${progress * MAX_BLUR}px`);
+      section.style.setProperty('--fd-exped-darken', `${darken}`);
+    };
+
+    const onResize = () => { setStickTop(); onScroll(); };
+    const onMediaChange = () => { setStickTop(); onScroll(); };
+
+    setStickTop();
+    onScroll();
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    MEDIA.addEventListener('change', onMediaChange);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      MEDIA.removeEventListener('change', onMediaChange);
+    };
+  }, []);
+
   // Clubhouse: right side overlay fades in as you scroll (desktop only)
   useEffect(() => {
     let clubRaf = 0;
