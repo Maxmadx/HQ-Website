@@ -2398,7 +2398,10 @@ function Experimentation() {
       }
       const vh = window.innerHeight;
       const h = section.offsetHeight;
-      section.style.setProperty('--fd-exped-stick-top', `${Math.min(0, vh - h)}px`);
+      // top = vh - h pins the section's BOTTOM to the viewport bottom.
+      // Positive (h < vh) → pins at bottom of viewport with empty space above.
+      // Negative (h > vh) → pins with section top above viewport, bottom at vh.
+      section.style.setProperty('--fd-exped-stick-top', `${vh - h}px`);
     };
 
     const onScroll = () => {
@@ -8082,14 +8085,6 @@ function Experimentation() {
           .fd-exped {
             position: sticky;
             top: var(--fd-exped-stick-top, 0);
-            /* Force section to fill viewport so the "bottom hits viewport
-               bottom" trigger is mathematically meaningful. Without this
-               the cinematic's 70vh leaves the section shorter than the
-               viewport and stick-top resolves to 0 → pins to top. */
-            min-height: 100vh;
-          }
-          .fd-exped__cinematic {
-            min-height: 100vh;
           }
 
           @media (prefers-reduced-motion: no-preference) {
