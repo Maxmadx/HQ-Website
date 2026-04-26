@@ -7999,6 +7999,42 @@ function Experimentation() {
           position: relative;
           z-index: 1;
         }
+
+        /* Sticky-blur transition into Sales (desktop only).
+           Mirrors the variants→specs pattern on /aircraft/r66.
+           Overrides position: relative above; z-index: 1 is preserved
+           and the next-sibling parallax gets z-index: 3 to stack above. */
+        @media (min-width: 901px) {
+          .fd-exped {
+            position: sticky;
+            top: var(--fd-exped-stick-top, 0);
+          }
+
+          @media (prefers-reduced-motion: no-preference) {
+            .fd-exped {
+              filter: blur(var(--fd-exped-blur, 0px));
+              will-change: filter;
+            }
+
+            .fd-exped::after {
+              content: '';
+              position: absolute;
+              inset: 0;
+              background: #000;
+              opacity: var(--fd-exped-darken, 0);
+              pointer-events: none;
+              z-index: 2;
+            }
+          }
+
+          /* The Sales ParallaxSection is the immediate next sibling and must
+             stack above the pinned, blurred Expeditions while it rises. */
+          .fd-exped + .parallax-section {
+            position: relative;
+            z-index: 3;
+          }
+        }
+
         .fd-exped__glow {
           position: absolute;
           transform: translate(-50%, -50%);
