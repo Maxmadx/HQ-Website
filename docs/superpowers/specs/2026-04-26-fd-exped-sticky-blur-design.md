@@ -1,9 +1,9 @@
-# FinalDraft Expeditions → Sales Sticky-Blur Transition — Design Spec
+# Home Page (Experimentation) Expeditions → Sales Sticky-Blur Transition — Design Spec
 
 **Date:** 2026-04-26
 **Author:** Brainstorm session
 **Status:** Awaiting user approval
-**Scope:** `src/pages/FinalDraft.jsx` only (home page). No other pages touched.
+**Scope:** `src/pages/Experimentation.jsx` only (the page mounted at `/` — the actual home page per `App.jsx:261`). No other pages touched.
 
 ## Summary
 
@@ -37,7 +37,19 @@ Add a desktop-only sticky-blur transition between the Expeditions section (`.fd-
 
 Mirrors the variants→specs transition in `src/pages/AircraftR66.jsx` (lines 1267–1335 for the scroll handler; 2331–2374 / 3271–3293 for the CSS).
 
-### CSS (added inside `<style>` block in `FinalDraft.jsx`, gated by `@media (min-width: 901px)`)
+### CSS (added inside `<style>` block in `Experimentation.jsx`, gated by `@media (min-width: 901px)`)
+
+The existing `.fd-exped` rule in Experimentation (around line 8129) is:
+
+```css
+.fd-exped {
+  background: transparent;
+  position: relative;
+  z-index: 1;
+}
+```
+
+The new media-query block is appended **after** that rule (and before `.fd-exped__glow`). The desktop branch overrides `position: relative` to `position: sticky`. `z-index: 1` is retained — sticky still establishes a stacking context, so the rising parallax needs `z-index: 3` to appear above. The transparent background is fine (the rising parallax sits above and is opaque).
 
 ```css
 @media (min-width: 901px) {
@@ -70,9 +82,7 @@ Mirrors the variants→specs transition in `src/pages/AircraftR66.jsx` (lines 12
 
 The exact next-sibling selector will be confirmed during implementation by inspecting the rendered class on `<ParallaxSection>` (the component already exists; we only need its outermost class). If `<ParallaxSection>` renders with a different root class, the rule is updated to that class. The intent — "make the immediate next sibling stack above" — is unchanged.
 
-`.fd-exped` already has `background: #faf9f6;` (line 4957). No background change needed.
-
-### JavaScript (one new `useEffect` in the `FinalDraft` component, near other scroll-driven hooks)
+### JavaScript (one new `useEffect` in the `Experimentation` component, near other scroll-driven hooks)
 
 ```jsx
 useEffect(() => {
@@ -153,25 +163,28 @@ Notes:
 
 | Constant | Value | Rationale |
 |---|---|---|
-| `MAX_BLUR` | `10px` | Matches R66 (`AircraftR66.jsx` line 776 / 1311). |
+| `MAX_BLUR` | `10px` | Matches R66 (`AircraftR66.jsx` line 776 / 1311 (R66 reference page is unchanged)). |
 | `MAX_DARKEN` | `0.55` | Strong enough to read as "much darker" without going fully opaque before the rising section covers Expeditions. |
 | `FADE_COMPLETE` | `0.95` | Matches R66 (`AircraftR66.jsx` line 810). Keeps the section nearly clear for most of the scroll, then ramps fast at the end. |
 | Easing | `pow(adjusted, 8)` | Matches R66. Ease-in power curve. |
 
 ## Affected Files
 
-- `src/pages/FinalDraft.jsx` — add CSS rules inside the existing `<style>` block (near `.fd-exped` rules around line 4956), and add one new `useEffect` near other scroll hooks.
+- `src/pages/Experimentation.jsx` — add CSS rules inside the existing `<style>` block (near `.fd-exped` rule at line 8129), and add one new `useEffect` near the other expedition-related scroll hooks (e.g. after the globe/glow positioning effect that ends near line 2295).
 
 No other files touched. No new components, no new exports, no new dependencies.
 
 ## Externalities Verified
 
-- **Parent of `.fd-exped`** is `.final-draft` (line 1282), styled at line 2417. No `overflow: hidden` and no `transform` — `position: sticky` will pin correctly.
-- **Preceding section** (`<ParallaxSection>` Expeditions, line 1938) is untouched.
-- **Following sections** (`fd-sales`, then `fd-maintenance`, etc.) are untouched. Once `.fd-exped`'s natural block bottom passes, sticky releases and normal flow resumes.
-- **`reveal-element` class on `.fd-exped`** (line 1954): an existing on-scroll opacity reveal. We will verify in implementation that once revealed, opacity stays at 1 (it does in current code; this is just a checkpoint). If it ever animates opacity during the sticky phase, we strip just that class from this specific section.
-- **Fixed top nav (`FinalDraftHeader`)** is in its own fixed layer; `z-index: 3` on the next sibling does not interfere with it.
-- **Other sticky elements on the page** — `ScrollingStrips` etc. complete before `.fd-exped`. Their stacking is independent.
+- **Parent of `.fd-exped`** is the page wrapper inside `Experimentation`. No `overflow: hidden` or `transform` on the chain that would defeat sticky.
+- **Preceding section** is the `scrolling-strips-wrapper` (line 3960) — untouched.
+- **Following sections** (`fd-sales`, then maintenance/contact, etc.) are untouched. Once `.fd-exped`'s natural block bottom passes, sticky releases and normal flow resumes.
+- **No `reveal-element` class on `.fd-exped`** in the Experimentation markup — so there is no IntersectionObserver-driven opacity reveal to interact with.
+- **Existing scroll/resize handler that positions `.fd-exped__glow` and `.fd-exped__globe`** (line 2298) computes positions in document coordinates (`getBoundingClientRect() + window.scrollY`) — sticky positioning does not break that math. Glow remains pinned to the section's painted box, which is exactly the desired behaviour while the section is stuck.
+- **`.fd-exped__glow` already has `filter: blur(50px)`** (line 8141). Our new `filter: blur(var(--fd-exped-blur))` on the parent composes on top. As blur ramps up, the glow becomes proportionally more diffuse — visually consistent with the section blurring out.
+- **Existing `.fd-exped` `z-index: 1`** (line 8132) is preserved. The next-sibling parallax gets `z-index: 3` to stack above.
+- **Fixed top nav** is in its own fixed layer; `z-index: 3` on the next sibling does not interfere with it.
+- **Other sticky elements on the page** — `EditorialStrips` / `scrolling-strips-wrapper` etc. complete before `.fd-exped`. Their stacking is independent.
 
 ## Risks and Mitigations
 
@@ -214,5 +227,5 @@ None. Decision on overlay color resolved: pure black (`rgba(0, 0, 0, 1)`, max op
 ## Out of Scope (Explicit)
 
 - Equivalent transitions on other home-page section boundaries.
-- Refactoring R66 + FinalDraft to share a `useStickyBlur` hook. (Worth considering later, but not now — the two implementations differ in the "stick-top" math and any abstraction would need to support both.)
+- Refactoring R66 + Experimentation to share a `useStickyBlur` hook. (Worth considering later, but not now — the two implementations differ in the "stick-top" math and any abstraction would need to support both.)
 - Mobile equivalent treatment. Mobile keeps the existing scroll behavior unchanged.

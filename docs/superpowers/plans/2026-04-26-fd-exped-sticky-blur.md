@@ -1,10 +1,10 @@
-# FinalDraft Expeditions Sticky-Blur Transition Implementation Plan
+# Home Page (Experimentation) Expeditions Sticky-Blur Transition Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Pin `.fd-exped` to the bottom of the viewport on desktop, blur it, and fade in a black overlay as the next-sibling Sales `<ParallaxSection>` rises over it — mirroring the variants→specs transition on `/aircraft/r66`.
 
-**Architecture:** Single-file change to `src/pages/FinalDraft.jsx`. Add CSS rules inside the existing `<style>` block (sticky positioning, blur filter, `::after` overlay, next-sibling z-index, all gated by `@media (min-width: 901px)` and `prefers-reduced-motion: no-preference`). Add one `useEffect` that wires `scroll`, `resize`, and `matchMedia` change listeners and writes `--fd-exped-stick-top`, `--fd-exped-blur`, and `--fd-exped-darken` CSS variables on the section.
+**Architecture:** Single-file change to `src/pages/Experimentation.jsx` (the page mounted at `/`). Add CSS rules inside the existing `<style>` block (sticky positioning, blur filter, `::after` overlay, next-sibling z-index, all gated by `@media (min-width: 901px)` and `prefers-reduced-motion: no-preference`). Add one `useEffect` that wires `scroll`, `resize`, and `matchMedia` change listeners and writes `--fd-exped-stick-top`, `--fd-exped-blur`, and `--fd-exped-darken` CSS variables on the section.
 
 **Tech Stack:** React 18, Vite. No new dependencies. No tests are added because the project has no test infrastructure for scroll-driven CSS-variable animations and the spec defines a manual browser verification plan that this plan executes.
 
@@ -25,44 +25,49 @@
 ## Task 1: Add CSS rules for sticky pin, blur filter, and dark overlay
 
 **Files:**
-- Modify: `src/pages/FinalDraft.jsx` (insert after the `.fd-exped { background: #faf9f6; }` rule at line 4956–4958)
+- Modify: `src/pages/Experimentation.jsx` (insert after the `.fd-exped { ... }` rule at line 8129–8133)
 
 - [ ] **Step 1: Open the file and locate the anchor**
 
-Open `src/pages/FinalDraft.jsx`. Find the existing rule (around line 4956):
+Open `src/pages/Experimentation.jsx`. Find the existing rule (around line 8129):
 
 ```css
-        /* ===== EXPEDITIONS SECTION (Immersive) ===== */
         .fd-exped {
-          background: #faf9f6;
+          background: transparent;
+          position: relative;
+          z-index: 1;
         }
+        .fd-exped__glow {
 ```
 
-This is the insertion point.
+The insertion goes between these two rules (after the `.fd-exped` block, before `.fd-exped__glow`).
 
-- [ ] **Step 2: Insert the new CSS rules immediately after that block**
+- [ ] **Step 2: Insert the new CSS rules immediately after the `.fd-exped` block**
 
-Use the Edit tool. Replace:
+Use the Edit tool. Replace this exact text:
 
 ```
-        /* ===== EXPEDITIONS SECTION (Immersive) ===== */
         .fd-exped {
-          background: #faf9f6;
+          background: transparent;
+          position: relative;
+          z-index: 1;
         }
-
-        /* Cinematic Opening */
+        .fd-exped__glow {
 ```
 
-With:
+With this exact text:
 
 ```
-        /* ===== EXPEDITIONS SECTION (Immersive) ===== */
         .fd-exped {
-          background: #faf9f6;
+          background: transparent;
+          position: relative;
+          z-index: 1;
         }
 
         /* Sticky-blur transition into Sales (desktop only).
-           Mirrors the variants→specs pattern on /aircraft/r66. */
+           Mirrors the variants→specs pattern on /aircraft/r66.
+           Overrides position: relative above; z-index: 1 is preserved
+           and the next-sibling parallax gets z-index: 3 to stack above. */
         @media (min-width: 901px) {
           .fd-exped {
             position: sticky;
@@ -94,7 +99,7 @@ With:
           }
         }
 
-        /* Cinematic Opening */
+        .fd-exped__glow {
 ```
 
 - [ ] **Step 3: Verify the file still parses**
@@ -102,7 +107,7 @@ With:
 Run from the project root:
 
 ```bash
-node --check src/pages/FinalDraft.jsx 2>&1 | head -5
+node --check src/pages/Experimentation.jsx 2>&1 | head -5
 ```
 
 Expected: no output (the file is JSX, not pure JS, so `node --check` will object — instead use the dev server smoke test below).
@@ -125,14 +130,14 @@ In the browser (the dev server URL printed by vite, typically `http://localhost:
 
 If the section never sticks at all, check that `position: sticky` was applied (DevTools → inspect `.fd-exped` → Computed → `position`).
 
-- [ ] **Step 5: Confirm `.reveal-element` does not visually conflict**
+- [ ] **Step 5: Confirm the existing glow/globe positioning still works**
 
-In DevTools, inspect `.fd-exped` and confirm it has the class `visible` once it's been scrolled into view. Confirm `transform` reads `none` (or `translateY(0px) scale(1)`). If `visible` is missing or transform is non-trivial during the sticky phase, note this and proceed — Task 3 will verify the final visual outcome.
+In DevTools, inspect `.fd-exped__glow` and `.fd-exped__globe`. Confirm both have inline `top` (and the glow has inline `left`) being set by the existing positioning useEffect (line 2298). Scroll past the section once — the glow should remain centered on the pin within the section's painted box. If the glow drifts off the pin, note it and proceed; Task 3's visual checks will catch any visible regression.
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add src/pages/FinalDraft.jsx
+git add src/pages/Experimentation.jsx
 git commit -m "$(cat <<'EOF'
 feat(home): add sticky-blur CSS for Expeditions→Sales transition
 
@@ -151,41 +156,44 @@ EOF
 ## Task 2: Add the useEffect that drives the CSS variables
 
 **Files:**
-- Modify: `src/pages/FinalDraft.jsx` (insert a new `useEffect` after the existing `reveal-element` IntersectionObserver useEffect that ends at line 1271)
+- Modify: `src/pages/Experimentation.jsx` (insert a new `useEffect` after the phase-text minHeight-sync useEffect that ends at line 2367, immediately before the "Clubhouse: right side overlay" useEffect at line 2370)
 
 - [ ] **Step 1: Locate the insertion point**
 
-Open `src/pages/FinalDraft.jsx`. Find the closing of the `reveal-element` useEffect (around line 1269–1273):
+Open `src/pages/Experimentation.jsx`. Find the closing of the phase-text minHeight-sync useEffect (around line 2365–2370):
 
 ```jsx
-    reveals.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+    sync();
+    window.addEventListener('resize', sync);
+    return () => window.removeEventListener('resize', sync);
   }, []);
 
-  
-  const scrollToSection = (sectionId) => {
+  // Clubhouse: right side overlay fades in as you scroll (desktop only)
+  useEffect(() => {
 ```
 
-The new useEffect goes between `}, []);` (line 1271) and `const scrollToSection` (line 1274), in place of the blank gap.
+The new useEffect goes between `}, []);` (line 2367) and the `// Clubhouse:` comment (line 2369).
 
 - [ ] **Step 2: Insert the new useEffect**
 
 Use the Edit tool. Replace:
 
 ```
-    reveals.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+    sync();
+    window.addEventListener('resize', sync);
+    return () => window.removeEventListener('resize', sync);
   }, []);
 
-  
-  const scrollToSection = (sectionId) => {
+  // Clubhouse: right side overlay fades in as you scroll (desktop only)
+  useEffect(() => {
 ```
 
 With:
 
 ```
-    reveals.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+    sync();
+    window.addEventListener('resize', sync);
+    return () => window.removeEventListener('resize', sync);
   }, []);
 
   // Sticky-blur transition: pins .fd-exped at viewport-bottom on desktop,
@@ -256,8 +264,8 @@ With:
     };
   }, []);
 
-  
-  const scrollToSection = (sectionId) => {
+  // Clubhouse: right side overlay fades in as you scroll (desktop only)
+  useEffect(() => {
 ```
 
 - [ ] **Step 3: Verify dev server hot-reloads cleanly**
@@ -273,7 +281,7 @@ In the browser, open DevTools, inspect the `.fd-exped` element, look at the `sty
 - [ ] **Step 5: Commit**
 
 ```bash
-git add src/pages/FinalDraft.jsx
+git add src/pages/Experimentation.jsx
 git commit -m "$(cat <<'EOF'
 feat(home): wire scroll handler for Expeditions sticky-blur transition
 
@@ -316,7 +324,7 @@ Continue scrolling past Sales into Maintenance, Contact, footer. Expected: all s
 
 - [ ] **Step 4: Verify scroll-spy nav still tracks correctly**
 
-The fixed top nav (`FinalDraftHeader`) tracks the current section. Cross the Expeditions→Sales transition slowly. Expected: the active section indicator updates from "EXPEDITIONS" to "SALES" at the right time. No stuck states.
+The fixed top nav (`Experimentation header`) tracks the current section. Cross the Expeditions→Sales transition slowly. Expected: the active section indicator updates from "EXPEDITIONS" to "SALES" at the right time. No stuck states.
 
 - [ ] **Step 5: Resize from desktop to mobile mid-page**
 
@@ -349,7 +357,7 @@ DevTools → Console. Expected: no errors, no warnings related to this change.
 
 - [ ] **Step 9: Confirm fixed header is unaffected**
 
-The top nav (`FinalDraftHeader`) should remain fully visible and clickable throughout the transition. Expected: it sits above the rising Sales parallax (it's in its own fixed layer with higher stacking).
+The top nav (`Experimentation header`) should remain fully visible and clickable throughout the transition. Expected: it sits above the rising Sales parallax (it's in its own fixed layer with higher stacking).
 
 - [ ] **Step 10: Stop dev server**
 
@@ -375,7 +383,7 @@ If anything failed, do not stop — diagnose, propose a fix, get approval, and a
 | Mechanism CSS | Task 1 |
 | Mechanism JS | Task 2 |
 | Numerical constants | Task 2 (defined as constants) |
-| Affected files | Task 1, Task 2 (only `FinalDraft.jsx`) |
+| Affected files | Task 1, Task 2 (only `Experimentation.jsx`) |
 | Externalities verified | Task 1.4, 1.5, Task 3.3, 3.9 |
 | Risks: nextElementSibling fallback | Task 2 (`findRisingSection` includes fallback) |
 | Risks: reduced motion | Task 1 (`prefers-reduced-motion: no-preference`) → Task 3.7 verify |
