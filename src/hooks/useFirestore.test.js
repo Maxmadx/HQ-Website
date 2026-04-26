@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const { mockAdd, mockUpdateDoc, mockDeleteDoc, mockGetDocs, mockDocRef } = vi.hoisted(() => {
+const { mockAdd, mockUpdateDoc, mockDeleteDoc, mockGetDocs, mockDocRef, mockOnSnapshot } = vi.hoisted(() => {
   const mockDocRef = {};
   return {
     mockAdd: vi.fn(() => Promise.resolve({ id: 'new-id' })),
@@ -8,6 +8,7 @@ const { mockAdd, mockUpdateDoc, mockDeleteDoc, mockGetDocs, mockDocRef } = vi.ho
     mockDeleteDoc: vi.fn(() => Promise.resolve()),
     mockGetDocs: vi.fn(() => Promise.resolve({ docs: [] })),
     mockDocRef,
+    mockOnSnapshot: vi.fn(() => () => {}),
   };
 });
 
@@ -23,7 +24,7 @@ vi.mock('firebase/firestore', () => ({
   serverTimestamp: vi.fn(() => 'SERVER_TS'),
   query: vi.fn((...args) => args[0]),
   orderBy: vi.fn(() => 'orderBy'),
-  onSnapshot: vi.fn(() => () => {}),
+  onSnapshot: mockOnSnapshot,
 }));
 
 import { createDoc, updateDocById, deleteDocById, getCollection } from './useFirestore';

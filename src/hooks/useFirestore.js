@@ -90,3 +90,39 @@ export function useCollection(collectionName, orderByField = 'createdAt') {
 
   return { docs, loading, error };
 }
+
+/**
+ * Subscribe to a single doc by collection + id.
+ * Returns { data, loading, error }. data is { id, ...fields } or null if doc missing.
+ */
+export function useDocument(collectionName, id) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!collectionName || !id) {
+      setLoading(false);
+      return;
+    }
+    const ref = doc(db, collectionName, id);
+    const unsub = onSnapshot(
+      ref,
+      (snap) => {
+        if (snap.exists()) {
+          setData({ id: snap.id, ...snap.data() });
+        } else {
+          setData(null);
+        }
+        setLoading(false);
+      },
+      (err) => {
+        setError(err);
+        setLoading(false);
+      },
+    );
+    return unsub;
+  }, [collectionName, id]);
+
+  return { data, loading, error };
+}
