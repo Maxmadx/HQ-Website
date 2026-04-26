@@ -210,6 +210,18 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Aircraft comparables — public read, admin write
+    match /comparables/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Comparison defaults singleton (fuel prices etc.) — public read, admin write
+    match /comparison_defaults/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Blog posts — public read, admin write
     match /blog_posts/{id} {
       allow read: if true;
