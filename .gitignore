@@ -43,6 +43,9 @@ build/
 # Git worktrees (isolated branch workspaces)
 .worktrees/
 
+# One-off ops / seed scripts (contain live data — never commit)
+scripts/seed-comparables.js
+
 # Firebase deploy cache
 .firebase/
 
