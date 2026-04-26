@@ -8095,9 +8095,13 @@ function Experimentation() {
             }
           }
 
-          /* The Sales ParallaxSection is the immediate next sibling and must
-             stack above the pinned, blurred Expeditions while it rises. */
-          .fd-exped + .parallax-section {
+          /* Every section after .fd-exped must stack above it. .fd-exped is
+             sticky and stays pinned until its containing block (.final-draft,
+             the entire page) ends, so without this rule the rising parallax,
+             #sales, and any later sections would render BEHIND the still-pinned
+             Expeditions. position: relative with no offset is layout-equivalent
+             to static; we only need it so z-index applies. */
+          .fd-exped ~ * {
             position: relative;
             z-index: 3;
           }
