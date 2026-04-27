@@ -178,6 +178,26 @@ const DESTINATIONS = [
   { name: 'Edinburgh',       time: '3h',        region: 'Scotland'        },
 ];
 
+const PARTNERS = [
+  { category: 'Shooting Ground', name: 'Holland & Holland', location: 'Northwood' },
+  { category: 'Restaurant',      name: 'The Hut',           location: 'Isle of Wight' },
+  { category: 'Shooting Ground', name: 'E.J. Churchill',    location: 'West Wycombe' },
+];
+
+const EVENTS = [
+  { region: 'Berkshire',       name: 'Royal Ascot',                month: 'June' },
+  { region: 'Oxfordshire',     name: 'Henley Royal Regatta',       month: 'July' },
+  { region: 'West Sussex',     name: 'Goodwood Festival of Speed', month: 'July' },
+  { region: 'West Sussex',     name: 'Glorious Goodwood',          month: 'August' },
+  { region: 'Gloucestershire', name: 'Cheltenham Festival',        month: 'March' },
+  { region: 'Merseyside',      name: 'Grand National (Aintree)',   month: 'April' },
+  { region: 'Surrey',          name: 'Epsom Derby',                month: 'June' },
+  { region: 'Suffolk',         name: 'Newmarket Racing',           month: 'May–Oct' },
+  { region: 'Yorkshire',       name: 'York Racecourse',            month: 'May–Oct' },
+  { region: 'Surrey',          name: 'Sandown Park',               month: 'Year-round' },
+  { region: 'Berkshire',       name: 'Newbury Racecourse',         month: 'Year-round' },
+];
+
 const REQUIREMENTS = [
   { num: '01', title: 'Valid PPL(H)',       body: 'A current Private Pilot Licence (Helicopters) with a valid Class 2 medical certificate.' },
   { num: '02', title: 'Current Type Rating', body: 'A current type rating for the aircraft you wish to fly — R22, R44 or R66.' },
