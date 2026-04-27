@@ -14,6 +14,7 @@ import AircraftAlertSignup from '../components/AircraftAlertSignup';
 import '../assets/css/main.css';
 import '../assets/css/components.css';
 import FooterMinimal from '../components/FooterMinimal';
+import HqMenuPanel from '../components/HqMenuPanel';
 
 // ============================================
 // DATA
@@ -90,61 +91,7 @@ function FinalDraftHeader() {
 
   return (
     <>
-      <div className={`hq-menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="hq-menu-grid">
-          <div className="hq-menu-section">
-            <h3>About</h3>
-            <ul>
-              <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-              <li><Link to="/about-us" onClick={closeMenu}>About Us</Link></li>
-              <li><Link to="/about-us/team" onClick={closeMenu}>Meet The Team</Link></li>
-              <li><Link to="/about-us/captain-q" onClick={closeMenu}>Quentin Smith</Link></li>
-              <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Aircraft Sales</h3>
-            <ul>
-              <li><Link to="/aircraft-sales" onClick={closeMenu}>New Aircraft</Link></li>
-              <li><Link to="/aircraft-sales/new/r88" onClick={closeMenu}>R88</Link></li>
-              <li><Link to="/aircraft-sales/new/r66" onClick={closeMenu}>R66</Link></li>
-              <li><Link to="/aircraft-sales/new/r44" onClick={closeMenu}>R44</Link></li>
-              <li><Link to="/aircraft-sales/new/r22" onClick={closeMenu}>R22</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Flight Training</h3>
-            <ul>
-              <li><Link to="/training" onClick={closeMenu}>Training Overview</Link></li>
-              <li><Link to="/training/trial-lessons" onClick={closeMenu}>Trial Lessons</Link></li>
-              <li><Link to="/training/ppl" onClick={closeMenu}>Private Pilot License</Link></li>
-              <li><Link to="/training/faq" onClick={closeMenu}>Training FAQ</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Services</h3>
-            <ul>
-              <li><Link to="/services" onClick={closeMenu}>Services Overview</Link></li>
-              <li><Link to="/services/maintenance" onClick={closeMenu}>Maintenance</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Experiences</h3>
-            <ul>
-              <li><Link to="/expeditions" onClick={closeMenu}>Expeditions</Link></li>
-              <li><Link to="/expeditions/calendar" onClick={closeMenu}>Calendar</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Contact</h3>
-            <ul>
-              <li><Link to="/contact" onClick={closeMenu}>Contact Us</Link></li>
-              <li><Link to="/contact/careers" onClick={closeMenu}>Careers</Link></li>
-              <li><Link to="/contact/pricing" onClick={closeMenu}>Pricing</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <HqMenuPanel open={menuOpen} onClose={closeMenu} />
       <button
         className={`hq-menu-btn ${colorDark ? 'color-dark' : ''} ${scrolled ? 'scrolled' : ''} ${menuOpen ? 'open' : ''}`}
         onClick={toggleMenu}
@@ -312,7 +259,6 @@ function VirtualTourCTA() {
           <p>Visit our facility at Denham Aerodrome or arrange a virtual tour.</p>
         </Reveal>
         <Reveal delay={0.2}>
-          <Link to="/contact?subject=viewing" className="used-btn used-btn--primary">Book a Viewing</Link>
         </Reveal>
       </div>
     </section>
@@ -463,11 +409,10 @@ function FinalCTA() {
         </Reveal>
         <Reveal delay={0.2}>
           <div className="used-final-cta__actions">
-            <Link to="/contact" className="used-btn used-btn--light used-btn--large">Contact Sales Team</Link>
-            <a href="tel:+441895833838" className="used-final-cta__phone">
+            <a href="tel:+441895833373" className="used-final-cta__phone">
               <i className="fas fa-phone"></i>
               <span>Or call directly:</span>
-              <strong>+44 (0) 1895 833 838</strong>
+              <strong>+44 1895 833 373</strong>
             </a>
           </div>
         </Reveal>

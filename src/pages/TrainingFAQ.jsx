@@ -90,9 +90,6 @@ function TrainingFAQ() {
                 Book a trial lesson and see what it's all about!
               </p>
               <div className="flex gap-4">
-                <Link to="/contact" className="btn btn--primary">
-                  Contact Us
-                </Link>
                 <Link to="/training/trial-lessons" className="btn btn--outline">
                   Book Trial Lesson
                 </Link>

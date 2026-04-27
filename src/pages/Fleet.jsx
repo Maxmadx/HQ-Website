@@ -40,6 +40,7 @@ import '../assets/css/components.css';
 
 // Import Footer
 import FooterMinimal from '../components/FooterMinimal';
+import HqMenuPanel from '../components/HqMenuPanel';
 
 // ============================================================================
 // COMPONENT 1: FleetHeader
@@ -83,43 +84,7 @@ function FleetHeader() {
 
   return (
     <>
-      <div className={`hq-menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="hq-menu-grid">
-          <div className="hq-menu-section">
-            <h3>About</h3>
-            <ul>
-              <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-              <li><Link to="/about-us" onClick={closeMenu}>About Us</Link></li>
-              <li><Link to="/about-us/team" onClick={closeMenu}>Meet The Team</Link></li>
-              <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Fleet</h3>
-            <ul>
-              <li><Link to="/fleet" onClick={closeMenu}>Our Fleet</Link></li>
-              <li><Link to="/self-fly-hire" onClick={closeMenu}>Self-Fly Hire</Link></li>
-              <li><Link to="/aircraft-sales" onClick={closeMenu}>Aircraft Sales</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Training</h3>
-            <ul>
-              <li><Link to="/training" onClick={closeMenu}>Training Overview</Link></li>
-              <li><Link to="/training/ppl" onClick={closeMenu}>Private Pilot License</Link></li>
-              <li><Link to="/training/type-rating" onClick={closeMenu}>Type Ratings</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Services</h3>
-            <ul>
-              <li><Link to="/services" onClick={closeMenu}>Services</Link></li>
-              <li><Link to="/maintenance" onClick={closeMenu}>Maintenance</Link></li>
-              <li><Link to="/expeditions" onClick={closeMenu}>Expeditions</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <HqMenuPanel open={menuOpen} onClose={closeMenu} />
 
       <button
         className={`hq-menu-btn ${colorDark ? 'color-dark' : ''} ${scrolled ? 'scrolled' : ''} ${menuOpen ? 'open' : ''}`}
@@ -762,9 +727,6 @@ function FleetShowcase() {
                 Book a 30-minute taster flight in the aircraft of your choice.
                 Take the controls, experience the thrill, and fly wherever you want for that time.
               </p>
-              <Link to="/contact?subject=taster-flight" className="fleet-btn fleet-btn--primary">
-                Book Your Taster Flight
-              </Link>
             </div>
           </div>
         </Reveal>
@@ -838,9 +800,6 @@ function FleetShowcase() {
                       <span className="fleet-modal__price-amount">£{selectedAircraft.hourlyRate}</span>
                       <span className="fleet-modal__price-per">per hour</span>
                     </div>
-                    <Link to="/contact?subject=fleet-enquiry" className="fleet-btn fleet-btn--primary">
-                      Enquire Now
-                    </Link>
                   </div>
                 )}
               </div>
@@ -1037,9 +996,6 @@ function FleetHighlight() {
           </div>
         </Reveal>
         <Reveal delay={0.4}>
-          <Link to="/contact?subject=h500-enquiry" className="fleet-btn fleet-btn--light">
-            Enquire About MD 500
-          </Link>
         </Reveal>
       </div>
     </section>
@@ -1344,9 +1300,6 @@ function FleetCTA() {
         </Reveal>
         <Reveal delay={0.2}>
           <div className="fleet-cta__actions">
-            <Link to="/contact" className="fleet-btn fleet-btn--light">
-              Contact Us
-            </Link>
             <Link to="/training/ppl" className="fleet-btn fleet-btn--outline-light">
               Start Training
             </Link>
@@ -1394,15 +1347,15 @@ function FleetContact() {
             <div className="fleet-contact__details">
               <div className="fleet-contact__detail">
                 <span className="fleet-contact__detail-label">Phone</span>
-                <a href="tel:+441234567890">+44 (0) 1234 567 890</a>
+                <a href="tel:+441895833373">+44 1895 833 373</a>
               </div>
               <div className="fleet-contact__detail">
                 <span className="fleet-contact__detail-label">Email</span>
-                <a href="mailto:fleet@hqaviation.com">fleet@hqaviation.com</a>
+                <a href="mailto:sales@hqaviation.com">sales@hqaviation.com</a>
               </div>
               <div className="fleet-contact__detail">
                 <span className="fleet-contact__detail-label">Location</span>
-                <span>Denham Aerodrome, UB9 5DF</span>
+                <span>Denham Aerodrome, Uxbridge, London, UB9 5DF</span>
               </div>
             </div>
           </Reveal>
@@ -1507,9 +1460,6 @@ function FleetDiscovery() {
                 <span className="fleet-discovery__price-from">From</span>
                 <span className="fleet-discovery__price-amount">£199</span>
               </div>
-              <Link to="/contact?subject=discovery-flight" className="fleet-btn fleet-btn--light">
-                Book Now →
-              </Link>
             </div>
           </div>
         </div>

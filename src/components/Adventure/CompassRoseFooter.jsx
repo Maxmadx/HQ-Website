@@ -219,8 +219,8 @@ const CompassRoseFooter = () => {
         <div style={styles.column}>
           <span style={styles.columnTitle}>Contact</span>
           <span className="footer-link" style={styles.link}>Denham Aerodrome</span>
-          <span className="footer-link" style={styles.link}>+44 1895 833 838</span>
-          <span className="footer-link" style={styles.link}>info@hqaviation.com</span>
+          <span className="footer-link" style={styles.link}>+44 1895 833 373</span>
+          <span className="footer-link" style={styles.link}>operations@hqaviation.com</span>
         </div>
       </div>
 

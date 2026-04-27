@@ -36,7 +36,6 @@ const defaultSiteStructure = [
     completed: false,
     children: [
       { id: 'captain-q', title: 'Captain Quentin Smith', path: '/about-us/captain-q', description: 'Founder & Chief Pilot', completed: false, children: [] },
-      { id: 'team', title: 'Meet The Team', path: '/about-us/team', description: 'Our instructors and staff', completed: false, children: [] },
     ],
   },
   {
@@ -84,15 +83,6 @@ const defaultSiteStructure = [
     path: '/expeditions',
     icon: '◎',
     description: 'Worldwide helicopter adventures',
-    completed: false,
-    children: [],
-  },
-  {
-    id: 'contact',
-    title: 'Contact',
-    path: '/contact',
-    icon: '✉',
-    description: 'Get in touch with us',
     completed: false,
     children: [],
   },

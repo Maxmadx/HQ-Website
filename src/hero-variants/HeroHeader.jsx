@@ -165,7 +165,6 @@ const MENU_SECTIONS = [
     links: [
       { to: '/',                  label: 'Home' },
       { to: '/about-us',          label: 'About Us' },
-      { to: '/about-us/team',     label: 'Meet The Team' },
       { to: '/about-us/captain-q',label: 'Quentin Smith' },
     ],
   },
@@ -198,13 +197,6 @@ const MENU_SECTIONS = [
     links: [
       { to: '/expeditions',          label: 'Expeditions' },
       { to: '/expeditions/calendar', label: 'Calendar' },
-    ],
-  },
-  {
-    title: 'Contact',
-    links: [
-      { to: '/contact',         label: 'Contact Us' },
-      { to: '/contact/careers', label: 'Careers' },
     ],
   },
 ];

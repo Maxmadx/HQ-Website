@@ -26,19 +26,19 @@ function Footer() {
                 </svg>
                 +44 1895 833373
               </a>
-              <a href="mailto:info@hqaviation.com" className="hq-footer__contact-item">
+              <a href="mailto:operations@hqaviation.com" className="hq-footer__contact-item">
                 <svg className="hq-footer__contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                   <polyline points="22,6 12,13 2,6"></polyline>
                 </svg>
-                info@hqaviation.com
+                operations@hqaviation.com
               </a>
               <a href="https://maps.google.com/?q=Denham+Aerodrome" className="hq-footer__contact-item" target="_blank" rel="noopener noreferrer">
                 <svg className="hq-footer__contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                   <circle cx="12" cy="10" r="3"></circle>
                 </svg>
-                Denham Aerodrome, UB9 5DF
+                Denham Aerodrome, Uxbridge, London, UB9 5DF
               </a>
             </div>
             {/* Certifications */}
@@ -83,7 +83,6 @@ function Footer() {
               <li><Link to="/about-us/captain-q" className="hq-footer__nav-link">Captain Q</Link></li>
               <li><Link to="/services/maintenance" className="hq-footer__nav-link">Maintenance</Link></li>
               <li><Link to="/expeditions" className="hq-footer__nav-link">Expeditions</Link></li>
-              <li><Link to="/contact" className="hq-footer__nav-link">Contact</Link></li>
             </ul>
           </nav>
         </div>

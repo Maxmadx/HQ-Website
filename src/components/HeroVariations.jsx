@@ -725,7 +725,7 @@ export const Hero27_SidebarLayout = () => (
       </nav>
       <div className="hero-var__sidebar-contact">
         <span>Denham Aerodrome</span>
-        <span>+44 1234 567890</span>
+        <span>+44 1895 833 373</span>
       </div>
     </div>
     <div className="hero-var__sidebar-main">

@@ -51,7 +51,10 @@ scripts/seed-comparables.js
 
 # Claude Code local state
 .claude-playwright/
+.claude/
 
 # Local research / scratch assets
 R44-Claude/
 assets-source/
+eyeinthesky-robbie/
+images.txt

@@ -32,9 +32,6 @@ function Home() {
   const maintenanceSlides = [
     { title: 'Rebuilds',     description: 'At HQ, our experienced and dedicated engineers carry out the highest quality rebuilds on calendar or time expired machines. The 12 years inspection or 2200 Hr overhaul will be tailored to your specific needs.', cta: 'Learn More', link: '/services/maintenance' },
     { title: 'Maintenance',  description: 'Being an authorised Part 145 Maintenance Facility, HQ can carry out all types of work on your Robinson or Cabri Helicopter. From small scheduled inspections to unforeseen defects, our engineers will look after your machine.', cta: 'Learn More', link: '/services/maintenance' },
-    { title: 'Part Sales',   description: 'With an impressive stock of Robinson and Cabri spares, HQ can offer an AOG service to get the parts you need without delay. Our Stores Team are always on hand to give you some assistance.', cta: 'Learn More', link: '/contact' },
-    { title: 'Hangarage',   description: 'Please enquire if you would like to base your aircraft temporarily or permanently at Denham. Our Operations team are on site 7 days a week, to provide moving in-and-out service and refueling assistance.', cta: 'Learn More', link: '/contact' },
-    { title: 'Avionics', description: 'From upgrading your existing radio, to installing USB ports to the instrument console: HQ works with experienced Avionics engineers to ensure the best outcome for the owner and improve the whole flying experience.', cta: 'Learn More', link: '/contact' },
   ].map((slide, i) => ({ ...slide, image: maintenanceCarouselImages[i]?.url }));
 
   // Sales carousel — text stays hardcoded, images come from admin
@@ -649,7 +646,7 @@ function Home() {
                           <span className="accordion-item__title-text">General Enquiries</span>
                         </summary>
                         <div className="accordion-item__description">
-                          <p>Email: info@hqaviation.com</p>
+                          <p>Email: operations@hqaviation.com</p>
                           <p>Phone: +44 1895 833373</p>
                         </div>
                       </details>
@@ -669,7 +666,7 @@ function Home() {
                           <span className="accordion-item__title-text">Training Enquiries</span>
                         </summary>
                         <div className="accordion-item__description">
-                          <p>Email: training@hqaviation.com</p>
+                          <p>Email: operations@hqaviation.com</p>
                           <p>Phone: +44 1895 833373</p>
                         </div>
                       </details>
@@ -680,7 +677,7 @@ function Home() {
                         </summary>
                         <div className="accordion-item__description">
                           <p>Email: maintenance@hqaviation.com</p>
-                          <p>Phone: +44 1895 833373</p>
+                          <p>Phone: +44 1895 832833</p>
                         </div>
                       </details>
                     </div>
@@ -695,8 +692,8 @@ function Home() {
                     <div className="sqs-html-content">
                       <p><strong>HQ Aviation Ltd</strong></p>
                       <p>Denham Aerodrome</p>
-                      <p>Tilehouse Lane</p>
-                      <p>Denham, Buckinghamshire</p>
+                      <p>Uxbridge</p>
+                      <p>London</p>
                       <p>UB9 5DF</p>
                       <p>United Kingdom</p>
                     </div>

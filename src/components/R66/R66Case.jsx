@@ -11,6 +11,17 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+// UK outline path (same as Experimentation.jsx sfh-map). ViewBox-native coords
+// — Denham (EGLD) sits at (310, 480). 1 NM ≈ 1.114 SVG units at this scale.
+const R66B_UK_PATH = "M224.5 476.8 L199.8 492.6 L189.1 490.9 L176.2 478.9 L162.5 480.4 L168.2 474.2 L156.5 468.8 L136.2 476.6 L122.0 459.4 L165.9 429.1 L172.6 414.4 L168.6 410.0 L167.8 389.1 L144.9 396.6 L161.2 373.6 L194.4 360.3 L207.5 365.9 L204.8 356.7 L208.8 354.6 L221.3 362.4 L208.8 348.7 L214.3 333.7 L210.1 331.0 L210.4 322.1 L215.3 318.3 L216.6 303.6 L204.8 307.0 L188.0 277.4 L193.0 263.3 L209.9 251.0 L189.6 251.5 L173.5 262.8 L139.5 258.3 L135.8 268.9 L126.9 257.5 L125.5 248.9 L130.1 248.7 L145.0 214.0 L136.6 200.6 L139.2 184.9 L148.7 184.3 L138.5 176.7 L140.2 169.4 L123.8 187.6 L123.5 175.6 L132.3 164.3 L117.1 178.8 L110.3 221.5 L101.9 223.3 L112.3 193.5 L107.7 192.8 L111.1 163.2 L124.8 128.8 L106.4 144.1 L87.5 131.5 L103.4 122.3 L98.2 118.9 L110.1 96.6 L99.9 82.8 L109.3 75.3 L102.9 67.0 L108.3 52.7 L126.1 52.7 L116.0 39.9 L119.0 28.5 L131.9 26.8 L128.8 18.6 L133.2 5.3 L154.7 9.9 L209.2 1.6 L203.0 22.8 L172.2 47.4 L170.5 54.7 L177.5 56.9 L166.5 73.3 L199.7 64.2 L247.9 64.8 L256.2 70.9 L259.6 80.2 L231.1 137.0 L199.1 155.5 L215.9 153.2 L224.3 162.9 L197.1 178.2 L180.2 173.7 L209.5 183.4 L227.2 178.3 L245.1 186.7 L264.6 209.3 L281.3 268.0 L303.5 281.5 L326.7 307.6 L321.8 314.2 L334.6 342.2 L303.9 334.3 L318.4 336.6 L340.8 360.7 L344.0 372.6 L331.8 389.9 L341.0 396.4 L352.1 385.7 L380.3 388.6 L395.6 400.1 L399.0 412.0 L393.0 443.1 L378.8 453.1 L380.5 461.7 L359.7 469.5 L365.5 472.2 L365.2 480.2 L346.7 487.4 L386.0 494.3 L385.3 506.7 L367.9 524.0 L338.1 535.0 L298.9 534.9 L274.0 526.0 L277.3 531.1 L249.6 537.6 L252.4 544.2 L249.5 545.8 L211.4 538.2 L195.4 543.8 L184.4 570.4 L164.1 560.1 L143.0 567.0 L127.6 584.1 L106.4 581.5 L136.5 550.5 L148.7 534.1 L151.1 520.6 L160.1 517.1 L164.4 506.2 L205.9 505.0 L233.8 468.8 L224.5 476.8 Z";
+
+// Denham origin in UK-path coords; 1 NM ≈ 1.114 SVG units (derived from
+// sfh-map's R66 Turbine r30=78 over 70 NM).
+const R66B_DENHAM = { x: 310, y: 480 };
+const R66B_NM_TO_UNITS = 1.114;
+const R66B_R_STD = 350 * R66B_NM_TO_UNITS; // ~390
+const R66B_R_AUX = 550 * R66B_NM_TO_UNITS; // ~613
+
 // ===========================================================================
 // Nine approved arguments
 // ===========================================================================
@@ -38,21 +49,22 @@ const ARGUMENTS = {
     body:
       'Pilots graduate into the R66 from the R22 and R44 without leaving the ' +
       'manufacturer that taught them. Same philosophy, same factory, same ' +
-      'discipline — turbine performance added on top.',
+      'discipline, with turbine performance added on top.',
     stat: { label: 'POSITION IN RANGE', value: 'Flagship' },
   },
   3: {
     code: 'ENG-01', group: 'Engine',
     parts: [
-      { t: 'A powerplant',        w: 'dark' },
-      { t: 'that asks less of',   w: 'mid' },
-      { t: 'the pilot.',          w: 'light' },
+      { t: 'A Rolls-Royce', w: 'dark' },
+      { t: 'with headroom,', w: 'mid' },
+      { t: 'on purpose.',   w: 'light' },
     ],
     body:
-      'Single-lever power. No mixture, no carb heat, no shock cooling to ' +
-      'avoid. Start the RR300 with a switch and spend the workload on the ' +
-      'flight, not on managing the engine.',
-    stat: { label: 'POWER LEVERS', value: '1' },
+      'The RR300 produces more power than the R66 asks of it, and Robinson ' +
+      'caps it below that limit on purpose. No carb heat or complex engine ' +
+      'routine to learn. The result is a takeoff chart at 6,000 ft density ' +
+      'altitude that reads the same as sea level.',
+    stat: { label: 'CORE ENGINE', value: 'Rolls-Royce RR300' },
   },
   4: {
     code: 'OWN-03', group: 'Ownership',
@@ -89,35 +101,37 @@ const ARGUMENTS = {
       { t: 'in production.',      w: 'light' },
     ],
     body:
-      'Garmin G500H TXi, digital engine monitoring, TAWS, ADS-B — all ' +
-      'factory, all integrated. None of the retrofit patchwork the used-' +
-      'turbine market is built on.',
+      'Garmin G500H TXi, digital engine monitoring, TAWS, ADS-B. All ' +
+      'factory, all integrated.',
     stat: { label: 'AVIONICS', value: 'Factory G500H TXi' },
   },
   7: {
     code: 'AIR-01', group: 'Aircraft',
     parts: [
-      { t: 'A cargo hold',        w: 'dark' },
-      { t: 'that',                w: 'mid' },
-      { t: 'locks.',              w: 'light' },
+      { t: 'Spacious cargo hold', w: 'dark' },
+      { t: 'and',                 w: 'mid' },
+      { t: 'underseat storage.',  w: 'light' },
     ],
     body:
-      'Three hundred pounds of secure baggage, loaded from outside the ' +
-      'cabin. Rifle cases, camera rigs, overnight bags — they ride in the ' +
-      'aircraft, not on pilot laps.',
-    stat: { label: 'CARGO CAPACITY', value: '300', unit: 'LB' },
+      'Three hundred pounds of secure baggage loaded from outside the ' +
+      'cabin, plus roughly fifty pounds of underseat stowage for personal ' +
+      'items. Rifle cases, camera rigs, golf clubs, overnight bags. They ' +
+      'ride in the aircraft, not on pilot laps.',
+    stat: { label: 'TOTAL STOWAGE', value: '~350', unit: 'LB' },
   },
   8: {
     code: 'AIR-02', group: 'Aircraft',
     parts: [
-      { t: 'Five seats',          w: 'dark' },
-      { t: 'that mean',           w: 'mid' },
-      { t: 'five adults.',        w: 'light' },
+      { t: 'Five seats,',       w: 'dark' },
+      { t: 'one more than',     w: 'mid' },
+      { t: 'the R44.',          w: 'light' },
     ],
     body:
-      'Not four plus a child. Not four plus luggage. Five full-size seats, ' +
-      'forward-facing, with shoulder room that matches the passenger ' +
-      'weights on the load sheet.',
+      'The R66 is not the largest light turbine on the market, but stepping ' +
+      'from four seats to five changes what the aircraft can do for you. ' +
+      'Forward-facing, adult-sized, with a useful load that holds up once ' +
+      'everyone is aboard. Where the R44 leaves a passenger on the ground, ' +
+      'the R66 keeps the trip intact.',
     stat: { label: 'USEFUL LOAD', value: '~1,157', unit: 'LB' },
   },
   9: {
@@ -130,7 +144,7 @@ const ARGUMENTS = {
     body:
       'The 43.5-gallon auxiliary tank extends range to roughly 550 nautical ' +
       'miles and endurance past five hours. London to the Highlands, the ' +
-      'Alps, or the South of France — single tank, single leg.',
+      'Alps, or the South of France on a single tank, single leg.',
     stat: { label: 'RANGE (w/ AUX)', value: '~550', unit: 'NM' },
   },
 };
@@ -175,10 +189,14 @@ function GlobalTokens() {
       .r66b-inv-text--dark  { color: #faf9f6; font-weight: 500; }
       .r66b-inv-text--mid   { color: rgba(250,249,246,0.75); font-weight: 300; }
       .r66b-inv-text--light { color: rgba(250,249,246,0.5);  font-weight: 300; }
-      .r66b * { box-sizing: border-box; }
-      .r66b {
+      .r66b-exp, .r66b-seamD, .r66b-seamP,
+      .r66b-range, .r66b-ladder, .r66b-closeA {
         font-family: 'Space Grotesk', -apple-system, sans-serif;
         color: #1a1a1a;
+      }
+      .r66b-exp *, .r66b-seamD *, .r66b-seamP *,
+      .r66b-range *, .r66b-ladder *, .r66b-closeA * {
+        box-sizing: border-box;
       }
       .r66b-mono {
         font-family: 'Share Tech Mono', monospace;
@@ -324,9 +342,8 @@ function ExplainerSplit({ argId, index, side = 'right', statHero = false }) {
         <div className="r66b-exp__text">
           <div className="r66b-exp__meta">
             <span className="r66b-mono r66b-exp__idx">
-              {String(index).padStart(2, '0')} / 09
+              {String(index).padStart(2, '0')} / 07
             </span>
-            <span className="r66b-mono r66b-exp__code">{arg.code}</span>
           </div>
           <Headline parts={arg.parts} className="r66b-exp__h" />
           <p className="r66b-exp__p">{arg.body}</p>
@@ -438,7 +455,7 @@ function SeamDark({ argId, index }) {
         <div className="r66b-seamD__text">
           <div className="r66b-seamD__meta">
             <span className="r66b-mono r66b-seamD__idx">
-              {String(index).padStart(2, '0')} / 09
+              {String(index).padStart(2, '0')} / 07
             </span>
             <span className="r66b-mono r66b-seamD__code">{arg.code}</span>
           </div>
@@ -538,7 +555,7 @@ function SeamPaperStat({ argId, index }) {
         <div className="r66b-seamP__text">
           <div className="r66b-seamP__meta">
             <span className="r66b-mono r66b-seamP__idx">
-              {String(index).padStart(2, '0')} / 09
+              {String(index).padStart(2, '0')} / 07
             </span>
             <span className="r66b-mono r66b-seamP__code">{arg.code}</span>
           </div>
@@ -649,59 +666,80 @@ function RangeMap({ argId, index }) {
   return (
     <section className="r66b-range" ref={ref}>
       <div className="r66b-range__container">
-        <div className="r66b-range__head">
-          <div className="r66b-range__meta">
-            <span className="r66b-mono r66b-range__idx">
-              {String(index).padStart(2, '0')} / 09
-            </span>
-            <span className="r66b-mono r66b-range__code">{arg.code}</span>
-          </div>
-          <Headline parts={arg.parts} className="r66b-range__h" inverted />
-        </div>
         <div className="r66b-range__grid">
           <div className="r66b-range__map">
-            <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg"
+            <svg viewBox="-310 -180 1240 1240" xmlns="http://www.w3.org/2000/svg"
               className={`r66b-range__svg${inView ? ' is-drawn' : ''}`}
+              preserveAspectRatio="xMidYMid meet"
               aria-hidden="true">
               <defs>
-                <radialGradient id="r66b-range-glow" cx="20%" cy="55%" r="70%">
+                <radialGradient id="r66b-range-aux-glow" cx="50%" cy="50%" r="50%">
                   <stop offset="0%" stopColor="rgba(166,123,63,0.18)" />
+                  <stop offset="70%" stopColor="rgba(166,123,63,0.04)" />
                   <stop offset="100%" stopColor="rgba(166,123,63,0)" />
                 </radialGradient>
+                <radialGradient id="r66b-range-std-glow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="rgba(26,26,26,0.06)" />
+                  <stop offset="70%" stopColor="rgba(26,26,26,0.02)" />
+                  <stop offset="100%" stopColor="rgba(26,26,26,0)" />
+                </radialGradient>
               </defs>
-              <rect width="600" height="400" fill="url(#r66b-range-glow)" />
-              <circle cx="120" cy="220" r="90"
-                fill="none" stroke="rgba(250,249,246,0.18)"
-                strokeDasharray="3 5" strokeWidth="1" />
-              <circle cx="120" cy="220" r="170"
-                fill="none" stroke="#a67b3f"
-                strokeDasharray="4 6" strokeWidth="1.25" />
-              <path d="M 120 220 Q 260 130 430 90"
-                fill="none" stroke="#faf9f6" strokeWidth="1.5"
-                className="r66b-range__route" />
-              <circle cx="120" cy="220" r="4" fill="#faf9f6" />
-              <circle cx="120" cy="220" r="10"
-                fill="none" stroke="#faf9f6" strokeOpacity="0.3" strokeWidth="1" />
-              <circle cx="430" cy="90" r="4" fill="#a67b3f" />
-              <circle cx="430" cy="90" r="10"
-                fill="none" stroke="#a67b3f" strokeOpacity="0.45" strokeWidth="1" />
-              <text x="120" y="260" fill="rgba(250,249,246,0.55)"
-                fontFamily="Share Tech Mono, monospace" fontSize="11" letterSpacing="2"
-                textAnchor="middle">EGLD</text>
-              <text x="430" y="75" fill="#a67b3f"
-                fontFamily="Share Tech Mono, monospace" fontSize="11" letterSpacing="2"
-                textAnchor="middle">550 NM</text>
-              <text x="215" y="310" fill="rgba(250,249,246,0.4)"
-                fontFamily="Share Tech Mono, monospace" fontSize="9" letterSpacing="2">
-                STD TANK · ~350 NM
+
+              {/* AUX range ring (with auxiliary tank) */}
+              <circle
+                cx={R66B_DENHAM.x} cy={R66B_DENHAM.y} r={R66B_R_AUX}
+                fill="url(#r66b-range-aux-glow)"
+                stroke="#a67b3f" strokeWidth="1.5" strokeDasharray="6 5"
+                className="r66b-range__ring r66b-range__ring--aux" />
+
+              {/* Standard range ring */}
+              <circle
+                cx={R66B_DENHAM.x} cy={R66B_DENHAM.y} r={R66B_R_STD}
+                fill="url(#r66b-range-std-glow)"
+                stroke="rgba(26,26,26,0.55)" strokeWidth="1.25" strokeDasharray="4 5"
+                className="r66b-range__ring r66b-range__ring--std" />
+
+              {/* UK outline — faint fill, subtle stroke */}
+              <path d={R66B_UK_PATH}
+                fill="rgba(26,26,26,0.06)"
+                stroke="rgba(26,26,26,0.45)" strokeWidth="1.2" />
+
+              {/* Denham origin */}
+              <circle cx={R66B_DENHAM.x} cy={R66B_DENHAM.y} r="6" fill="#1a1a1a" />
+              <circle cx={R66B_DENHAM.x} cy={R66B_DENHAM.y} r="12"
+                fill="none" stroke="#1a1a1a" strokeOpacity="0.35" strokeWidth="1" />
+              <text x={R66B_DENHAM.x + 14} y={R66B_DENHAM.y + 4}
+                fill="rgba(26,26,26,0.8)"
+                fontFamily="Share Tech Mono, monospace" fontSize="13" letterSpacing="2">
+                EGLD · DENHAM
               </text>
-              <text x="325" y="360" fill="rgba(166,123,63,0.75)"
-                fontFamily="Share Tech Mono, monospace" fontSize="9" letterSpacing="2">
-                AUX TANK · ~550 NM
+
+              {/* Range ring labels — positioned on the top arc of each ring */}
+              <text x={R66B_DENHAM.x} y={R66B_DENHAM.y - R66B_R_STD - 10}
+                fill="rgba(26,26,26,0.7)"
+                fontFamily="Share Tech Mono, monospace" fontSize="16" letterSpacing="3"
+                textAnchor="middle">
+                STD · 350 NM
+              </text>
+              <text x={R66B_DENHAM.x} y={R66B_DENHAM.y - R66B_R_AUX - 10}
+                fill="#a67b3f"
+                fontFamily="Share Tech Mono, monospace" fontSize="16" letterSpacing="3"
+                textAnchor="middle">
+                AUX · 550 NM
               </text>
             </svg>
+            <p className="r66b-range__note">
+              * Assuming 120 kts cruise and no wind.
+            </p>
           </div>
           <div className="r66b-range__text">
+            <div className="r66b-range__meta">
+              <span className="r66b-mono r66b-range__idx">
+                {String(index).padStart(2, '0')} / 07
+              </span>
+              <span className="r66b-mono r66b-range__code">{arg.code}</span>
+            </div>
+            <Headline parts={arg.parts} className="r66b-range__h" />
             <p className="r66b-range__p">{arg.body}</p>
             <div className="r66b-range__stats">
               <div className="r66b-range__stat">
@@ -726,8 +764,8 @@ function RangeMap({ argId, index }) {
       </div>
       <style>{`
         .r66b-range {
-          background: linear-gradient(to right, #1c1c1c 50%, #141414 50%);
-          color: #faf9f6;
+          background: linear-gradient(to right, #faf9f6 50%, #ececec 50%);
+          color: #1a1a1a;
           padding: clamp(5rem, 9vw, 8rem) 0;
         }
         .r66b-range__container {
@@ -741,7 +779,7 @@ function RangeMap({ argId, index }) {
           margin-bottom: 1.5rem;
           font-size: 0.7rem;
         }
-        .r66b-range__idx  { color: rgba(250,249,246,0.55); }
+        .r66b-range__idx  { color: #1a1a1a; }
         .r66b-range__code { color: #a67b3f; }
         .r66b-range__h {
           font-size: clamp(2rem, 4.5vw, 3.3rem);
@@ -755,46 +793,92 @@ function RangeMap({ argId, index }) {
           display: grid;
           grid-template-columns: 1fr;
           gap: clamp(2rem, 5vw, 4rem);
-          align-items: center;
+          align-items: start;
         }
         @media (min-width: 960px) {
-          .r66b-range__grid { grid-template-columns: 1.4fr 1fr; }
+          .r66b-range__grid { grid-template-columns: 1fr 1fr; }
+        }
+        /* Right-column order: meta → title → copy → stats, aligned from the
+           top so the headline lands above the paragraph exactly. */
+        .r66b-range__text {
+          display: flex;
+          flex-direction: column;
+          position: relative;
+          z-index: 2;
+        }
+        /* Pseudo-panel layered above the map so range circles can't bleed into
+           the right column. Extends left past the grid gap to cover the seam. */
+        @media (min-width: 960px) {
+          .r66b-range__text::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: calc(-1 * clamp(3rem, 8vw, 6rem));
+            background: #ececec;
+            z-index: -1;
+          }
+        }
+        .r66b-range__text .r66b-range__meta {
+          margin-top: 0;
         }
         .r66b-range__map {
           width: 100%;
-          aspect-ratio: 3 / 2;
-          border: 1px solid rgba(250,249,246,0.12);
+          padding: clamp(1rem, 2vw, 1.5rem);
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+          position: relative;
+          z-index: 1;
         }
-        .r66b-range__svg { width: 100%; height: 100%; display: block; }
-        .r66b-range__route {
-          stroke-dasharray: 600;
-          stroke-dashoffset: 600;
-          transition: stroke-dashoffset 2s ease-out;
+        .r66b-range__svg {
+          width: 100%;
+          aspect-ratio: 1 / 1;
+          display: block;
         }
-        .r66b-range__svg.is-drawn .r66b-range__route { stroke-dashoffset: 0; }
+        /* Range rings fade in as the section enters view. Rendered by default
+           so they stay visible even if IntersectionObserver hasn't fired (the
+           section is taller than the 25% threshold of its ref). */
+        .r66b-range__ring {
+          opacity: 0.55;
+          transition: opacity 1.1s ease-out;
+        }
+        .r66b-range__svg.is-drawn .r66b-range__ring { opacity: 1; }
+        .r66b-range__svg.is-drawn .r66b-range__ring--aux {
+          transition-delay: 0.15s;
+        }
+        .r66b-range__note {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.72rem;
+          letter-spacing: 0.12em;
+          color: rgba(26,26,26,0.55);
+          margin: 0;
+          text-align: right;
+        }
         .r66b-range__p {
           font-size: 1.0625rem;
           line-height: 1.75;
-          color: rgba(250,249,246,0.78);
+          color: #4a4a4a;
           margin: 0 0 2rem;
           max-width: 42ch;
         }
         .r66b-range__stats {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          border-top: 1px solid rgba(250,249,246,0.12);
+          border-top: 1px solid #e8e6e2;
         }
         .r66b-range__stat {
           display: flex;
           flex-direction: column;
           gap: 0.35rem;
           padding: 1rem 0;
-          border-bottom: 1px solid rgba(250,249,246,0.12);
+          border-bottom: 1px solid #e8e6e2;
         }
         .r66b-range__stat--hero .r66b-range__stat-v { color: #a67b3f; }
         .r66b-range__stat-l {
           font-size: 0.65rem;
-          color: rgba(250,249,246,0.5);
+          color: #a67b3f;
         }
         .r66b-range__stat-v {
           font-size: 1.25rem;
@@ -821,7 +905,7 @@ function RobinsonLadder({ argId, index }) {
         <div className="r66b-ladder__head">
           <div className="r66b-ladder__meta">
             <span className="r66b-mono r66b-ladder__idx">
-              {String(index).padStart(2, '0')} / 09
+              {String(index).padStart(2, '0')} / 07
             </span>
             <span className="r66b-mono r66b-ladder__code">{arg.code}</span>
           </div>
@@ -961,7 +1045,7 @@ function ClosingArgument({ argId, index }) {
         <div className="r66b-closeA__text">
           <div className="r66b-closeA__meta">
             <span className="r66b-mono r66b-closeA__idx">
-              {String(index).padStart(2, '0')} / 09
+              {String(index).padStart(2, '0')} / 07
             </span>
             <span className="r66b-mono r66b-closeA__code">{arg.code}</span>
           </div>
@@ -1082,19 +1166,18 @@ function ClosingArgument({ argId, index }) {
 // Composition — "Chaptered Flow": opener → argued body → ladder → closer.
 // ===========================================================================
 export default function R66Case() {
+  // Render sections as a fragment so AircraftR66 can wrap them together with
+  // R66Gallery + R66CTA in a single sticky-stack containing block.
   return (
-    <div className="r66b r66b-case">
+    <>
       <GlobalTokens />
-      <OpenerSticky />
       <ExplainerSplit argId={3} index={1} side="right" />
-      <SeamDark        argId={5} index={2} />
-      <ExplainerSplit argId={6} index={3} side="left" />
-      <ExplainerSplit argId={7} index={4} side="right" statHero />
-      <ExplainerSplit argId={8} index={5} side="left" />
-      <RangeMap        argId={9} index={6} />
-      <SeamPaperStat   argId={1} index={7} />
-      <RobinsonLadder  argId={2} index={8} />
-      <ClosingArgument argId={4} index={9} />
-    </div>
+      <ExplainerSplit argId={6} index={2} side="left" />
+      <ExplainerSplit argId={7} index={3} side="right" statHero />
+      <ExplainerSplit argId={8} index={4} side="left" />
+      <RangeMap        argId={9} index={5} />
+      <SeamPaperStat   argId={1} index={6} />
+      <ClosingArgument argId={4} index={7} />
+    </>
   );
 }

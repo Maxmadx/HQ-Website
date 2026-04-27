@@ -3115,7 +3115,7 @@ function CTAComponent({ variation }) {
         <div className="cta-preview__call">
           <h2>Speak to an Instructor</h2>
           <p>Have questions? Our team is ready to help</p>
-          <a href="tel:+441234567890" className="cta-preview__phone">01234 567 890</a>
+          <a href="tel:+441895833373" className="cta-preview__phone">01895 833 373</a>
           <p className="cta-preview__hours">Mon-Sun 8am-6pm</p>
           <div className="cta-preview__call-alt">
             <span>Or</span>
@@ -3129,7 +3129,7 @@ function CTAComponent({ variation }) {
           <div className="cta-preview__visit-map">
             <div className="cta-preview__map-placeholder">
               <span>📍 Denham Aerodrome</span>
-              <span>Tilehouse Lane, Denham UB9 5DF</span>
+              <span>Uxbridge, London, UB9 5DF</span>
             </div>
           </div>
           <div className="cta-preview__visit-info">
@@ -3260,7 +3260,7 @@ function CTAComponent({ variation }) {
                   <span className="cta-preview__tour-icon">📍</span>
                   <div>
                     <strong>Denham Aerodrome</strong>
-                    <small>Tilehouse Lane, Denham UB9 5DF</small>
+                    <small>Uxbridge, London, UB9 5DF</small>
                   </div>
                 </div>
                 <div className="cta-preview__tour-hours">
@@ -3311,17 +3311,17 @@ function CTAComponent({ variation }) {
               <h3>Get In Touch</h3>
             </div>
             <div className="cta-preview__glass-options">
-              <a href="tel:+441234567890" className="cta-preview__glass-option">
+              <a href="tel:+441895833373" className="cta-preview__glass-option">
                 <span className="cta-preview__glass-icon">📞</span>
-                <span>01234 567 890</span>
+                <span>01895 833 373</span>
               </a>
-              <a href="mailto:info@hqaviation.com" className="cta-preview__glass-option">
+              <a href="mailto:operations@hqaviation.com" className="cta-preview__glass-option">
                 <span className="cta-preview__glass-icon">✉️</span>
-                <span>info@hqaviation.com</span>
+                <span>operations@hqaviation.com</span>
               </a>
               <div className="cta-preview__glass-option">
                 <span className="cta-preview__glass-icon">📍</span>
-                <span>Denham Aerodrome, UB9 5DF</span>
+                <span>Denham Aerodrome, Uxbridge, London, UB9 5DF</span>
               </div>
             </div>
             <button className="cta-preview__btn cta-preview__btn--primary cta-preview__btn--large">Book Consultation</button>

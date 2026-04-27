@@ -35,7 +35,7 @@ const LocationHighlight = ({ showNote = true }) => {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
             <div>
               <h4 style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', letterSpacing: '0.1em', color: 'var(--hq-subtle)', marginBottom: '0.5rem' }}>ADDRESS</h4>
-              <p style={{ fontSize: '0.9rem', lineHeight: 1.6 }}>HQ Aviation<br />Tilehouse Lane<br />Denham, UB9 5DF</p>
+              <p style={{ fontSize: '0.9rem', lineHeight: 1.6 }}>HQ Aviation<br />Denham Aerodrome, Uxbridge<br />London, UB9 5DF</p>
             </div>
             <div>
               <h4 style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', letterSpacing: '0.1em', color: 'var(--hq-subtle)', marginBottom: '0.5rem' }}>GETTING HERE</h4>

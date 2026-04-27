@@ -12,6 +12,7 @@ import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import FooterMinimal from '../components/FooterMinimal';
+import HqMenuPanel from '../components/HqMenuPanel';
 
 // ============================================
 // HEADER (Spotlight animation)
@@ -52,59 +53,7 @@ function FinalDraftHeader() {
 
   return (
     <>
-      <div className={`hq-menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="hq-menu-grid">
-          <div className="hq-menu-section">
-            <h3>About</h3>
-            <ul>
-              <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-              <li><Link to="/about-us" onClick={closeMenu}>About Us</Link></li>
-              <li><Link to="/about-us/team" onClick={closeMenu}>Meet The Team</Link></li>
-              <li><Link to="/about-us/captain-q" onClick={closeMenu}>Quentin Smith</Link></li>
-              <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Aircraft Sales</h3>
-            <ul>
-              <li><Link to="/aircraft-sales" onClick={closeMenu}>New Aircraft</Link></li>
-              <li><Link to="/sales/pre-owned" onClick={closeMenu}>Pre-Owned</Link></li>
-              <li><Link to="/sales/rebuilds" onClick={closeMenu}>Rebuilds</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Flight Training</h3>
-            <ul>
-              <li><Link to="/training" onClick={closeMenu}>Training Overview</Link></li>
-              <li><Link to="/training/trial-lessons" onClick={closeMenu}>Trial Lessons</Link></li>
-              <li><Link to="/training/ppl" onClick={closeMenu}>Private Pilot License</Link></li>
-              <li><Link to="/training/faq" onClick={closeMenu}>Training FAQ</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Services</h3>
-            <ul>
-              <li><Link to="/services" onClick={closeMenu}>Services Overview</Link></li>
-              <li><Link to="/services/maintenance" onClick={closeMenu}>Maintenance</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Experiences</h3>
-            <ul>
-              <li><Link to="/expeditions" onClick={closeMenu}>Expeditions</Link></li>
-              <li><Link to="/expeditions/calendar" onClick={closeMenu}>Calendar</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Contact</h3>
-            <ul>
-              <li><Link to="/contact" onClick={closeMenu}>Contact Us</Link></li>
-              <li><Link to="/contact/careers" onClick={closeMenu}>Careers</Link></li>
-              <li><Link to="/contact/pricing" onClick={closeMenu}>Pricing</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <HqMenuPanel open={menuOpen} onClose={closeMenu} />
       <button
         className={`hq-menu-btn ${colorDark ? 'color-dark' : ''} ${scrolled ? 'scrolled' : ''} ${menuOpen ? 'open' : ''}`}
         onClick={toggleMenu}
@@ -748,9 +697,9 @@ function Rebuilds() {
                     )}
                   </div>
 
-                  <a href="tel:+441895833838" className="rb__cta-phone">
+                  <a href="tel:+441895833373" className="rb__cta-phone">
                     <span>Or call directly</span>
-                    <strong>+44 (0) 1895 833 838</strong>
+                    <strong>+44 1895 833 373</strong>
                   </a>
                 </div>
               </Reveal>

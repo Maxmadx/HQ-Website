@@ -313,9 +313,6 @@ function PPL() {
               <p className="ppl-cost-card__note">
                 *Based on minimum hours. Most students require 50-60 hours.
               </p>
-              <Link to="/contact" className="ppl-cost-card__btn">
-                Get Detailed Quote
-              </Link>
             </RevealSection>
 
             <RevealSection className="ppl-cost-card" delay={0.1}>
@@ -335,9 +332,6 @@ function PPL() {
               <p className="ppl-cost-card__note">
                 R44 and R66 training available at different rates.
               </p>
-              <Link to="/contact" className="ppl-cost-card__btn ppl-cost-card__btn--outline">
-                View All Rates
-              </Link>
             </RevealSection>
 
             <RevealSection className="ppl-cost-card" delay={0.2}>
@@ -357,9 +351,6 @@ function PPL() {
               <p className="ppl-cost-card__note">
                 Self-study options also available.
               </p>
-              <Link to="/contact" className="ppl-cost-card__btn ppl-cost-card__btn--outline">
-                Enquire Now
-              </Link>
             </RevealSection>
           </div>
         </div>
@@ -417,9 +408,6 @@ function PPL() {
                 <Link to="/training/trial-lessons" className="ppl-cta__btn ppl-cta__btn--primary">
                   Book Discovery Flight
                   <span className="ppl-cta__btn-arrow">→</span>
-                </Link>
-                <Link to="/contact" className="ppl-cta__btn ppl-cta__btn--secondary">
-                  Contact Us
                 </Link>
               </div>
             </div>

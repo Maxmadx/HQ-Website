@@ -20,6 +20,7 @@ import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'fra
 import '../assets/css/main.css';
 import '../assets/css/components.css';
 import FooterMinimal from '../components/FooterMinimal';
+import HqMenuPanel from '../components/HqMenuPanel';
 
 /* ─────────────────────────────────────────────────────────────────────────────
    HEADER COMPONENT
@@ -64,64 +65,7 @@ function SuperYachtOpsHeader() {
   return (
     <>
       {/* Menu Panel */}
-      <div className={`hq-menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="hq-menu-grid">
-          <div className="hq-menu-section">
-            <h3>About</h3>
-            <ul>
-              <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-              <li><Link to="/about-us" onClick={closeMenu}>About Us</Link></li>
-              <li><Link to="/about-us/team" onClick={closeMenu}>Meet The Team</Link></li>
-              <li><Link to="/about-us/captain-q" onClick={closeMenu}>Quentin Smith</Link></li>
-              <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Aircraft Sales</h3>
-            <ul>
-              <li><Link to="/aircraft-sales" onClick={closeMenu}>New Aircraft</Link></li>
-              <li><Link to="/aircraft-sales/new/r88" onClick={closeMenu}>R88</Link></li>
-              <li><Link to="/aircraft-sales/new/r66" onClick={closeMenu}>R66</Link></li>
-              <li><Link to="/aircraft-sales/new/r44" onClick={closeMenu}>R44</Link></li>
-              <li><Link to="/aircraft-sales/new/r22" onClick={closeMenu}>R22</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Flight Training</h3>
-            <ul>
-              <li><Link to="/training" onClick={closeMenu}>Training Overview</Link></li>
-              <li><Link to="/training/trial-lessons" onClick={closeMenu}>Trial Lessons</Link></li>
-              <li><Link to="/training/ppl" onClick={closeMenu}>Private Pilot License</Link></li>
-              <li><Link to="/training/type-rating" onClick={closeMenu}>Type Rating</Link></li>
-              <li><Link to="/training/night-rating" onClick={closeMenu}>Night Rating</Link></li>
-              <li><Link to="/training/faq" onClick={closeMenu}>Training FAQ</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Services</h3>
-            <ul>
-              <li><Link to="/services" onClick={closeMenu}>Services Overview</Link></li>
-              <li><Link to="/services/maintenance" onClick={closeMenu}>Maintenance</Link></li>
-              <li><Link to="/superyacht-ops" onClick={closeMenu}>SuperYacht Operations</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Experiences</h3>
-            <ul>
-              <li><Link to="/expeditions" onClick={closeMenu}>Expeditions</Link></li>
-              <li><Link to="/expeditions/calendar" onClick={closeMenu}>Calendar</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Contact</h3>
-            <ul>
-              <li><Link to="/contact" onClick={closeMenu}>Contact Us</Link></li>
-              <li><Link to="/contact/careers" onClick={closeMenu}>Careers</Link></li>
-              <li><Link to="/contact/pricing" onClick={closeMenu}>Pricing</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <HqMenuPanel open={menuOpen} onClose={closeMenu} />
 
       {/* Menu Button */}
       <button
@@ -739,12 +683,6 @@ export default function SuperYachtOps() {
               Whether you're planning a new programme or looking to improve an existing one, our
               operations team is ready to help. Reach out for a confidential conversation.
             </p>
-            <Link
-              to="/contact?subject=superyacht-ops"
-              className="syo-btn syo-btn--white"
-            >
-              Contact Operations Team
-            </Link>
           </Reveal>
         </div>
       </section>

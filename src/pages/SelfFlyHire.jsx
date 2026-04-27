@@ -21,6 +21,7 @@ import '../assets/css/components.css';
 
 // Import FooterMinimal component
 import FooterMinimal from '../components/FooterMinimal';
+import HqMenuPanel from '../components/HqMenuPanel';
 
 /**
  * SELF-FLY HIRE PAGE HEADER COMPONENT
@@ -64,57 +65,7 @@ function SelfFlyHireHeader() {
 
   return (
     <>
-      <div className={`hq-menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="hq-menu-grid">
-          <div className="hq-menu-section">
-            <h3>About</h3>
-            <ul>
-              <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-              <li><Link to="/about-us" onClick={closeMenu}>About Us</Link></li>
-              <li><Link to="/about-us/team" onClick={closeMenu}>Meet The Team</Link></li>
-              <li><Link to="/about-us/captain-q" onClick={closeMenu}>Quentin Smith</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Aircraft Sales</h3>
-            <ul>
-              <li><Link to="/aircraft-sales" onClick={closeMenu}>New Aircraft</Link></li>
-              <li><Link to="/aircraft-sales/new/r66" onClick={closeMenu}>R66</Link></li>
-              <li><Link to="/aircraft-sales/new/r44" onClick={closeMenu}>R44</Link></li>
-              <li><Link to="/aircraft-sales/new/r22" onClick={closeMenu}>R22</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Flight Training</h3>
-            <ul>
-              <li><Link to="/training" onClick={closeMenu}>Training Overview</Link></li>
-              <li><Link to="/training/ppl" onClick={closeMenu}>Private Pilot License</Link></li>
-              <li><Link to="/training/faq" onClick={closeMenu}>Training FAQ</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Services</h3>
-            <ul>
-              <li><Link to="/services" onClick={closeMenu}>Services Overview</Link></li>
-              <li><Link to="/self-fly-hire" onClick={closeMenu}>Self-Fly Hire</Link></li>
-              <li><Link to="/services/maintenance" onClick={closeMenu}>Maintenance</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Experiences</h3>
-            <ul>
-              <li><Link to="/expeditions" onClick={closeMenu}>Expeditions</Link></li>
-              <li><Link to="/expeditions/calendar" onClick={closeMenu}>Calendar</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Contact</h3>
-            <ul>
-              <li><Link to="/contact" onClick={closeMenu}>Contact Us</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <HqMenuPanel open={menuOpen} onClose={closeMenu} />
 
       <button
         className={`hq-menu-btn ${colorDark ? 'color-dark' : ''} ${scrolled ? 'scrolled' : ''} ${menuOpen ? 'open' : ''}`}
@@ -777,7 +728,7 @@ export default function SelfFlyHire() {
                 {formStatus === 'error' && (
                   <p className="sfh2-enquiry__error">
                     Something went wrong — please try again or email{' '}
-                    <a href="mailto:hire@hqaviation.com">hire@hqaviation.com</a>
+                    <a href="mailto:operations@hqaviation.com">operations@hqaviation.com</a>
                   </p>
                 )}
                 <button

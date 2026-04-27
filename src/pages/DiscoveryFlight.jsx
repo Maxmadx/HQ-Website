@@ -25,6 +25,7 @@ import '../assets/css/components.css';
 
 // Import FooterMinimal
 import FooterMinimal from '../components/FooterMinimal';
+import HqMenuPanel from '../components/HqMenuPanel';
 
 // ============================================================================
 // REVEAL COMPONENT
@@ -133,55 +134,7 @@ function DiscoveryHeader() {
   return (
     <>
       {/* Menu Panel */}
-      <div className={`hq-menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="hq-menu-grid">
-          <div className="hq-menu-section">
-            <h3>About</h3>
-            <ul>
-              <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-              <li><Link to="/about-us" onClick={closeMenu}>About Us</Link></li>
-              <li><Link to="/about-us/team" onClick={closeMenu}>Meet The Team</Link></li>
-              <li><Link to="/about-us/captain-q" onClick={closeMenu}>Quentin Smith</Link></li>
-              <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Aircraft Sales</h3>
-            <ul>
-              <li><Link to="/aircraft-sales" onClick={closeMenu}>New Aircraft</Link></li>
-              <li><Link to="/aircraft-sales/new/r88" onClick={closeMenu}>R88</Link></li>
-              <li><Link to="/aircraft-sales/new/r66" onClick={closeMenu}>R66</Link></li>
-              <li><Link to="/aircraft-sales/new/r44" onClick={closeMenu}>R44</Link></li>
-              <li><Link to="/aircraft-sales/new/r22" onClick={closeMenu}>R22</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Flight Training</h3>
-            <ul>
-              <li><Link to="/training" onClick={closeMenu}>Training Overview</Link></li>
-              <li><Link to="/training/trial-lessons" onClick={closeMenu}>Discovery Flights</Link></li>
-              <li><Link to="/training/ppl" onClick={closeMenu}>Private Pilot License</Link></li>
-              <li><Link to="/training/type-rating" onClick={closeMenu}>Type Rating</Link></li>
-              <li><Link to="/training/faq" onClick={closeMenu}>Training FAQ</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Services</h3>
-            <ul>
-              <li><Link to="/maintenance" onClick={closeMenu}>Maintenance</Link></li>
-              <li><Link to="/expeditions" onClick={closeMenu}>Expeditions</Link></li>
-              <li><Link to="/self-fly-hire" onClick={closeMenu}>Self-Fly Hire</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Contact</h3>
-            <ul>
-              <li><Link to="/contact" onClick={closeMenu}>Contact Us</Link></li>
-              <li><Link to="/blog" onClick={closeMenu}>Blog</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <HqMenuPanel open={menuOpen} onClose={closeMenu} />
 
       {/* Menu Button */}
       <button
@@ -1073,7 +1026,7 @@ function LocationAndFAQ() {
                       <span className="arrival__detail-icon"><i className="fas fa-envelope"></i></span>
                       <div>
                         <span className="arrival__detail-label">Email</span>
-                        <p className="arrival__detail-text"><a href="mailto:Operations@HQAviation.com" className="arrival__detail-link">Operations@HQAviation.com</a></p>
+                        <p className="arrival__detail-text"><a href="mailto:operations@hqaviation.com" className="arrival__detail-link">operations@hqaviation.com</a></p>
                       </div>
                     </div>
                     <div className="arrival__detail">
@@ -1094,11 +1047,18 @@ function LocationAndFAQ() {
                     </div>
                   </div>
                 </div>
-                <div className="arrival__actions">
-                  <a href="https://maps.google.com/?q=HQ+Aviation+Denham" target="_blank" rel="noopener noreferrer" className="arrival__cta">Get Directions <span>→</span></a>
-                </div>
               </div>
             </div>
+          </Reveal>
+          <Reveal>
+            <a
+              href="https://maps.google.com/?q=HQ+Aviation+Denham"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="df-btn df-btn--outline df-location-faq__directions-mobile"
+            >
+              Get Directions
+            </a>
           </Reveal>
         </div>
 
@@ -1151,7 +1111,7 @@ function LocationAndFAQ() {
       {/* Action Buttons */}
       <Reveal delay={0.3}>
         <div className="df-location-faq__actions">
-          <a href="https://maps.google.com/?q=HQ+Aviation+Denham" target="_blank" rel="noopener noreferrer" className="df-btn df-btn--outline">
+          <a href="https://maps.google.com/?q=HQ+Aviation+Denham" target="_blank" rel="noopener noreferrer" className="df-btn df-btn--outline df-location-faq__directions-desktop">
             Get Directions
           </a>
           <Link to="/training/faq" className="df-btn df-btn--outline">View All FAQs</Link>
@@ -1204,9 +1164,6 @@ function FinalCTA() {
             <a href="#select-flight" className="df-btn df-btn--light df-btn--large">
               {t('discovery-final-cta', 'cta_primary')}
             </a>
-            <Link to="/contact" className="df-btn df-btn--outline-light">
-              {t('discovery-final-cta', 'cta_secondary')}
-            </Link>
           </div>
         </Reveal>
 
@@ -2442,6 +2399,10 @@ function DiscoveryFlight() {
           text-align: center;
         }
 
+        .df-location-faq__directions-mobile {
+          display: none;
+        }
+
         /* Location */
         .df-location {
           display: flex;
@@ -2601,6 +2562,7 @@ function DiscoveryFlight() {
           flex: 1;
           min-height: 0;
           overflow-y: auto;
+          padding-right: 1.75rem;
           scrollbar-width: thin;
           scrollbar-color: #e0deda transparent;
         }
@@ -3065,11 +3027,18 @@ function DiscoveryFlight() {
             gap: 1rem;
           }
 
-        @media (max-width: 768px) {
-          .df-location-faq__actions {
+          .df-location-faq__directions-mobile {
+            display: inline-block;
+            width: 100%;
+            margin-top: 1.5rem;
+            text-align: center;
+          }
+
+          .df-location-faq__directions-desktop {
             display: none;
           }
 
+        @media (max-width: 768px) {
           .df-location-faq__right {
             overflow-y: visible;
             height: auto;

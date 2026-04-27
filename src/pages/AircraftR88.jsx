@@ -30,6 +30,7 @@ import '../assets/css/components.css';
 
 // Import Footer
 import FooterMinimal from '../components/FooterMinimal';
+import HqMenuPanel from '../components/HqMenuPanel';
 
 // ============================================================================
 // COMPONENT: R88Header
@@ -73,46 +74,7 @@ function R88Header() {
 
   return (
     <>
-      <div className={`hq-menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="hq-menu-grid">
-          <div className="hq-menu-section">
-            <h3>About</h3>
-            <ul>
-              <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-              <li><Link to="/about-us" onClick={closeMenu}>About Us</Link></li>
-              <li><Link to="/about-us/team" onClick={closeMenu}>Meet The Team</Link></li>
-              <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Aircraft Sales</h3>
-            <ul>
-              <li><Link to="/sales/new" onClick={closeMenu}>New Aircraft</Link></li>
-              <li><Link to="/aircraft/r66" onClick={closeMenu}>R66 Turbine</Link></li>
-              <li><Link to="/aircraft/r44" onClick={closeMenu}>R44</Link></li>
-              <li><Link to="/aircraft/r22" onClick={closeMenu}>R22</Link></li>
-              <li><Link to="/aircraft/r88" onClick={closeMenu}>R88 (Coming Soon)</Link></li>
-              <li><Link to="/sales/pre-owned" onClick={closeMenu}>Pre-Owned Aircraft</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Training</h3>
-            <ul>
-              <li><Link to="/training" onClick={closeMenu}>Training Overview</Link></li>
-              <li><Link to="/training/ppl" onClick={closeMenu}>Private Pilot License</Link></li>
-              <li><Link to="/training/type-rating" onClick={closeMenu}>Type Ratings</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Services</h3>
-            <ul>
-              <li><Link to="/services" onClick={closeMenu}>Services</Link></li>
-              <li><Link to="/maintenance" onClick={closeMenu}>Maintenance</Link></li>
-              <li><Link to="/expeditions" onClick={closeMenu}>Expeditions</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <HqMenuPanel open={menuOpen} onClose={closeMenu} />
 
       <button
         className={`hq-menu-btn ${colorDark ? 'color-dark' : ''} ${scrolled ? 'scrolled' : ''} ${menuOpen ? 'open' : ''}`}
@@ -292,17 +254,6 @@ const avionicsFeatures = [
     description: 'Fully integrated avionics architecture connecting engine monitoring, autopilot interfaces, and communication systems for reduced pilot workload.',
     icon: 'fa-microchip',
   },
-];
-
-const r88StandardFeatures = [
-  'Garmin G500H TXi Flight Display',
-  'GTN Touchscreen Navigator',
-  'Conventional Dual Pilot Controls',
-  'Integrated Engine Monitoring',
-  'Autopilot Interface',
-  'Moving-Map Navigation',
-  'Database-Driven Flight Planning',
-  'Communication Systems Integration',
 ];
 
 const engineFeatures = [
@@ -732,8 +683,64 @@ function R88Specifications() {
 function R88Engine() {
   const [enginePage, setEnginePage] = useState(0);
   const engineGridRef = useRef(null);
+  const sceneRef = useRef(null);
+
+  // JS-driven pin: emulates position:sticky for the engine without
+  // relying on CSS sticky (which was failing to engage — likely a
+  // containment issue in the page's ancestor chain).
+  //
+  // The engine stays in normal flow (so its layout space is preserved).
+  // During the pin phase we apply a translateY offset equal to the
+  // scroll delta, which visually holds the engine in place while the
+  // underlying document continues to scroll. Register's negative
+  // margin + z-index handles rising over it.
+  //
+  // Pin trigger: scrollY = engineDocBottom - vh + 48 (engine's bottom
+  //   has just passed the "touches viewport bottom" point by 48px).
+  // Pin release: pinStart + 100vh (matches the scene's padding-bottom).
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!scene) return;
+    const engine = scene.querySelector('.r88-engine');
+    if (!engine) return;
+    const onScroll = () => {
+      const rect = scene.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const scrollY = window.scrollY;
+      const engineRect = engine.getBoundingClientRect();
+      // Recover engine's natural (untransformed) doc position. Since we
+      // set transform ourselves, engineRect.top reflects the transformed
+      // position; subtract the current translateY to get natural top.
+      const currentTY = parseFloat(engine.dataset.ty || '0');
+      const engineDocTop = engineRect.top + scrollY - currentTY;
+      const engineHeight = engine.offsetHeight;
+      const engineDocBottom = engineDocTop + engineHeight;
+      const pinStart = engineDocBottom - vh + 48;
+      const pinRange = vh;
+      const pinEnd = pinStart + pinRange;
+
+      let ty;
+      if (scrollY < pinStart) ty = 0;
+      else if (scrollY > pinEnd) ty = pinRange;
+      else ty = scrollY - pinStart;
+
+      engine.style.transform = ty === 0 ? '' : `translateY(${ty}px)`;
+      engine.dataset.ty = ty.toString();
+
+      const fade = Math.min(1, Math.max(0, (2 * vh - rect.bottom) / vh));
+      scene.style.setProperty('--engine-fade', fade.toString());
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, []);
 
   return (
+    <div ref={sceneRef} className="r88-engine-scene">
     <section className="r88-engine">
       <div className="r88-engine__container">
         <div className="r88-engine__layout">
@@ -875,88 +882,123 @@ function R88Engine() {
           </div>
         </div>
       </div>
+      <div className="r88-engine__overlay" aria-hidden="true" />
     </section>
+    </div>
   );
 }
 
 // ============================================================================
 // SECTION 5: Avionics - Garmin Glass Cockpit
 // ============================================================================
+// Sticky hero runs a two-phase internal scroll:
+//   Phase A — cockpit image fades in on the right as you scroll into the scene.
+//   Phase B — image dissolves top-to-bottom while the 4 feature cards rise
+//             and fade in on top of it, ending fully visible.
+// The scene wrapper (.r88-avionics-scene) provides the extra scroll range;
+// the .r88-avionics element stays pinned at 100vh throughout.
 function R88Avionics() {
+  const sceneRef = useRef(null);
+
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!scene) return;
+    const onScroll = () => {
+      const rect = scene.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // Phases tied to how far the scene top has scrolled past the viewport top.
+      const phaseA = vh * 0.8;  // dwell (first image fully visible)
+      const phaseB = vh * 0.8;  // first image dissolves top→bottom, cards pop
+      const phaseC = vh * 0.8;  // second image loads in top→bottom, covers cards
+      const scrolled = Math.max(0, -rect.top);
+      const revealProg = Math.min(1, scrolled / phaseA);
+      const afterReveal = Math.max(0, scrolled - phaseA);
+      const transitionProg = Math.min(1, afterReveal / phaseB);
+      const afterTransition = Math.max(0, scrolled - phaseA - phaseB);
+      const secondReveal = Math.min(1, afterTransition / phaseC);
+      scene.style.setProperty('--av-image-reveal', revealProg.toString());
+      scene.style.setProperty('--av-transition', transitionProg.toString());
+      scene.style.setProperty('--av-second-reveal', secondReveal.toString());
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, []);
+
   return (
-    <section className="r88-avionics">
-      <div className="r88-avionics__container">
-        <div className="r88-avionics__content">
-          <div className="r88-avionics__left">
-            <Reveal>
-              <div className="r88-section-header">
-                <span className="r88-pre-text">R88 FLIGHT DECK</span>
-                <h2>
-                  <span className="r88-text--dark">Garmin</span>{' '}
-                  <span className="r88-text--mid">Glass</span>{' '}
-                  <span className="r88-text--light">Cockpit</span>
-                </h2>
+    <div ref={sceneRef} className="r88-avionics-scene">
+      <section className="r88-avionics">
+        <div className="r88-avionics__container">
+          <div className="r88-avionics__content">
+            <div className="r88-avionics__left">
+              <Reveal>
+                <div className="r88-section-header">
+                  <span className="r88-pre-text">R88 FLIGHT DECK</span>
+                  <h2>
+                    <span className="r88-text--dark">Garmin</span>{' '}
+                    <span className="r88-text--mid">Glass</span>{' '}
+                    <span className="r88-text--light">Cockpit</span>
+                  </h2>
+                </div>
+              </Reveal>
+              <Reveal delay={0.1}>
+                <p className="r88-avionics__intro">
+                  The R88 pairs a full Garmin glass flight deck with conventional dual
+                  pilot controls and a fully integrated avionics architecture — engine
+                  monitoring, autopilot interfaces and communication systems all routed
+                  through a single modern cockpit designed for commercial and multi-pilot
+                  operations from day one.
+                </p>
+              </Reveal>
+            </div>
+
+            <div className="r88-avionics__features-col">
+              <div className="r88-avionics__cockpit" aria-hidden="true">
+                <img
+                  src="/assets/images/new-aircraft/r88/rhc-r88-wide-view-instrument-panel-13175.jpg"
+                  alt=""
+                  loading="lazy"
+                />
               </div>
-            </Reveal>
-            <Reveal delay={0.1}>
-              <p className="r88-avionics__intro">
-                The R88 pairs a full Garmin glass flight deck with conventional dual
-                pilot controls and a fully integrated avionics architecture — engine
-                monitoring, autopilot interfaces and communication systems all routed
-                through a single modern cockpit designed for commercial and multi-pilot
-                operations from day one.
-              </p>
-            </Reveal>
-            <Reveal delay={0.2}>
-              <div className="r88-avionics__image">
+              {/* Second cockpit image — sits in the same absolute slot as
+                  the first (inset:0 of .r88-avionics__features-col) so
+                  their dimensions always match. z-index:200 puts it above
+                  the popped cards. Mask loads it in top→bottom during
+                  phase C. */}
+              <div className="r88-avionics__cockpit-2" aria-hidden="true">
                 <img
                   src="/assets/images/new-aircraft/r88/rhc-r88-glass-flight-displays-right-side-cyclic-13216.jpg"
-                  alt="R88 Garmin glass flight deck"
+                  alt=""
+                  loading="lazy"
                 />
-                <div className="r88-avionics__image-badge">
-                  <span className="r88-avionics__image-badge-label">GARMIN</span>
-                  <span className="r88-avionics__image-badge-text">Integrated Avionics</span>
-                </div>
               </div>
-            </Reveal>
-          </div>
-
-          <div className="r88-avionics__features">
-            {avionicsFeatures.map((feature, i) => (
-              <Reveal key={i} delay={0.1 + i * 0.1}>
-                <motion.div
-                  className="r88-avionics__feature"
-                  whileHover={{ x: 8 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="r88-avionics__feature-icon">
-                    <i className={`fas ${feature.icon}`}></i>
-                  </div>
-                  <div className="r88-avionics__feature-content">
-                    <h4>{feature.title}</h4>
-                    <p>{feature.description}</p>
-                  </div>
-                </motion.div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-
-        <Reveal delay={0.5}>
-          <div className="r88-avionics__standard">
-            <h3>R88 Standard Flight Deck Equipment</h3>
-            <div className="r88-avionics__standard-grid">
-              {r88StandardFeatures.map((feature, i) => (
-                <div key={i} className="r88-avionics__standard-item">
-                  <i className="fas fa-check"></i>
-                  <span>{feature}</span>
-                </div>
-              ))}
+              <div className="r88-avionics__features">
+                {avionicsFeatures.map((feature, i) => (
+                  <motion.div
+                    key={i}
+                    className="r88-avionics__feature"
+                    whileHover={{ x: 8 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="r88-avionics__feature-icon">
+                      <i className={`fas ${feature.icon}`}></i>
+                    </div>
+                    <div className="r88-avionics__feature-content">
+                      <h4>{feature.title}</h4>
+                      <p>{feature.description}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </div>
-        </Reveal>
-      </div>
-    </section>
+        </div>
+      </section>
+    </div>
   );
 }
 
@@ -1235,13 +1277,26 @@ function R88Reconfigurable() {
       const slideProg = Math.min(1, scrolled / slide);
       const afterSlide = Math.max(0, scrolled - slide);
       const holdProg = Math.min(1, afterSlide / hold);
-      const afterHold = Math.max(0, scrolled - slide - hold);
-      const reconfigProg = Math.min(1, afterHold / anim);
-      // Both the text swap (left column) and features fade (right
-      // column, behind the image) run during the hold phase so they
-      // finish before the image starts shrinking.
-      const textSwap = holdProg;
-      const featuresShrink = holdProg;
+      // Shrink spans from 70% through the slide (starts while the image
+      // is still travelling left toward its rest position) all the way
+      // to the end of the scene — which is the exact point the sticky
+      // pin releases and the page resumes normal scrolling. So the
+      // shrink overlaps the end of the slide and finishes as the
+      // section unpins.
+      const shrinkStart = slide * 0.7;
+      const shrinkEnd = slide + hold + anim;
+      const reconfigProg = Math.min(
+        1,
+        Math.max(0, (scrolled - shrinkStart) / (shrinkEnd - shrinkStart))
+      );
+      // Text swap (left column) and features fade (right column) run
+      // DURING the slide so the transition from avionics → reconfigurable
+      // is already underway as the image is coming into view from the
+      // right. Both finish exactly as the slide ends. Hold phase then
+      // becomes a dwell (everything already in its end state) before
+      // the image starts shrinking in the anim phase.
+      const textSwap = slideProg;
+      const featuresShrink = slideProg;
 
       scene.style.setProperty('--slide-progress', slideProg.toString());
       scene.style.setProperty('--reconfig-progress', reconfigProg.toString());
@@ -1293,10 +1348,10 @@ function R88Reconfigurable() {
 
               <div className="r88-reconfigurable__features">
                 {[
-                  { icon: 'fa-users', title: 'Eight-Seat Commuter', copy: 'Full dual-row configuration for charter and transport operations.' },
-                  { icon: 'fa-box-open', title: 'Cargo Mode', copy: 'Remove rear rows in under a minute to open a flat cargo floor.' },
-                  { icon: 'fa-briefcase-medical', title: 'Medevac Ready', copy: 'Accommodates stretcher and attendant seating for EMS missions.' },
                   { icon: 'fa-chair', title: 'Executive Shuttle', copy: 'Rearrange seating for club-four layouts and VIP transport.' },
+                  { icon: 'fa-users', title: 'Eight-Seat Commuter', copy: 'Full dual-row configuration for charter and transport operations.' },
+                  { icon: 'fa-briefcase-medical', title: 'Medevac Ready', copy: 'Accommodates stretcher and attendant seating for EMS missions.' },
+                  { icon: 'fa-box-open', title: 'Cargo Mode', copy: 'Remove rear rows in under a minute to open a flat cargo floor.' },
                 ].map((f, i) => (
                   <Reveal key={i} delay={0.15 + i * 0.08}>
                     <div className="r88-reconfigurable__feature">
@@ -2666,9 +2721,45 @@ const R88Styles = () => (
     /* ====================================================================
        ENGINE PARTNERSHIP SECTION
        ==================================================================== */
+    /* Scene wrapper: gives the engine 100vh of trailing scroll room so
+       position: sticky on .r88-engine has somewhere to be pinned after
+       the user has scrolled past the engine's content. Using an explicit
+       min-height of (content-auto + 100vh) by way of padding-bottom; also
+       setting display:block explicitly to avoid any flex/grid inheritance
+       that could break sticky containment. */
+    .r88-engine-scene {
+      position: relative;
+      display: block;
+      padding-bottom: 100vh;
+      overflow: visible;
+    }
+
     .r88-engine {
       padding: 4rem 2rem;
       background: #fff;
+      /* Pinning is handled via JS — see R88Engine scroll handler.
+         The scroll handler applies translateY to visually hold the
+         engine in place during the rise phase. position:relative +
+         z-index so register (z-index:3) still paints on top. */
+      position: relative;
+      z-index: 1;
+      will-change: transform;
+    }
+
+    /* Blur + darken overlay that fades in as --engine-fade → 1.
+       Backdrop-filter blurs the engine content behind it; the tinted
+       background darkens. Sits above the engine content but below any
+       sibling (register) that has higher z-index. */
+    .r88-engine__overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: rgba(0, 0, 0, calc(var(--engine-fade, 0) * 0.55));
+      backdrop-filter: blur(calc(var(--engine-fade, 0) * 14px));
+      -webkit-backdrop-filter: blur(calc(var(--engine-fade, 0) * 14px));
+      opacity: var(--engine-fade, 0);
+      z-index: 5;
+      will-change: opacity, backdrop-filter;
     }
 
     .r88-engine__container {
@@ -3051,10 +3142,14 @@ const R88Styles = () => (
       background: transparent;
       /* Total scene = pin height + 100vh slide + 80vh hold + 80vh anim. */
       min-height: calc((100vh - var(--catch-top, 90px)) + 100vh + 80vh + 80vh);
-      /* Pull the scene up by one viewport so the pin activates while the
-         avionics pin is still showing — reconfigurable then slides in from
-         the left OVER the avionics. */
-      margin-top: calc(-1 * (100vh - var(--catch-top, 90px)));
+      /* Pull the scene up so it starts exactly at the end of phase C
+         (second cockpit image fully revealed). The avionics-scene is
+         440vh tall: phase B ends at 160vh, phase C at 240vh. Natural
+         start of reconfigurable-scene (end of avionics-scene) is at
+         440vh, so pull back 200vh to land at 240vh. Avionics stays
+         pinned until 340vh (= end of reconfig slide), so the slide
+         still paints over pinned avionics. */
+      margin-top: -200vh;
     }
 
     .r88-reconfigurable-pin {
@@ -3065,6 +3160,28 @@ const R88Styles = () => (
          text content fades in during the text-swap. overflow:visible so
          the image can sit offscreen-left before sliding in. */
       overflow: visible;
+    }
+
+    /* Cream background cover — fades in SIMULTANEOUSLY with the avionics
+       fade-out (both driven by text-swap 0→0.5), so the cream replaces
+       the dark avionics bg with no mid-transition dead zone. Fully opaque
+       by text-swap=0.5; reconfigurable content then fades in on top
+       during text-swap 0.5→1. Sits at z-index 0 within the pin so the
+       image (z:3) and text (z:1) both paint on top.
+       Top is pulled up by --catch-top so the cream extends above the pin
+       to cover the strip between the sticky header and the pin's top —
+       otherwise the pinned avionics bg would show through that gap. */
+    .r88-reconfigurable-pin::before {
+      content: "";
+      position: absolute;
+      top: calc(-1 * var(--catch-top, 90px));
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #f5f1ea;
+      z-index: 0;
+      opacity: calc(min(1, var(--text-swap, 0) * 2));
+      pointer-events: none;
     }
 
     .r88-reconfigurable {
@@ -3080,15 +3197,17 @@ const R88Styles = () => (
          reference these so they stay in sync. */
       --p: var(--reconfig-progress, 0);
       --inv: calc(1 - var(--p));
-      --end-w: 280px;
-      /* Start width covers the whole right side of the viewport — the
-         image slides in from offscreen-right and rests anchored to the
-         right, fully occupying the right half before shrinking. 60vw
-         (vs 50vw) gives a more convincing "covers the whole right side"
-         without drifting toward the centre. */
-      --start-w: 60vw;
-      --end-h: 520px;
+      /* Start width must stay clear of the left content column so the
+         image never overlaps the feature cards or text. Content column
+         uses max-width: 54%, so the image occupies the remaining 46%
+         minus the right inset and a 2rem gutter. Anchored at
+         right:--end-right-inset, left edge = 54% + 2rem. */
+      --start-w: calc(46% - var(--end-right-inset) - 2rem);
       --start-h: calc(100vh - var(--catch-top, 90px) - 4rem);
+      /* End size = 80% of start (a subtle 20% shrink, uniform on both
+         axes so the aspect ratio is preserved). */
+      --end-w: calc(var(--start-w) * 0.8);
+      --end-h: calc(var(--start-h) * 0.8);
       --w-now: calc(var(--end-w) + (var(--start-w) - var(--end-w)) * var(--inv));
       --h-now: calc(var(--end-h) + (var(--start-h) - var(--end-h)) * var(--inv));
       --end-right-inset: 6rem;
@@ -3133,6 +3252,11 @@ const R88Styles = () => (
     .r88-reconfigurable__features {
       display: grid;
       grid-template-columns: 1fr 1fr;
+      /* Every row is forced to the height of the tallest row, so all
+         four cards end up the same height regardless of which one has
+         the longest copy — avoids the uneven/messy look when one card
+         is noticeably taller than the others. */
+      grid-auto-rows: 1fr;
       gap: 1rem;
       margin-top: 0.75rem;
     }
@@ -3144,6 +3268,10 @@ const R88Styles = () => (
       background: #fff;
       border: 1px solid rgba(0, 0, 0, 0.06);
       border-radius: 8px;
+      /* Fill the grid cell completely so siblings in the same row
+         line up with each other and with cards in the other row. */
+      height: 100%;
+      box-sizing: border-box;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
@@ -3188,11 +3316,15 @@ const R88Styles = () => (
       position: absolute;
       z-index: 3;
       top: 50%;
-      /* Anchored to the right side of the container the whole time —
-         the image slides in from offscreen-right, rests on the right,
-         then shrinks in place from --start-w → --end-w without
-         translating horizontally. */
-      right: var(--end-right-inset);
+      /* Horizontal anchor: at the post-slide resting position, right edge
+         sits at --end-right-inset (width = --start-w). As the image
+         shrinks during the anim phase, we offset the right value by
+         half the width-change so the image CENTER X stays fixed — both
+         the left AND right edges contract inward equally, mirroring the
+         vertical shrink (top/bottom already contract toward 50% via
+         translateY(-50%)). Net effect: all four corners pull toward
+         the image own centre. */
+      right: calc(var(--end-right-inset) + (var(--start-w) - var(--w-now)) / 2);
       left: auto;
       width: var(--w-now);
       height: var(--h-now);
@@ -3265,6 +3397,7 @@ const R88Styles = () => (
       }
       .r88-avionics__left { opacity: 1 !important; }
       .r88-avionics__features { transform: none !important; opacity: 1 !important; }
+      .r88-avionics__feature { transform: none !important; z-index: auto !important; box-shadow: none !important; border-color: rgba(255, 255, 255, 0.1) !important; }
       .r88-reconfigurable__content { opacity: 1 !important; }
       .r88-reconfigurable {
         padding: 4rem 1.25rem;
@@ -3296,6 +3429,22 @@ const R88Styles = () => (
     /* ====================================================================
        AVIONICS SECTION
        ==================================================================== */
+    /* Scene wrapper gives the sticky avionics section extra scroll range
+       for its internal two-phase animation (image reveal → gradient fade
+       while cards rise). Total ~440vh = 100vh of visible pin + 160vh of
+       phase scroll + 100vh of "hold while reconfigurable image slides
+       over" + 80vh of "hold while reconfigurable cream cover + text
+       crossfade runs on top". Avionics must stay pinned through the end
+       of the reconfigurable HOLD phase (text-swap=1 / cream-cover fully
+       opaque) — after that, the cream cover hides avionics even as it
+       scrolls off underneath. --av-transition clamps at 1 during the
+       trailing 180vh so cards stay fully revealed. The reconfigurable-
+       scene below overlaps this tail via its own negative margin-top. */
+    .r88-avionics-scene {
+      position: relative;
+      min-height: 440vh;
+    }
+
     .r88-avionics {
       /* Top padding absorbs the header height so the visible content
          starts at the same place as before, while the dark background
@@ -3311,6 +3460,13 @@ const R88Styles = () => (
       position: sticky;
       top: 0;
       z-index: 1;
+      /* Constrain to exactly one viewport so the sticky range aligns with
+         the reconfigurable pin that follows. */
+      height: 100vh;
+      overflow: hidden;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
     }
 
     /* Staggered crossfade: avionics text fades out during the FIRST
@@ -3322,18 +3478,13 @@ const R88Styles = () => (
       transition: opacity 0s;
     }
 
-    /* Features on the right sit behind the image once it has slid in.
-       They fade out during the FIRST half of the hold phase (same as
-       the avionics text) so by the time the image shrinks, nothing is
-       left underneath to reappear. */
-    .r88-avionics__features {
-      opacity: calc(1 - min(1, var(--av-rec-features-shrink, 0) * 2));
-      will-change: opacity;
-    }
+    /* (.r88-avionics__features opacity/transform is defined further
+       down, combining phase-B reveal with the reconfigurable fade.) */
 
     .r88-avionics__container {
       max-width: 1400px;
       margin: 0 auto;
+      width: 100%;
     }
 
     .r88-avionics .r88-section-header h2 {
@@ -3356,8 +3507,100 @@ const R88Styles = () => (
       display: grid;
       grid-template-columns: 1.2fr 1fr;
       gap: 4rem;
-      align-items: end;
-      margin-bottom: 4rem;
+      align-items: center;
+      width: 100%;
+    }
+
+    /* Right column: stacks cockpit image (backdrop) and feature cards
+       (on top) in the same space so the cards can fade in over the
+       dissolving image. min-height ensures both stack to the same size. */
+    .r88-avionics__features-col {
+      position: relative;
+      min-height: 520px;
+      display: flex;
+      align-items: stretch;
+    }
+
+    /* Cockpit images — shared sizing/positioning/clipping so the first
+       and second images always occupy the EXACT same box. Only z-index
+       and mask differ between them. */
+    .r88-avionics__cockpit,
+    .r88-avionics__cockpit-2 {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      pointer-events: none;
+      will-change: mask-image;
+    }
+
+    .r88-avionics__cockpit img,
+    .r88-avionics__cockpit-2 img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    /* First image — fully opaque when section enters view so it
+       completely covers the feature cards beneath (no fade-in —
+       otherwise card text bleeds through semi-transparent image and
+       spoils the top-down reveal). Dissolves top-first during phase B:
+       mask pushes a transparent cutoff from top to bottom. */
+    .r88-avionics__cockpit {
+      z-index: 2;
+      opacity: 1;
+      -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        transparent calc(var(--av-transition, 0) * 104% - 4%),
+        #000 calc(var(--av-transition, 0) * 104%),
+        #000 100%
+      );
+      mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        transparent calc(var(--av-transition, 0) * 104% - 4%),
+        #000 calc(var(--av-transition, 0) * 104%),
+        #000 100%
+      );
+    }
+
+    /* Second image — appears AFTER phase B. Inverted mask: opaque
+       region grows from top→bottom as --av-second-reveal progresses
+       0→1, so the image "loads" in from the top. Sits above the
+       popped cards (max card z-index ~101) so it covers them up again
+       as it draws in. When fully revealed the reconfig section slides
+       in over the top.
+       Scaled to 1.02 to match the popped-card scale so its edges
+       line up with the expanded card footprint — otherwise popped
+       cards poke out past the image on left/right/bottom. */
+    .r88-avionics__cockpit-2 {
+      z-index: 200;
+      transform: scale(1.02);
+      transform-origin: center;
+      -webkit-mask-image: linear-gradient(
+        to bottom,
+        #000 0%,
+        #000 calc(var(--av-second-reveal, 0) * 104% - 4%),
+        transparent calc(var(--av-second-reveal, 0) * 104%),
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to bottom,
+        #000 0%,
+        #000 calc(var(--av-second-reveal, 0) * 104% - 4%),
+        transparent calc(var(--av-second-reveal, 0) * 104%),
+        transparent 100%
+      );
     }
 
     .r88-avionics__image {
@@ -3403,21 +3646,55 @@ const R88Styles = () => (
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      /* Cards sit beneath the cockpit image (z:2). As the image's mask
+         dissolves top-down, each card is progressively uncovered. Once
+         a card is ~3/4 uncovered it pops ABOVE the image (see per-card
+         rules below). Opacity then drives the reconfigurable fade-out. */
+      opacity: calc(1 - min(1, var(--av-rec-features-shrink, 0) * 2));
+      will-change: opacity;
     }
 
+    /* Per-card reveal thresholds. A card is ~3/4 uncovered when the
+       mask cutoff has descended past (cardIndex + 0.75) / totalCards of
+       the column height. Pop animation triggers at that point. */
+    .r88-avionics__feature:nth-child(1) { --card-reveal-point: 0.1875; }
+    .r88-avionics__feature:nth-child(2) { --card-reveal-point: 0.4375; }
+    .r88-avionics__feature:nth-child(3) { --card-reveal-point: 0.6875; }
+    .r88-avionics__feature:nth-child(4) { --card-reveal-point: 0.9375; }
+
     .r88-avionics__feature {
+      --pop-duration: 0.06;
+      --pop-progress: clamp(
+        0,
+        calc((var(--av-transition, 0) - var(--card-reveal-point, 1)) / var(--pop-duration)),
+        1
+      );
+      position: relative;
+      /* Lift above cockpit image (z:2) when popping. */
+      z-index: calc(1 + var(--pop-progress) * 100);
       display: flex;
       gap: 1.25rem;
       padding: 1.5rem;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      /* Solid dark fill (matches section background) so the card fully
+         occludes anything behind it once it has popped forward. */
+      background: #1a1a1a;
+      border: 1px solid rgba(255, 255, 255, calc(0.1 + var(--pop-progress) * 0.5));
       border-radius: 4px;
-      transition: all 0.3s ease;
+      /* Subtle grow + momentary vertical hop (sin bump peaks mid-pop). */
+      transform:
+        scale(calc(1 + var(--pop-progress) * 0.02))
+        translateY(calc(sin(calc(var(--pop-progress) * 180deg)) * -6px));
+      box-shadow: none;
+      transition: background 0.3s ease;
+      will-change: transform, z-index, border-color;
     }
 
     .r88-avionics__feature:hover {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: rgba(255, 255, 255, 0.15);
+      background: #232323;
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
     .r88-avionics__feature-icon {
@@ -3447,48 +3724,6 @@ const R88Styles = () => (
       line-height: 1.6;
       color: rgba(255, 255, 255, 0.6);
       margin: 0;
-    }
-
-    .r88-avionics__standard {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 8px;
-      padding: 3rem;
-    }
-
-    .r88-avionics__standard h3 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.5rem;
-      font-weight: 500;
-      color: #fff;
-      margin: 0 0 2rem;
-      text-align: center;
-    }
-
-    .r88-avionics__standard-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-    }
-
-    .r88-avionics__standard-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 1rem;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 4px;
-    }
-
-    .r88-avionics__standard-item i {
-      color: rgba(255, 255, 255, 0.4);
-      font-size: 0.8rem;
-    }
-
-    .r88-avionics__standard-item span {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.8);
     }
 
     /* ====================================================================
@@ -4332,6 +4567,13 @@ const R88Styles = () => (
     .r88-cta {
       padding: 4rem 2rem;
       background: #1a1a1a;
+      /* Rise over the pinned engine: negative margin pulls the register
+         section up into the scene's trailing 100vh, so register rises
+         into view from the viewport bottom (starting exactly when engine
+         sticks) and scrolls up to fully cover the pinned engine. */
+      position: relative;
+      z-index: 3;
+      margin-top: -100vh;
     }
 
     .r88-cta__toggle {
@@ -4715,10 +4957,6 @@ const R88Styles = () => (
         grid-template-columns: 1fr;
         gap: 3rem;
       }
-
-      .r88-avionics__standard-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
     }
 
     @media (max-width: 768px) {
@@ -4922,10 +5160,6 @@ const R88Styles = () => (
 
       .r88-avionics__feature-icon {
         margin: 0 auto;
-      }
-
-      .r88-avionics__standard-grid {
-        grid-template-columns: 1fr;
       }
 
       .r88-engine__dots {

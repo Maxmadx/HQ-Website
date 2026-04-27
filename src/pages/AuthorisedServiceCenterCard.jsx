@@ -1559,15 +1559,15 @@ function CertCardV40() {
             <div className="cert-v40__contact-grid">
               <div className="cert-v40__contact-item">
                 <span className="cert-v40__contact-label">Phone</span>
-                <span className="cert-v40__contact-value">+44 1895 833 337</span>
+                <span className="cert-v40__contact-value">+44 1895 832 833</span>
               </div>
               <div className="cert-v40__contact-item">
                 <span className="cert-v40__contact-label">Email</span>
-                <span className="cert-v40__contact-value">info@hqaviation.com</span>
+                <span className="cert-v40__contact-value">maintenance@hqaviation.com</span>
               </div>
               <div className="cert-v40__contact-item">
                 <span className="cert-v40__contact-label">Location</span>
-                <span className="cert-v40__contact-value">Denham Aerodrome, UB9 5DF</span>
+                <span className="cert-v40__contact-value">Denham Aerodrome, Uxbridge, London, UB9 5DF</span>
               </div>
             </div>
             <button className="cert-v40__cta" onClick={(e) => e.stopPropagation()}>Get in Touch</button>

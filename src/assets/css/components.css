@@ -880,6 +880,8 @@
    ---------------------------------------- */
 .footer-minimal {
   position: relative;
+  z-index: 50;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   gap: 2rem;

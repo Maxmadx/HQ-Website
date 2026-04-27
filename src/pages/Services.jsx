@@ -101,7 +101,6 @@ function Services() {
           <p className="cta__description">
             Contact our team to discuss your requirements.
           </p>
-          <Link to="/contact" className="btn btn--accent btn--lg">Get in Touch</Link>
         </div>
       </section>
     </>

@@ -92,9 +92,6 @@ function AircraftSales() {
             <Link to="/aircraft-sales/used" className="btn btn--primary btn--lg">
               View Inventory
             </Link>
-            <Link to="/contact" className="btn btn--outline btn--lg">
-              Contact Sales
-            </Link>
           </div>
         </div>
       </section>

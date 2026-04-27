@@ -549,7 +549,7 @@ export const TEXT_SECTIONS = [
       { id: 'phone_label',   label: 'Phone Label',     type: 'text',      default: 'Call Us' },
       { id: 'phone_value',   label: 'Phone Number',    type: 'text',      default: '+44 1895 833 373' },
       { id: 'email_label',   label: 'Email Label',     type: 'text',      default: 'Email' },
-      { id: 'email_value',   label: 'Email Address',   type: 'text',      default: 'hire@hqaviation.com' },
+      { id: 'email_value',   label: 'Email Address',   type: 'text',      default: 'operations@hqaviation.com' },
       { id: 'cta_primary',   label: 'Primary CTA',     type: 'text',      default: 'Make a Booking' },
       { id: 'cta_secondary', label: 'Secondary CTA',   type: 'text',      default: 'Get Your Licence' },
     ],
@@ -659,7 +659,7 @@ export const TEXT_SECTIONS = [
       { id: 'description', label: 'Description',   type: 'paragraph', default: 'Whether you\'re a first-time buyer or expanding your fleet, our team is ready to guide you to the perfect helicopter.' },
       { id: 'cta_phone',   label: 'Phone CTA',     type: 'text',      default: 'Call +44 1895 833 373' },
       { id: 'cta_email',   label: 'Email CTA',     type: 'text',      default: 'Send Enquiry' },
-      { id: 'location',    label: 'Location Line', type: 'text',      default: 'HQ Aviation · Denham Aerodrome · UB9 5DF' },
+      { id: 'location',    label: 'Location Line', type: 'text',      default: 'HQ Aviation · Denham Aerodrome · London · UB9 5DF' },
     ],
   },
 
@@ -734,7 +734,7 @@ export const TEXT_SECTIONS = [
     hint: 'Opening paragraph on the Expeditions page',
     fields: [
       { id: 'heading',     label: 'Heading',     type: 'heading',   default: 'The World From Above' },
-      { id: 'description', label: 'Description', type: 'paragraph', default: 'This isn\'t transport. This is using the helicopter as a gateway to the world — a first-class ticket to the beauty of our planet, seeing places in ways that very few have ever experienced before.' },
+      { id: 'description', label: 'Description', type: 'paragraph', default: 'This isn\'t transport. This is using the helicopter as a gateway to the world, a first-class ticket to the beauty of our planet, seeing places in ways that very few have ever experienced before.' },
     ],
   },
 

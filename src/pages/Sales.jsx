@@ -718,10 +718,10 @@ const membershipBenefits = [
 
 // Technical support
 const techSupport = [
-  { channel: 'Phone', availability: '24/7', response: 'Immediate', number: '+44 1234 567 890' },
-  { channel: 'WhatsApp', availability: '7am-10pm', response: '< 1 hour', number: '+44 7XXX XXX XXX' },
-  { channel: 'Email', availability: '24/7', response: '< 24 hours', number: 'support@hqaviation.co.uk' },
-  { channel: 'AOG Line', availability: '24/7', response: 'Immediate', number: '+44 800 XXX XXXX' },
+  { channel: 'Phone', availability: '24/7', response: 'Immediate', number: '+44 1895 833 373' },
+  { channel: 'WhatsApp', availability: '7am-10pm', response: '< 1 hour', number: '+44 1895 833 373' },
+  { channel: 'Email', availability: '24/7', response: '< 24 hours', number: 'sales@hqaviation.com' },
+  { channel: 'AOG Line', availability: '24/7', response: 'Immediate', number: '+44 1895 832 833' },
 ];
 
 // Component exchange program
@@ -825,10 +825,10 @@ const managementServices = [
 
 // Quick contact methods
 const quickContacts = [
-  { dept: 'New Sales', name: 'Michael Thompson', email: 'michael@hqaviation.co.uk', phone: '+44 1234 567 001' },
-  { dept: 'Used Aircraft', name: 'Sarah Williams', email: 'sarah@hqaviation.co.uk', phone: '+44 1234 567 002' },
-  { dept: 'Finance', name: 'David Chen', email: 'david@hqaviation.co.uk', phone: '+44 1234 567 003' },
-  { dept: 'After Sales', name: 'Emma Roberts', email: 'emma@hqaviation.co.uk', phone: '+44 1234 567 004' },
+  { dept: 'New Sales', name: 'Michael Thompson', email: 'sales@hqaviation.com', phone: '+44 1895 833 373' },
+  { dept: 'Used Aircraft', name: 'Sarah Williams', email: 'sales@hqaviation.com', phone: '+44 1895 833 373' },
+  { dept: 'Finance', name: 'David Chen', email: 'sales@hqaviation.com', phone: '+44 1895 833 373' },
+  { dept: 'After Sales', name: 'Emma Roberts', email: 'sales@hqaviation.com', phone: '+44 1895 833 373' },
 ];
 
 // Aircraft comparison quick view
@@ -1038,7 +1038,6 @@ function Sales() {
               transition={{ delay: 1.5 }}
             >
               <a href="#models" className="sales-btn sales-btn--primary">Explore Models</a>
-              <a href="/contact" className="sales-btn sales-btn--outline">Contact Sales</a>
             </motion.div>
           </div>
         </motion.div>
@@ -1427,9 +1426,6 @@ function Sales() {
                     <span>Fair market pricing</span>
                   </div>
                 </div>
-                <a href="/contact?subject=valuation" className="sales-btn sales-btn--white">
-                  Get Free Valuation
-                </a>
               </div>
             </Reveal>
 
@@ -1538,9 +1534,6 @@ function Sales() {
                   in helicopter insurance and understands the unique needs of Robinson owners.
                 </p>
               </div>
-              <a href="/contact?subject=insurance" className="sales-btn sales-btn--primary">
-                Get a Quote
-              </a>
             </div>
           </Reveal>
         </div>
@@ -1679,15 +1672,12 @@ function Sales() {
                 {t('sales-cta', 'description') || "Whether you're a first-time buyer or expanding your fleet, our team is ready to guide you to the perfect helicopter."}
               </p>
               <div className="sales-contact__actions">
-                <a href="tel:+441234567890" className="sales-btn sales-btn--white">
-                  {t('sales-cta', 'cta_phone') || 'Call +44 1234 567 890'}
+                <a href="tel:+441895833373" className="sales-btn sales-btn--white">
+                  {t('sales-cta', 'cta_phone') || 'Call +44 1895 833 373'}
                 </a>
-                <Link to="/contact?subject=aircraft-sales" className="sales-btn sales-btn--outline-white">
-                  {t('sales-cta', 'cta_email') || 'Send Enquiry'}
-                </Link>
               </div>
               <div className="sales-contact__location">
-                <span>{t('sales-cta', 'location') || 'HQ Aviation · Denham Aerodrome · UB9 5DF'}</span>
+                <span>{t('sales-cta', 'location') || 'HQ Aviation · Denham Aerodrome · London · UB9 5DF'}</span>
               </div>
             </div>
           </Reveal>

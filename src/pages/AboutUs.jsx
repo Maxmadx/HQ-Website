@@ -691,8 +691,6 @@ function AboutUs() {
             aviation — our doors are always open.
           </p>
           <div className="au__cta-actions">
-            <Link to="/about-us/team" className="au__btn">Meet the Team</Link>
-            <Link to="/contact" className="au__btn au__btn--ghost">Get in Touch</Link>
           </div>
         </div>
       </section>

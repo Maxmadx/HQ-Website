@@ -33,7 +33,6 @@ export const routes = [
         ]
       },
       { title: "Our Fleet (School)", path: "/about-us/our-fleet" },
-      { title: "Meet the Team", path: "/about-us/team" },
       { title: "British Team", path: "/about-us/british-team" },
       { title: "Operations Team", path: "/about-us/operations-team" },
       { title: "Partnerships & Tools", path: "/about-us/partnerships" },
@@ -207,15 +206,6 @@ export const routes = [
       { title: "Gifts & Experiences", path: "/store/gifts" }
     ]
   },
-  {
-    title: "Contact",
-    path: "/contact",
-    children: [
-      { title: "Pricing / Price List", path: "/contact/pricing" },
-      { title: "Job Board", path: "/contact/careers" },
-      { title: "Testimonials", path: "/contact/testimonials" }
-    ]
-  }
 ];
 
 /**

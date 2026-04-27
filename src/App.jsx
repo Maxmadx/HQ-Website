@@ -4,7 +4,6 @@ import Layout from './layouts/Layout';
 import Home from './pages/Home';
 import AboutUs from './pages/AboutUs';
 import CaptainQ from './pages/CaptainQ';
-import Team from './pages/Team';
 import AircraftSales from './pages/AircraftSales';
 import Training from './pages/Training';
 import TrainingFAQ from './pages/TrainingFAQ';
@@ -12,7 +11,6 @@ import PPL from './pages/PPL';
 import Expeditions from './pages/Expeditions';
 import Services from './pages/Services';
 import Maintenance from './pages/Maintenance';
-import Contact from './pages/Contact';
 import HeroTest from './pages/HeroTest';
 import FinalDraft from './pages/FinalDraft';
 import ScrollPathTest from './pages/ScrollPathTest';
@@ -53,9 +51,6 @@ import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import DiscoveryFlight from './pages/DiscoveryFlight';
 import Experimentation from './pages/Experimentation';
-import Experimentation2 from './pages/Experimentation2';
-import EndOfMarchVersion from './pages/EndOfMarchVersion';
-import SFHTests from './pages/sfhtests/SFHTests';
 import AuthorisedServiceCenterCard from './pages/AuthorisedServiceCenterCard';
 import SlidingGalleryVariations from './pages/SlidingGalleryVariations';
 import WallOfCoolVariations from './pages/WallOfCoolVariations';
@@ -83,16 +78,16 @@ import Leaseback from './pages/Leaseback';
 import HeroSectionFinal from './pages/HeroSectionFinal';
 import HeroSectionFinalTesting from './pages/HeroSectionFinalTesting';
 import TestingHeroSection from './pages/TestingHeroSection';
-import AboutUsVariations from './pages/AboutUsVariations';
 import Misc from './pages/Misc';
 import MiscItemDetail from './pages/MiscItemDetail';
 import PartSales from './pages/PartSales';
 import AwardVariations from './pages/AwardVariations';
 import MobileSecondSection from './pages/MobileSecondSection';
-import SFHVariations from './pages/SFHVariations';
 import Wireframes from './pages/Wireframes';
 import AccordionVariations from './pages/AccordionVariations';
 import R66BenefitsVariations from './pages/R66BenefitsVariations';
+import ExpeditionPhilosophyVariations from './pages/ExpeditionPhilosophyVariations';
+import ExpeditionPhilosophyJVariations from './pages/ExpeditionPhilosophyJVariations';
 import Checkout from './pages/Checkout';
 import BookingConfirmed from './pages/BookingConfirmed';
 import LondonTourCheckout from './pages/LondonTourCheckout';
@@ -156,11 +151,11 @@ function App() {
         <Route path="/testing-hero-section" element={<TestingHeroSection />} />
         <Route path="/award-variations" element={<AwardVariations />} />
         <Route path="/mobile-second-section" element={<MobileSecondSection />} />
-        <Route path="/sfh-variations" element={<SFHVariations />} />
         <Route path="/wireframes" element={<Wireframes />} />
         <Route path="/accordion-variations" element={<AccordionVariations />} />
         <Route path="/r66-benefits-variations" element={<R66BenefitsVariations />} />
-        <Route path="/about-us-variations" element={<AboutUsVariations />} />
+        <Route path="/expeditions-philosophy-variations" element={<ExpeditionPhilosophyVariations />} />
+        <Route path="/expeditions-philosophy-j-variations" element={<ExpeditionPhilosophyJVariations />} />
         <Route path="/flying-variations" element={<FlyingVariations />} />
         <Route path="/final-draft" element={<FinalDraft />} />
         <Route path="/experimentation" element={<Experimentation />} />
@@ -176,9 +171,6 @@ function App() {
         <Route path="/wall-of-cool-final-card-sky" element={<WallOfCoolFinalCardSky />} />
         <Route path="/wall-of-cool-gradient-variations" element={<WallOfCoolGradientVariations />} />
         <Route path="/wall-of-cool-gallery-gradient-variations" element={<WallOfCoolGalleryGradientVariations />} />
-        <Route path="/experimentation-2" element={<Experimentation2 />} />
-        <Route path="/endofmarchversion" element={<EndOfMarchVersion />} />
-        <Route path="/sfhtests" element={<SFHTests />} />
         <Route path="/authorisedservicecentercard" element={<AuthorisedServiceCenterCard />} />
         <Route path="/scroll-path-test" element={<ScrollPathTest />} />
         <Route path="/carousel-picker" element={<CarouselPicker />} />
@@ -271,7 +263,6 @@ function App() {
           {/* About Us Routes */}
           <Route path="about-us" element={<AboutUs />} />
           <Route path="about-us/captain-q" element={<CaptainQ />} />
-          <Route path="about-us/team" element={<Team />} />
 
           {/* Aircraft Sales */}
           <Route path="aircraft-sales" element={<AircraftSales />} />
@@ -285,9 +276,6 @@ function App() {
           {/* Services Routes */}
           <Route path="services" element={<Services />} />
           <Route path="services/maintenance" element={<Maintenance />} />
-
-          {/* Contact */}
-          <Route path="contact" element={<Contact />} />
 
         </Route>
       </Routes>

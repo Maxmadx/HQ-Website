@@ -28,6 +28,7 @@ import '../assets/css/components.css';
 
 // Import Footer
 import FooterMinimal from '../components/FooterMinimal';
+import HqMenuPanel from '../components/HqMenuPanel';
 
 // ============================================================================
 // COMPONENT: H500Header
@@ -71,46 +72,7 @@ function H500Header() {
 
   return (
     <>
-      <div className={`hq-menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="hq-menu-grid">
-          <div className="hq-menu-section">
-            <h3>About</h3>
-            <ul>
-              <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-              <li><Link to="/about-us" onClick={closeMenu}>About Us</Link></li>
-              <li><Link to="/about-us/team" onClick={closeMenu}>Meet The Team</Link></li>
-              <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Aircraft Sales</h3>
-            <ul>
-              <li><Link to="/sales/new" onClick={closeMenu}>New Aircraft</Link></li>
-              <li><Link to="/aircraft/r66" onClick={closeMenu}>R66 Turbine</Link></li>
-              <li><Link to="/aircraft/r44" onClick={closeMenu}>R44</Link></li>
-              <li><Link to="/aircraft/r22" onClick={closeMenu}>R22</Link></li>
-              <li><Link to="/aircraft/h500" onClick={closeMenu}>Hughes 500</Link></li>
-              <li><Link to="/sales/pre-owned" onClick={closeMenu}>Pre-Owned Aircraft</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Training</h3>
-            <ul>
-              <li><Link to="/training" onClick={closeMenu}>Training Overview</Link></li>
-              <li><Link to="/training/ppl" onClick={closeMenu}>Private Pilot License</Link></li>
-              <li><Link to="/training/type-rating" onClick={closeMenu}>Type Ratings</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Services</h3>
-            <ul>
-              <li><Link to="/services" onClick={closeMenu}>Services</Link></li>
-              <li><Link to="/maintenance" onClick={closeMenu}>Maintenance</Link></li>
-              <li><Link to="/expeditions" onClick={closeMenu}>Expeditions</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <HqMenuPanel open={menuOpen} onClose={closeMenu} />
 
       <button
         className={`hq-menu-btn ${colorDark ? 'color-dark' : ''} ${scrolled ? 'scrolled' : ''} ${menuOpen ? 'open' : ''}`}
@@ -1041,10 +1003,6 @@ function H500CTA() {
 
         <Reveal delay={0.4}>
           <div className="h500-cta__actions">
-            <Link to="/contact" className="h500-btn h500-btn--primary">
-              <i className="fas fa-phone"></i>
-              Contact Us
-            </Link>
             <Link to="/fleet" className="h500-btn h500-btn--secondary">
               <i className="fas fa-helicopter"></i>
               View Fleet
