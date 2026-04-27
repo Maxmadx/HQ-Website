@@ -2450,6 +2450,79 @@ function Experimentation() {
     };
   }, []);
 
+  // Sticky-blur transition: same as above but for .fd-sales → .fd-maint.
+  // Pins .fd-sales at viewport-bottom on desktop, blurs and darkens it as
+  // the next sibling (Maintenance parallax) rises over it.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const section = document.querySelector('.fd-sales');
+    if (!section) return;
+
+    const MAX_BLUR = 10;
+    const MAX_DARKEN = 0.55;
+    const FADE_COMPLETE = 0.95;
+    const EFFECT_START = 0.6;
+    const MEDIA = window.matchMedia('(min-width: 901px)');
+
+    const findRisingSection = () => {
+      const next = section.nextElementSibling;
+      if (next && (next.classList.contains('parallax-section') ||
+                   next.querySelector?.('.parallax-section'))) return next;
+      const maint = document.getElementById('maintenance');
+      if (!maint) return next;
+      return maint.previousElementSibling || next;
+    };
+
+    const setStickTop = () => {
+      if (!MEDIA.matches) {
+        section.style.removeProperty('--fd-sales-stick-top');
+        return;
+      }
+      const vh = window.innerHeight;
+      const h = section.offsetHeight;
+      section.style.setProperty('--fd-sales-stick-top', `${vh - h}px`);
+    };
+
+    const onScroll = () => {
+      if (!MEDIA.matches) {
+        section.style.setProperty('--fd-sales-blur', '0px');
+        section.style.setProperty('--fd-sales-darken', '0');
+        section.style.visibility = '';
+        return;
+      }
+      const next = findRisingSection();
+      if (!next) return;
+      const vh = window.innerHeight;
+      const h = section.offsetHeight;
+      const rect = next.getBoundingClientRect();
+      const progress = Math.min(1, Math.max(0, (vh - rect.top) / vh));
+      const effective = Math.max(0, (progress - EFFECT_START) / (1 - EFFECT_START));
+      const adjusted = Math.min(1, effective / FADE_COMPLETE);
+      const darken = Math.pow(adjusted, 8) * MAX_DARKEN;
+
+      section.style.setProperty('--fd-sales-blur', `${effective * MAX_BLUR}px`);
+      section.style.setProperty('--fd-sales-darken', `${darken}`);
+      section.style.visibility = (rect.top <= vh - h) ? 'hidden' : 'visible';
+    };
+
+    const onResize = () => { setStickTop(); onScroll(); };
+    const onMediaChange = () => { setStickTop(); onScroll(); };
+
+    setStickTop();
+    onScroll();
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    MEDIA.addEventListener('change', onMediaChange);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      MEDIA.removeEventListener('change', onMediaChange);
+    };
+  }, []);
+
   // Clubhouse: right side overlay fades in as you scroll (desktop only)
   useEffect(() => {
     let clubRaf = 0;
@@ -8121,6 +8194,40 @@ function Experimentation() {
           .fd-exped ~ * {
             position: relative;
             z-index: 3;
+          }
+        }
+
+        /* Same sticky-blur pattern, applied to .fd-sales → Maintenance.
+           When fd-sales pins, the next sibling (maint parallax) rises
+           over it. #sales ~ * uses id specificity to beat both
+           .fd-exped ~ * (z-index 3) and .parallax-section (z-index 2),
+           so subsequent siblings reliably stack above the pinned sales. */
+        @media (min-width: 901px) {
+          .fd-sales {
+            position: sticky;
+            top: var(--fd-sales-stick-top, 0);
+          }
+
+          @media (prefers-reduced-motion: no-preference) {
+            .fd-sales {
+              filter: blur(var(--fd-sales-blur, 0px));
+              will-change: filter;
+            }
+
+            .fd-sales::after {
+              content: '';
+              position: absolute;
+              inset: 0;
+              background: #000;
+              opacity: var(--fd-sales-darken, 0);
+              pointer-events: none;
+              z-index: 2;
+            }
+          }
+
+          #sales ~ * {
+            position: relative;
+            z-index: 5;
           }
         }
 
