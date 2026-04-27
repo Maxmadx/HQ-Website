@@ -22,6 +22,7 @@ import '../assets/css/components.css';
 // Import FooterMinimal component
 import FooterMinimal from '../components/FooterMinimal';
 import HqMenuPanel from '../components/HqMenuPanel';
+import WallOfCoolGr11 from '../components/WallOfCoolGr11';
 
 /**
  * SELF-FLY HIRE PAGE HEADER COMPONENT
