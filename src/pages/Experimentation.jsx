@@ -4237,7 +4237,7 @@ function Experimentation() {
         <h2 className="parallax-section__title">Sales</h2>
       </ParallaxSection>
 
-      <section className="fd-sales reveal-element" id="sales">
+      <section className="fd-sales" id="sales">
         <div className="fd-sales__intro" ref={salesIntroRef}>
           <div className="fd-sales__left">
             <div className="fd-sales__header-sticky" ref={salesHeaderRef} data-cms-text-section="home-sales-section">
