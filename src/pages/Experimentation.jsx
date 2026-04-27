@@ -57,8 +57,6 @@ const UnionJack = ({ size = 20, className = '', id = '' }) => (
   />
 );
 
-// Awesome Components
-import { EditorialGrid } from '../components/AwesomeComponents/EditorialGrid';
 // Blog posts data
 import blogPosts from '../blog/posts.json';
 import { collection, getDocs } from 'firebase/firestore';
@@ -5072,11 +5070,6 @@ function Experimentation() {
         </div>
 
         <ArrivalSection />
-      </div>
-
-      {/* ===== EDITORIAL GRID (Wall of Cool) ===== */}
-      <div id="wall-of-cool" className="reveal-element" style={{ scrollMarginTop: '80px' }}>
-        <EditorialGrid />
       </div>
 
       {/* ===== LATEST FROM HQ — Rich Blog Section ===== */}
