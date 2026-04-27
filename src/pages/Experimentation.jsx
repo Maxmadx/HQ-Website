@@ -3957,7 +3957,7 @@ function Experimentation() {
         </section>
       </div>
       {/* ===== THE CLUBHOUSE ===== */}
-      <section className="clubhouse reveal-element" ref={clubhouseRef} data-cms-section="home-clubhouse-carousel">
+      <section className="clubhouse" ref={clubhouseRef} data-cms-section="home-clubhouse-carousel">
         <div style={{ margin: '0 auto 1.5rem', position: 'relative', zIndex: 2 }} />
         <div className="clubhouse__inner">
           <div className="clubhouse__sticky">
@@ -5072,7 +5072,7 @@ function Experimentation() {
       </div>
 
       {/* ===== LATEST FROM HQ — Rich Blog Section ===== */}
-      <section className="lhq reveal-element" style={{ padding: '6rem 0 4rem', background: '#fff' }}>
+      <section className="lhq" style={{ padding: '6rem 0 4rem', background: '#fff' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 2rem' }}>
 
           {/* Header */}
