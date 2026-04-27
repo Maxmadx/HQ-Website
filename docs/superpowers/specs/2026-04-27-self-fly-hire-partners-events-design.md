@@ -1,4 +1,4 @@
-# Self-Fly Hire — Partners & Events Sections
+# Self-Fly Hire — Partners, Events & Community Wall
 
 **Page:** `/self-fly-hire` (`src/pages/SelfFlyHire.jsx`)
 **Date:** 2026-04-27
@@ -6,12 +6,13 @@
 
 ## Goal
 
-Add two new sections to the Self-Fly Hire page that round out the "where can I take this aircraft" story already established by the existing destinations grid:
+Add three additions to the Self-Fly Hire page that round out the "where can I take this aircraft" story already established by the existing destinations grid:
 
 1. **Our Partners** — luxury destinations and shooting grounds HQ formally works with.
 2. **Events** — UK calendar events (sporting, racing, regatta) that pilots commonly fly to.
+3. **Community Wall** — drop-in of the existing `WallOfCoolGr11` component as social proof of where pilots actually fly.
 
-Both sections reuse the visual pattern of the existing `sfh2-destinations` section so the page reads as one continuous "where you can go" sweep rather than three competing layouts.
+Sections 1 and 2 reuse the visual pattern of the existing `sfh2-destinations` section so the page reads as one continuous "where you can go" sweep. Section 3 reuses an existing self-contained component already running on `Experimentation.jsx`.
 
 ## Placement
 
@@ -20,9 +21,10 @@ Insert directly after the existing `sfh2-destinations` section (currently ending
 1. `sfh2-destinations` (existing)
 2. `sfh2-partners` (new)
 3. `sfh2-events` (new)
-4. `sfh2-enquiry` (existing)
+4. `WallOfCoolGr11` (new — drop-in component)
+5. `sfh2-enquiry` (existing)
 
-No other sections move.
+No other sections move. Rationale for putting Community Wall last in the new block: it acts as social proof ("see what HQ pilots actually do") immediately before the enquiry CTA.
 
 ## Section 1 — Our Partners
 
@@ -169,6 +171,40 @@ Both new sections should carry `data-cms-section` attributes for consistency wit
 
 (Card text is hardcoded in JS for now — matches how `DESTINATIONS` is currently handled. Migration to CMS-managed data is out of scope for this change.)
 
+## Section 3 — Community Wall (Wall of Cool)
+
+### What it is
+
+The existing `src/components/WallOfCoolGr11.jsx` component, currently rendered on `src/pages/Experimentation.jsx:5221`. It's a fully self-contained section: title, two-row scroll-reveal gallery on desktop, horizontal carousel on mobile, footer with pagination/upload/fullscreen actions, Firestore-backed image source with a fallback list.
+
+### How it gets added
+
+Add an import at the top of `SelfFlyHire.jsx`:
+
+```js
+import WallOfCoolGr11 from '../components/WallOfCoolGr11';
+```
+
+Render it as a sibling section between the new `sfh2-events` section and the existing `sfh2-enquiry` section:
+
+```jsx
+<WallOfCoolGr11 />
+```
+
+No props, no wrappers. The component handles its own background, padding, full-bleed margin (`width: 100vw; margin-left: calc(50% - 50vw)`), Firestore loading, scroll-reveal hook and mobile breakpoints. The existing `#community-wall` id stays intact, so deep-linking continues to work.
+
+### Risks / things to verify on first paint
+
+- The component sets `width: 100vw` with negative margins — verify it doesn't break the parent `sfh2-page` layout (it works inside `Experimentation.jsx`, which has the same outer container shape, so this should be fine).
+- It pulls Firestore data via `db` from `../lib/firebase`; SelfFlyHire already runs in the same app shell so credentials are present.
+- It has its own scroll-position-driven animation — confirm it doesn't fight with the existing `sfh2` motion reveals on neighbouring sections (visually inspect the boundaries).
+
+### Out of scope for this change
+
+- Modifications to `WallOfCoolGr11` itself.
+- Custom title/subtitle for the SFH context (keeping the default "Helicopter Adventures / Community Wall").
+- Per-page filtered Firestore query (it uses the global approved list).
+
 ## Out of Scope
 
 - Partner logos / logo strip treatment (rejected during brainstorming in favour of text cards for visual consistency).
@@ -179,8 +215,9 @@ Both new sections should carry `data-cms-section` attributes for consistency wit
 
 ## Acceptance Criteria
 
-1. `/self-fly-hire` renders three sections in order between destinations and the enquiry form: existing destinations, new Our Partners, new Events.
-2. Partners section shows three cards in a single row on desktop, scrolls horizontally with dot pagination on mobile.
+1. `/self-fly-hire` renders four sections in order between destinations and the enquiry form: existing destinations → new Our Partners → new Events → existing-component Community Wall → existing enquiry.
+2. Partners section shows three cards in a single row on desktop and stacks to a single column on mobile.
 3. Events section shows 11 cards in a 4-column grid on desktop and mirrors the destinations mobile scroll pattern with working dot pagination.
-4. All cards use the same typography, spacing, hover state and border treatment as `sfh2-destinations__card`.
-5. No regression to the existing destinations section, enquiry form, or any sticky-blur behaviour above/below.
+4. All new partners/events cards use the same typography, spacing, hover state and border treatment as `sfh2-destinations__card`.
+5. Community Wall renders identically to its current appearance on `Experimentation.jsx`: scroll-reveal gallery on desktop, horizontal carousel on mobile, footer chrome intact.
+6. No regression to the existing destinations section, enquiry form, or any sticky-blur behaviour above/below.
