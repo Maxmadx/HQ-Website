@@ -2516,10 +2516,18 @@ function Experimentation() {
     window.addEventListener('resize', onResize);
     MEDIA.addEventListener('change', onMediaChange);
 
+    // Recompute stick-top when the section itself grows/shrinks — e.g. when
+    // a .fd-sales__subsection expands and changes the section's height.
+    const ro = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(() => { setStickTop(); onScroll(); })
+      : null;
+    if (ro) ro.observe(section);
+
     return () => {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
       MEDIA.removeEventListener('change', onMediaChange);
+      if (ro) ro.disconnect();
     };
   }, []);
 
