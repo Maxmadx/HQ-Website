@@ -227,6 +227,9 @@ export default function SelfFlyHire() {
   const fleetTopBodyRef = useRef(null);
   const fleetSpecsRef = useRef(null);
   const DEST_PAGES = Math.ceil(DESTINATIONS.length / 4); // 2 rows × 2 cols per view = 4 cards per page
+  const [eventsPage, setEventsPage] = useState(0);
+  const eventsGridRef = useRef(null);
+  const EVENTS_PAGES = Math.ceil(EVENTS.length / 4); // 4 cards per mobile page (2 rows × 2 cols)
   const { faqs } = useFaqs('sfh', { visibleOnly: true });
   const [form, setForm] = useState({ name: '', email: '', phone: '', aircraft: '', dates: '', message: '' });
   const [formStatus, setFormStatus] = useState(null);
