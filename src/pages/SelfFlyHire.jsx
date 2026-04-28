@@ -614,6 +614,42 @@ export default function SelfFlyHire() {
         </div>
       </section>
 
+      {/* ── Our Partners ────────────────────────────────────────── */}
+      <section className="sfh2-partners" data-cms-section="sfh-partners">
+        <div className="sfh2-partners__inner">
+          <motion.div
+            className="sfh2-partners__header"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <span className="sfh2-pre-label">Trusted By</span>
+            <h2 className="sfh2-section-heading">Our Partners</h2>
+            <p className="sfh2-partners__intro">
+              We work with country estates, sporting grounds and destinations who welcome arrivals by helicopter.
+            </p>
+          </motion.div>
+
+          <div className="sfh2-partners__grid">
+            {PARTNERS.map((partner, i) => (
+              <motion.div
+                key={partner.name}
+                className="sfh2-partners__card"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.05 }}
+                transition={{ duration: 0.3, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div className="sfh2-partners__card-region">{partner.category}</div>
+                <div className="sfh2-partners__card-name">{partner.name}</div>
+                <div className="sfh2-partners__card-time">{partner.location}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Enquiry Form ───────────────────────────────────────── */}
       <section className="sfh2-enquiry" id="enquire">
         <div className="sfh2-enquiry__inner">
