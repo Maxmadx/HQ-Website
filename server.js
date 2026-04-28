@@ -303,6 +303,12 @@ app.use('/api/wall-of-cool', express.json(), wallOfCoolRouter);
 const adminFaqsRouter = require('./api/admin-faqs');
 app.use('/api/admin/faqs', express.json(), adminFaqsRouter);
 
+const adminSfhPartnersRouter = require('./api/admin-sfh-partners');
+app.use('/api/admin/sfh-partners', express.json(), adminSfhPartnersRouter);
+
+const adminSfhEventsRouter = require('./api/admin-sfh-events');
+app.use('/api/admin/sfh-events', express.json(), adminSfhEventsRouter);
+
 // ============================================
 // MISC MARKETPLACE ROUTES
 // ============================================
