@@ -1426,9 +1426,11 @@ export default function SelfFlyHire() {
           overflow-y: auto;
           overflow-x: hidden;
           padding-right: 0.5rem;
-          background: #fff;
           scrollbar-width: thin;
           scrollbar-color: #ccc8c1 transparent;
+        }
+        .sfh2-where__events {
+          background: #fff;
         }
         .sfh2-where__scroll::-webkit-scrollbar {
           width: 6px;
