@@ -630,8 +630,13 @@ export default function SelfFlyHire() {
 
           <div className="sfh2-where__split">
             <div className="sfh2-where__col">
-              <p className="sfh2-where__sub-label">Destination Partners</p>
-              <div className="sfh2-where__scroll sfh2-where__cards">
+              <h3 className="sfh2-where__sub-label">Destination Partners</h3>
+              <div
+                className="sfh2-where__scroll sfh2-where__cards"
+                role="region"
+                aria-label="Destination Partners"
+                tabIndex={0}
+              >
                 {PARTNERS.map((partner) => (
                   <div key={partner.name} className="sfh2-where__card">
                     <span className="sfh2-where__card-cat">{partner.category}</span>
@@ -645,8 +650,13 @@ export default function SelfFlyHire() {
             <div className="sfh2-where__divider" aria-hidden="true" />
 
             <div className="sfh2-where__col">
-              <p className="sfh2-where__sub-label">Event Partners</p>
-              <div className="sfh2-where__scroll sfh2-where__events">
+              <h3 className="sfh2-where__sub-label">Event Partners</h3>
+              <div
+                className="sfh2-where__scroll sfh2-where__events"
+                role="region"
+                aria-label="Event Partners"
+                tabIndex={0}
+              >
                 {EVENTS.map((event) => (
                   <div key={event.name} className="sfh2-where__events-row">
                     <div className="sfh2-where__events-month">{event.month}</div>
@@ -1560,6 +1570,7 @@ export default function SelfFlyHire() {
         .sfh2-where__sub-label {
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.6rem;
+          font-weight: 400;
           letter-spacing: 0.22em;
           text-transform: uppercase;
           color: #9ca3af;
@@ -1597,7 +1608,7 @@ export default function SelfFlyHire() {
           border: 1px solid #e8e6e2;
           padding: 0.85rem 1rem;
           border-radius: 6px;
-          transition: background 0.15s;
+          transition: background 0.2s;
           display: flex;
           flex-direction: column;
         }
