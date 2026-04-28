@@ -12,6 +12,11 @@ function getStripe() {
   return _stripe;
 }
 
+function applyDiscountPence(pricePence, qty, discountPct) {
+  const pct = Math.max(0, Math.min(100, Number(discountPct) || 0));
+  return Math.round(Number(pricePence) * Number(qty) * (1 - pct / 100));
+}
+
 // Lazy-initialise SMTP transporter — reuse the same connection pool across calls.
 let _transporter = null;
 function getTransporter() {
@@ -717,4 +722,4 @@ async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmai
   return paymentIntent;
 }
 
-module.exports = { getPrice, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking };
+module.exports = { getPrice, applyDiscountPence, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking };
