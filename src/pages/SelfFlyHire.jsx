@@ -179,8 +179,6 @@ const EVENTS = [
   { region: 'Surrey',          name: 'Epsom Derby',                month: 'June' },
   { region: 'Suffolk',         name: 'Newmarket Racing',           month: 'May–Oct' },
   { region: 'Yorkshire',       name: 'York Racecourse',            month: 'May–Oct' },
-  { region: 'Surrey',          name: 'Sandown Park',               month: 'Year-round' },
-  { region: 'Berkshire',       name: 'Newbury Racecourse',         month: 'Year-round' },
 ];
 
 const REQUIREMENTS = [
