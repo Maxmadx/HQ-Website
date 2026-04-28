@@ -2303,6 +2303,46 @@ export default function SelfFlyHire() {
           .sfh2-destinations__dots {
             display: flex;
           }
+          /* Partners: stack to single column on mobile (only 3 cards) */
+          .sfh2-partners__grid {
+            grid-template-columns: 1fr;
+          }
+
+          /* Events: mirror destinations mobile scroll/snap pattern */
+          .sfh2-events__grid {
+            grid-template-columns: unset;
+            grid-template-rows: repeat(2, auto);
+            grid-auto-flow: column;
+            grid-auto-columns: 50%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            scroll-snap-type: x mandatory;
+          }
+          .sfh2-events__grid::-webkit-scrollbar {
+            display: none;
+          }
+          .sfh2-events__card {
+            scroll-snap-align: start;
+          }
+          .sfh2-events__dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding-top: 14px;
+          }
+          .sfh2-events__dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ccc8c1;
+            transition: background 0.2s;
+            cursor: pointer;
+          }
+          .sfh2-events__dot--active {
+            background: #1a1a1a;
+          }
           .sfh2-enquiry__row {
             grid-template-columns: 1fr;
           }
