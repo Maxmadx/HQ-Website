@@ -421,13 +421,16 @@ Read `api/stripe.js` around the `recordBooking` function. Identify where the boo
 Inside `recordBooking`, after the existing fields are assembled, add:
 
 ```js
-let parsedAddons = [];
-if (paymentIntent.metadata.addons) {
+const addonsCount = parseInt(paymentIntent.metadata.addonsCount || '0', 10) || 0;
+const parsedAddons = [];
+for (let i = 0; i < addonsCount; i++) {
+  const raw = paymentIntent.metadata[`addon_${i}`];
+  if (!raw) continue;
   try {
-    const raw = JSON.parse(paymentIntent.metadata.addons);
-    parsedAddons = Array.isArray(raw) ? raw : [];
+    const item = JSON.parse(raw);
+    if (item && typeof item === 'object') parsedAddons.push(item);
   } catch (_) {
-    parsedAddons = [];
+    // skip malformed entry, continue with the rest
   }
 }
 
