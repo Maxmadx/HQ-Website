@@ -4,7 +4,6 @@ import Layout from './layouts/Layout';
 import Home from './pages/Home';
 import AboutUs from './pages/AboutUs';
 import CaptainQ from './pages/CaptainQ';
-import AircraftSales from './pages/AircraftSales';
 import Training from './pages/Training';
 import TrainingFAQ from './pages/TrainingFAQ';
 import PPL from './pages/PPL';
@@ -113,6 +112,7 @@ import AdminAnalytics from './pages/admin/AdminAnalytics';
 import AdminWallOfCool from './pages/admin/AdminWallOfCool';
 import AdminReviews from './pages/admin/AdminReviews';
 import AdminFaqs from './pages/admin/AdminFaqs';
+import AdminWhereWhen from './pages/admin/AdminWhereWhen';
 import AdminEditImagesMode from './pages/admin/AdminEditImagesMode';
 import AdminEditTextMode from './pages/admin/AdminEditTextMode';
 import AdminComparables from './pages/admin/AdminComparables';
@@ -248,6 +248,7 @@ function App() {
         <Route path="/admin/wall-of-cool" element={<AdminRoute><AdminWallOfCool /></AdminRoute>} />
         <Route path="/admin/reviews" element={<AdminRoute><AdminReviews /></AdminRoute>} />
         <Route path="/admin/faqs" element={<AdminRoute><AdminFaqs /></AdminRoute>} />
+        <Route path="/admin/where-when" element={<AdminRoute><AdminWhereWhen /></AdminRoute>} />
 
         <Route path="/training/commercial" element={<CPL />} />
         <Route path="/training/advanced" element={<AdvancedTraining />} />
@@ -263,9 +264,6 @@ function App() {
           {/* About Us Routes */}
           <Route path="about-us" element={<AboutUs />} />
           <Route path="about-us/captain-q" element={<CaptainQ />} />
-
-          {/* Aircraft Sales */}
-          <Route path="aircraft-sales" element={<AircraftSales />} />
 
           {/* Training Routes */}
           <Route path="training" element={<Training />} />
