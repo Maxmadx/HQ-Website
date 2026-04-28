@@ -193,11 +193,13 @@ async function createPaymentIntent({
 
   const amount = flightAmount + addonsAmount;
 
-  // Stripe metadata values are capped at 500 chars. Try the rich form first,
-  // fall back to a compact form keyed on itemId+qty.
-  const richAddons = JSON.stringify(lineItems);
-  const compactAddons = JSON.stringify(lineItems.map((l) => ({ id: l.itemId, q: l.qty })));
-  const addonsMeta = richAddons.length <= 500 ? richAddons : compactAddons;
+  // Stripe metadata caps each value at 500 chars but allows up to 50 keys.
+  // Encode each add-on as its own key so the rich shape always fits, even
+  // for large baskets. recordBooking re-assembles via addonsCount + addon_N.
+  const addonKeyEntries = {};
+  lineItems.forEach((item, i) => {
+    addonKeyEntries[`addon_${i}`] = JSON.stringify(item);
+  });
 
   const paymentIntent = await getStripe().paymentIntents.create({
     amount,
@@ -213,7 +215,8 @@ async function createPaymentIntent({
       wantsVoucher: wantsVoucher ? 'true' : 'false',
       voucherLocation: voucherLocation || '',
       voucherMessage: voucherMessage || '',
-      addons: lineItems.length > 0 ? addonsMeta : '',
+      addonsCount: String(lineItems.length),
+      ...addonKeyEntries,
       fulfilment: resolvedFulfilment || '',
       shippingLine1: resolvedAddress ? resolvedAddress.line1 : '',
       shippingLine2: resolvedAddress ? resolvedAddress.line2 : '',
