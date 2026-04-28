@@ -227,9 +227,6 @@ export default function SelfFlyHire() {
   const fleetTopBodyRef = useRef(null);
   const fleetSpecsRef = useRef(null);
   const DEST_PAGES = Math.ceil(DESTINATIONS.length / 4); // 2 rows × 2 cols per view = 4 cards per page
-  const [eventsPage, setEventsPage] = useState(0);
-  const eventsGridRef = useRef(null);
-  const EVENTS_PAGES = Math.ceil(EVENTS.length / 4); // 4 cards per mobile page (2 rows × 2 cols)
   const { faqs } = useFaqs('sfh', { visibleOnly: true });
   const [form, setForm] = useState({ name: '', email: '', phone: '', aircraft: '', dates: '', message: '' });
   const [formStatus, setFormStatus] = useState(null);
@@ -614,96 +611,53 @@ export default function SelfFlyHire() {
         </div>
       </section>
 
-      {/* ── Our Partners ────────────────────────────────────────── */}
-      <section className="sfh2-partners" data-cms-section="sfh-partners">
-        <div className="sfh2-partners__inner">
+      {/* ── Where & When ──────────────────────────────────────── */}
+      <section className="sfh2-where" data-cms-section="sfh-where">
+        <div className="sfh2-where__inner">
           <motion.div
-            className="sfh2-partners__header"
+            className="sfh2-where__header"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
-            <span className="sfh2-pre-label">Trusted By</span>
-            <h2 className="sfh2-section-heading">Our Partners</h2>
-            <p className="sfh2-partners__intro">
-              We work with country estates, sporting grounds and destinations who welcome arrivals by helicopter.
+            <span className="sfh2-pre-label">Off-Airfield</span>
+            <h2 className="sfh2-section-heading">Where &amp; When</h2>
+            <p className="sfh2-where__intro">
+              Partners we work with and the calendar dates we fly clients to.
             </p>
           </motion.div>
 
-          <div className="sfh2-partners__grid">
-            {PARTNERS.map((partner, i) => (
-              <motion.div
-                key={partner.name}
-                className="sfh2-partners__card"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.05 }}
-                transition={{ duration: 0.3, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <div className="sfh2-partners__card-region">{partner.category}</div>
-                <div className="sfh2-partners__card-name">{partner.name}</div>
-                <div className="sfh2-partners__card-time">{partner.location}</div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+          <div className="sfh2-where__split">
+            <div className="sfh2-where__col">
+              <p className="sfh2-where__sub-label">Destination Partners</p>
+              <div className="sfh2-where__scroll sfh2-where__cards">
+                {PARTNERS.map((partner) => (
+                  <div key={partner.name} className="sfh2-where__card">
+                    <span className="sfh2-where__card-cat">{partner.category}</span>
+                    <span className="sfh2-where__card-name">{partner.name}</span>
+                    <span className="sfh2-where__card-loc">{partner.location}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-      {/* ── Events ──────────────────────────────────────────────── */}
-      <section className="sfh2-events" data-cms-section="sfh-events">
-        <div className="sfh2-events__inner">
-          <motion.div
-            className="sfh2-events__header"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <span className="sfh2-pre-label">The Season</span>
-            <h2 className="sfh2-section-heading">Fly to the Calendar</h2>
-            <p className="sfh2-events__intro">
-              From the Festival to the Regatta, we fly clients straight to the day.
-            </p>
-          </motion.div>
+            <div className="sfh2-where__divider" aria-hidden="true" />
 
-          <div
-            className="sfh2-events__grid"
-            ref={eventsGridRef}
-            onScroll={() => {
-              const el = eventsGridRef.current;
-              if (!el) return;
-              setEventsPage(Math.round(el.scrollLeft / el.clientWidth));
-            }}
-          >
-            {EVENTS.map((event, i) => (
-              <motion.div
-                key={event.name}
-                className="sfh2-events__card"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.05 }}
-                transition={{ duration: 0.3, delay: (i % 4) * 0.05, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <div className="sfh2-events__card-region">{event.region}</div>
-                <div className="sfh2-events__card-name">{event.name}</div>
-                <div className="sfh2-events__card-time">{event.month}</div>
-              </motion.div>
-            ))}
-          </div>
-          <div className="sfh2-events__dots">
-            {Array.from({ length: EVENTS_PAGES }).map((_, i) => (
-              <span
-                key={i}
-                className={`sfh2-events__dot${eventsPage === i ? ' sfh2-events__dot--active' : ''}`}
-                onClick={() => {
-                  eventsGridRef.current?.scrollTo({ left: i * eventsGridRef.current.clientWidth, behavior: 'smooth' });
-                }}
-              />
-            ))}
+            <div className="sfh2-where__col">
+              <p className="sfh2-where__sub-label">Event Partners</p>
+              <div className="sfh2-where__scroll sfh2-where__events">
+                {EVENTS.map((event) => (
+                  <div key={event.name} className="sfh2-where__events-row">
+                    <div className="sfh2-where__events-month">{event.month}</div>
+                    <div className="sfh2-where__events-name">{event.name}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
-          <p className="sfh2-events__footer">
+          <p className="sfh2-where__footer">
             Plus the rest of the calendar — let us know your day.
           </p>
         </div>
@@ -1575,126 +1529,125 @@ export default function SelfFlyHire() {
           color: #9ca3af;
         }
 
-        /* ── Partners ──────────────────────────────────────────── */
-        .sfh2-partners {
+        /* ── Where & When ─────────────────────────────────────── */
+        .sfh2-where {
           background: #fff;
-          padding: 5rem 2rem;
+          padding: 3rem 2rem;
           border-top: 1px solid #e8e6e2;
         }
-        .sfh2-partners__inner {
+        .sfh2-where__inner {
           max-width: 1200px;
           margin: 0 auto;
         }
-        .sfh2-partners__header {
+        .sfh2-where__header {
           max-width: 600px;
-          margin-bottom: 3rem;
+          margin-bottom: 2.5rem;
         }
-        .sfh2-partners__intro {
+        .sfh2-where__intro {
           font-size: 0.95rem;
           line-height: 1.7;
           color: #555;
-          margin: 0 0 0.5rem;
+          margin: 0;
         }
-        .sfh2-partners__grid {
+        .sfh2-where__split {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1px;
+          grid-template-columns: 1fr 1px 2fr;
+          column-gap: 2.5rem;
+        }
+        .sfh2-where__divider {
           background: #e8e6e2;
-          border: 1px solid #e8e6e2;
         }
-        .sfh2-partners__card {
-          background: #fff;
-          padding: 1.5rem;
-          display: flex;
-          flex-direction: column;
-          gap: 0.35rem;
-          transition: background 0.2s;
-        }
-        .sfh2-partners__card:hover {
-          background: #faf9f6;
-        }
-        .sfh2-partners__card-region {
+        .sfh2-where__sub-label {
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.6rem;
+          letter-spacing: 0.22em;
           text-transform: uppercase;
-          letter-spacing: 0.12em;
           color: #9ca3af;
+          margin: 0 0 0.85rem;
         }
-        .sfh2-partners__card-name {
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 1rem;
-          font-weight: 600;
-          color: #1a1a1a;
+        .sfh2-where__scroll {
+          max-height: 420px;
+          overflow-y: auto;
+          overflow-x: hidden;
+          padding-right: 0.5rem;
+          scrollbar-width: thin;
+          scrollbar-color: #ccc8c1 transparent;
         }
-        .sfh2-partners__card-time {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.85rem;
-          color: #666;
-          margin-top: auto;
-          padding-top: 0.5rem;
+        .sfh2-where__scroll::-webkit-scrollbar {
+          width: 6px;
         }
-
-        /* ── Events ────────────────────────────────────────────── */
-        .sfh2-events {
+        .sfh2-where__scroll::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .sfh2-where__scroll::-webkit-scrollbar-thumb {
+          background: #ccc8c1;
+          border-radius: 3px;
+          transition: background 0.2s;
+        }
+        .sfh2-where__scroll::-webkit-scrollbar-thumb:hover {
+          background: #1a1a1a;
+        }
+        .sfh2-where__cards {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+        .sfh2-where__card {
+          background: #fff;
+          border: 1px solid #e8e6e2;
+          padding: 0.85rem 1rem;
+          border-radius: 6px;
+          transition: background 0.15s;
+          display: flex;
+          flex-direction: column;
+        }
+        .sfh2-where__card:hover {
           background: #faf9f6;
-          padding: 5rem 2rem;
         }
-        .sfh2-events__inner {
-          max-width: 1200px;
-          margin: 0 auto;
+        .sfh2-where__card-cat {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.55rem;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: #9ca3af;
+          margin-bottom: 0.2rem;
         }
-        .sfh2-events__header {
-          max-width: 600px;
-          margin-bottom: 3rem;
-        }
-        .sfh2-events__intro {
+        .sfh2-where__card-name {
+          font-family: 'Space Grotesk', sans-serif;
           font-size: 0.95rem;
-          line-height: 1.7;
-          color: #555;
-          margin: 0 0 0.5rem;
-        }
-        .sfh2-events__grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 1px;
-          background: #e8e6e2;
-          border: 1px solid #e8e6e2;
-        }
-        .sfh2-events__card {
-          background: #fff;
-          padding: 1.5rem;
-          display: flex;
-          flex-direction: column;
-          gap: 0.35rem;
-          transition: background 0.2s;
-        }
-        .sfh2-events__card:hover {
-          background: #faf9f6;
-        }
-        .sfh2-events__card-region {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.6rem;
-          text-transform: uppercase;
-          letter-spacing: 0.12em;
-          color: #9ca3af;
-        }
-        .sfh2-events__card-name {
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 1rem;
           font-weight: 600;
           color: #1a1a1a;
         }
-        .sfh2-events__card-time {
+        .sfh2-where__card-loc {
           font-family: 'Share Tech Mono', monospace;
-          font-size: 0.85rem;
+          font-size: 0.65rem;
+          letter-spacing: 0.05em;
           color: #666;
-          margin-top: auto;
-          padding-top: 0.5rem;
+          margin-top: 0.15rem;
         }
-        .sfh2-events__dots {
-          display: none;
+        .sfh2-where__events-row {
+          display: grid;
+          grid-template-columns: 90px 1fr;
+          column-gap: 1.5rem;
+          padding: 0.55rem 0.85rem;
+          align-items: center;
         }
-        .sfh2-events__footer {
+        .sfh2-where__events-row:nth-child(odd) {
+          background: #faf9f6;
+        }
+        .sfh2-where__events-month {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.72rem;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: #666;
+        }
+        .sfh2-where__events-name {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.95rem;
+          color: #1a1a1a;
+        }
+        .sfh2-where__footer {
           text-align: center;
           margin: 2.5rem 0 0;
           font-family: 'Share Tech Mono', monospace;
@@ -2119,9 +2072,6 @@ export default function SelfFlyHire() {
           .sfh2-destinations__grid {
             grid-template-columns: repeat(3, 1fr);
           }
-          .sfh2-events__grid {
-            grid-template-columns: repeat(3, 1fr);
-          }
         }
 
         @media (max-width: 768px) {
@@ -2303,45 +2253,16 @@ export default function SelfFlyHire() {
           .sfh2-destinations__dots {
             display: flex;
           }
-          /* Partners: stack to single column on mobile (only 3 cards) */
-          .sfh2-partners__grid {
+          /* Where & When: stack columns on mobile */
+          .sfh2-where__split {
             grid-template-columns: 1fr;
+            row-gap: 2rem;
           }
-
-          /* Events: mirror destinations mobile scroll/snap pattern */
-          .sfh2-events__grid {
-            grid-template-columns: unset;
-            grid-template-rows: repeat(2, auto);
-            grid-auto-flow: column;
-            grid-auto-columns: 50%;
-            overflow-x: auto;
-            overflow-y: hidden;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            scroll-snap-type: x mandatory;
-          }
-          .sfh2-events__grid::-webkit-scrollbar {
+          .sfh2-where__divider {
             display: none;
           }
-          .sfh2-events__card {
-            scroll-snap-align: start;
-          }
-          .sfh2-events__dots {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            padding-top: 14px;
-          }
-          .sfh2-events__dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #ccc8c1;
-            transition: background 0.2s;
-            cursor: pointer;
-          }
-          .sfh2-events__dot--active {
-            background: #1a1a1a;
+          .sfh2-where__scroll {
+            max-height: 320px;
           }
           .sfh2-enquiry__row {
             grid-template-columns: 1fr;
