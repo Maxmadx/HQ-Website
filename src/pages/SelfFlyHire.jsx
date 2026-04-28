@@ -170,13 +170,13 @@ const PARTNERS = [
 ];
 
 const EVENTS = [
-  { region: 'Berkshire',       name: 'Royal Ascot',                month: 'June' },
-  { region: 'Oxfordshire',     name: 'Henley Royal Regatta',       month: 'July' },
-  { region: 'West Sussex',     name: 'Goodwood Festival of Speed', month: 'July' },
-  { region: 'West Sussex',     name: 'Glorious Goodwood',          month: 'August' },
-  { region: 'Gloucestershire', name: 'Cheltenham Festival',        month: 'March' },
-  { region: 'Merseyside',      name: 'Grand National (Aintree)',   month: 'April' },
-  { region: 'Surrey',          name: 'Epsom Derby',                month: 'June' },
+  { region: 'Gloucestershire', name: 'Cheltenham Festival',        month: '10–13 Mar' },
+  { region: 'Merseyside',      name: 'Grand National (Aintree)',   month: '9–11 Apr' },
+  { region: 'Surrey',          name: 'Epsom Derby',                month: '5–6 Jun' },
+  { region: 'Berkshire',       name: 'Royal Ascot',                month: '16–20 Jun' },
+  { region: 'Oxfordshire',     name: 'Henley Royal Regatta',       month: '1–5 Jul' },
+  { region: 'West Sussex',     name: 'Goodwood Festival of Speed', month: '9–12 Jul' },
+  { region: 'West Sussex',     name: 'Glorious Goodwood',          month: '28 Jul–1 Aug' },
   { region: 'Suffolk',         name: 'Newmarket Racing',           month: 'May–Oct' },
   { region: 'Yorkshire',       name: 'York Racecourse',            month: 'May–Oct' },
 ];
@@ -1484,7 +1484,7 @@ export default function SelfFlyHire() {
         }
         .sfh2-where__events-row {
           display: grid;
-          grid-template-columns: 90px 1fr;
+          grid-template-columns: 110px 1fr;
           column-gap: 1.5rem;
           padding: 0.55rem 0.85rem;
           align-items: center;
