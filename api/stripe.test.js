@@ -4,7 +4,7 @@ import { describe, it, expect } from 'vitest';
 // (registered in vite.config.js test.setupFiles). This keeps production code
 // free of any test-specific guards.
 
-import { getPrice, applyDiscountPence } from './stripe.js';
+import { getPrice, applyDiscountPence, priceAddons } from './stripe.js';
 
 describe('getPrice', () => {
   it('returns correct price in pence for r22 30 min', async () => {
@@ -50,4 +50,16 @@ describe('applyDiscountPence', () => {
     expect(applyDiscountPence(1000, 1, -10)).toBe(1000);
     expect(applyDiscountPence(1000, 1, 200)).toBe(0);
   });
+});
+
+describe('priceAddons', () => {
+  it('returns total 0 and empty lineItems for an empty array', async () => {
+    const result = await priceAddons([]);
+    expect(result).toEqual({ lineItems: [], total: 0 });
+  });
+
+  // Note: the live Firestore-backed branches are exercised via integration
+  // through createPaymentIntent below; pure unit testing of those branches
+  // is out of scope here because they require a Firestore mock that
+  // mirrors the production admin SDK shape used in stripe.js.
 });

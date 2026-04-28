@@ -17,6 +17,57 @@ function applyDiscountPence(pricePence, qty, discountPct) {
   return Math.round(Number(pricePence) * Number(qty) * (1 - pct / 100));
 }
 
+async function priceAddons(addons) {
+  if (!Array.isArray(addons) || addons.length === 0) {
+    return { lineItems: [], total: 0 };
+  }
+
+  const lineItems = [];
+  let total = 0;
+
+  for (const entry of addons) {
+    const itemId = entry && entry.itemId;
+    const qty = Number(entry && entry.qty);
+
+    if (!itemId || !Number.isInteger(qty) || qty < 1 || qty > 10) {
+      const err = new Error(`Invalid add-on entry: ${JSON.stringify(entry)}`);
+      err.statusCode = 400;
+      throw err;
+    }
+
+    const snap = await admin.firestore().collection('misc_items').doc(itemId).get();
+    if (!snap.exists) {
+      const err = new Error(`Add-on not found: ${itemId}`);
+      err.statusCode = 400;
+      throw err;
+    }
+    const data = snap.data();
+    if (data.discoveryAddon !== true) {
+      const err = new Error(`Add-on is no longer available: ${itemId}`);
+      err.statusCode = 400;
+      throw err;
+    }
+    if (data.priceType !== 'fixed' || !(Number(data.price) > 0)) {
+      const err = new Error(`Add-on misconfigured: ${itemId}`);
+      err.statusCode = 400;
+      throw err;
+    }
+
+    const lineTotal = applyDiscountPence(data.price, qty, data.discoveryAddonDiscountPct);
+    total += lineTotal;
+    lineItems.push({
+      itemId,
+      name: data.name,
+      qty,
+      unitPrice: data.price,
+      discountPct: Number(data.discoveryAddonDiscountPct) || 0,
+      lineTotal,
+    });
+  }
+
+  return { lineItems, total };
+}
+
 // Lazy-initialise SMTP transporter — reuse the same connection pool across calls.
 let _transporter = null;
 function getTransporter() {
@@ -722,4 +773,4 @@ async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmai
   return paymentIntent;
 }
 
-module.exports = { getPrice, applyDiscountPence, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking };
+module.exports = { getPrice, applyDiscountPence, priceAddons, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking };
