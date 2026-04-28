@@ -150,13 +150,54 @@ async function getPrice(aircraft, duration) {
  * Creates a Stripe PaymentIntent with a price read from Firestore.
  * Throws with statusCode 400 if aircraft/duration is invalid.
  */
-async function createPaymentIntent({ aircraft, duration, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage }) {
-  const amount = await getPrice(aircraft, duration);
-  if (amount === null) {
+async function createPaymentIntent({
+  aircraft, duration, customerName, customerEmail, customerPhone,
+  wantsVoucher, voucherLocation, voucherMessage,
+  addons = [], fulfilment, shippingAddress,
+}) {
+  const flightAmount = await getPrice(aircraft, duration);
+  if (flightAmount === null) {
     const err = new Error(`Invalid aircraft or duration: ${aircraft} / ${duration}`);
     err.statusCode = 400;
     throw err;
   }
+
+  const { lineItems, total: addonsAmount } = await priceAddons(addons);
+
+  // Fulfilment is only relevant when there are add-ons. Voucher buyers
+  // must pick delivery — recipient redeems the flight later.
+  let resolvedFulfilment = null;
+  let resolvedAddress = null;
+  if (lineItems.length > 0) {
+    resolvedFulfilment = wantsVoucher ? 'delivery' : (fulfilment || 'collect');
+    if (resolvedFulfilment !== 'collect' && resolvedFulfilment !== 'delivery') {
+      const err = new Error(`Invalid fulfilment: ${fulfilment}`);
+      err.statusCode = 400;
+      throw err;
+    }
+    if (resolvedFulfilment === 'delivery') {
+      const a = shippingAddress || {};
+      if (!a.line1 || !a.city || !a.postcode) {
+        const err = new Error('Delivery address is required (line1, city, postcode)');
+        err.statusCode = 400;
+        throw err;
+      }
+      resolvedAddress = {
+        line1: String(a.line1),
+        line2: String(a.line2 || ''),
+        city: String(a.city),
+        postcode: String(a.postcode),
+      };
+    }
+  }
+
+  const amount = flightAmount + addonsAmount;
+
+  // Stripe metadata values are capped at 500 chars. Try the rich form first,
+  // fall back to a compact form keyed on itemId+qty.
+  const richAddons = JSON.stringify(lineItems);
+  const compactAddons = JSON.stringify(lineItems.map((l) => ({ id: l.itemId, q: l.qty })));
+  const addonsMeta = richAddons.length <= 500 ? richAddons : compactAddons;
 
   const paymentIntent = await getStripe().paymentIntents.create({
     amount,
@@ -172,6 +213,12 @@ async function createPaymentIntent({ aircraft, duration, customerName, customerE
       wantsVoucher: wantsVoucher ? 'true' : 'false',
       voucherLocation: voucherLocation || '',
       voucherMessage: voucherMessage || '',
+      addons: lineItems.length > 0 ? addonsMeta : '',
+      fulfilment: resolvedFulfilment || '',
+      shippingLine1: resolvedAddress ? resolvedAddress.line1 : '',
+      shippingLine2: resolvedAddress ? resolvedAddress.line2 : '',
+      shippingCity: resolvedAddress ? resolvedAddress.city : '',
+      shippingPostcode: resolvedAddress ? resolvedAddress.postcode : '',
     },
   });
 
