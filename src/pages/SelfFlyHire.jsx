@@ -1634,6 +1634,76 @@ export default function SelfFlyHire() {
           padding-top: 0.5rem;
         }
 
+        /* ── Events ────────────────────────────────────────────── */
+        .sfh2-events {
+          background: #faf9f6;
+          padding: 5rem 2rem;
+        }
+        .sfh2-events__inner {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+        .sfh2-events__header {
+          max-width: 600px;
+          margin-bottom: 3rem;
+        }
+        .sfh2-events__intro {
+          font-size: 0.95rem;
+          line-height: 1.7;
+          color: #555;
+          margin: 0 0 0.5rem;
+        }
+        .sfh2-events__grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 1px;
+          background: #e8e6e2;
+          border: 1px solid #e8e6e2;
+        }
+        .sfh2-events__card {
+          background: #fff;
+          padding: 1.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
+          transition: background 0.2s;
+        }
+        .sfh2-events__card:hover {
+          background: #faf9f6;
+        }
+        .sfh2-events__card-region {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.6rem;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          color: #9ca3af;
+        }
+        .sfh2-events__card-name {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1rem;
+          font-weight: 600;
+          color: #1a1a1a;
+        }
+        .sfh2-events__card-time {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.85rem;
+          color: #666;
+          margin-top: auto;
+          padding-top: 0.5rem;
+        }
+        .sfh2-events__dots {
+          display: none;
+        }
+        .sfh2-events__footer {
+          text-align: center;
+          margin: 2.5rem 0 0;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.7rem;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          color: #9ca3af;
+        }
+
         /* ── Process ───────────────────────────────────────────── */
         .sfh2-process {
           background: #fff;
