@@ -2,7 +2,7 @@
 
 const admin = require('firebase-admin');
 
-if (!admin.apps.length && process.env.FIREBASE_PROJECT_ID) {
+if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
       projectId: process.env.FIREBASE_PROJECT_ID,
