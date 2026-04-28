@@ -709,6 +709,9 @@ export default function SelfFlyHire() {
         </div>
       </section>
 
+      {/* ── Community Wall (drop-in component) ──────────────────── */}
+      <WallOfCoolGr11 />
+
       {/* ── Enquiry Form ───────────────────────────────────────── */}
       <section className="sfh2-enquiry" id="enquire">
         <div className="sfh2-enquiry__inner">
