@@ -650,6 +650,65 @@ export default function SelfFlyHire() {
         </div>
       </section>
 
+      {/* ── Events ──────────────────────────────────────────────── */}
+      <section className="sfh2-events" data-cms-section="sfh-events">
+        <div className="sfh2-events__inner">
+          <motion.div
+            className="sfh2-events__header"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <span className="sfh2-pre-label">The Season</span>
+            <h2 className="sfh2-section-heading">Fly to the Calendar</h2>
+            <p className="sfh2-events__intro">
+              From the Festival to the Regatta, we fly clients straight to the day.
+            </p>
+          </motion.div>
+
+          <div
+            className="sfh2-events__grid"
+            ref={eventsGridRef}
+            onScroll={() => {
+              const el = eventsGridRef.current;
+              if (!el) return;
+              setEventsPage(Math.round(el.scrollLeft / el.clientWidth));
+            }}
+          >
+            {EVENTS.map((event, i) => (
+              <motion.div
+                key={event.name}
+                className="sfh2-events__card"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.05 }}
+                transition={{ duration: 0.3, delay: (i % 4) * 0.05, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div className="sfh2-events__card-region">{event.region}</div>
+                <div className="sfh2-events__card-name">{event.name}</div>
+                <div className="sfh2-events__card-time">{event.month}</div>
+              </motion.div>
+            ))}
+          </div>
+          <div className="sfh2-events__dots">
+            {Array.from({ length: EVENTS_PAGES }).map((_, i) => (
+              <span
+                key={i}
+                className={`sfh2-events__dot${eventsPage === i ? ' sfh2-events__dot--active' : ''}`}
+                onClick={() => {
+                  eventsGridRef.current?.scrollTo({ left: i * eventsGridRef.current.clientWidth, behavior: 'smooth' });
+                }}
+              />
+            ))}
+          </div>
+
+          <p className="sfh2-events__footer">
+            Plus the rest of the calendar — let us know your day.
+          </p>
+        </div>
+      </section>
+
       {/* ── Enquiry Form ───────────────────────────────────────── */}
       <section className="sfh2-enquiry" id="enquire">
         <div className="sfh2-enquiry__inner">
