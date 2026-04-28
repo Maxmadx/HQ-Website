@@ -2119,6 +2119,9 @@ export default function SelfFlyHire() {
           .sfh2-destinations__grid {
             grid-template-columns: repeat(3, 1fr);
           }
+          .sfh2-events__grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
         }
 
         @media (max-width: 768px) {
