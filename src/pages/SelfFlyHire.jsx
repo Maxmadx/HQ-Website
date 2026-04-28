@@ -163,21 +163,6 @@ const FLEET = [
   },
 ];
 
-const DESTINATIONS = [
-  { name: 'Goodwood',        time: '25 min',   region: 'South England'   },
-  { name: 'Oxford',          time: '25 min',   region: 'South England'   },
-  { name: 'Cambridge',       time: '30 min',   region: 'East England'    },
-  { name: 'Brighton',        time: '30 min',   region: 'South England'   },
-  { name: 'Cotswolds',       time: '35 min',   region: 'South England'   },
-  { name: 'Silverstone',     time: '35 min',   region: 'Midlands'        },
-  { name: 'Channel Islands', time: '1h 15m',   region: 'Channel Islands' },
-  { name: 'Le Touquet',      time: '45 min',   region: 'France'          },
-  { name: 'Lake District',   time: '1h 50m',   region: 'North England'   },
-  { name: 'Paris',           time: '1h 30m',   region: 'France'          },
-  { name: 'Amsterdam',       time: '1h 45m',   region: 'Europe'          },
-  { name: 'Edinburgh',       time: '3h',        region: 'Scotland'        },
-];
-
 const PARTNERS = [
   { category: 'Shooting Ground', name: 'Holland & Holland', location: 'Northwood' },
   { category: 'Restaurant',      name: 'The Hut',           location: 'Isle of Wight' },
@@ -219,14 +204,11 @@ export default function SelfFlyHire() {
   const aircraftDropdownRef = useRef(null);
   const [openFaq, setOpenFaq] = useState(null);
   const [showAllFaqs, setShowAllFaqs] = useState(false);
-  const [destPage, setDestPage] = useState(0);
-  const destGridRef = useRef(null);
   const [pricingNotesPage, setPricingNotesPage] = useState(0);
   const pricingNotesGridRef = useRef(null);
   const fleetImgRef = useRef(null);
   const fleetTopBodyRef = useRef(null);
   const fleetSpecsRef = useRef(null);
-  const DEST_PAGES = Math.ceil(DESTINATIONS.length / 4); // 2 rows × 2 cols per view = 4 cards per page
   const { faqs } = useFaqs('sfh', { visibleOnly: true });
   const [form, setForm] = useState({ name: '', email: '', phone: '', aircraft: '', dates: '', message: '' });
   const [formStatus, setFormStatus] = useState(null);
@@ -564,50 +546,10 @@ export default function SelfFlyHire() {
             <span className="sfh2-pre-label">Where You Can Go</span>
             <h2 className="sfh2-section-heading">Where Will You Go?</h2>
             <p className="sfh2-destinations__intro">
-              The UK and beyond are on your doorstep. Below is just a sample of where our
-              pilots fly. If it has a landing site, you can get there.
+              The UK and beyond are on your doorstep. From country estates to the
+              calendar's biggest fixtures, if it has a landing site, you can get there.
             </p>
           </motion.div>
-
-          <div
-            className="sfh2-destinations__grid"
-            ref={destGridRef}
-            onScroll={() => {
-              const el = destGridRef.current;
-              if (!el) return;
-              setDestPage(Math.round(el.scrollLeft / el.clientWidth));
-            }}
-          >
-            {DESTINATIONS.map((dest, i) => (
-              <motion.div
-                key={dest.name}
-                className="sfh2-destinations__card"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.05 }}
-                transition={{ duration: 0.3, delay: (i % 4) * 0.05, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <div className="sfh2-destinations__card-region">{dest.region}</div>
-                <div className="sfh2-destinations__card-name">{dest.name}</div>
-                <div className="sfh2-destinations__card-time">{dest.time}</div>
-              </motion.div>
-            ))}
-          </div>
-          <div className="sfh2-destinations__dots">
-            {Array.from({ length: DEST_PAGES }).map((_, i) => (
-              <span
-                key={i}
-                className={`sfh2-destinations__dot${destPage === i ? ' sfh2-destinations__dot--active' : ''}`}
-                onClick={() => {
-                  destGridRef.current?.scrollTo({ left: i * destGridRef.current.clientWidth, behavior: 'smooth' });
-                }}
-              />
-            ))}
-          </div>
-
-          <p className="sfh2-destinations__footer">
-            Plus thousands more — you pick the destination.
-          </p>
 
           <div className="sfh2-where__split" data-cms-section="sfh-where">
             <div className="sfh2-where__col">
@@ -645,6 +587,9 @@ export default function SelfFlyHire() {
                   </div>
                 ))}
               </div>
+              <p className="sfh2-where__cal-note">
+                Calendar kept current — talk to HQ for slot availability or to share a flight already going.
+              </p>
             </div>
           </div>
         </div>
@@ -1457,73 +1402,12 @@ export default function SelfFlyHire() {
           color: #555;
           margin: 0 0 0.5rem;
         }
-        .sfh2-destinations__base-note {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.7rem;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          color: #9ca3af;
-          margin: 0;
-        }
-        .sfh2-destinations__grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 1px;
-          background: #e8e6e2;
-          border: 1px solid #e8e6e2;
-        }
-        .sfh2-destinations__card {
-          background: #fff;
-          padding: 1.5rem;
-          display: flex;
-          flex-direction: column;
-          gap: 0.35rem;
-          transition: background 0.2s;
-        }
-        .sfh2-destinations__card:hover {
-          background: #faf9f6;
-        }
-        .sfh2-destinations__card-region {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.6rem;
-          text-transform: uppercase;
-          letter-spacing: 0.12em;
-          color: #9ca3af;
-        }
-        .sfh2-destinations__card-name {
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 1rem;
-          font-weight: 600;
-          color: #1a1a1a;
-        }
-        .sfh2-destinations__card-time {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.85rem;
-          color: #666;
-          margin-top: auto;
-          padding-top: 0.5rem;
-        }
-        .sfh2-destinations__dots {
-          display: none;
-        }
-        .sfh2-destinations__footer {
-          text-align: center;
-          margin: 2.5rem 0 0;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.7rem;
-          text-transform: uppercase;
-          letter-spacing: 0.12em;
-          color: #9ca3af;
-        }
 
         /* ── Where & When (lives inside .sfh2-destinations__inner) ─── */
         .sfh2-where__split {
           display: grid;
           grid-template-columns: 1fr 1px 2fr;
           column-gap: 2.5rem;
-          margin-top: 4rem;
-          padding-top: 3.5rem;
-          border-top: 1px solid #e8e6e2;
         }
         .sfh2-where__divider {
           background: #e8e6e2;
@@ -1619,6 +1503,15 @@ export default function SelfFlyHire() {
           font-family: 'Space Grotesk', sans-serif;
           font-size: 0.95rem;
           color: #1a1a1a;
+        }
+        .sfh2-where__cal-note {
+          margin: 1rem 0 0;
+          padding-top: 0.85rem;
+          border-top: 1px solid #f3f1ed;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.78rem;
+          line-height: 1.5;
+          color: #666;
         }
 
         /* ── Process ───────────────────────────────────────────── */
@@ -2033,9 +1926,6 @@ export default function SelfFlyHire() {
             width: 100%;
             height: auto;
           }
-          .sfh2-destinations__grid {
-            grid-template-columns: repeat(3, 1fr);
-          }
         }
 
         @media (max-width: 768px) {
@@ -2180,49 +2070,10 @@ export default function SelfFlyHire() {
           .sfh2-pricing-notes__dot--active {
             background: #1a1a1a;
           }
-          .sfh2-destinations__grid {
-            grid-template-columns: unset;
-            grid-template-rows: repeat(2, auto);
-            grid-auto-flow: column;
-            grid-auto-columns: 50%;
-            overflow-x: auto;
-            overflow-y: hidden;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            scroll-snap-type: x mandatory;
-          }
-          .sfh2-destinations__grid::-webkit-scrollbar {
-            display: none;
-          }
-          .sfh2-destinations__card {
-            scroll-snap-align: start;
-          }
-          .sfh2-destinations__dots {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            padding-top: 14px;
-          }
-          .sfh2-destinations__dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #ccc8c1;
-            transition: background 0.2s;
-            cursor: pointer;
-          }
-          .sfh2-destinations__dot--active {
-            background: #1a1a1a;
-          }
-          .sfh2-destinations__dots {
-            display: flex;
-          }
-          /* Where & When: stack columns on mobile, tighter top spacing */
+          /* Where & When: stack columns on mobile */
           .sfh2-where__split {
             grid-template-columns: 1fr;
             row-gap: 2rem;
-            margin-top: 2.5rem;
-            padding-top: 2.5rem;
           }
           .sfh2-where__divider {
             display: none;
