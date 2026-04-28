@@ -242,6 +242,20 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // SFH Where & When — public read, editor+ write (admin API also writes via Admin SDK which bypasses these rules)
+    match /sfh_partners/{partnerId} {
+      allow read: if true;
+      allow create: if isEditor();
+      allow update: if isEditor();
+      allow delete: if isAdmin();
+    }
+    match /sfh_events/{eventId} {
+      allow read: if true;
+      allow create: if isEditor();
+      allow update: if isEditor();
+      allow delete: if isAdmin();
+    }
+
     // Pricing — public read, authenticated write (admin panel guards the UI)
     match /pricing/{id} {
       allow read: if true;
