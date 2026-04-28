@@ -608,27 +608,8 @@ export default function SelfFlyHire() {
           <p className="sfh2-destinations__footer">
             Plus thousands more — you pick the destination.
           </p>
-        </div>
-      </section>
 
-      {/* ── Where & When ──────────────────────────────────────── */}
-      <section className="sfh2-where" data-cms-section="sfh-where">
-        <div className="sfh2-where__inner">
-          <motion.div
-            className="sfh2-where__header"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <span className="sfh2-pre-label">Off-Airfield</span>
-            <h2 className="sfh2-section-heading">Where &amp; When</h2>
-            <p className="sfh2-where__intro">
-              Partners we work with and the calendar dates we fly clients to.
-            </p>
-          </motion.div>
-
-          <div className="sfh2-where__split">
+          <div className="sfh2-where__split" data-cms-section="sfh-where">
             <div className="sfh2-where__col">
               <h3 className="sfh2-where__sub-label">Destination Partners</h3>
               <div
@@ -666,10 +647,6 @@ export default function SelfFlyHire() {
               </div>
             </div>
           </div>
-
-          <p className="sfh2-where__footer">
-            Plus the rest of the calendar — let us know your day.
-          </p>
         </div>
       </section>
 
@@ -1539,30 +1516,14 @@ export default function SelfFlyHire() {
           color: #9ca3af;
         }
 
-        /* ── Where & When ─────────────────────────────────────── */
-        .sfh2-where {
-          background: #fff;
-          padding: 3rem 2rem;
-          border-top: 1px solid #e8e6e2;
-        }
-        .sfh2-where__inner {
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-        .sfh2-where__header {
-          max-width: 600px;
-          margin-bottom: 2.5rem;
-        }
-        .sfh2-where__intro {
-          font-size: 0.95rem;
-          line-height: 1.7;
-          color: #555;
-          margin: 0;
-        }
+        /* ── Where & When (lives inside .sfh2-destinations__inner) ─── */
         .sfh2-where__split {
           display: grid;
           grid-template-columns: 1fr 1px 2fr;
           column-gap: 2.5rem;
+          margin-top: 4rem;
+          padding-top: 3.5rem;
+          border-top: 1px solid #e8e6e2;
         }
         .sfh2-where__divider {
           background: #e8e6e2;
@@ -1581,6 +1542,7 @@ export default function SelfFlyHire() {
           overflow-y: auto;
           overflow-x: hidden;
           padding-right: 0.5rem;
+          background: #fff;
           scrollbar-width: thin;
           scrollbar-color: #ccc8c1 transparent;
         }
@@ -1657,15 +1619,6 @@ export default function SelfFlyHire() {
           font-family: 'Space Grotesk', sans-serif;
           font-size: 0.95rem;
           color: #1a1a1a;
-        }
-        .sfh2-where__footer {
-          text-align: center;
-          margin: 2.5rem 0 0;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.7rem;
-          text-transform: uppercase;
-          letter-spacing: 0.12em;
-          color: #9ca3af;
         }
 
         /* ── Process ───────────────────────────────────────────── */
@@ -2264,10 +2217,12 @@ export default function SelfFlyHire() {
           .sfh2-destinations__dots {
             display: flex;
           }
-          /* Where & When: stack columns on mobile */
+          /* Where & When: stack columns on mobile, tighter top spacing */
           .sfh2-where__split {
             grid-template-columns: 1fr;
             row-gap: 2rem;
+            margin-top: 2.5rem;
+            padding-top: 2.5rem;
           }
           .sfh2-where__divider {
             display: none;
