@@ -1,3 +1,5 @@
+export const MAX_ADDON_QTY = 10;
+
 export function computeLineTotal({ price, qty, discountPct = 0 }) {
   const pct = Math.max(0, Math.min(100, Number(discountPct) || 0));
   return Math.round(Number(price) * Number(qty) * (1 - pct / 100));

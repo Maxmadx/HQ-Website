@@ -4,6 +4,8 @@ const Stripe = require('stripe');
 const nodemailer = require('nodemailer');
 const admin = require('./firebase-admin');
 
+const MAX_ADDON_QTY = 10;
+
 // Lazy-initialise so the module can be loaded without STRIPE_SECRET_KEY set
 // (e.g. during unit tests that only exercise getPrice).
 let _stripe = null;
@@ -29,7 +31,7 @@ async function priceAddons(addons) {
     const itemId = entry && entry.itemId;
     const qty = Number(entry && entry.qty);
 
-    if (!itemId || !Number.isInteger(qty) || qty < 1 || qty > 10) {
+    if (!itemId || !Number.isInteger(qty) || qty < 1 || qty > MAX_ADDON_QTY) {
       const err = new Error(`Invalid add-on entry: ${JSON.stringify(entry)}`);
       err.statusCode = 400;
       throw err;

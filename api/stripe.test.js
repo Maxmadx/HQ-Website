@@ -58,6 +58,13 @@ describe('priceAddons', () => {
     expect(result).toEqual({ lineItems: [], total: 0 });
   });
 
+  it('throws 400 when itemId is unknown (mock returns exists: false)', async () => {
+    await expect(priceAddons([{ itemId: 'nope', qty: 1 }])).rejects.toMatchObject({
+      statusCode: 400,
+      message: expect.stringContaining('Add-on not found'),
+    });
+  });
+
   // Note: the live Firestore-backed branches are exercised via integration
   // through createPaymentIntent below; pure unit testing of those branches
   // is out of scope here because they require a Firestore mock that
