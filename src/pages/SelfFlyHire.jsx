@@ -12,6 +12,7 @@ import { motion, useInView } from 'framer-motion';
 import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { useFaqs } from '../hooks/useFaqs';
+import { useWhereWhen } from '../hooks/useWhereWhen';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
@@ -163,13 +164,13 @@ const FLEET = [
   },
 ];
 
-const PARTNERS = [
+const PARTNERS_FALLBACK = [
   { category: 'Shooting Ground', name: 'Holland & Holland', location: 'Northwood' },
   { category: 'Restaurant',      name: 'The Hut',           location: 'Isle of Wight' },
   { category: 'Shooting Ground', name: 'E.J. Churchill',    location: 'West Wycombe' },
 ];
 
-const EVENTS = [
+const EVENTS_FALLBACK = [
   { region: 'Gloucestershire', name: 'Cheltenham Festival',        month: '10–13 Mar' },
   { region: 'Merseyside',      name: 'Grand National (Aintree)',   month: '9–11 Apr' },
   { region: 'Surrey',          name: 'Epsom Derby',                month: '5–6 Jun' },
@@ -194,6 +195,9 @@ const REQUIREMENTS = [
 export default function SelfFlyHire() {
   const pageImages = usePageImages('sfh');
   useCmsHighlight();
+  const { partners: cmsPartners, events: cmsEvents } = useWhereWhen({ visibleOnly: true });
+  const partners = cmsPartners.length ? cmsPartners : PARTNERS_FALLBACK;
+  const events = cmsEvents.length ? cmsEvents : EVENTS_FALLBACK;
   const heroUrl  = pageImages['sfh-hero']?.[0]?.url  ?? '/assets/images/gallery/carousel/rotating1.jpg';
   const introUrl = pageImages['sfh-intro']?.[0]?.url ?? '/assets/images/facility/hq-0153.jpg';
 
@@ -558,7 +562,7 @@ export default function SelfFlyHire() {
                 aria-label="Destination Partners"
                 tabIndex={0}
               >
-                {PARTNERS.map((partner) => (
+                {partners.map((partner) => (
                   <div key={partner.name} className="sfh2-where__card">
                     <span className="sfh2-where__card-cat">{partner.category}</span>
                     <span className="sfh2-where__card-name">{partner.name}</span>
@@ -578,7 +582,7 @@ export default function SelfFlyHire() {
                 aria-label="Event Partners"
                 tabIndex={0}
               >
-                {EVENTS.map((event) => (
+                {events.map((event) => (
                   <div key={event.name} className="sfh2-where__events-row">
                     <div className="sfh2-where__events-month">{event.month}</div>
                     <div className="sfh2-where__events-name">{event.name}</div>
