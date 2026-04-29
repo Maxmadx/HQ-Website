@@ -127,7 +127,7 @@ function fileExists(filePath) {
 // Creates a Stripe PaymentIntent using server-side validated price.
 // Uses express.json() middleware inline so it doesn't affect the webhook route.
 app.post('/api/create-payment-intent', express.json(), async (req, res) => {
-  const { aircraft, duration, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage } = req.body || {};
+  const { aircraft, duration, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage, addons, fulfilment, shippingAddress } = req.body || {};
 
   // Validate presence
   if (!aircraft || !duration || !customerName || !customerEmail || !customerPhone) {
@@ -158,6 +158,9 @@ app.post('/api/create-payment-intent', express.json(), async (req, res) => {
       wantsVoucher: !!wantsVoucher,
       voucherLocation: wantsVoucher ? String(voucherLocation || '').slice(0, 300) : '',
       voucherMessage: wantsVoucher ? String(voucherMessage || '').slice(0, 150) : '',
+      addons,
+      fulfilment,
+      shippingAddress,
     });
     res.json({ clientSecret: paymentIntent.client_secret });
   } catch (err) {
