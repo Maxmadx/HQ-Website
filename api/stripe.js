@@ -14,6 +14,31 @@ function getStripe() {
   return _stripe;
 }
 
+function parseAddonsFromMetadata(metadata = {}) {
+  const count = parseInt(metadata.addonsCount || '0', 10) || 0;
+  const addons = [];
+  for (let i = 0; i < count; i++) {
+    const raw = metadata[`addon_${i}`];
+    if (!raw) continue;
+    try {
+      const item = JSON.parse(raw);
+      if (item && typeof item === 'object') addons.push(item);
+    } catch (err) {
+      console.error(`[stripe] failed to parse addon_${i}:`, err.message);
+    }
+  }
+  const fulfilment = (metadata.fulfilment || '').toLowerCase() || null;
+  const shippingAddress = fulfilment === 'delivery'
+    ? {
+        line1: metadata.shippingLine1 || '',
+        line2: metadata.shippingLine2 || '',
+        city: metadata.shippingCity || '',
+        postcode: metadata.shippingPostcode || '',
+      }
+    : null;
+  return { addons, fulfilment, shippingAddress };
+}
+
 function applyDiscountPence(pricePence, qty, discountPct) {
   const pct = Math.max(0, Math.min(100, Number(discountPct) || 0));
   return Math.round(Number(pricePence) * Number(qty) * (1 - pct / 100));
@@ -695,25 +720,7 @@ async function handleWebhook(req) {
       } else {
         // Default: discovery-flight (includes legacy intents without productType)
         const { aircraft, duration } = pi.metadata;
-        const webhookAddonsCount = parseInt(pi.metadata.addonsCount || '0', 10) || 0;
-        const webhookParsedAddons = [];
-        for (let i = 0; i < webhookAddonsCount; i++) {
-          const raw = pi.metadata[`addon_${i}`];
-          if (!raw) continue;
-          try {
-            const item = JSON.parse(raw);
-            if (item && typeof item === 'object') webhookParsedAddons.push(item);
-          } catch (_) { /* skip malformed addon */ }
-        }
-        const webhookFulfilment = (pi.metadata.fulfilment || '').toLowerCase() || null;
-        const webhookShippingAddress = webhookFulfilment === 'delivery'
-          ? {
-              line1: pi.metadata.shippingLine1 || '',
-              line2: pi.metadata.shippingLine2 || '',
-              city: pi.metadata.shippingCity || '',
-              postcode: pi.metadata.shippingPostcode || '',
-            }
-          : null;
+        const { addons: webhookParsedAddons, fulfilment: webhookFulfilment, shippingAddress: webhookShippingAddress } = parseAddonsFromMetadata(pi.metadata);
         await sendConfirmationEmail({
           customerName,
           customerEmail,
@@ -784,28 +791,7 @@ async function recordBooking(paymentIntentId) {
     bookingData.duration = Number(duration) || 0;
   }
 
-  const addonsCount = parseInt(pi.metadata.addonsCount || '0', 10) || 0;
-  const parsedAddons = [];
-  for (let i = 0; i < addonsCount; i++) {
-    const raw = pi.metadata[`addon_${i}`];
-    if (!raw) continue;
-    try {
-      const item = JSON.parse(raw);
-      if (item && typeof item === 'object') parsedAddons.push(item);
-    } catch (err) {
-      console.error(`[stripe recordBooking] failed to parse addon_${i} for ${pi.id}:`, err.message);
-    }
-  }
-
-  const fulfilment = (pi.metadata.fulfilment || '').toLowerCase() || null;
-  const shippingAddress = fulfilment === 'delivery'
-    ? {
-        line1: pi.metadata.shippingLine1 || '',
-        line2: pi.metadata.shippingLine2 || '',
-        city: pi.metadata.shippingCity || '',
-        postcode: pi.metadata.shippingPostcode || '',
-      }
-    : null;
+  const { addons: parsedAddons, fulfilment, shippingAddress } = parseAddonsFromMetadata(pi.metadata);
 
   bookingData.addons = parsedAddons;
   bookingData.fulfilment = fulfilment;
