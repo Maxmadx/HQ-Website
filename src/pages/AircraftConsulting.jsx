@@ -21,6 +21,7 @@ import '../assets/css/main.css';
 import '../assets/css/components.css';
 import FooterMinimal from '../components/FooterMinimal';
 import HqMenuPanel from '../components/HqMenuPanel';
+import { INITIAL_FORM_STATE, SERVICE_TYPES, SERVICE_FIELD_MAP, getServiceFields, clearConditionalFields } from './aircraftConsultingForm';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HEADER COMPONENT
@@ -172,7 +173,7 @@ function AircraftConsulting() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
   const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', registration: '', serviceType: '', message: '' });
+  const [formData, setFormData] = useState(INITIAL_FORM_STATE);
   const [formStatus, setFormStatus] = useState('idle');
   const { faqs: rawFaqs } = useFaqs('aircraft-consulting', { visibleOnly: true });
   const fallbackFaqs = [
@@ -193,7 +194,7 @@ function AircraftConsulting() {
       const res = await fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...formData, subject: 'Aircraft Consulting Enquiry', source: 'aircraft-consulting-page' }) });
       if (!res.ok) throw new Error();
       setFormStatus('success');
-      setFormData({ name: '', email: '', phone: '', registration: '', serviceType: '', message: '' });
+      setFormData(INITIAL_FORM_STATE);
     } catch { setFormStatus('error'); }
   }
 
