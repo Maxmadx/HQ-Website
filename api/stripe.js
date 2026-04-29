@@ -752,12 +752,12 @@ async function recordBooking(paymentIntentId) {
     try {
       const item = JSON.parse(raw);
       if (item && typeof item === 'object') parsedAddons.push(item);
-    } catch (_) {
-      // skip malformed entry, continue with the rest
+    } catch (err) {
+      console.error(`[stripe recordBooking] failed to parse addon_${i} for ${pi.id}:`, err.message);
     }
   }
 
-  const fulfilment = pi.metadata.fulfilment || null;
+  const fulfilment = (pi.metadata.fulfilment || '').toLowerCase() || null;
   const shippingAddress = fulfilment === 'delivery'
     ? {
         line1: pi.metadata.shippingLine1 || '',
