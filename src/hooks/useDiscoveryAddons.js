@@ -10,9 +10,9 @@ export function useDiscoveryAddons() {
     const unsub = onSnapshot(q, (snap) => {
       const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
       items.sort((a, b) => {
-        const da = Number(b.discoveryAddonDiscountPct) || 0;
-        const db_ = Number(a.discoveryAddonDiscountPct) || 0;
-        if (da !== db_) return da - db_;
+        const pctA = Number(a.discoveryAddonDiscountPct) || 0;
+        const pctB = Number(b.discoveryAddonDiscountPct) || 0;
+        if (pctA !== pctB) return pctB - pctA;
         return String(a.name || '').localeCompare(String(b.name || ''));
       });
       setState({ items, loading: false });

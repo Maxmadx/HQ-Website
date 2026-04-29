@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDiscoveryAddons } from '../../hooks/useDiscoveryAddons';
-import { computeLineTotal } from '../../lib/discoveryAddons';
+import { computeLineTotal, MAX_ADDON_QTY } from '../../lib/discoveryAddons';
 
 const fmtGbp = (pence) => `£${(Number(pence) / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
@@ -77,7 +77,7 @@ export default function DiscoveryAddons({ value, onChange, voucherActive = false
               <div style={S.qty}>
                 <button type="button" onClick={() => setQty(item.id, Math.max(0, qty - 1))} style={S.qtyBtn}>−</button>
                 <span style={S.qtyN}>{qty}</span>
-                <button type="button" onClick={() => setQty(item.id, Math.min(10, qty + 1))} style={S.qtyBtn}>+</button>
+                <button type="button" onClick={() => setQty(item.id, Math.min(MAX_ADDON_QTY, qty + 1))} style={S.qtyBtn}>+</button>
               </div>
             </li>
           );
