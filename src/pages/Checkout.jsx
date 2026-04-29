@@ -30,7 +30,11 @@ const CARD_FIELD_STYLE = {
 };
 
 // ─── Payment Form ────────────────────────────────────────────────────────────
-function CheckoutForm({ aircraft, duration, price, wantsVoucher, setWantsVoucher, voucherLocation, setVoucherLocation, voucherMessage, setVoucherMessage }) {
+function CheckoutForm({
+  aircraft, duration, price,
+  wantsVoucher, setWantsVoucher, voucherLocation, setVoucherLocation, voucherMessage, setVoucherMessage,
+  addons, addonsState, addonsTotalPence,
+}) {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -63,6 +67,11 @@ function CheckoutForm({ aircraft, duration, price, wantsVoucher, setWantsVoucher
           wantsVoucher,
           voucherLocation: wantsVoucher ? voucherLocation : '',
           voucherMessage: wantsVoucher ? voucherMessage : '',
+          addons: addons.map((a) => ({ itemId: a.itemId, qty: a.qty })),
+          fulfilment: addons.length > 0 ? (wantsVoucher ? 'delivery' : addonsState.fulfilment) : null,
+          shippingAddress: (addons.length > 0 && (addonsState.fulfilment === 'delivery' || wantsVoucher))
+            ? addonsState.shippingAddress
+            : null,
         }),
       });
       const data = await res.json();
@@ -209,7 +218,7 @@ function CheckoutForm({ aircraft, duration, price, wantsVoucher, setWantsVoucher
       {error && <p style={styles.error}>{error}</p>}
 
       <button type="submit" disabled={!stripe || loading} style={loading ? { ...styles.btn, ...styles.btnDisabled } : styles.btn}>
-        {loading ? 'Processing…' : `Pay £${fmt(price)}`}
+        {loading ? 'Processing…' : `Pay £${fmt(Number(price) + (Number(addonsTotalPence) || 0) / 100)}`}
       </button>
 
       <p style={styles.secureNote}>
@@ -546,6 +555,9 @@ export default function Checkout() {
                   setVoucherLocation={setVoucherLocation}
                   voucherMessage={voucherMessage}
                   setVoucherMessage={setVoucherMessage}
+                  addons={basketAddons}
+                  addonsState={addonsState}
+                  addonsTotalPence={addonsTotalPence}
                 />
               )}
             </Elements>
