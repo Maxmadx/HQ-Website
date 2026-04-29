@@ -125,7 +125,7 @@ function Reveal({ children, delay = 0, direction = 'up' }) {
 
 const rebuildStepsByModel = {
   R22: [
-    { label: 'Airframe', before: '/assets/images/rebuilds/r22/airframe-before.jpg', after: '/assets/images/rebuilds/r22/airframe-after.jpg', beforeDesc: 'Corrosion and fatigue across the tubular steel frame after 12,000 hours.', afterDesc: 'Stripped, inspected, repaired and re-protected, ready for another lifetime.' },
+    { label: 'Airframe', before: '/assets/images/rebuilds/r22/airframe-before.jpg', after: '/assets/images/rebuilds/r22/airframe-after.jpg', beforeDesc: 'Corrosion and fatigue across the tubular steel frame after 12,000 hours.', afterDesc: 'Stripped, inspected, repaired and re-protected — ready for another lifetime.' },
     { label: 'Engine', before: '/assets/images/rebuilds/r22/engine-before.jpg', after: '/assets/images/rebuilds/r22/engine-after.jpg', beforeDesc: '2,200 hours on the Lycoming O-360. Worn cam lobes, degraded seals.', afterDesc: 'Zero-time overhaul. Factory-new components throughout, test-run and certified.' },
     { label: 'Avionics', before: '/assets/images/rebuilds/r22/avionics-before.jpg', after: '/assets/images/rebuilds/r22/avionics-after.jpg', beforeDesc: 'Original steam gauges. Faded placards, intermittent radios, no GPS.', afterDesc: 'Modern glass panel. Garmin G5, GPS/COM, ADS-B Out, digital engine monitor.' },
     { label: 'Wiring', before: '/assets/images/rebuilds/r22/wiring-before.jpg', after: '/assets/images/rebuilds/r22/wiring-after.jpg', beforeDesc: 'Brittle insulation, spliced repairs, corroded connectors throughout.', afterDesc: 'Complete rewire. New looms, mil-spec connectors, laser-etched labels.' },
@@ -133,7 +133,7 @@ const rebuildStepsByModel = {
     { label: 'Paint', before: '/assets/images/rebuilds/r22/paint-before.jpg', after: '/assets/images/rebuilds/r22/paint-after.jpg', beforeDesc: 'Oxidised, chipped and faded. Multiple touch-ups visible.', afterDesc: 'Stripped to bare metal and refinished in custom livery. UV-sealed.' },
   ],
   R44: [
-    { label: 'Airframe', before: '/assets/images/rebuilds/r44/airframe-before.jpg', after: '/assets/images/rebuilds/r44/airframe-after.jpg', beforeDesc: 'Corrosion, fatigue cracks and fifteen years of wear across the bare airframe.', afterDesc: 'Stripped, inspected, repaired and re-protected, ready for another lifetime.' },
+    { label: 'Airframe', before: '/assets/images/rebuilds/r44/airframe-before.jpg', after: '/assets/images/rebuilds/r44/airframe-after.jpg', beforeDesc: 'Corrosion, fatigue cracks and fifteen years of wear across the bare airframe.', afterDesc: 'Stripped, inspected, repaired and re-protected — ready for another lifetime.' },
     { label: 'Engine', before: '/assets/images/rebuilds/r44/engine-before.jpg', after: '/assets/images/rebuilds/r44/engine-after.jpg', beforeDesc: '2,200 hours on the IO-540. Worn bearings, degraded seals, metal in the filter.', afterDesc: 'Zero-time overhaul. Factory-new components throughout, test-run and certified.' },
     { label: 'Avionics', before: '/assets/images/rebuilds/r44/avionics-before.jpg', after: '/assets/images/rebuilds/r44/avionics-after.jpg', beforeDesc: 'Original analogue panel. Faded placards, intermittent radios, no GPS.', afterDesc: 'Full glass cockpit. Garmin suite, GPS/NAV/COM, ADS-B, four-axis autopilot.' },
     { label: 'Wiring', before: '/assets/images/rebuilds/r44/wiring-before.jpg', after: '/assets/images/rebuilds/r44/wiring-after.jpg', beforeDesc: 'Brittle insulation, spliced repairs, corroded connectors. An electrician\'s nightmare.', afterDesc: 'Complete rewire. New looms, mil-spec connectors, laser-etched labels throughout.' },
@@ -175,7 +175,7 @@ const rebuildModels = [
 ];
 
 const processSteps = [
-  { num: '01', title: 'Consultation', desc: 'We discuss your requirements: model, specification, avionics, paint scheme, and timeline.' },
+  { num: '01', title: 'Consultation', desc: 'We discuss your requirements — model, specification, avionics, paint scheme, and timeline.' },
   { num: '02', title: 'Donor Sourcing', desc: 'We source an ideal donor airframe from our network, or you supply your own aircraft.' },
   { num: '03', title: 'Strip & Inspect', desc: 'Complete disassembly. Every component inspected, measured, and documented against factory limits.' },
   { num: '04', title: 'Rebuild', desc: 'Zero-time engine overhaul, new wiring looms, avionics install, interior fit, and custom paintwork.' },
@@ -218,7 +218,7 @@ function BeforeAfter({ pageImages = {} }) {
       <div className="rb__beforeafter-item">
         <div className="rb__beforeafter-before">
           <div className="rb__beforeafter-img">
-            <img src={beforeSrc} alt={`${steps[rebuildStep].label} (before)`} />
+            <img src={beforeSrc} alt={`${steps[rebuildStep].label} — before`} />
           </div>
           <span>BEFORE</span>
           <p>{steps[rebuildStep].beforeDesc}</p>
@@ -226,7 +226,7 @@ function BeforeAfter({ pageImages = {} }) {
         <div className="rb__beforeafter-arrow">&rarr;</div>
         <div className="rb__beforeafter-after">
           <div className="rb__beforeafter-img">
-            <img src={afterSrc} alt={`${steps[rebuildStep].label} (after)`} />
+            <img src={afterSrc} alt={`${steps[rebuildStep].label} — after`} />
           </div>
           <span>AFTER</span>
           <p>{steps[rebuildStep].afterDesc}</p>
@@ -384,7 +384,7 @@ function Rebuilds() {
       let subject = '';
       let body = '';
       if (rebuildIntent === 'own') {
-        subject = 'Rebuild Enquiry: Own Aircraft';
+        subject = 'Rebuild Enquiry — Own Aircraft';
         body = [
           `Aircraft: ${rbAircraftType || 'Not specified'}`,
           rbReg  ? `Reg: ${rbReg}` : '',
@@ -393,14 +393,14 @@ function Rebuilds() {
           rbNotes ? `Notes: ${rbNotes}` : '',
         ].filter(Boolean).join('\n');
       } else if (rebuildIntent === 'source') {
-        subject = 'Rebuild Enquiry: Source Aircraft';
+        subject = 'Rebuild Enquiry — Source Aircraft';
         body = [
           `Type wanted: ${rbSourceType || 'Not specified'}`,
           rbBudget ? `Budget: £${rbBudget}` : '',
           rbNotes  ? `Notes: ${rbNotes}` : '',
         ].filter(Boolean).join('\n');
       } else {
-        subject = 'Rebuild Enquiry: Available Now';
+        subject = 'Rebuild Enquiry — Available Now';
         body = [
           rbPrefType   ? `Preferred type: ${rbPrefType}` : '',
           rbAvailBudget ? `Budget: £${rbAvailBudget}` : '',
@@ -460,7 +460,7 @@ function Rebuilds() {
                 </div>
                 <div className="rb__why-card">
                   <h3>Zero-Time Airframe</h3>
-                  <p>All life-limited components replaced. Fresh overhaul with full component life ahead, plus a comprehensive warranty.</p>
+                  <p>All life-limited components replaced. Fresh overhaul with full component life ahead — and a comprehensive warranty.</p>
                 </div>
               </div>
               <div className="rb__why-dots">
@@ -575,7 +575,7 @@ function Rebuilds() {
                       <button className="fd-sales__intent-btn fd-sales__intent-btn--full" onClick={() => setRebuildFormOpen(true)}>
                         <span className="fd-sales__intent-icon">↗</span>
                         <span className="fd-sales__intent-title">Register Rebuild Interest</span>
-                        <span className="fd-sales__intent-sub">Own an aircraft, want us to source one, or looking for something available now? Start here.</span>
+                        <span className="fd-sales__intent-sub">Own an aircraft, want us to source one, or looking for something available now — start here.</span>
                       </button>
                     )}
 
@@ -589,17 +589,17 @@ function Rebuilds() {
                           <button className="fd-sales__intent-btn" onClick={() => setRebuildIntent('own')}>
                             <span className="fd-sales__intent-icon">→</span>
                             <span className="fd-sales__intent-title">I Have an Aircraft to Rebuild</span>
-                            <span className="fd-sales__intent-sub">You own the airframe and want a full or partial rebuild. We'll discuss scope, timeline, and cost.</span>
+                            <span className="fd-sales__intent-sub">You own the airframe and want a full or partial rebuild — we'll discuss scope, timeline, and cost.</span>
                           </button>
                           <button className="fd-sales__intent-btn" onClick={() => setRebuildIntent('source')}>
                             <span className="fd-sales__intent-icon">+</span>
                             <span className="fd-sales__intent-title">Source an Aircraft for a Rebuild</span>
-                            <span className="fd-sales__intent-sub">You don't have an aircraft yet. We'll find and acquire the right airframe before the rebuild begins.</span>
+                            <span className="fd-sales__intent-sub">You don't have an aircraft yet — we'll find and acquire the right airframe before the rebuild begins.</span>
                           </button>
                           <button className="fd-sales__intent-btn" onClick={() => setRebuildIntent('available')}>
                             <span className="fd-sales__intent-icon">◎</span>
                             <span className="fd-sales__intent-title">Is a Rebuild Available Now?</span>
-                            <span className="fd-sales__intent-sub">Looking for a recently completed or near-completion rebuild ready to fly? Tell us your preferences.</span>
+                            <span className="fd-sales__intent-sub">Looking for a recently completed or near-completion rebuild ready to fly — tell us your preferences.</span>
                           </button>
                         </div>
                       </div>
@@ -696,7 +696,7 @@ function Rebuilds() {
                       <div className="fd-sales__unmanned-success">
                         <span className="fd-sales__unmanned-success-icon">✓</span>
                         <p className="fd-sales__unmanned-success-title">Enquiry Received</p>
-                        <p className="fd-sales__unmanned-success-sub">Thank you. A member of our team will be in touch to discuss your rebuild.</p>
+                        <p className="fd-sales__unmanned-success-sub">Thank you — a member of our team will be in touch to discuss your rebuild.</p>
                       </div>
                     )}
                   </div>
