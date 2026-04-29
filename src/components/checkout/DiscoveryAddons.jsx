@@ -12,7 +12,10 @@ export default function DiscoveryAddons({ value, onChange, voucherActive = false
     if (voucherActive && value.fulfilment !== 'delivery') {
       onChange({ ...value, fulfilment: 'delivery' });
     }
-  }, [voucherActive, value, onChange]);
+    // Intentionally only fire on the voucherActive transition. value/onChange
+    // are read inside but don't need to retrigger.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [voucherActive]);
 
   if (loading) return null;
   if (items.length === 0) return null;
