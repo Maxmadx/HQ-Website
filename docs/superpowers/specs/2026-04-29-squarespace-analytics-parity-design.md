@@ -23,8 +23,8 @@ E. Geography map + Top Pageviews tile — repackages existing data
 
 ## End-to-end flow (visitor's perspective)
 
-1. Visitor lands on `/training/trial-lessons`. We fire `viewed_product` (in addition to the existing `pageview`).
-2. They pick a card + duration and click Book Now. We fire `started_checkout` and navigate to `/checkout` (existing route).
+1. Visitor lands on `/training/trial-lessons`. We fire `view_item` (GA4-canonical; in addition to the existing `pageview`).
+2. They pick a card + duration and click Book Now. We fire `begin_checkout` and navigate to `/checkout` (existing route).
 3. On `/checkout`, the first thing we ask is **"Where shall we send your booking confirmation?"** — single email field, framed as confirmation delivery, not gating. The moment a valid email is entered and the field blurs, we POST to `/api/carts` and create a Firestore `carts` doc.
 4. They fill card details and pay. The existing Stripe webhook (`payment_intent.succeeded`) fires `purchased`, marks the cart `completed`, and writes the existing `bookings` doc.
 5. If they walk away, the cart sits as `active` or `checkout_initiated`. A scheduled job runs every 15 minutes and:
@@ -39,12 +39,16 @@ E. Geography map + Top Pageviews tile — repackages existing data
 
 ### New event types in `page_events`
 
+**Use the GA4 canonical event names**, not custom ones. Even though we're not (yet) sending to GA4, the names are an industry standard recognised by every analyst, every tool, and every future integration. Required params per GA4: `transaction_id`, `value`, `currency` (on `purchase`); `items[]` array on each ecommerce event.
+
 Extend the `ALLOWED_TYPES` allowlist in `api/analytics-api.js`:
 
-- `viewed_product` — `elementId` = product category (e.g. `'discovery-flight'`)
-- `started_checkout` — `elementId` = product/aircraft id (e.g. `'r44-60'`)
-- `payment_started` — fired when card form is submitted
-- `purchased` — fired from the Stripe webhook AND from the `BookingConfirmed` page (idempotent via `sessionId` + `stripeSessionId`)
+- `view_item` — fired on Discovery Flight page mount. Params: `items: [{item_id, item_name, item_category, price, currency}]`
+- `begin_checkout` — fired on Book Now click before navigate. Params: `items[]`, `value`, `currency`, `coupon` (null for now)
+- `add_payment_info` — fired when card form is submitted. Same params as `begin_checkout`
+- `purchase` — fired ONLY from the Stripe webhook (server-side, single source of truth). Params: `transaction_id` (= Stripe `payment_intent.id`), `value`, `currency`, `items[]`. **Dedup is automatic** because the `transaction_id` is unique per payment intent and writes are guarded by `status !== 'completed'`.
+
+This naming choice is the unlock that makes the data portable: if the owner ever wants to wire up GA4 or GTM later, the events already map 1:1.
 
 ### New `carts` collection
 
@@ -129,7 +133,7 @@ gsc_daily/{YYYY-MM-DD_query_page}: {
 
 - `api/analytics-api.js` — extend `ALLOWED_TYPES` with the four new event types.
 - `src/lib/analytics.js` — no change needed (`trackEvent` is generic).
-- `src/pages/DiscoveryFlight.jsx` — fire `viewed_product` on mount, `started_checkout` on Book Now click.
+- `src/pages/DiscoveryFlight.jsx` — fire `view_item` on mount, `begin_checkout` on Book Now click.
 - `src/pages/Checkout.jsx` — insert `EmailFirstStep` as step 1, mount `ExitIntentModal`, integrate `cart.js` writes.
 - `api/stripe.js` — in the webhook, after writing the `bookings` doc, mark the matching `carts` doc as `completed` and fire `purchased` event.
 - `src/pages/admin/AdminAnalytics.jsx` — register four new tiles (Purchase Funnel, Abandoned Cart, Search Keywords, Geography).
@@ -148,12 +152,12 @@ The job logic itself is identical either way and lives in `api/cart-recovery-job
 
 Aggregations are computed at read time on the dashboard from `page_events` (and `carts` for purchased counts), filterable by date range and product. No precomputed materialised counters in v1 — at current volume it's fine to query Firestore directly with a date-range filter. If volume grows, we move to a daily rollup collection later.
 
-Funnel logic (per product, per day range):
+Funnel logic (per product, per day range, mirroring GA4 funnel exploration semantics — sessions → product views → begin checkout → purchase):
 
 - **Visits** = unique `sessionId`s that fired any event in range.
-- **Viewed Product** = unique `sessionId`s that fired `viewed_product` with the product's category.
-- **Started Checkout** = unique `sessionId`s that fired `started_checkout` for the product.
-- **Purchased** = unique `sessionId`s that fired `purchased` for the product. (After Phase 2, this can also be cross-checked against `carts` with `status === 'completed'`.)
+- **Viewed Product** = unique `sessionId`s that fired `view_item` with matching `item_category`.
+- **Started Checkout** = unique `sessionId`s that fired `begin_checkout` matching the product.
+- **Purchased** = unique `transaction_id`s on `purchase` events for the product. Using `transaction_id` (not `sessionId`) here is the canonical GA4 dedup pattern and survives webhook double-fires automatically.
 
 Squarespace shows percentages between adjacent stages (Visits→Viewed = 25%, Viewed→Checkout = 19%, etc.). Mirror that.
 
@@ -235,6 +239,97 @@ Recommended order (each phase ships independently):
 4. **Phase 4 — Search Keywords (subsystem D).** GSC integration + tile.
 5. **Phase 5 — Geography map + Top Pageviews tile (subsystem E).** Pure UI work over existing data.
 
+## Recovery email content & deliverability (researched best-practice)
+
+Drawing on 2026 Shopify/Omnisend/Baymard guidance and Gmail/Yahoo bulk-sender requirements.
+
+### Cadence
+
+Two emails by default — Email 1 at 1h, Email 2 at 24h. The third 72h-discount email common in mass ecommerce is intentionally omitted: HQ Aviation is a high-AOV considered purchase ([luxury and high-ticket cart-abandonment is 82.84%](https://mailmend.io/blogs/cart-abandonment-recovery-statistics) and luxury-brand best-practice is no discounts in recovery). A `CART_RECOVERY_THIRD_EMAIL` flag exists if we ever want to A/B-test a 72h follow-up.
+
+### No-discount stance
+
+Recovery emails do **not** offer a discount. Rationale, per researched best practice:
+- Discounting a £350 first flight teaches buyers to abandon and wait.
+- For luxury/high-AOV, [brand storytelling and assurance outperform discounts](https://www.shopify.com/blog/abandoned-cart-emails) (Shopify, To'ak Chocolate cited as the canonical example).
+- The right levers for HQ are: photography, social proof (real customer testimonials, expert endorsements, awards), reassurance (safety record, instructor pedigree), and frictionless return-to-checkout via the resume link.
+
+If at some point the owner wants to test an incentive, the right one is **not** £-off: it's a value-add — e.g. "complimentary in-flight photos" or "logbook entry signed by your instructor." Built behind a flag for later.
+
+### Subject lines
+
+Research consensus ([Popupsmart 2026](https://popupsmart.com/blog/abandoned-cart-subject-lines), [Funnelkit](https://funnelkit.com/abandoned-cart-subject-lines/)):
+- Straightforward subjects with the word "cart" / "booking" + brand name convert highest (~33% click-to-open).
+- Curiosity-driven subjects open highest (~66%) but convert worse.
+- Personalised subjects (with first name if known) open ~22% better than generic.
+- Mentioning "cart" specifically is +10% opens vs. not mentioning it.
+
+V1 subject lines (configurable via Firestore so owner can edit without redeploy):
+
+- Email 1 (1h): `"{firstName}, your HQ Aviation booking is saved"` — straightforward, personalised, mentions booking.
+- Email 2 (24h): `"Still thinking it over, {firstName}?"` — curiosity-tilted, brand-aligned ("we know it's a big day").
+
+### Email body — Email 1 (1h)
+
+Single-purpose: remind, reassure, link back. No urgency, no discount, no upsell.
+
+Structure:
+1. Hero photo of the chosen aircraft (R22 / R44 / R66) — photography is the brand.
+2. "Your booking is held: R44 60-minute Trial Lesson — £350"
+3. Itemised summary (flight + add-ons + fulfilment) with prices.
+4. **Resume button**: "Complete your booking" → resume link (UTM-tagged).
+5. One-line reassurance: "First-flight nerves are normal. Your instructor will walk you through every minute."
+6. Footer with phone number (manned by office) — for the buyer who'd rather speak to a human.
+7. Plain-text alternative populated by template.
+
+### Email body — Email 2 (24h)
+
+Different angle: social proof + assurance, not repetition.
+
+Structure:
+1. Customer testimonial (rotate from Wall of Cool / Reviews collection).
+2. "Your trial lesson is still saved."
+3. Same itemised summary + Resume button.
+4. Brief paragraph addressing common hesitations ("not sure about the weather? We reschedule for free." / "gift voucher? Yes — let us know at checkout.").
+5. Footer + phone.
+
+### Email infrastructure (RFC 8058 + Gmail/Yahoo 2026 requirements)
+
+Even though HQ is far below the 5,000 emails/day bulk-sender threshold, [Gmail & Yahoo require RFC 8058 one-click unsubscribe headers on promotional mail](https://emailwarmup.com/blog/gmail-and-yahoo-bulk-sender-requirements/) and Google moved to permanent rejections from November 2025. Implementing now means we never get caught when volume grows.
+
+Headers on every recovery email:
+
+- `List-Unsubscribe: <mailto:unsubscribe@hq-domain>, <{API_BASE}/api/carts/unsubscribe?t={token}>`
+- `List-Unsubscribe-Post: List-Unsubscribe=One-Click`
+- DKIM signature **must cover both List-Unsubscribe headers** (RFC 8058 hard requirement).
+- `Precedence: bulk` header so auto-replies don't bounce back.
+- `X-Auto-Response-Suppress: All` to suppress out-of-office replies.
+
+Deliverability checklist:
+
+- SPF + DKIM + DMARC already in place for the existing booking-confirmation domain (verify before Phase 3 ships — check via `dig TXT` on the sending domain).
+- One-click unsubscribe must be processed within 48h ([Gmail policy](https://support.google.com/a/answer/81126)) — our handler is synchronous, well under.
+- Plain-text alternative on every send (no open-pixel in plain-text variant).
+- Visible body unsubscribe link in addition to header (operationally required even with RFC 8058).
+- Send rate cap: ≤ 50/tick, ≤ 200/h.
+
+### GDPR / PECR (UK)
+
+Per UK ICO and 2026 sources ([Snowplow](https://snowplow.io/blog/abandoned-cart-emails-gdpr), [Frizbit](https://frizbit.com/blog/are-cart-abandonment-emails-gdpr-compliant/), [Sprintlaw](https://sprintlaw.co.uk/articles/gdpr-email-marketing-in-the-uk/)), cart-recovery emails are permissible without explicit marketing consent provided **all four** soft-opt-in conditions are met:
+
+1. **Email collected during a transactional context** — yes, at the email-first checkout step.
+2. **Marketing is for similar products/services** — yes, completing the booking they were already making.
+3. **Clear opt-out at point of collection** — yes, helper text under the email field: "We'll only use this to send your booking. You can unsubscribe any time."
+4. **Opt-out in every subsequent message** — yes, body link + RFC 8058 header.
+
+Lawful basis recorded as **legitimate interest** (Article 6(1)(f)) on each `carts` doc: `lawfulBasis: 'legitimate_interest'` for audit. If it's ever escalated to marketing-style content (newsletters, promotions), basis must change to consent — but that's out of scope.
+
+### Open / click measurement (privacy-aware)
+
+- Open pixel is `<img>` only in HTML variant; absent in plain-text alternative.
+- Pixel hit and resume-link click both write to the cart's `recoveryEmailsSent[i]` entry — no separate tracking collection, no cross-session profile building.
+- No third-party tracking pixels (no Facebook, no Google), only first-party.
+
 ## Best-practice hardening
 
 The features below are what take this from "Squarespace clone" to "actually load-bearing analytics for the business." Each is small in isolation, but together they're the difference between a dashboard you trust and one you don't.
@@ -283,15 +378,17 @@ The features below are what take this from "Squarespace clone" to "actually load
 
 Exit-intent doesn't work on mobile (no mouse). Replacement: on `/checkout`, listen for `visibilitychange` → `hidden` AND `pagehide`. If we don't yet have an email and the cart has at least one item, fire the same email-prompt modal *next time* the page becomes visible (i.e. they come back to the tab). For sessions that never return, we have no email and the cart simply expires — that's accepted.
 
-### Conversion value, not just count (this is the unlock)
+### Conversion value alongside count
 
-The dashboard tiles must show **£ revenue alongside counts**. A purchase funnel without value is half the picture; the owner needs to know that the £350 R44 cart abandoning is more important than the £150 R22 one.
+The dashboard tiles show **£ revenue alongside counts** — a funnel without value is half the picture. Every customer is treated the same; £ totals are shown for transparency, not to triage who deserves attention.
 
 For each funnel stage and each abandoned-cart row:
 
 - Show count AND total £ value.
 - Show **AOV** (average cart value) in the funnel header.
-- "Recoverable" tile shows total recoverable £ at the top — this is the headline number.
+- "Recoverable" tile shows total recoverable £ at the top alongside the count.
+
+Recovery emails and follow-up cadence are identical regardless of cart value — every booking is treated the same way.
 
 ### Source-segmented funnel
 
@@ -325,7 +422,7 @@ Add one number to the funnel tile: **median hours from first `pageview` to `purc
 
 ### Rollout / migration
 
-- Phase 1 ships behind a `FUNNEL_ENABLED` env flag (default true) so it can be killed instantly if the new `viewed_product` / `started_checkout` events misbehave.
+- Phase 1 ships behind a `FUNNEL_ENABLED` env flag (default true) so it can be killed instantly if the new `view_item` / `begin_checkout` events misbehave.
 - Phase 2 (email-first step) ships behind `EMAIL_FIRST_CHECKOUT` flag — owner can A/B-toggle to confirm no conversion regression.
 - Phase 3 (auto recovery emails) is initially **disabled by default** and turned on by setting `CART_RECOVERY_AUTO=true` in env. First week the owner manually sends from the dashboard, watches deliverability, then flips the flag.
 - Phase 4 (GSC) requires service-account JSON in env; tile shows setup CTA when missing.
@@ -351,4 +448,38 @@ In addition to the items already listed:
 - Automated recovery emails fire at 1h and 24h boundaries (±5 min), respect quiet hours (08:00–20:00 Europe/London), respect unsubscribe and admin exclusion lists, and are delivered with one-click `List-Unsubscribe`.
 - Search Keywords tile shows the same metrics Squarespace shows, refreshed within 24h, with a visible "last sync" indicator.
 - Funnel correctness verified end-to-end: 10 rapid Book Now clicks produce 1 cart; webhook double-fires produce 1 `purchased` event; admin IP/email never appears in tiles.
-- No regression in existing checkout conversion (measured by comparing 14-day pre/post `purchased` counts; `EMAIL_FIRST_CHECKOUT` flag enables instant rollback).
+- No regression in existing checkout conversion (measured by comparing 14-day pre/post `purchase` counts; `EMAIL_FIRST_CHECKOUT` flag enables instant rollback).
+
+## Standards & references
+
+This spec is grounded in 2026 best practice from the following sources:
+
+**Event naming & funnel structure**
+- [GA4 recommended events](https://support.google.com/analytics/answer/9267735) — canonical `view_item`, `begin_checkout`, `add_payment_info`, `purchase` event names and their `items[]` parameter shape.
+- [GA4 ecommerce measurement](https://developers.google.com/analytics/devguides/collection/ga4/ecommerce) — required params (`transaction_id`, `value`, `currency`).
+- [GA4 funnel exploration](https://www.analyticsmania.com/post/funnel-analysis-report-in-google-analytics-4/) — Sessions → Product Views → Begin Checkout → Purchase funnel structure.
+- [GA4 transaction_id deduplication](https://support.google.com/analytics/answer/12313109) — using a stable transaction id (Stripe `payment_intent.id`) for natural webhook double-fire dedup.
+
+**Cart recovery email content & cadence**
+- [Shopify abandoned cart email best practices 2026](https://www.shopify.com/blog/abandoned-cart-emails) — 1h / 24h / 72h sequence; luxury brands skip discounts and use brand storytelling.
+- [Omnisend abandoned cart timing](https://www.omnisend.com/blog/abandoned-cart-email/) — first email 1h is the universal minimum.
+- [Top Growth Marketing 2026 strategies](https://topgrowthmarketing.com/ecommerce-abandoned-cart-recovery-strategies/) — for high-AOV categories, extend timing and emphasise assurance over discount.
+- [Mailmend cart abandonment statistics 2026](https://mailmend.io/blogs/cart-abandonment-recovery-statistics) — luxury/jewelry abandonment 82.84%; recovery is critical.
+- [Popupsmart subject lines 2026](https://popupsmart.com/blog/abandoned-cart-subject-lines) — straightforward subjects with "cart" convert highest at 32.73%; curiosity subjects open highest at 66.28%.
+- [Funnelkit subject lines](https://funnelkit.com/abandoned-cart-subject-lines/) — personalised subjects boost opens ~22%; mentioning "cart" +10% opens.
+
+**Email infrastructure & deliverability**
+- [Gmail sender guidelines](https://support.google.com/a/answer/81126) — RFC 8058 one-click unsubscribe required for bulk senders; 48h processing window.
+- [DMARCPal RFC 8058 setup](https://dmarcpal.com/learn/one-click-unsubscribe-gmail-yahoo) — `List-Unsubscribe` + `List-Unsubscribe-Post: List-Unsubscribe=One-Click`; DKIM must cover both headers.
+- [Mailgun RFC 8058 explainer](https://www.mailgun.com/blog/deliverability/what-is-rfc-8058/) — implementation pattern for transactional senders.
+- [Email Warmup 2026 bulk sender requirements](https://emailwarmup.com/blog/gmail-and-yahoo-bulk-sender-requirements/) — Google moved to permanent rejections from November 2025; threshold is 5,000/day to personal accounts.
+
+**Privacy / GDPR / PECR**
+- [Snowplow on cart recovery + GDPR](https://snowplow.io/blog/abandoned-cart-emails-gdpr) — soft opt-in pathway for transactional cart recovery.
+- [Frizbit on PECR-compliant cart emails](https://frizbit.com/blog/are-cart-abandonment-emails-gdpr-compliant/) — four conditions for legitimate-interest basis.
+- [WDPS transactional vs marketing under PECR](https://wdps.co.uk/transactional-vs-marketing-emails-pecr/) — service emails are exempt from consent; cart recovery walks the line and needs the legitimate-interest record.
+- [Sprintlaw UK GDPR email guide](https://sprintlaw.co.uk/articles/gdpr-email-marketing-in-the-uk/) — UK-specific implementation guidance.
+
+**Conversion benchmarks (for success-criteria framing)**
+- [Baymard cart-abandonment research](https://baymard.com/learn/ecommerce-cro) — global average abandonment 70.22%.
+- [Shopify ecommerce conversion rates 2026](https://blendcommerce.com/blogs/shopify/ecommerce-conversion-rate-benchmarks-2026) — Shopify-store baseline conversion 1.4–3.2%.
