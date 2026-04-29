@@ -676,9 +676,13 @@ async function handleWebhook(req) {
         bookingData.aircraft = aircraft;
         bookingData.aircraftName = aircraftName || aircraft;
         bookingData.duration = Number(duration);
+        const { addons: webhookParsedAddons, fulfilment: webhookFulfilment, shippingAddress: webhookShippingAddress } = parseAddonsFromMetadata(pi.metadata);
+        bookingData.addons = webhookParsedAddons;
+        bookingData.fulfilment = webhookFulfilment;
+        bookingData.shippingAddress = webhookShippingAddress;
       }
 
-      await admin.firestore().collection('bookings').doc(pi.id).set(bookingData);
+      await admin.firestore().collection('bookings').doc(pi.id).set(bookingData, { merge: true });
 
       // Also write misc orders to the misc_marketplace collection
       if (productType === 'misc') {
