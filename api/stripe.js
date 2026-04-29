@@ -290,7 +290,7 @@ async function createLondonTourPaymentIntent({ experience, timeOfDay, quantity, 
 /**
  * Sends a booking confirmation email to the customer.
  */
-async function sendConfirmationEmail({ customerName, customerEmail, aircraft, duration, amount, bookingRef }) {
+async function sendConfirmationEmail({ customerName, customerEmail, aircraft, duration, amount, bookingRef, addons, fulfilment, shippingAddress }) {
   const priceFormatted = `£${(amount / 100).toFixed(2)}`;
   const aircraftName = AIRCRAFT_NAMES[aircraft] || aircraft;
 
@@ -390,6 +390,24 @@ async function sendConfirmationEmail({ customerName, customerEmail, aircraft, du
               </tr>
             </table>
 
+            ${(addons && addons.length > 0)
+  ? `
+    <h3 style="margin:32px 0 12px;font-family:Inter,-apple-system,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#999;">Add-ons</h3>
+    <ul style="padding-left:20px;margin:0 0 12px;font-family:Inter,-apple-system,Arial,sans-serif;font-size:14px;color:#1A1A1A;line-height:1.75;">
+      ${addons.map((a) => {
+        const unit = (a.unitPrice / 100).toFixed(2);
+        const line = (a.lineTotal / 100).toFixed(2);
+        const disc = a.discountPct > 0 ? ` (${a.discountPct}% off)` : '';
+        return `<li>${escapeHtml(a.name)} × ${a.qty} — £${unit}${disc} = £${line}</li>`;
+      }).join('')}
+    </ul>
+    <p style="margin:0 0 32px;font-family:Inter,-apple-system,Arial,sans-serif;font-size:14px;color:#1A1A1A;line-height:1.6;"><strong>Fulfilment:</strong> ${
+      fulfilment === 'delivery'
+        ? `Delivery to ${escapeHtml([shippingAddress.line1, shippingAddress.line2, shippingAddress.city, shippingAddress.postcode].filter(Boolean).join(', '))}`
+        : 'Collect at Denham on the day of your flight.'
+    }</p>
+  `
+  : ''}
             <!-- What happens next -->
             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:32px 0 0;background:#FFFFFF;border-left:3px solid #E04A2F;border-radius:0 8px 8px 0;border-top:1px solid #E8E6E1;border-right:1px solid #E8E6E1;border-bottom:1px solid #E8E6E1;">
               <tr>
@@ -677,6 +695,25 @@ async function handleWebhook(req) {
       } else {
         // Default: discovery-flight (includes legacy intents without productType)
         const { aircraft, duration } = pi.metadata;
+        const webhookAddonsCount = parseInt(pi.metadata.addonsCount || '0', 10) || 0;
+        const webhookParsedAddons = [];
+        for (let i = 0; i < webhookAddonsCount; i++) {
+          const raw = pi.metadata[`addon_${i}`];
+          if (!raw) continue;
+          try {
+            const item = JSON.parse(raw);
+            if (item && typeof item === 'object') webhookParsedAddons.push(item);
+          } catch (_) { /* skip malformed addon */ }
+        }
+        const webhookFulfilment = (pi.metadata.fulfilment || '').toLowerCase() || null;
+        const webhookShippingAddress = webhookFulfilment === 'delivery'
+          ? {
+              line1: pi.metadata.shippingLine1 || '',
+              line2: pi.metadata.shippingLine2 || '',
+              city: pi.metadata.shippingCity || '',
+              postcode: pi.metadata.shippingPostcode || '',
+            }
+          : null;
         await sendConfirmationEmail({
           customerName,
           customerEmail,
@@ -684,6 +721,9 @@ async function handleWebhook(req) {
           duration: Number(duration),
           amount: pi.amount,
           bookingRef: pi.id,
+          addons: webhookParsedAddons,
+          fulfilment: webhookFulfilment,
+          shippingAddress: webhookShippingAddress,
         });
       }
     } catch (emailErr) {
