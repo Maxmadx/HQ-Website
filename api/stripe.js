@@ -744,6 +744,33 @@ async function recordBooking(paymentIntentId) {
     bookingData.duration = Number(duration) || 0;
   }
 
+  const addonsCount = parseInt(pi.metadata.addonsCount || '0', 10) || 0;
+  const parsedAddons = [];
+  for (let i = 0; i < addonsCount; i++) {
+    const raw = pi.metadata[`addon_${i}`];
+    if (!raw) continue;
+    try {
+      const item = JSON.parse(raw);
+      if (item && typeof item === 'object') parsedAddons.push(item);
+    } catch (_) {
+      // skip malformed entry, continue with the rest
+    }
+  }
+
+  const fulfilment = pi.metadata.fulfilment || null;
+  const shippingAddress = fulfilment === 'delivery'
+    ? {
+        line1: pi.metadata.shippingLine1 || '',
+        line2: pi.metadata.shippingLine2 || '',
+        city: pi.metadata.shippingCity || '',
+        postcode: pi.metadata.shippingPostcode || '',
+      }
+    : null;
+
+  bookingData.addons = parsedAddons;
+  bookingData.fulfilment = fulfilment;
+  bookingData.shippingAddress = shippingAddress;
+
   const ref = admin.firestore().collection('bookings').doc(pi.id);
   const existing = await ref.get();
 
