@@ -174,7 +174,11 @@ export default function AdminMiscItemEdit() {
                     name="priceType"
                     value={pt}
                     checked={form.priceType === pt}
-                    onChange={() => set('priceType', pt)}
+                    onChange={() => setForm((f) => ({
+                      ...f,
+                      priceType: pt,
+                      ...(pt === 'poa' ? { discoveryAddon: false, discoveryAddonDiscountPct: 0 } : {}),
+                    }))}
                   />
                   {pt === 'poa' ? 'Price on Application' : 'Fixed Price'}
                 </label>
@@ -273,6 +277,7 @@ export default function AdminMiscItemEdit() {
                     step="1"
                     value={form.discoveryAddonDiscountPct}
                     onChange={(e) => set('discoveryAddonDiscountPct', e.target.value)}
+                    onBlur={() => set('discoveryAddonDiscountPct', Math.max(0, Math.min(100, parseInt(form.discoveryAddonDiscountPct, 10) || 0)))}
                   />
                   <span style={{ fontSize: '0.85rem', color: '#374151' }}>%</span>
                   <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>Leave as 0 for no discount.</span>
