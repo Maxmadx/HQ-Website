@@ -21,6 +21,7 @@ import '../assets/css/main.css';
 import '../assets/css/components.css';
 import FooterMinimal from '../components/FooterMinimal';
 import HqMenuPanel from '../components/HqMenuPanel';
+import { INITIAL_FORM_STATE, SERVICE_TYPES, SERVICE_FIELD_MAP, getServiceFields, clearConditionalFields } from './aircraftConsultingForm';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HEADER COMPONENT
@@ -172,16 +173,16 @@ function AircraftConsulting() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
   const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', registration: '', serviceType: '', message: '' });
+  const [formData, setFormData] = useState(INITIAL_FORM_STATE);
   const [formStatus, setFormStatus] = useState('idle');
   const { faqs: rawFaqs } = useFaqs('aircraft-consulting', { visibleOnly: true });
   const fallbackFaqs = [
-    { id: 'f1', question: 'Do you inspect aircraft other than Robinson types?', answer: 'Our core expertise is the Robinson range — R22, R44, R66, and R88. We can arrange inspections on other types through our network of type-specialist engineers, but the Robinson range is where our direct expertise sits.' },
-    { id: 'f2', question: 'How much does a pre-purchase inspection cost?', answer: "Fees depend on the type and location of the aircraft. Contact us with details and we'll provide a fixed fee upfront — no surprises." },
-    { id: 'f3', question: 'Can you negotiate on my behalf?', answer: "Yes — as part of our Acquisition Services offering. We're effective negotiators because we understand the market, the aircraft, and realistic rectification costs." },
+    { id: 'f1', question: 'Do you inspect aircraft other than Robinson types?', answer: 'Our core expertise is the Robinson range: R22, R44, R66, and R88. We can arrange inspections on other types through our network of type-specialist engineers, but the Robinson range is where our direct expertise sits.' },
+    { id: 'f2', question: 'How much does a pre-purchase inspection cost?', answer: "Fees depend on the type and location of the aircraft. Contact us with details and we'll provide a fixed fee upfront, with no surprises." },
+    { id: 'f3', question: 'Can you negotiate on my behalf?', answer: "Yes, as part of our Acquisition Services offering. We're effective negotiators because we understand the market, the aircraft, and realistic rectification costs." },
     { id: 'f4', question: 'What if the inspection finds problems?', answer: 'We document every finding with photographs and reference the applicable maintenance data. For defects, we estimate rectification costs so you can factor them into your offer or walk away with a clear understanding of why.' },
     { id: 'f5', question: 'How quickly can you conduct an inspection?', answer: "Typically within 3–5 working days of the request, subject to the aircraft's location. For time-sensitive transactions, contact us and we'll do our best." },
-    { id: 'f6', question: 'Do you provide ongoing advisory retainers?', answer: 'Yes — for owners who want regular access to our knowledge. Contact us to discuss a structure that suits your needs.' },
+    { id: 'f6', question: 'Do you provide ongoing advisory retainers?', answer: 'Yes, for owners who want regular access to our knowledge. Contact us to discuss a structure that suits your needs.' },
   ];
   const faqs = rawFaqs.length > 0 ? rawFaqs : fallbackFaqs;
 
@@ -193,7 +194,7 @@ function AircraftConsulting() {
       const res = await fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...formData, subject: 'Aircraft Consulting Enquiry', source: 'aircraft-consulting-page' }) });
       if (!res.ok) throw new Error();
       setFormStatus('success');
-      setFormData({ name: '', email: '', phone: '', registration: '', serviceType: '', message: '' });
+      setFormData(INITIAL_FORM_STATE);
     } catch { setFormStatus('error'); }
   }
 
@@ -202,13 +203,13 @@ function AircraftConsulting() {
   const services = [
     {
       num: '01', tag: 'Most Common', title: 'Pre-Purchase Inspection',
-      description: 'A thorough airframe, engine, avionics, and logbook inspection of any Robinson helicopter before purchase. We check everything a pre-purchase should cover — and more. Written report within 48 hours of inspection.',
+      description: 'A thorough airframe, engine, avionics, and logbook inspection of any Robinson helicopter before purchase. We check everything a pre-purchase should cover, and more. Written report within 48 hours of inspection.',
       includes: ['Physical airframe inspection', 'Engine and systems check', 'Full logbook audit', 'Written report with photography', 'Rectification cost estimates', 'Price guidance'],
       enquiry: 'pre-purchase-inspection',
     },
     {
       num: '02', tag: 'Ongoing', title: 'Ownership Advisory',
-      description: "For first-time helicopter owners navigating the responsibilities of ownership — insurance, maintenance scheduling, hangarage, pilot currency, operating costs. Ongoing support so you're never left guessing.",
+      description: "For first-time helicopter owners navigating the responsibilities of ownership: insurance, maintenance scheduling, hangarage, pilot currency, operating costs. Ongoing support so you're never left guessing.",
       includes: ['Operating cost modelling', 'Operator and engineer selection', 'Maintenance schedule planning', 'Insurance guidance', 'Regulatory compliance advice'],
       enquiry: 'ownership-advisory',
     },
@@ -220,32 +221,32 @@ function AircraftConsulting() {
     },
     {
       num: '04', tag: 'Full Service', title: 'Acquisition Services',
-      description: 'HQ manages the entire acquisition process — identifying aircraft, conducting negotiations, arranging surveys, handling documentation, and coordinating delivery. A complete hands-off service for buyers who value their time.',
+      description: 'HQ manages the entire acquisition process: identifying aircraft, conducting negotiations, arranging surveys, handling documentation, and coordinating delivery. A complete hands-off service for buyers who value their time.',
       includes: ['Aircraft sourcing worldwide', 'Seller negotiation', 'Independent survey management', 'Import/export documentation', 'Delivery coordination and handover'],
       enquiry: 'acquisition-services',
     },
   ];
 
   const processSteps = [
-    { num: '01', title: 'Brief', duration: '30 mins', description: "Tell us what you're looking at — aircraft registration, hours, price, and your goals. We'll confirm scope and provide a fixed fee upfront." },
+    { num: '01', title: 'Brief', duration: '30 mins', description: "Tell us what you're looking at: aircraft registration, hours, price, and your goals. We'll confirm scope and provide a fixed fee upfront." },
     { num: '02', title: 'Research', duration: '1 day', description: "We review CAA records, check for applicable ADs or known issues on the type, and prepare our inspection checklist tailored to the specific aircraft and its history." },
     { num: '03', title: 'Inspection', duration: 'Half day', description: "Physical inspection at the aircraft's location covering airframe, engine, avionics, documents, and logbooks. Photography throughout." },
-    { num: '04', title: 'Report', duration: '48 hours', description: 'Written report detailing every finding, condition assessment, estimated rectification costs for defects found, and our clear recommendation — buy, negotiate, or walk away.' },
+    { num: '04', title: 'Report', duration: '48 hours', description: 'Written report detailing every finding, condition assessment, estimated rectification costs for defects found, and our clear recommendation: buy, negotiate, or walk away.' },
     { num: '05', title: 'Support', duration: 'Ongoing', description: "Available to discuss the report and support any negotiation or decision-making that follows. We're on your side throughout." },
   ];
 
   const credentials = [
-    { title: 'Robinson Authorised Service Centre', desc: "Factory-authorised to inspect and certify every Robinson type — the qualification that matters most for pre-purchase work on the aircraft you are most likely buying." },
-    { title: 'CAA Part 145 Approved', desc: 'Approved Maintenance Organisation. Airworthiness standards in operational detail — not theory.' },
+    { title: 'Robinson Authorised Service Centre', desc: "Factory-authorised to inspect and certify every Robinson type, the qualification that matters most for pre-purchase work on the aircraft you are most likely buying." },
+    { title: 'CAA Part 145 Approved', desc: 'Approved Maintenance Organisation. Airworthiness standards in operational detail, not theory.' },
     { title: '35 Years of Robinson Experience', desc: 'More Robinson hours, more Robinson logbooks, and more Robinson problems solved than almost any organisation in Europe.' },
-    { title: '500+ Transactions Supported', desc: 'Acquisitions, sales, and ownership transitions — a track record that gives us genuine feel for the market, not just the aircraft.' },
+    { title: '500+ Transactions Supported', desc: 'Acquisitions, sales, and ownership transitions: a track record that gives us genuine feel for the market, not just the aircraft.' },
   ];
 
   const independencePoints = [
-    { num: '01', title: 'Paid by You, Not the Seller', desc: "Our fee comes from the buyer — never the seller. No commission, no engineer-to-seller relationship to protect, no reason to close a deal that isn't right for you." },
+    { num: '01', title: 'Paid by You, Not the Seller', desc: "Our fee comes from the buyer, never the seller. No commission, no engineer-to-seller relationship to protect, no reason to close a deal that isn't right for you." },
     { num: '02', title: 'Factory-Trained Eyes', desc: "As an Authorised Robinson Service Centre, we know what a clean airframe looks like at 500, 1,000, and 2,000 hours. Deferred maintenance, botched repairs, and undisclosed damage rarely survive a proper inspection." },
-    { num: '03', title: 'Logbook Forensics', desc: "Logbooks tell a story — sometimes the one the seller wants, sometimes the one the aircraft actually lived. Thirty-five years of reading them catches the inconsistencies, gaps, and red flags that inexperienced eyes miss." },
-    { num: '04', title: 'A Clear Recommendation', desc: "Every report ends with one of three words: buy, negotiate, or walk. You will know exactly where you stand before you commit — not after the paperwork is signed." },
+    { num: '03', title: 'Logbook Forensics', desc: "Logbooks tell a story: sometimes the one the seller wants, sometimes the one the aircraft actually lived. Thirty-five years of reading them catches the inconsistencies, gaps, and red flags that inexperienced eyes miss." },
+    { num: '04', title: 'A Clear Recommendation', desc: "Every report ends with one of three words: buy, negotiate, or walk. You will know exactly where you stand before you commit, not after the paperwork is signed." },
   ];
 
   // ── Render ─────────────────────────────────────────────────────────────────
@@ -338,7 +339,7 @@ function AircraftConsulting() {
               transition={{ delay: 1.2 }}
             >
               Pre-purchase inspections, ownership advice, fleet planning, and bespoke acquisition
-              services — grounded in thirty-five years of Robinson expertise and 500+ transactions
+              services, grounded in thirty-five years of Robinson expertise and 500+ transactions
               across Europe.
             </motion.p>
           </div>
@@ -355,15 +356,15 @@ function AircraftConsulting() {
               <span className="ac-pre-text">Expertise Before Commitment</span>
               <h2 className="ac-intro__heading">Independent.&nbsp;Thorough.&nbsp;Honest.</h2>
               <p className="ac-intro__body">
-                Most people buy their first helicopter once. The margin for error — wrong type,
-                wrong configuration, undisclosed history — is narrow, and the consequences last
+                Most people buy their first helicopter once. The margin for error (wrong type,
+                wrong configuration, undisclosed history) is narrow, and the consequences last
                 years. HQ Aviation's consulting service exists to close that margin before you
                 commit.
               </p>
               <p className="ac-intro__body">
                 From a single pre-purchase inspection to full acquisition management, our work
                 draws on the same hangar floor, logbook library, and maintenance experience that
-                supports owners across Europe — brought to bear on your aircraft, your budget,
+                supports owners across Europe, brought to bear on your aircraft, your budget,
                 and your plan.
               </p>
             </Reveal>
@@ -392,7 +393,7 @@ function AircraftConsulting() {
               <div className="ac-intro__image-wrap">
                 <img
                   src={pageImages['ac-intro']?.[0]?.url || '/assets/images/facility/hq-0153.jpg'}
-                  alt="HQ Aviation facility — Factory Authorised Service Centre"
+                  alt="HQ Aviation facility, Factory Authorised Service Centre"
                 />
                 <div className="ac-intro__caption">Factory Authorised Service Centre</div>
               </div>
@@ -452,7 +453,7 @@ function AircraftConsulting() {
               </h2>
               <p className="ac-why__intro-body">
                 Thirty-five years of Robinson experience and 500+ transactions sit behind every
-                consultation — because getting a helicopter purchase wrong is a mistake that is
+                consultation, because getting a helicopter purchase wrong is a mistake that is
                 hard to unwind. Our job is simple: give you an accurate, independent read before
                 you commit. What the logbooks really say, what the airframe really needs, and
                 what the aircraft is really worth.
@@ -733,7 +734,7 @@ function AircraftConsulting() {
             <h2 className="ac-cta__heading">Talk to an Expert First</h2>
             <p className="ac-cta__body">
               An hour with us before you commit is the cheapest insurance on a helicopter
-              purchase. No obligation, no sales pitch — just an honest read on whatever you are
+              purchase. No obligation, no sales pitch, just an honest read on whatever you are
               considering.
             </p>
             <div className="ac-cta__buttons">
