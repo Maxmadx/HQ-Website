@@ -48,21 +48,44 @@ Extend the `ALLOWED_TYPES` allowlist in `api/analytics-api.js`:
 
 ### New `carts` collection
 
+Mirrors the existing `bookings` doc shape so the cart can be promoted in place when payment succeeds. Cart is **upserted by `sessionId`** — there is at most one active cart per session, so repeated Book Now clicks update rather than duplicate.
+
 ```
 carts/{cartId}: {
-  sessionId: string,            // links to page_events.sessionId
-  email: string,                // captured at email-first step
-  items: [
-    { type: 'discovery-flight', aircraftId: 'r44', duration: 60, priceP: 35000 }
-  ],
-  totalP: number,               // pence
+  sessionId: string,                // links to page_events.sessionId; unique among non-completed carts
+  email: string|null,               // captured at email-first step; null until then
+  emailSource: 'typed'|'lead-match'|'exit-intent'|null,
+
+  // booking shape — matches existing recordBooking() in api/stripe.js
+  flight: { aircraftId, duration, priceP },
+  addons: [{ id, qty, priceP }],    // existing add-on schema
+  fulfilment: 'collect'|'delivery',
+  shippingAddress: { line1, line2, city, postcode } | null,
+
+  totalP: number,                   // sum of flight.priceP + addons; pence
+  currency: 'gbp',
+
   status: 'active' | 'checkout_initiated' | 'abandoned' | 'completed' | 'expired',
   stripeSessionId: string|null,
-  recoveryEmailsSent: [{ at: timestamp, type: '1h' | '24h' }],
+  stripePaymentIntentId: string|null,
+
+  recoveryToken: string,            // random 32-char URL-safe token; resume link = /checkout?t={token}
+  recoveryEmailsSent: [{ at: timestamp, type: '1h'|'24h', messageId, opened: bool, clicked: bool }],
+  noEmail: bool,                    // unsubscribed from recovery emails
+  excludedFromAnalytics: bool,      // admin self-exclusion (matched email or IP)
+
+  utm: { source, medium, campaign, term, content },  // captured from session at cart creation
+  referrer: string,
+  countryCode: string|null,
+
   createdAt: timestamp,
-  updatedAt: timestamp
+  updatedAt: timestamp,
+  completedAt: timestamp|null,
+  abandonedAt: timestamp|null
 }
 ```
+
+**Why a recovery token, not the doc id:** doc ids appear in URLs and server logs; a separate random token in the resume link prevents enumeration and lets us rotate or revoke without touching the cart.
 
 ### New `gsc_daily` collection (Search Console sync)
 
@@ -99,7 +122,8 @@ gsc_daily/{YYYY-MM-DD_query_page}: {
 - `src/components/admin/SearchKeywords.jsx` — GSC tile with the chart + by-keyword/by-page tabs.
 - `src/components/admin/GeographyMap.jsx` — SVG world map tile.
 - `src/lib/funnelAggregations.js` — pure functions to compute funnel counts from page_events + carts.
-- Email templates: `api/templates/cart-recovery-1h.html`, `cart-recovery-24h.html`.
+- `api/templates/cart-recovery.js` — exports `cartRecoveryEmail(cart, type)` returning `{ subject, html, text }`. Reuses the nodemailer transporter already initialised in `api/stripe.js` (existing booking-confirmation infra; no new ESP needed).
+- `api/lib/cartValidation.js` — zod schema for `POST /api/carts` body (rejects malformed payloads at the boundary).
 
 ### Modified files
 
@@ -211,10 +235,120 @@ Recommended order (each phase ships independently):
 4. **Phase 4 — Search Keywords (subsystem D).** GSC integration + tile.
 5. **Phase 5 — Geography map + Top Pageviews tile (subsystem E).** Pure UI work over existing data.
 
+## Best-practice hardening
+
+The features below are what take this from "Squarespace clone" to "actually load-bearing analytics for the business." Each is small in isolation, but together they're the difference between a dashboard you trust and one you don't.
+
+### Cart correctness
+
+- **Upsert by `sessionId`.** `POST /api/carts` is an upsert: if a non-completed cart with this `sessionId` exists, update it; otherwise create. Repeated Book Now clicks don't multiply carts. A Firestore `cartBySessionId/{sessionId}` index doc points at the active cart for O(1) lookup.
+- **Idempotent webhook → cart promotion.** When `payment_intent.succeeded` fires, mark the matching cart `completed` only if `status !== 'completed'`. The Stripe webhook can fire twice; the cart promotion must be a no-op the second time.
+- **Server is source of truth for prices.** Client sends `aircraftId` + `duration` + `addonIds` only; server re-prices from Firestore `pricing` collection before storing `totalP`. Prevents tampering and matches the existing `priceAddons()` pattern in `api/stripe.js`.
+- **Schema validation at the boundary.** `POST /api/carts` body validated by zod (`api/lib/cartValidation.js`); 400 on malformed input. Same for `PATCH /api/carts/:id`.
+- **Cart expiry is explicit.** Carts inactive >7 days move to `expired`. Carts older than 90 days (any status) are deleted by the housekeeping job. No silent infinite growth.
+
+### Security & abuse
+
+- **Rate limit `POST /api/carts` to 30/min/IP** (half the analytics rate; cart writes happen less). Same `express-rate-limit` pattern as `api/analytics-api.js`.
+- **Honeypot field on the email step.** Hidden `<input name="company">` field; any cart submission with it filled is dropped server-side without a 400 (don't tell bots they failed).
+- **Email format validation server-side** (regex + DNS MX check via a debounced lookup). Stops `asdf@asdf` from cluttering recoverable carts.
+- **Resume token unguessability.** 32-char URL-safe random token (`crypto.randomBytes(24).toString('base64url')`). Tokens are single-use after `completed`; revoked tokens 410.
+- **Unsubscribe is one-click and doesn't require auth.** `GET /api/carts/unsubscribe?t={token}` sets `noEmail: true`. Required by GDPR/CAN-SPAM; same token type as resume.
+
+### Email deliverability
+
+- **Reuse existing nodemailer transporter** from `api/stripe.js`. Same sending domain → SPF/DKIM/DMARC already established for booking confirmations carries over to recovery emails.
+- **Plain-text alternative on every recovery email.** `text:` field populated by template. Improves inbox placement.
+- **List-Unsubscribe header.** Add `List-Unsubscribe: <{API_BASE}/api/carts/unsubscribe?t={token}>` and `List-Unsubscribe-Post: List-Unsubscribe=One-Click` to recovery emails. Gmail and Apple Mail show a native unsubscribe button — drastically reduces spam reports.
+- **Send rate cap.** Recovery job sends ≤ 50 emails per scheduler tick (≤ 200/h). Volume is far below this; the cap is a runaway-loop guard.
+
+### Recovery email tracking
+
+- **UTM-tagged resume link.** Recovery email link is `/checkout?t={token}&utm_source=recovery&utm_medium=email&utm_campaign=cart-1h` (or `-24h`). The funnel can then attribute "Recovered" carts back to the email that worked.
+- **Open tracking via 1×1 pixel.** `<img src="{API_BASE}/api/carts/email-pixel?t={token}&type=1h">`. Marks the matching `recoveryEmailsSent` entry's `opened: true`. Disable in plain-text alternative. Document in privacy section.
+- **Click tracking via the resume link itself** — the resume endpoint sets `clicked: true` on the matching `recoveryEmailsSent` entry before redirecting.
+
+### Self-exclusion (admin doesn't pollute their own data)
+
+- **Existing `ADMIN_IP` env var** already excludes admin IPs from `page_events` reads. Reuse the same list in funnel aggregations and cart counts.
+- **`ADMIN_EMAIL` env var** (comma-separated) — any cart whose email matches gets `excludedFromAnalytics: true` and is filtered from the dashboard tiles. Admin testing the funnel doesn't show as a real visitor.
+- **No recovery emails to admin emails.** Same list short-circuits the recovery job.
+
+### Time zones
+
+- **Date-range filters use Europe/London.** "Last 7 days" ends at end-of-day London time, not UTC. Owner sees today's data when they expect to. `dayjs` with `tz` plugin (already a dep, check) — otherwise use `Intl.DateTimeFormat` with `timeZone: 'Europe/London'`.
+- **Recovery email send times are clamped to 08:00–20:00 Europe/London.** A cart abandoned at 23:30 doesn't get a recovery email at 00:30; it queues for 08:00 next morning. Better deliverability, fewer "why are they emailing me at 1am" complaints.
+
+### Mobile abandonment signal
+
+Exit-intent doesn't work on mobile (no mouse). Replacement: on `/checkout`, listen for `visibilitychange` → `hidden` AND `pagehide`. If we don't yet have an email and the cart has at least one item, fire the same email-prompt modal *next time* the page becomes visible (i.e. they come back to the tab). For sessions that never return, we have no email and the cart simply expires — that's accepted.
+
+### Conversion value, not just count (this is the unlock)
+
+The dashboard tiles must show **£ revenue alongside counts**. A purchase funnel without value is half the picture; the owner needs to know that the £350 R44 cart abandoning is more important than the £150 R22 one.
+
+For each funnel stage and each abandoned-cart row:
+
+- Show count AND total £ value.
+- Show **AOV** (average cart value) in the funnel header.
+- "Recoverable" tile shows total recoverable £ at the top — this is the headline number.
+
+### Source-segmented funnel
+
+The single most useful filter Squarespace **doesn't** show: split the funnel by traffic source (UTM source / referrer category). Owner immediately sees that Google Organic converts at 6% but Instagram at 0.5%. Filter dropdown in the Funnel tile: All / Google / Instagram / Facebook / Direct / Email / Other. Already-tracked UTM data makes this nearly free.
+
+### Time-to-conversion
+
+Add one number to the funnel tile: **median hours from first `pageview` to `purchased`** within the date range. Tells the owner whether buyers convert same-day or after a week of consideration — radically different marketing implications.
+
+### Empty states
+
+- "No abandoned carts in this range" → "Nothing to recover — well done."
+- "No GSC data yet" → setup CTA with a link to the env-var doc.
+- "No purchases this period" → don't show 0% / 0% / 0% misleadingly; show "Awaiting first purchase."
+
+### Audit log for admin actions
+
+`admin_audit/{id}: { actor, action, target, at, meta }` — written whenever an admin manually sends a recovery email, marks a cart as completed, or unsubscribes a cart. Cheap insurance; lets the owner verify "did I email this person already?" instead of guessing from the cart record.
+
+### Data retention
+
+- `page_events`: rolled into `daily_rollups` (one doc per day per page) by a nightly job. Raw events older than 180 days are deleted. Funnel and overview tiles read rollups for ranges >30 days; raw events for ranges ≤30 days. Caps Firestore growth and read costs without losing historical trend data.
+- `carts`: deleted after 90 days regardless of status (housekeeping job described above).
+- `gsc_daily`: kept indefinitely (small, slow-growing).
+
+### Observability
+
+- Recovery job logs structured events: `{job: 'cart-recovery', tick: ts, scanned, abandoned, queued, sent, failed}`. Log to stdout (existing pattern); a future Cloud Logging hookup can pick this up.
+- GSC sync logs `{job: 'gsc-sync', date, rowsFetched, rowsWritten, durationMs, error}`.
+- Dashboard surfaces a small "Last sync: 3h ago" indicator on each tile that depends on a job.
+
+### Rollout / migration
+
+- Phase 1 ships behind a `FUNNEL_ENABLED` env flag (default true) so it can be killed instantly if the new `viewed_product` / `started_checkout` events misbehave.
+- Phase 2 (email-first step) ships behind `EMAIL_FIRST_CHECKOUT` flag — owner can A/B-toggle to confirm no conversion regression.
+- Phase 3 (auto recovery emails) is initially **disabled by default** and turned on by setting `CART_RECOVERY_AUTO=true` in env. First week the owner manually sends from the dashboard, watches deliverability, then flips the flag.
+- Phase 4 (GSC) requires service-account JSON in env; tile shows setup CTA when missing.
+
+### Testing matrix
+
+In addition to the items already listed:
+
+- Unit: cart upsert idempotency (10 rapid Book Now clicks → 1 cart).
+- Unit: recovery job clock boundaries (59m vs 61m, 23h59 vs 24h01, 6d23h vs 7d01h).
+- Unit: webhook double-fire → cart marked completed once, `purchased` event fired once.
+- Unit: admin email/IP exclusion (cart created from admin IP doesn't appear in funnel counts).
+- Unit: zod schema rejects malformed payloads with 400.
+- Integration: resume token round-trip (email link → checkout state restored → pay → cart completed).
+- Integration: unsubscribe link sets `noEmail: true` and short-circuits future recovery sends.
+- E2E (Playwright): full happy + abandoned paths, mobile + desktop.
+- Load: 1000 carts created in 1 minute → rate limiter holds, no Firestore quota errors.
+
 ## Success criteria
 
-- Owner can open `/admin/analytics` and see, for any chosen date range, the Discovery Flight funnel and abandoned-cart counts that match Squarespace's tile structure exactly.
-- An abandoned cart with an email is reachable via "Send recovery email" from the dashboard within one click.
-- Automated recovery emails fire at 1h and 24h boundaries with ±5 min accuracy.
-- Search Keywords tile shows the same metrics Squarespace shows, refreshed within 24h.
-- No regression in existing checkout conversion (measured by comparing 14-day pre/post `purchased` counts).
+- Owner can open `/admin/analytics` and see, for any chosen date range, the Discovery Flight funnel and abandoned-cart **counts AND £ values** that match Squarespace's tile structure exactly, plus AOV, time-to-conversion, and source segmentation that Squarespace doesn't show.
+- An abandoned cart with an email is reachable via "Send recovery email" from the dashboard within one click; admin manual sends are recorded in `admin_audit`.
+- Automated recovery emails fire at 1h and 24h boundaries (±5 min), respect quiet hours (08:00–20:00 Europe/London), respect unsubscribe and admin exclusion lists, and are delivered with one-click `List-Unsubscribe`.
+- Search Keywords tile shows the same metrics Squarespace shows, refreshed within 24h, with a visible "last sync" indicator.
+- Funnel correctness verified end-to-end: 10 rapid Book Now clicks produce 1 cart; webhook double-fires produce 1 `purchased` event; admin IP/email never appears in tiles.
+- No regression in existing checkout conversion (measured by comparing 14-day pre/post `purchased` counts; `EMAIL_FIRST_CHECKOUT` flag enables instant rollback).
