@@ -236,11 +236,31 @@ function AircraftConsulting() {
   ];
 
   const processSteps = [
-    { num: '01', title: 'Brief', duration: '30 mins', description: "Tell us what you're looking at — aircraft registration, hours, price, and your goals. We'll confirm scope and provide a fixed fee upfront." },
-    { num: '02', title: 'Research', duration: '1 day', description: "We review CAA records, check for applicable ADs or known issues on the type, and prepare our inspection checklist tailored to the specific aircraft and its history." },
-    { num: '03', title: 'Inspection', duration: 'Half day', description: "Physical inspection at the aircraft's location covering airframe, engine, avionics, documents, and logbooks. Photography throughout." },
-    { num: '04', title: 'Report', duration: '48 hours', description: 'Written report detailing every finding, condition assessment, estimated rectification costs for defects found, and our clear recommendation — buy, negotiate, or walk away.' },
-    { num: '05', title: 'Support', duration: 'Ongoing', description: "Available to discuss the report and support any negotiation or decision-making that follows. We're on your side throughout." },
+    {
+      num: '01',
+      title: 'Brief',
+      description: "Tell us what you need. We confirm scope and whether we're the right firm.",
+    },
+    {
+      num: '02',
+      title: 'Scope & fee',
+      description: "Written, upfront. What's in, what's out, what it costs. Fixed where possible; capped where not.",
+    },
+    {
+      num: '03',
+      title: 'Engagement',
+      description: 'The work itself: an inspection, a market search, a model build, a documentation sequence, a written opinion.',
+    },
+    {
+      num: '04',
+      title: 'Deliverable',
+      description: 'In writing. Report, valuation, TCO model, policy recommendation, expert opinion — with a clear position you can act on.',
+    },
+    {
+      num: '05',
+      title: 'Continued',
+      description: 'Open line afterwards. Available to talk through findings, support negotiations, take the next call. For retainer clients, this is the relationship.',
+    },
   ];
 
   const credentials = [
@@ -516,7 +536,6 @@ function AircraftConsulting() {
                   <div className="ac-process__step-content">
                     <div className="ac-process__step-header">
                       <h4 className="ac-process__step-title">{step.title}</h4>
-                      <span className="ac-process__step-duration">{step.duration}</span>
                     </div>
                     <p className="ac-process__step-desc">{step.description}</p>
                   </div>
