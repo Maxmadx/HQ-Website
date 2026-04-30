@@ -18,6 +18,7 @@ import { usePageText } from '../hooks/usePageText';
 import { useFaqs } from '../hooks/useFaqs';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { arrivalStyles } from '../components/ArrivalSection';
+import { trackEvent } from '../lib/analytics';
 
 // Import styles
 import '../assets/css/main.css';
@@ -1186,6 +1187,15 @@ function DiscoveryFlight() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    trackEvent('view_item', null, window.location.pathname, {
+      itemCategory: 'discovery-flight',
+      items: [{ item_category: 'discovery-flight' }],
+      currency: 'gbp',
+    });
+  }, []);
+
   useCmsHighlight();
 
   return (
