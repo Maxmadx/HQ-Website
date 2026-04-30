@@ -1497,7 +1497,10 @@ function AircraftConsulting() {
           display: grid;
           grid-template-columns: repeat(var(--cols, 2), 1fr);
           gap: 1.5rem;
-          align-items: start;
+          align-items: stretch;
+        }
+        .ac-services__grid > * {
+          display: flex;
         }
         .ac-service-card {
           background: #ffffff;
@@ -1506,6 +1509,7 @@ function AircraftConsulting() {
           padding: 2.5rem;
           display: flex;
           flex-direction: column;
+          height: 100%;
           transition: box-shadow 0.25s ease, border-color 0.25s ease;
         }
         .ac-service-card:hover {
