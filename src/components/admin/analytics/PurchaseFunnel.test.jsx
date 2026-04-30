@@ -12,12 +12,13 @@ const events = [
 ];
 
 describe('PurchaseFunnel', () => {
-  it('renders the four funnel stages with counts', () => {
+  it('renders the three product-funnel stages with counts', () => {
     render(<PurchaseFunnel events={events} itemCategory="discovery-flight" />);
-    expect(screen.getByText(/Visits/i)).toBeInTheDocument();
     expect(screen.getByText(/Viewed Product/i)).toBeInTheDocument();
     expect(screen.getByText(/Started Checkout/i)).toBeInTheDocument();
     expect(screen.getByText(/Purchased/i)).toBeInTheDocument();
+    // Visits is intentionally NOT shown — most site visitors aren't here for a discovery flight
+    expect(screen.queryByText(/^Visits$/i)).toBeNull();
   });
 
   it('renders the £ AOV and Revenue alongside the funnel', () => {

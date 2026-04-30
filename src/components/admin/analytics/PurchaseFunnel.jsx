@@ -47,8 +47,10 @@ export default function PurchaseFunnel({ events = [], itemCategory = 'discovery-
 
   const isEmpty = funnel.purchased === 0 && funnel.viewedProduct === 0;
 
+  // Funnel intentionally starts at "Viewed Product" (people who reached /training/trial-lessons),
+  // not total site Visits — most visitors are on the site for other reasons, so including them
+  // would make the discovery-flight drop-off look artificially terrible.
   const stages = [
-    { key: 'visits',         label: 'Visits',           count: funnel.visits },
     { key: 'viewedProduct',  label: 'Viewed Product',   count: funnel.viewedProduct },
     { key: 'beganCheckout',  label: 'Started Checkout', count: funnel.beganCheckout },
     { key: 'purchased',      label: 'Purchased',        count: funnel.purchased },
