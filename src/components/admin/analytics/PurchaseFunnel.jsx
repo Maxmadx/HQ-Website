@@ -76,7 +76,7 @@ export default function PurchaseFunnel({ events = [], itemCategory = 'discovery-
 
       <div style={{ display: 'flex', gap: 24, margin: '20px 0', flexWrap: 'wrap' }}>
         <Stat label="AOV" value={fmtGbp(value.aov)} />
-        <Stat label="Transactions" value={value.purchasedCount} />
+        <Stat label="Revenue" value={fmtGbp(value.totalValue)} />
         <Stat label="Median time to convert" value={ttc !== null ? `${ttc.toFixed(1)}h` : '—'} />
       </div>
 

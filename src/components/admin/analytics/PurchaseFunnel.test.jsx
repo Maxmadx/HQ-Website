@@ -20,10 +20,13 @@ describe('PurchaseFunnel', () => {
     expect(screen.getByText(/Purchased/i)).toBeInTheDocument();
   });
 
-  it('renders the £ AOV alongside the funnel', () => {
+  it('renders the £ AOV and Revenue alongside the funnel', () => {
     render(<PurchaseFunnel events={events} itemCategory="discovery-flight" />);
     expect(screen.getByText(/AOV/i)).toBeInTheDocument();
-    expect(screen.getByText(/£350/)).toBeInTheDocument();
+    expect(screen.getByText(/Revenue/i)).toBeInTheDocument();
+    // Both AOV and Revenue display £350 for this single-purchase fixture
+    const matches = screen.getAllByText(/£350/);
+    expect(matches.length).toBe(2);
   });
 
   it('shows an empty state when no events match', () => {
