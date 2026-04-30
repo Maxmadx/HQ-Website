@@ -798,6 +798,25 @@ async function handleWebhook(req) {
       });
     }
 
+    // Promote matching cart to completed (Phase 2). Idempotent — safe on webhook retries.
+    try {
+      const cartId = pi.metadata && pi.metadata.cartId;
+      if (cartId) {
+        const cartRef = admin.firestore().collection('carts').doc(cartId);
+        const cartSnap = await cartRef.get();
+        if (cartSnap.exists && cartSnap.data().status !== 'completed') {
+          await cartRef.set({
+            status: 'completed',
+            stripePaymentIntentId: pi.id,
+            completedAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          }, { merge: true });
+        }
+      }
+    } catch (cartErr) {
+      console.error('[stripe webhook] cart promotion failed:', cartErr.message);
+    }
+
     // Send confirmation email
     try {
       if (productType === 'london-tour') {
