@@ -6,7 +6,9 @@ import FinalDraftHeader from '../components/FinalDraftHeader';
 import DiscoveryAddons from '../components/checkout/DiscoveryAddons';
 import { computeAddonsTotal, computeLineTotal } from '../lib/discoveryAddons';
 import { useDiscoveryAddons } from '../hooks/useDiscoveryAddons';
-import { trackEvent } from '../lib/analytics';
+import { trackEvent, getSessionId } from '../lib/analytics';
+import EmailFirstStep from './Checkout/EmailFirstStep';
+import { upsertCart, getCartId, rehydrateCartByToken } from '../lib/cart';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -35,13 +37,14 @@ function CheckoutForm({
   aircraft, duration, price,
   wantsVoucher, setWantsVoucher, voucherLocation, setVoucherLocation, voucherMessage, setVoucherMessage,
   addons, addonsState, addonsTotalPence,
+  prefillEmail, cartId,
 }) {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(prefillEmail || '');
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -91,6 +94,7 @@ function CheckoutForm({
           shippingAddress: (addons.length > 0 && (addonsState.fulfilment === 'delivery' || wantsVoucher))
             ? addonsState.shippingAddress
             : null,
+          cartId: cartId || '',
         }),
       });
       const data = await res.json();
@@ -394,6 +398,42 @@ export default function Checkout() {
   const duration = searchParams.get('duration');
   const price = searchParams.get('price');
 
+  const [email, setEmail] = useState(null);
+  const [cartId, setCartIdState] = useState(getCartId());
+  const [resumeError, setResumeError] = useState(null);
+
+  // Resume from token (recovery email link)
+  useEffect(() => {
+    const token = searchParams.get('t');
+    if (!token) return;
+    rehydrateCartByToken(token).then((cart) => {
+      if (cart) {
+        setEmail(cart.email);
+        setCartIdState(cart.cartId);
+      } else {
+        setResumeError('That booking link has expired or is no longer valid.');
+      }
+    });
+  }, [searchParams]);
+
+  async function handleEmailContinue(typedEmail) {
+    setEmail(typedEmail);
+    const newCartId = await upsertCart({
+      sessionId: getSessionId(),
+      email: typedEmail,
+      flight: aircraft && duration ? { aircraftId: aircraft, duration: parseInt(duration, 10) } : null,
+      utm: {
+        source: searchParams.get('utm_source'),
+        medium: searchParams.get('utm_medium'),
+        campaign: searchParams.get('utm_campaign'),
+        term: searchParams.get('utm_term'),
+        content: searchParams.get('utm_content'),
+      },
+      referrer: document.referrer || null,
+    });
+    if (newCartId) setCartIdState(newCartId);
+  }
+
   const [wantsVoucher, setWantsVoucher] = useState(false);
   const [voucherLocation, setVoucherLocation] = useState('');
   const [voucherMessage, setVoucherMessage] = useState('');
@@ -438,6 +478,18 @@ export default function Checkout() {
   }, [isValid, navigate, isMisc]);
 
   if (!isValid) return null;
+
+  if (resumeError) {
+    return (
+      <div style={{ maxWidth: 480, margin: '40px auto', padding: 24, color: '#f87171', textAlign: 'center' }}>
+        {resumeError}
+      </div>
+    );
+  }
+
+  if (!isMisc && !email) {
+    return <EmailFirstStep onContinue={handleEmailContinue} />;
+  }
 
   return (
     <>
@@ -577,6 +629,8 @@ export default function Checkout() {
                   addons={basketAddons}
                   addonsState={addonsState}
                   addonsTotalPence={addonsTotalPence}
+                  prefillEmail={email}
+                  cartId={cartId}
                 />
               )}
             </Elements>

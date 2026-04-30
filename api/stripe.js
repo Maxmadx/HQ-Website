@@ -213,6 +213,7 @@ async function createPaymentIntent({
   aircraft, duration, customerName, customerEmail, customerPhone,
   wantsVoucher, voucherLocation, voucherMessage,
   addons = [], fulfilment, shippingAddress,
+  cartId,
 }) {
   const flightAmount = await getPrice(aircraft, duration);
   if (flightAmount === null) {
@@ -281,6 +282,7 @@ async function createPaymentIntent({
       shippingLine2: resolvedAddress ? resolvedAddress.line2 : '',
       shippingCity: resolvedAddress ? resolvedAddress.city : '',
       shippingPostcode: resolvedAddress ? resolvedAddress.postcode : '',
+      cartId: cartId || '',
     },
   });
 
