@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { trackEvent } from '../lib/analytics';
 
 const AIRCRAFT_NAMES = {
   r22: 'Robinson R22',
@@ -20,6 +21,40 @@ export default function BookingConfirmed() {
   const isMisc = type === 'misc';
 
   const aircraftName = AIRCRAFT_NAMES[aircraft] || aircraft || 'Discovery Flight';
+
+  // Fire client-side purchase event as a fallback for the Stripe webhook.
+  // The transactionId (ref = payment_intent.id) is the dedup key — if the
+  // webhook also fires server-side, the aggregation layer dedupes via
+  // transactionId at read time. No double-count in dashboard counts.
+  useEffect(() => {
+    if (!ref) return;
+    const value = parseFloat(price || '0');
+    const itemCategory = isMisc ? 'misc' : 'discovery-flight';
+    const items = isMisc
+      ? [{
+          item_id: itemName || 'misc',
+          item_name: itemName || 'Misc item',
+          item_category: 'misc',
+          price: value,
+          currency: 'gbp',
+          quantity: 1,
+        }]
+      : [{
+          item_id: `${aircraft || 'unknown'}-${duration || ''}`,
+          item_name: `${aircraftName} ${duration ? duration + 'min ' : ''}Discovery Flight`,
+          item_category: 'discovery-flight',
+          price: value,
+          currency: 'gbp',
+          quantity: 1,
+        }];
+    trackEvent('purchase', ref, '/booking-confirmed', {
+      transactionId: ref,
+      value,
+      currency: 'gbp',
+      items,
+      itemCategory,
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div style={styles.page}>
