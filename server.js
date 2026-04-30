@@ -24,6 +24,7 @@ const { createPaymentIntent, createLondonTourPaymentIntent, createMiscPaymentInt
 const leadsRouter = require('./api/leads');
 const stripeDiscoveryRouter = require('./api/stripe-discovery');
 const analyticsRouter = require('./api/analytics-api');
+const cartsRouter = require('./api/carts');
 const pressClickRouter = require('./api/press-click');
 
 const app = express();
@@ -288,6 +289,11 @@ app.use('/api/stripe/discovery-checkout', express.json(), stripeDiscoveryRouter)
 // ANALYTICS ROUTES
 // ============================================
 app.use('/api/analytics', express.json({ limit: '16kb' }), analyticsRouter);
+
+// ============================================
+// CARTS ROUTES
+// ============================================
+app.use('/api/carts', express.json({ limit: '16kb' }), cartsRouter);
 
 // ============================================
 // PRESS CLICK ROUTES
