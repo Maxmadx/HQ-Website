@@ -6,7 +6,7 @@
  * Location and social proof woven into one experience.
  */
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import { useCollection } from '../hooks/useFirestore';
@@ -18,19 +18,104 @@ const contactDetails = [
   { icon: 'fas fa-map-marker-alt', label: 'Address', text: 'Hangar E, Denham Aerodrome', text2: 'Uxbridge, London, UB9 5DF' },
   { icon: 'fas fa-phone-alt', label: 'Operations', text: '+44 1895 833373', href: 'tel:+441895833373' },
   { icon: 'fas fa-wrench', label: 'Maintenance', text: '+44 1895 832833', href: 'tel:+441895832833' },
-  { icon: 'fas fa-envelope', label: 'Email', text: 'Operations@HQAviation.com', href: 'mailto:Operations@HQAviation.com' },
+  { icon: 'fas fa-envelope', label: 'Email', text: 'operations@hqaviation.com', href: 'mailto:operations@hqaviation.com' },
   { icon: 'fas fa-clock', label: 'Hours', text: 'Monday – Sunday', text2: '09:00 – 17:00' },
 ];
 
 const MAPS_SRC = "https://maps.google.com/maps?q=HQ+Aviation,+Denham+Aerodrome,+UB9+5DF&ll=51.578,0.25&t=&z=9&ie=UTF8&iwloc=&output=embed";
 
 /* ── Component ── */
-export default function ArrivalSection() {
+export default function ArrivalSection({ children, picker, setPicker }) {
   const reviewTrackRef = useRef(null);
+  const arrivalLayoutRef = useRef(null);
+  const arrivalCardRef = useRef(null);
+  const arrivalMarqueeRef = useRef(null);
   const [reviewIdx, setReviewIdx] = useState(0);
   const [pricingTab, setPricingTab] = useState('discovery');
   const [pricingOpen, setPricingOpen] = useState(false);
   const { fmt } = usePricing();
+
+  // Sticky-at-end pin for arrival__layout + opacity fade as community-wall
+  // rises into view. CTA pinning is handled by pure CSS (position: sticky;
+  // bottom: 0) on desktop — see styles below.
+  useEffect(() => {
+    const layout = arrivalLayoutRef.current;
+    if (!layout) return undefined;
+
+    const updateStickTop = () => {
+      const vh = window.innerHeight;
+      layout.style.setProperty('--arrival-stick-top', `${vh - layout.offsetHeight}px`);
+    };
+
+    const setCtaState = (parent, cta) => {
+      if (!parent || !cta) return;
+      const vh = window.innerHeight;
+      const rect = parent.getBoundingClientRect();
+      // Top corners are rounded while stuck (CTA pinned at viewport bottom),
+      // flatten as it detaches and rejoins the document flow.
+      const isStuck = rect.bottom > vh;
+      const target = cta.querySelector('.arrival__cta') || cta;
+      target.style.borderTopLeftRadius = isStuck ? '8px' : '0';
+      target.style.borderTopRightRadius = isStuck ? '8px' : '0';
+    };
+
+    let rafId = null;
+    const MAX_BLUR = 10;
+    const FADE_WINDOW = 0.65;
+    const onScroll = () => {
+      if (rafId != null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+
+        const vh = window.innerHeight;
+        const riser = document.getElementById('community-wall');
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+          // Pinned to fully visible on mobile — CSS also enforces this. No JS work.
+        } else if (riser) {
+          // Fade is a pure function of community-wall's viewport position,
+          // applied in both scroll directions. Small upward scrolls past
+          // the section don't resurrect the layout — community-wall is
+          // still covering, so progress is still high and the layout stays
+          // faded. It only fades back in as community-wall genuinely
+          // recedes.
+          layout.style.transition = '';
+          const rect = riser.getBoundingClientRect();
+          const progress = Math.min(1, Math.max(0, 1 - rect.top / vh));
+          const eased = Math.pow(Math.min(1, progress / FADE_WINDOW), 2);
+          // Gate the snap-to-visible by RAW progress, not eased. eased
+          // hits 0.99 at raw progress ~0.65 (two-thirds covered) which is
+          // too early — user briefly sees the layout. Wait until
+          // community-wall is genuinely at its final position.
+          if (progress >= 0.95) {
+            layout.style.setProperty('--arrival-fade', '0');
+            layout.style.setProperty('--arrival-blur', '0px');
+          } else {
+            layout.style.setProperty('--arrival-fade', `${eased}`);
+            layout.style.setProperty('--arrival-blur', `${eased * MAX_BLUR}px`);
+          }
+          layout.style.pointerEvents = eased >= 0.99 ? 'none' : '';
+        }
+        setCtaState(arrivalCardRef.current, document.querySelector('.arrival__actions'));
+        setCtaState(arrivalMarqueeRef.current, document.querySelector('.arrival__marquee-cta'));
+      });
+    };
+
+    const onResize = () => { updateStickTop(); onScroll(); };
+
+    updateStickTop();
+    onScroll();
+    const ro = new ResizeObserver(updateStickTop);
+    ro.observe(layout);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      ro.disconnect();
+      if (rafId != null) cancelAnimationFrame(rafId);
+    };
+  }, []);
 
   const pricingTabs = [
     { id: 'discovery', label: 'Discovery Experience' },
@@ -55,12 +140,13 @@ export default function ArrivalSection() {
     }));
 
   return (
+    <>
     <section className="arrival" id="the-arrival">
       <style>{arrivalStyles}</style>
 
-      <div className="arrival__layout">
+      <div className="arrival__layout" ref={arrivalLayoutRef}>
       {/* ── The Card (full-bleed) — map + info woven together ── */}
-      <div className="arrival__card">
+      <div className="arrival__card" ref={arrivalCardRef}>
         {/* Map */}
         <div className="arrival__map">
           <div className="arrival__map-inner">
@@ -113,25 +199,34 @@ export default function ArrivalSection() {
           </div>
         </div>
         <div className="arrival__actions">
-          <Link to="/contact" className="arrival__cta">Get Directions <span>→</span></Link>
+          <a
+            href="https://www.google.com/maps/dir/?api=1&destination=HQ+Aviation+Ltd,+Hangar+E,+Denham+Aerodrome,+Uxbridge+UB9+5DF&destination_place_id=ChIJ36KI7NFudkgRvpfhWKl_8Xg"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="arrival__cta"
+          >
+            Get Directions <span>→</span>
+          </a>
         </div>
       </div>
 
       {/* Testimonial River (desktop) / Carousel (mobile) */}
-      <div className="arrival__marquee arrival__marquee--desktop">
-        <div className="arrival__marquee-track">
-          {testimonials.concat(testimonials).map((t, i) => (
-            <div key={i} className="arrival__marquee-card">
-              <p className="arrival__marquee-text">{t.text}</p>
-              <div className="arrival__marquee-author">
-                <div className="arrival__avatar arrival__avatar--sm">{t.initials}</div>
-                <div>
-                  <strong>{t.name}</strong>
-                  <span>{t.role}</span>
+      <div className="arrival__marquee arrival__marquee--desktop" ref={arrivalMarqueeRef}>
+        <div className="arrival__marquee-trackwrap">
+          <div className="arrival__marquee-track">
+            {testimonials.concat(testimonials).map((t, i) => (
+              <div key={i} className="arrival__marquee-card">
+                <p className="arrival__marquee-text">{t.text}</p>
+                <div className="arrival__marquee-author">
+                  <div className="arrival__avatar arrival__avatar--sm">{t.initials}</div>
+                  <div>
+                    <strong>{t.name}</strong>
+                    <span>{t.role}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
         <a href="https://www.google.com/maps/place/HQ+Aviation+Ltd/@51.5918637,-0.5143918,17z/data=!4m8!3m7!1s0x48766ed1ec88a2df:0x78f17fa958e197be!8m2!3d51.5918637!4d-0.5118169!9m1!1b1!16s%2Fg%2F1wfcnn43" target="_blank" rel="noopener noreferrer" className="arrival__cta arrival__cta--outline arrival__marquee-cta">Leave a Review <span>→</span></a>
       </div>
@@ -181,10 +276,67 @@ export default function ArrivalSection() {
         <a href="https://www.google.com/maps/place/HQ+Aviation+Ltd/@51.5918637,-0.5143918,17z/data=!4m8!3m7!1s0x48766ed1ec88a2df:0x78f17fa958e197be!8m2!3d51.5918637!4d-0.5118169!9m1!1b1!16s%2Fg%2F1wfcnn43" target="_blank" rel="noopener noreferrer" className="arrival__cta arrival__cta--outline" style={{ display: 'block', textAlign: 'center', marginTop: '0.75rem' }}>Leave a Review <span>→</span></a>
       </div>
       </div>
+      {children}
+    </section>
+      {/* ===== PICKER BAR (desktop only) — selects between Pricing and Blog ===== */}
+      <div className="ri-picker-bg">
+        <div className="ri-picker">
+          <button
+            type="button"
+            className={`ri-picker__card ${picker === 'blog' ? 'ri-picker__card--active' : ''}`}
+            onClick={() => setPicker && setPicker(picker === 'blog' ? null : 'blog')}
+            aria-pressed={picker === 'blog'}
+          >
+            <span className="ri-picker__pre">Latest from HQ</span>
+            <span className="ri-picker__title">Insights &amp; Stories</span>
+            <span className="ri-picker__icon" aria-hidden="true">{picker === 'blog' ? '×' : '+'}</span>
+          </button>
+          <button
+            type="button"
+            className={`ri-picker__card ${picker === 'pricing' ? 'ri-picker__card--active' : ''}`}
+            onClick={() => setPicker && setPicker(picker === 'pricing' ? null : 'pricing')}
+            aria-pressed={picker === 'pricing'}
+          >
+            <span className="ri-picker__pre">Transparent Pricing</span>
+            <span className="ri-picker__title">Rates &amp; Pricing</span>
+            <span className="ri-picker__icon" aria-hidden="true">{picker === 'pricing' ? '×' : '+'}</span>
+          </button>
+        </div>
+      </div>
       {/* ===== RATES & PRICING ===== */}
-      <div>
+      <div className="fd-pricing-bg">
         <style>{`
-        .fd-pricing { background: #faf9f6; padding: 3rem 2rem 3rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.08); }
+        /* ===== Rates / Insights picker bar ===== */
+        .ri-picker-bg { position: relative; width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); background: #fff; padding: 6rem clamp(2rem, 8vw, 12rem); box-sizing: border-box; }
+        .ri-picker { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .ri-picker__card { all: unset; cursor: pointer; position: relative; display: flex; flex-direction: column; gap: 0.4rem; padding: 1.5rem 4rem 1.5rem 1.5rem; background: #faf9f6; border: 1px solid rgba(0,0,0,0.08); border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.08); transition: border-color 0.2s, transform 0.2s; box-sizing: border-box; }
+        .ri-picker__card:hover { border-color: #1a1a1a; }
+        .ri-picker__card--active { border-color: #1a1a1a; }
+        .ri-picker__pre { font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: #999; }
+        .ri-picker__title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.2rem, 2vw, 1.75rem); font-weight: 700; text-transform: uppercase; letter-spacing: -0.02em; color: #1a1a1a; }
+        .ri-picker__icon { position: absolute; top: 50%; right: 1.25rem; transform: translateY(-50%); width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #e8e6e2; border-radius: 50%; font-size: 1.2rem; color: #1a1a1a; line-height: 1; transition: transform 0.2s, border-color 0.2s; }
+        .ri-picker__card--active .ri-picker__icon { border-color: #1a1a1a; transform: translateY(-50%) rotate(0deg); }
+
+        /* Desktop only: hide existing pricing card header and existing
+           lhq header — the picker bar replaces them. Hide whichever
+           panel isn't active. */
+        @media (min-width: 901px) {
+          body[data-picker="none"] .fd-pricing-bg,
+          body[data-picker="blog"] .fd-pricing-bg { display: none; }
+          body[data-picker="pricing"] .fd-pricing-bg { padding-top: 1rem; }
+          body[data-picker="pricing"] .fd-pricing__header { display: none; }
+          body[data-picker="pricing"] .fd-pricing__collapsible { max-height: 4000px; }
+          body[data-picker="none"] .lhq,
+          body[data-picker="pricing"] .lhq { display: none; }
+          body[data-picker="blog"] .lhq__header,
+          body[data-picker="blog"] .lhq__title { display: none; }
+        }
+        @media (max-width: 900px) {
+          .ri-picker-bg { display: none; }
+        }
+
+        .fd-pricing-bg { position: relative; width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); background: #fff; padding: 3rem clamp(2rem, 8vw, 12rem); box-sizing: border-box; }
+        .fd-pricing { position: relative; z-index: 10; max-width: 100%; margin: 0 auto; box-sizing: border-box; background: #faf9f6; padding: 3rem 1.5rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.08), 0 24px 48px rgba(0,0,0,0.06); }
         .fd-pricing__header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 1rem 0; }
         .fd-pricing__header .fd-pricing__pre { font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: #999; display: block; margin-bottom: 0.5rem; }
         .fd-pricing__header .fd-pricing__title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700; text-transform: uppercase; letter-spacing: -0.02em; color: #1a1a1a; margin: 0; }
@@ -194,7 +346,7 @@ export default function ArrivalSection() {
         .fd-pricing__toggle-icon--open { transform: rotate(45deg); }
         .fd-pricing__collapsible { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; }
         .fd-pricing--open .fd-pricing__collapsible { max-height: 3000px; transition: max-height 0.7s ease; }
-        .fd-pricing--open { padding: 3rem 2rem 3rem; }
+        .fd-pricing--open { padding: 3rem 1.5rem 1rem; }
         .fd-pricing__inner { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
         .fd-pricing__desc { font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; color: #777; line-height: 1.7; margin-bottom: 2rem; }
         .fd-pricing__tab-nav { display: flex; align-items: stretch; border-bottom: 1px solid #e8e6e2; margin-bottom: 1.25rem; padding-top: 1.75rem; }
@@ -244,7 +396,8 @@ export default function ArrivalSection() {
         .fd-pricing__enquire { padding: 2rem 0; }
         .fd-pricing__enquire-text { font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; color: #555; line-height: 1.7; margin-bottom: 1.5rem; max-width: 480px; }
         @media (max-width: 768px) {
-          .fd-pricing { margin: 0 1rem; padding: 0.75rem 1rem; }
+          .fd-pricing-bg { padding: 0 0 2.5rem; }
+          .fd-pricing { margin: 0; padding: 0.75rem 1rem; }
           .fd-pricing--open { padding: 0.75rem 1rem; }
           .fd-pricing__header { flex-direction: column; align-items: center; gap: 1rem; text-align: center; padding-bottom: 0; }
           .fd-pricing__valet-tiers { grid-template-columns: 1fr; }
@@ -287,7 +440,7 @@ export default function ArrivalSection() {
               </div>
               {pricingTab === 'discovery' && (
                 <>
-                  <p className="fd-pricing__tab-intro">An introductory flight with one of our qualified instructors. No experience necessary — just turn up and fly.</p>
+                  <p className="fd-pricing__tab-intro">An introductory flight with one of our qualified instructors. No experience necessary, just turn up and fly.</p>
                   <div className="fd-pricing__table-wrap">
                     <table className="fd-pricing__table">
                       <thead><tr><th>Aircraft</th><th style={{textAlign:'center'}}>30 min</th><th style={{textAlign:'center'}}>60 min</th></tr></thead>
@@ -324,7 +477,7 @@ export default function ArrivalSection() {
               )}
               {pricingTab === 'hire' && (
                 <>
-                  <p className="fd-pricing__tab-intro">Available to PPL(H) holders with appropriate type rating and recent experience. All rates are wet — fuel included.</p>
+                  <p className="fd-pricing__tab-intro">Available to PPL(H) holders with appropriate type rating and recent experience. All rates are wet, fuel included.</p>
                   <div className="fd-pricing__table-wrap">
                     <table className="fd-pricing__table">
                       <thead><tr><th>Aircraft</th><th style={{textAlign:'center'}}>Seats</th><th>Rate (60 min)</th></tr></thead>
@@ -345,14 +498,13 @@ export default function ArrivalSection() {
               {pricingTab === 'advanced' && (
                 <div className="fd-pricing__enquire">
                   <p className="fd-pricing__enquire-text">Advanced training with Quentin Smith is available on request. Pricing is tailored to your experience level and training objectives.</p>
-                  <Link to="/contact" className="arrival__cta">Please Enquire <span>→</span></Link>
                 </div>
               )}
             </div>
           </div>
         </section>
       </div>
-    </section>
+    </>
   );
 }
 
@@ -361,15 +513,22 @@ export const arrivalStyles = `
   /* ===== THE ARRIVAL ===== */
   .arrival {
     background: #fff;
-    padding: 0px clamp(2rem, 8vw, 12rem) 3rem;
+    padding: 0px clamp(2rem, 8vw, 12rem) 0px;
   }
   .arrival__layout {
+    position: sticky;
+    top: var(--arrival-stick-top, 0);
+    z-index: 1;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
     max-width: 100%;
     margin: 0 0 3rem;
     padding: 0;
+    background: #fff;
+    opacity: calc(1 - var(--arrival-fade, 0));
+    filter: blur(var(--arrival-blur, 0px));
+    will-change: opacity, filter;
   }
   .arrival__layout > .arrival__card {
     grid-column: 1;
@@ -383,6 +542,9 @@ export const arrivalStyles = `
   @media (max-width: 768px) {
     .arrival__layout {
       grid-template-columns: 1fr;
+      opacity: 1;
+      filter: none;
+      transition: none;
     }
     .arrival__layout > .arrival__card {
       grid-column: 1;
@@ -431,12 +593,18 @@ export const arrivalStyles = `
 
   /* ── The Card ── */
   .arrival__card {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     background: #faf9f6;
     border: 1px solid #e8e6e2;
     border-radius: 8px;
-    overflow: hidden;
+  }
+  /* Carry the rounded top corners through to the map so it still clips
+     cleanly without overflow:hidden on the card (which would make the card
+     a scroll ancestor and break sticky-bottom on .arrival__actions). */
+  .arrival__map {
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
   }
 
   /* Map */
@@ -604,6 +772,24 @@ export const arrivalStyles = `
   .arrival__actions {
     display: flex;
     gap: 0.75rem;
+    position: relative;
+  }
+  /* Fuzzy backdrop blur above the CTA: blurs the content behind it without
+     adding any colour, so the button stays sharp but the content behind
+     fades out softly. Mask tapers the blur from strong near the button to
+     none further up. */
+  .arrival__actions::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: 22px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    -webkit-mask-image: linear-gradient(to top, black 65%, transparent);
+    mask-image: linear-gradient(to top, black 65%, transparent);
+    pointer-events: none;
   }
   .arrival__actions .arrival__cta {
     flex: 1;
@@ -686,13 +872,26 @@ export const arrivalStyles = `
 
   .arrival__marquee {
     position: relative;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     padding: 0;
     border: 1px solid #e8e6e2;
     border-radius: 8px;
+    /* No overflow:hidden here — it would make the marquee a scroll
+       ancestor and break sticky-bottom on .arrival__marquee-cta (same
+       trap that .arrival__card avoids above). Rounded-corner clipping
+       is delegated to .arrival__marquee-trackwrap (top) and
+       .arrival__marquee-cta (bottom) instead. */
   }
-  .arrival__marquee::before,
-  .arrival__marquee::after {
+  .arrival__marquee-trackwrap {
+    position: relative;
+    flex: 1 1 auto;
+    overflow: hidden;
+    min-height: 0;
+    border-radius: 7px 7px 0 0;
+  }
+  .arrival__marquee-trackwrap::before,
+  .arrival__marquee-trackwrap::after {
     content: '';
     position: absolute;
     left: 0;
@@ -701,12 +900,12 @@ export const arrivalStyles = `
     z-index: 2;
     pointer-events: none;
   }
-  .arrival__marquee::before {
+  .arrival__marquee-trackwrap::before {
     top: 0;
     background: linear-gradient(to bottom, #fff, transparent);
   }
-  .arrival__marquee::after {
-    bottom: 3rem;
+  .arrival__marquee-trackwrap::after {
+    bottom: 0;
     background: linear-gradient(to top, #fff, transparent);
   }
   .arrival__marquee-track {
@@ -721,10 +920,7 @@ export const arrivalStyles = `
     animation: arrivalMarquee 45s linear infinite;
   }
   .arrival__marquee-cta {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    flex: 0 0 auto;
     display: block;
     text-align: center;
     padding: 1rem;
@@ -733,6 +929,22 @@ export const arrivalStyles = `
     z-index: 3;
     border-radius: 0 0 7px 7px;
     border: none;
+    position: relative;
+    transition: border-radius 0.2s ease;
+  }
+  /* Fuzzy backdrop blur above the CTA — see .arrival__actions::before. */
+  .arrival__marquee-cta::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: 22px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    -webkit-mask-image: linear-gradient(to top, black 65%, transparent);
+    mask-image: linear-gradient(to top, black 65%, transparent);
+    pointer-events: none;
   }
   .arrival__marquee-track:has(.arrival__marquee-card:hover) {
     animation-play-state: paused;
@@ -841,6 +1053,26 @@ export const arrivalStyles = `
     .arrival__reviews-card {
       flex: 0 0 calc(100% - 2rem);
       width: calc(100% - 2rem);
+    }
+  }
+
+  /* Desktop: CTAs are in flow at the bottom of their parent and stick to the
+     viewport bottom while their parent extends below. They're "just there" —
+     attach as you scroll, detach when you scroll back up. */
+  @media (min-width: 769px) {
+    .arrival__actions {
+      position: sticky;
+      bottom: 0;
+      z-index: 5;
+      background: #faf9f6;
+    }
+    .arrival__marquee-cta {
+      position: sticky;
+      bottom: 0;
+    }
+    .arrival__card,
+    .arrival__marquee--desktop {
+      margin-bottom: 90px;
     }
   }
 `;

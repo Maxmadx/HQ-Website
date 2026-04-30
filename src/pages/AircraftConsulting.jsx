@@ -1,9 +1,8 @@
 /**
  * AIRCRAFT CONSULTING PAGE
  *
- * Advisory and inspection services for helicopter buyers and owners.
- * Independent expertise — pre-purchase inspections, ownership advisory,
- * fleet planning, and full acquisition services.
+ * Helicopter consulting page. Robinson specialists.
+ * Buying, owning & operating, valuations, and independent expert work.
  *
  * Brand: Luxury Minimal Aviation
  * Typography: Space Grotesk + Share Tech Mono
@@ -20,6 +19,8 @@ import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'fra
 import '../assets/css/main.css';
 import '../assets/css/components.css';
 import FooterMinimal from '../components/FooterMinimal';
+import HqMenuPanel from '../components/HqMenuPanel';
+import { INITIAL_FORM_STATE, SERVICE_TYPES, getServiceFields, clearConditionalFields } from './aircraftConsultingForm';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HEADER COMPONENT
@@ -65,64 +66,7 @@ function AircraftConsultingHeader() {
   return (
     <>
       {/* Menu Panel */}
-      <div className={`hq-menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="hq-menu-grid">
-          <div className="hq-menu-section">
-            <h3>About</h3>
-            <ul>
-              <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-              <li><Link to="/about-us" onClick={closeMenu}>About Us</Link></li>
-              <li><Link to="/about-us/team" onClick={closeMenu}>Meet The Team</Link></li>
-              <li><Link to="/about-us/captain-q" onClick={closeMenu}>Quentin Smith</Link></li>
-              <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Aircraft Sales</h3>
-            <ul>
-              <li><Link to="/aircraft-sales" onClick={closeMenu}>New Aircraft</Link></li>
-              <li><Link to="/aircraft-sales/new/r88" onClick={closeMenu}>R88</Link></li>
-              <li><Link to="/aircraft-sales/new/r66" onClick={closeMenu}>R66</Link></li>
-              <li><Link to="/aircraft-sales/new/r44" onClick={closeMenu}>R44</Link></li>
-              <li><Link to="/aircraft-sales/new/r22" onClick={closeMenu}>R22</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Flight Training</h3>
-            <ul>
-              <li><Link to="/training" onClick={closeMenu}>Training Overview</Link></li>
-              <li><Link to="/training/trial-lessons" onClick={closeMenu}>Trial Lessons</Link></li>
-              <li><Link to="/training/ppl" onClick={closeMenu}>Private Pilot License</Link></li>
-              <li><Link to="/training/type-rating" onClick={closeMenu}>Type Rating</Link></li>
-              <li><Link to="/training/night-rating" onClick={closeMenu}>Night Rating</Link></li>
-              <li><Link to="/training/faq" onClick={closeMenu}>Training FAQ</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Services</h3>
-            <ul>
-              <li><Link to="/services" onClick={closeMenu}>Services Overview</Link></li>
-              <li><Link to="/services/maintenance" onClick={closeMenu}>Maintenance</Link></li>
-              <li><Link to="/aircraft-consulting" onClick={closeMenu}>Aircraft Consulting</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Experiences</h3>
-            <ul>
-              <li><Link to="/expeditions" onClick={closeMenu}>Expeditions</Link></li>
-              <li><Link to="/expeditions/calendar" onClick={closeMenu}>Calendar</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Contact</h3>
-            <ul>
-              <li><Link to="/contact" onClick={closeMenu}>Contact Us</Link></li>
-              <li><Link to="/contact/careers" onClick={closeMenu}>Careers</Link></li>
-              <li><Link to="/contact/pricing" onClick={closeMenu}>Pricing</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <HqMenuPanel open={menuOpen} onClose={closeMenu} />
 
       {/* Menu Button */}
       <button
@@ -228,7 +172,7 @@ function AircraftConsulting() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
   const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', registration: '', serviceType: '', message: '' });
+  const [formData, setFormData] = useState(INITIAL_FORM_STATE);
   const [formStatus, setFormStatus] = useState('idle');
   const { faqs: rawFaqs } = useFaqs('aircraft-consulting', { visibleOnly: true });
   const fallbackFaqs = [
@@ -249,62 +193,241 @@ function AircraftConsulting() {
       const res = await fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...formData, subject: 'Aircraft Consulting Enquiry', source: 'aircraft-consulting-page' }) });
       if (!res.ok) throw new Error();
       setFormStatus('success');
-      setFormData({ name: '', email: '', phone: '', registration: '', serviceType: '', message: '' });
+      setFormData(INITIAL_FORM_STATE);
     } catch { setFormStatus('error'); }
+  }
+
+  function handleServiceTypeChange(e) {
+    const nextServiceType = e.target.value;
+    setFormData(p => ({
+      ...clearConditionalFields(p),
+      serviceType: nextServiceType,
+    }));
+  }
+
+  function handleServiceCtaClick(enquirySlug) {
+    setFormData(p => ({
+      ...clearConditionalFields(p),
+      serviceType: enquirySlug,
+    }));
+    requestAnimationFrame(() => {
+      document.getElementById('ac-enquiry')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   }
 
   // ── Data Arrays ────────────────────────────────────────────────────────────
 
   const services = [
+    // GROUP: Buying a helicopter
     {
-      num: '01', tag: 'Most Common', title: 'Pre-Purchase Inspection',
-      description: 'A thorough airframe, engine, avionics, and logbook inspection of any Robinson helicopter before purchase. We check everything a pre-purchase should cover — and more. Written report within 48 hours of inspection.',
-      includes: ['Physical airframe inspection', 'Engine and systems check', 'Full logbook audit', 'Written report with photography', 'Rectification cost estimates', 'Price guidance'],
+      num: '01',
+      group: 'buying',
+      title: 'Pre-Purchase Inspection',
+      scope: 'Robinson only',
+      chip: 'Most common',
+      description: "A full airframe, engine, avionics, and logbook inspection of any Robinson helicopter under offer. Factory-authorised verdict in writing — buy, renegotiate, or walk — within 48 hours.",
+      includes: [
+        'Physical airframe inspection',
+        'Engine and systems check',
+        'Full logbook audit',
+        'Written report with photography',
+        'Rectification cost estimates',
+        'Price-position guidance',
+      ],
       enquiry: 'pre-purchase-inspection',
     },
     {
-      num: '02', tag: 'Ongoing', title: 'Ownership Advisory',
-      description: "For first-time helicopter owners navigating the responsibilities of ownership — insurance, maintenance scheduling, hangarage, pilot currency, operating costs. Ongoing support so you're never left guessing.",
-      includes: ['Operating cost modelling', 'Operator and engineer selection', 'Maintenance schedule planning', 'Insurance guidance', 'Regulatory compliance advice'],
-      enquiry: 'ownership-advisory',
+      num: '02',
+      group: 'buying',
+      title: 'Acquisition Advisory',
+      scope: 'All helicopters',
+      description: "We find the right aircraft, negotiate the deal, manage independent surveys, and run the paperwork through to delivery. A hands-off route to ownership for buyers who'd rather hire it done.",
+      includes: [
+        'Aircraft sourcing in the UK and abroad',
+        'Seller and broker negotiation',
+        'Independent survey management',
+        'Import/export documentation',
+        'Delivery coordination and handover',
+        'First-year operating support',
+      ],
+      enquiry: 'acquisition-advisory',
     },
     {
-      num: '03', tag: 'Corporate', title: 'Fleet Planning',
-      description: "Corporate clients planning a helicopter fleet benefit from HQ's knowledge of operational costs, maintenance patterns, and type suitability. We model the numbers and give you a clear picture before any purchase commitment.",
-      includes: ['Aircraft type comparison', 'Lifecycle cost projections', 'Operational requirements analysis', 'Supplier and engineer evaluation', 'Procurement strategy support'],
-      enquiry: 'fleet-planning',
+      num: '03',
+      group: 'buying',
+      title: 'Valuation & Appraisal',
+      scope: 'All helicopters · Robinson-deep',
+      description: "An independent written value opinion for purchase, finance, insurance, tax, lease return, divorce, or estate purposes. Methodology you can hand to a banker, lender, lawyer, or insurer.",
+      includes: [
+        'Inspection-based or desk-based valuation',
+        'Robinson type-specific market context',
+        'Methodology and comparables',
+        'Litigation-ready report formats',
+        'Lender / insurer-acceptable templates',
+        'Single-aircraft or fleet portfolio',
+      ],
+      enquiry: 'valuation',
+    },
+    // GROUP: Owning & operating
+    {
+      num: '04',
+      group: 'owning',
+      title: 'Aircraft Management',
+      scope: 'All helicopters',
+      chip: 'Retainer',
+      description: "An ongoing relationship for owners who'd rather not run the aircraft themselves. We oversee maintenance, engineer relationships, scheduling, and keep the file in order so the aircraft stays serviceable and saleable.",
+      includes: [
+        'Maintenance scheduling oversight',
+        'Engineer and operator coordination',
+        'Records and documentation upkeep',
+        'Hangarage, insurance, and currency tracking',
+        'Quarterly cost reviews',
+        'Single point of contact across the lifecycle',
+      ],
+      enquiry: 'aircraft-management',
     },
     {
-      num: '04', tag: 'Full Service', title: 'Acquisition Services',
-      description: 'HQ manages the entire acquisition process — identifying aircraft, conducting negotiations, arranging surveys, handling documentation, and coordinating delivery. A complete hands-off service for buyers who value their time.',
-      includes: ['Aircraft sourcing worldwide', 'Seller negotiation', 'Independent survey management', 'Import/export documentation', 'Delivery coordination and handover'],
-      enquiry: 'acquisition-services',
+      num: '05',
+      group: 'owning',
+      title: 'Operating Cost & TCO',
+      scope: 'All helicopters',
+      description: "A defensible total cost of ownership model for a specific aircraft, fleet, or use case. Numbers built from real maintenance bills and live insurance market — not OEM brochures.",
+      includes: [
+        'Type-specific fixed and variable costs',
+        'One, five, and ten-year projections',
+        'Maintenance reserves modelling',
+        'Hours-flown sensitivity and break-even',
+        'Financing scenario comparisons',
+        'Cross-type comparison',
+      ],
+      enquiry: 'tco-modelling',
     },
+    {
+      num: '06',
+      group: 'owning',
+      title: 'Insurance Advisory',
+      scope: 'All helicopters',
+      description: "Independent review of hull and liability cover, broker introductions, and policy comparisons. We read the policy with the aircraft in mind — what's actually flown, where, and by whom — not just what's quoted.",
+      includes: [
+        'Cover review against operating reality',
+        'Broker selection and introduction',
+        'Policy and exclusion comparison',
+        'Claims advocacy and support',
+        'Renewal-cycle reviews',
+        'Lessor and financier requirement alignment',
+      ],
+      enquiry: 'insurance-advisory',
+    },
+    {
+      num: '07',
+      group: 'owning',
+      title: 'Import / Export & Register Transfer',
+      scope: 'All helicopters',
+      description: "Cross-border transactions and register transfers handled end-to-end — UK CAA, FAA, IoM, Guernsey — with the documentation, customs, and airworthiness pieces sequenced correctly.",
+      includes: [
+        'Import and export documentation',
+        'Customs and duty handling',
+        'De-registration and re-registration',
+        'Airworthiness review handover',
+        'Transit and ferry coordination',
+        'VAT and tax sequencing in partnership',
+      ],
+      enquiry: 'import-export',
+    },
+    // GROUP: Independent expert work
+    {
+      num: '08',
+      group: 'expert',
+      title: 'Expert Witness & Litigation Support',
+      scope: 'All helicopters · Robinson-deep',
+      description: "Independent expert opinion for legal, insurance, and dispute matters. Written reports, expert determination, and court-acceptable testimony — drawn from 35 years on the hangar floor.",
+      includes: [
+        'Pre-action expert opinion',
+        'Formal CPR Part 35 expert reports',
+        'Insurance loss adjusting support',
+        'Maintenance dispute resolution',
+        'Sale dispute and warranty claims',
+        'Single joint expert appointments',
+      ],
+      enquiry: 'expert-witness',
+    },
+  ];
+
+  const SERVICE_GROUPS = [
+    { id: 'buying',  label: 'Buying a helicopter' },
+    { id: 'owning',  label: 'Owning & operating' },
+    { id: 'expert',  label: 'Independent expert work' },
   ];
 
   const processSteps = [
-    { num: '01', title: 'Brief', duration: '30 mins', description: "Tell us what you're looking at — aircraft registration, hours, price, and your goals. We'll confirm scope and provide a fixed fee upfront." },
-    { num: '02', title: 'Research', duration: '1 day', description: "We review CAA records, check for applicable ADs or known issues on the type, and prepare our inspection checklist tailored to the specific aircraft and its history." },
-    { num: '03', title: 'Inspection', duration: 'Half day', description: "Physical inspection at the aircraft's location covering airframe, engine, avionics, documents, and logbooks. Photography throughout." },
-    { num: '04', title: 'Report', duration: '48 hours', description: 'Written report detailing every finding, condition assessment, estimated rectification costs for defects found, and our clear recommendation — buy, negotiate, or walk away.' },
-    { num: '05', title: 'Support', duration: 'Ongoing', description: "Available to discuss the report and support any negotiation or decision-making that follows. We're on your side throughout." },
+    {
+      num: '01',
+      title: 'Brief',
+      description: "Tell us what you need. We confirm scope and whether we're the right firm.",
+    },
+    {
+      num: '02',
+      title: 'Scope & fee',
+      description: "Written, upfront. What's in, what's out, what it costs. Fixed where possible; capped where not.",
+    },
+    {
+      num: '03',
+      title: 'Engagement',
+      description: 'The work itself: an inspection, a market search, a model build, a documentation sequence, a written opinion.',
+    },
+    {
+      num: '04',
+      title: 'Deliverable',
+      description: 'In writing. Report, valuation, TCO model, policy recommendation, expert opinion — with a clear position you can act on.',
+    },
+    {
+      num: '05',
+      title: 'Continued',
+      description: 'Open line afterwards. Available to talk through findings, support negotiations, take the next call. For retainer clients, this is the relationship.',
+    },
   ];
 
   const credentials = [
-    { title: 'Robinson Authorised Service Centre', desc: "Factory-authorised to inspect and certify every Robinson type — the qualification that matters most for pre-purchase work on the aircraft you are most likely buying." },
-    { title: 'CAA Part 145 Approved', desc: 'Approved Maintenance Organisation. Airworthiness standards in operational detail — not theory.' },
-    { title: '35 Years of Robinson Experience', desc: 'More Robinson hours, more Robinson logbooks, and more Robinson problems solved than almost any organisation in Europe.' },
-    { title: '500+ Transactions Supported', desc: 'Acquisitions, sales, and ownership transitions — a track record that gives us genuine feel for the market, not just the aircraft.' },
+    {
+      title: 'Robinson Authorised Service Centre',
+      desc: "Factory-authorised on every Robinson type — the qualification that backs the inspection, the valuation, the expert opinion, and every Robinson recommendation HQ writes.",
+    },
+    {
+      title: 'CAA Part 145 Approved',
+      desc: 'Approved Maintenance Organisation. Airworthiness standards in operational detail, not theory.',
+    },
+    {
+      title: '35 Years of Robinson Experience',
+      desc: 'More Robinson hours, more Robinson logbooks, and more Robinson problems solved than almost any organisation in Europe.',
+    },
+    {
+      title: '500+ Transactions Supported',
+      desc: 'Acquisitions, ownership transitions, valuations, and disputes — a track record across the helicopter ownership lifecycle, not just at the point of sale.',
+    },
   ];
 
   const independencePoints = [
-    { num: '01', title: 'Paid by You, Not the Seller', desc: "Our fee comes from the buyer — never the seller. No commission, no engineer-to-seller relationship to protect, no reason to close a deal that isn't right for you." },
-    { num: '02', title: 'Factory-Trained Eyes', desc: "As an Authorised Robinson Service Centre, we know what a clean airframe looks like at 500, 1,000, and 2,000 hours. Deferred maintenance, botched repairs, and undisclosed damage rarely survive a proper inspection." },
-    { num: '03', title: 'Logbook Forensics', desc: "Logbooks tell a story — sometimes the one the seller wants, sometimes the one the aircraft actually lived. Thirty-five years of reading them catches the inconsistencies, gaps, and red flags that inexperienced eyes miss." },
-    { num: '04', title: 'A Clear Recommendation', desc: "Every report ends with one of three words: buy, negotiate, or walk. You will know exactly where you stand before you commit — not after the paperwork is signed." },
+    {
+      num: '01',
+      title: "What you can't see, we can",
+      desc: "Every aircraft we look at — to buy, to manage, to value, or to defend — is read through a working hangar floor and 500+ transactions of memory. Photos, seller demos, broker write-ups, and OEM brochures don't catch what we catch. For Robinsons specifically, factory authorisation means we know the type at the level the people who built it do.",
+    },
+    {
+      num: '02',
+      title: 'What good actually looks like',
+      desc: "Thirty-five years across the Robinson fleet means we know what 500-hour wear looks like, what 1,500-hour wear looks like, what's normal for a 2010 R44, and what's drifting. That context is what a first-time buyer or single-aircraft owner doesn't have — and what makes the difference between an opinion and an answer.",
+    },
+    {
+      num: '03',
+      title: 'A clear position, not a hedged one',
+      desc: "Every engagement ends with something concrete — a number, a verdict, or a position you can act on. We get hired to make calls, not to write neutral surveys you have to interpret yourself. That's true of a pre-purchase report, a TCO model, a cover review, or an expert opinion in a dispute.",
+    },
   ];
 
   // ── Render ─────────────────────────────────────────────────────────────────
+
+  const visibleConditionalFields = getServiceFields(formData.serviceType);
+  const isVisible = (name) => visibleConditionalFields.includes(name);
 
   return (
     <div className="ac">
@@ -338,7 +461,7 @@ function AircraftConsulting() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              Advisory Services
+              For buyers, owners, and disputes
             </motion.span>
 
             <div className="ac-hero__headline">
@@ -348,7 +471,7 @@ function AircraftConsulting() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
               >
-                AIRCRAFT
+                HELICOPTER
               </motion.span>
               <motion.span
                 className="ac-hero__word ac-hero__word--2"
@@ -393,9 +516,9 @@ function AircraftConsulting() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.2 }}
             >
-              Pre-purchase inspections, ownership advice, fleet planning, and bespoke acquisition
-              services — grounded in thirty-five years of Robinson expertise and 500+ transactions
-              across Europe.
+              Robinson specialists. Independent advice across the helicopter ownership lifecycle —
+              from short-list to settlement, and through the disputes and decisions in between.
+              Grounded in 35 years and 500+ transactions.
             </motion.p>
           </div>
         </motion.div>
@@ -411,16 +534,18 @@ function AircraftConsulting() {
               <span className="ac-pre-text">Expertise Before Commitment</span>
               <h2 className="ac-intro__heading">Independent.&nbsp;Thorough.&nbsp;Honest.</h2>
               <p className="ac-intro__body">
-                Most people buy their first helicopter once. The margin for error — wrong type,
-                wrong configuration, undisclosed history — is narrow, and the consequences last
-                years. HQ Aviation's consulting service exists to close that margin before you
-                commit.
+                Buyers shortlisting their first helicopter. Owners running one or several. Lawyers,
+                insurers, and lenders who need an independent expert on a matter where opinions
+                cost real money. HQ Aviation consults across the helicopter ownership lifecycle —
+                with Robinson factory authorisation backing the work where type-specific depth
+                changes the answer.
               </p>
               <p className="ac-intro__body">
-                From a single pre-purchase inspection to full acquisition management, our work
-                draws on the same hangar floor, logbook library, and maintenance experience that
-                supports owners across Europe — brought to bear on your aircraft, your budget,
-                and your plan.
+                The same hangar floor, logbook library, and maintenance experience that informs
+                every Robinson service-centre engagement is what backs every consulting opinion
+                we write — for any helicopter, not just the ones we are authorised to certify.
+                Brought to bear on your aircraft, your budget, your policy, your plan, or your
+                dispute.
               </p>
             </Reveal>
             <Reveal delay={0.2}>
@@ -458,7 +583,7 @@ function AircraftConsulting() {
       </section>
 
       {/* ====================================================================
-          SERVICES — 2×2 card grid
+          SERVICES — 3 groups, 8 cards total
       ==================================================================== */}
       <section className="ac-services">
         <div className="ac-services__container">
@@ -469,35 +594,49 @@ function AircraftConsulting() {
             </div>
           </Reveal>
 
-          <div className="ac-services__grid">
-            {services.map((service, i) => (
-              <Reveal key={service.num} delay={i * 0.1}>
-                <div className="ac-service-card">
-                  <div className="ac-service-card__top">
-                    <span className="ac-service-card__tag">{service.tag}</span>
-                    <span className="ac-service-card__num">{service.num}</span>
-                  </div>
-                  <h3 className="ac-service-card__title">{service.title}</h3>
-                  <p className="ac-service-card__desc">{service.description}</p>
-                  <p className="ac-service-card__includes-label">What's included</p>
-                  <ul className="ac-service-card__includes">
-                    {service.includes.map((item) => (
-                      <li key={item} className="ac-service-card__include-item">
-                        <span className="ac-service-card__check">✓</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                  <Link
-                    to={`/contact?subject=${service.enquiry}`}
-                    className="ac-service-card__cta"
-                  >
-                    Enquire About This Service
-                  </Link>
+          {SERVICE_GROUPS.map((group) => {
+            const groupServices = services.filter(s => s.group === group.id);
+            return (
+              <div key={group.id} className="ac-services__group">
+                <Reveal>
+                  <h3 className="ac-services__group-title">{group.label}</h3>
+                </Reveal>
+                <div className="ac-services__grid">
+                  {groupServices.map((service, i) => (
+                    <Reveal key={service.num} delay={i * 0.1}>
+                      <div className="ac-service-card">
+                        <div className="ac-service-card__top">
+                          <span className="ac-service-card__tag">{service.scope}</span>
+                          <span className="ac-service-card__num">{service.num}</span>
+                        </div>
+                        {service.chip && (
+                          <span className="ac-service-card__chip">{service.chip}</span>
+                        )}
+                        <h3 className="ac-service-card__title">{service.title}</h3>
+                        <p className="ac-service-card__desc">{service.description}</p>
+                        <p className="ac-service-card__includes-label">What's included</p>
+                        <ul className="ac-service-card__includes">
+                          {service.includes.map((item) => (
+                            <li key={item} className="ac-service-card__include-item">
+                              <span className="ac-service-card__check">✓</span>
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                        <button
+                          type="button"
+                          className="ac-service-card__cta"
+                          onClick={() => handleServiceCtaClick(service.enquiry)}
+                        >
+                          Enquire about this →
+                        </button>
+                      </div>
+                    </Reveal>
+                  ))}
                 </div>
-              </Reveal>
-            ))}
-          </div>
+              </div>
+            );
+          })}
         </div>
       </section>
 
@@ -514,10 +653,9 @@ function AircraftConsulting() {
               </h2>
               <p className="ac-why__intro-body">
                 Thirty-five years of Robinson experience and 500+ transactions sit behind every
-                consultation — because getting a helicopter purchase wrong is a mistake that is
-                hard to unwind. Our job is simple: give you an accurate, independent read before
-                you commit. What the logbooks really say, what the airframe really needs, and
-                what the aircraft is really worth.
+                engagement on the menu — buying, owning, valuing, defending. The job is the same
+                each time: an accurate, independent read on the aircraft, the cost, the policy,
+                or the dispute, written in a way you can act on.
               </p>
             </div>
           </Reveal>
@@ -556,7 +694,6 @@ function AircraftConsulting() {
                   <div className="ac-process__step-content">
                     <div className="ac-process__step-header">
                       <h4 className="ac-process__step-title">{step.title}</h4>
-                      <span className="ac-process__step-duration">{step.duration}</span>
                     </div>
                     <p className="ac-process__step-desc">{step.description}</p>
                   </div>
@@ -595,7 +732,7 @@ function AircraftConsulting() {
       {/* ====================================================================
           ENQUIRY FORM — 2-col layout
       ==================================================================== */}
-      <section className="ac-enquiry">
+      <section className="ac-enquiry" id="ac-enquiry">
         <div className="ac-enquiry__container">
           <div className="ac-enquiry__left">
             <Reveal>
@@ -669,17 +806,19 @@ function AircraftConsulting() {
                         placeholder="+44 7700 000000"
                       />
                     </div>
-                    <div className="ac-field">
-                      <label htmlFor="ac-registration">Aircraft Registration</label>
-                      <input
-                        id="ac-registration"
-                        type="text"
-                        name="registration"
-                        value={formData.registration}
-                        onChange={(e) => setFormData(p => ({ ...p, registration: e.target.value }))}
-                        placeholder="e.g. G-ABCD (if applicable)"
-                      />
-                    </div>
+                    {isVisible('registration') && (
+                      <div className="ac-field">
+                        <label htmlFor="ac-registration">Aircraft Registration</label>
+                        <input
+                          id="ac-registration"
+                          type="text"
+                          name="registration"
+                          value={formData.registration}
+                          onChange={(e) => setFormData(p => ({ ...p, registration: e.target.value }))}
+                          placeholder="e.g. G-ABCD"
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div className="ac-field">
@@ -688,16 +827,233 @@ function AircraftConsulting() {
                       id="ac-service-type"
                       name="serviceType"
                       value={formData.serviceType}
-                      onChange={(e) => setFormData(p => ({ ...p, serviceType: e.target.value }))}
+                      onChange={handleServiceTypeChange}
                     >
                       <option value="">Select a service...</option>
-                      <option value="Pre-Purchase Inspection">Pre-Purchase Inspection</option>
-                      <option value="Ownership Advisory">Ownership Advisory</option>
-                      <option value="Fleet Planning">Fleet Planning</option>
-                      <option value="Acquisition Services">Acquisition Services</option>
-                      <option value="Other">Other</option>
+                      {SERVICE_TYPES.map(s => (
+                        <option key={s.slug} value={s.slug}>{s.label}</option>
+                      ))}
+                      <option value="other">Something else</option>
                     </select>
                   </div>
+
+                  {formData.serviceType && (
+                    <>
+                      {isVisible('askingPrice') && (
+                        <div className="ac-enquiry__row">
+                          <div className="ac-field">
+                            <label htmlFor="ac-asking-price">Asking Price</label>
+                            <input
+                              id="ac-asking-price"
+                              type="text"
+                              name="askingPrice"
+                              value={formData.askingPrice}
+                              onChange={(e) => setFormData(p => ({ ...p, askingPrice: e.target.value }))}
+                              placeholder="e.g. £450,000"
+                            />
+                          </div>
+                          {isVisible('targetInspectionDate') && (
+                            <div className="ac-field">
+                              <label htmlFor="ac-target-date">Target Inspection Date</label>
+                              <input
+                                id="ac-target-date"
+                                type="text"
+                                name="targetInspectionDate"
+                                value={formData.targetInspectionDate}
+                                onChange={(e) => setFormData(p => ({ ...p, targetInspectionDate: e.target.value }))}
+                                placeholder="e.g. within 2 weeks"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {isVisible('budgetRange') && (
+                        <div className="ac-enquiry__row">
+                          <div className="ac-field">
+                            <label htmlFor="ac-budget">Budget Range</label>
+                            <input
+                              id="ac-budget"
+                              type="text"
+                              name="budgetRange"
+                              value={formData.budgetRange}
+                              onChange={(e) => setFormData(p => ({ ...p, budgetRange: e.target.value }))}
+                              placeholder="e.g. £300k–£500k"
+                            />
+                          </div>
+                          <div className="ac-field">
+                            <label htmlFor="ac-timeline">Timeline</label>
+                            <input
+                              id="ac-timeline"
+                              type="text"
+                              name="timeline"
+                              value={formData.timeline}
+                              onChange={(e) => setFormData(p => ({ ...p, timeline: e.target.value }))}
+                              placeholder="e.g. ready to buy in 3 months"
+                            />
+                          </div>
+                        </div>
+                      )}
+                      {isVisible('intendedUse') && (
+                        <div className="ac-field">
+                          <label htmlFor="ac-intended-use">Intended Use</label>
+                          <input
+                            id="ac-intended-use"
+                            type="text"
+                            name="intendedUse"
+                            value={formData.intendedUse}
+                            onChange={(e) => setFormData(p => ({ ...p, intendedUse: e.target.value }))}
+                            placeholder="Private, training, charter, utility…"
+                          />
+                        </div>
+                      )}
+
+                      {isVisible('valuationPurpose') && (
+                        <div className="ac-field">
+                          <label htmlFor="ac-valuation-purpose">Valuation Purpose</label>
+                          <select
+                            id="ac-valuation-purpose"
+                            name="valuationPurpose"
+                            value={formData.valuationPurpose}
+                            onChange={(e) => setFormData(p => ({ ...p, valuationPurpose: e.target.value }))}
+                          >
+                            <option value="">Select a purpose…</option>
+                            <option value="purchase">Purchase</option>
+                            <option value="finance">Finance / lender</option>
+                            <option value="insurance">Insurance</option>
+                            <option value="tax">Tax</option>
+                            <option value="legal">Legal / dispute</option>
+                            <option value="other">Other</option>
+                          </select>
+                        </div>
+                      )}
+
+                      {isVisible('aircraftType') && (
+                        <div className="ac-enquiry__row">
+                          <div className="ac-field">
+                            <label htmlFor="ac-aircraft-type">Aircraft Type</label>
+                            <input
+                              id="ac-aircraft-type"
+                              type="text"
+                              name="aircraftType"
+                              value={formData.aircraftType}
+                              onChange={(e) => setFormData(p => ({ ...p, aircraftType: e.target.value }))}
+                              placeholder="e.g. R44 Raven II, AS350"
+                            />
+                          </div>
+                          {isVisible('ownershipStatus') && (
+                            <div className="ac-field">
+                              <label htmlFor="ac-ownership">Ownership Status</label>
+                              <select
+                                id="ac-ownership"
+                                name="ownershipStatus"
+                                value={formData.ownershipStatus}
+                                onChange={(e) => setFormData(p => ({ ...p, ownershipStatus: e.target.value }))}
+                              >
+                                <option value="">Select…</option>
+                                <option value="own">Owned outright</option>
+                                <option value="spv">Held in SPV / company</option>
+                                <option value="lease">Leased</option>
+                                <option value="prospective">Prospective</option>
+                              </select>
+                            </div>
+                          )}
+                          {isVisible('expectedAnnualHours') && (
+                            <div className="ac-field">
+                              <label htmlFor="ac-annual-hours">Expected Annual Hours</label>
+                              <input
+                                id="ac-annual-hours"
+                                type="text"
+                                name="expectedAnnualHours"
+                                value={formData.expectedAnnualHours}
+                                onChange={(e) => setFormData(p => ({ ...p, expectedAnnualHours: e.target.value }))}
+                                placeholder="e.g. 120"
+                              />
+                            </div>
+                          )}
+                          {isVisible('currentRenewalDate') && (
+                            <div className="ac-field">
+                              <label htmlFor="ac-renewal-date">Current Renewal Date</label>
+                              <input
+                                id="ac-renewal-date"
+                                type="text"
+                                name="currentRenewalDate"
+                                value={formData.currentRenewalDate}
+                                onChange={(e) => setFormData(p => ({ ...p, currentRenewalDate: e.target.value }))}
+                                placeholder="e.g. 2026-09-01"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {isVisible('fromRegistry') && (
+                        <div className="ac-enquiry__row">
+                          <div className="ac-field">
+                            <label htmlFor="ac-from-registry">From Registry</label>
+                            <input
+                              id="ac-from-registry"
+                              type="text"
+                              name="fromRegistry"
+                              value={formData.fromRegistry}
+                              onChange={(e) => setFormData(p => ({ ...p, fromRegistry: e.target.value }))}
+                              placeholder="e.g. G (UK CAA), N (FAA)"
+                            />
+                          </div>
+                          {isVisible('toRegistry') && (
+                            <div className="ac-field">
+                              <label htmlFor="ac-to-registry">To Registry</label>
+                              <input
+                                id="ac-to-registry"
+                                type="text"
+                                name="toRegistry"
+                                value={formData.toRegistry}
+                                onChange={(e) => setFormData(p => ({ ...p, toRegistry: e.target.value }))}
+                                placeholder="e.g. M (IoM), 2 (Guernsey)"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {isVisible('matterType') && (
+                        <div className="ac-enquiry__row">
+                          <div className="ac-field">
+                            <label htmlFor="ac-matter-type">Matter Type</label>
+                            <select
+                              id="ac-matter-type"
+                              name="matterType"
+                              value={formData.matterType}
+                              onChange={(e) => setFormData(p => ({ ...p, matterType: e.target.value }))}
+                            >
+                              <option value="">Select…</option>
+                              <option value="purchase">Purchase / sale dispute</option>
+                              <option value="maintenance">Maintenance dispute</option>
+                              <option value="insurance">Insurance / loss</option>
+                              <option value="accident">Accident / incident</option>
+                              <option value="other">Other</option>
+                            </select>
+                          </div>
+                          <div className="ac-field">
+                            <label htmlFor="ac-party">Instructing Party</label>
+                            <select
+                              id="ac-party"
+                              name="party"
+                              value={formData.party}
+                              onChange={(e) => setFormData(p => ({ ...p, party: e.target.value }))}
+                            >
+                              <option value="">Select…</option>
+                              <option value="claimant">Claimant</option>
+                              <option value="defendant">Defendant</option>
+                              <option value="single-joint">Single joint expert</option>
+                              <option value="insurer">Insurer</option>
+                              <option value="other">Other</option>
+                            </select>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
 
                   <div className="ac-field">
                     <label htmlFor="ac-message">Message</label>
@@ -791,17 +1147,14 @@ function AircraftConsulting() {
       <section className="ac-cta">
         <div className="ac-cta__inner">
           <Reveal>
-            <span className="ac-pre-text ac-pre-text--light">Thinking of Buying?</span>
-            <h2 className="ac-cta__heading">Talk to an Expert First</h2>
+            <span className="ac-pre-text ac-pre-text--light">No matter what you're working on</span>
+            <h2 className="ac-cta__heading">Tell us what you're working on.</h2>
             <p className="ac-cta__body">
-              An hour with us before you commit is the cheapest insurance on a helicopter
-              purchase. No obligation, no sales pitch — just an honest read on whatever you are
-              considering.
+              Whether it's a shortlist, a renewal, a model in spreadsheet form, a paper trail, or
+              a dispute on the desk — an hour with us is the cheapest read you'll get. No
+              obligation, no sales pitch, just an honest opinion you can act on.
             </p>
             <div className="ac-cta__buttons">
-              <a href="/contact?subject=aircraft-consulting" className="ac-btn ac-btn--white">
-                Request an Inspection
-              </a>
               <Link to="/fleet" className="ac-cta__link">
                 View Our Fleet
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -1144,6 +1497,51 @@ function AircraftConsulting() {
           max-width: 1200px;
           margin: 0 auto;
         }
+        .ac-services__group {
+          margin-top: 3.5rem;
+        }
+        .ac-services__group:first-of-type {
+          margin-top: 2.5rem;
+        }
+        .ac-services__group-title {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1.25rem;
+          font-weight: 600;
+          letter-spacing: 0.02em;
+          color: #1a1a1a;
+          margin: 0 0 1.5rem;
+          padding-bottom: 0.75rem;
+          border-bottom: 1px solid #eeecea;
+        }
+        .ac-service-card__chip {
+          display: inline-block;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.6rem;
+          letter-spacing: 0.15em;
+          text-transform: uppercase;
+          color: #6b6b6b;
+          background: #f1efeb;
+          padding: 0.25rem 0.6rem;
+          border-radius: 999px;
+          margin-bottom: 0.75rem;
+        }
+        .ac-service-card__cta {
+          margin-top: 1.5rem;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.85rem;
+          font-weight: 600;
+          letter-spacing: 0.02em;
+          color: #1a1a1a;
+          background: transparent;
+          border: 0;
+          padding: 0;
+          cursor: pointer;
+          transition: opacity 0.2s ease;
+          align-self: flex-start;
+        }
+        .ac-service-card__cta:hover {
+          opacity: 0.7;
+        }
         .ac-services__grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -1234,24 +1632,6 @@ function AircraftConsulting() {
           flex-shrink: 0;
           margin-top: 0.15rem;
         }
-        .ac-service-card__cta {
-          display: block;
-          text-align: center;
-          padding: 0.85rem 1.5rem;
-          background: #1a1a1a;
-          color: #ffffff;
-          font-size: 0.72rem;
-          font-weight: 600;
-          text-decoration: none;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          border-radius: 4px;
-          transition: background 0.2s ease;
-          margin-top: auto;
-        }
-        .ac-service-card__cta:hover {
-          background: #333333;
-        }
 
         /* ============================================================
            WHY INDEPENDENT (dark)
@@ -1273,7 +1653,7 @@ function AircraftConsulting() {
         }
         .ac-why__grid {
           display: grid;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: repeat(3, 1fr);
           gap: 1.25rem;
           margin-top: 4rem;
         }

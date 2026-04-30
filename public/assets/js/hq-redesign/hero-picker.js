@@ -406,7 +406,7 @@
               <li>✓ Photo opportunity</li>
             </ul>
             <a href="/pages/discovery-flights" class="hero-cta hero-cta--primary hero-cta--full">Book Now</a>
-            <p class="booking-note">Or call <a href="tel:+441753868976">01onal753 868976</a></p>
+            <p class="booking-note">Or call <a href="tel:+441895833373">01895 833 373</a></p>
           </div>
         </div>
       `

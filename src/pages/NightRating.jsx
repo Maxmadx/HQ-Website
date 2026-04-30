@@ -20,6 +20,7 @@ import '../assets/css/components.css';
 
 // Import FooterMinimal component
 import FooterMinimal from '../components/FooterMinimal';
+import HqMenuPanel from '../components/HqMenuPanel';
 
 /**
  * NIGHT RATING PAGE HEADER COMPONENT
@@ -66,63 +67,7 @@ function NightRatingHeader() {
   return (
     <>
       {/* Menu Panel */}
-      <div className={`hq-menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="hq-menu-grid">
-          <div className="hq-menu-section">
-            <h3>About</h3>
-            <ul>
-              <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-              <li><Link to="/about-us" onClick={closeMenu}>About Us</Link></li>
-              <li><Link to="/about-us/team" onClick={closeMenu}>Meet The Team</Link></li>
-              <li><Link to="/about-us/captain-q" onClick={closeMenu}>Quentin Smith</Link></li>
-              <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Aircraft Sales</h3>
-            <ul>
-              <li><Link to="/aircraft-sales" onClick={closeMenu}>New Aircraft</Link></li>
-              <li><Link to="/aircraft-sales/new/r88" onClick={closeMenu}>R88</Link></li>
-              <li><Link to="/aircraft-sales/new/r66" onClick={closeMenu}>R66</Link></li>
-              <li><Link to="/aircraft-sales/new/r44" onClick={closeMenu}>R44</Link></li>
-              <li><Link to="/aircraft-sales/new/r22" onClick={closeMenu}>R22</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Flight Training</h3>
-            <ul>
-              <li><Link to="/training" onClick={closeMenu}>Training Overview</Link></li>
-              <li><Link to="/training/trial-lessons" onClick={closeMenu}>Trial Lessons</Link></li>
-              <li><Link to="/training/ppl" onClick={closeMenu}>Private Pilot License</Link></li>
-              <li><Link to="/training/type-rating" onClick={closeMenu}>Type Rating</Link></li>
-              <li><Link to="/training/night-rating" onClick={closeMenu}>Night Rating</Link></li>
-              <li><Link to="/training/faq" onClick={closeMenu}>Training FAQ</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Services</h3>
-            <ul>
-              <li><Link to="/services" onClick={closeMenu}>Services Overview</Link></li>
-              <li><Link to="/services/maintenance" onClick={closeMenu}>Maintenance</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Experiences</h3>
-            <ul>
-              <li><Link to="/expeditions" onClick={closeMenu}>Expeditions</Link></li>
-              <li><Link to="/expeditions/calendar" onClick={closeMenu}>Calendar</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Contact</h3>
-            <ul>
-              <li><Link to="/contact" onClick={closeMenu}>Contact Us</Link></li>
-              <li><Link to="/contact/careers" onClick={closeMenu}>Careers</Link></li>
-              <li><Link to="/contact/pricing" onClick={closeMenu}>Pricing</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <HqMenuPanel open={menuOpen} onClose={closeMenu} />
 
       {/* Menu Button */}
       <button
@@ -312,7 +257,7 @@ function NightRating() {
       num: '03',
       title: 'Night Navigation',
       duration: '2-3 Hours',
-      description: 'Cross-country navigation exercises learning to read a new landscape of lights — towns, motorways, and illuminated features. Includes flight to and from another aerodrome and emergency procedures training.',
+      description: 'Cross-country navigation exercises learning to read a new landscape of lights: towns, motorways, and illuminated features. Includes flight to and from another aerodrome and emergency procedures training.',
     },
     {
       num: '04',
@@ -430,7 +375,7 @@ function NightRating() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.2 }}
             >
-              Extend your flying beyond sunset. The Night Rating opens a new dimension of aviation —
+              Extend your flying beyond sunset. The Night Rating opens a new dimension of aviation,
               cities glittering below, smooth air, quiet radio, and experiences that daylight flying simply cannot match.
             </motion.p>
           </div>
@@ -487,7 +432,7 @@ function NightRating() {
                 <h3>A Different World</h3>
                 <p>
                   London viewed from a helicopter at night becomes a living map of light and
-                  shadow — the Thames a dark ribbon winding through illuminated streets. The peace of
+                  shadow, the Thames a dark ribbon winding through illuminated streets. The peace of
                   night flying, the radio quieter, the airspace less congested, offers a meditative
                   quality many pilots find profoundly satisfying.
                 </p>
@@ -500,7 +445,7 @@ function NightRating() {
                 <p>
                   Night flying demands greater precision, more thorough planning, and heightened
                   situational awareness. Pilots who complete a Night Rating invariably report
-                  that their daylight flying improves as well — the disciplines learned at night
+                  that their daylight flying improves as well. The disciplines learned at night
                   carry over into all operations.
                 </p>
               </div>

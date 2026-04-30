@@ -415,7 +415,7 @@ export default function MiscItemDetail() {
                 )}
 
                 <button className="mid-buy-btn" onClick={handleBuyNow}>
-                  Buy Now{item.hasQuantity && qty > 1 ? ` — £${((item.price / 100) * qty).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ''}
+                  Buy Now{item.hasQuantity && qty > 1 ? ` £${((item.price / 100) * qty).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ''}
                 </button>
               </>
             ) : (
@@ -426,7 +426,7 @@ export default function MiscItemDetail() {
 
                 {submitted ? (
                   <div className="mid-success">
-                    Thanks — we'll be in touch shortly about the {item.name}.
+                    Thanks. We'll be in touch shortly about the {item.name}.
                   </div>
                 ) : (
                   <form className="mid-enquiry-form" onSubmit={handleEnquirySubmit}>

@@ -51,7 +51,22 @@ export default function AdminMiscItems() {
             <tbody>
               {items.map((item) => (
                 <tr key={item.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                  <td style={{ padding: '0.75rem 1rem', fontWeight: 500, color: '#111827' }}>{item.name}</td>
+                  <td style={{ padding: '0.75rem 1rem', fontWeight: 500, color: '#111827' }}>
+                    {item.name}
+                    {item.discoveryAddon && (
+                      <span style={{
+                        display: 'inline-block',
+                        fontSize: '0.65rem',
+                        fontWeight: 700,
+                        letterSpacing: '0.05em',
+                        background: '#1a1a1a',
+                        color: '#fff',
+                        padding: '2px 6px',
+                        borderRadius: '3px',
+                        marginLeft: '0.5rem',
+                      }}>DF</span>
+                    )}
+                  </td>
                   <td style={{ padding: '0.75rem 1rem', color: '#6b7280' }}>{item.category}</td>
                   <td style={{ padding: '0.75rem 1rem', color: '#111827' }}>{item.priceDisplay || '—'}</td>
                   <td style={{ padding: '0.75rem 1rem', color: '#6b7280' }}>

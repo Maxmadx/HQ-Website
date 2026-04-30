@@ -839,7 +839,6 @@ function HQAccount() {
             <Link to="/training/ppl">Training</Link>
             <Link to="/expeditions">Expeditions</Link>
             <Link to="/maintenance">Maintenance</Link>
-            <Link to="/contact">Contact</Link>
           </nav>
         </header>
 
@@ -988,7 +987,7 @@ function HQAccount() {
                       <p>Contact Operations to check availability.</p>
                     </div>
                   </div>
-                  <a href="tel:+441onal484772" className="call-now-btn">
+                  <a href="tel:+441895833373" className="call-now-btn">
                     CALL OPS →
                   </a>
                 </div>

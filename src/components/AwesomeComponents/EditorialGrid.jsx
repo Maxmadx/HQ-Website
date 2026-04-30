@@ -24,18 +24,18 @@ const GALLERY_PAGES = [
   ],
   // Page 2 — Expeditions & Adventure
   [
-    { type: 'image', src: '/assets/images/expeditions/north-pole.jpg', alt: 'North Pole expedition', description: 'To the North Pole by helicopter — the ultimate expedition', span: true },
+    { type: 'image', src: '/assets/images/expeditions/north-pole.jpg', alt: 'North Pole expedition', description: 'To the North Pole by helicopter, the ultimate expedition', span: true },
     { type: 'image', src: '/assets/images/expeditions/six-helis-in-North-Pole.jpg', alt: 'Expeditions', description: 'World adventures by helicopter' },
     { type: 'image', src: '/assets/images/lifestyle/superyacht-ops.jpg', alt: 'Superyacht operations', description: 'Superyacht helicopter operations worldwide' },
-    { type: 'image', src: '/assets/images/expeditions/antartica.jpg', alt: 'Antarctica expedition', description: 'Antarctica — the final frontier of expedition flying' },
+    { type: 'image', src: '/assets/images/expeditions/antartica.jpg', alt: 'Antarctica expedition', description: 'Antarctica, the final frontier of expedition flying' },
     { type: 'image', src: '/assets/images/team/quentin-smith-world-record-holder-helicopter-aerobatics.webp', alt: 'Quentin Smith', description: 'World record holder Quentin Smith' },
   ],
   // Page 3 — Flying & Behind the Scenes
   [
-    { type: 'image', src: '/assets/images/gallery/carousel/rotating1.jpg', alt: 'HQ Aviation carousel', description: 'Life at HQ Aviation — behind the scenes', span: true },
+    { type: 'image', src: '/assets/images/gallery/carousel/rotating1.jpg', alt: 'HQ Aviation carousel', description: 'Life at HQ Aviation: behind the scenes', span: true },
     { type: 'image', src: '/assets/images/gallery/flying/james-shadow-night.jpg', alt: 'Night Rating', description: 'Night flying over the English countryside' },
     { type: 'image', src: '/assets/images/gallery/carousel/rotating2.jpg', alt: 'HQ Aviation', description: 'Every day is different at HQ Aviation' },
-    { type: 'image', src: '/assets/images/gallery/flying/flying--1.jpg', alt: 'Aerial view', description: 'The view from above — why we fly' },
+    { type: 'image', src: '/assets/images/gallery/flying/flying--1.jpg', alt: 'Aerial view', description: 'The view from above, why we fly' },
   ],
 ];
 
@@ -98,7 +98,7 @@ function buildPages(firestoreDocs) {
 
 /* ─── Main Component ──────────────────────────────────────────── */
 
-export const EditorialGrid = () => {
+export const EditorialGrid = ({ centerCardSlot } = {}) => {
   // CMS gallery pages — starts with hardcoded fallback, replaced by Firestore data
   const [galleryPages, setGalleryPages] = useState(GALLERY_PAGES);
 
@@ -137,6 +137,11 @@ export const EditorialGrid = () => {
   const originalTopRef = useRef(null);
   const prevModeRef = useRef('normal');
   const STICKY_DURATION = 100;
+
+  // Refs for sticky layout (desktop)
+  const sectionRef = useRef(null);
+  const footerRef = useRef(null);
+  const [footerHeight, setFooterHeight] = useState(84);
 
   // Gallery state
   const [currentPage, setCurrentPage] = useState(0);
@@ -255,8 +260,9 @@ export const EditorialGrid = () => {
   const [fsShowClock, setFsShowClock] = useState(false);
   const [fsClock, setFsClock] = useState('');
   const [fsIdle, setFsIdle] = useState(false);
-  const [fsScrollMode, setFsScrollMode] = useState(true);
+  const [fsScrollMode, setFsScrollMode] = useState(false);
   const [fsSpeed, setFsSpeed] = useState(1);
+  const [fsPaused, setFsPaused] = useState(true);
   const fsRow1Ref = useRef(null);
   const fsRow2Ref = useRef(null);
 
@@ -284,6 +290,7 @@ export const EditorialGrid = () => {
         { duration, iterations: Infinity, easing: 'linear' }
       );
       anim.playbackRate = fsSpeed;
+      if (fsPaused) anim.pause();
       animations.push(anim);
     });
     return () => animations.forEach((a) => a.cancel());
@@ -298,6 +305,16 @@ export const EditorialGrid = () => {
       anims.forEach((a) => { a.playbackRate = fsSpeed; });
     });
   }, [fsSpeed]);
+
+  // Pause/play scroll-mode animations when fsPaused toggles
+  useEffect(() => {
+    if (!fsOpen || !fsScrollMode) return;
+    [fsRow1Ref, fsRow2Ref].forEach((ref) => {
+      const el = ref.current;
+      if (!el) return;
+      el.getAnimations().forEach((a) => { fsPaused ? a.pause() : a.play(); });
+    });
+  }, [fsPaused, fsOpen, fsScrollMode]);
 
   // Preload images 2 pages ahead so they're in cache before the user swipes to them
   useEffect(() => {
@@ -339,7 +356,8 @@ export const EditorialGrid = () => {
 
   const openFullscreen = useCallback(() => {
     setFsSlide(0);
-    setFsScrollMode(true);
+    setFsScrollMode(false);
+    setFsPaused(true);
     setFsOpen(true);
     document.documentElement.requestFullscreen?.().catch(() => {});
   }, []);
@@ -390,13 +408,13 @@ export const EditorialGrid = () => {
 
   // Fullscreen auto-rotate (speed-adjusted interval)
   useEffect(() => {
-    if (!fsOpen || fsScrollMode) return;
+    if (!fsOpen || fsScrollMode || fsPaused) return;
     const ms = 5000 / fsSpeed;
     const interval = setInterval(() => {
       setFsSlide((prev) => (prev + 1) % allGalleryImages.length);
     }, ms);
     return () => clearInterval(interval);
-  }, [fsOpen, fsSpeed, fsScrollMode]);
+  }, [fsOpen, fsSpeed, fsScrollMode, fsPaused]);
 
   // Fullscreen clock
   useEffect(() => {
@@ -413,11 +431,13 @@ export const EditorialGrid = () => {
   // Ticker scroll logic
   useEffect(() => {
     const calculate = () => {
+      let freshNavBottom = navBottom;
       const nav = document.querySelector('.fd-nav');
       if (nav) {
         const style = window.getComputedStyle(nav);
         const top = parseFloat(style.top) || 49;
-        setNavBottom(top + nav.getBoundingClientRect().height);
+        freshNavBottom = top + nav.getBoundingClientRect().height;
+        setNavBottom(freshNavBottom);
       }
 
       if (placeholderRef.current) {
@@ -460,8 +480,47 @@ export const EditorialGrid = () => {
     };
   }, [navBottom, tickerLeftOffset]);
 
+  // Track footer height + emulate sticky via transform (desktop only).
+  // CSS position:sticky won't activate on this footer in this layout context,
+  // so we displace it from its natural position with translateY when it would
+  // otherwise scroll above the viewport bottom.
+  useEffect(() => {
+    if (!footerRef.current || !sectionRef.current) return;
+    const apply = () => {
+      const section = sectionRef.current;
+      const footer = footerRef.current;
+      if (!section || !footer) return;
+      const fh = footer.getBoundingClientRect().height;
+      setFooterHeight(fh);
+      if (window.innerWidth < 769) { footer.style.transform = ''; return; }
+      const vh = window.innerHeight;
+      const sr = section.getBoundingClientRect();
+      const paddingBottom = parseFloat(getComputedStyle(section).paddingBottom) || 0;
+      const naturalTop = sr.bottom - paddingBottom - fh;
+      const pinTop = vh - fh;
+      const cbBottom = sr.bottom;
+      let shift = 0;
+      if (naturalTop < pinTop) {
+        const desired = cbBottom >= vh ? pinTop : cbBottom - fh;
+        shift = desired - naturalTop;
+      }
+      footer.style.transform = shift > 0 ? `translateY(${shift}px)` : '';
+    };
+    apply();
+    const ro = new ResizeObserver(apply);
+    ro.observe(footerRef.current);
+    window.addEventListener('scroll', apply, { passive: true });
+    window.addEventListener('resize', apply);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('scroll', apply);
+      window.removeEventListener('resize', apply);
+    };
+  }, []);
+
   return (
-  <section className="editorial-grid">
+  <section ref={sectionRef} className="editorial-grid" style={{ '--eg-nav-bottom': `${navBottom}px`, '--eg-footer-height': `${footerHeight}px` }}>
+    <div className="editorial-grid__sticky-wrap">
     {/* Header */}
     <header className="editorial-grid__header">
       {/* Left spacer — balances the right page indicator on desktop */}
@@ -485,11 +544,35 @@ export const EditorialGrid = () => {
       {/* ── Desktop: uniform photo grid, paginated ── */}
       <div className="editorial-grid__desktop-gallery">
         <div className="editorial-grid__photo-grid">
-          {(galleryPages[currentPage] || []).map((cell, i) => (
-            <div key={`${currentPage}-${i}`} className="editorial-grid__photo-cell" onClick={() => openLightbox(i)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && openLightbox(i)}>
-              <img src={cell.src} alt={cell.alt} loading="eager" />
-            </div>
-          ))}
+          {(() => {
+            const cells = galleryPages[currentPage] || [];
+            if (!centerCardSlot) {
+              return cells.map((cell, i) => (
+                <div key={`${currentPage}-${i}`} className="editorial-grid__photo-cell" onClick={() => openLightbox(i)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && openLightbox(i)}>
+                  <img src={cell.src} alt={cell.alt} loading="eager" />
+                </div>
+              ));
+            }
+            const left = cells.slice(0, 4);
+            const right = cells.slice(4);
+            return (
+              <>
+                {left.map((cell, i) => (
+                  <div key={`${currentPage}-${i}`} className="editorial-grid__photo-cell" onClick={() => openLightbox(i)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && openLightbox(i)}>
+                    <img src={cell.src} alt={cell.alt} loading="eager" />
+                  </div>
+                ))}
+                <div key={`${currentPage}-center`} className="editorial-grid__photo-cell editorial-grid__photo-cell--center">
+                  {centerCardSlot}
+                </div>
+                {right.map((cell, i) => (
+                  <div key={`${currentPage}-${i + 4}`} className="editorial-grid__photo-cell" onClick={() => openLightbox(i + 4)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && openLightbox(i + 4)}>
+                    <img src={cell.src} alt={cell.alt} loading="eager" />
+                  </div>
+                ))}
+              </>
+            );
+          })()}
         </div>
       </div>
 
@@ -506,6 +589,7 @@ export const EditorialGrid = () => {
         </div>
       </div>
 
+    </div>
     </div>
 
 
@@ -675,7 +759,7 @@ export const EditorialGrid = () => {
               textAlign: 'center',
             }}>
               {uploadResult.failed === 0
-                ? `✓ ${uploadResult.success} file${uploadResult.success !== 1 ? 's' : ''} submitted — thanks! Closing in a moment…`
+                ? `✓ ${uploadResult.success} file${uploadResult.success !== 1 ? 's' : ''} submitted, thanks! Closing in a moment…`
                 : uploadResult.success === 0
                   ? `Upload failed: ${uploadResult.errorMsg}`
                   : `${uploadResult.success} uploaded, ${uploadResult.failed} failed: ${uploadResult.errorMsg}`}
@@ -940,6 +1024,18 @@ export const EditorialGrid = () => {
           </div>
         )}
         <div className="fd-gallery-fs__speed-control">
+          <button
+            type="button"
+            className="fd-gallery-fs__play-toggle"
+            onClick={() => setFsPaused((p) => !p)}
+            aria-label={fsPaused ? 'Play' : 'Pause'}
+          >
+            {fsPaused ? (
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+            ) : (
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" /><rect x="14" y="5" width="4" height="14" /></svg>
+            )}
+          </button>
           <span className="fd-gallery-fs__speed-label">×{fsSpeed.toFixed(1)}</span>
           <input
             type="range"
@@ -1127,6 +1223,23 @@ export const EditorialGrid = () => {
             letter-spacing: 0.05em;
             min-width: 2rem;
             text-align: center;
+          }
+          .fd-gallery-fs__play-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            padding: 0;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 4px;
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.2s;
+          }
+          .fd-gallery-fs__play-toggle:hover {
+            background: rgba(255,255,255,0.15);
           }
           .fd-gallery-fs__speed-slider {
             -webkit-appearance: none;
@@ -1354,7 +1467,7 @@ export const EditorialGrid = () => {
       .editorial-grid__photo-grid {
         flex: 1;
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         grid-template-rows: repeat(3, 1fr);
         gap: 0.4rem;
         padding: 0.4rem;
@@ -1499,6 +1612,42 @@ export const EditorialGrid = () => {
         color: #666;
       }
 
+      /* ── Desktop-only: black background + sticky header ── */
+
+      @media (min-width: 769px) {
+        .editorial-grid {
+          background: #1a1a1a;
+          padding-bottom: 120px;
+          position: relative;
+        }
+
+        .editorial-grid__sticky-wrap {
+          position: relative;
+        }
+
+        .editorial-grid__header {
+          position: sticky;
+          top: var(--eg-nav-bottom, 120px);
+          z-index: 10;
+        }
+
+        .editorial-grid__gallery {
+          height: calc(100vh - 75px);
+        }
+
+        .editorial-grid__photo-grid {
+          padding-top: 40px;
+          padding-bottom: 60px;
+          background: #1a1a1a;
+        }
+
+        .editorial-grid__footer {
+          position: relative;
+          z-index: 10;
+          will-change: transform;
+        }
+      }
+
       /* ── Mobile ──────────────────────────────────── */
 
       @media (max-width: 768px) {
@@ -1573,7 +1722,7 @@ export const EditorialGrid = () => {
     `}</style>
 
     {/* Footer — actions */}
-    <footer className="editorial-grid__footer">
+    <footer ref={footerRef} className="editorial-grid__footer">
       <div className="editorial-grid__issue">Are you an HQ'er with some cool footage?</div>
 
       {/* Pagination chevrons (desktop only) */}

@@ -1,36 +1,121 @@
 // scripts/seed-reviews.js
-// Seeds the 7 hardcoded reviews into Firestore reviews collection.
-// Safe to re-run only if collection is empty — checks first.
+// Seeds verbatim Google Maps reviews for HQ Aviation Ltd into the Firestore
+// `reviews` collection. Re-run-safe: skips when the collection is non-empty
+// unless `--force` is passed (which wipes the collection first).
+//
+// Two modes:
+//   1. Built-in fallback list (5 reviews from public Google Maps mirror) —
+//      runs when no --from-json is passed.
+//   2. JSON file produced by scripts/scrape-google-reviews.cjs — pass
+//      `--from-json scripts/google-reviews.json` to seed every review.
+//
+// Source: Google Maps listing for HQ Aviation Ltd
+//   place_id: ChIJ36KI7NFudkgRvpfhWKl_8Xg
+//
+// Usage:
+//   node scripts/seed-reviews.js                                   # fallback, dev only
+//   node scripts/seed-reviews.js --force                           # wipe & reseed fallback
+//   node scripts/seed-reviews.js --from-json scripts/google-reviews.json --force
 
 require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
+const fs = require('fs');
+const path = require('path');
 const admin = require('../api/firebase-admin');
 
-const reviews = [
-  { author: 'Patrick C.',  role: 'Helicopter Owner · R44 Raven II',        rating: 5, displayOrder: 1, text: "HQ Aviation has been looking after my R44 for over five years now. The level of care and attention to detail from David Cross and his engineering team is second to none. They treat my aircraft as if it were their own." },
-  { author: 'Andy B.',     role: 'Trial Lesson Student',                    rating: 5, displayOrder: 2, text: "What an incredible day. From the moment I arrived, the team made me feel completely at ease. The briefing was thorough, and then actually flying the helicopter — there's nothing quite like it. I'm already looking at booking my PPL course." },
-  { author: 'Luca L.',     role: 'Helicopter Owner · R66 Turbine',          rating: 5, displayOrder: 3, text: "The leaseback programme has been fantastic for offsetting ownership costs. HQ manages everything — maintenance, scheduling, insurance coordination. My R66 pays for itself, and I still fly it whenever I want." },
-  { author: 'Geoff R.',    role: 'PPL(H) · Self-Fly Hire Regular',          rating: 5, displayOrder: 4, text: "The walk-in, walk-out self-fly hire is exactly what I wanted after getting my licence. No membership fees, no hassle. I book an R44, it's fuelled and ready on the pad. Last month I flew to Le Touquet for lunch — try doing that by car." },
-  { author: 'Maxim K.',    role: 'Helicopter Owner · R22 Beta II',          rating: 5, displayOrder: 5, text: "Bought my R22 through HQ and they've maintained it impeccably since. The engineering team genuinely cares. When my 2,200-hour overhaul came up, they walked me through every option and the rebuild came back better than factory." },
-  { author: 'Sarah H.',    role: 'PPL Student · Hour Building',             rating: 5, displayOrder: 6, text: "The instructors at HQ are patient, professional and genuinely passionate about teaching. I started my PPL in January and passed my skills test in September. The ground school was brilliant — passed all nine exams first time." },
-  { author: 'James M.',    role: 'Expedition Participant · Iceland 2024',   rating: 5, displayOrder: 7, text: "Flying to Iceland with Captain Q was a once-in-a-lifetime experience. The planning was meticulous, the flying was extraordinary, and the camaraderie between the group was something I'll never forget. Already signed up for the next one." },
+const fallbackReviews = [
+  {
+    author: 'Patrick Curran',
+    role: '',
+    rating: 5,
+    displayOrder: 1,
+    text: 'HQ Aviation is by far the best helicopter school in the UK. HQ is much more than just a business. Its a community of caring people who all share a love of helicopters.',
+  },
+  {
+    author: 'Stephen Glynn',
+    role: '',
+    rating: 5,
+    displayOrder: 2,
+    text: 'Great place to learn to fly a helicopter. Open 7 days, comfortable surroundings, and the best instructors in the business.',
+  },
+  {
+    author: 'Frederic Neefs',
+    role: '',
+    rating: 5,
+    displayOrder: 3,
+    text: 'Great atmosphere, top instructors, Best helicopter training center, period.',
+  },
+  {
+    author: 'Paul White',
+    role: 'Elstree Helicopters',
+    rating: 5,
+    displayOrder: 4,
+    text: 'A great bunch and excellent team. Been associated with them for some years now :-)',
+  },
+  {
+    author: 'Vicky King',
+    role: '',
+    rating: 5,
+    displayOrder: 5,
+    text: 'Nice pepole and place',
+  },
 ];
 
+async function wipe(col) {
+  const snap = await col.get();
+  if (snap.empty) return 0;
+  const batch = col.firestore.batch();
+  snap.docs.forEach((d) => batch.delete(d.ref));
+  await batch.commit();
+  return snap.size;
+}
+
+function getJsonPath() {
+  const idx = process.argv.indexOf('--from-json');
+  if (idx === -1) return null;
+  const p = process.argv[idx + 1];
+  if (!p) throw new Error('--from-json requires a file path');
+  return path.resolve(p);
+}
+
+function loadFromJson(jsonPath) {
+  const raw = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+  if (!Array.isArray(raw)) throw new Error(`${jsonPath} did not contain a JSON array`);
+  return raw
+    .filter((r) => r && r.text && r.author)
+    .map((r, i) => ({
+      author: String(r.author).trim(),
+      role: '',
+      rating: Number(r.rating) || 5,
+      displayOrder: i + 1,
+      text: String(r.text).trim(),
+      date: String(r.date || '').trim(),
+    }));
+}
+
 async function main() {
+  const force = process.argv.includes('--force');
+  const jsonPath = getJsonPath();
+  const reviews = jsonPath ? loadFromJson(jsonPath) : fallbackReviews;
+  console.log(`source: ${jsonPath || 'built-in fallback'} (${reviews.length} reviews)`);
+
   const db = admin.firestore();
   const col = db.collection('reviews');
 
-  // Check if already seeded
   const existing = await col.limit(1).get();
   if (!existing.empty) {
-    console.log('reviews collection already has data — skipping seed.');
-    process.exit(0);
+    if (!force) {
+      console.log('reviews collection already has data, skipping (pass --force to wipe & reseed).');
+      process.exit(0);
+    }
+    const wiped = await wipe(col);
+    console.log(`wiped ${wiped} existing review(s).`);
   }
 
   const batch = db.batch();
   for (const r of reviews) {
     batch.set(col.doc(), {
       ...r,
-      date: '',
+      date: r.date || '',
       visible: true,
       avatarUrl: '',
     });

@@ -4,8 +4,8 @@
  * Run with: node scripts/seed-misc-items.js
  * Requires: FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY in .env
  *
- * Safe to re-run — existing docs are updated, not duplicated.
- * Images are not seeded here — add them via /admin/misc after running.
+ * Safe to re-run,existing docs are updated, not duplicated.
+ * Images are not seeded here,add them via /admin/misc after running.
  */
 
 require('dotenv').config();

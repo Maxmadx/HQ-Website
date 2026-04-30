@@ -26,6 +26,7 @@ import FooterMinimal from '../components/FooterMinimal';
 // Import Expedition components
 import ExpeditionBarcode from '../components/Expeditions/ExpeditionBarcode';
 import ExpeditionVideoSlider from '../components/Expeditions/ExpeditionVideoSlider';
+import HqMenuPanel from '../components/HqMenuPanel';
 
 // CMS hook
 import { usePageText } from '../hooks/usePageText';
@@ -78,61 +79,7 @@ function ExpeditionsHeader() {
   return (
     <>
       {/* Menu Panel */}
-      <div className={`hq-menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="hq-menu-grid">
-          <div className="hq-menu-section">
-            <h3>About</h3>
-            <ul>
-              <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-              <li><Link to="/about-us" onClick={closeMenu}>About Us</Link></li>
-              <li><Link to="/about-us/team" onClick={closeMenu}>Meet The Team</Link></li>
-              <li><Link to="/about-us/captain-q" onClick={closeMenu}>Quentin Smith</Link></li>
-              <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Aircraft Sales</h3>
-            <ul>
-              <li><Link to="/aircraft-sales" onClick={closeMenu}>New Aircraft</Link></li>
-              <li><Link to="/aircraft-sales/new/r88" onClick={closeMenu}>R88</Link></li>
-              <li><Link to="/aircraft-sales/new/r66" onClick={closeMenu}>R66</Link></li>
-              <li><Link to="/aircraft-sales/new/r44" onClick={closeMenu}>R44</Link></li>
-              <li><Link to="/aircraft-sales/new/r22" onClick={closeMenu}>R22</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Flight Training</h3>
-            <ul>
-              <li><Link to="/training" onClick={closeMenu}>Training Overview</Link></li>
-              <li><Link to="/training/trial-lessons" onClick={closeMenu}>Trial Lessons</Link></li>
-              <li><Link to="/training/ppl" onClick={closeMenu}>Private Pilot License</Link></li>
-              <li><Link to="/training/faq" onClick={closeMenu}>Training FAQ</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Services</h3>
-            <ul>
-              <li><Link to="/services" onClick={closeMenu}>Services Overview</Link></li>
-              <li><Link to="/services/maintenance" onClick={closeMenu}>Maintenance</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Experiences</h3>
-            <ul>
-              <li><Link to="/expeditions" onClick={closeMenu}>Expeditions</Link></li>
-              <li><Link to="/expeditions/calendar" onClick={closeMenu}>Calendar</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Contact</h3>
-            <ul>
-              <li><Link to="/contact" onClick={closeMenu}>Contact Us</Link></li>
-              <li><Link to="/contact/careers" onClick={closeMenu}>Careers</Link></li>
-              <li><Link to="/contact/pricing" onClick={closeMenu}>Pricing</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <HqMenuPanel open={menuOpen} onClose={closeMenu} />
 
       {/* Menu Button */}
       <button
@@ -465,7 +412,7 @@ const partners = [
 
 // 16. Featured quote
 const featuredQuote = {
-  text: "The moment you lift off and leave the ground behind, you enter a world that few will ever know. Flying to the ends of the Earth isn't just about the destination — it's about the profound shift in perspective that changes how you see everything.",
+  text: "The moment you lift off and leave the ground behind, you enter a world that few will ever know. Flying to the ends of the Earth isn't just about the destination. It's about the profound shift in perspective that changes how you see everything.",
   author: "Captain Quentin Smith",
   context: "On why he leads expeditions",
 };
@@ -841,9 +788,6 @@ function PricingSection() {
                     <li key={j}><i className="fas fa-check"></i> {f}</li>
                   ))}
                 </ul>
-                <Link to="/contact?package=${tier.name.toLowerCase()}" className="fexp-btn fexp-btn--primary fexp-btn--block">
-                  Enquire Now
-                </Link>
               </div>
             </Reveal>
           ))}
@@ -896,6 +840,158 @@ function ComparisonTable() {
   );
 }
 
+// 14. Booking Steps Waitlist (CTA → form, posts to /api/leads)
+function BookingStepsWaitlist() {
+  const [formOpen, setFormOpen] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [tripInterest, setTripInterest] = useState('');
+  const [notes, setNotes] = useState('');
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!name) { setError('Name is required'); return; }
+    if (!email) { setError('Email is required'); return; }
+    setSubmitting(true);
+    setError('');
+    try {
+      const body = [
+        tripInterest ? `Trip interest: ${tripInterest}` : '',
+        notes ? `Notes: ${notes}` : '',
+      ].filter(Boolean).join('\n');
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name, email, phone,
+          subject: 'Expedition Waitlist Enquiry',
+          message: body || 'No additional information provided.',
+          source: 'expedition-waitlist',
+        }),
+      });
+      if (!res.ok) throw new Error('Request failed');
+      setSubmitted(true);
+    } catch {
+      setError('Something went wrong. Please try again or call us directly.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <div className="fexp-bs-waitlist">
+      <div className="fexp-bs-waitlist__inner">
+        {!formOpen && !submitted && (
+          <div className="fexp-waitlist-cta">
+            <button
+              type="button"
+              className="fexp-waitlist-cta__btn"
+              onClick={() => setFormOpen(true)}
+            >
+              Register Interest <span>→</span>
+            </button>
+          </div>
+        )}
+
+        {formOpen && !submitted && (
+          <form className="fexp-waitlist-form" onSubmit={handleSubmit}>
+            <div className="fexp-waitlist-form__header">
+              <span className="fexp-waitlist-form__badge">Trip Waitlist</span>
+              <button
+                type="button"
+                className="fexp-waitlist-form__back"
+                onClick={() => { setFormOpen(false); setError(''); }}
+              >
+                ← Back
+              </button>
+            </div>
+
+            <div className="fexp-waitlist-form__row fexp-waitlist-form__row--2col">
+              <div className="fexp-waitlist-form__field">
+                <label className="fexp-waitlist-form__label">Name <span style={{ color: '#c00' }}>*</span></label>
+                <input
+                  className="fexp-waitlist-form__input"
+                  type="text"
+                  placeholder="Full name"
+                  required
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                />
+              </div>
+              <div className="fexp-waitlist-form__field">
+                <label className="fexp-waitlist-form__label">Email <span style={{ color: '#c00' }}>*</span></label>
+                <input
+                  className="fexp-waitlist-form__input"
+                  type="email"
+                  placeholder="you@example.com"
+                  required
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="fexp-waitlist-form__row fexp-waitlist-form__row--2col">
+              <div className="fexp-waitlist-form__field">
+                <label className="fexp-waitlist-form__label">Phone <span className="fexp-waitlist-form__optional">(optional)</span></label>
+                <input
+                  className="fexp-waitlist-form__input"
+                  type="tel"
+                  placeholder="+44"
+                  value={phone}
+                  onChange={e => setPhone(e.target.value)}
+                />
+              </div>
+              <div className="fexp-waitlist-form__field">
+                <label className="fexp-waitlist-form__label">Trip Interest <span className="fexp-waitlist-form__optional">(optional)</span></label>
+                <input
+                  className="fexp-waitlist-form__input"
+                  type="text"
+                  placeholder="e.g. Arctic, Iceland, Bahamas"
+                  value={tripInterest}
+                  onChange={e => setTripInterest(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="fexp-waitlist-form__field">
+              <label className="fexp-waitlist-form__label">Anything Else <span className="fexp-waitlist-form__optional">(optional)</span></label>
+              <textarea
+                className="fexp-waitlist-form__input fexp-waitlist-form__textarea"
+                placeholder="Experience level, timeframe, group size, dream destinations…"
+                rows={3}
+                value={notes}
+                onChange={e => setNotes(e.target.value)}
+              />
+            </div>
+
+            {error && <p className="fexp-waitlist-form__error">{error}</p>}
+            <div className="fexp-waitlist-form__footer">
+              <button type="submit" className="fexp-waitlist-form__submit" disabled={submitting}>
+                {submitting ? 'Sending…' : 'Register Interest'}
+              </button>
+              <span className="fexp-waitlist-form__note">We'll be in touch when new trips open.</span>
+            </div>
+          </form>
+        )}
+
+        {submitted && (
+          <div className="fexp-waitlist-form__success">
+            <span className="fexp-waitlist-form__success-icon">✓</span>
+            <p className="fexp-waitlist-form__success-title">You're on the list</p>
+            <p className="fexp-waitlist-form__success-sub">Thank you. We'll be in touch as soon as new expeditions are announced.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // 14. Booking Steps
 function BookingSteps() {
   return (
@@ -911,36 +1007,29 @@ function BookingSteps() {
           </div>
         </Reveal>
 
+        <Reveal delay={0.15}>
+          <p className="fexp-booking-steps__intro">
+            Register your interest and we'll let you know when new trips open. Or tell us where you want to go and we'll plan a bespoke expedition just for you.
+          </p>
+        </Reveal>
+
         <div className="fexp-booking-steps__layout">
-          <div className="fexp-booking-steps__left">
+          <div className="fexp-booking-steps__track">
             {bookingSteps.map((step, i) => (
-              <Reveal key={i} delay={i * 0.08}>
-                <div className="fexp-step">
-                  <div className="fexp-step__left">
-                    <div className="fexp-step__number">{String(step.step).padStart(2, '0')}</div>
-                    {i < bookingSteps.length - 1 && <div className="fexp-step__line" />}
+              <Reveal key={i} delay={0.2 + i * 0.06}>
+                <div className="fexp-step-h">
+                  <div className="fexp-step-h__head">
+                    <span className="fexp-step-h__num">{String(step.step).padStart(2, '0')}</span>
                   </div>
-                  <div className="fexp-step__content">
-                    <div className="fexp-step__icon"><i className={`fas ${step.icon}`}></i></div>
-                    <div>
-                      <h4 className="fexp-step__title">{step.title}</h4>
-                      <p className="fexp-step__desc">{step.desc}</p>
-                    </div>
-                  </div>
+                  <h4 className="fexp-step-h__title">{step.title}</h4>
+                  <p className="fexp-step-h__desc">{step.desc}</p>
                 </div>
               </Reveal>
             ))}
           </div>
 
-          <Reveal delay={0.4}>
-            <div className="fexp-waitlist">
-              <div className="fexp-waitlist__inner">
-                <span className="fexp-waitlist__pre">Limited Spaces</span>
-                <h3 className="fexp-waitlist__title">Join Our Trip<br />Waitlist</h3>
-                <p className="fexp-waitlist__desc">Expeditions fill quickly. Register your interest to be notified when new trips are announced.</p>
-                <a href="/contact" className="fexp-waitlist__btn">Register Interest <span>→</span></a>
-              </div>
-            </div>
+          <Reveal delay={0.55}>
+            <BookingStepsWaitlist />
           </Reveal>
         </div>
       </div>
@@ -948,43 +1037,82 @@ function BookingSteps() {
   );
 }
 
-// 15. Expedition Philosophy
+// 15. Expedition Philosophy — J10 (Choreographed Motion)
+const PHILOSOPHY_FEATURES = [
+  {
+    code: 'PHIL-01',
+    field: 'Operations',
+    title: 'Operations Team',
+    body:
+      'Our dedicated team works behind the scenes, with ground contacts in ' +
+      'constant communication, facilitating every aspect of travel for a ' +
+      'seamless experience.',
+  },
+  {
+    code: 'PHIL-02',
+    field: 'Method',
+    title: 'Real-World Skills',
+    body:
+      "You'll learn valuable flying skills in fully immersive, real-world " +
+      "scenarios that can't be replicated in a classroom.",
+  },
+  {
+    code: 'PHIL-03',
+    field: 'Process',
+    title: 'Full Preparation',
+    body:
+      'We provide packing lists, safety gear, briefing materials, and handle ' +
+      'all logistics so you can focus on the adventure.',
+  },
+];
+
+const PHILOSOPHY_HEADLINE = [
+  { t: 'A helicopter',   w: 'dark' },
+  { t: 'as the gateway', w: 'mid' },
+  { t: 'to the world.',  w: 'light' },
+];
+
 function ExpeditionHistory() {
   const { t } = usePageText('expeditions');
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, amount: 0.18 });
+
   return (
     <section className="fexp-philosophy">
-      <div className="fexp-philosophy__container">
-        <div className="fexp-philosophy__layout">
-          <Reveal delay={0.2}>
-            <div className="fexp-philosophy__left">
-              <p className="fexp-philosophy__lead">
-                This isn't transport.
-              </p>
-              <p className="fexp-philosophy__text">
-                {t('expeditions-intro', 'description')}
-              </p>
-              <p className="fexp-philosophy__text">
-                We also offer fully bespoke expeditions tailored to your dreams. Tell us where you want to go, and we'll make it happen.
-              </p>
-            </div>
-          </Reveal>
+      <div className={`fexp-philo-j ${inView ? 'is-in' : ''}`} ref={ref}>
+        <div className="fexp-philo-j__band">
+          <div className="fexp-philo-j__band-inner">
+            <span className="fexp-philo-j__eye">PHILOSOPHY</span>
+            <h2 className="fexp-philo-j__head">
+              {PHILOSOPHY_HEADLINE.map((p, i) => (
+                <span key={i} className={`fexp-philo-j__text--${p.w}`}>
+                  {p.t}{i < PHILOSOPHY_HEADLINE.length - 1 ? ' ' : ''}
+                </span>
+              ))}
+            </h2>
+            <p className="fexp-philo-j__copy">
+              {t('expeditions-intro', 'description')}
+            </p>
+            <p className="fexp-philo-j__copy fexp-philo-j__copy--quiet">
+              We also offer fully bespoke expeditions tailored to your dreams. Tell us where you want to go, and we'll make it happen.
+            </p>
+          </div>
+          <div className="fexp-philo-j__sweep" aria-hidden="true" />
+        </div>
 
-          <Reveal delay={0.3}>
-            <div className="fexp-philosophy__right">
-              <div className="fexp-philosophy__feature">
-                <h4>Operations Team</h4>
-                <p>Our dedicated team works behind the scenes—ground contacts in constant communication, facilitating every aspect of travel for a seamless experience.</p>
-              </div>
-              <div className="fexp-philosophy__feature">
-                <h4>Real-World Skills</h4>
-                <p>You'll learn valuable flying skills in fully immersive, real-world scenarios that can't be replicated in a classroom.</p>
-              </div>
-              <div className="fexp-philosophy__feature">
-                <h4>Full Preparation</h4>
-                <p>We provide packing lists, safety gear, briefing materials, and handle all logistics so you can focus on the adventure.</p>
-              </div>
-            </div>
-          </Reveal>
+        <div className="fexp-philo-j__triptych">
+          {PHILOSOPHY_FEATURES.map((f, i) => (
+            <article
+              key={f.code}
+              className="fexp-philo-j__panel"
+              style={{ '--d': `${i * 0.12}s` }}
+            >
+              <div className="fexp-philo-j__num">{String(i + 1).padStart(2, '0')}</div>
+              <span className="fexp-philo-j__code">{f.code} · {f.field.toUpperCase()}</span>
+              <h4 className="fexp-philo-j__title">{f.title}</h4>
+              <p className="fexp-philo-j__body">{f.body}</p>
+            </article>
+          ))}
         </div>
       </div>
     </section>
@@ -1016,7 +1144,6 @@ function SplitSection({ section }) {
         <span className="fexp-pre-text">{section.subtitle}</span>
         <h2>{section.title}</h2>
         <p>{section.text}</p>
-        <Link to="/contact" className="fexp-btn fexp-btn--outline">Learn More</Link>
       </motion.div>
     </section>
   );
@@ -2006,94 +2133,167 @@ function FinalExpeditions() {
           margin: 0;
         }
 
-        /* ===== PHILOSOPHY SECTION ===== */
+        /* ===== PHILOSOPHY SECTION (J10 — choreographed motion) ===== */
         .fexp-philosophy {
-          padding: 30px 2rem 4rem;
-          background: #fff;
+          padding: 5rem 2rem 6rem;
+          background: #faf9f6;
           position: relative;
           z-index: 2;
-          box-shadow: 0 8px 30px rgba(0,0,0,0.1);
         }
 
-        .fexp-philosophy__container {
-          max-width: 1000px;
+        .fexp-philo-j {
+          max-width: 1200px;
           margin: 0 auto;
-        }
-
-        .fexp-philosophy__layout {
-          display: grid;
-          grid-template-columns: 1fr 1px 1fr;
-          gap: 2.5rem;
-          align-items: center;
-        }
-
-        .fexp-philosophy__layout::before {
-          content: '';
-          grid-column: 2;
-          grid-row: 1;
-          background: linear-gradient(180deg, transparent, #d0ccc4, transparent);
-          height: 100%;
-        }
-
-        .fexp-philosophy__left {
-          padding-right: 1rem;
-        }
-
-        .fexp-philosophy__lead {
-          font-size: 1.3rem;
-          font-weight: 600;
+          font-family: 'Space Grotesk', -apple-system, sans-serif;
           color: #1a1a1a;
+        }
+
+        .fexp-philo-j__text--dark  { color: #faf9f6; font-weight: 500; }
+        .fexp-philo-j__text--mid   { color: rgba(250,249,246,0.75); font-weight: 300; }
+        .fexp-philo-j__text--light { color: rgba(250,249,246,0.5);  font-weight: 300; }
+
+        .fexp-philo-j__band {
+          background: #0e0e0e;
+          color: #faf9f6;
+          padding: 3.25rem 2.5rem 5rem;
+          margin-bottom: -2.5rem;
+          position: relative;
+          z-index: 1;
+          opacity: 0;
+          transform: translateY(8px);
+          transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .fexp-philo-j.is-in .fexp-philo-j__band {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        .fexp-philo-j__band-inner { max-width: 760px; }
+
+        .fexp-philo-j__eye {
+          display: block;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.6rem;
+          letter-spacing: 0.3em;
+          text-transform: uppercase;
+          color: rgba(255,255,255,0.5);
           margin-bottom: 1rem;
         }
 
-        .fexp-philosophy__text {
+        .fexp-philo-j__head {
+          font-size: clamp(2rem, 4.8vw, 3.8rem);
+          line-height: 1.02;
+          letter-spacing: -0.025em;
+          margin: 0 0 1.25rem;
+        }
+
+        .fexp-philo-j__copy {
           font-size: 0.95rem;
-          color: #555;
-          line-height: 1.8;
-          margin: 0 0 1rem;
-        }
-
-        .fexp-philosophy__right {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-        }
-
-        .fexp-philosophy__feature {
-          padding: 1.25rem;
-          background: #f2efea;
-          border-radius: 8px;
-          border: 1px solid #e0dcd6;
-        }
-
-        .fexp-philosophy__feature h4 {
-          font-size: 0.85rem;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
+          line-height: 1.7;
+          color: rgba(255,255,255,0.75);
           margin: 0 0 0.5rem;
-          color: #1a1a1a;
+        }
+        .fexp-philo-j__copy--quiet {
+          color: rgba(255,255,255,0.5);
+          font-size: 0.85rem;
         }
 
-        .fexp-philosophy__feature p {
+        .fexp-philo-j__sweep {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 1px;
+          background: #faf9f6;
+          transform-origin: left;
+          transform: scaleX(0);
+          transition: transform 0.9s ease 0.4s;
+        }
+        .fexp-philo-j.is-in .fexp-philo-j__sweep { transform: scaleX(1); }
+
+        .fexp-philo-j__triptych {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1px;
+          background: #e0deda;
+          margin: 0 1.5rem;
+          position: relative;
+          z-index: 2;
+          box-shadow: 0 14px 36px rgba(0,0,0,0.12);
+        }
+
+        .fexp-philo-j__panel {
+          background: #faf9f6;
+          padding: 2.25rem 1.85rem;
+          opacity: 0;
+          transform: translateY(24px);
+          transition:
+            opacity 0.6s ease var(--d, 0s),
+            transform 0.6s ease var(--d, 0s),
+            box-shadow 0.25s ease;
+        }
+        .fexp-philo-j.is-in .fexp-philo-j__panel {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        .fexp-philo-j__panel:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+        }
+
+        .fexp-philo-j__num {
+          font-size: 2.6rem;
+          font-weight: 200;
+          color: #1a1a1a;
+          line-height: 1;
+          letter-spacing: -0.04em;
+          margin-bottom: 0.85rem;
+        }
+        .fexp-philo-j__code {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.55rem;
+          letter-spacing: 0.2em;
+          color: #aaa;
+          display: block;
+          margin-bottom: 0.6rem;
+        }
+        .fexp-philo-j__title {
+          font-size: 1rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: -0.01em;
+          margin: 0 0 0.55rem;
+        }
+        .fexp-philo-j__body {
           font-size: 0.85rem;
+          line-height: 1.65;
           color: #666;
-          line-height: 1.5;
           margin: 0;
         }
 
-        @media (max-width: 768px) {
-          .fexp-philosophy__layout {
+        @media (max-width: 900px) {
+          .fexp-philo-j__triptych {
             grid-template-columns: 1fr;
-            gap: 2rem;
+            margin: 0;
           }
+          .fexp-philo-j__band {
+            margin-bottom: 0;
+            padding: 2.5rem 1.5rem;
+          }
+        }
 
-          .fexp-philosophy__layout::before {
-            display: none;
+        @media (prefers-reduced-motion: reduce) {
+          .fexp-philo-j__band,
+          .fexp-philo-j__panel,
+          .fexp-philo-j__sweep {
+            transition: none !important;
           }
-
-          .fexp-philosophy__left {
-            padding-right: 0;
+          .fexp-philo-j__band,
+          .fexp-philo-j__panel {
+            opacity: 1;
+            transform: none;
           }
+          .fexp-philo-j__sweep { transform: scaleX(1); }
         }
 
         .fexp-btn--sm {
@@ -3536,16 +3736,88 @@ function FinalExpeditions() {
 
         /* STEPS LAYOUT */
         .fexp-booking-steps__layout {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 3rem;
-          align-items: stretch;
-        }
-
-        /* VERTICAL STEP LIST */
-        .fexp-booking-steps__left {
           display: flex;
           flex-direction: column;
+          gap: 3.5rem;
+        }
+
+        /* SECTION INTRO COPY (sits above the timeline) */
+        .fexp-booking-steps__intro {
+          max-width: 640px;
+          margin: 0 auto 3.5rem;
+          text-align: center;
+          font-size: 0.95rem;
+          line-height: 1.7;
+          color: rgba(255,255,255,0.7);
+        }
+
+        /* HORIZONTAL STEP TIMELINE — centered numbers sit ON the rule, breaking it */
+        .fexp-booking-steps__track {
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          column-gap: 3rem;
+          padding-top: 0.75rem;
+          position: relative;
+        }
+        .fexp-booking-steps__track::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 1.575rem;  /* vertical centre of the 1.65rem-tall number chip */
+          height: 1px;
+          background: rgba(255,255,255,0.22);
+          z-index: 0;
+        }
+        .fexp-step-h {
+          position: relative;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+        .fexp-step-h__head {
+          display: inline-flex;
+          align-items: center;
+          height: 1.65rem;
+          padding: 0 0.95rem;
+          margin-bottom: 2.25rem;
+          background: #1a1a1a;
+          position: relative;
+          z-index: 1;
+        }
+        .fexp-step-h__num {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.7rem;
+          letter-spacing: 0.18em;
+          color: rgba(255,255,255,0.7);
+          background: none;
+          padding: 0;
+          line-height: 1;
+        }
+        .fexp-step-h__title {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.95rem;
+          font-weight: 700;
+          color: #fff;
+          margin: 0 0 0.7rem;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+        }
+        .fexp-step-h__desc {
+          font-size: 0.78rem;
+          color: rgba(255,255,255,0.55);
+          line-height: 1.7;
+          margin: 0;
+          max-width: 200px;
+        }
+        @media (max-width: 900px) {
+          .fexp-booking-steps__track { grid-template-columns: repeat(2, 1fr); row-gap: 2.5rem; }
+          .fexp-booking-steps__track::before { display: none; }
+        }
+        @media (max-width: 560px) {
+          .fexp-booking-steps__track { grid-template-columns: 1fr; }
         }
 
         .fexp-step {
@@ -3620,72 +3892,233 @@ function FinalExpeditions() {
           max-width: 280px;
         }
 
-        /* WAITLIST CTA */
-        .fexp-waitlist {
-          border-radius: 12px;
-          height: 100%;
-        }
-        .fexp-waitlist__inner {
+        /* BOOKING-STEPS WAITLIST WRAPPER (kept transparent — the dark section shows through) */
+        .fexp-bs-waitlist {
+          width: 100%;
           background: transparent;
-          border-radius: 8px;
-          padding: 3rem 2.5rem;
+        }
+        .fexp-bs-waitlist__inner {
+          background: transparent;
+          padding: 0;
           display: flex;
           flex-direction: column;
-          align-items: flex-start;
-          height: 100%;
-          box-sizing: border-box;
-          justify-content: center;
+          align-items: center;
+          width: 100%;
         }
-        .fexp-waitlist__pre {
+
+        /* WAITLIST CTA (no card — sits on dark section, full-width) + FORM */
+        .fexp-waitlist-cta {
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+          text-align: center;
+          width: 100%;
+          padding: 0;
+          background: transparent;
+          margin: 0;
+        }
+        .fexp-waitlist-cta__pre {
           font-family: 'Share Tech Mono', monospace;
-          font-size: 0.5rem;
-          text-transform: uppercase;
+          font-size: 0.55rem;
           letter-spacing: 0.3em;
-          color: #999;
+          text-transform: uppercase;
+          color: rgba(255,255,255,0.45);
           margin-bottom: 1rem;
         }
-        .fexp-waitlist__title {
+        .fexp-waitlist-cta__title {
           font-family: 'Space Grotesk', sans-serif;
-          font-size: clamp(1.6rem, 3vw, 2.2rem);
+          font-size: clamp(1.8rem, 3vw, 2.6rem);
           font-weight: 800;
-          text-transform: uppercase;
-          color: #1a1a1a;
-          margin: 0 0 1rem;
-          line-height: 1.1;
+          line-height: 1.05;
           letter-spacing: -0.02em;
+          text-transform: uppercase;
+          color: #fff;
+          margin: 0 0 1rem;
         }
-        .fexp-waitlist__desc {
-          font-size: 0.75rem;
-          color: #777;
+        .fexp-waitlist-cta__sub {
+          font-size: 0.85rem;
+          color: rgba(255,255,255,0.55);
           line-height: 1.6;
-          margin: 0 0 2rem;
-          max-width: 320px;
+          margin: 0 auto 1.75rem;
+          max-width: 460px;
         }
-        .fexp-waitlist__btn {
-          display: inline-flex;
+        .fexp-waitlist-cta__btn {
+          display: flex;
           align-items: center;
-          gap: 0.6rem;
-          padding: 0.85rem 2rem;
-          background: #1a1a1a;
-          color: #faf9f6;
+          justify-content: center;
+          gap: 0.85rem;
+          width: 100%;
+          padding: 1.25rem 2.6rem;
+          background: #faf9f6;
+          color: #1a1a1a;
+          border: none;
           font-family: 'Space Grotesk', sans-serif;
-          font-size: 0.65rem;
+          font-size: 0.85rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          cursor: pointer;
+          transition: background 0.25s ease, transform 0.25s ease;
+        }
+        .fexp-waitlist-cta__btn:hover {
+          background: #fff;
+          transform: translateY(-1px);
+        }
+        .fexp-waitlist-cta__btn span {
+          transition: transform 0.25s ease;
+        }
+        .fexp-waitlist-cta__btn:hover span {
+          transform: translateX(4px);
+        }
+
+        .fexp-waitlist-form {
+          background: #fff;
+          border: 1px solid #e0deda;
+          padding: 1.75rem;
+          width: 100%;
+          box-sizing: border-box;
+          text-align: left;
+        }
+        .fexp-waitlist-form__header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 1.5rem;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid #e8e6e2;
+        }
+        .fexp-waitlist-form__badge {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.58rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          background: #1a1a1a;
+          color: #fff;
+          padding: 0.3rem 0.7rem;
+        }
+        .fexp-waitlist-form__back {
+          background: none;
+          border: none;
+          color: #bbb;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.62rem;
+          letter-spacing: 0.1em;
+          cursor: pointer;
+          padding: 0;
+          transition: color 0.2s;
+        }
+        .fexp-waitlist-form__back:hover { color: #1a1a1a; }
+        .fexp-waitlist-form__row {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1rem;
+          margin-bottom: 1rem;
+          align-items: end;
+        }
+        .fexp-waitlist-form__row--2col { grid-template-columns: repeat(2, 1fr); }
+        .fexp-waitlist-form__field {
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+          margin-bottom: 1rem;
+        }
+        .fexp-waitlist-form__row .fexp-waitlist-form__field { margin-bottom: 0; }
+        .fexp-waitlist-form__label {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.58rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: #999;
+          white-space: nowrap;
+        }
+        .fexp-waitlist-form__optional {
+          color: #ccc;
+          font-size: 0.55rem;
+          text-transform: none;
+          letter-spacing: 0;
+          font-family: 'Space Grotesk', sans-serif;
+        }
+        .fexp-waitlist-form__input {
+          background: #faf9f6;
+          border: 1px solid #e0ddd8;
+          padding: 0.7rem 0.9rem;
+          color: #1a1a1a;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.88rem;
+          transition: border-color 0.2s;
+          width: 100%;
+          box-sizing: border-box;
+        }
+        .fexp-waitlist-form__input::placeholder { color: #bbb; }
+        .fexp-waitlist-form__input:focus { outline: none; border-color: #1a1a1a; }
+        .fexp-waitlist-form__textarea { resize: vertical; min-height: 80px; }
+        .fexp-waitlist-form__error {
+          font-size: 0.78rem;
+          color: #c00;
+          margin-bottom: 0.75rem;
+        }
+        .fexp-waitlist-form__footer {
+          display: flex;
+          align-items: center;
+          gap: 1.25rem;
+          padding-top: 1.25rem;
+          border-top: 1px solid #e8e6e2;
+          margin-top: 0.5rem;
+          flex-wrap: wrap;
+        }
+        .fexp-waitlist-form__submit {
+          padding: 0.8rem 2rem;
+          background: #1a1a1a;
+          border: none;
+          color: #fff;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.75rem;
           font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 0.08em;
-          text-decoration: none;
-          border: none;
-          transition: all 0.3s ease;
+          cursor: pointer;
+          transition: background 0.2s;
         }
-        .fexp-waitlist__btn:hover {
-          background: #333;
-          color: #faf9f6;
+        .fexp-waitlist-form__submit:hover:not(:disabled) { background: #333; }
+        .fexp-waitlist-form__submit:disabled { opacity: 0.6; cursor: not-allowed; }
+        .fexp-waitlist-form__note {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.6rem;
+          letter-spacing: 0.05em;
+          color: #bbb;
         }
-        .fexp-waitlist__btn span {
-          transition: transform 0.3s ease;
+        .fexp-waitlist-form__success {
+          background: #fff;
+          border: 1px solid #e0deda;
+          padding: 2.5rem 2rem;
+          text-align: center;
         }
-        .fexp-waitlist__btn:hover span {
-          transform: translateX(3px);
+        .fexp-waitlist-form__success-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 48px;
+          height: 48px;
+          background: #1a1a1a;
+          color: #fff;
+          border-radius: 50%;
+          font-size: 1.1rem;
+          margin: 0 auto 1rem;
+        }
+        .fexp-waitlist-form__success-title {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: -0.01em;
+          color: #1a1a1a;
+          margin: 0 0 0.5rem;
+        }
+        .fexp-waitlist-form__success-sub {
+          font-size: 0.82rem;
+          color: #888;
+          line-height: 1.6;
+          margin: 0;
         }
 
         @media (max-width: 1024px) {
@@ -3695,8 +4128,12 @@ function FinalExpeditions() {
         }
 
         @media (max-width: 768px) {
-          .fexp-waitlist__inner {
-            padding: 2rem 1.5rem;
+          .fexp-bs-waitlist__inner {
+            padding: 0;
+          }
+          .fexp-waitlist-form__row,
+          .fexp-waitlist-form__row--2col {
+            grid-template-columns: 1fr;
           }
         }
 

@@ -6,13 +6,13 @@
  * (gallery/social, gallery/events, gallery/flying) as approved entries.
  *
  * Run: node scripts/seed-wall-of-cool.js
- * Safe to re-run — skips if collection already has data.
+ * Safe to re-run,skips if collection already has data.
  */
 
 require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
 const admin = require('../api/firebase-admin');
 
-// All gallery images to seed — grouped by subfolder.
+// All gallery images to seed,grouped by subfolder.
 // Social images first (most relevant to "Wall of Cool"), then events, then flying.
 const IMAGES = [
   // ── Social (community WhatsApp photos) ──────────────────────────────────────
@@ -82,7 +82,7 @@ async function main() {
   // Skip if collection already has data
   const existing = await db.collection('wall_of_cool').limit(1).get();
   if (!existing.empty) {
-    console.log('wall_of_cool already has data — skipping seed.');
+    console.log('wall_of_cool already has data,skipping seed.');
     process.exit(0);
   }
 

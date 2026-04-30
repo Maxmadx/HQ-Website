@@ -37,7 +37,7 @@ const defaultDestinations = [
       '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp',
       '/assets/images/expeditions/antartica.jpg',
     ],
-    description: 'Land of fire and ice — volcanic landscapes, glaciers, and the Northern Lights.'
+    description: 'Land of fire and ice: volcanic landscapes, glaciers, and the Northern Lights.'
   },
   {
     id: 'morocco',
@@ -93,7 +93,7 @@ const defaultDestinations = [
       '/assets/images/expeditions/six-helis-in-North-Pole.jpg',
       '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp',
     ],
-    description: 'Explore the world\'s largest island — icebergs, remote settlements, and untouched wilderness.'
+    description: 'Explore the world\'s largest island: icebergs, remote settlements, and untouched wilderness.'
   },
   {
     id: 'bahamas',
@@ -121,7 +121,7 @@ const defaultDestinations = [
       '/assets/images/expeditions/north-pole.jpg',
       '/assets/images/expeditions/antartica.jpg',
     ],
-    description: 'Rainforests, volcanoes, and coastlines — pure tropical adventure.'
+    description: 'Rainforests, volcanoes, and coastlines, pure tropical adventure.'
   },
 ];
 

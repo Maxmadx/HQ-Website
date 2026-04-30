@@ -18,10 +18,10 @@ function MasteringTheHover() {
       heroImage="/assets/images/gallery/flying/flying-.jpg"
     >
       <p>
-        If you've ever sat in a helicopter and thought "how hard can hovering be?" — you're in good company.
+        If you've ever sat in a helicopter and thought "how hard can hovering be?",you're in good company.
         Every student pilot who has ever taken the controls has had that moment of humbling realisation:
         hovering a helicopter is one of the most challenging skills you'll ever learn. But here's the good
-        news — everyone who has earned their wings was once where you are now, and every single one of them
+        news,everyone who has earned their wings was once where you are now, and every single one of them
         eventually got it.
       </p>
 
@@ -41,7 +41,7 @@ function MasteringTheHover() {
 
       <p>
         Before we dive into tips and techniques, it helps to understand exactly why hovering presents such
-        a challenge. This isn't about making excuses — it's about recognising that you're attempting
+        a challenge. This isn't about making excuses,it's about recognising that you're attempting
         something genuinely difficult, and giving yourself permission to struggle with it.
       </p>
 
@@ -50,7 +50,7 @@ function MasteringTheHover() {
       <p>
         Unlike a fixed-wing aircraft, which has natural stability built into its design, a helicopter in
         the hover is what engineers call "dynamically unstable." Imagine trying to balance a broomstick
-        on your palm — that's essentially what you're doing, except the broomstick weighs over 600 kilograms
+        on your palm,that's essentially what you're doing, except the broomstick weighs over 600 kilograms
         and costs significantly more to repair.
       </p>
 
@@ -61,8 +61,8 @@ function MasteringTheHover() {
       </p>
 
       <Callout variant="info" title="The Physics at Play">
-        A hovering helicopter is balanced on a column of air created by the rotor disc. Any disturbance —
-        wind, turbulence, or control input — disturbs this balance. The aircraft then begins to move,
+        A hovering helicopter is balanced on a column of air created by the rotor disc. Any disturbance,
+        wind, turbulence, or control input,disturbs this balance. The aircraft then begins to move,
         which changes the airflow, which requires correction, which changes the airflow again. This
         continuous feedback loop is what makes hovering so demanding.
       </Callout>
@@ -75,18 +75,18 @@ function MasteringTheHover() {
 
       <ul>
         <li>
-          <strong>The Cyclic</strong> — the stick between your legs — controls your direction of movement.
+          <strong>The Cyclic</strong>,the stick between your legs,controls your direction of movement.
           Push it forward, and the helicopter moves forward. Tilt it left, and you drift left. Sounds
           simple, but every cyclic input also affects your height and your heading.
         </li>
         <li>
-          <strong>The Collective</strong> — the lever by your left side — controls your altitude by
+          <strong>The Collective</strong>,the lever by your left side,controls your altitude by
           changing the pitch angle of all the rotor blades simultaneously. Raise it, and you go up.
           Lower it, and you descend. But changing the collective also changes the torque on the aircraft,
           which means...
         </li>
         <li>
-          <strong>The Pedals</strong> — your feet control the tail rotor, which keeps the helicopter
+          <strong>The Pedals</strong>,your feet control the tail rotor, which keeps the helicopter
           pointed in one direction. Every time you adjust the collective, you need to adjust the pedals
           to compensate. And because the tail rotor is also affected by wind and movement, the pedals
           are never truly still.
@@ -95,7 +95,7 @@ function MasteringTheHover() {
 
       <p>
         In our Robinson R22 and R44 helicopters, these interactions are particularly pronounced. The
-        R22's light weight makes it responsive — which is wonderful for learning, but means it reacts
+        R22's light weight makes it responsive,which is wonderful for learning, but means it reacts
         quickly to every input. The R44, while more stable, still requires constant attention.
       </p>
 
@@ -108,7 +108,7 @@ function MasteringTheHover() {
 
       <p>
         Here's something that might surprise you: the biggest obstacles to learning the hover aren't
-        physical — they're mental. Your brain is your most powerful instrument in the cockpit, and
+        physical,they're mental. Your brain is your most powerful instrument in the cockpit, and
         getting your head right will accelerate your learning dramatically.
       </p>
 
@@ -130,7 +130,7 @@ function MasteringTheHover() {
 
       <Callout variant="tip" title="The 3-Foot Rule">
         Instead of trying to hover over a single point, give yourself a 3-foot diameter circle to work
-        within. Your goal isn't perfect stillness — it's keeping the aircraft within that zone. This
+        within. Your goal isn't perfect stillness,it's keeping the aircraft within that zone. This
         mental shift reduces tension and, paradoxically, leads to tighter hovers.
       </Callout>
 
@@ -144,14 +144,14 @@ function MasteringTheHover() {
 
       <p>
         Your peripheral vision is actually better at detecting movement than your central vision. Use
-        this to your advantage. Pick a reference point on the horizon — a building, a tree line, the
-        edge of the airfield — and keep it in your general view. Let your peripheral vision tell you
+        this to your advantage. Pick a reference point on the horizon,a building, a tree line, the
+        edge of the airfield,and keep it in your general view. Let your peripheral vision tell you
         when you're drifting. This technique alone can transform your hovering.
       </p>
 
       <p>
-        Similarly, slow down your thinking. Hovering often feels urgent — the aircraft is moving!
-        Something needs to happen! — but rushed decisions lead to over-corrections. Practice thinking
+        Similarly, slow down your thinking. Hovering often feels urgent,the aircraft is moving!
+        Something needs to happen!,but rushed decisions lead to over-corrections. Practice thinking
         in slow motion. Narrate to yourself: "I'm drifting left... I'll add a small right cyclic input...
         now I'll wait and see what happens." This deliberate approach helps break the panic cycle.
       </p>
@@ -165,7 +165,7 @@ function MasteringTheHover() {
       </p>
 
       <p>
-        Make a conscious effort to relax. Drop your shoulders. Loosen your grip — you should be holding
+        Make a conscious effort to relax. Drop your shoulders. Loosen your grip,you should be holding
         the cyclic like a pen, not like a hammer. Take regular breaths. Some of our instructors even
         encourage students to hum or talk through what they're doing, as it's impossible to hold your
         breath while speaking.
@@ -173,9 +173,9 @@ function MasteringTheHover() {
 
       <Callout variant="quote">
         "The hover only clicks when you stop fighting it. The moment you relax, accept the movement, and
-        start working with the helicopter instead of against it — that's when everything changes."
+        start working with the helicopter instead of against it,that's when everything changes."
         <br /><br />
-        — Senior Instructor, HQ Aviation
+       ,Senior Instructor, HQ Aviation
       </Callout>
 
       <IllustrationPlaceholder
@@ -202,12 +202,12 @@ function MasteringTheHover() {
         How small? Think millimetres, not centimetres. The cyclic in particular is extraordinarily
         sensitive. A movement of just 2-3 millimetres in the R22 will create a noticeable change in
         direction. When you're learning, your instructor will often demonstrate how little movement
-        is actually required — and it's always less than students expect.
+        is actually required,and it's always less than students expect.
       </p>
 
       <Callout variant="warning" title="The Over-Correction Trap">
         If you find yourself making big control movements and the hover getting worse rather than better,
-        you've fallen into the over-correction trap. The solution isn't to try harder — it's to do less.
+        you've fallen into the over-correction trap. The solution isn't to try harder,it's to do less.
         Reduce your inputs by half, then half again. Often, the best correction is almost no correction
         at all.
       </Callout>
@@ -221,7 +221,7 @@ function MasteringTheHover() {
       </p>
 
       <p>
-        This isn't a sign of failure — it's the correct way to build the neural pathways that will
+        This isn't a sign of failure,it's the correct way to build the neural pathways that will
         eventually allow automatic coordination. You'll likely start with the pedals (keeping the
         nose pointed straight), then progress to the cyclic (controlling lateral position), and finally
         add the collective (managing height). Only once each individual skill becomes somewhat automatic
@@ -230,7 +230,7 @@ function MasteringTheHover() {
 
       <p>
         Even once you're flying all controls, it can help to mentally prioritise. Most instructors teach
-        a hierarchy: cyclic first (for safety — maintaining position), collective second (maintaining
+        a hierarchy: cyclic first (for safety,maintaining position), collective second (maintaining
         altitude), pedals third (maintaining heading). When things get busy, focus on cyclic above all else.
       </p>
 
@@ -264,14 +264,14 @@ function MasteringTheHover() {
       <h3>Drifting Right</h3>
 
       <p>
-        Almost every student initially drifts to the right. This isn't a coincidence — it's physics.
+        Almost every student initially drifts to the right. This isn't a coincidence,it's physics.
         In Robinson helicopters, the main rotor turns counter-clockwise (when viewed from above),
         which creates a natural tendency for the aircraft to drift right due to tail rotor thrust.
       </p>
 
       <p>
         The solution is awareness and anticipation. Know that the helicopter wants to go right, and
-        be prepared to hold a slight amount of left cyclic. Don't wait for the drift to happen —
+        be prepared to hold a slight amount of left cyclic. Don't wait for the drift to happen.
         establish a gentle left cyclic input from the beginning and adjust from there.
       </p>
 
@@ -300,7 +300,7 @@ function MasteringTheHover() {
       <h3>Everything Goes Wrong at Once</h3>
 
       <p>
-        Sometimes you'll experience what feels like total loss of control — the helicopter drifting,
+        Sometimes you'll experience what feels like total loss of control,the helicopter drifting,
         climbing, turning, and generally misbehaving all at once. When this happens, it's usually
         because you've gotten "behind the aircraft" and your corrections are now fighting each other.
       </p>
@@ -340,14 +340,14 @@ function MasteringTheHover() {
 
       <p>
         For most students, this breakthrough happens somewhere between hours 15 and 20. Some pilots
-        experience it earlier; some later. The exact timing depends on many factors — how often you fly,
+        experience it earlier; some later. The exact timing depends on many factors,how often you fly,
         your natural coordination, even the weather conditions during your lessons. But it will happen.
         We have never trained a student who didn't eventually get it.
       </p>
 
       <p>
         What triggers the breakthrough is different for everyone. Sometimes it's a specific piece of advice
-        that finally resonates. Sometimes it's fatigue — you're so tired that you stop trying too hard and
+        that finally resonates. Sometimes it's fatigue,you're so tired that you stop trying too hard and
         your body just does it. Sometimes it's simply accumulated experience, neurons that have finally
         formed the connections they needed.
       </p>
@@ -367,8 +367,8 @@ function MasteringTheHover() {
 
       <p>
         We want to close with this: if you're struggling with the hover, you are exactly where you
-        should be. Every pilot who has ever earned their licence — from weekend warriors to commercial
-        airline captains to military test pilots — has sat in that seat feeling frustrated, confused,
+        should be. Every pilot who has ever earned their licence,from weekend warriors to commercial
+        airline captains to military test pilots,has sat in that seat feeling frustrated, confused,
         and certain that they would never get it.
       </p>
 
@@ -376,7 +376,7 @@ function MasteringTheHover() {
         The hover is hard because it's supposed to be hard. You're learning to control a machine that
         defies intuition, in three dimensions, using three interdependent controls, while processing
         an enormous amount of sensory information. Your brain is literally rewiring itself to handle
-        this new skill. That takes time, and that time isn't wasted — it's invested.
+        this new skill. That takes time, and that time isn't wasted,it's invested.
       </p>
 
       <p>
@@ -395,7 +395,7 @@ function MasteringTheHover() {
 
       <p>
         Keep flying. Keep practising. Keep trusting the process. One day soon, you'll be sitting in
-        that hover — stable, controlled, confident — and you'll look back at these early struggles as
+        that hover,stable, controlled, confident,and you'll look back at these early struggles as
         the foundation of everything that came after.
       </p>
 
@@ -406,12 +406,12 @@ function MasteringTheHover() {
       <KeyPoint
         title="Key Takeaways"
         points={[
-          "Hovering is genuinely difficult due to inherent instability and coupled controls — give yourself grace",
+          "Hovering is genuinely difficult due to inherent instability and coupled controls,give yourself grace",
           "The mental game matters most: accept the wobble, look far, think slow, breathe and relax",
           "Make small inputs early rather than big corrections late",
           "Learn one control at a time before attempting full coordination",
           "Common problems (drifting right, height control) have specific solutions",
-          "The breakthrough typically comes between hours 15-20 — keep going, it will click",
+          "The breakthrough typically comes between hours 15-20,keep going, it will click",
           "Every successful pilot was once exactly where you are now"
         ]}
       />

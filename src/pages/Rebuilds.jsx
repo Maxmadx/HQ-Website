@@ -9,9 +9,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useFaqs } from '../hooks/useFaqs';
 import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
+import { useRebuildPricing } from '../hooks/useRebuildPricing';
 import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import FooterMinimal from '../components/FooterMinimal';
+import HqMenuPanel from '../components/HqMenuPanel';
 
 // ============================================
 // HEADER (Spotlight animation)
@@ -52,59 +54,7 @@ function FinalDraftHeader() {
 
   return (
     <>
-      <div className={`hq-menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="hq-menu-grid">
-          <div className="hq-menu-section">
-            <h3>About</h3>
-            <ul>
-              <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-              <li><Link to="/about-us" onClick={closeMenu}>About Us</Link></li>
-              <li><Link to="/about-us/team" onClick={closeMenu}>Meet The Team</Link></li>
-              <li><Link to="/about-us/captain-q" onClick={closeMenu}>Quentin Smith</Link></li>
-              <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Aircraft Sales</h3>
-            <ul>
-              <li><Link to="/aircraft-sales" onClick={closeMenu}>New Aircraft</Link></li>
-              <li><Link to="/sales/pre-owned" onClick={closeMenu}>Pre-Owned</Link></li>
-              <li><Link to="/sales/rebuilds" onClick={closeMenu}>Rebuilds</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Flight Training</h3>
-            <ul>
-              <li><Link to="/training" onClick={closeMenu}>Training Overview</Link></li>
-              <li><Link to="/training/trial-lessons" onClick={closeMenu}>Trial Lessons</Link></li>
-              <li><Link to="/training/ppl" onClick={closeMenu}>Private Pilot License</Link></li>
-              <li><Link to="/training/faq" onClick={closeMenu}>Training FAQ</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Services</h3>
-            <ul>
-              <li><Link to="/services" onClick={closeMenu}>Services Overview</Link></li>
-              <li><Link to="/services/maintenance" onClick={closeMenu}>Maintenance</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Experiences</h3>
-            <ul>
-              <li><Link to="/expeditions" onClick={closeMenu}>Expeditions</Link></li>
-              <li><Link to="/expeditions/calendar" onClick={closeMenu}>Calendar</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Contact</h3>
-            <ul>
-              <li><Link to="/contact" onClick={closeMenu}>Contact Us</Link></li>
-              <li><Link to="/contact/careers" onClick={closeMenu}>Careers</Link></li>
-              <li><Link to="/contact/pricing" onClick={closeMenu}>Pricing</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <HqMenuPanel open={menuOpen} onClose={closeMenu} />
       <button
         className={`hq-menu-btn ${colorDark ? 'color-dark' : ''} ${scrolled ? 'scrolled' : ''} ${menuOpen ? 'open' : ''}`}
         onClick={toggleMenu}
@@ -175,7 +125,7 @@ function Reveal({ children, delay = 0, direction = 'up' }) {
 
 const rebuildStepsByModel = {
   R22: [
-    { label: 'Airframe', before: '/assets/images/rebuilds/r22/airframe-before.jpg', after: '/assets/images/rebuilds/r22/airframe-after.jpg', beforeDesc: 'Corrosion and fatigue across the tubular steel frame after 12,000 hours.', afterDesc: 'Stripped, inspected, repaired and re-protected — ready for another lifetime.' },
+    { label: 'Airframe', before: '/assets/images/rebuilds/r22/airframe-before.jpg', after: '/assets/images/rebuilds/r22/airframe-after.jpg', beforeDesc: 'Corrosion and fatigue across the tubular steel frame after 12,000 hours.', afterDesc: 'Stripped, inspected, repaired and re-protected, ready for another lifetime.' },
     { label: 'Engine', before: '/assets/images/rebuilds/r22/engine-before.jpg', after: '/assets/images/rebuilds/r22/engine-after.jpg', beforeDesc: '2,200 hours on the Lycoming O-360. Worn cam lobes, degraded seals.', afterDesc: 'Zero-time overhaul. Factory-new components throughout, test-run and certified.' },
     { label: 'Avionics', before: '/assets/images/rebuilds/r22/avionics-before.jpg', after: '/assets/images/rebuilds/r22/avionics-after.jpg', beforeDesc: 'Original steam gauges. Faded placards, intermittent radios, no GPS.', afterDesc: 'Modern glass panel. Garmin G5, GPS/COM, ADS-B Out, digital engine monitor.' },
     { label: 'Wiring', before: '/assets/images/rebuilds/r22/wiring-before.jpg', after: '/assets/images/rebuilds/r22/wiring-after.jpg', beforeDesc: 'Brittle insulation, spliced repairs, corroded connectors throughout.', afterDesc: 'Complete rewire. New looms, mil-spec connectors, laser-etched labels.' },
@@ -183,7 +133,7 @@ const rebuildStepsByModel = {
     { label: 'Paint', before: '/assets/images/rebuilds/r22/paint-before.jpg', after: '/assets/images/rebuilds/r22/paint-after.jpg', beforeDesc: 'Oxidised, chipped and faded. Multiple touch-ups visible.', afterDesc: 'Stripped to bare metal and refinished in custom livery. UV-sealed.' },
   ],
   R44: [
-    { label: 'Airframe', before: '/assets/images/rebuilds/r44/airframe-before.jpg', after: '/assets/images/rebuilds/r44/airframe-after.jpg', beforeDesc: 'Corrosion, fatigue cracks and fifteen years of wear across the bare airframe.', afterDesc: 'Stripped, inspected, repaired and re-protected — ready for another lifetime.' },
+    { label: 'Airframe', before: '/assets/images/rebuilds/r44/airframe-before.jpg', after: '/assets/images/rebuilds/r44/airframe-after.jpg', beforeDesc: 'Corrosion, fatigue cracks and fifteen years of wear across the bare airframe.', afterDesc: 'Stripped, inspected, repaired and re-protected, ready for another lifetime.' },
     { label: 'Engine', before: '/assets/images/rebuilds/r44/engine-before.jpg', after: '/assets/images/rebuilds/r44/engine-after.jpg', beforeDesc: '2,200 hours on the IO-540. Worn bearings, degraded seals, metal in the filter.', afterDesc: 'Zero-time overhaul. Factory-new components throughout, test-run and certified.' },
     { label: 'Avionics', before: '/assets/images/rebuilds/r44/avionics-before.jpg', after: '/assets/images/rebuilds/r44/avionics-after.jpg', beforeDesc: 'Original analogue panel. Faded placards, intermittent radios, no GPS.', afterDesc: 'Full glass cockpit. Garmin suite, GPS/NAV/COM, ADS-B, four-axis autopilot.' },
     { label: 'Wiring', before: '/assets/images/rebuilds/r44/wiring-before.jpg', after: '/assets/images/rebuilds/r44/wiring-after.jpg', beforeDesc: 'Brittle insulation, spliced repairs, corroded connectors. An electrician\'s nightmare.', afterDesc: 'Complete rewire. New looms, mil-spec connectors, laser-etched labels throughout.' },
@@ -202,33 +152,30 @@ const rebuildStepsByModel = {
 
 const rebuildModels = [
   {
+    modelKey: 'r22',
     model: 'Robinson R22 Beta II',
     image: '/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png',
     description: 'Ideal training platform rebuilt to zero-time specification.',
-    rebuildFrom: '£55,000',
-    donorEstimate: '£80,000–£120,000',
     specs: ['Lycoming O-360 overhaul', 'New blades available', 'Glass cockpit option', 'Custom paint scheme'],
   },
   {
+    modelKey: 'r44',
     model: 'Robinson R44 Raven II',
     image: '/assets/images/new-aircraft/r44/raven-ii-front-alpha.png',
     description: 'The world\'s best-selling helicopter, rebuilt to exceed factory standards.',
-    rebuildFrom: '£85,000',
-    donorEstimate: '£120,000–£200,000',
     specs: ['IO-540 zero-time engine', 'Full avionics upgrade', 'Leather interior', 'Aux tank option'],
   },
   {
+    modelKey: 'r66',
     model: 'Robinson R66 Turbine',
     image: '/assets/images/used-aircraft/r66/r66-turbine-ghkcc.jpg',
     description: 'Turbine power, rebuilt with modern avionics and bespoke specification.',
-    rebuildFrom: '£150,000',
-    donorEstimate: '£350,000–£550,000',
     specs: ['RR300 turbine overhaul', 'Garmin G500H TXi', 'Premium interior', 'Extended range tank'],
   },
 ];
 
 const processSteps = [
-  { num: '01', title: 'Consultation', desc: 'We discuss your requirements — model, specification, avionics, paint scheme, and timeline.' },
+  { num: '01', title: 'Consultation', desc: 'We discuss your requirements: model, specification, avionics, paint scheme, and timeline.' },
   { num: '02', title: 'Donor Sourcing', desc: 'We source an ideal donor airframe from our network, or you supply your own aircraft.' },
   { num: '03', title: 'Strip & Inspect', desc: 'Complete disassembly. Every component inspected, measured, and documented against factory limits.' },
   { num: '04', title: 'Rebuild', desc: 'Zero-time engine overhaul, new wiring looms, avionics install, interior fit, and custom paintwork.' },
@@ -271,7 +218,7 @@ function BeforeAfter({ pageImages = {} }) {
       <div className="rb__beforeafter-item">
         <div className="rb__beforeafter-before">
           <div className="rb__beforeafter-img">
-            <img src={beforeSrc} alt={`${steps[rebuildStep].label} — before`} />
+            <img src={beforeSrc} alt={`${steps[rebuildStep].label} (before)`} />
           </div>
           <span>BEFORE</span>
           <p>{steps[rebuildStep].beforeDesc}</p>
@@ -279,7 +226,7 @@ function BeforeAfter({ pageImages = {} }) {
         <div className="rb__beforeafter-arrow">&rarr;</div>
         <div className="rb__beforeafter-after">
           <div className="rb__beforeafter-img">
-            <img src={afterSrc} alt={`${steps[rebuildStep].label} — after`} />
+            <img src={afterSrc} alt={`${steps[rebuildStep].label} (after)`} />
           </div>
           <span>AFTER</span>
           <p>{steps[rebuildStep].afterDesc}</p>
@@ -353,6 +300,7 @@ function FAQ() {
 
 function Rebuilds() {
   const pageImages = usePageImages('rebuilds');
+  const { getRebuildPrices } = useRebuildPricing();
   useCmsHighlight();
   const [rebuildFormOpen, setRebuildFormOpen] = useState(false);
   const [rebuildIntent, setRebuildIntent] = useState(null);
@@ -436,7 +384,7 @@ function Rebuilds() {
       let subject = '';
       let body = '';
       if (rebuildIntent === 'own') {
-        subject = 'Rebuild Enquiry — Own Aircraft';
+        subject = 'Rebuild Enquiry: Own Aircraft';
         body = [
           `Aircraft: ${rbAircraftType || 'Not specified'}`,
           rbReg  ? `Reg: ${rbReg}` : '',
@@ -445,14 +393,14 @@ function Rebuilds() {
           rbNotes ? `Notes: ${rbNotes}` : '',
         ].filter(Boolean).join('\n');
       } else if (rebuildIntent === 'source') {
-        subject = 'Rebuild Enquiry — Source Aircraft';
+        subject = 'Rebuild Enquiry: Source Aircraft';
         body = [
           `Type wanted: ${rbSourceType || 'Not specified'}`,
           rbBudget ? `Budget: £${rbBudget}` : '',
           rbNotes  ? `Notes: ${rbNotes}` : '',
         ].filter(Boolean).join('\n');
       } else {
-        subject = 'Rebuild Enquiry — Available Now';
+        subject = 'Rebuild Enquiry: Available Now';
         body = [
           rbPrefType   ? `Preferred type: ${rbPrefType}` : '',
           rbAvailBudget ? `Budget: £${rbAvailBudget}` : '',
@@ -512,7 +460,7 @@ function Rebuilds() {
                 </div>
                 <div className="rb__why-card">
                   <h3>Zero-Time Airframe</h3>
-                  <p>All life-limited components replaced. Fresh overhaul with full component life ahead — and a comprehensive warranty.</p>
+                  <p>All life-limited components replaced. Fresh overhaul with full component life ahead, plus a comprehensive warranty.</p>
                 </div>
               </div>
               <div className="rb__why-dots">
@@ -551,28 +499,33 @@ function Rebuilds() {
             <div className="rb__section-label" style={{ marginTop: '3rem' }}>Models</div>
           </Reveal>
           <div className="rb__models-grid" data-cms-section="rebuilds-models" ref={modelsCarouselRef} onScroll={handleModelsScroll}>
-            {rebuildModels.map((m, i) => (
-              <Reveal key={i} delay={i * 0.1}>
-                <div className="rb__model-card">
-                  <div className="rb__model-img">
-                    <img src={pageImages['rebuilds-models']?.[i]?.url || m.image} alt={m.model} />
-                  </div>
-                  <div className="rb__model-body">
-                    <h3>{m.model}</h3>
-                    <div className="rb__model-pricing">
-                      <div className="rb__model-price-line">
-                        <span>Rebuild from</span>
-                        <strong>{m.rebuildFrom}</strong>
+            {rebuildModels.map((m, i) => {
+              const { from, donorMin, donorMax } = getRebuildPrices(m.modelKey);
+              const fromStr = `£${from.toLocaleString('en-GB')}`;
+              const donorStr = `£${donorMin.toLocaleString('en-GB')}–£${donorMax.toLocaleString('en-GB')}`;
+              return (
+                <Reveal key={i} delay={i * 0.1}>
+                  <div className="rb__model-card">
+                    <div className="rb__model-img">
+                      <img src={pageImages['rebuilds-models']?.[i]?.url || m.image} alt={m.model} />
+                    </div>
+                    <div className="rb__model-body">
+                      <h3>{m.model}</h3>
+                      <div className="rb__model-pricing">
+                        <div className="rb__model-price-line">
+                          <span>Rebuild from</span>
+                          <strong>{fromStr}</strong>
+                        </div>
+                        <div className="rb__model-price-donor">
+                          + donor aircraft <span>({donorStr})</span>
+                        </div>
+                        <div className="rb__model-price-note">We can source a suitable donor or rebuild your existing aircraft.</div>
                       </div>
-                      <div className="rb__model-price-donor">
-                        + donor aircraft <span>({m.donorEstimate})</span>
-                      </div>
-                      <div className="rb__model-price-note">We can source a suitable donor or rebuild your existing aircraft.</div>
                     </div>
                   </div>
-                </div>
-              </Reveal>
-            ))}
+                </Reveal>
+              );
+            })}
           </div>
           <div className="rb__carousel-dots">
             {rebuildModels.map((_, i) => (
@@ -622,7 +575,7 @@ function Rebuilds() {
                       <button className="fd-sales__intent-btn fd-sales__intent-btn--full" onClick={() => setRebuildFormOpen(true)}>
                         <span className="fd-sales__intent-icon">↗</span>
                         <span className="fd-sales__intent-title">Register Rebuild Interest</span>
-                        <span className="fd-sales__intent-sub">Own an aircraft, want us to source one, or looking for something available now — start here.</span>
+                        <span className="fd-sales__intent-sub">Own an aircraft, want us to source one, or looking for something available now? Start here.</span>
                       </button>
                     )}
 
@@ -636,17 +589,17 @@ function Rebuilds() {
                           <button className="fd-sales__intent-btn" onClick={() => setRebuildIntent('own')}>
                             <span className="fd-sales__intent-icon">→</span>
                             <span className="fd-sales__intent-title">I Have an Aircraft to Rebuild</span>
-                            <span className="fd-sales__intent-sub">You own the airframe and want a full or partial rebuild — we'll discuss scope, timeline, and cost.</span>
+                            <span className="fd-sales__intent-sub">You own the airframe and want a full or partial rebuild. We'll discuss scope, timeline, and cost.</span>
                           </button>
                           <button className="fd-sales__intent-btn" onClick={() => setRebuildIntent('source')}>
                             <span className="fd-sales__intent-icon">+</span>
                             <span className="fd-sales__intent-title">Source an Aircraft for a Rebuild</span>
-                            <span className="fd-sales__intent-sub">You don't have an aircraft yet — we'll find and acquire the right airframe before the rebuild begins.</span>
+                            <span className="fd-sales__intent-sub">You don't have an aircraft yet. We'll find and acquire the right airframe before the rebuild begins.</span>
                           </button>
                           <button className="fd-sales__intent-btn" onClick={() => setRebuildIntent('available')}>
                             <span className="fd-sales__intent-icon">◎</span>
                             <span className="fd-sales__intent-title">Is a Rebuild Available Now?</span>
-                            <span className="fd-sales__intent-sub">Looking for a recently completed or near-completion rebuild ready to fly — tell us your preferences.</span>
+                            <span className="fd-sales__intent-sub">Looking for a recently completed or near-completion rebuild ready to fly? Tell us your preferences.</span>
                           </button>
                         </div>
                       </div>
@@ -743,14 +696,14 @@ function Rebuilds() {
                       <div className="fd-sales__unmanned-success">
                         <span className="fd-sales__unmanned-success-icon">✓</span>
                         <p className="fd-sales__unmanned-success-title">Enquiry Received</p>
-                        <p className="fd-sales__unmanned-success-sub">Thank you — a member of our team will be in touch to discuss your rebuild.</p>
+                        <p className="fd-sales__unmanned-success-sub">Thank you. A member of our team will be in touch to discuss your rebuild.</p>
                       </div>
                     )}
                   </div>
 
-                  <a href="tel:+441895833838" className="rb__cta-phone">
+                  <a href="tel:+441895833373" className="rb__cta-phone">
                     <span>Or call directly</span>
-                    <strong>+44 (0) 1895 833 838</strong>
+                    <strong>+44 1895 833 373</strong>
                   </a>
                 </div>
               </Reveal>

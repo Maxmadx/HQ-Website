@@ -157,7 +157,7 @@ const FACILITY_PHOTO = '/assets/images/facility/hq-0089.jpg';
 
 const CERT_LABEL = 'The Robinson Specialists';
 const CERT_TITLE = 'Authorized Dealer & Service Center';
-const CERT_DESC = 'Factory distributor, authorised dealer, and designated service centre for the full Robinson range — R22, R44, R66.';
+const CERT_DESC = 'Factory distributor, authorised dealer, and designated service centre for the full Robinson range: R22, R44, R66.';
 const CERT_QUOTE = "Nothing leaves our hangar that we wouldn't fly our own families in.";
 
 const STATS = [
@@ -261,7 +261,7 @@ function CertCardV3() {
         </div>
       </div>
       <div className="cert-v3__bar">
-        <span>Also certified — Guimbal Cabri G2</span>
+        <span>Also certified, Guimbal Cabri G2</span>
       </div>
     </div>
   );
@@ -357,7 +357,7 @@ function CertCardV6() {
           </div>
         </div>
         <div className="cert-v6__footer">
-          <span>Also certified — Guimbal Cabri G2</span>
+          <span>Also certified, Guimbal Cabri G2</span>
         </div>
       </div>
     </div>
@@ -394,7 +394,7 @@ function CertCardV7() {
           </div>
         </div>
         <div className="cert-v7__footer">
-          <span>Also certified — Guimbal Cabri G2</span>
+          <span>Also certified, Guimbal Cabri G2</span>
         </div>
       </div>
     </div>
@@ -430,7 +430,7 @@ function CertCardV8() {
           </div>
         </div>
         <div className="cert-v8__footer">
-          <span>Also certified — Guimbal Cabri G2</span>
+          <span>Also certified, Guimbal Cabri G2</span>
         </div>
       </div>
     </div>
@@ -497,7 +497,7 @@ function CertCardV10() {
           </div>
         </div>
         <div className="cert-v10__footer">
-          <span>Also certified — Guimbal Cabri G2</span>
+          <span>Also certified, Guimbal Cabri G2</span>
         </div>
       </div>
     </div>
@@ -527,7 +527,7 @@ function CertCardV11() {
           </div>
         </div>
         <div className="cert-v11__footer">
-          <span>Also certified — Guimbal Cabri G2</span>
+          <span>Also certified, Guimbal Cabri G2</span>
         </div>
       </div>
     </div>
@@ -592,7 +592,7 @@ function CertCardV13() {
           </div>
         </div>
         <div className="cert-v13__footer">
-          <span>Also certified — Guimbal Cabri G2</span>
+          <span>Also certified, Guimbal Cabri G2</span>
         </div>
       </div>
     </div>
@@ -667,7 +667,7 @@ function CertCardV15() {
                 </div>
               ))}
             </div>
-            <div className="cert-v15__also">Also certified — Guimbal Cabri G2</div>
+            <div className="cert-v15__also">Also certified, Guimbal Cabri G2</div>
           </div>
         )}
       </div>
@@ -757,7 +757,7 @@ function CertCardV18() {
           ))}
         </div>
         <div className="cert-v18__footer">
-          <span>ALSO CERTIFIED — GUIMBAL CABRI G2</span>
+          <span>ALSO CERTIFIED, GUIMBAL CABRI G2</span>
         </div>
       </div>
     </div>
@@ -848,7 +848,7 @@ function CertCardV21() {
                 </div>
               ))}
             </div>
-            <div className="cert-v21__also">Also certified — Guimbal Cabri G2</div>
+            <div className="cert-v21__also">Also certified, Guimbal Cabri G2</div>
           </div>
         )}
       </div>
@@ -881,7 +881,7 @@ function CertCardV22() {
                 </div>
               ))}
             </div>
-            <div className="cert-v22__also">Also certified — Guimbal Cabri G2</div>
+            <div className="cert-v22__also">Also certified, Guimbal Cabri G2</div>
           </div>
         )}
       </div>
@@ -938,7 +938,7 @@ function CertCardV24() {
           <div className="cert-v24__toast-icon">&#10003;</div>
           <div className="cert-v24__toast-text">
             <strong>Robinson Authorized Service Center</strong>
-            <span>HQ Aviation — Denham Aerodrome</span>
+            <span>HQ Aviation, Denham Aerodrome</span>
           </div>
           <span className="cert-v24__hint">{expanded ? '\u2715' : 'Details'}</span>
         </div>
@@ -953,7 +953,7 @@ function CertCardV24() {
                 </div>
               ))}
             </div>
-            <div className="cert-v24__also">Also certified — Guimbal Cabri G2</div>
+            <div className="cert-v24__also">Also certified, Guimbal Cabri G2</div>
           </div>
         )}
       </div>
@@ -989,7 +989,7 @@ function CertCardV25() {
                 </div>
               ))}
             </div>
-            <div className="cert-v25__also">Also certified — Guimbal Cabri G2</div>
+            <div className="cert-v25__also">Also certified, Guimbal Cabri G2</div>
           </div>
         )}
       </div>
@@ -1022,7 +1022,7 @@ function CertCardV26() {
                 </div>
               ))}
             </div>
-            <div className="cert-v26__also">Also certified — Guimbal Cabri G2</div>
+            <div className="cert-v26__also">Also certified, Guimbal Cabri G2</div>
           </div>
         </div>
       </div>
@@ -1057,7 +1057,7 @@ function CertCardV27() {
                 </div>
               ))}
             </div>
-            <div className="cert-v27__also">Also certified — Guimbal Cabri G2</div>
+            <div className="cert-v27__also">Also certified, Guimbal Cabri G2</div>
           </div>
         )}
       </div>
@@ -1089,7 +1089,7 @@ function CertCardV28() {
               </div>
             ))}
           </div>
-          <div className="cert-v28__also">Also certified — Guimbal Cabri G2</div>
+          <div className="cert-v28__also">Also certified, Guimbal Cabri G2</div>
           <span className="cert-v28__back-hint">Click to flip back</span>
         </div>
       </div>
@@ -1174,7 +1174,7 @@ function CertCardV30() {
                 </div>
               ))}
             </div>
-            <div className="cert-v30__also">Also certified — Guimbal Cabri G2</div>
+            <div className="cert-v30__also">Also certified, Guimbal Cabri G2</div>
           </div>
         )}
       </div>
@@ -1210,7 +1210,7 @@ function CertCardV31() {
             <div className="cert-v31__right">
               <span className="cert-v31__label">{CERT_LABEL}</span>
               <p className="cert-v31__desc">{CERT_DESC}</p>
-              <div className="cert-v31__also">Also certified — Guimbal Cabri G2</div>
+              <div className="cert-v31__also">Also certified, Guimbal Cabri G2</div>
             </div>
           </div>
         )}
@@ -1380,7 +1380,7 @@ function CertCardV35() {
                   </div>
                 ))}
               </div>
-              <div className="cert-v35__also">Also certified — Guimbal Cabri G2</div>
+              <div className="cert-v35__also">Also certified, Guimbal Cabri G2</div>
             </div>
           </div>
         )}
@@ -1559,15 +1559,15 @@ function CertCardV40() {
             <div className="cert-v40__contact-grid">
               <div className="cert-v40__contact-item">
                 <span className="cert-v40__contact-label">Phone</span>
-                <span className="cert-v40__contact-value">+44 1895 833 337</span>
+                <span className="cert-v40__contact-value">+44 1895 832 833</span>
               </div>
               <div className="cert-v40__contact-item">
                 <span className="cert-v40__contact-label">Email</span>
-                <span className="cert-v40__contact-value">info@hqaviation.com</span>
+                <span className="cert-v40__contact-value">maintenance@hqaviation.com</span>
               </div>
               <div className="cert-v40__contact-item">
                 <span className="cert-v40__contact-label">Location</span>
-                <span className="cert-v40__contact-value">Denham Aerodrome, UB9 5DF</span>
+                <span className="cert-v40__contact-value">Denham Aerodrome, Uxbridge, London, UB9 5DF</span>
               </div>
             </div>
             <button className="cert-v40__cta" onClick={(e) => e.stopPropagation()}>Get in Touch</button>
@@ -1605,7 +1605,7 @@ function CertCardV41() {
                 </div>
               ))}
             </div>
-            <div className="cert-v41__also">Also certified — Guimbal Cabri G2</div>
+            <div className="cert-v41__also">Also certified, Guimbal Cabri G2</div>
           </div>
         </div>
       </div>
@@ -1645,7 +1645,7 @@ function CertCardV42() {
               </div>
             </div>
             <div className="cert-v42__row cert-v42__row--4">
-              <div className="cert-v42__also">Also certified — Guimbal Cabri G2</div>
+              <div className="cert-v42__also">Also certified, Guimbal Cabri G2</div>
             </div>
           </div>
         )}
@@ -1680,7 +1680,7 @@ function CertCardV43() {
               </div>
             ))}
           </div>
-          <div className="cert-v43__also">Also certified — Guimbal Cabri G2</div>
+          <div className="cert-v43__also">Also certified, Guimbal Cabri G2</div>
         </div>
       </div>
     </div>
@@ -1722,7 +1722,7 @@ function CertCardV44() {
                 </div>
               ))}
             </div>
-            <div className="cert-v44__also">Also certified — Guimbal Cabri G2</div>
+            <div className="cert-v44__also">Also certified, Guimbal Cabri G2</div>
           </div>
         )}
       </div>
@@ -1787,7 +1787,7 @@ function CertCardV46() {
                 </div>
               ))}
             </div>
-            <div className="cert-v46__also">Also certified — Guimbal Cabri G2</div>
+            <div className="cert-v46__also">Also certified, Guimbal Cabri G2</div>
           </div>
         )}
       </div>
@@ -1820,7 +1820,7 @@ function CertCardV47() {
                 </div>
               ))}
             </div>
-            <div className="cert-v47__also">Also certified — Guimbal Cabri G2</div>
+            <div className="cert-v47__also">Also certified, Guimbal Cabri G2</div>
           </div>
         )}
       </div>
@@ -1885,7 +1885,7 @@ function CertCardV49() {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           </div>
           <div className="cert-v49__pin-info">
-            <h3 className="cert-v49__title">HQ Aviation — Denham Aerodrome</h3>
+            <h3 className="cert-v49__title">HQ Aviation, Denham Aerodrome</h3>
             <span className="cert-v49__subtitle">{CERT_TITLE}</span>
           </div>
           <span className="cert-v49__hint">{expanded ? '\u2715' : 'Details'}</span>

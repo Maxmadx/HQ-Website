@@ -11,7 +11,7 @@
  * Run once to populate the database:
  *   node scripts/seed-blogs.js
  *
- * Re-run safely — existing docs are updated, not duplicated.
+ * Re-run safely,existing docs are updated, not duplicated.
  *
  * Requires: FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY in .env
  */
@@ -314,7 +314,7 @@ async function seed() {
   let skipped = 0;
 
   for (const meta of posts) {
-    // Skip external press posts — they redirect, no content to seed
+    // Skip external press posts,they redirect, no content to seed
     if (meta.externalUrl) {
       console.log(`  skip    ${meta.id}  (external redirect)`);
       skipped++;
@@ -323,14 +323,14 @@ async function seed() {
 
     const fileName = COMPONENT_TO_FILE[meta.component];
     if (!fileName) {
-      console.warn(`  WARN    ${meta.id}  — no component mapping for "${meta.component}"`);
+      console.warn(`  WARN    ${meta.id} ,no component mapping for "${meta.component}"`);
       skipped++;
       continue;
     }
 
     const filePath = path.join(BLOG_DIR, fileName);
     if (!fs.existsSync(filePath)) {
-      console.warn(`  WARN    ${meta.id}  — file not found: ${filePath}`);
+      console.warn(`  WARN    ${meta.id} ,file not found: ${filePath}`);
       skipped++;
       continue;
     }
@@ -338,7 +338,7 @@ async function seed() {
     const fileContent   = fs.readFileSync(filePath, 'utf8');
     const layoutContent = extractBlogLayoutContent(fileContent);
     if (!layoutContent) {
-      console.warn(`  WARN    ${meta.id}  — could not extract BlogLayout content`);
+      console.warn(`  WARN    ${meta.id} ,could not extract BlogLayout content`);
       skipped++;
       continue;
     }
@@ -347,7 +347,7 @@ async function seed() {
     const blocks = parseBlocks(layoutContent);
 
     if (blocks.length === 0) {
-      console.warn(`  WARN    ${meta.id}  — parsed 0 blocks`);
+      console.warn(`  WARN    ${meta.id} ,parsed 0 blocks`);
       skipped++;
       continue;
     }

@@ -880,6 +880,8 @@
    ---------------------------------------- */
 .footer-minimal {
   position: relative;
+  z-index: 50;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -1062,4 +1064,148 @@
     justify-content: center;
     gap: 2rem;
   }
+}
+
+/* === Aircraft Comparison Tool === */
+.aircraft-comparison { max-width: 1100px; margin: 0 auto; padding: 0 1.25rem 4rem; }
+.aircraft-comparison__hero { padding: 3rem 0 2rem; text-align: center; border-bottom: 1px solid #e8e6e2; }
+.aircraft-comparison__eyebrow { font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: #888; margin-bottom: 0.6rem; }
+.aircraft-comparison__hero h1 { font-size: 2.4rem; font-weight: 300; margin: 0 0 0.8rem; letter-spacing: -0.02em; }
+.aircraft-comparison__hero-em { font-weight: 700; }
+.aircraft-comparison__intro { max-width: 36rem; margin: 0 auto; opacity: 0.72; line-height: 1.55; }
+
+.aircraft-comparison__loading,
+.aircraft-comparison__error,
+.aircraft-comparison__placeholder {
+  padding: 3rem 1rem; text-align: center; opacity: 0.6; font-size: 0.95rem;
+}
+.aircraft-comparison__error { color: #a02020; }
+
+/* Selector */
+.comparison-selector { padding: 1.5rem 0; border-bottom: 1px solid #f0f0f0; }
+.comparison-selector__group-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.6; margin-bottom: 0.6rem; }
+.comparison-selector__chips { display: flex; gap: 0.45rem; flex-wrap: wrap; margin-bottom: 1.1rem; }
+.comparison-selector__chip {
+  background: #fff; border: 1px solid #ccc; padding: 0.45rem 0.85rem;
+  font-size: 0.86rem; cursor: pointer; border-radius: 2px; font-family: inherit;
+  transition: all 0.15s;
+}
+.comparison-selector__chip:hover:not(:disabled) { border-color: #222; }
+.comparison-selector__chip.is-selected { background: #222; color: #fff; border-color: #222; }
+.comparison-selector__chip:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.comparison-selector__search-wrap { position: relative; }
+.comparison-selector__search {
+  width: 100%; padding: 0.65rem 0.85rem; font-size: 0.9rem;
+  background: #fafaf6; border: 1px solid #e0e0e0; border-radius: 2px;
+  font-family: inherit;
+}
+.comparison-selector__search:focus { outline: none; border-color: #888; }
+.comparison-selector__dropdown {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: #fff; border: 1px solid #e0e0e0; border-radius: 2px;
+  max-height: 360px; overflow-y: auto; z-index: 5;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+}
+.comparison-selector__group { padding: 0.4rem 0; border-bottom: 1px solid #f5f5f5; }
+.comparison-selector__group:last-child { border-bottom: none; }
+.comparison-selector__group-heading {
+  font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase;
+  opacity: 0.55; padding: 0.3rem 0.85rem;
+}
+.comparison-selector__pick {
+  width: 100%; text-align: left; background: none; border: none;
+  padding: 0.55rem 0.85rem; font-size: 0.86rem; font-family: inherit;
+  cursor: pointer; display: flex; align-items: center; gap: 0.55rem;
+}
+.comparison-selector__pick:hover:not(:disabled) { background: #fafaf6; }
+.comparison-selector__pick:disabled { opacity: 0.4; cursor: not-allowed; }
+.comparison-selector__used-tag {
+  font-size: 0.66rem; opacity: 0.55; font-style: italic;
+}
+.comparison-selector__pills { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.7rem; }
+.comparison-selector__pill {
+  background: #222; color: #fff; border: none; padding: 0.3rem 0.65rem;
+  font-size: 0.8rem; cursor: pointer; border-radius: 2px;
+  display: inline-flex; align-items: center; gap: 0.35rem; font-family: inherit;
+}
+.comparison-selector__limit-note { margin-top: 0.5rem; font-size: 0.78rem; opacity: 0.6; }
+
+/* Comparison sections (specs, cost, tco) */
+.comparison-section { padding: 2rem 0; border-bottom: 1px solid #f0f0f0; }
+.comparison-section__label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.6; margin-bottom: 0.8rem; }
+.comparison-section__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; flex-wrap: wrap; gap: 1rem; }
+.comparison-section__controls { display: flex; gap: 1rem; }
+.comparison-section__controls label { display: inline-flex; flex-direction: column; font-size: 0.7rem; opacity: 0.7; gap: 0.2rem; }
+.comparison-section__controls input { padding: 0.4rem 0.55rem; font-size: 0.95rem; border: 1px solid #ccc; border-radius: 2px; width: 5.5rem; font-family: inherit; }
+.comparison-section__report-link {
+  background: none; border: none; padding: 0.5rem 0;
+  font-size: 0.78rem; color: #888; cursor: pointer; text-decoration: underline;
+  font-family: inherit; margin-top: 0.4rem;
+}
+.comparison-section__report-link:hover { color: #222; }
+
+/* Comparison table */
+.comparison-table-wrap { overflow-x: auto; }
+.comparison-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; background: #fafaf6; border: 1px solid #e8e6e2; }
+.comparison-table thead th { background: #222; color: #fff; padding: 0.55rem 0.75rem; text-align: left; font-weight: 500; font-size: 0.82rem; }
+.comparison-table tbody th[scope="row"] { padding: 0.55rem 0.75rem; opacity: 0.6; font-weight: 400; text-align: left; background: #fafaf6; position: sticky; left: 0; min-width: 9rem; }
+.comparison-table td { padding: 0.55rem 0.75rem; border-top: 1px solid #f0f0f0; }
+.comparison-table tbody th[scope="row"] { border-top: 1px solid #f0f0f0; }
+.comparison-table__group-row th { background: #f0eee8 !important; font-size: 0.7rem !important; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.7 !important; padding: 0.35rem 0.75rem !important; }
+.comparison-table__total-row td, .comparison-table__total-row th { font-weight: 600; background: #f4f2ec; }
+.comparison-table__head { display: flex; flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+
+/* TCO cards */
+.comparison-section--tco { background: #f8f8f6; padding-left: 1rem; padding-right: 1rem; margin: 1rem -1rem; }
+.tco-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; }
+.tco-card { background: #fff; border: 1px solid #e5e5e5; padding: 1rem; border-radius: 2px; }
+.tco-card__name { font-size: 0.78rem; opacity: 0.6; margin-bottom: 0.3rem; }
+.tco-card__total { font-size: 1.6rem; font-weight: 700; line-height: 1; }
+.tco-card__caption { font-size: 0.72rem; opacity: 0.6; margin-top: 0.5rem; line-height: 1.4; }
+
+/* CTA */
+.comparison-cta { background: #222; color: #fff; padding: 2rem 1.5rem; margin: 2rem 0; border-radius: 2px; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.comparison-cta__eyebrow { font-size: 0.75rem; opacity: 0.7; margin-bottom: 0.4rem; }
+.comparison-cta__copy p { margin: 0; line-height: 1.5; }
+.comparison-cta__form { display: grid; gap: 0.5rem; }
+.comparison-cta__form input,
+.comparison-cta__form textarea { padding: 0.55rem 0.7rem; font-size: 0.9rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 2px; font-family: inherit; }
+.comparison-cta__form button { padding: 0.7rem 1rem; background: #fff; color: #222; border: none; font-weight: 600; cursor: pointer; border-radius: 2px; font-family: inherit; }
+.comparison-cta__error { color: #f8b8b8; font-size: 0.85rem; margin: 0; }
+.comparison-cta__thanks { font-size: 0.95rem; align-self: center; }
+
+/* Methodology accordion */
+.aircraft-comparison__methodology { padding: 2rem 0; font-size: 0.88rem; }
+.aircraft-comparison__methodology summary { cursor: pointer; font-size: 0.78rem; opacity: 0.6; }
+.aircraft-comparison__methodology-body { padding: 1rem 0; line-height: 1.55; }
+.aircraft-comparison__methodology-body ul { padding-left: 1.2rem; }
+.aircraft-comparison__methodology-body li { margin-bottom: 0.3rem; }
+.aircraft-comparison__fuel-assumption { font-size: 0.82rem; opacity: 0.7; margin: 0.5rem 0 1rem; }
+
+/* Report-mistake modal */
+.report-mistake__backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
+.report-mistake__modal { background: #fff; max-width: 30rem; width: 100%; padding: 1.5rem; border-radius: 4px; }
+.report-mistake__head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+.report-mistake__head h3 { margin: 0; font-size: 1.05rem; }
+.report-mistake__subtitle { margin: 0.2rem 0 0; opacity: 0.65; font-size: 0.78rem; }
+.report-mistake__close { background: none; border: none; font-size: 1.4rem; cursor: pointer; opacity: 0.5; }
+.report-mistake__form { display: grid; gap: 0.7rem; }
+.report-mistake__form label { display: grid; gap: 0.2rem; font-size: 0.72rem; opacity: 0.75; }
+.report-mistake__form input,
+.report-mistake__form select,
+.report-mistake__form textarea { padding: 0.5rem 0.65rem; font-size: 0.88rem; border: 1px solid #ccc; border-radius: 2px; font-family: inherit; }
+.report-mistake__optional { opacity: 0.6; font-weight: 400; }
+.report-mistake__actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem; }
+.report-mistake__btn-primary { background: #222; color: #fff; border: none; padding: 0.55rem 1.1rem; font-size: 0.85rem; cursor: pointer; border-radius: 2px; font-family: inherit; font-weight: 600; }
+.report-mistake__btn-secondary { background: #fff; color: #222; border: 1px solid #ccc; padding: 0.55rem 1.1rem; font-size: 0.85rem; cursor: pointer; border-radius: 2px; font-family: inherit; }
+.report-mistake__thanks { padding: 1rem 0; }
+.report-mistake__thanks p { margin: 0 0 1rem; }
+
+/* Mobile */
+@media (max-width: 700px) {
+  .aircraft-comparison__hero h1 { font-size: 1.7rem; }
+  .comparison-cta { grid-template-columns: 1fr; }
+  .comparison-section__head { flex-direction: column; align-items: stretch; }
+  .comparison-table tbody th[scope="row"] { min-width: 7rem; }
 }

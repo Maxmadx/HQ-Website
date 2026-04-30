@@ -42,6 +42,7 @@ import FooterMinimal from '../components/FooterMinimal';
 
 // Combined Location + Testimonials
 import ArrivalSection from '../components/ArrivalSection';
+import WallOfCoolGr11 from '../components/WallOfCoolGr11';
 
 // Union Jack component - black and white version
 const UnionJack = ({ size = 20, className = '', id = '' }) => (
@@ -582,6 +583,21 @@ const sfhDestCoords = [
   { name: 'Le Touquet', x: 355, y: 548, nm: 110, carTime: '3h 30min', desc: 'Cross the Channel in under an hour. Fresh seafood on the French coast, no passport queues, no ferry timetables.' },
   { name: 'Scottish Highlands', x: 210, y: 175, nm: 330, carTime: '8h+', desc: 'Glens, lochs and castles from the air. Two and a half hours to a landscape most people drive a full day to reach.' },
   { name: 'Cornwall', x: 145, y: 560, nm: 180, carTime: '4h 30min', desc: 'Skip the M5 entirely. Land near the coast for a weekend of surfing, cream teas and dramatic clifftop walks.' },
+];
+
+const fsdMaintRow1 = [
+  '/assets/images/facility/hq-0345.jpg',
+  '/assets/images/facility/shyam-7822.jpg',
+  '/assets/images/facility/shyam-9427.jpg',
+  '/assets/images/facility/hq-0300.jpg',
+  '/assets/images/facility/shyam-6113.jpg',
+];
+const fsdMaintRow2 = [
+  '/assets/images/facility/shyam-7346.jpg',
+  '/assets/images/facility/hq-0153-3.jpg',
+  '/assets/images/facility/shyam-8662.jpg',
+  '/assets/images/facility/shyam-9017.jpg',
+  '/assets/images/facility/hq-0388.jpg',
 ];
 
 const maintGalleryRow1 = [
@@ -1386,16 +1402,9 @@ const SelfFlyHireSection = () => {
 };
 
 function ZigzagTrainingItem({ slide, index, isEven }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.1 });
-
   return (
-    <motion.div
-      ref={ref}
+    <div
       className={`fd-zigzag__item ${isEven ? 'fd-zigzag__item--left' : 'fd-zigzag__item--right'}`}
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
     >
       <div className="fd-zigzag__item-image">
         <img src={slide.image} alt={slide.title} />
@@ -1410,7 +1419,7 @@ function ZigzagTrainingItem({ slide, index, isEven }) {
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </Link>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -1792,7 +1801,7 @@ function Experimentation() {
     return () => { cancelAnimationFrame(rafId); track.removeEventListener('pointerdown', onPD); track.removeEventListener('pointermove', onPM); track.removeEventListener('pointerup', onPU); track.removeEventListener('pointercancel', onPU); window.removeEventListener('resize', measure); };
   }, []);
 
-  // Maintenance three-phase sticky (same pattern as sales)
+  // Maintenance — collision-based fade matching sales pattern (viewport-independent)
   const maintIntroRef = useRef(null);
   const maintHeaderRef = useRef(null);
   const maintPreTitleRef = useRef(null);
@@ -1807,97 +1816,76 @@ function Experimentation() {
     const introEl = maintIntroRef.current;
     const headerEl = maintHeaderRef.current;
     const ptEl = maintPreTitleRef.current;
-    const fadeEl = maintTextFadeRef.current;
+    const textFadeEl = maintTextFadeRef.current;
     const titleFadeEl = maintTitleFadeRef.current;
     const servicesListEl = maintServicesListRef.current;
     if (!serviceEl || !introEl || !headerEl || !ptEl) return;
 
-    let headerHeight, ptHeight, phase1Offset, phase3Offset;
-    const measure = () => {
-      headerHeight = headerEl.offsetHeight;
-      ptHeight = ptEl.offsetHeight;
-      phase1Offset = headerHeight;
-      phase3Offset = 32 + ptHeight + 8;
-      serviceEl.style.transform = `translateY(${phase1Offset}px)`;
-    };
+    if (window.innerWidth > 768) {
+      headerEl.style.paddingBottom = '250px';
+      serviceEl.style.marginTop = '275px';
+      serviceEl.style.transform = 'none';
+    }
 
-    let currentPhase = 1;
-    let maintRaf = 0;
+    let serviceRaf = 0;
+    let wasStuck = false;
     const handleScrollRaw = () => {
-      const isMobile = window.innerWidth <= 768;
       const rect = introEl.getBoundingClientRect();
-      // Skip if section is far above viewport
       if (rect.top > window.innerHeight + 500) return;
+      if (rect.bottom < -500) {
+        if (titleFadeEl) titleFadeEl.style.opacity = '0';
+        if (textFadeEl) textFadeEl.style.opacity = '0';
+        if (servicesListEl) servicesListEl.style.opacity = '1';
+        return;
+      }
+      const isMobile = window.innerWidth <= 768;
+      const vh = window.innerHeight;
+      const serviceRect = serviceEl.getBoundingClientRect();
 
-      if (isMobile) {
-        // On mobile: no fading, no transforms, just expand the service card
+      if (!isMobile) {
+        const catchTopPx = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--catch-top')) || 90;
+        const stickyTop = Math.max(vh * 0.10, catchTopPx);
+        const isStuck = serviceRect.top <= stickyTop + 60 + 150;
+        if (isStuck && !wasStuck) {
+          wasStuck = true;
+          setServiceAutoExpand(true);
+        } else if (!isStuck && wasStuck) {
+          wasStuck = false;
+          setServiceAutoExpand(false);
+        }
+        if (textFadeEl) {
+          const textRect = textFadeEl.getBoundingClientRect();
+          const earlyStart = 200;
+          const overlap = textRect.bottom - serviceRect.top + earlyStart;
+          const fadeRange = Math.max(textRect.height * 0.4, 40);
+          textFadeEl.style.opacity = overlap <= 0 ? '1' : String(Math.max(0, 1 - overlap / fadeRange));
+        }
+        if (titleFadeEl) {
+          const titleRect = titleFadeEl.getBoundingClientRect();
+          const earlyStart = 150;
+          const overlap = titleRect.bottom - serviceRect.top + earlyStart;
+          const fadeRange = Math.max(titleRect.height, 60);
+          const titleOpacity = overlap <= 0 ? 1 : Math.max(0, 1 - overlap / fadeRange);
+          titleFadeEl.style.opacity = String(titleOpacity);
+          if (servicesListEl) {
+            servicesListEl.style.opacity = String(1 - titleOpacity);
+          }
+        }
+      } else {
+        if (serviceRect.bottom < vh - 200) setServiceAutoExpand(true);
+        if (textFadeEl) textFadeEl.style.opacity = '1';
         if (titleFadeEl) titleFadeEl.style.opacity = '1';
-        if (fadeEl) fadeEl.style.opacity = '1';
         if (servicesListEl) servicesListEl.style.opacity = '1';
         serviceEl.style.transform = 'none';
-        const serviceRect = serviceEl.getBoundingClientRect();
-        const vh = window.innerHeight;
-        if (serviceRect.bottom < vh - 200) setServiceAutoExpand(true);
-        return;
-      }
-
-      // If section scrolled well past, ensure end state
-      if (rect.bottom < -500) {
-        if (servicesListEl) servicesListEl.style.opacity = '1';
-        if (titleFadeEl) titleFadeEl.style.opacity = '0';
-        if (fadeEl) fadeEl.style.opacity = '0';
-        return;
-      }
-      const scrolled = -rect.top;
-      const vh = window.innerHeight;
-      const threshold = vh * 0.10;
-      const phase3Threshold = threshold + vh * 0.05;
-      const newPhase = scrolled >= phase3Threshold ? 3 : 1;
-      if (newPhase !== currentPhase) {
-        currentPhase = newPhase;
-        const offset = newPhase === 1 ? phase1Offset : phase3Offset;
-        serviceEl.style.transform = `translateY(${offset}px)`;
-      }
-      const expandThreshold = threshold + vh * 0.10;
-      if (scrolled >= expandThreshold) {
-        setServiceAutoExpand(true);
-      } else {
-        setServiceAutoExpand(false);
-      }
-      // Fade out paragraph/divider first, then title as card approaches
-      const serviceRect = serviceEl.getBoundingClientRect();
-      if (fadeEl) {
-        const elRect = fadeEl.getBoundingClientRect();
-        const earlyStart = 200;
-        const overlap = elRect.bottom - serviceRect.top + earlyStart;
-        const fadeRange = elRect.height * 0.4;
-        if (overlap <= 0) fadeEl.style.opacity = '1';
-        else fadeEl.style.opacity = String(Math.max(0, 1 - overlap / fadeRange));
-      }
-      if (titleFadeEl) {
-        const elRect = titleFadeEl.getBoundingClientRect();
-        const earlyStart = 150;
-        const overlap = elRect.bottom - serviceRect.top + earlyStart;
-        const fadeRange = elRect.height;
-        let titleOpacity;
-        if (overlap <= 0) titleOpacity = 1;
-        else titleOpacity = Math.max(0, 1 - overlap / fadeRange);
-        titleFadeEl.style.opacity = String(titleOpacity);
-        // Services list fades in as title fades out
-        if (servicesListEl) {
-          servicesListEl.style.opacity = String(1 - titleOpacity);
-        }
       }
     };
-    const handleScroll = () => { cancelAnimationFrame(maintRaf); maintRaf = requestAnimationFrame(handleScrollRaw); };
+    const handleScroll = () => { cancelAnimationFrame(serviceRaf); serviceRaf = requestAnimationFrame(handleScrollRaw); };
 
-    measure();
-    handleScrollRaw(); // Run immediately to handle restored scroll position
+    handleScrollRaw();
     window.addEventListener('scroll', handleScroll, { passive: true });
-    let maintResizeTimer;
-    const onResize = () => { clearTimeout(maintResizeTimer); maintResizeTimer = setTimeout(() => { measure(); currentPhase = 0; handleScrollRaw(); }, 200); };
+    const onResize = () => { handleScrollRaw(); };
     window.addEventListener('resize', onResize);
-    return () => { window.removeEventListener('scroll', handleScroll); window.removeEventListener('resize', onResize); cancelAnimationFrame(maintRaf); clearTimeout(maintResizeTimer); };
+    return () => { window.removeEventListener('scroll', handleScroll); window.removeEventListener('resize', onResize); cancelAnimationFrame(serviceRaf); };
   }, []);
 
   // Blog derived data — static posts + Firestore press links
@@ -1984,6 +1972,17 @@ function Experimentation() {
   }, [rebuildView, rebuildDetailOpen]);
 
   const [barcodeSelected, setBarcodeSelected] = useState(false);
+
+  // Rates / Insights picker — null | 'pricing' | 'blog'.
+  // Mirrored onto body[data-picker] so the desktop-only CSS in
+  // ArrivalSection can show/hide the pricing card and the lhq blog
+  // section based on which tab is active. Mobile ignores this and shows
+  // both stacked with their original headers.
+  const [ratesInsightsPicker, setRatesInsightsPicker] = useState('blog');
+  useEffect(() => {
+    document.body.dataset.picker = ratesInsightsPicker || 'none';
+    return () => { delete document.body.dataset.picker; };
+  }, [ratesInsightsPicker]);
 
   // Track pre-owned carousel scroll state
   useEffect(() => {
@@ -2146,8 +2145,6 @@ function Experimentation() {
   const clubhouseRef = useRef(null);
   const clubhouseCarouselRef = useRef(null);
   const aboutCarouselRef = useRef(null);
-  const fsdTrack1Ref = useRef(null);
-  const fsdTrack2Ref = useRef(null);
   const clubhouseMobilePhase2Ref = useRef(null);
   const globeRef = useRef(null);
   const phaseText1Ref = useRef(null);
@@ -2192,7 +2189,23 @@ function Experimentation() {
   const [hitterIdx, setHitterIdx] = useState(0);
   const hitterTrackRef = useRef(null);
   const HEAVY_HITTERS = [
-    { name: 'Tim Tucker', title: 'Chief Pilot & Safety Instructor', org: 'Robinson Helicopter Company', quote: 'Captain Smith is, without question, one of the finest rotary aviators I have ever encountered. His school sets the standard others aspire to.' },
+    {
+      name: 'Tim Tucker',
+      title: 'Chief Instructor',
+      org: 'Robinson Helicopter Company',
+      quote: "Quentin Smith is surely one of the helicopter industry's most accomplished innovators and a true explorer. When you do something for the first time, as Q has done repeatedly, you set a standard that lasts forever.",
+      letter: {
+        img: '/assets/images/legacy/tim-tucker-robinson-letter.jpg',
+        date: '30 September 2010',
+        signoff: ['Tim Tucker', 'Chief Instructor', 'Robinson Helicopter Company'],
+        body: [
+          "Every industry has its innovators. People who, by the consequence of their actions, push their industry in one direction or another. Every generation has its explorers. People whose intensity, curiosity and courage blend with a knowledge and skill to take them places no one has gone before or in a way no one has done before. Quentin Smith is surely one of the helicopter industry's most accomplished innovators and a true explorer.",
+          "Charles Lindbergh didn't invent the airplane but he certainly showed the world what it was capable of. It took Frank Robinson to develop the R44, but “Q” demonstrated to a skeptical helicopter industry and a reluctant Robinson Helicopter Company what the piston engine R44 was capable of. I don't think even Frank ever envisioned the R44 being the first piston helicopter to circle the globe, fly to the North Pole and, most impressive of all, fly to the South Pole. To be honest, neither did I. By accomplishing these feats, Q, along with Jennifer Murray and Steve Brooks, showed us all what a piston helicopter, used in the proper way by skilled pilots could achieve. Overcoming the challenges of navigation (when standing on the North Pole all directions are south so which way is home?), precise engine operation (starting the piston engine at over 7000 feet and -30°C), lack of avgas availability and, of course, unexpected weather require the innovation, knowledge and skill of true professionals.",
+          "As a result of Q's exploits, R44 pilots now criss-cross the globe and have made Trans Atlantic crossings in piston helicopters commonplace in both directions. Most distance, altitude and speed records for its weight class have now fallen to the R44. However, aviation records are made to be broken but when you do something for the first time, as Q has done repeatedly; you set a standard that lasts forever.",
+          "Thanks Q, for being such an important ingredient in cementing the R44's solid reputation as a durable and reliable machine.",
+        ],
+      },
+    },
     { name: 'Yuri Lonchakov', title: 'Head of the Cosmonaut Corps', org: 'Roscosmos', quote: 'To reach the North Pole by piston helicopter requires not only skill but an extraordinary quality of spirit. Quentin Smith has both.' },
     { name: 'Gilles Brunier', title: 'Director General', org: 'Fédération Aéronautique Internationale', quote: 'The FAI Gold Rotorcraft Medal is our highest honour. There was no question who deserved it.' },
     { name: 'Sir Ranulph Fiennes', title: 'Explorer & World Record Holder', org: '', quote: 'In polar exploration, the helicopter is everything. Captain Smith flew further than anyone thought possible in a piston machine.' },
@@ -2366,6 +2379,303 @@ function Experimentation() {
     return () => window.removeEventListener('resize', sync);
   }, []);
 
+  // Sticky-blur transition: pins .fd-exped at viewport-bottom on desktop,
+  // blurs it, and fades a black overlay in as the next sibling (Sales
+  // parallax) rises over it. Mirrors the R66 variants→specs pattern.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const section = document.querySelector('.fd-exped');
+    if (!section) return;
+
+    const MAX_BLUR = 10;
+    const MAX_DARKEN = 0.55;
+    const FADE_COMPLETE = 0.95;
+    // Effects stay at 0 until the rising parallax has covered this fraction
+    // of the viewport. Bump up to start later, down to start earlier.
+    const EFFECT_START = 0.6;
+    const MEDIA = window.matchMedia('(min-width: 901px)');
+
+    const findRisingSection = () => {
+      const next = section.nextElementSibling;
+      if (next && (next.classList.contains('parallax-section') ||
+                   next.querySelector?.('.parallax-section'))) return next;
+      const sales = document.getElementById('sales');
+      if (!sales) return next;
+      return sales.previousElementSibling || next;
+    };
+
+    const setStickTop = () => {
+      if (!MEDIA.matches) {
+        section.style.removeProperty('--fd-exped-stick-top');
+        return;
+      }
+      const vh = window.innerHeight;
+      const h = section.offsetHeight;
+      // top = vh - h pins the section's BOTTOM to the viewport bottom.
+      // Positive (h < vh) → pins at bottom of viewport with empty space above.
+      // Negative (h > vh) → pins with section top above viewport, bottom at vh.
+      section.style.setProperty('--fd-exped-stick-top', `${vh - h}px`);
+    };
+
+    let prevY = window.scrollY;
+    const onScroll = () => {
+      if (!MEDIA.matches) {
+        section.style.setProperty('--fd-exped-blur', '0px');
+        section.style.setProperty('--fd-exped-darken', '0');
+        section.style.visibility = '';
+        return;
+      }
+      const next = findRisingSection();
+      if (!next) return;
+      const currentY = window.scrollY;
+      const goingUp = currentY < prevY;
+      prevY = currentY;
+
+      const vh = window.innerHeight;
+      const h = section.offsetHeight;
+      const rect = next.getBoundingClientRect();
+
+      // Visibility check is direction-agnostic so scrolling back up
+      // re-reveals the pinned section as the rising sibling retreats.
+      section.style.visibility = (rect.top <= vh - h) ? 'hidden' : 'visible';
+
+      if (goingUp) {
+        // Blur (and darken) only apply on the way down. On scroll-up
+        // snap straight to zero with NO transition, so the section is
+        // immediately readable without waiting for an ease-out.
+        section.style.transition = 'none';
+        section.style.setProperty('--fd-exped-blur', '0px');
+        section.style.setProperty('--fd-exped-darken', '0');
+        return;
+      }
+
+      // Scroll-down: scroll-position-driven blur. No transition — needs
+      // to track scroll position frame-by-frame.
+      section.style.transition = 'none';
+      const progress = Math.min(1, Math.max(0, (vh - rect.top) / vh));
+      // Remap progress so effects stay at 0 until progress >= EFFECT_START,
+      // then ramp 0→1 over the remaining range.
+      const effective = Math.max(0, (progress - EFFECT_START) / (1 - EFFECT_START));
+      const adjusted = Math.min(1, effective / FADE_COMPLETE);
+      const darken = Math.pow(adjusted, 8) * MAX_DARKEN;
+
+      section.style.setProperty('--fd-exped-blur', `${effective * MAX_BLUR}px`);
+      section.style.setProperty('--fd-exped-darken', `${darken}`);
+    };
+
+    const onResize = () => { setStickTop(); onScroll(); };
+    const onMediaChange = () => { setStickTop(); onScroll(); };
+
+    setStickTop();
+    onScroll();
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    MEDIA.addEventListener('change', onMediaChange);
+
+    // Recompute stick-top when the section itself grows/shrinks — e.g.
+    // when an expedition card expands and changes the section's height.
+    // Same fix that was applied to .fd-sales for its subsection toggles.
+    const ro = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(() => { setStickTop(); onScroll(); })
+      : null;
+    if (ro) ro.observe(section);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      MEDIA.removeEventListener('change', onMediaChange);
+      if (ro) ro.disconnect();
+    };
+  }, []);
+
+  // Sticky-blur transition: same as above but for .fd-sales → .fd-maint.
+  // Pins .fd-sales at viewport-bottom on desktop, blurs it as the next
+  // sibling (Maintenance parallax) rises over it.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const section = document.querySelector('.fd-sales');
+    if (!section) return;
+
+    const MAX_BLUR = 10;
+    const EFFECT_START = 0.6;
+    const MEDIA = window.matchMedia('(min-width: 901px)');
+
+    const findRisingSection = () => {
+      const next = section.nextElementSibling;
+      if (next && (next.classList.contains('parallax-section') ||
+                   next.querySelector?.('.parallax-section'))) return next;
+      const maint = document.getElementById('maintenance');
+      if (!maint) return next;
+      return maint.previousElementSibling || next;
+    };
+
+    const setStickTop = () => {
+      if (!MEDIA.matches) {
+        section.style.removeProperty('--fd-sales-stick-top');
+        return;
+      }
+      const vh = window.innerHeight;
+      const h = section.offsetHeight;
+      section.style.setProperty('--fd-sales-stick-top', `${vh - h}px`);
+    };
+
+    let prevY = window.scrollY;
+    const onScroll = () => {
+      if (!MEDIA.matches) {
+        section.style.setProperty('--fd-sales-blur', '0px');
+        section.style.visibility = '';
+        return;
+      }
+      const next = findRisingSection();
+      if (!next) return;
+      const currentY = window.scrollY;
+      const goingUp = currentY < prevY;
+      prevY = currentY;
+
+      const vh = window.innerHeight;
+      const h = section.offsetHeight;
+      const rect = next.getBoundingClientRect();
+
+      section.style.visibility = (rect.top <= vh - h) ? 'hidden' : 'visible';
+
+      if (goingUp) {
+        // Blur only on the way down. Snap straight to zero with NO
+        // transition on scroll-up so the section is immediately
+        // readable without waiting for an ease-out.
+        section.style.transition = 'none';
+        section.style.setProperty('--fd-sales-blur', '0px');
+        return;
+      }
+
+      section.style.transition = 'none';
+      const progress = Math.min(1, Math.max(0, (vh - rect.top) / vh));
+      const effective = Math.max(0, (progress - EFFECT_START) / (1 - EFFECT_START));
+
+      section.style.setProperty('--fd-sales-blur', `${effective * MAX_BLUR}px`);
+    };
+
+    const onResize = () => { setStickTop(); onScroll(); };
+    const onMediaChange = () => { setStickTop(); onScroll(); };
+
+    setStickTop();
+    onScroll();
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    MEDIA.addEventListener('change', onMediaChange);
+
+    // Recompute stick-top when the section itself grows/shrinks — e.g. when
+    // a .fd-sales__subsection expands and changes the section's height.
+    const ro = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(() => { setStickTop(); onScroll(); })
+      : null;
+    if (ro) ro.observe(section);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      MEDIA.removeEventListener('change', onMediaChange);
+      if (ro) ro.disconnect();
+    };
+  }, []);
+
+  // Sticky-blur transition: pins .fd-maint at viewport-bottom on desktop
+  // and blurs it as the next sibling (the Contact & Find Us parallax
+  // inside #contact) rises over it. Mirrors the .fd-sales → maint pattern.
+  // The selector .fd-maint#maintenance is used in the CSS specifically to
+  // beat the existing `#sales ~ *` rule that would otherwise force this
+  // section to position: relative.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const section = document.querySelector('.fd-maint');
+    if (!section) return;
+
+    const MAX_BLUR = 10;
+    const EFFECT_START = 0.6;
+    const MEDIA = window.matchMedia('(min-width: 901px)');
+
+    const findRisingSection = () => {
+      const next = section.nextElementSibling;
+      if (next && (next.classList.contains('parallax-section') ||
+                   next.querySelector?.('.parallax-section'))) return next;
+      const contact = document.getElementById('contact');
+      return contact || next;
+    };
+
+    const setStickTop = () => {
+      if (!MEDIA.matches) {
+        section.style.removeProperty('--fd-maint-stick-top');
+        return;
+      }
+      const vh = window.innerHeight;
+      const h = section.offsetHeight;
+      section.style.setProperty('--fd-maint-stick-top', `${vh - h}px`);
+    };
+
+    let prevY = window.scrollY;
+    const onScroll = () => {
+      if (!MEDIA.matches) {
+        section.style.setProperty('--fd-maint-blur', '0px');
+        section.style.visibility = '';
+        return;
+      }
+      const next = findRisingSection();
+      if (!next) return;
+      const currentY = window.scrollY;
+      const goingUp = currentY < prevY;
+      prevY = currentY;
+
+      const vh = window.innerHeight;
+      const h = section.offsetHeight;
+      const rect = next.getBoundingClientRect();
+
+      section.style.visibility = (rect.top <= vh - h) ? 'hidden' : 'visible';
+
+      if (goingUp) {
+        // Blur only on the way down. Snap straight to zero with NO
+        // transition on scroll-up so the section is immediately
+        // readable without waiting for an ease-out.
+        section.style.transition = 'none';
+        section.style.setProperty('--fd-maint-blur', '0px');
+        return;
+      }
+
+      section.style.transition = 'none';
+      const progress = Math.min(1, Math.max(0, (vh - rect.top) / vh));
+      const effective = Math.max(0, (progress - EFFECT_START) / (1 - EFFECT_START));
+
+      section.style.setProperty('--fd-maint-blur', `${effective * MAX_BLUR}px`);
+    };
+
+    const onResize = () => { setStickTop(); onScroll(); };
+    const onMediaChange = () => { setStickTop(); onScroll(); };
+
+    setStickTop();
+    onScroll();
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    MEDIA.addEventListener('change', onMediaChange);
+
+    // Recompute on layout changes (collapsibles inside .fd-maint can change
+    // its offsetHeight, which moves the sticky threshold).
+    const ro = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(() => { setStickTop(); onScroll(); })
+      : null;
+    if (ro) ro.observe(section);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      MEDIA.removeEventListener('change', onMediaChange);
+      if (ro) ro.disconnect();
+    };
+  }, []);
+
   // Clubhouse: right side overlay fades in as you scroll (desktop only)
   useEffect(() => {
     let clubRaf = 0;
@@ -2512,44 +2822,6 @@ function Experimentation() {
       track.removeEventListener('pointercancel', onPointerUp);
       window.removeEventListener('resize', measure);
     };
-  }, []);
-
-  // Maintenance image carousels: infinite auto-scroll
-  useEffect(() => {
-    const startCarousel = (track, speed) => {
-      if (!track) return null;
-      const GAP = 12; // 0.75rem
-      const state = { offset: 0, lastTime: 0, setWidth: 0 };
-      let rafId = 0;
-      const measure = () => {
-        const sets = track.querySelectorAll('.fsd__img-set');
-        if (sets.length > 0) {
-          let w = 0;
-          const items = sets[0].children;
-          for (let i = 0; i < items.length; i++) w += items[i].offsetWidth + GAP;
-          state.setWidth = w;
-          if (speed < 0 && state.offset === 0) state.offset = state.setWidth;
-        }
-      };
-      const tick = (time) => {
-        rafId = requestAnimationFrame(tick);
-        if (!state.lastTime) { state.lastTime = time; return; }
-        if (state.setWidth <= 0) { measure(); state.lastTime = time; return; }
-        const dt = Math.min((time - state.lastTime) / 1000, 0.1);
-        state.lastTime = time;
-        state.offset += speed * dt;
-        if (speed > 0 && state.offset >= state.setWidth) state.offset -= state.setWidth;
-        if (speed < 0 && state.offset <= 0) state.offset += state.setWidth;
-        track.style.transform = `translateX(${-state.offset}px)`;
-      };
-      measure();
-      rafId = requestAnimationFrame(tick);
-      window.addEventListener('resize', measure);
-      return () => { cancelAnimationFrame(rafId); window.removeEventListener('resize', measure); };
-    };
-    const cleanup1 = startCarousel(fsdTrack1Ref.current, 30);
-    const cleanup2 = startCarousel(fsdTrack2Ref.current, -25);
-    return () => { cleanup1?.(); cleanup2?.(); };
   }, []);
 
   // Mobile: Phase 2 fade-in via IntersectionObserver
@@ -2699,50 +2971,14 @@ function Experimentation() {
     },
   ];
 
-  // Navigation items for accordion
+  // Navigation items for accordion. Submenus disabled for now — click scrolls to section.
   const navItems = [
-    { id: 'training', label: 'Flying', icon: '01', subItems: [
-      { label: 'Training Overview', to: '/training' },
-      { label: 'Trial Lessons', to: '/training/trial-lessons' },
-      { label: 'Private Pilot Licence', to: '/training/ppl' },
-      { label: 'Commercial Pilot Licence', to: '/training/commercial' },
-      { label: 'Type Rating', to: '/training/type-rating' },
-      { label: 'Night Rating', to: '/training/night-rating' },
-      { label: 'Advanced Training', to: '/training/advanced' },
-      { label: 'Self-Fly Hire', to: '/self-fly-hire' },
-      { label: 'Training FAQ', to: '/training/faq' },
-    ]},
-    { id: 'expeditions', label: 'Expeditions', icon: '02', subItems: [
-      { label: 'Worldwide Expeditions', to: '/expeditions' },
-      { label: 'HQ Trips Calendar', to: '/expeditions/calendar' },
-      { label: 'Helicopter Tour of London', to: '/helicopter-tour-of-london' },
-    ]},
-    { id: 'sales', label: 'Sales', icon: '03', subItems: [
-      { label: 'New Aircraft', to: '/aircraft-sales' },
-      { label: 'R22 Beta II', to: '/aircraft-sales/new/r22' },
-      { label: 'R44 Raven II', to: '/aircraft-sales/new/r44' },
-      { label: 'R66 Turbine', to: '/aircraft-sales/new/r66' },
-      { label: 'R88', to: '/aircraft-sales/new/r88' },
-      { label: 'Pre-Owned', to: '/sales/pre-owned' },
-      { label: 'Rebuilds', to: '/sales/rebuilds' },
-    ]},
-    { id: 'maintenance', label: 'Maintenance', icon: '04', subItems: [
-      { label: 'Maintenance Overview', to: '/maintenance' },
-      { label: 'Parts', to: '/parts' },
-    ]},
-    { id: 'contact', label: 'Contact', icon: '05', subItems: [
-      { label: 'Contact Us', to: '/contact' },
-      { label: 'About Us', to: '/about-us' },
-      { label: 'Meet the Team', to: '/about-us/team' },
-      { label: 'Captain Q', to: '/about-us/captain-q' },
-      { label: 'Careers', to: '/contact/careers' },
-    ]},
-    { id: 'pricing', label: 'Pricing', icon: '06', subItems: [
-      { label: 'Training', to: '/#pricing' },
-      { label: 'Self-Fly Hire', to: '/#pricing' },
-      { label: 'Hangarage', to: '/#pricing' },
-      { label: 'Valet Services', to: '/#pricing' },
-    ]},
+    { id: 'training', label: 'Flying', icon: '01', subItems: [] },
+    { id: 'expeditions', label: 'Expeditions', icon: '02', subItems: [] },
+    { id: 'sales', label: 'Sales', icon: '03', subItems: [] },
+    { id: 'maintenance', label: 'Maintenance', icon: '04', subItems: [] },
+    { id: 'contact', label: 'Contact', icon: '05', subItems: [] },
+    { id: 'pricing', label: 'Pricing', icon: '06', subItems: [] },
   ];
 
   // Nav section highlighting on scroll
@@ -3395,7 +3631,7 @@ function Experimentation() {
                           { year: '2005', icon: 'fas fa-flag',           text: 'First Crew to Both Poles',           sub: 'Guinness World Record',   detail: 'Led the first crew expedition to reach both the geographic North and South Poles by helicopter.',                                 img: '/assets/images/expeditions/six-helis-in-North-Pole.jpg' },
                           { year: '2002', icon: 'fas fa-compass',        text: 'First Piston Heli to North Pole',    sub: 'Guinness World Record',   detail: 'Flew a piston-engined helicopter to the North Pole, setting a Guinness World Record.',                                           img: '/assets/images/expeditions/north-pole.jpg' },
                           { year: '1997', icon: 'fas fa-globe-americas', text: 'First Piston Heli Around the World', sub: 'Now in the Smithsonian',  detail: 'First piston helicopter circumnavigation of the globe. The aircraft now resides in the Smithsonian collection.',                  img: '/assets/images/team/quentin-smith-world-record-holder-helicopter-aerobatics.webp' },
-                          { year: '1994', icon: 'fas fa-trophy',         text: 'World Aerobatics Gold',              sub: 'Moscow, Russia',          detail: 'Beat turbine-powered Russian aircraft flying a humble R22 at the World Freestyle Aerobatics Championship.',                        img: '/assets/images/team/helicopter-genius-quentin-smith-great-britain.webp' },
+                          { year: '1994', icon: 'fas fa-trophy',         text: 'World Aerobatics Gold',              sub: 'Moscow, Russia',          detail: 'Beat turbine-powered Russian aircraft flying a humble R22 at the 8th World Helicopter Championship in Tushino, Moscow — awarded the FAI Championship Diploma on 30 August 1994.', img: '/assets/images/legacy/fai-championship-diploma-1994.jpg' },
                         ].map((m, i) => (
                           <div
                             key={i}
@@ -3452,7 +3688,19 @@ function Experimentation() {
                         }}
                       >
                         {HEAVY_HITTERS.map((h, i) => (
-                          <div key={i} className="abt-v9__hitter">
+                          <div
+                            key={i}
+                            className="abt-v9__hitter"
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => setHitterModal(h)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                setHitterModal(h);
+                              }
+                            }}
+                          >
                             <span className="abt-v9__hitter-mark">&ldquo;</span>
                             <p className="abt-v9__hitter-quote">{h.quote}</p>
                             <div className="abt-v9__hitter-footer">
@@ -3460,9 +3708,9 @@ function Experimentation() {
                                 <span className="abt-v9__hitter-name">{h.name}</span>
                                 <span className="abt-v9__hitter-role">{h.title}{h.org ? ` · ${h.org}` : ''}</span>
                               </div>
-                              <button className="abt-v9__hitter-expand" onClick={() => setHitterModal(h)}>
-                                See Full Quote
-                              </button>
+                              <span className="abt-v9__hitter-expand" aria-hidden="true">
+                                {h.letter ? 'See Full Letter' : 'See Full Quote'}
+                              </span>
                             </div>
                           </div>
                         ))}
@@ -3502,18 +3750,49 @@ function Experimentation() {
                     </div>
                     {hitterModal && createPortal(
                       <div className="abt-v9__modal-overlay" onClick={() => setHitterModal(null)}>
-                        <div className="abt-v9__modal" onClick={(e) => e.stopPropagation()}>
+                        <div
+                          className={`abt-v9__modal${hitterModal.letter ? ' abt-v9__modal--letter' : ''}`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <button className="abt-v9__modal-close" onClick={() => setHitterModal(null)} aria-label="Close">
                             <i className="fas fa-times"></i>
                           </button>
-                          <div className="abt-v9__modal-info" style={{ padding: '2rem 1.5rem 1.5rem' }}>
-                            <span className="abt-v9__hitter-mark" style={{ display: 'block', marginBottom: '0.75rem' }}>&ldquo;</span>
-                            <p className="abt-v9__modal-detail" style={{ border: 'none', padding: 0, margin: '0 0 1.25rem', fontSize: '0.82rem', lineHeight: 1.65 }}>{hitterModal.quote}</p>
-                            <div className="abt-v9__hitter-person" style={{ paddingTop: '0.75rem', borderTop: '1px solid #e8e4df' }}>
-                              <span className="abt-v9__hitter-name">{hitterModal.name}</span>
-                              <span className="abt-v9__hitter-role">{hitterModal.title}{hitterModal.org ? ` · ${hitterModal.org}` : ''}</span>
+                          {hitterModal.letter ? (
+                            <div className="abt-v9__letter">
+                              <div className="abt-v9__letter-img">
+                                <img src={hitterModal.letter.img} alt={`Letter from ${hitterModal.name}`} />
+                              </div>
+                              <div className="abt-v9__letter-text">
+                                <span className="abt-v9__hitter-mark" style={{ display: 'block', marginBottom: '0.5rem' }}>&ldquo;</span>
+                                {hitterModal.letter.date && (
+                                  <p className="abt-v9__letter-date">{hitterModal.letter.date}</p>
+                                )}
+                                {hitterModal.letter.body.map((para, idx) => (
+                                  <p key={idx} className="abt-v9__letter-para">{para}</p>
+                                ))}
+                                {hitterModal.letter.signoff && (
+                                  <div className="abt-v9__letter-signoff">
+                                    {hitterModal.letter.signoff.map((line, idx) => (
+                                      <span key={idx}>{line}</span>
+                                    ))}
+                                  </div>
+                                )}
+                                <div className="abt-v9__hitter-person" style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid #e8e4df' }}>
+                                  <span className="abt-v9__hitter-name">{hitterModal.name}</span>
+                                  <span className="abt-v9__hitter-role">{hitterModal.title}{hitterModal.org ? ` · ${hitterModal.org}` : ''}</span>
+                                </div>
+                              </div>
                             </div>
-                          </div>
+                          ) : (
+                            <div className="abt-v9__modal-info" style={{ padding: '2rem 1.5rem 1.5rem' }}>
+                              <span className="abt-v9__hitter-mark" style={{ display: 'block', marginBottom: '0.75rem' }}>&ldquo;</span>
+                              <p className="abt-v9__modal-detail" style={{ border: 'none', padding: 0, margin: '0 0 1.25rem', fontSize: '0.82rem', lineHeight: 1.65 }}>{hitterModal.quote}</p>
+                              <div className="abt-v9__hitter-person" style={{ paddingTop: '0.75rem', borderTop: '1px solid #e8e4df' }}>
+                                <span className="abt-v9__hitter-name">{hitterModal.name}</span>
+                                <span className="abt-v9__hitter-role">{hitterModal.title}{hitterModal.org ? ` · ${hitterModal.org}` : ''}</span>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>,
                       document.body
@@ -3807,7 +4086,7 @@ function Experimentation() {
         </section>
       </div>
       {/* ===== THE CLUBHOUSE ===== */}
-      <section className="clubhouse reveal-element" ref={clubhouseRef} data-cms-section="home-clubhouse-carousel">
+      <section className="clubhouse" ref={clubhouseRef} data-cms-section="home-clubhouse-carousel">
         <div style={{ margin: '0 auto 1.5rem', position: 'relative', zIndex: 2 }} />
         <div className="clubhouse__inner">
           <div className="clubhouse__sticky">
@@ -4087,7 +4366,7 @@ function Experimentation() {
         <h2 className="parallax-section__title">Sales</h2>
       </ParallaxSection>
 
-      <section className="fd-sales reveal-element" id="sales">
+      <section className="fd-sales" id="sales">
         <div className="fd-sales__intro" ref={salesIntroRef}>
           <div className="fd-sales__left">
             <div className="fd-sales__header-sticky" ref={salesHeaderRef} data-cms-text-section="home-sales-section">
@@ -4562,7 +4841,7 @@ function Experimentation() {
           )}
 
           {tradeinFormOpen && !tradeinSubmitted && (
-            <form className="fd-sales__unmanned-form" ref={tradeinFormRef} onSubmit={handleTradeinSubmit}>
+            <form className="fd-sales__unmanned-form fd-sales__unmanned-form--tradein" ref={tradeinFormRef} onSubmit={handleTradeinSubmit}>
               <div className="fd-sales__unmanned-form-header">
                 <span className="fd-sales__unmanned-form-badge">
                   {tradeinIntent === 'tradein' ? 'Trade In Towards New Aircraft' : 'Aircraft Sale Enquiry'}
@@ -4850,31 +5129,17 @@ function Experimentation() {
             <Link to="/parts" className="fd-maint__btn fd-maint__btn--secondary">Explore Our Parts Sales</Link>
           </div>
           <div className="fsd__img-carousel">
-            <div className="fsd__img-track" ref={fsdTrack1Ref}>
-              <div className="fsd__img-set">
-                {['/assets/images/facility/hq-0345.jpg','/assets/images/facility/hq-0354.jpg','/assets/images/facility/hq-0053.jpg','/assets/images/facility/hq-0300.jpg','/assets/images/facility/hq-0477.jpg'].map((src, i) => (
-                  <div key={i} className="fsd__img"><img src={src} alt="" loading="lazy" /></div>
-                ))}
-              </div>
-              <div className="fsd__img-set">
-                {['/assets/images/facility/hq-0345.jpg','/assets/images/facility/hq-0354.jpg','/assets/images/facility/hq-0053.jpg','/assets/images/facility/hq-0300.jpg','/assets/images/facility/hq-0477.jpg'].map((src, i) => (
-                  <div key={`d-${i}`} className="fsd__img"><img src={src} alt="" loading="lazy" /></div>
-                ))}
-              </div>
+            <div className="fsd__img-track fsd__img-track--left">
+              {[...fsdMaintRow1, ...fsdMaintRow1, ...fsdMaintRow1].map((src, i) => (
+                <div key={i} className="fsd__img"><img src={src} alt="" loading="lazy" /></div>
+              ))}
             </div>
           </div>
-          <div className="fsd__img-carousel fsd__img-carousel--reverse">
-            <div className="fsd__img-track fsd__img-track--reverse" ref={fsdTrack2Ref}>
-              <div className="fsd__img-set">
-                {['/assets/images/facility/hq-0388.jpg','/assets/images/facility/hq-0153-3.jpg','/assets/images/facility/hq-0391.jpg','/assets/images/facility/hq-0696.jpg','/assets/images/facility/hq-0345.jpg'].map((src, i) => (
-                  <div key={i} className="fsd__img"><img src={src} alt="" loading="lazy" /></div>
-                ))}
-              </div>
-              <div className="fsd__img-set">
-                {['/assets/images/facility/hq-0388.jpg','/assets/images/facility/hq-0153-3.jpg','/assets/images/facility/hq-0391.jpg','/assets/images/facility/hq-0696.jpg','/assets/images/facility/hq-0345.jpg'].map((src, i) => (
-                  <div key={`d-${i}`} className="fsd__img"><img src={src} alt="" loading="lazy" /></div>
-                ))}
-              </div>
+          <div className="fsd__img-carousel">
+            <div className="fsd__img-track fsd__img-track--right">
+              {[...fsdMaintRow2, ...fsdMaintRow2, ...fsdMaintRow2].map((src, i) => (
+                <div key={i} className="fsd__img"><img src={src} alt="" loading="lazy" /></div>
+              ))}
             </div>
           </div>
         </div>
@@ -4888,6 +5153,14 @@ function Experimentation() {
 
       {/* ===== SECTION: THE ARRIVAL (Location + Testimonials combined) ===== */}
       <div id="contact">
+        <div
+          aria-hidden="true"
+          style={{
+            height: '40px',
+            background: 'linear-gradient(to bottom, rgba(250, 249, 246, 0) 0%, #faf9f6 20%, #faf9f6 100%)',
+            pointerEvents: 'none',
+          }}
+        />
         <ParallaxSection
           image={cmsParallaxContact}
           alt="Find Us & Contact Us"
@@ -4900,29 +5173,26 @@ function Experimentation() {
         <div className="fd-about__divider">
           <span className="fd-about__divider-line"></span>
           <div className="fd-about__socials">
-            <a href="https://www.instagram.com/haborhelicopters/" target="_blank" rel="noopener noreferrer" className="fd-about__social" aria-label="Instagram">
+            <a href="https://www.instagram.com/hqaviation/" target="_blank" rel="noopener noreferrer" className="fd-about__social" aria-label="Instagram">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="2" width="20" height="20" rx="5"></rect><circle cx="12" cy="12" r="5"></circle><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"></circle></svg>
             </a>
-            <a href="https://www.facebook.com/haborhelicopters" target="_blank" rel="noopener noreferrer" className="fd-about__social" aria-label="Facebook">
+            <a href="https://www.facebook.com/HQAviationLtd/" target="_blank" rel="noopener noreferrer" className="fd-about__social" aria-label="Facebook">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path></svg>
             </a>
-            <a href="https://www.youtube.com/@hqaviation" target="_blank" rel="noopener noreferrer" className="fd-about__social" aria-label="YouTube">
+            <a href="https://www.youtube.com/@HQAviationLtd" target="_blank" rel="noopener noreferrer" className="fd-about__social" aria-label="YouTube">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33A2.78 2.78 0 003.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29 29 0 00.46-5.25 29 29 0 00-.46-5.43z"></path><polygon points="9.75,15.02 15.5,11.75 9.75,8.48" fill="currentColor" stroke="none"></polygon></svg>
             </a>
           </div>
           <span className="fd-about__divider-line"></span>
         </div>
 
-        <ArrivalSection />
-      </div>
-
-      {/* ===== EDITORIAL GRID (Wall of Cool) ===== */}
-      <div id="wall-of-cool" className="reveal-element" style={{ scrollMarginTop: '80px' }}>
-        <EditorialGrid />
+        <ArrivalSection picker={ratesInsightsPicker} setPicker={setRatesInsightsPicker}>
+          <WallOfCoolGr11 />
+        </ArrivalSection>
       </div>
 
       {/* ===== LATEST FROM HQ — Rich Blog Section ===== */}
-      <section className="lhq reveal-element" style={{ padding: '6rem 0 4rem', background: '#fff' }}>
+      <section className="lhq" style={{ padding: '0 0 4rem', background: '#fff' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 2rem' }}>
 
           {/* Header */}
@@ -5052,6 +5322,161 @@ function Experimentation() {
 
 
       <style>{`
+        /* ===== Pricing section ===== */
+        .woc-pricing {
+          padding: 6rem 2rem 8rem;
+          background: #faf9f6;
+        }
+        .woc-pricing__inner {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+        .woc-pricing__header {
+          text-align: center;
+          max-width: 720px;
+          margin: 0 auto;
+        }
+        .woc-pricing__pretitle {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.75rem;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: #6b7280;
+        }
+        .woc-pricing__title {
+          margin: 0.6rem 0 1.2rem;
+          font-family: 'Inter', sans-serif;
+          font-weight: 800;
+          font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+          line-height: 1.1;
+          letter-spacing: -0.01em;
+          color: #0a0a0a;
+        }
+        .woc-pricing__lede {
+          margin: 0;
+          font-family: 'Inter', sans-serif;
+          font-size: 1rem;
+          line-height: 1.55;
+          color: #4b5563;
+        }
+
+        /* ===== EDITORIAL GRID GALLERY BACKGROUND ===== */
+        #wall-of-cool {
+          padding-top: 0 !important;
+          padding-bottom: 0 !important;
+        }
+        #wall-of-cool .editorial-grid__gallery {
+          background: linear-gradient(to bottom, #ffffff 0%, #000000 100%);
+          height: 80vh;
+        }
+        @media (min-width: 769px) {
+          #wall-of-cool .editorial-grid__gallery {
+            position: sticky;
+            top: calc(var(--eg-nav-bottom, 120px) + 60px + 30px);
+          }
+        }
+        #wall-of-cool .editorial-grid__photo-grid {
+          background: transparent;
+          padding-bottom: 0;
+        }
+        #wall-of-cool .editorial-grid__photo-cell {
+          border-radius: 8px;
+          border: 1px solid rgba(255,255,255,0.22);
+        }
+        @media (min-width: 769px) {
+          /* ====== Center title card (GR10 design, desktop only) ====== */
+          #wall-of-cool .editorial-grid__gallery {
+            border-radius: 10px 10px 0 0;
+          }
+          #wall-of-cool .editorial-grid__footer {
+            border-radius: 0 0 10px 10px;
+          }
+          #wall-of-cool .editorial-grid__photo-cell--center {
+            grid-row: 2 / 3;
+            grid-column: 2 / 3;
+            background-color: #ffffff;
+            background-image: linear-gradient(90deg,
+              transparent 0%,
+              transparent 7%,
+              rgba(10,10,10,0.55) 7%,
+              rgba(10,10,10,0.55) 7.6%,
+              transparent 7.6%,
+              transparent 11%,
+              rgba(10,10,10,0.28) 11%,
+              rgba(10,10,10,0.28) 11.5%,
+              transparent 11.5%,
+              transparent 88.5%,
+              rgba(10,10,10,0.28) 88.5%,
+              rgba(10,10,10,0.28) 89%,
+              transparent 89%,
+              transparent 92.4%,
+              rgba(10,10,10,0.55) 92.4%,
+              rgba(10,10,10,0.55) 93%,
+              transparent 93%,
+              transparent 100%
+            );
+            border: 1px solid rgba(0,0,0,0.1);
+            cursor: default;
+            transform: none !important;
+            position: relative;
+            align-self: stretch;
+            justify-self: stretch;
+            min-height: 0;
+            height: 100%;
+            min-width: 0;
+          }
+          #wall-of-cool .woc-center-card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+          }
+          #wall-of-cool .woc-center-card__heli {
+            position: absolute;
+            left: 50%;
+            top: 28%;
+            width: 36%;
+            max-width: 130px;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            pointer-events: none;
+          }
+          #wall-of-cool .woc-center-card__title-strip {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            transform: translateY(-50%);
+            padding: 0.55rem 0.9rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            text-align: center;
+          }
+          #wall-of-cool .woc-center-card__title {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: clamp(1.05rem, 2.2vw, 1.7rem);
+            line-height: 1;
+            letter-spacing: -0.005em;
+            text-transform: uppercase;
+            color: #0a0a0a;
+          }
+          #wall-of-cool .woc-center-card__subtitle {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.6rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #6b7280;
+          }
+        }
+        @media (min-width: 769px) {
+          #wall-of-cool .editorial-grid {
+            padding-bottom: 40px;
+          }
+        }
+
         /* ===== BASE STYLES ===== */
         body {
           overflow-x: clip;
@@ -5990,7 +6415,7 @@ function Experimentation() {
         .abt-v9__modal-img-wrap {
           width: 100%;
           aspect-ratio: 4/3;
-          background: #f2efea;
+          background: #fff;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -6024,6 +6449,76 @@ function Experimentation() {
           padding-top: 0.6rem;
           border-top: 1px solid #e8e4df;
         }
+        .abt-v9__modal--letter {
+          max-width: 920px;
+          max-height: calc(100vh - 3rem);
+          display: flex;
+          overflow: hidden;
+        }
+        .abt-v9__letter {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+          width: 100%;
+          max-height: calc(100vh - 3rem);
+        }
+        .abt-v9__letter-img {
+          background: #1a1a1a;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 1.25rem;
+          overflow: hidden;
+        }
+        .abt-v9__letter-img img {
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: contain;
+          display: block;
+        }
+        .abt-v9__letter-text {
+          padding: 1.75rem 1.5rem 1.5rem;
+          overflow-y: auto;
+          font-family: 'Space Grotesk', sans-serif;
+        }
+        .abt-v9__letter-date {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.62rem;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: #a09080;
+          margin: 0 0 0.85rem;
+        }
+        .abt-v9__letter-para {
+          font-size: 0.78rem;
+          color: #3a3228;
+          line-height: 1.65;
+          margin: 0 0 0.85rem;
+        }
+        .abt-v9__letter-signoff {
+          display: flex;
+          flex-direction: column;
+          gap: 0.1rem;
+          margin-top: 1.1rem;
+          font-size: 0.78rem;
+          color: #3a3228;
+          line-height: 1.4;
+          font-style: italic;
+        }
+        @media (max-width: 720px) {
+          .abt-v9__modal--letter {
+            max-width: calc(100vw - 2rem);
+          }
+          .abt-v9__letter {
+            grid-template-columns: 1fr;
+            grid-template-rows: minmax(0, 40vh) minmax(0, 1fr);
+          }
+          .abt-v9__letter-img {
+            padding: 0.75rem;
+          }
+          .abt-v9__letter-text {
+            padding: 1.25rem 1.1rem 1.25rem;
+          }
+        }
 
         /* Heavy hitter recommendations carousel */
         .abt-v9__hitters-carousel {
@@ -6046,6 +6541,20 @@ function Experimentation() {
           border-radius: 6px;
           padding: 1rem 1.1rem 1rem;
           background: #faf8f5;
+          cursor: pointer;
+          transition: border-color 0.15s, background 0.15s, transform 0.15s;
+        }
+        .abt-v9__hitter:hover {
+          border-color: #c9bfb1;
+          background: #fffdf9;
+        }
+        .abt-v9__hitter:focus-visible {
+          outline: 2px solid #a09080;
+          outline-offset: 2px;
+        }
+        .abt-v9__hitter:hover .abt-v9__hitter-expand {
+          border-color: #a09080;
+          color: #3a3228;
         }
         .abt-v9__hitter-mark {
           font-family: Georgia, serif;
@@ -8007,6 +8516,95 @@ function Experimentation() {
           position: relative;
           z-index: 1;
         }
+
+        /* Sticky-blur transition into Sales (desktop only).
+           Mirrors the variants→specs pattern on /aircraft/r66.
+           Overrides position: relative above; z-index: 1 is preserved
+           and the next-sibling parallax gets z-index: 3 to stack above. */
+        @media (min-width: 901px) {
+          .fd-exped {
+            position: sticky;
+            top: var(--fd-exped-stick-top, 0);
+          }
+
+          @media (prefers-reduced-motion: no-preference) {
+            .fd-exped {
+              filter: blur(var(--fd-exped-blur, 0px));
+              will-change: filter;
+            }
+
+            .fd-exped::after {
+              content: '';
+              position: absolute;
+              inset: 0;
+              background: #000;
+              opacity: var(--fd-exped-darken, 0);
+              pointer-events: none;
+              z-index: 2;
+            }
+          }
+
+          /* Every section after .fd-exped must stack above it. .fd-exped is
+             sticky and stays pinned until its containing block (.final-draft,
+             the entire page) ends, so without this rule the rising parallax,
+             #sales, and any later sections would render BEHIND the still-pinned
+             Expeditions. position: relative with no offset is layout-equivalent
+             to static; we only need it so z-index applies. */
+          .fd-exped ~ * {
+            position: relative;
+            z-index: 3;
+          }
+        }
+
+        /* Same sticky-blur pattern, applied to .fd-sales → Maintenance.
+           When fd-sales pins, the next sibling (maint parallax) rises
+           over it. #sales ~ * uses id specificity to beat both
+           .fd-exped ~ * (z-index 3) and .parallax-section (z-index 2),
+           so subsequent siblings reliably stack above the pinned sales. */
+        @media (min-width: 901px) {
+          .fd-sales {
+            position: sticky;
+            top: var(--fd-sales-stick-top, 0);
+          }
+
+          @media (prefers-reduced-motion: no-preference) {
+            .fd-sales {
+              filter: blur(var(--fd-sales-blur, 0px));
+              will-change: filter;
+            }
+          }
+
+          #sales ~ * {
+            position: relative;
+            z-index: 5;
+          }
+
+          /* Same pin-and-blur pattern as .fd-sales but for .fd-maint to
+             contact. Selector is .fd-maint#maintenance (specificity 0,1,1,0)
+             so it beats the existing #sales-tilde-star (0,1,0,0) rule above
+             which would otherwise force this section to position: relative.
+             #maintenance-tilde-star gives subsequent siblings (the contact
+             parallax inside #contact, etc.) a higher z-index so they paint
+             above the pinned maintenance section as they rise over it. */
+          .fd-maint#maintenance {
+            position: sticky;
+            top: var(--fd-maint-stick-top, 0);
+          }
+
+          @media (prefers-reduced-motion: no-preference) {
+            .fd-maint#maintenance {
+              filter: blur(var(--fd-maint-blur, 0px));
+              will-change: filter;
+            }
+          }
+
+          #maintenance ~ * {
+            position: relative;
+            z-index: 7;
+          }
+
+        }
+
         .fd-exped__glow {
           position: absolute;
           transform: translate(-50%, -50%);
@@ -9127,8 +9725,14 @@ function Experimentation() {
           background: #faf9f6;
         }
         .fd-sales__unmanned-coming .fd-sales__intent-btn {
-          margin-left: 2rem;
-          margin-right: 2rem;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        @media (max-width: 768px) {
+          .fd-sales__unmanned-coming .fd-sales__intent-btn {
+            margin-left: 4px;
+            margin-right: 4px;
+          }
         }
         .fd-sales__intent-icon {
           grid-column: 1;
@@ -9414,6 +10018,15 @@ function Experimentation() {
         .fd-sales__tradein-grid {
           grid-template-columns: repeat(2, 1fr);
           margin-top: 1.5rem;
+        }
+        @media (min-width: 641px) {
+          .fd-sales__tradein-grid .fd-sales__intent-btn {
+            max-width: none;
+            width: 100%;
+          }
+          .fd-sales__unmanned-form--tradein {
+            max-width: none;
+          }
         }
         @media (max-width: 640px) {
           .fd-sales__tradein-grid { grid-template-columns: 1fr; }
@@ -10571,8 +11184,23 @@ function Experimentation() {
           }
         }
         .fsd__img-carousel { overflow: hidden; }
-        .fsd__img-track { display: flex; will-change: transform; }
-        .fsd__img-set { display: flex; gap: 0.75rem; flex-shrink: 0; padding-right: 0.75rem; }
+        .fsd__img-track {
+          display: flex;
+          gap: 0.75rem;
+          padding-right: 0.75rem;
+          width: max-content;
+          will-change: transform;
+        }
+        .fsd__img-track--left  { animation: fsdImgScroll 60s linear infinite; }
+        .fsd__img-track--right { animation: fsdImgScroll 72s linear infinite reverse; }
+        @keyframes fsdImgScroll {
+          from { transform: translate3d(0, 0, 0); }
+          to   { transform: translate3d(-33.3333%, 0, 0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .fsd__img-track--left,
+          .fsd__img-track--right { animation: none; }
+        }
         .fsd__img { flex-shrink: 0; width: 220px; height: 150px; border-radius: 6px; overflow: hidden; }
         .fsd__img img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
 
@@ -10772,12 +11400,10 @@ function Experimentation() {
 
         .fd-maint__service-catch {
           position: sticky;
-          top: max(10vh, var(--catch-top, 90px));
+          top: calc(max(10vh, var(--catch-top, 90px)) + 60px);
           z-index: 2;
           padding: 0.5rem 0 10px;
           margin-bottom: 48px;
-          transition: transform 1.6s cubic-bezier(0.16, 1, 0.3, 1);
-          will-change: transform;
           background: #faf9f6;
           margin-left: -3rem;
           margin-right: -3rem;
@@ -14653,9 +15279,9 @@ function Experimentation() {
           .fd-maint__intro { overflow: visible; }
           .fd-maint__intro { grid-template-columns: 1fr; padding-left: 0; padding-right: 0; }
           .fd-maint__left { display: contents; }
-          .fd-maint__header-sticky { position: static; text-align: center; padding: 2rem 0 0; order: 1; }
+          .fd-maint__header-sticky { position: static; text-align: center; padding: 2rem 0 0 !important; order: 1; }
           .fd-maint__text { margin: 0 auto; padding-bottom: 1rem; }
-          .fd-maint__service-catch { position: sticky; top: var(--catch-top, 120px); z-index: 10; transition: none; transform: none !important; padding: 24px 2rem 0; order: 3; margin: 0 0 24px; overflow: visible; background: #faf9f6; }
+          .fd-maint__service-catch { position: sticky; top: var(--catch-top, 120px); z-index: 10; transition: none; transform: none !important; padding: 24px 2rem 0; order: 3; margin: 0 0 24px; margin-top: 0 !important; overflow: visible; background: #faf9f6; }
           .fd-maint__divider-mobile { display: block; order: 2; margin: 1.5rem auto 0; padding: 0 2rem; }
           .fsd__right { padding: 0 !important; margin: 0 !important; }
           .fd-maint__service-catch::before, .fd-maint__service-catch::after { display: none; }

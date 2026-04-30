@@ -1,7 +1,7 @@
 // scripts/seed-site-text.js
 // Seeds Firestore site_text collection with default values from textSections.js
 // Run: node scripts/seed-site-text.js
-// Safe to re-run — uses merge:true so admin-edited values are preserved.
+// Safe to re-run,uses merge:true so admin-edited values are preserved.
 
 require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
 const admin = require('../api/firebase-admin');

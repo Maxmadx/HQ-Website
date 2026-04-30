@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SFH — A6 Two-column split (11 variants)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Share+Tech+Mono&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --warm: #faf9f6;
+      --white: #fff;
+      --ink: #1a1a1a;
+      --muted: #555;
+      --soft: #666;
+      --line: #e8e6e2;
+      --label: #9ca3af;
+      --accent: #2563eb;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Space Grotesk', -apple-system, sans-serif; color: var(--ink); background: var(--warm); }
+
+    .page-header {
+      padding: 2rem 2rem 1rem;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .page-header h1 { margin: 0 0 0.4rem; font-size: 1.4rem; font-weight: 700; letter-spacing: -0.01em; }
+    .page-header p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+    .toc {
+      margin-top: 0.75rem;
+      display: flex; flex-wrap: wrap; gap: 0.35rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .toc a {
+      padding: 0.2rem 0.5rem; border: 1px solid var(--line);
+      border-radius: 4px; color: var(--ink); text-decoration: none;
+      background: var(--warm);
+    }
+    .toc a:hover { background: var(--ink); color: #fff; }
+
+    .variant { border-bottom: 1px solid var(--line); }
+    .variant__chrome {
+      max-width: 1200px; margin: 0 auto;
+      padding: 1.5rem 2rem 0.5rem;
+      display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap;
+    }
+    .variant__tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--ink); background: var(--white);
+      border: 1px solid var(--line);
+      padding: 0.3rem 0.65rem; border-radius: 999px;
+    }
+    .variant__name { font-size: 0.85rem; color: var(--muted); }
+
+    .pre-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--label); display: block; margin-bottom: 0.6rem;
+    }
+    .section-heading {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.2rem; font-weight: 700;
+      letter-spacing: -0.01em; margin: 0 0 0.6rem; line-height: 1.1;
+    }
+    .section-intro {
+      font-size: 0.95rem; line-height: 1.7;
+      color: var(--muted); margin: 0; max-width: 600px;
+    }
+    .section-footer {
+      text-align: center; margin: 2rem 0 0;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--label);
+    }
+    .sub-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--label); margin: 0 0 0.85rem;
+    }
+    .inner { max-width: 1200px; margin: 0 auto; }
+    .header-block { max-width: 600px; margin-bottom: 2rem; }
+
+    /* shared events typography for most variants */
+    .ev-month { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--soft); padding-top: 0.1rem; }
+    .ev-list { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; }
+    .ev-list span + span::before { content: " · "; color: var(--label); }
+
+    /* ─── A6 anchor ──────────────────────────────────────── */
+    .v-a6 { background: var(--white); border-top: 1px solid var(--line); padding: 3rem 2rem; }
+    .v-a6__split { display: grid; grid-template-columns: 1fr 1px 2fr; column-gap: 2.5rem; }
+    .v-a6__divider { background: var(--line); }
+    .v-a6__chips { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+    .v-a6__chip { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 500; color: var(--ink); background: var(--warm); padding: 0.5rem 1rem; border-radius: 6px; width: 100%; }
+    .v-a6__events { display: grid; grid-template-columns: 90px 1fr; row-gap: 0.55rem; column-gap: 1.5rem; }
+
+    /* ─── A6.1 reversed columns ──────────────────────────── */
+    .v-a61 { background: var(--white); border-top: 1px solid var(--line); padding: 3rem 2rem; }
+    .v-a61__split { display: grid; grid-template-columns: 2fr 1px 1fr; column-gap: 2.5rem; }
+    .v-a61__divider { background: var(--line); }
+    .v-a61__chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .v-a61__chip { font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; font-weight: 500; color: var(--ink); background: var(--warm); padding: 0.45rem 0.9rem; border-radius: 999px; }
+    .v-a61__events { display: grid; grid-template-columns: 90px 1fr; row-gap: 0.55rem; column-gap: 1.5rem; }
+
+    /* ─── A6.2 equal columns + multi-row pills ───────────── */
+    .v-a62 { background: var(--white); border-top: 1px solid var(--line); padding: 3rem 2rem; }
+    .v-a62__split { display: grid; grid-template-columns: 1fr 1px 1fr; column-gap: 2.5rem; }
+    .v-a62__divider { background: var(--line); }
+    .v-a62__chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .v-a62__chip { font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; font-weight: 500; color: var(--ink); background: #fff; border: 1px solid var(--line); padding: 0.45rem 0.9rem; border-radius: 999px; }
+    .v-a62__events { display: grid; grid-template-columns: 100px 1fr; row-gap: 0.5rem; column-gap: 1.25rem; }
+
+    /* ─── A6.3 asymmetric 1:3 ────────────────────────────── */
+    .v-a63 { background: var(--white); border-top: 1px solid var(--line); padding: 3rem 2rem; }
+    .v-a63__split { display: grid; grid-template-columns: 1fr 1px 3fr; column-gap: 2.5rem; }
+    .v-a63__divider { background: var(--line); }
+    .v-a63__chips { display: flex; flex-direction: column; gap: 0.4rem; }
+    .v-a63__chip { font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; font-weight: 500; color: var(--ink); padding: 0.4rem 0; border-bottom: 1px solid #f3f1ed; }
+    .v-a63__chip:last-child { border-bottom: none; }
+    .v-a63__events { display: grid; grid-template-columns: 90px 1fr; row-gap: 0.55rem; column-gap: 1.5rem; }
+
+    /* ─── A6.4 gap-only (no divider) ─────────────────────── */
+    .v-a64 { background: var(--white); border-top: 1px solid var(--line); padding: 3rem 2rem; }
+    .v-a64__split { display: grid; grid-template-columns: 1fr 2fr; column-gap: 4rem; }
+    .v-a64__chips { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+    .v-a64__chip { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 500; color: var(--ink); background: var(--warm); padding: 0.5rem 1rem; border-radius: 6px; width: 100%; }
+    .v-a64__events { display: grid; grid-template-columns: 90px 1fr; row-gap: 0.55rem; column-gap: 1.5rem; }
+
+    /* ─── A6.5 accent divider ────────────────────────────── */
+    .v-a65 { background: var(--white); border-top: 1px solid var(--line); padding: 3rem 2rem; }
+    .v-a65__split { display: grid; grid-template-columns: 1fr 4px 2fr; column-gap: 2.5rem; }
+    .v-a65__divider { background: var(--accent); border-radius: 2px; }
+    .v-a65__chips { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+    .v-a65__chip { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 500; color: var(--ink); background: var(--warm); padding: 0.5rem 1rem; border-radius: 6px; width: 100%; border-left: 2px solid transparent; transition: border-color 0.2s; }
+    .v-a65__chip:hover { border-left-color: var(--accent); }
+    .v-a65__events { display: grid; grid-template-columns: 90px 1fr; row-gap: 0.55rem; column-gap: 1.5rem; }
+    .v-a65__events-month { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); padding-top: 0.1rem; }
+
+    /* ─── A6.6 stacked partner cards + striped events ────── */
+    .v-a66 { background: var(--white); border-top: 1px solid var(--line); padding: 3rem 2rem; }
+    .v-a66__split { display: grid; grid-template-columns: 1fr 1px 2fr; column-gap: 2.5rem; }
+    .v-a66__divider { background: var(--line); }
+    .v-a66__cards { display: flex; flex-direction: column; gap: 0.5rem; }
+    .v-a66__card { background: #fff; border: 1px solid var(--line); padding: 0.85rem 1rem; border-radius: 6px; transition: background 0.15s; }
+    .v-a66__card:hover { background: var(--warm); }
+    .v-a66__card-cat { display: block; font-family: 'Share Tech Mono', monospace; font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--label); margin-bottom: 0.2rem; }
+    .v-a66__card-name { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--ink); }
+    .v-a66__card-loc { display: block; font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; color: var(--soft); margin-top: 0.15rem; letter-spacing: 0.05em; }
+    .v-a66__events-row { display: grid; grid-template-columns: 90px 1fr; column-gap: 1.5rem; padding: 0.55rem 0.85rem; }
+    .v-a66__events-row:nth-child(odd) { background: var(--warm); }
+    .v-a66__events-row .ev-month { color: var(--soft); padding-top: 0; align-self: center; }
+
+    /* ─── A6.7 italic serif partner names ─────────────────── */
+    .v-a67 { background: var(--white); border-top: 1px solid var(--line); padding: 3rem 2rem; }
+    .v-a67__split { display: grid; grid-template-columns: 1fr 1px 2fr; column-gap: 2.5rem; }
+    .v-a67__divider { background: var(--line); }
+    .v-a67__partners { display: flex; flex-direction: column; gap: 0.85rem; }
+    .v-a67__partner-name { font-family: 'Cormorant Garamond', serif; font-size: 1.55rem; font-style: italic; font-weight: 500; color: var(--ink); line-height: 1.05; }
+    .v-a67__partner-meta { display: block; font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--label); margin-top: 0.2rem; }
+    .v-a67__events { display: grid; grid-template-columns: 90px 1fr; row-gap: 0.55rem; column-gap: 1.5rem; }
+
+    /* ─── A6.8 three-col seasonal split ──────────────────── */
+    .v-a68 { background: var(--white); border-top: 1px solid var(--line); padding: 3rem 2rem; }
+    .v-a68__split { display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 2.5rem; }
+    .v-a68__col { padding-top: 0.25rem; border-top: 2px solid var(--ink); }
+    .v-a68__col-label { font-family: 'Share Tech Mono', monospace; font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink); margin: 0.5rem 0 1rem; }
+    .v-a68__chips { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+    .v-a68__chip { font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; font-weight: 500; color: var(--ink); background: var(--warm); padding: 0.45rem 0.85rem; border-radius: 4px; width: 100%; }
+    .v-a68__sub { display: grid; grid-template-columns: 70px 1fr; row-gap: 0.5rem; column-gap: 1rem; margin-bottom: 1rem; }
+    .v-a68__sub-month { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--soft); padding-top: 0.1rem; }
+    .v-a68__sub-list { font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; }
+    .v-a68__sub-list span + span::before { content: " · "; color: var(--label); }
+
+    /* ─── A6.9 vertical sub-labels ───────────────────────── */
+    .v-a69 { background: var(--white); border-top: 1px solid var(--line); padding: 3rem 2rem; }
+    .v-a69__split { display: grid; grid-template-columns: auto 1fr 1px auto 2fr; column-gap: 1.5rem; }
+    .v-a69__divider { background: var(--line); }
+    .v-a69__vlabel {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem; letter-spacing: 0.32em; text-transform: uppercase;
+      color: var(--label); align-self: stretch;
+      padding: 0.5rem 0;
+    }
+    .v-a69__chips { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+    .v-a69__chip { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 500; color: var(--ink); background: var(--warm); padding: 0.5rem 1rem; border-radius: 6px; width: 100%; }
+    .v-a69__events { display: grid; grid-template-columns: 90px 1fr; row-gap: 0.55rem; column-gap: 1.5rem; }
+
+    /* ─── A6.10 magazine column header ───────────────────── */
+    .v-a610 { background: var(--white); border-top: 1px solid var(--line); padding: 3rem 2rem; }
+    .v-a610__split { display: grid; grid-template-columns: 1fr 2fr; column-gap: 3rem; }
+    .v-a610__col { border-top: 1px solid var(--ink); padding-top: 0.85rem; }
+    .v-a610__col-head {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .v-a610__col-name { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 600; font-style: italic; }
+    .v-a610__col-num { font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--label); }
+    .v-a610__chips { display: flex; flex-direction: column; gap: 0.45rem; }
+    .v-a610__chip { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 500; color: var(--ink); padding: 0.4rem 0; border-bottom: 1px dotted #c5bfb3; }
+    .v-a610__chip:last-child { border-bottom: none; }
+    .v-a610__chip small { display: block; font-family: 'Share Tech Mono', monospace; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--soft); margin-top: 0.15rem; font-weight: 400; }
+    .v-a610__events { display: grid; grid-template-columns: 90px 1fr; row-gap: 0.55rem; column-gap: 1.5rem; }
+
+    @media (max-width: 768px) {
+      .section-heading { font-size: 1.6rem; }
+      .v-a6__split,
+      .v-a61__split,
+      .v-a62__split,
+      .v-a63__split,
+      .v-a64__split,
+      .v-a65__split,
+      .v-a66__split,
+      .v-a67__split,
+      .v-a68__split,
+      .v-a610__split { grid-template-columns: 1fr; row-gap: 2rem; }
+      .v-a6__divider,
+      .v-a61__divider,
+      .v-a62__divider,
+      .v-a63__divider,
+      .v-a65__divider,
+      .v-a66__divider,
+      .v-a67__divider { display: none; }
+      .v-a69__split { grid-template-columns: 1fr; row-gap: 2rem; }
+      .v-a69__vlabel { writing-mode: horizontal-tb; transform: none; padding: 0; margin-bottom: 0.6rem; }
+      .v-a69__divider { display: none; }
+      .v-a6__events,
+      .v-a61__events,
+      .v-a62__events,
+      .v-a63__events,
+      .v-a64__events,
+      .v-a65__events,
+      .v-a67__events,
+      .v-a69__events,
+      .v-a610__events { grid-template-columns: 60px 1fr; }
+      .v-a66__events-row { grid-template-columns: 60px 1fr; }
+      .v-a68__sub { grid-template-columns: 50px 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="page-header">
+  <h1>SFH Where &amp; When — A6 Two-column split (11 variants)</h1>
+  <p>Original A6 on top as anchor. Below it: 10 evolutions of the two-column layout.</p>
+  <nav class="toc">
+    <a href="#a6">A6</a>
+    <a href="#a61">A6.1</a><a href="#a62">A6.2</a><a href="#a63">A6.3</a><a href="#a64">A6.4</a><a href="#a65">A6.5</a>
+    <a href="#a66">A6.6</a><a href="#a67">A6.7</a><a href="#a68">A6.8</a><a href="#a69">A6.9</a><a href="#a610">A6.10</a>
+  </nav>
+</header>
+
+<!-- A6 anchor -->
+<div class="variant" id="a6">
+  <div class="variant__chrome"><span class="variant__tag">A6 · anchor</span><span class="variant__name">Partners left (1fr) · vertical hairline · events right (2fr). Stacked warm-fill chips.</span></div>
+  <section class="v-a6"><div class="inner">
+    <div class="header-block"><span class="pre-label">Off-Airfield</span><h2 class="section-heading">Where &amp; When</h2><p class="section-intro">Partners we work with and the calendar dates we fly clients to.</p></div>
+    <div class="v-a6__split">
+      <div>
+        <p class="sub-label">Trusted By</p>
+        <div class="v-a6__chips"><span class="v-a6__chip">Holland &amp; Holland</span><span class="v-a6__chip">The Hut</span><span class="v-a6__chip">E.J. Churchill</span></div>
+      </div>
+      <div class="v-a6__divider" aria-hidden="true"></div>
+      <div>
+        <p class="sub-label">The Season</p>
+        <div class="v-a6__events">
+          <div class="ev-month">Mar</div><div class="ev-list"><span>Cheltenham Festival</span></div>
+          <div class="ev-month">Apr</div><div class="ev-list"><span>Grand National (Aintree)</span></div>
+          <div class="ev-month">Jun</div><div class="ev-list"><span>Royal Ascot</span><span>Epsom Derby</span></div>
+          <div class="ev-month">Jul</div><div class="ev-list"><span>Henley Royal Regatta</span><span>Goodwood Festival of Speed</span></div>
+          <div class="ev-month">Aug</div><div class="ev-list"><span>Glorious Goodwood</span></div>
+          <div class="ev-month">May–Oct</div><div class="ev-list"><span>Newmarket</span><span>York</span></div>
+          <div class="ev-month">Year-round</div><div class="ev-list"><span>Sandown Park</span><span>Newbury</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="section-footer">Plus the rest of the calendar — let us know your day.</p>
+  </div></section>
+</div>
+
+<!-- A6.1 reversed -->
+<div class="variant" id="a61">
+  <div class="variant__chrome"><span class="variant__tag">A6.1 · Reversed</span><span class="variant__name">Events on the LEFT (anchor position), partners on the right as horizontal pills. Re-prioritises events.</span></div>
+  <section class="v-a61"><div class="inner">
+    <div class="header-block"><span class="pre-label">Off-Airfield</span><h2 class="section-heading">Where &amp; When</h2><p class="section-intro">Partners we work with and the calendar dates we fly clients to.</p></div>
+    <div class="v-a61__split">
+      <div>
+        <p class="sub-label">The Season</p>
+        <div class="v-a61__events">
+          <div class="ev-month">Mar</div><div class="ev-list"><span>Cheltenham Festival</span></div>
+          <div class="ev-month">Apr</div><div class="ev-list"><span>Grand National (Aintree)</span></div>
+          <div class="ev-month">Jun</div><div class="ev-list"><span>Royal Ascot</span><span>Epsom Derby</span></div>
+          <div class="ev-month">Jul</div><div class="ev-list"><span>Henley Royal Regatta</span><span>Goodwood Festival of Speed</span></div>
+          <div class="ev-month">Aug</div><div class="ev-list"><span>Glorious Goodwood</span></div>
+          <div class="ev-month">May–Oct</div><div class="ev-list"><span>Newmarket</span><span>York</span></div>
+          <div class="ev-month">Year-round</div><div class="ev-list"><span>Sandown Park</span><span>Newbury</span></div>
+        </div>
+      </div>
+      <div class="v-a61__divider" aria-hidden="true"></div>
+      <div>
+        <p class="sub-label">Trusted By</p>
+        <div class="v-a61__chips"><span class="v-a61__chip">Holland &amp; Holland</span><span class="v-a61__chip">The Hut</span><span class="v-a61__chip">E.J. Churchill</span></div>
+      </div>
+    </div>
+    <p class="section-footer">Plus the rest of the calendar — let us know your day.</p>
+  </div></section>
+</div>
+
+<!-- A6.2 equal columns -->
+<div class="variant" id="a62">
+  <div class="variant__chrome"><span class="variant__tag">A6.2 · Equal columns</span><span class="variant__name">1fr · divider · 1fr — equal weight to both sides. Partners as horizontal outlined pills.</span></div>
+  <section class="v-a62"><div class="inner">
+    <div class="header-block"><span class="pre-label">Off-Airfield</span><h2 class="section-heading">Where &amp; When</h2><p class="section-intro">Partners we work with and the calendar dates we fly clients to.</p></div>
+    <div class="v-a62__split">
+      <div>
+        <p class="sub-label">Trusted By</p>
+        <div class="v-a62__chips"><span class="v-a62__chip">Holland &amp; Holland</span><span class="v-a62__chip">The Hut</span><span class="v-a62__chip">E.J. Churchill</span></div>
+      </div>
+      <div class="v-a62__divider" aria-hidden="true"></div>
+      <div>
+        <p class="sub-label">The Season</p>
+        <div class="v-a62__events">
+          <div class="ev-month">Mar</div><div class="ev-list"><span>Cheltenham Festival</span></div>
+          <div class="ev-month">Apr</div><div class="ev-list"><span>Grand National (Aintree)</span></div>
+          <div class="ev-month">Jun</div><div class="ev-list"><span>Royal Ascot</span><span>Epsom Derby</span></div>
+          <div class="ev-month">Jul</div><div class="ev-list"><span>Henley Royal Regatta</span><span>Goodwood F. of Speed</span></div>
+          <div class="ev-month">Aug</div><div class="ev-list"><span>Glorious Goodwood</span></div>
+          <div class="ev-month">May–Oct</div><div class="ev-list"><span>Newmarket</span><span>York</span></div>
+          <div class="ev-month">Year-round</div><div class="ev-list"><span>Sandown Park</span><span>Newbury</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="section-footer">Plus the rest of the calendar — let us know your day.</p>
+  </div></section>
+</div>
+
+<!-- A6.3 asymmetric 1:3 -->
+<div class="variant" id="a63">
+  <div class="variant__chrome"><span class="variant__tag">A6.3 · 1:3 wider events</span><span class="variant__name">Narrow partners column (1fr) gives events 3fr. Partners shift to a hairline-divided list (no chips).</span></div>
+  <section class="v-a63"><div class="inner">
+    <div class="header-block"><span class="pre-label">Off-Airfield</span><h2 class="section-heading">Where &amp; When</h2><p class="section-intro">Partners we work with and the calendar dates we fly clients to.</p></div>
+    <div class="v-a63__split">
+      <div>
+        <p class="sub-label">Trusted By</p>
+        <div class="v-a63__chips">
+          <span class="v-a63__chip">Holland &amp; Holland</span>
+          <span class="v-a63__chip">The Hut</span>
+          <span class="v-a63__chip">E.J. Churchill</span>
+        </div>
+      </div>
+      <div class="v-a63__divider" aria-hidden="true"></div>
+      <div>
+        <p class="sub-label">The Season</p>
+        <div class="v-a63__events">
+          <div class="ev-month">Mar</div><div class="ev-list"><span>Cheltenham Festival</span></div>
+          <div class="ev-month">Apr</div><div class="ev-list"><span>Grand National (Aintree)</span></div>
+          <div class="ev-month">Jun</div><div class="ev-list"><span>Royal Ascot</span><span>Epsom Derby</span></div>
+          <div class="ev-month">Jul</div><div class="ev-list"><span>Henley Royal Regatta</span><span>Goodwood Festival of Speed</span></div>
+          <div class="ev-month">Aug</div><div class="ev-list"><span>Glorious Goodwood</span></div>
+          <div class="ev-month">May–Oct</div><div class="ev-list"><span>Newmarket</span><span>York</span></div>
+          <div class="ev-month">Year-round</div><div class="ev-list"><span>Sandown Park</span><span>Newbury</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="section-footer">Plus the rest of the calendar — let us know your day.</p>
+  </div></section>
+</div>
+
+<!-- A6.4 gap-only -->
+<div class="variant" id="a64">
+  <div class="variant__chrome"><span class="variant__tag">A6.4 · Gap-only</span><span class="variant__name">No vertical divider — generous 4rem column gap separates the two sides. Cleanest, most negative-space.</span></div>
+  <section class="v-a64"><div class="inner">
+    <div class="header-block"><span class="pre-label">Off-Airfield</span><h2 class="section-heading">Where &amp; When</h2><p class="section-intro">Partners we work with and the calendar dates we fly clients to.</p></div>
+    <div class="v-a64__split">
+      <div>
+        <p class="sub-label">Trusted By</p>
+        <div class="v-a64__chips"><span class="v-a64__chip">Holland &amp; Holland</span><span class="v-a64__chip">The Hut</span><span class="v-a64__chip">E.J. Churchill</span></div>
+      </div>
+      <div>
+        <p class="sub-label">The Season</p>
+        <div class="v-a64__events">
+          <div class="ev-month">Mar</div><div class="ev-list"><span>Cheltenham Festival</span></div>
+          <div class="ev-month">Apr</div><div class="ev-list"><span>Grand National (Aintree)</span></div>
+          <div class="ev-month">Jun</div><div class="ev-list"><span>Royal Ascot</span><span>Epsom Derby</span></div>
+          <div class="ev-month">Jul</div><div class="ev-list"><span>Henley Royal Regatta</span><span>Goodwood Festival of Speed</span></div>
+          <div class="ev-month">Aug</div><div class="ev-list"><span>Glorious Goodwood</span></div>
+          <div class="ev-month">May–Oct</div><div class="ev-list"><span>Newmarket</span><span>York</span></div>
+          <div class="ev-month">Year-round</div><div class="ev-list"><span>Sandown Park</span><span>Newbury</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="section-footer">Plus the rest of the calendar — let us know your day.</p>
+  </div></section>
+</div>
+
+<!-- A6.5 accent divider -->
+<div class="variant" id="a65">
+  <div class="variant__chrome"><span class="variant__tag">A6.5 · Accent divider</span><span class="variant__name">4px brand-blue stripe down the middle. Months turn blue. Subtle brand statement.</span></div>
+  <section class="v-a65"><div class="inner">
+    <div class="header-block"><span class="pre-label">Off-Airfield</span><h2 class="section-heading">Where &amp; When</h2><p class="section-intro">Partners we work with and the calendar dates we fly clients to.</p></div>
+    <div class="v-a65__split">
+      <div>
+        <p class="sub-label">Trusted By</p>
+        <div class="v-a65__chips" style="display:flex;flex-direction:column;gap:0.5rem;align-items:flex-start;">
+          <span class="v-a65__chip">Holland &amp; Holland</span>
+          <span class="v-a65__chip">The Hut</span>
+          <span class="v-a65__chip">E.J. Churchill</span>
+        </div>
+      </div>
+      <div class="v-a65__divider" aria-hidden="true"></div>
+      <div>
+        <p class="sub-label">The Season</p>
+        <div class="v-a65__events">
+          <div class="v-a65__events-month">Mar</div><div class="ev-list"><span>Cheltenham Festival</span></div>
+          <div class="v-a65__events-month">Apr</div><div class="ev-list"><span>Grand National (Aintree)</span></div>
+          <div class="v-a65__events-month">Jun</div><div class="ev-list"><span>Royal Ascot</span><span>Epsom Derby</span></div>
+          <div class="v-a65__events-month">Jul</div><div class="ev-list"><span>Henley Royal Regatta</span><span>Goodwood Festival of Speed</span></div>
+          <div class="v-a65__events-month">Aug</div><div class="ev-list"><span>Glorious Goodwood</span></div>
+          <div class="v-a65__events-month">May–Oct</div><div class="ev-list"><span>Newmarket</span><span>York</span></div>
+          <div class="v-a65__events-month">Year-round</div><div class="ev-list"><span>Sandown Park</span><span>Newbury</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="section-footer">Plus the rest of the calendar — let us know your day.</p>
+  </div></section>
+</div>
+
+<!-- A6.6 cards + striped events -->
+<div class="variant" id="a66">
+  <div class="variant__chrome"><span class="variant__tag">A6.6 · Cards + striped events</span><span class="variant__name">Partners as outlined cards (cat / name / location). Events as striped table rows.</span></div>
+  <section class="v-a66"><div class="inner">
+    <div class="header-block"><span class="pre-label">Off-Airfield</span><h2 class="section-heading">Where &amp; When</h2><p class="section-intro">Partners we work with and the calendar dates we fly clients to.</p></div>
+    <div class="v-a66__split">
+      <div>
+        <p class="sub-label">Trusted By</p>
+        <div class="v-a66__cards">
+          <div class="v-a66__card"><span class="v-a66__card-cat">Shooting Ground</span><span class="v-a66__card-name">Holland &amp; Holland</span><span class="v-a66__card-loc">Northwood</span></div>
+          <div class="v-a66__card"><span class="v-a66__card-cat">Restaurant</span><span class="v-a66__card-name">The Hut</span><span class="v-a66__card-loc">Isle of Wight</span></div>
+          <div class="v-a66__card"><span class="v-a66__card-cat">Shooting Ground</span><span class="v-a66__card-name">E.J. Churchill</span><span class="v-a66__card-loc">West Wycombe</span></div>
+        </div>
+      </div>
+      <div class="v-a66__divider" aria-hidden="true"></div>
+      <div>
+        <p class="sub-label">The Season</p>
+        <div class="v-a66__events-row"><div class="ev-month">Mar</div><div class="ev-list"><span>Cheltenham Festival</span></div></div>
+        <div class="v-a66__events-row"><div class="ev-month">Apr</div><div class="ev-list"><span>Grand National (Aintree)</span></div></div>
+        <div class="v-a66__events-row"><div class="ev-month">Jun</div><div class="ev-list"><span>Royal Ascot · Epsom Derby</span></div></div>
+        <div class="v-a66__events-row"><div class="ev-month">Jul</div><div class="ev-list"><span>Henley Regatta · Goodwood F. of Speed</span></div></div>
+        <div class="v-a66__events-row"><div class="ev-month">Aug</div><div class="ev-list"><span>Glorious Goodwood</span></div></div>
+        <div class="v-a66__events-row"><div class="ev-month">May–Oct</div><div class="ev-list"><span>Newmarket · York</span></div></div>
+        <div class="v-a66__events-row"><div class="ev-month">Year-round</div><div class="ev-list"><span>Sandown Park · Newbury</span></div></div>
+      </div>
+    </div>
+    <p class="section-footer">Plus the rest of the calendar — let us know your day.</p>
+  </div></section>
+</div>
+
+<!-- A6.7 italic serif partners -->
+<div class="variant" id="a67">
+  <div class="variant__chrome"><span class="variant__tag">A6.7 · Italic serif partners</span><span class="variant__name">Partners become large italic Cormorant names (no chips, just typography). Editorial / magazine masthead feel.</span></div>
+  <section class="v-a67"><div class="inner">
+    <div class="header-block"><span class="pre-label">Off-Airfield</span><h2 class="section-heading">Where &amp; When</h2><p class="section-intro">Partners we work with and the calendar dates we fly clients to.</p></div>
+    <div class="v-a67__split">
+      <div>
+        <p class="sub-label">Trusted By</p>
+        <div class="v-a67__partners">
+          <div><span class="v-a67__partner-name">Holland &amp; Holland</span><span class="v-a67__partner-meta">Shooting Ground · Northwood</span></div>
+          <div><span class="v-a67__partner-name">The Hut</span><span class="v-a67__partner-meta">Restaurant · Isle of Wight</span></div>
+          <div><span class="v-a67__partner-name">E.J. Churchill</span><span class="v-a67__partner-meta">Shooting Ground · West Wycombe</span></div>
+        </div>
+      </div>
+      <div class="v-a67__divider" aria-hidden="true"></div>
+      <div>
+        <p class="sub-label">The Season</p>
+        <div class="v-a67__events">
+          <div class="ev-month">Mar</div><div class="ev-list"><span>Cheltenham Festival</span></div>
+          <div class="ev-month">Apr</div><div class="ev-list"><span>Grand National (Aintree)</span></div>
+          <div class="ev-month">Jun</div><div class="ev-list"><span>Royal Ascot</span><span>Epsom Derby</span></div>
+          <div class="ev-month">Jul</div><div class="ev-list"><span>Henley Royal Regatta</span><span>Goodwood Festival of Speed</span></div>
+          <div class="ev-month">Aug</div><div class="ev-list"><span>Glorious Goodwood</span></div>
+          <div class="ev-month">May–Oct</div><div class="ev-list"><span>Newmarket</span><span>York</span></div>
+          <div class="ev-month">Year-round</div><div class="ev-list"><span>Sandown Park</span><span>Newbury</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="section-footer">Plus the rest of the calendar — let us know your day.</p>
+  </div></section>
+</div>
+
+<!-- A6.8 three-col seasonal split -->
+<div class="variant" id="a68">
+  <div class="variant__chrome"><span class="variant__tag">A6.8 · Three columns</span><span class="variant__name">Three equal columns: Partners | Spring–Summer events | Autumn / Year-round events. Each col gets a top rule.</span></div>
+  <section class="v-a68"><div class="inner">
+    <div class="header-block"><span class="pre-label">Off-Airfield</span><h2 class="section-heading">Where &amp; When</h2><p class="section-intro">Partners we work with and the calendar dates we fly clients to.</p></div>
+    <div class="v-a68__split">
+      <div class="v-a68__col">
+        <p class="v-a68__col-label">Trusted Partners</p>
+        <div class="v-a68__chips"><span class="v-a68__chip">Holland &amp; Holland</span><span class="v-a68__chip">The Hut</span><span class="v-a68__chip">E.J. Churchill</span></div>
+      </div>
+      <div class="v-a68__col">
+        <p class="v-a68__col-label">Spring &amp; Summer</p>
+        <div class="v-a68__sub">
+          <div class="v-a68__sub-month">Mar</div><div class="v-a68__sub-list"><span>Cheltenham Festival</span></div>
+          <div class="v-a68__sub-month">Apr</div><div class="v-a68__sub-list"><span>Grand National (Aintree)</span></div>
+          <div class="v-a68__sub-month">Jun</div><div class="v-a68__sub-list"><span>Royal Ascot</span><span>Epsom Derby</span></div>
+          <div class="v-a68__sub-month">Jul</div><div class="v-a68__sub-list"><span>Henley Regatta</span><span>Goodwood F. of Speed</span></div>
+          <div class="v-a68__sub-month">Aug</div><div class="v-a68__sub-list"><span>Glorious Goodwood</span></div>
+        </div>
+      </div>
+      <div class="v-a68__col">
+        <p class="v-a68__col-label">Flat &amp; All-Year</p>
+        <div class="v-a68__sub">
+          <div class="v-a68__sub-month">May–Oct</div><div class="v-a68__sub-list"><span>Newmarket</span><span>York</span></div>
+          <div class="v-a68__sub-month">All Year</div><div class="v-a68__sub-list"><span>Sandown Park</span><span>Newbury</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="section-footer">Plus the rest of the calendar — let us know your day.</p>
+  </div></section>
+</div>
+
+<!-- A6.9 vertical sub-labels -->
+<div class="variant" id="a69">
+  <div class="variant__chrome"><span class="variant__tag">A6.9 · Vertical sub-labels</span><span class="variant__name">"TRUSTED BY" and "THE SEASON" rotated 90° in a thin gutter on each block. Most architectural.</span></div>
+  <section class="v-a69"><div class="inner">
+    <div class="header-block"><span class="pre-label">Off-Airfield</span><h2 class="section-heading">Where &amp; When</h2><p class="section-intro">Partners we work with and the calendar dates we fly clients to.</p></div>
+    <div class="v-a69__split">
+      <span class="v-a69__vlabel">Trusted By</span>
+      <div>
+        <div class="v-a69__chips"><span class="v-a69__chip">Holland &amp; Holland</span><span class="v-a69__chip">The Hut</span><span class="v-a69__chip">E.J. Churchill</span></div>
+      </div>
+      <div class="v-a69__divider" aria-hidden="true"></div>
+      <span class="v-a69__vlabel">The Season</span>
+      <div>
+        <div class="v-a69__events">
+          <div class="ev-month">Mar</div><div class="ev-list"><span>Cheltenham Festival</span></div>
+          <div class="ev-month">Apr</div><div class="ev-list"><span>Grand National (Aintree)</span></div>
+          <div class="ev-month">Jun</div><div class="ev-list"><span>Royal Ascot</span><span>Epsom Derby</span></div>
+          <div class="ev-month">Jul</div><div class="ev-list"><span>Henley Royal Regatta</span><span>Goodwood Festival of Speed</span></div>
+          <div class="ev-month">Aug</div><div class="ev-list"><span>Glorious Goodwood</span></div>
+          <div class="ev-month">May–Oct</div><div class="ev-list"><span>Newmarket</span><span>York</span></div>
+          <div class="ev-month">Year-round</div><div class="ev-list"><span>Sandown Park</span><span>Newbury</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="section-footer">Plus the rest of the calendar — let us know your day.</p>
+  </div></section>
+</div>
+
+<!-- A6.10 magazine column header -->
+<div class="variant" id="a610">
+  <div class="variant__chrome"><span class="variant__tag">A6.10 · Magazine columns</span><span class="variant__name">Each column gets a top rule + italic Cormorant column-name + serial-number callout. Like a newspaper masthead.</span></div>
+  <section class="v-a610"><div class="inner">
+    <div class="header-block"><span class="pre-label">Off-Airfield</span><h2 class="section-heading">Where &amp; When</h2><p class="section-intro">Partners we work with and the calendar dates we fly clients to.</p></div>
+    <div class="v-a610__split">
+      <div class="v-a610__col">
+        <div class="v-a610__col-head"><span class="v-a610__col-name">Where</span><span class="v-a610__col-num">No. 01</span></div>
+        <div class="v-a610__chips">
+          <div class="v-a610__chip">Holland &amp; Holland<small>Shooting Ground · Northwood</small></div>
+          <div class="v-a610__chip">The Hut<small>Restaurant · Isle of Wight</small></div>
+          <div class="v-a610__chip">E.J. Churchill<small>Shooting Ground · West Wycombe</small></div>
+        </div>
+      </div>
+      <div class="v-a610__col">
+        <div class="v-a610__col-head"><span class="v-a610__col-name">When</span><span class="v-a610__col-num">No. 02</span></div>
+        <div class="v-a610__events">
+          <div class="ev-month">Mar</div><div class="ev-list"><span>Cheltenham Festival</span></div>
+          <div class="ev-month">Apr</div><div class="ev-list"><span>Grand National (Aintree)</span></div>
+          <div class="ev-month">Jun</div><div class="ev-list"><span>Royal Ascot</span><span>Epsom Derby</span></div>
+          <div class="ev-month">Jul</div><div class="ev-list"><span>Henley Royal Regatta</span><span>Goodwood Festival of Speed</span></div>
+          <div class="ev-month">Aug</div><div class="ev-list"><span>Glorious Goodwood</span></div>
+          <div class="ev-month">May–Oct</div><div class="ev-list"><span>Newmarket</span><span>York</span></div>
+          <div class="ev-month">Year-round</div><div class="ev-list"><span>Sandown Park</span><span>Newbury</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="section-footer">Plus the rest of the calendar — let us know your day.</p>
+  </div></section>
+</div>
+
+</body>
+</html>

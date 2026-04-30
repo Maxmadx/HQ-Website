@@ -24,6 +24,7 @@ import '../assets/css/components.css';
 
 // Import FooterMinimal component
 import FooterMinimal from '../components/FooterMinimal';
+import HqMenuPanel from '../components/HqMenuPanel';
 
 /**
  * TYPE RATING PAGE HEADER COMPONENT
@@ -69,62 +70,7 @@ function TypeRatingHeader() {
   return (
     <>
       {/* Menu Panel */}
-      <div className={`hq-menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="hq-menu-grid">
-          <div className="hq-menu-section">
-            <h3>About</h3>
-            <ul>
-              <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-              <li><Link to="/about-us" onClick={closeMenu}>About Us</Link></li>
-              <li><Link to="/about-us/team" onClick={closeMenu}>Meet The Team</Link></li>
-              <li><Link to="/about-us/captain-q" onClick={closeMenu}>Quentin Smith</Link></li>
-              <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Aircraft Sales</h3>
-            <ul>
-              <li><Link to="/aircraft-sales" onClick={closeMenu}>New Aircraft</Link></li>
-              <li><Link to="/aircraft-sales/new/r88" onClick={closeMenu}>R88</Link></li>
-              <li><Link to="/aircraft-sales/new/r66" onClick={closeMenu}>R66</Link></li>
-              <li><Link to="/aircraft-sales/new/r44" onClick={closeMenu}>R44</Link></li>
-              <li><Link to="/aircraft-sales/new/r22" onClick={closeMenu}>R22</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Flight Training</h3>
-            <ul>
-              <li><Link to="/training" onClick={closeMenu}>Training Overview</Link></li>
-              <li><Link to="/training/trial-lessons" onClick={closeMenu}>Trial Lessons</Link></li>
-              <li><Link to="/training/ppl" onClick={closeMenu}>Private Pilot License</Link></li>
-              <li><Link to="/training/type-rating" onClick={closeMenu}>Type Rating</Link></li>
-              <li><Link to="/training/faq" onClick={closeMenu}>Training FAQ</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Services</h3>
-            <ul>
-              <li><Link to="/services" onClick={closeMenu}>Services Overview</Link></li>
-              <li><Link to="/services/maintenance" onClick={closeMenu}>Maintenance</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Experiences</h3>
-            <ul>
-              <li><Link to="/expeditions" onClick={closeMenu}>Expeditions</Link></li>
-              <li><Link to="/expeditions/calendar" onClick={closeMenu}>Calendar</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Contact</h3>
-            <ul>
-              <li><Link to="/contact" onClick={closeMenu}>Contact Us</Link></li>
-              <li><Link to="/contact/careers" onClick={closeMenu}>Careers</Link></li>
-              <li><Link to="/contact/pricing" onClick={closeMenu}>Pricing</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <HqMenuPanel open={menuOpen} onClose={closeMenu} />
 
       {/* Menu Button */}
       <button
@@ -366,7 +312,7 @@ function TypeRating() {
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
-          subject: `Type Rating — ${enquiryAircraft}`,
+          subject: `Type Rating: ${enquiryAircraft}`,
           message: formData.message,
           source: 'type-rating-page',
         }),
@@ -421,7 +367,7 @@ function TypeRating() {
         { value: '4', label: 'Seats' },
         { value: '130', label: 'Knots' },
       ],
-      description: 'The world\'s best-selling helicopter. Spacious, powerful, and versatile—perfect for touring, business travel, and family flying.',
+      description: 'The world\'s best-selling helicopter. Spacious, powerful, and versatile, perfect for touring, business travel, and family flying.',
       groundHours: 8,
       flightHours: 5,
     },
@@ -454,7 +400,7 @@ function TypeRating() {
         { value: '6', label: 'Seats' },
         { value: '130', label: 'Knots' },
       ],
-      description: 'The legendary single-engine workhorse. The AS350 combines exceptional performance with proven reliability—a favourite for utility, tours, and aerial work worldwide.',
+      description: 'The legendary single-engine workhorse. The AS350 combines exceptional performance with proven reliability, a favourite for utility, tours, and aerial work worldwide.',
       groundHours: 10,
       flightHours: 5,
     },
@@ -465,7 +411,7 @@ function TypeRating() {
         { value: '7', label: 'Seats' },
         { value: '140', label: 'Knots' },
       ],
-      description: 'Premium single-turbine performance. The Bell 407 combines spacious cabin comfort with outstanding power and speed—a favourite for corporate and charter operations.',
+      description: 'Premium single-turbine performance. The Bell 407 combines spacious cabin comfort with outstanding power and speed, a favourite for corporate and charter operations.',
       groundHours: 12,
       flightHours: 5,
     },

@@ -231,13 +231,11 @@ export const SECTIONS = [
     type: 'gallery',
     viewport: 'both',
     images: [
-      { id: 'ms1', url: '/assets/images/facility/maintenance-.jpg',   alt: 'Maintenance facility' },
-      { id: 'ms2', url: '/assets/images/facility/hq-0391.jpg',        alt: 'Engineering workshop' },
-      { id: 'ms3', url: '/assets/images/facility/hq-0477.jpg',        alt: 'Engine work' },
-      { id: 'ms4', url: '/assets/images/facility/hq-0354.jpg',        alt: 'Rotor inspection' },
-      { id: 'ms5', url: '/assets/images/facility/hq-0035.jpg',        alt: 'Hangar floor' },
-      { id: 'ms6', url: '/assets/images/facility/hq-0089.jpg',        alt: 'Component detail' },
-      { id: 'ms7', url: '/assets/images/facility/hq-0745.jpg',        alt: 'Aircraft on apron' },
+      { id: 'ms1', url: '/assets/images/facility/eyeinthesky/24__JWD5077_lr.jpg', alt: 'Maintenance facility' },
+      { id: 'ms2', url: '/assets/images/facility/eyeinthesky/25__JWD5068_lr.jpg', alt: 'Engineering workshop' },
+      { id: 'ms3', url: '/assets/images/facility/eyeinthesky/26__JWD5076_lr.jpg', alt: 'Engine work' },
+      { id: 'ms4', url: '/assets/images/facility/eyeinthesky/27_IMG_5177_lr.jpg', alt: 'Rotor inspection' },
+      { id: 'ms5', url: '/assets/images/facility/eyeinthesky/28__JWD5290_lr.jpg', alt: 'Hangar floor' },
     ],
   },
   {
@@ -248,13 +246,11 @@ export const SECTIONS = [
     type: 'gallery',
     viewport: 'both',
     images: [
-      { id: 'mt1', url: '/assets/images/facility/sales-rebuild.jpg',      alt: 'Rebuild in progress' },
-      { id: 'mt2', url: '/assets/images/facility/hq-0167.jpg',            alt: 'Avionics bench' },
-      { id: 'mt3', url: '/assets/images/facility/okey-paint-quality.jpg', alt: 'Paint shop' },
-      { id: 'mt4', url: '/assets/images/facility/hq-0345.jpg',            alt: 'Rotor blades' },
-      { id: 'mt5', url: '/assets/images/facility/hq-0053.jpg',            alt: 'Workshop' },
-      { id: 'mt6', url: '/assets/images/facility/hq-0300.jpg',            alt: 'Cockpit instruments' },
-      { id: 'mt7', url: '/assets/images/facility/hq-0696.jpg',            alt: 'Aircraft on apron' },
+      { id: 'mt1', url: '/assets/images/facility/eyeinthesky/29__JWD5277_lr.jpg', alt: 'Rebuild in progress' },
+      { id: 'mt2', url: '/assets/images/facility/eyeinthesky/30__JWD5055_lr.jpg', alt: 'Avionics bench' },
+      { id: 'mt3', url: '/assets/images/facility/eyeinthesky/31__JWD5262.jpg',    alt: 'Paint shop' },
+      { id: 'mt4', url: '/assets/images/facility/eyeinthesky/32__JWD5267_lr.jpg', alt: 'Rotor blades' },
+      { id: 'mt5', url: '/assets/images/facility/eyeinthesky/33__JWD5272_lr.jpg', alt: 'Workshop' },
     ],
   },
   {
@@ -864,7 +860,7 @@ export const SECTIONS = [
     hint: 'Full-screen background image at the top of the Helicopter Tour page',
     type: 'single',
     images: [
-      { id: 'hth1', url: '/assets/images/gallery/flying/flying-.jpg', alt: 'London aerial view' },
+      { id: 'hth1', url: '/assets/images/facility/eyeinthesky/46__JWD5194_lr.jpg', alt: 'London aerial view — Canary Wharf and the Thames at sunset' },
     ],
   },
   {
@@ -874,10 +870,10 @@ export const SECTIONS = [
     hint: 'Gallery of London landmark photos shown in the tour page gallery section',
     type: 'gallery',
     images: [
-      { id: 'htg1', url: '/assets/images/gallery/carousel/rotating1.jpg',               alt: 'Tower Bridge' },
-      { id: 'htg2', url: '/assets/images/gallery/carousel/rotating2.jpg',               alt: 'The Shard' },
-      { id: 'htg3', url: '/assets/images/gallery/flying/foggy-evening-flying.jpg',      alt: 'Thames at Sunset' },
-      { id: 'htg4', url: '/assets/images/gallery/carousel/rotating8.jpg',               alt: 'City Skyline' },
+      { id: 'htg1', url: '/assets/images/gallery/london-tour/buckingham-palace.jpg',      alt: 'Buckingham Palace' },
+      { id: 'htg2', url: '/assets/images/gallery/london-tour/thames-city-skyline.jpg',    alt: 'Thames & City' },
+      { id: 'htg3', url: '/assets/images/gallery/london-tour/canary-wharf.jpg',           alt: 'Canary Wharf' },
+      { id: 'htg4', url: '/assets/images/gallery/london-tour/above-westminster.jpg',      alt: 'Above Westminster' },
     ],
   },
 
@@ -1113,6 +1109,30 @@ export const SECTIONS = [
     ],
   },
 
+  // ─── LEASEBACK PAGE ────────────────────────────────────────────────────────
+  {
+    id: 'lb-hero',
+    page: 'leaseback',
+    name: 'Leaseback Hero — Background Image',
+    hint: 'Wide editorial aircraft shot behind the hero headline on /leaseback',
+    type: 'single',
+    images: [
+      { id: 'lbh1', url: '/assets/images/new-aircraft/r66/rhc-r66-nxg-pv-left-side-wide-shot-from-rear-13751.jpg', alt: 'Robinson R66 wide rear view' },
+    ],
+  },
+  {
+    id: 'lb-aircraft',
+    page: 'leaseback',
+    name: 'Leaseback — Eligible Aircraft Cards',
+    hint: 'Three cards in the Eligible Aircraft strip — R44, R66, Hughes 500',
+    type: 'cards',
+    slideLabels: ['Robinson R44', 'Robinson R66', 'Hughes 500'],
+    images: [
+      { id: 'lba1', url: '/assets/images/used-aircraft/r44/r44-raven-ii-grrob.jpg', alt: 'Robinson R44 Raven II' },
+      { id: 'lba2', url: '/assets/images/new-aircraft/r66/r66-turbine.png', alt: 'Robinson R66 Turbine' },
+      { id: 'lba3', url: '/assets/images/used-aircraft/other/hughes-369e-gumby.jpg', alt: 'Hughes 500 in flight' },
+    ],
+  },
 
 ];
 
@@ -1144,4 +1164,5 @@ export const PAGE_LABELS = {
   r66:               'R66 Aircraft Page',
   r88:               'R88 Aircraft Page',
   h500:              'H500 Aircraft Page',
+  leaseback:         'Leaseback Page',
 };

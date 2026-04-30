@@ -36,7 +36,7 @@ const TopGearMoment = ({ showNote = true }) => {
             <div>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.2em', color: 'var(--hq-accent)', display: 'block', marginBottom: '1rem' }}>ICONIC MOMENT</span>
               <h3 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#fff', lineHeight: 1.2, marginBottom: '1rem' }}>Landing on a Moving Car</h3>
-              <p style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.7, marginBottom: '1.5rem' }}>Captain Q's legendary stunt for Top Gear—landing a helicopter on a moving car—showcased precision flying at its absolute best.</p>
+              <p style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.7, marginBottom: '1.5rem' }}>Captain Q's legendary stunt for Top Gear, landing a helicopter on a moving car, showcased precision flying at its absolute best.</p>
               <div style={{ display: 'flex', gap: '2rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>
                 <span>📺 BBC Two</span>
                 <span>👀 10M+ views</span>

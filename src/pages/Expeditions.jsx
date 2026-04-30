@@ -193,9 +193,6 @@ function Expeditions() {
             Contact us to discuss your expedition or reserve your place on an upcoming adventure.
           </p>
           <div className="flex justify-center gap-4">
-            <Link to="/contact" className="btn btn--accent btn--lg">
-              Enquire Now
-            </Link>
             <Link to="/expeditions/calendar" className="btn btn--outline btn--lg">
               View Calendar
             </Link>

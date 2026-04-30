@@ -22,7 +22,7 @@ function FuelManagement() {
         fuel is in immediate and serious difficulty. There is no gentle descent to a convenient
         field; there is an autorotation, which while entirely survivable when executed properly,
         is not the sort of event anyone wishes to experience outside of training. Getting fuel
-        management right is therefore not merely good airmanship — it is fundamental to survival.
+        management right is therefore not merely good airmanship,it is fundamental to survival.
       </p>
 
       <p>
@@ -39,7 +39,7 @@ function FuelManagement() {
       <p>
         Helicopters present unique fuel management challenges that set them apart from their
         fixed-wing counterparts. The most obvious is endurance. A typical light helicopter
-        carries fuel for between two and three and a half hours of flight — considerably less
+        carries fuel for between two and three and a half hours of flight,considerably less
         than most aeroplanes of comparable size. This relatively limited endurance means that
         the consequences of poor planning or unexpected delays are felt much sooner.
       </p>
@@ -63,7 +63,7 @@ function FuelManagement() {
 
       <Callout variant="warning" title="Fuel Exhaustion Is Always Preventable">
         Every fuel exhaustion accident in aviation history was preventable. These incidents
-        do not result from mechanical failure or bad luck — they result from inadequate
+        do not result from mechanical failure or bad luck,they result from inadequate
         planning, poor monitoring, or the decision to press on when the numbers no longer
         add up. Treat your fuel state with the same gravity you would treat an engine
         warning light.
@@ -104,10 +104,10 @@ function FuelManagement() {
       <KeyPoint
         title="Fuel Burn Summary by Type"
         points={[
-          "R22: 8-10 GPH of AvGas 100LL — approximately 1 hour 45 minutes endurance",
-          "R44 Raven I: 14 GPH of AvGas 100LL — approximately 2 hours 15 minutes endurance",
-          "R44 Raven II: 15 GPH of AvGas 100LL — approximately 2 hours endurance",
-          "R66 Turbine: 23 GPH of Jet A-1 — approximately 3 hours 10 minutes endurance",
+          "R22: 8-10 GPH of AvGas 100LL,approximately 1 hour 45 minutes endurance",
+          "R44 Raven I: 14 GPH of AvGas 100LL,approximately 2 hours 15 minutes endurance",
+          "R44 Raven II: 15 GPH of AvGas 100LL,approximately 2 hours endurance",
+          "R66 Turbine: 23 GPH of Jet A-1,approximately 3 hours 10 minutes endurance",
           "All figures are approximate and assume standard conditions with no reserves"
         ]}
       />
@@ -122,7 +122,7 @@ function FuelManagement() {
 
       <p>
         The critical word here is <strong>usable</strong>. Every aircraft has a quantity of
-        fuel that is physically in the tanks but cannot be delivered to the engine — this is
+        fuel that is physically in the tanks but cannot be delivered to the engine,this is
         unusable fuel that remains trapped in the system. You must always work with usable
         fuel figures from the Pilot's Operating Handbook, never the total tank capacity.
         Failing to account for unusable fuel means your calculations will be optimistic by
@@ -158,7 +158,7 @@ function FuelManagement() {
 
       <p>
         The UK Civil Aviation Authority sets clear requirements for fuel reserves under VFR
-        flight. Understanding these requirements is not optional — it is a legal obligation
+        flight. Understanding these requirements is not optional,it is a legal obligation
         and a fundamental safety margin.
       </p>
 
@@ -240,7 +240,7 @@ function FuelManagement() {
       <p>
         <strong>Step 2: Determine your groundspeed.</strong> Start with your true airspeed
         for the planned altitude and power setting, then apply the forecast wind to calculate
-        groundspeed. Be honest about headwind components — it is tempting to assume the
+        groundspeed. Be honest about headwind components,it is tempting to assume the
         wind will be more favourable than forecast, but optimism has no place in fuel
         planning.
       </p>
@@ -302,7 +302,7 @@ function FuelManagement() {
         <strong>Headwinds</strong> do not increase your fuel burn rate per hour, but they
         increase the time required to cover a given distance, which increases total fuel
         consumed. A 20-knot headwind that reduces your groundspeed from 100 knots to 80 knots
-        increases your flight time by 25 percent — and therefore increases your fuel requirement
+        increases your flight time by 25 percent,and therefore increases your fuel requirement
         by the same proportion. On a flight planned for two hours, that headwind adds 30
         minutes of fuel burn, which could be the difference between arriving with comfortable
         reserves and arriving with the low fuel light glaring at you.
@@ -382,7 +382,7 @@ function FuelManagement() {
       <p>
         <strong>Set a fuel timer or note your start time.</strong> From the moment the engine
         starts, fuel is burning. Record your engine start time and calculate your bingo fuel
-        time — the time at which you must have landed or be committed to landing at a fuel
+        time,the time at which you must have landed or be committed to landing at a fuel
         stop. Write it on your kneepad where you cannot miss it.
       </p>
 
@@ -418,12 +418,12 @@ function FuelManagement() {
         title="Fuel Management Essentials"
         points={[
           "Always calculate endurance using usable fuel, not total tank capacity",
-          "Full passengers often means reduced fuel — run the weight and balance every time",
+          "Full passengers often means reduced fuel,run the weight and balance every time",
           "Carry a minimum 30-minute VFR reserve; experienced pilots plan for 45 minutes",
-          "Track fuel by time in the R44 — the low fuel light means 10 minutes remaining",
+          "Track fuel by time in the R44,the low fuel light means 10 minutes remaining",
           "Confirm fuel type availability before departing, especially for Jet A-1",
           "Monitor fuel state every 30 minutes and recalculate if behind schedule",
-          "Never erode reserves to extend range — divert for fuel instead"
+          "Never erode reserves to extend range,divert for fuel instead"
         ]}
       />
 
@@ -441,9 +441,9 @@ function FuelManagement() {
       <p>
         At HQ Aviation, we encourage all our pilots to approach fuel management with the
         same rigour they would apply to any other safety-critical aspect of flight. Plan
-        conservatively, monitor continuously, and never allow external pressures — the desire
+        conservatively, monitor continuously, and never allow external pressures,the desire
         to avoid a fuel stop, the reluctance to disappoint passengers, or the temptation to
-        stretch that last few miles — to compromise your fuel discipline.
+        stretch that last few miles,to compromise your fuel discipline.
       </p>
 
       <p>

@@ -28,7 +28,7 @@ const MegaFooter = ({ showNote = true }) => {
               <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>HQ Aviation</h3>
               <p style={{ color: '#666', marginBottom: '1rem' }}>UK's Premier Robinson Helicopter Dealer</p>
               <a href="tel:+441895833373" style={{ display: 'block', color: 'var(--hq-accent)', fontSize: '1.25rem', marginBottom: '0.5rem', textDecoration: 'none' }}>01895 833 373</a>
-              <a href="mailto:info@hqaviation.com" style={{ color: '#888', textDecoration: 'none' }}>info@hqaviation.com</a>
+              <a href="mailto:operations@hqaviation.com" style={{ color: '#888', textDecoration: 'none' }}>operations@hqaviation.com</a>
             </div>
             <div>
               <h4 style={{ marginBottom: '1rem', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', color: '#888' }}>Aircraft</h4>
@@ -60,7 +60,7 @@ const MegaFooter = ({ showNote = true }) => {
             <div>
               <h4 style={{ marginBottom: '1rem', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', color: '#888' }}>Opening Hours</h4>
               <p style={{ color: '#888', lineHeight: 1.6, fontSize: '0.9rem' }}>Monday - Sunday: 8:30am - 5pm</p>
-              <address style={{ color: '#888', fontStyle: 'normal', marginTop: '1rem', fontSize: '0.9rem' }}>Denham Aerodrome<br/>Buckinghamshire UB9 5DF</address>
+              <address style={{ color: '#888', fontStyle: 'normal', marginTop: '1rem', fontSize: '0.9rem' }}>Denham Aerodrome<br/>Uxbridge, London, UB9 5DF</address>
             </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '2rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>

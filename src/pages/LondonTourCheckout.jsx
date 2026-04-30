@@ -152,7 +152,7 @@ function CheckoutForm({ experience, timeOfDay, quantity, price, wantsVoucher, se
               </label>
               <textarea
                 style={{ ...styles.input, resize: 'vertical', minHeight: '80px', lineHeight: 1.5 }}
-                placeholder="A message to print on the voucher — e.g. Happy Birthday!"
+                placeholder="A message to print on the voucher, e.g. Happy Birthday!"
                 value={voucherMessage}
                 maxLength={150}
                 onChange={e => setVoucherMessage(e.target.value)}
@@ -251,7 +251,7 @@ export default function LondonTourCheckout() {
           <Link to="/helicopter-tour-of-london" style={styles.back}>← Back</Link>
 
           <h1 style={styles.heading} className="co-page-heading">Complete Your Booking</h1>
-          <p style={styles.subheading} className="co-page-subheading">Pay now — we'll call you to confirm your flight date.</p>
+          <p style={styles.subheading} className="co-page-subheading">Pay now. We'll call you to confirm your flight date.</p>
 
           <div className="co-layout">
 

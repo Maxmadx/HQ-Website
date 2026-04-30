@@ -4,12 +4,95 @@ const Stripe = require('stripe');
 const nodemailer = require('nodemailer');
 const admin = require('./firebase-admin');
 
+const MAX_ADDON_QTY = 10;
+
 // Lazy-initialise so the module can be loaded without STRIPE_SECRET_KEY set
 // (e.g. during unit tests that only exercise getPrice).
 let _stripe = null;
 function getStripe() {
   if (!_stripe) _stripe = Stripe(process.env.STRIPE_SECRET_KEY);
   return _stripe;
+}
+
+function parseAddonsFromMetadata(metadata = {}) {
+  const count = parseInt(metadata.addonsCount || '0', 10) || 0;
+  const addons = [];
+  for (let i = 0; i < count; i++) {
+    const raw = metadata[`addon_${i}`];
+    if (!raw) continue;
+    try {
+      const item = JSON.parse(raw);
+      if (item && typeof item === 'object') addons.push(item);
+    } catch (err) {
+      console.error(`[stripe] failed to parse addon_${i}:`, err.message);
+    }
+  }
+  const fulfilment = (metadata.fulfilment || '').toLowerCase() || null;
+  const shippingAddress = fulfilment === 'delivery'
+    ? {
+        line1: metadata.shippingLine1 || '',
+        line2: metadata.shippingLine2 || '',
+        city: metadata.shippingCity || '',
+        postcode: metadata.shippingPostcode || '',
+      }
+    : null;
+  return { addons, fulfilment, shippingAddress };
+}
+
+function applyDiscountPence(pricePence, qty, discountPct) {
+  const pct = Math.max(0, Math.min(100, Number(discountPct) || 0));
+  return Math.round(Number(pricePence) * Number(qty) * (1 - pct / 100));
+}
+
+async function priceAddons(addons) {
+  if (!Array.isArray(addons) || addons.length === 0) {
+    return { lineItems: [], total: 0 };
+  }
+
+  const lineItems = [];
+  let total = 0;
+
+  for (const entry of addons) {
+    const itemId = entry && entry.itemId;
+    const qty = Number(entry && entry.qty);
+
+    if (!itemId || !Number.isInteger(qty) || qty < 1 || qty > MAX_ADDON_QTY) {
+      const err = new Error(`Invalid add-on entry: ${JSON.stringify(entry)}`);
+      err.statusCode = 400;
+      throw err;
+    }
+
+    const snap = await admin.firestore().collection('misc_items').doc(itemId).get();
+    if (!snap.exists) {
+      const err = new Error(`Add-on not found: ${itemId}`);
+      err.statusCode = 400;
+      throw err;
+    }
+    const data = snap.data();
+    if (data.discoveryAddon !== true) {
+      const err = new Error(`Add-on is no longer available: ${itemId}`);
+      err.statusCode = 400;
+      throw err;
+    }
+    if (data.priceType !== 'fixed' || !(Number(data.price) > 0)) {
+      const err = new Error(`Add-on misconfigured: ${itemId}`);
+      err.statusCode = 400;
+      throw err;
+    }
+
+    const lineTotal = applyDiscountPence(data.price, qty, data.discoveryAddonDiscountPct);
+    total += lineTotal;
+    lineItems.push({
+      itemId,
+      name: data.name,
+      qty,
+      unitPrice: data.price,
+      discountPct: Number(data.discoveryAddonDiscountPct) || 0,
+      lineTotal,
+    });
+  }
+
+  return { lineItems, total };
 }
 
 // Lazy-initialise SMTP transporter — reuse the same connection pool across calls.
@@ -92,13 +175,56 @@ async function getPrice(aircraft, duration) {
  * Creates a Stripe PaymentIntent with a price read from Firestore.
  * Throws with statusCode 400 if aircraft/duration is invalid.
  */
-async function createPaymentIntent({ aircraft, duration, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage }) {
-  const amount = await getPrice(aircraft, duration);
-  if (amount === null) {
+async function createPaymentIntent({
+  aircraft, duration, customerName, customerEmail, customerPhone,
+  wantsVoucher, voucherLocation, voucherMessage,
+  addons = [], fulfilment, shippingAddress,
+}) {
+  const flightAmount = await getPrice(aircraft, duration);
+  if (flightAmount === null) {
     const err = new Error(`Invalid aircraft or duration: ${aircraft} / ${duration}`);
     err.statusCode = 400;
     throw err;
   }
+
+  const { lineItems, total: addonsAmount } = await priceAddons(addons);
+
+  // Fulfilment is only relevant when there are add-ons. Voucher buyers
+  // must pick delivery — recipient redeems the flight later.
+  let resolvedFulfilment = null;
+  let resolvedAddress = null;
+  if (lineItems.length > 0) {
+    resolvedFulfilment = wantsVoucher ? 'delivery' : (fulfilment || 'collect');
+    if (resolvedFulfilment !== 'collect' && resolvedFulfilment !== 'delivery') {
+      const err = new Error(`Invalid fulfilment: ${fulfilment}`);
+      err.statusCode = 400;
+      throw err;
+    }
+    if (resolvedFulfilment === 'delivery') {
+      const a = shippingAddress || {};
+      if (!a.line1 || !a.city || !a.postcode) {
+        const err = new Error('Delivery address is required (line1, city, postcode)');
+        err.statusCode = 400;
+        throw err;
+      }
+      resolvedAddress = {
+        line1: String(a.line1),
+        line2: String(a.line2 || ''),
+        city: String(a.city),
+        postcode: String(a.postcode),
+      };
+    }
+  }
+
+  const amount = flightAmount + addonsAmount;
+
+  // Stripe metadata caps each value at 500 chars but allows up to 50 keys.
+  // Encode each add-on as its own key so the rich shape always fits, even
+  // for large baskets. recordBooking re-assembles via addonsCount + addon_N.
+  const addonKeyEntries = {};
+  lineItems.forEach((item, i) => {
+    addonKeyEntries[`addon_${i}`] = JSON.stringify(item);
+  });
 
   const paymentIntent = await getStripe().paymentIntents.create({
     amount,
@@ -114,6 +240,13 @@ async function createPaymentIntent({ aircraft, duration, customerName, customerE
       wantsVoucher: wantsVoucher ? 'true' : 'false',
       voucherLocation: voucherLocation || '',
       voucherMessage: voucherMessage || '',
+      addonsCount: String(lineItems.length),
+      ...addonKeyEntries,
+      fulfilment: resolvedFulfilment || '',
+      shippingLine1: resolvedAddress ? resolvedAddress.line1 : '',
+      shippingLine2: resolvedAddress ? resolvedAddress.line2 : '',
+      shippingCity: resolvedAddress ? resolvedAddress.city : '',
+      shippingPostcode: resolvedAddress ? resolvedAddress.postcode : '',
     },
   });
 
@@ -182,7 +315,7 @@ async function createLondonTourPaymentIntent({ experience, timeOfDay, quantity, 
 /**
  * Sends a booking confirmation email to the customer.
  */
-async function sendConfirmationEmail({ customerName, customerEmail, aircraft, duration, amount, bookingRef }) {
+async function sendConfirmationEmail({ customerName, customerEmail, aircraft, duration, amount, bookingRef, addons, fulfilment, shippingAddress }) {
   const priceFormatted = `£${(amount / 100).toFixed(2)}`;
   const aircraftName = AIRCRAFT_NAMES[aircraft] || aircraft;
 
@@ -282,6 +415,24 @@ async function sendConfirmationEmail({ customerName, customerEmail, aircraft, du
               </tr>
             </table>
 
+            ${(addons && addons.length > 0)
+  ? `
+    <h3 style="margin:32px 0 12px;font-family:Inter,-apple-system,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#999;">Add-ons</h3>
+    <ul style="padding-left:20px;margin:0 0 12px;font-family:Inter,-apple-system,Arial,sans-serif;font-size:14px;color:#1A1A1A;line-height:1.75;">
+      ${addons.map((a) => {
+        const unit = (a.unitPrice / 100).toFixed(2);
+        const line = (a.lineTotal / 100).toFixed(2);
+        const disc = a.discountPct > 0 ? ` (${a.discountPct}% off)` : '';
+        return `<li>${escapeHtml(a.name)} × ${a.qty} — £${unit}${disc} = £${line}</li>`;
+      }).join('')}
+    </ul>
+    <p style="margin:0 0 32px;font-family:Inter,-apple-system,Arial,sans-serif;font-size:14px;color:#1A1A1A;line-height:1.6;"><strong>Fulfilment:</strong> ${
+      fulfilment === 'delivery'
+        ? `Delivery to ${escapeHtml([shippingAddress.line1, shippingAddress.line2, shippingAddress.city, shippingAddress.postcode].filter(Boolean).join(', '))}`
+        : 'Collect at Denham on the day of your flight.'
+    }</p>
+  `
+  : ''}
             <!-- What happens next -->
             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:32px 0 0;background:#FFFFFF;border-left:3px solid #E04A2F;border-radius:0 8px 8px 0;border-top:1px solid #E8E6E1;border-right:1px solid #E8E6E1;border-bottom:1px solid #E8E6E1;">
               <tr>
@@ -525,9 +676,13 @@ async function handleWebhook(req) {
         bookingData.aircraft = aircraft;
         bookingData.aircraftName = aircraftName || aircraft;
         bookingData.duration = Number(duration);
+        const { addons: webhookParsedAddons, fulfilment: webhookFulfilment, shippingAddress: webhookShippingAddress } = parseAddonsFromMetadata(pi.metadata);
+        bookingData.addons = webhookParsedAddons;
+        bookingData.fulfilment = webhookFulfilment;
+        bookingData.shippingAddress = webhookShippingAddress;
       }
 
-      await admin.firestore().collection('bookings').doc(pi.id).set(bookingData);
+      await admin.firestore().collection('bookings').doc(pi.id).set(bookingData, { merge: true });
 
       // Also write misc orders to the misc_marketplace collection
       if (productType === 'misc') {
@@ -569,6 +724,7 @@ async function handleWebhook(req) {
       } else {
         // Default: discovery-flight (includes legacy intents without productType)
         const { aircraft, duration } = pi.metadata;
+        const { addons: webhookParsedAddons, fulfilment: webhookFulfilment, shippingAddress: webhookShippingAddress } = parseAddonsFromMetadata(pi.metadata);
         await sendConfirmationEmail({
           customerName,
           customerEmail,
@@ -576,6 +732,9 @@ async function handleWebhook(req) {
           duration: Number(duration),
           amount: pi.amount,
           bookingRef: pi.id,
+          addons: webhookParsedAddons,
+          fulfilment: webhookFulfilment,
+          shippingAddress: webhookShippingAddress,
         });
       }
     } catch (emailErr) {
@@ -635,6 +794,12 @@ async function recordBooking(paymentIntentId) {
     bookingData.aircraftName = aircraftName || AIRCRAFT_NAMES[aircraft] || aircraft || '';
     bookingData.duration = Number(duration) || 0;
   }
+
+  const { addons: parsedAddons, fulfilment, shippingAddress } = parseAddonsFromMetadata(pi.metadata);
+
+  bookingData.addons = parsedAddons;
+  bookingData.fulfilment = fulfilment;
+  bookingData.shippingAddress = shippingAddress;
 
   const ref = admin.firestore().collection('bookings').doc(pi.id);
   const existing = await ref.get();
@@ -717,4 +882,4 @@ async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmai
   return paymentIntent;
 }
 
-module.exports = { getPrice, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking };
+module.exports = { getPrice, applyDiscountPence, priceAddons, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking };

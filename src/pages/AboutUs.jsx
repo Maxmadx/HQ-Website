@@ -8,12 +8,12 @@ import { SECTION_MAP } from '../lib/imageSections';
 
 const milestones = [
   { year: '1990', title: 'HQ Aviation Founded', desc: 'Captain Quentin Smith establishes HQ Aviation at Denham Aerodrome, beginning a legacy in Robinson helicopter training, sales, and maintenance.' },
-  { year: '1994', title: 'World Champion', desc: 'At just 32 years old, Q wins the Freestyle Aerobatics gold medal at the World Helicopter Championships in Moscow — the first British pilot to do so — flying a humble Robinson R22 against Russian turbine helicopters on their home turf.' },
+  { year: '1994', title: 'World Champion', desc: 'At just 32 years old, Q wins the Freestyle Aerobatics gold medal at the World Helicopter Championships in Moscow, becoming the first British pilot to do so. He flies a humble Robinson R22 against Russian turbine helicopters on their home turf.' },
   { year: '1997', title: 'Around the World', desc: 'Q and Jennifer Murray complete the first piston-powered helicopter circumnavigation of the globe. 97 days, 28 countries, 30,000 miles. Their R44, G-MURY, now sits in the Smithsonian.' },
   { year: '2002', title: 'North Pole', desc: 'Q and Steve Brooks become the first to land a piston-powered helicopter at the North Pole, flying Robinson R44 G-NUDE into one of the most hostile environments on earth.' },
   { year: '2005', title: 'South Pole', desc: 'First helicopter crew to reach both the North and South Poles. Minus 26 degrees, 14,000 feet density altitude. A Guinness World Record and a feat of endurance, planning, and courage.' },
-  { year: '2012', title: 'World Champion Again', desc: 'Q wins his second Freestyle Aerobatics World Championship, performing a backwards autorotation — an engine-off backward landing from 300 feet — a manoeuvre experts previously deemed impossible.' },
-  { year: '2018', title: 'Tom Cruise', desc: 'Q trains Tom Cruise to fly a helicopter for Mission: Impossible — Fallout, compressing 2,000 hours of experience into three months of intensive training.' },
+  { year: '2012', title: 'World Champion Again', desc: 'Q wins his second Freestyle Aerobatics World Championship, performing a backwards autorotation: an engine-off backward landing from 300 feet, a manoeuvre experts previously deemed impossible.' },
+  { year: '2018', title: 'Tom Cruise', desc: 'Q trains Tom Cruise to fly a helicopter for Mission: Impossible Fallout, compressing 2,000 hours of experience into three months of intensive training.' },
   { year: 'Today', title: '35+ Years of Excellence', desc: 'Over 500 graduates, a fleet of Robinson aircraft, a world-class Part 145 maintenance facility, Robinson Authorized Dealer, and expeditions that continue to push boundaries.' },
 ];
 
@@ -113,13 +113,13 @@ function AboutUs() {
             </p>
             <p className="au__story-desc">
               We've trained hundreds of pilots, sold and maintained Robinson
-              helicopters across the fleet — R22, R44, and R66 — and led expeditions to some of the
+              helicopters across the fleet, including R22, R44, and R66, and led expeditions to some of the
               most remote places on earth.
             </p>
             <p className="au__story-desc">
               Today, HQ Aviation is a Robinson Authorized Dealer and Service Centre, a CAA Approved
               Training Organisation, and home to a community of pilots, engineers, and adventurers
-              who share one thing — a love of flying.
+              who share one thing: a love of flying.
             </p>
             <span className="au__story-tagline">Training. Sales. Maintenance. Expeditions.</span>
           </div>
@@ -152,7 +152,7 @@ function AboutUs() {
       {/* ===== CAPTAIN Q — Parallax image break ===== */}
       <section className="au__parallax" data-cms-section="about-captain-q">
         <div className="au__parallax-img">
-          <img src={pageImages['about-captain-q']?.[0]?.url || '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp'} alt="Captain Q — South Pole expedition" />
+          <img src={pageImages['about-captain-q']?.[0]?.url || '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp'} alt="Captain Q on the South Pole expedition" />
         </div>
         <h2 className="au__parallax-title">Captain Q</h2>
       </section>
@@ -172,7 +172,7 @@ function AboutUs() {
                 {t('about-founder', 'bio')}
               </p>
               <p>
-                Q isn't just a pilot — he's a pioneer. His expeditions have rewritten the record
+                Q isn't just a pilot. He's a pioneer. His expeditions have rewritten the record
                 books. His survival of the Drake Passage crash validates every emergency procedure
                 he teaches. His championship victories in underpowered Robinson helicopters
                 demonstrate a mastery of the aircraft that no competitor can match. That same
@@ -213,14 +213,14 @@ function AboutUs() {
             <span className="au__pretitle">The HQ Vibe</span>
             <h2 className="au__clubhouse-title">Not a Flight School.<br />A Clubhouse.</h2>
             <p className="au__clubhouse-desc">
-              Aviation for private fliers shouldn't be clinical. At HQ, we believe in "hangar talk" —
+              Aviation for private fliers shouldn't be clinical. At HQ, we believe in "hangar talk":
               the conversations between flights, the stories shared over coffee, the knowledge passed
               from experienced pilots to new students. That informal exchange is where real learning happens.
             </p>
             <p className="au__clubhouse-desc">
-              Our students don't just train here — they belong here. Former students who are now
+              Our students don't just train here. They belong here. Former students who are now
               self-fly hiring interact with new students, creating a support network built around a
-              shared passion. Car races, go-karting, clay pigeon shooting — we do things together
+              shared passion. Car races, go-karting, clay pigeon shooting: we do things together
               beyond the airfield.
             </p>
             <p className="au__clubhouse-desc">
@@ -270,7 +270,7 @@ function AboutUs() {
             <h2 className="au__location-title">Escape to the Country</h2>
             <p className="au__location-desc">
               Located just inside the M25 on the Buckinghamshire / Greater London border,
-              Denham is uniquely positioned — close enough to the city to be practical,
+              Denham is uniquely positioned, close enough to the city to be practical,
               far enough to feel like a different world. Rolling countryside, open skies,
               and one of England's most charming aerodromes.
             </p>
@@ -299,11 +299,11 @@ function AboutUs() {
             <h2 className="au__safety-title">We Don't Teach You<br />to Pass a Test</h2>
             <p className="au__safety-desc">
               We teach you to survive one. When Q Smith teaches a student about ditching procedures
-              or survival equipment, it is not theoretical — it is empirical knowledge derived from
+              or survival equipment, it is not theoretical. It is empirical knowledge derived from
               surviving the Drake Passage. That authenticity is something no competitor can manufacture.
             </p>
             <p className="au__safety-desc">
-              Flight training is often a commodity — a race to the bottom on price. HQ Aviation is
+              Flight training is often a commodity, a race to the bottom on price. HQ Aviation is
               different. Students come here not just for flight hours, but for entry into an exclusive
               explorer's club, mentored by a World Champion with real-world survival experience.
             </p>
@@ -311,9 +311,9 @@ function AboutUs() {
           <div className={`au__safety-right ${safetyInView ? 'au__safety-right--visible' : ''}`}>
             <div className="au__safety-pillars">
               {[
-                { num: '01', title: 'Competence First', desc: 'Every procedure taught has been validated in extreme real-world conditions — not just in a textbook.' },
+                { num: '01', title: 'Competence First', desc: 'Every procedure taught has been validated in extreme real-world conditions, not just in a textbook.' },
                 { num: '02', title: 'World Champion Led', desc: 'The presence of a World Champion at the helm acts as a supreme trust signal for every student.' },
-                { num: '03', title: 'End-to-End Support', desc: 'Engineering, operations, and instructors under one roof — flights supported from mechanics to logistics.' },
+                { num: '03', title: 'End-to-End Support', desc: 'Engineering, operations, and instructors under one roof, with flights supported from mechanics to logistics.' },
               ].map((p, i) => (
                 <div key={i} className="au__safety-pillar">
                   <span className="au__safety-pillar-num">{p.num}</span>
@@ -365,7 +365,7 @@ function AboutUs() {
           <div className="au__services-grid">
             {[
               { title: 'Flight Training', desc: 'PPL(H), CPL(H), type ratings, night ratings, and instructor ratings. From first flight to career pilot.', link: '/training', cta: 'Explore Training', img: pageImages['about-services']?.[0]?.url || '/assets/images/facility/hq-0053.jpg' },
-              { title: 'Aircraft Sales', desc: 'New and pre-owned Robinson helicopters. As an Authorized Dealer, we offer factory-direct R22, R44, and R66 aircraft.', link: '/aircraft-sales', cta: 'View Aircraft', img: pageImages['about-services']?.[1]?.url || '/assets/images/facility/main-sales-pic.jpg' },
+              { title: 'Aircraft Sales', desc: 'New and pre-owned Robinson helicopters. As an Authorized Dealer, we offer factory-direct R22, R44, and R66 aircraft.', link: '/sales/new', cta: 'View Aircraft', img: pageImages['about-services']?.[1]?.url || '/assets/images/facility/main-sales-pic.jpg' },
               { title: 'Maintenance', desc: 'Robinson Authorized Service Centre. Full overhauls, 100-hour inspections, avionics upgrades, and bespoke rebuilds.', link: '/services/maintenance', cta: 'View Services', img: pageImages['about-services']?.[2]?.url || '/assets/images/facility/g-ccfc-hq-robinson-overhaul.webp' },
               { title: 'Expeditions', desc: 'Helicopter expeditions to the most extraordinary places on earth. Led by Captain Q, from the poles to the peaks.', link: '/expeditions', cta: 'View Expeditions', img: pageImages['about-services']?.[3]?.url || '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp' },
             ].map((svc, i) => (
@@ -414,7 +414,7 @@ function AboutUs() {
               {
                 model: 'Robinson R22',
                 tagline: 'If you can fly an R22, you can fly anything.',
-                desc: 'The two-seat, piston-engine helicopter that started it all. Powered by a Lycoming O-360-J2A, its design prioritises lightness and simplicity. The standard entry point for civilian helicopter pilots — and the aircraft Q flew to win the World Championship.',
+                desc: 'The two-seat, piston-engine helicopter that started it all. Powered by a Lycoming O-360-J2A, its design prioritises lightness and simplicity. The standard entry point for civilian helicopter pilots, and the aircraft Q flew to win the World Championship.',
                 specs: [
                   { label: 'Seats', value: '2' },
                   { label: 'Engine', value: 'Piston' },
@@ -454,7 +454,7 @@ function AboutUs() {
               const a = [{
                 model: 'Robinson R22',
                 tagline: 'If you can fly an R22, you can fly anything.',
-                desc: 'The two-seat, piston-engine helicopter that started it all. Powered by a Lycoming O-360-J2A, its design prioritises lightness and simplicity. The standard entry point for civilian helicopter pilots — and the aircraft Q flew to win the World Championship.',
+                desc: 'The two-seat, piston-engine helicopter that started it all. Powered by a Lycoming O-360-J2A, its design prioritises lightness and simplicity. The standard entry point for civilian helicopter pilots, and the aircraft Q flew to win the World Championship.',
                 specs: [
                   { label: 'Seats', value: '2' },
                   { label: 'Engine', value: 'Piston' },
@@ -532,7 +532,7 @@ function AboutUs() {
             <span className="au__pretitle">Beyond the Licence</span>
             <h2 className="au__explorer-title">Don't Just Be a Passenger.<br />Be a Pilot in Command.</h2>
             <p className="au__explorer-desc">
-              At HQ Aviation, the client is not a passenger — they are an active part of the flight.
+              At HQ Aviation, the client is not a passenger. They are an active part of the flight.
               We specialise in pilot-led expeditions: high-end, experience-driven aviation tourism
               for licensed pilots and aspiring aviators who seek to command their own aircraft across
               international borders, hostile terrains, and historically significant routes.
@@ -613,7 +613,7 @@ function AboutUs() {
                   </svg>
                 ),
                 title: '7-Day Operations',
-                desc: 'Our team is on site every day of the week. Walk in, walk out — your aircraft is always ready.',
+                desc: 'Our team is on site every day of the week. Walk in, walk out, your aircraft is always ready.',
               },
             ].map((op, i) => (
               <div key={i} className="au__ops-card" style={{ transitionDelay: `${i * 0.1}s` }}>
@@ -655,7 +655,7 @@ function AboutUs() {
               HQ Aviation is one of a select number of Robinson Authorized Dealers worldwide.
               We sell factory-new R22, R44, and R66 helicopters direct from Robinson Helicopter
               Company in Torrance, California. Our Part 145 approved maintenance facility is
-              equally authorized as a Robinson Service Centre — qualified to perform full
+              equally authorized as a Robinson Service Centre, qualified to perform full
               overhauls, 100-hour inspections, and factory-standard rebuilds.
             </p>
             <div className="au__robinson-certs">
@@ -688,11 +688,9 @@ function AboutUs() {
           <p className="au__cta-desc">
             Visit HQ Aviation at Denham Aerodrome. Whether you're interested in training,
             purchasing an aircraft, or simply want to experience the world of helicopter
-            aviation — our doors are always open.
+            aviation. Our doors are always open.
           </p>
           <div className="au__cta-actions">
-            <Link to="/about-us/team" className="au__btn">Meet the Team</Link>
-            <Link to="/contact" className="au__btn au__btn--ghost">Get in Touch</Link>
           </div>
         </div>
       </section>

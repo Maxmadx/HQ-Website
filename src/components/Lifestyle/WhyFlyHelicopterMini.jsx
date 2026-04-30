@@ -14,17 +14,17 @@ import React, { useState } from 'react';
 const benefits = [
   { title: 'Join a Community', desc: 'A community of adventurers, business people, positive and successful people.', category: 'Lifestyle' },
   { title: 'Vertical Freedom', desc: 'The ultimate cheat code for travel. Land on your own property, yachts, lawns, beaches, or restaurants.', category: 'Practical' },
-  { title: 'Weekend Maximization', desc: 'Bypass road gridlock and turn 4-hour drives into 45-minute flights, effectively extending your leisure time—when the journey beats the destination.', category: 'Practical' },
+  { title: 'Weekend Maximization', desc: 'Bypass road gridlock and turn 4-hour drives into 45-minute flights, effectively extending your leisure time. Sometimes the journey beats the destination.', category: 'Practical' },
   { title: 'Total Control', desc: 'You leave exactly when you want. Depart from your door and arrive exactly where you need to be.', category: 'Practical' },
   { title: 'Unmatched Access', desc: 'Reach secluded locations inaccessible by any other vehicle, from private islands to deep wilderness.', category: 'Practical' },
   { title: 'Mastery of Machine', desc: 'It satisfies the urge for technical perfection. Mastering the collective and cyclic displays your skills as a master at operating machinery.', category: 'Experience' },
   { title: 'The "007" Factor', desc: 'It is the coolest vehicle on earth. Arriving by helicopter is cinematic, commanding, and undeniably "James Bond."', category: 'Experience' },
-  { title: '3D Flight Dynamics', desc: 'Unlike airplanes that just go forward, you have total three-dimensional control—hovering, sliding sideways, and flying backward.', category: 'Experience' },
+  { title: '3D Flight Dynamics', desc: 'Unlike airplanes that just go forward, you have total three-dimensional control: hovering, sliding sideways, and flying backward.', category: 'Experience' },
   { title: 'Business Efficiency', desc: 'The ultimate productivity multiplier, allowing for multiple meetings in a single day.', category: 'Lifestyle' },
   { title: 'Spontaneity', desc: 'The ability to decide on a trip and be in the air within the hour.', category: 'Lifestyle' },
   { title: 'Hobby Enablement', desc: 'Direct access to golf courses or shooting grounds that have helipads.', category: 'Lifestyle' },
   { title: 'Prestige & Networking', desc: 'It is a powerful tool for business or social settings.', category: 'Lifestyle' },
-  { title: 'The Ancestral Dream', desc: 'You pull up to find the helicopter fueled, cleaned, and ready. You fly yourself to your destination in a private bubble above the world—a feat our ancestors who looked up at the birds could only dream of.', category: 'Lifestyle' },
+  { title: 'The Ancestral Dream', desc: 'You pull up to find the helicopter fueled, cleaned, and ready. You fly yourself to your destination in a private bubble above the world, a feat our ancestors who looked up at the birds could only dream of.', category: 'Lifestyle' },
   { title: 'Lasting Impact', desc: 'Create memories that last a lifetime.', category: 'Lifestyle' },
 ];
 

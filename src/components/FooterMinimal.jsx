@@ -40,15 +40,15 @@ function FooterMinimal() {
             <i className="fas fa-phone"></i>
             +44 1895 833 373
           </a>
-          <a href="mailto:info@hqaviation.com" className="footer-minimal__contact-item">
+          <a href="mailto:operations@hqaviation.com" className="footer-minimal__contact-item">
             <i className="fas fa-envelope"></i>
-            info@hqaviation.com
+            operations@hqaviation.com
           </a>
         </div>
 
         <div className="footer-minimal__brand">
           <span>HQ Aviation</span>
-          <span>Denham Aerodrome, UK</span>
+          <span>Denham Aerodrome, London, UK</span>
           <span className="footer-minimal__copyright">&copy; All rights reserved.</span>
         </div>
 

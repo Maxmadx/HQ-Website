@@ -165,14 +165,13 @@ const MENU_SECTIONS = [
     links: [
       { to: '/',                  label: 'Home' },
       { to: '/about-us',          label: 'About Us' },
-      { to: '/about-us/team',     label: 'Meet The Team' },
       { to: '/about-us/captain-q',label: 'Quentin Smith' },
     ],
   },
   {
     title: 'Aircraft Sales',
     links: [
-      { to: '/aircraft-sales',         label: 'New Aircraft' },
+      { to: '/sales/new',              label: 'New Aircraft' },
       { to: '/aircraft-sales/new/r66', label: 'R66' },
       { to: '/aircraft-sales/new/r44', label: 'R44' },
       { to: '/aircraft-sales/new/r22', label: 'R22' },
@@ -198,13 +197,6 @@ const MENU_SECTIONS = [
     links: [
       { to: '/expeditions',          label: 'Expeditions' },
       { to: '/expeditions/calendar', label: 'Calendar' },
-    ],
-  },
-  {
-    title: 'Contact',
-    links: [
-      { to: '/contact',         label: 'Contact Us' },
-      { to: '/contact/careers', label: 'Careers' },
     ],
   },
 ];

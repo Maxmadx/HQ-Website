@@ -214,7 +214,7 @@ const TripRegistrationCard = ({
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
-          subject: `Expedition Interest — ${destination}`,
+          subject: `Expedition Interest: ${destination}`,
           message: `Dates: ${dates}\nDuration: ${duration}\nAircraft: ${aircraft}\nSpots remaining: ${spotsRemaining}`,
           source: 'expedition-registration',
         }),

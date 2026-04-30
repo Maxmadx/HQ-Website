@@ -3,6 +3,9 @@ import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardNumberElement, CardExpiryElement, CardCvcElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import FinalDraftHeader from '../components/FinalDraftHeader';
+import DiscoveryAddons from '../components/checkout/DiscoveryAddons';
+import { computeAddonsTotal, computeLineTotal } from '../lib/discoveryAddons';
+import { useDiscoveryAddons } from '../hooks/useDiscoveryAddons';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -27,7 +30,11 @@ const CARD_FIELD_STYLE = {
 };
 
 // ─── Payment Form ────────────────────────────────────────────────────────────
-function CheckoutForm({ aircraft, duration, price, wantsVoucher, setWantsVoucher, voucherLocation, setVoucherLocation, voucherMessage, setVoucherMessage }) {
+function CheckoutForm({
+  aircraft, duration, price,
+  wantsVoucher, setWantsVoucher, voucherLocation, setVoucherLocation, voucherMessage, setVoucherMessage,
+  addons, addonsState, addonsTotalPence,
+}) {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -60,6 +67,11 @@ function CheckoutForm({ aircraft, duration, price, wantsVoucher, setWantsVoucher
           wantsVoucher,
           voucherLocation: wantsVoucher ? voucherLocation : '',
           voucherMessage: wantsVoucher ? voucherMessage : '',
+          addons: addons.map((a) => ({ itemId: a.itemId, qty: a.qty })),
+          fulfilment: addons.length > 0 ? (wantsVoucher ? 'delivery' : addonsState.fulfilment) : null,
+          shippingAddress: (addons.length > 0 && (addonsState.fulfilment === 'delivery' || wantsVoucher))
+            ? addonsState.shippingAddress
+            : null,
         }),
       });
       const data = await res.json();
@@ -172,7 +184,7 @@ function CheckoutForm({ aircraft, duration, price, wantsVoucher, setWantsVoucher
               </label>
               <textarea
                 style={{ ...styles.input, resize: 'vertical', minHeight: '80px', lineHeight: 1.5 }}
-                placeholder="A message to print on the voucher — e.g. Happy Birthday!"
+                placeholder="A message to print on the voucher, e.g. Happy Birthday!"
                 value={voucherMessage}
                 maxLength={150}
                 onChange={e => setVoucherMessage(e.target.value)}
@@ -206,7 +218,7 @@ function CheckoutForm({ aircraft, duration, price, wantsVoucher, setWantsVoucher
       {error && <p style={styles.error}>{error}</p>}
 
       <button type="submit" disabled={!stripe || loading} style={loading ? { ...styles.btn, ...styles.btnDisabled } : styles.btn}>
-        {loading ? 'Processing…' : `Pay £${fmt(price)}`}
+        {loading ? 'Processing…' : `Pay £${fmt(Number(price) + (Number(addonsTotalPence) || 0) / 100)}`}
       </button>
 
       <p style={styles.secureNote}>
@@ -366,6 +378,34 @@ export default function Checkout() {
   const [wantsVoucher, setWantsVoucher] = useState(false);
   const [voucherLocation, setVoucherLocation] = useState('');
   const [voucherMessage, setVoucherMessage] = useState('');
+  const [addonsState, setAddonsState] = useState({
+    qtyByItemId: {},
+    fulfilment: 'collect',
+    shippingAddress: { line1: '', line2: '', city: '', postcode: '' },
+  });
+
+  const { items: allAddons } = useDiscoveryAddons();
+
+  const basketAddons = (allAddons || []).flatMap((it) => {
+    const qty = addonsState.qtyByItemId[it.id] || 0;
+    if (qty <= 0) return [];
+    return [{
+      itemId: it.id,
+      name: it.name,
+      qty,
+      price: it.price,
+      discountPct: Number(it.discoveryAddonDiscountPct) || 0,
+      lineTotal: computeLineTotal({ price: it.price, qty, discountPct: it.discoveryAddonDiscountPct }),
+    }];
+  });
+
+  const addonsTotalPence = computeAddonsTotal(
+    basketAddons.map((a) => ({ price: a.price, qty: a.qty, discountPct: a.discountPct }))
+  );
+  const addonsTotalPounds = addonsTotalPence / 100;
+
+  const flightPricePounds = Number(price) || 0;
+  const grandTotalPounds = flightPricePounds + addonsTotalPounds;
 
   const isMisc = type === 'misc';
   const isMiscValid = isMisc && !!itemId && !!itemName && Number(price) > 0 && Number(qty) >= 1;
@@ -427,7 +467,7 @@ export default function Checkout() {
           {isMisc ? 'Complete Your Purchase' : 'Complete Your Booking'}
         </h1>
         <p style={styles.subheading} className="co-page-subheading">
-          {isMisc ? 'Pay securely — the HQ team will be in touch about your order.' : "Pay now — we'll call you to schedule your flight."}
+          {isMisc ? 'Pay securely. The HQ team will be in touch about your order.' : "Pay now. We'll call you to schedule your flight."}
         </p>
 
         <div className="co-layout">
@@ -473,9 +513,23 @@ export default function Checkout() {
                     <span style={{ ...styles.summaryValue, color: '#2d7a4f', fontSize: '13px' }}>Included</span>
                   </div>
                 )}
+                {/* DF Add-ons (shown after voucher line) */}
+                <DiscoveryAddons
+                  value={addonsState}
+                  onChange={setAddonsState}
+                  voucherActive={wantsVoucher}
+                />
+
+                {basketAddons.length > 0 && basketAddons.map((a) => (
+                  <div key={a.itemId} style={styles.summaryRow}>
+                    <span style={styles.summaryLabel}>{a.name} × {a.qty}{a.discountPct > 0 ? ` (${a.discountPct}% off)` : ''}</span>
+                    <span style={styles.summaryValue}>£{fmt(a.lineTotal / 100)}</span>
+                  </div>
+                ))}
+
                 <div style={{ ...styles.summaryRow, borderTop: '1px solid #e8e8e8', paddingTop: '16px', marginTop: '8px' }}>
                   <span style={{ ...styles.summaryLabel, fontWeight: 700, color: '#1a1a1a' }}>Total</span>
-                  <span style={{ ...styles.summaryValue, fontWeight: 700, fontSize: '1.25rem' }}>£{fmt(price)}</span>
+                  <span style={{ ...styles.summaryValue, fontWeight: 700, fontSize: '1.25rem' }}>£{fmt(grandTotalPounds)}</span>
                 </div>
                 <p style={styles.summaryNote}>
                   After payment, a member of the HQ Aviation team will contact you to arrange a date and time.
@@ -501,6 +555,9 @@ export default function Checkout() {
                   setVoucherLocation={setVoucherLocation}
                   voucherMessage={voucherMessage}
                   setVoucherMessage={setVoucherMessage}
+                  addons={basketAddons}
+                  addonsState={addonsState}
+                  addonsTotalPence={addonsTotalPence}
                 />
               )}
             </Elements>

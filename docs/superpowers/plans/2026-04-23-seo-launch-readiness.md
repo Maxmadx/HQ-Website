@@ -30,7 +30,7 @@
 - Modify: `package.json`
 - Modify: `package-lock.json`
 
-**Outcome:** `react-helmet-async@^2` is a project dependency.
+**Outcome:** `react-helmet-async@^3` is a project dependency. (Note: spec originally said `^2`, but v2 doesn't support React 19 — v3 is the React-19-compatible release with the same API surface. Plan updated post-execution.)
 
 - [ ] **Step 1:** Install the package
 
@@ -314,6 +314,8 @@ git commit -m "feat(seo): add seoRoutes single source of truth"
 - Create: `src/components/seo/Seo.test.jsx`
 
 **Outcome:** One component that renders `<title>`, `<meta description>`, canonical, Open Graph, Twitter card, optional `noindex`, and any number of JSON-LD blocks. Pure declarative — pages just drop one of these in.
+
+**Test fixture note (post-execution):** the original spec's test fixture used `helmetContext.helmet.title.toString()` (the SSR context API). This does NOT work with `react-helmet-async@3` on React 19 — v3 detects React 19 and skips the context provider entirely. The actually-shipped test fixture queries `document.head` directly via JSDOM. Same 7 behaviours verified, different query mechanism.
 
 - [ ] **Step 1:** Write the failing test
 

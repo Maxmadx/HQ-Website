@@ -18,6 +18,7 @@ import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'fra
 import '../assets/css/main.css';
 import '../assets/css/components.css';
 import FooterMinimal from '../components/FooterMinimal';
+import HqMenuPanel from '../components/HqMenuPanel';
 
 /**
  * ADVANCED TRAINING PAGE HEADER COMPONENT
@@ -63,64 +64,7 @@ function AdvancedTrainingHeader() {
   return (
     <>
       {/* Menu Panel */}
-      <div className={`hq-menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="hq-menu-grid">
-          <div className="hq-menu-section">
-            <h3>About</h3>
-            <ul>
-              <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-              <li><Link to="/about-us" onClick={closeMenu}>About Us</Link></li>
-              <li><Link to="/about-us/team" onClick={closeMenu}>Meet The Team</Link></li>
-              <li><Link to="/about-us/captain-q" onClick={closeMenu}>Quentin Smith</Link></li>
-              <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Aircraft Sales</h3>
-            <ul>
-              <li><Link to="/aircraft-sales" onClick={closeMenu}>New Aircraft</Link></li>
-              <li><Link to="/aircraft-sales/new/r88" onClick={closeMenu}>R88</Link></li>
-              <li><Link to="/aircraft-sales/new/r66" onClick={closeMenu}>R66</Link></li>
-              <li><Link to="/aircraft-sales/new/r44" onClick={closeMenu}>R44</Link></li>
-              <li><Link to="/aircraft-sales/new/r22" onClick={closeMenu}>R22</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Flight Training</h3>
-            <ul>
-              <li><Link to="/training" onClick={closeMenu}>Training Overview</Link></li>
-              <li><Link to="/training/trial-lessons" onClick={closeMenu}>Trial Lessons</Link></li>
-              <li><Link to="/training/ppl" onClick={closeMenu}>Private Pilot License</Link></li>
-              <li><Link to="/training/type-rating" onClick={closeMenu}>Type Rating</Link></li>
-              <li><Link to="/training/night-rating" onClick={closeMenu}>Night Rating</Link></li>
-              <li><Link to="/training/advanced" onClick={closeMenu}>Advanced Training</Link></li>
-              <li><Link to="/training/faq" onClick={closeMenu}>Training FAQ</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Services</h3>
-            <ul>
-              <li><Link to="/services" onClick={closeMenu}>Services Overview</Link></li>
-              <li><Link to="/services/maintenance" onClick={closeMenu}>Maintenance</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Experiences</h3>
-            <ul>
-              <li><Link to="/expeditions" onClick={closeMenu}>Expeditions</Link></li>
-              <li><Link to="/expeditions/calendar" onClick={closeMenu}>Calendar</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Contact</h3>
-            <ul>
-              <li><Link to="/contact" onClick={closeMenu}>Contact Us</Link></li>
-              <li><Link to="/contact/careers" onClick={closeMenu}>Careers</Link></li>
-              <li><Link to="/contact/pricing" onClick={closeMenu}>Pricing</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <HqMenuPanel open={menuOpen} onClose={closeMenu} />
 
       {/* Menu Button */}
       <button
@@ -222,9 +166,9 @@ function AdvancedTraining() {
   const { faqs: rawFaqs } = useFaqs('advanced-training', { visibleOnly: true });
   const fallbackFaqs = [
     { id: 'f1', question: 'Do I need to be an experienced pilot for advanced training?', answer: 'Different courses suit different experience levels. The autorotation clinic is open to PPL(H) holders from 50 hours. Mountain flying and confined area work are better suited to pilots with 100+ hours. Safety courses are open to anyone. We\'ll tell you honestly if we think you need more experience first.' },
-    { id: 'f2', question: 'Can I do multiple courses back to back?', answer: 'Yes — and it\'s often the most efficient way to advance your skills. We can structure a multi-day programme around your availability.' },
+    { id: 'f2', question: 'Can I do multiple courses back to back?', answer: 'Yes, and it\'s often the most efficient way to advance your skills. We can structure a multi-day programme around your availability.' },
     { id: 'f3', question: 'Is Captain Q personally available for every session?', answer: 'Autorotation clinics are led by Captain Q directly. Other courses are conducted by HQ\'s experienced instructors. Contact us to discuss availability and scheduling.' },
-    { id: 'f4', question: 'Will advanced training show on my licence?', answer: 'Training flights are entered in your logbook and contribute to your overall flight time. Some courses may contribute to specific ratings or qualifications depending on your goals — discuss this with us when booking.' },
+    { id: 'f4', question: 'Will advanced training show on my licence?', answer: 'Training flights are entered in your logbook and contribute to your overall flight time. Some courses may contribute to specific ratings or qualifications depending on your goals; discuss this with us when booking.' },
     { id: 'f5', question: 'Where is the training conducted?', answer: 'Based at Denham Aerodrome, with mountain flying training involving day trips to suitable UK terrain. All courses use HQ\'s own aircraft.' },
   ];
   const faqs = rawFaqs.length > 0 ? rawFaqs : fallbackFaqs;
@@ -233,23 +177,23 @@ function AdvancedTraining() {
 
   const skills = [
     // Emergencies
-    { cat: 'Emergencies', title: 'Full Autorotations', desc: 'Engine-off landings to a point — not just routine practice flares.' },
+    { cat: 'Emergencies', title: 'Full Autorotations', desc: 'Engine-off landings to a point, not just routine practice flares.' },
     { cat: 'Emergencies', title: 'Tail Rotor Failures', desc: 'Jammed, broken and loss-of-drive scenarios worked through properly.' },
-    { cat: 'Emergencies', title: 'Loss of Tail Rotor Effectiveness', desc: 'Recognising LTE before it bites — and getting out of it if it does.' },
+    { cat: 'Emergencies', title: 'Loss of Tail Rotor Effectiveness', desc: 'Recognising LTE before it bites, and getting out of it if it does.' },
     { cat: 'Emergencies', title: 'Vortex Ring State Recovery', desc: 'Entry, recognition and the correct recovery technique.' },
-    { cat: 'Emergencies', title: 'Engine Failure Drills', desc: 'Hover, takeoff, cruise and climb — every phase, under pressure.' },
+    { cat: 'Emergencies', title: 'Engine Failure Drills', desc: 'Hover, takeoff, cruise and climb. Every phase, under pressure.' },
     { cat: 'Emergencies', title: 'Hydraulic Failure', desc: 'Flying the aircraft heavy-stick and landing it safely.' },
     { cat: 'Emergencies', title: 'Governor Failure', desc: 'Manual throttle handling when the governor quits.' },
     { cat: 'Emergencies', title: 'Inadvertent IMC', desc: 'What to do in the first 60 seconds after losing visual reference.' },
     { cat: 'Emergencies', title: 'Carburettor Icing', desc: 'Detection, prevention and recovery on piston Robinsons.' },
 
     // Handling & Performance
-    { cat: 'Handling', title: 'Power Management', desc: 'Knowing your margins — and flying inside them with precision.' },
+    { cat: 'Handling', title: 'Power Management', desc: 'Knowing your margins, and flying inside them with precision.' },
     { cat: 'Handling', title: 'Quick Stops', desc: 'Aggressive deceleration drills for tight approaches.' },
     { cat: 'Handling', title: 'Precision Hovering', desc: 'Spot landings, wind corrections and close-quarters control.' },
     { cat: 'Handling', title: 'Unusual Attitude Recovery', desc: 'Disorienting attitudes and how to get back to level flight.' },
     { cat: 'Handling', title: 'Low-Inertia Rotor Technique', desc: 'Flying the Robinson rotor system the way it wants to be flown.' },
-    { cat: 'Handling', title: 'Running Landings & Takeoffs', desc: 'When hovering isn\'t an option — performance-limited operations.' },
+    { cat: 'Handling', title: 'Running Landings & Takeoffs', desc: 'When hovering isn\'t an option: performance-limited operations.' },
 
     // Terrain
     { cat: 'Terrain', title: 'Mountain Flying', desc: 'Route planning, density altitude and turbulence in the hills.' },
@@ -263,7 +207,7 @@ function AdvancedTraining() {
     { cat: 'Conditions', title: 'Hot-and-High Performance', desc: 'Density altitude maths that actually gets used in the cockpit.' },
     { cat: 'Conditions', title: 'Night Flying', desc: 'Night currency and the sensory traps of dark-sky operations.' },
     { cat: 'Conditions', title: 'Crosswind & Gusty Conditions', desc: 'Wind strategy, cyclic input and when to wait it out.' },
-    { cat: 'Conditions', title: 'Weather Decision-Making', desc: 'Reading weather products — and the discipline to turn back.' },
+    { cat: 'Conditions', title: 'Weather Decision-Making', desc: 'Reading weather products, and the discipline to turn back.' },
 
     // Airmanship
     { cat: 'Airmanship', title: 'Performance Planning', desc: 'Weight and balance, H-V diagram and real mission planning.' },
@@ -273,7 +217,7 @@ function AdvancedTraining() {
     { cat: 'Airmanship', title: 'Lost Comms & Radio Failure', desc: 'Procedure, lighting signals, and staying calm when radios die.' },
 
     // Signature
-    { cat: 'Signature', title: 'Aerobatic Principles', desc: 'Insights from Q\'s aerobatic world records — applied to everyday flying.' },
+    { cat: 'Signature', title: 'Aerobatic Principles', desc: 'Insights from Q\'s aerobatic world records, applied to everyday flying.' },
     { cat: 'Signature', title: 'Long-Range Expedition Planning', desc: 'Lessons from circumnavigating the globe and crossing the poles.' },
   ];
 
@@ -371,7 +315,7 @@ function AdvancedTraining() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.2 }}
             >
-              Autorotations, confined areas, mountain flying, and safety courses — all delivered by instructors who live and breathe this aircraft. Push your skills further with HQ's advanced programme.
+              Autorotations, confined areas, mountain flying, and safety courses, all delivered by instructors who live and breathe this aircraft. Push your skills further with HQ's advanced programme.
             </motion.p>
           </div>
         </motion.div>
@@ -386,10 +330,10 @@ function AdvancedTraining() {
                 <span className="adv-pre-text">Beyond the Licence</span>
                 <h2 className="adv-intro__heading">Sharp Skills.<br />Safer Pilot.</h2>
                 <p className="adv-intro__body">
-                  Holding a PPL(H) is the beginning of your journey, not the end of it. Advanced training at HQ covers the techniques and scenarios that your initial licence didn't — the situations that separate a merely-legal pilot from a genuinely capable one.
+                  Holding a PPL(H) is the beginning of your journey, not the end of it. Advanced training at HQ covers the techniques and scenarios that your initial licence didn't: the situations that separate a merely-legal pilot from a genuinely capable one.
                 </p>
                 <p className="adv-intro__body">
-                  Captain Quentin Smith — world helicopter aerobatics champion and holder of multiple world records — leads HQ's advanced programme. You won't find this calibre of instruction anywhere else in the UK.
+                  Captain Quentin Smith, world helicopter aerobatics champion and holder of multiple world records, leads HQ's advanced programme. You won't find this calibre of instruction anywhere else in the UK.
                 </p>
               </Reveal>
             </div>
@@ -398,12 +342,12 @@ function AdvancedTraining() {
                 <div className="adv-intro__image-wrap">
                   <img
                     src={pageImages['advanced-intro']?.[0]?.url || '/assets/images/team/quentin-smith-world-record-holder-helicopter-aerobatics.webp'}
-                    alt="Captain Quentin Smith — World Aerobatics Champion"
+                    alt="Captain Quentin Smith, World Aerobatics Champion"
                     className="adv-intro__image"
                     loading="lazy"
                     decoding="async"
                   />
-                  <span className="adv-intro__caption">Quentin Smith — World Aerobatics Champion</span>
+                  <span className="adv-intro__caption">Quentin Smith, World Aerobatics Champion</span>
                 </div>
               </Reveal>
             </div>
@@ -444,7 +388,7 @@ function AdvancedTraining() {
                 <span className="adv-pre-text adv-pre-text--light">Your Instructor</span>
                 <h2 className="adv-instructor__heading">Captain Quentin Smith</h2>
                 <p className="adv-instructor__body">
-                  Quentin Smith has flown around the world solo, crossed the poles by helicopter, and set multiple world records in aerobatics and long-distance flying. As HQ's founder and managing director, he brings 30 years of frontline flying experience to every advanced training session. This is not classroom instruction — it's knowledge earned at altitude, across continents, in conditions most pilots will never see.
+                  Quentin Smith has flown around the world solo, crossed the poles by helicopter, and set multiple world records in aerobatics and long-distance flying. As HQ's founder and managing director, he brings 30 years of frontline flying experience to every advanced training session. This is not classroom instruction. It's knowledge earned at altitude, across continents, in conditions most pilots will never see.
                 </p>
 
                 <div className="adv-instructor__stats">
@@ -463,7 +407,7 @@ function AdvancedTraining() {
                 <div className="adv-instructor__image-wrap">
                   <img
                     src={pageImages['advanced-instructor']?.[0]?.url || '/assets/images/team/quentin-smith-world-record-holder-helicopter-aerobatics.webp'}
-                    alt="Captain Quentin Smith — HQ Aviation Founder"
+                    alt="Captain Quentin Smith, HQ Aviation Founder"
                     className="adv-instructor__image"
                     loading="lazy"
                     decoding="async"
@@ -531,12 +475,9 @@ function AdvancedTraining() {
             <span className="adv-pre-text adv-pre-text--light">Ready to Push Further?</span>
             <h2 className="adv-cta__heading">Book Advanced Training</h2>
             <p className="adv-cta__body">
-              Contact our training team to discuss which course suits your hours and goals. Captain Q's autorotation clinic books up early — reach out to secure your place.
+              Contact our training team to discuss which course suits your hours and goals. Captain Q's autorotation clinic books up early, so reach out to secure your place.
             </p>
             <div className="adv-cta__buttons">
-              <a href="/contact?subject=advanced-training" className="adv-btn adv-btn--white">
-                Enquire Now
-              </a>
               <Link to="/about-us/captain-q" className="adv-cta__link">
                 Meet Captain Q
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

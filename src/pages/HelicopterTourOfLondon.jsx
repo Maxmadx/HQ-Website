@@ -28,6 +28,7 @@ import '../assets/css/components.css';
 // Import components
 import FooterMinimal from '../components/FooterMinimal';
 import LondonTourTicket from '../components/LondonTourTicket';
+import HqMenuPanel from '../components/HqMenuPanel';
 
 /**
  * PAGE HEADER COMPONENT
@@ -73,42 +74,7 @@ function TourHeader() {
   return (
     <>
       {/* Menu Panel */}
-      <div className={`hq-menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="hq-menu-grid">
-          <div className="hq-menu-section">
-            <h3>About</h3>
-            <ul>
-              <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-              <li><Link to="/about-us" onClick={closeMenu}>About Us</Link></li>
-              <li><Link to="/about-us/team" onClick={closeMenu}>Meet The Team</Link></li>
-              <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Experiences</h3>
-            <ul>
-              <li><Link to="/helicopter-tour-of-london" onClick={closeMenu}>Tour of London</Link></li>
-              <li><Link to="/expeditions" onClick={closeMenu}>Expeditions</Link></li>
-              <li><Link to="/training/trial-lessons" onClick={closeMenu}>Trial Lessons</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Training</h3>
-            <ul>
-              <li><Link to="/training" onClick={closeMenu}>Training Overview</Link></li>
-              <li><Link to="/training/ppl" onClick={closeMenu}>Private Pilot License</Link></li>
-              <li><Link to="/training/faq" onClick={closeMenu}>Training FAQ</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Contact</h3>
-            <ul>
-              <li><Link to="/contact" onClick={closeMenu}>Contact Us</Link></li>
-              <li><a href="tel:+441895833373" onClick={closeMenu}>+44 1895 833 373</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <HqMenuPanel open={menuOpen} onClose={closeMenu} />
 
       {/* Menu Button */}
       <button
@@ -196,10 +162,10 @@ function Reveal({ children, delay = 0, direction = 'up', duration = 0.8, amount 
 
 // London landmarks gallery data
 const galleryImages = [
-  { src: '/assets/images/gallery/carousel/rotating1.jpg', alt: 'Tower Bridge', caption: 'Tower Bridge' },
-  { src: '/assets/images/gallery/carousel/rotating2.jpg', alt: 'The Shard', caption: 'The Shard' },
-  { src: '/assets/images/gallery/flying/foggy-evening-flying.jpg', alt: 'Thames at Sunset', caption: 'Thames at Sunset' },
-  { src: '/assets/images/gallery/carousel/rotating8.jpg', alt: 'City Skyline', caption: 'City Skyline' },
+  { src: '/assets/images/gallery/london-tour/buckingham-palace.jpg', alt: 'Helicopter over St James\'s Park with Buckingham Palace', caption: 'Buckingham Palace' },
+  { src: '/assets/images/gallery/london-tour/thames-city-skyline.jpg', alt: 'Aerial view of the Thames toward the City of London', caption: 'Thames & City' },
+  { src: '/assets/images/gallery/london-tour/canary-wharf.jpg', alt: 'Aerial view of Canary Wharf and the O2 Arena', caption: 'Canary Wharf' },
+  { src: '/assets/images/gallery/london-tour/above-westminster.jpg', alt: 'Helicopter over the Thames above Westminster', caption: 'Above Westminster' },
 ];
 
 // Tour highlights data
@@ -208,7 +174,6 @@ const tourHighlights = [
   { icon: 'fa-route', title: 'West to East and back West', desc: 'Full Loop of the London Skyline' },
   { icon: 'fa-champagne-glasses', title: 'Champagne', desc: 'Welcome reception included' },
   { icon: 'fa-helicopter', title: 'Turbine R66', desc: 'Premium helicopter experience' },
-  { icon: 'fa-camera', title: 'Photo Ops', desc: 'Iconic landmark views' },
 ];
 
 // Landmarks you'll see
@@ -231,11 +196,9 @@ function LondonTourVideo() {
   const [videoPaused, setVideoPaused] = useState(false);
   const [videoProgress, setVideoProgress] = useState(0);
   const [controlsVisible, setControlsVisible] = useState(false);
-  const ytPlayerRef = useRef(null);
-  const ytContainerRef = useRef(null);
-  const controlsTimerRef = useRef(null);
+  const videoRef = useRef(null);
   const containerRef = useRef(null);
-  const [isNearby, setIsNearby] = useState(false);
+  const controlsTimerRef = useRef(null);
 
   const showControls = () => {
     setControlsVisible(true);
@@ -245,50 +208,12 @@ function LondonTourVideo() {
 
   useEffect(() => {
     const el = containerRef.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setIsNearby(true); },
-      { rootMargin: '600px' }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!isNearby || ytPlayerRef.current) return;
-    const createPlayer = () => {
-      ytPlayerRef.current = new window.YT.Player(ytContainerRef.current, {
-        videoId: 'gREwO1BDxXA',
-        playerVars: {
-          autoplay: 1, mute: 1, loop: 1, playlist: 'gREwO1BDxXA',
-          controls: 0, showinfo: 0, rel: 0, modestbranding: 1,
-          iv_load_policy: 3, disablekb: 1, fs: 0, playsinline: 1,
-        },
-        events: { onReady: (e) => e.target.playVideo() },
-      });
-    };
-    if (window.YT && window.YT.Player) {
-      createPlayer();
-    } else {
-      const prev = window.onYouTubeIframeAPIReady;
-      window.onYouTubeIframeAPIReady = () => { prev?.(); createPlayer(); };
-      if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
-        const tag = document.createElement('script');
-        tag.src = 'https://www.youtube.com/iframe_api';
-        document.head.appendChild(tag);
-      }
-    }
-  }, [isNearby]);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
+    const v = videoRef.current;
+    if (!el || !v) return;
     const obs = new IntersectionObserver(
       ([entry]) => {
-        const p = ytPlayerRef.current;
-        if (!p || !p.playVideo) return;
-        if (entry.isIntersecting && !videoPaused) p.playVideo();
-        else p.pauseVideo();
+        if (entry.isIntersecting && !videoPaused) v.play().catch(() => {});
+        else v.pause();
       },
       { threshold: 0.2 }
     );
@@ -297,25 +222,28 @@ function LondonTourVideo() {
   }, [videoPaused]);
 
   useEffect(() => {
-    const p = ytPlayerRef.current;
-    if (!p || !p.mute) return;
-    if (videoMuted) p.mute(); else p.unMute();
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = videoMuted;
   }, [videoMuted]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const p = ytPlayerRef.current;
-      if (!p || !p.getCurrentTime || !p.getDuration) return;
-      const dur = p.getDuration();
-      if (dur > 0) setVideoProgress(p.getCurrentTime() / dur);
-    }, 500);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <div className="ltour-video" ref={containerRef}>
       <div className={`ltour-video__placeholder${controlsVisible ? ' ltour-video__placeholder--controls-visible' : ''}`}>
-        <div ref={ytContainerRef} style={{ position: 'absolute', top: '-60px', left: 0, width: '100%', height: 'calc(100% + 120px)' }} />
+        <video
+          ref={videoRef}
+          className="ltour-video__media"
+          src="/assets/videos/over-london-night.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          onTimeUpdate={(e) => {
+            const dur = e.currentTarget.duration;
+            if (dur > 0) setVideoProgress(e.currentTarget.currentTime / dur);
+          }}
+        />
         <div
           style={{ position: 'absolute', inset: 0, zIndex: 2, cursor: 'pointer' }}
           onPointerDown={(e) => { e.currentTarget.dataset.startX = e.clientX; e.currentTarget.dataset.startY = e.clientY; }}
@@ -324,10 +252,10 @@ function LondonTourVideo() {
             const dy = Math.abs(e.clientY - Number(e.currentTarget.dataset.startY || 0));
             if (dx > 10 || dy > 10) return;
             showControls();
-            const p = ytPlayerRef.current;
-            if (!p) return;
-            if (videoPaused) { p.playVideo(); setVideoPaused(false); }
-            else { p.pauseVideo(); setVideoPaused(true); }
+            const v = videoRef.current;
+            if (!v) return;
+            if (videoPaused) { v.play().catch(() => {}); setVideoPaused(false); }
+            else { v.pause(); setVideoPaused(true); }
           }}
         />
         <button
@@ -345,10 +273,10 @@ function LondonTourVideo() {
           <button
             className="ltour-video__vc-btn"
             onClick={() => {
-              const p = ytPlayerRef.current;
-              if (!p) return;
-              if (videoPaused) { p.playVideo(); setVideoPaused(false); }
-              else { p.pauseVideo(); setVideoPaused(true); }
+              const v = videoRef.current;
+              if (!v) return;
+              if (videoPaused) { v.play().catch(() => {}); setVideoPaused(false); }
+              else { v.pause(); setVideoPaused(true); }
             }}
             aria-label={videoPaused ? 'Play' : 'Pause'}
           >
@@ -361,11 +289,11 @@ function LondonTourVideo() {
           <div
             className="ltour-video__vc-progress"
             onClick={(e) => {
-              const p = ytPlayerRef.current;
-              if (!p || !p.getDuration) return;
+              const v = videoRef.current;
+              if (!v || !v.duration) return;
               const rect = e.currentTarget.getBoundingClientRect();
               const ratio = (e.clientX - rect.left) / rect.width;
-              p.seekTo(ratio * p.getDuration(), true);
+              v.currentTime = ratio * v.duration;
             }}
           >
             <div className="ltour-video__vc-progress-fill" style={{ width: `${videoProgress * 100}%` }} />
@@ -481,91 +409,94 @@ function HelicopterTourOfLondon() {
       {/* ========== INTRO SECTION ========== */}
       <section className="ltour-intro">
         <div className="ltour-intro__container">
-          <Reveal>
-            <div className="ltour-intro__header">
-              <span className="ltour-pre-text">The Experience</span>
-              <h2>
-                <span className="ltour-text--dark">50 Minutes</span>{' '}
-                <span className="ltour-text--mid">of</span>{' '}
-                <span className="ltour-text--light">Unforgettable Views</span>
-              </h2>
-              <p>
+          <div className="ltour-intro__row">
+            <div className="ltour-intro__copy">
+              <Reveal>
+                <div className="ltour-intro__header">
+                  <span className="ltour-pre-text">The Experience</span>
+                  <h2>
+                    <span className="ltour-text--dark">Unforgettable Views</span>
+                  </h2>
+                </div>
+              </Reveal>
+              <p className="ltour-intro__p1">
                 Take to the skies over one of the most impressive skylines in the world.
                 With our airfield located within Greater London, we are just a short hop from
                 a beautiful skyline and an unforgettable flight experience.
               </p>
+
+              <div className="ltour-intro__highlights-wrap">
+                <div
+                  className="ltour-intro__highlights"
+                  ref={highlightsRef}
+                  onScroll={e => {
+                    const el = e.currentTarget;
+                    const idx = Math.round(el.scrollLeft / el.clientWidth);
+                    if (idx !== highlightIdx) setHighlightIdx(idx);
+                  }}
+                >
+                  {tourHighlights.map((item, i) => (
+                    <Reveal key={i} delay={i * 0.05} duration={0.35} amount={0.05}>
+                      <motion.div
+                        className="ltour-intro__highlight"
+                        whileHover={{ y: -3 }}
+                        transition={{ type: 'spring', stiffness: 400 }}
+                      >
+                        <i className={`fas ${item.icon}`}></i>
+                        <h4>{item.title}</h4>
+                        <p>{item.desc}</p>
+                      </motion.div>
+                    </Reveal>
+                  ))}
+                </div>
+                <div className="ltour-intro__highlights-dots">
+                  {tourHighlights.map((_, i) => (
+                    <span key={i} className={`ltour-intro__highlights-dot${highlightIdx === i ? ' ltour-intro__highlights-dot--active' : ''}`} />
+                  ))}
+                </div>
+              </div>
+
+              <p className="ltour-intro__p2">
+                Spanning the length of London from East to West and back again, you'll observe
+                in stunning detail the whole of London, from its historic landmarks to its modern marvels.
+              </p>
+
+              <Reveal delay={0.3}>
+                <div className="ltour-landmarks__ticket">
+                  <LondonTourTicket />
+                </div>
+              </Reveal>
+
+              <p className="ltour-intro__cta-desc">
+                Whether you're celebrating a special occasion or simply want an unforgettable experience,
+                our London helicopter tour is the perfect choice.
+              </p>
+              <p className="ltour-intro__cta-desc">
+                Contact us to book your flight today.
+              </p>
+              <div className="ltour-intro__cta-note">
+                <strong>Gift Vouchers Available.</strong> The perfect present for aviation enthusiasts
+              </div>
             </div>
-          </Reveal>
 
-          <div className="ltour-intro__video-wrap">
-            <Reveal delay={0.15}>
-              <LondonTourVideo />
-            </Reveal>
-          </div>
-
-          <p className="ltour-intro__p2">
-            Spanning the length of London from East to West and back again, you'll observe
-            in stunning detail the whole of London—from its historic landmarks to its modern marvels.
-          </p>
-
-          <div className="ltour-intro__highlights-wrap">
-            <div
-              className="ltour-intro__highlights"
-              ref={highlightsRef}
-              onScroll={e => {
-                const el = e.currentTarget;
-                const idx = Math.round(el.scrollLeft / el.clientWidth);
-                if (idx !== highlightIdx) setHighlightIdx(idx);
-              }}
-            >
-              {tourHighlights.map((item, i) => (
-                <Reveal key={i} delay={i * 0.05} duration={0.35} amount={0.05}>
-                  <motion.div
-                    className="ltour-intro__highlight"
-                    whileHover={{ y: -3 }}
-                    transition={{ type: 'spring', stiffness: 400 }}
-                  >
-                    <i className={`fas ${item.icon}`}></i>
-                    <h4>{item.title}</h4>
-                    <p>{item.desc}</p>
-                  </motion.div>
-                </Reveal>
-              ))}
-            </div>
-            <div className="ltour-intro__highlights-dots">
-              {tourHighlights.map((_, i) => (
-                <span key={i} className={`ltour-intro__highlights-dot${highlightIdx === i ? ' ltour-intro__highlights-dot--active' : ''}`} />
-              ))}
+            <div className="ltour-intro__video-wrap">
+              <Reveal delay={0.15}>
+                <LondonTourVideo />
+              </Reveal>
             </div>
           </div>
         </div>
-      </section>
-
-      {/* ========== LANDMARKS SECTION ========== */}
-      <section className="ltour-landmarks">
-        <div className="ltour-landmarks__container">
-          <Reveal>
-            <div className="ltour-section-header">
-              <span className="ltour-pre-text">Your Flight Path</span>
-              <h2>
-                <span className="ltour-text--dark">Iconic</span>{' '}
-                <span className="ltour-text--mid">London</span>{' '}
-                <span className="ltour-text--light">Landmarks</span>
-              </h2>
-            </div>
-          </Reveal>
-
-        </div>
-
-        <Reveal delay={0.3}>
-          <div className="ltour-landmarks__ticket">
-            <LondonTourTicket />
-          </div>
-        </Reveal>
       </section>
 
       {/* ========== GALLERY SECTION ========== */}
       <section className="ltour-gallery" data-cms-section="helicopter-tour-gallery">
+        <div className="ltour-gallery__heading">
+          <span className="ltour-pre-text">Your Flight Path</span>
+          <h2>
+            <span className="ltour-text--dark">Iconic</span>{' '}
+            <span className="ltour-text--light">Landmarks</span>
+          </h2>
+        </div>
         <div className="ltour-gallery__track">
           {galleryImages.map((img, i) => (
             <motion.div
@@ -629,61 +560,6 @@ function HelicopterTourOfLondon() {
         </div>
       </section>
 
-      {/* ========== CTA SECTION ========== */}
-      <section className="ltour-cta">
-        <div className="ltour-cta__inner">
-          <div className="ltour-cta__image">
-            <img src="/assets/images/gallery/carousel/rotating1.jpg" alt="Helicopter over London" />
-            <div className="ltour-cta__image-overlay"></div>
-          </div>
-          <div className="ltour-cta__content">
-            <Reveal>
-              <div className="ltour-cta__header">
-                <span className="ltour-pre-text">Ready to Fly?</span>
-                <h2>
-                  <span className="ltour-text--dark">Book</span>{' '}
-                  <span className="ltour-text--mid">Your</span>{' '}
-                  <span className="ltour-text--light">Flight</span>
-                </h2>
-              </div>
-            </Reveal>
-            <Reveal delay={0.1}>
-              <p className="ltour-cta__desc">
-                Whether you're celebrating a special occasion or simply want an unforgettable experience,
-                our London helicopter tour is the perfect choice. Contact us to book your flight today.
-              </p>
-            </Reveal>
-            <Reveal delay={0.2}>
-              <div className="ltour-cta__actions">
-                <a
-                  href="#ticket-wrapper"
-                  className="ltour-btn ltour-btn--primary"
-                  onClick={e => {
-                    e.preventDefault();
-                    const el = document.getElementById('ticket-details');
-                    if (el) {
-                      const bottom = el.getBoundingClientRect().bottom + window.scrollY;
-                      window.scrollTo({ top: bottom - window.innerHeight + 48, behavior: 'smooth' });
-                    }
-                  }}
-                >
-                  Book Now
-                </a>
-                <a href="tel:+441895833373" className="ltour-btn ltour-btn--outline">
-                  <i className="fas fa-phone"></i>
-                  +44 1895 833 373
-                </a>
-              </div>
-            </Reveal>
-            <Reveal delay={0.3}>
-              <div className="ltour-cta__note">
-                <strong>Gift Vouchers Available</strong> — The perfect present for aviation enthusiasts
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
       {/* ========== FOOTER ========== */}
       <FooterMinimal />
 
@@ -694,7 +570,7 @@ function HelicopterTourOfLondon() {
           font-family: 'Space Grotesk', -apple-system, sans-serif;
           background: #faf9f6;
           color: #1a1a1a;
-          overflow-x: hidden;
+          overflow-x: clip;
         }
 
         .ltour-pre-text {
@@ -788,7 +664,7 @@ function HelicopterTourOfLondon() {
           position: absolute;
           inset: 0;
           z-index: 2;
-          background: linear-gradient(90deg, rgba(250,249,246,0.97) 0%, rgba(250,249,246,0.92) 50%, rgba(250,249,246,0.6) 100%);
+          background: linear-gradient(90deg, rgba(250,249,246,0.92) 0%, rgba(250,249,246,0.88) 30%, rgba(250,249,246,0.3) 65%, rgba(250,249,246,0) 100%);
         }
 
         .ltour-hero__content {
@@ -864,11 +740,6 @@ function HelicopterTourOfLondon() {
           flex-direction: column;
         }
 
-        /* Desktop: p2 sits between header and video */
-        .ltour-intro__video-wrap { order: 2; }
-        .ltour-intro__p2 { order: 1; }
-        .ltour-intro__highlights-wrap { order: 3; }
-
         .ltour-intro__header {
           text-align: center;
           max-width: 800px;
@@ -882,19 +753,79 @@ function HelicopterTourOfLondon() {
           font-weight: 700;
         }
 
-        .ltour-intro__header p {
-          color: #666;
-          font-size: 1rem;
-          line-height: 1.8;
+        .ltour-intro__row {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
+          gap: 3rem;
+          align-items: start;
         }
 
-        .ltour-intro__p2 {
+        .ltour-intro__copy { grid-column: 1; }
+        .ltour-intro__video-wrap {
+          grid-column: 2;
+          position: sticky;
+          top: max(10vh, var(--catch-top, 90px));
+          align-self: start;
+        }
+
+        .ltour-intro__row .ltour-video {
+          max-width: 380px;
+          width: 100%;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        .ltour-intro__copy {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        .ltour-intro__copy > .ltour-intro__header {
+          margin: 0;
+          max-width: none;
+          text-align: left;
+        }
+
+        .ltour-intro__copy > p {
           color: #666;
           font-size: 1rem;
           line-height: 1.8;
-          text-align: center;
-          max-width: 800px;
-          margin: 0 auto 3rem;
+          margin: 0;
+        }
+
+        .ltour-intro__cta-desc {
+          padding-top: 24px;
+        }
+
+        .ltour-intro__cta-desc + .ltour-intro__cta-desc {
+          padding-top: 0;
+        }
+
+        .ltour-intro__cta-note {
+          font-size: 0.8rem;
+          color: #666;
+          padding: 0.85rem 1rem;
+          background: #faf9f6;
+          border-left: 3px solid #b38728;
+          border-radius: 4px;
+        }
+
+        .ltour-intro__cta-note strong {
+          color: #1a1a1a;
+        }
+
+        .ltour-intro__copy .ltour-intro__highlights-wrap {
+          margin-top: 0.5rem;
+        }
+
+        .ltour-intro__copy .ltour-intro__highlights {
+          grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+          gap: 0.75rem;
+        }
+
+        .ltour-intro__copy .ltour-intro__highlight {
+          padding: 1rem 0.75rem;
         }
 
         .ltour-intro__highlights-wrap {
@@ -962,17 +893,29 @@ function HelicopterTourOfLondon() {
 
         /* ===== INTRO VIDEO ===== */
         .ltour-video {
-          max-width: 800px;
+          max-width: 380px;
           margin: 2rem auto 3rem;
         }
 
         .ltour-video__placeholder {
           position: relative;
-          aspect-ratio: 16/9;
+          aspect-ratio: 478 / 850;
           background: #111;
           overflow: hidden;
           border-radius: 12px;
           box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .ltour-video__media {
+          display: block;
+          max-width: 100%;
+          max-height: 100%;
+          width: auto;
+          height: auto;
+          margin: auto;
         }
 
         .ltour-video__mute-btn {
@@ -1060,6 +1003,10 @@ function HelicopterTourOfLondon() {
           left: 50%;
           transform: translateX(-50%);
           overflow: hidden;
+        }
+
+        .ltour-gallery__heading {
+          display: none;
         }
 
         .ltour-gallery__track {
@@ -1327,7 +1274,7 @@ function HelicopterTourOfLondon() {
           }
 
           .ltour-hero__overlay {
-            background: linear-gradient(180deg, rgba(250,249,246,0.97) 0%, rgba(250,249,246,0.92) 60%, rgba(250,249,246,0.7) 100%);
+            background: linear-gradient(180deg, rgba(250,249,246,0.45) 0%, rgba(250,249,246,0.92) 28%, rgba(250,249,246,0.92) 78%, rgba(250,249,246,0.35) 100%);
           }
         }
 
@@ -1372,14 +1319,78 @@ function HelicopterTourOfLondon() {
             margin-bottom: 0;
           }
 
-          /* Mobile: restore DOM order — header → video → p2 → highlights */
-          .ltour-intro__video-wrap { order: unset; }
-          .ltour-intro__p2 { order: unset; }
-          .ltour-intro__highlights-wrap { order: unset; }
-
-          .ltour-intro__p2 {
-            text-align: left;
+          .ltour-intro__row {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
             margin-bottom: 1.5rem;
+          }
+
+          .ltour-intro__copy {
+            display: contents;
+          }
+
+          .ltour-intro__row > *,
+          .ltour-intro__copy > * {
+            min-width: 0;
+            max-width: 100%;
+          }
+
+          .ltour-intro__video-wrap {
+            min-width: 0;
+            align-self: stretch;
+          }
+
+          .ltour-intro__highlights-wrap {
+            align-self: stretch;
+          }
+
+          /* Mobile order: header → p1 → video → p2 → ticket → cta-desc1 → cta-note → cta-desc2 → highlights */
+          .ltour-intro__copy > div:has(> .ltour-intro__header) { order: 1; }
+          .ltour-intro__p1 { order: 2; }
+          .ltour-intro__video-wrap { order: 3; }
+          .ltour-intro__p2 { order: 4; }
+          .ltour-intro__copy > div:has(> .ltour-landmarks__ticket) { order: 5; }
+          .ltour-intro__cta-desc:has(+ .ltour-intro__cta-desc) { order: 6; }
+          .ltour-intro__cta-note { order: 7; }
+          .ltour-intro__cta-desc + .ltour-intro__cta-desc { order: 8; }
+          .ltour-intro__highlights-wrap { order: 9; }
+
+          .ltour-intro__copy .ltour-landmarks__ticket {
+            max-width: 100%;
+          }
+
+          .ltour-intro__copy .london-ticket {
+            width: 100%;
+            max-width: 100%;
+          }
+
+          .ltour-intro__copy .ticket-wrapper {
+            max-width: 100%;
+          }
+
+          .ltour-intro__video-wrap {
+            position: static;
+            top: auto;
+          }
+
+          .ltour-intro__row .ltour-video {
+            height: 70vh;
+            aspect-ratio: 478 / 850;
+            width: auto;
+            max-width: 100%;
+            margin: 1rem auto 3rem;
+          }
+
+          .ltour-intro__row .ltour-video__placeholder {
+            width: 100%;
+            height: 100%;
+            aspect-ratio: auto;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+          }
+
+          .ltour-intro__copy > p {
+            text-align: left;
           }
 
           .ltour-section-header {
@@ -1426,6 +1437,19 @@ function HelicopterTourOfLondon() {
 
           .ltour-intro__highlight p {
             font-size: 0.72rem;
+          }
+
+          .ltour-gallery__heading {
+            display: block;
+            text-align: center;
+            padding: 2.5rem 1rem 1.5rem;
+          }
+
+          .ltour-gallery__heading h2 {
+            font-size: clamp(1.5rem, 6vw, 2rem);
+            margin: 0.5rem 0 0;
+            text-transform: uppercase;
+            font-weight: 700;
           }
 
           .ltour-gallery__track {

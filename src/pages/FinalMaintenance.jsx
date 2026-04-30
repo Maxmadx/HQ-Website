@@ -10,7 +10,6 @@
  * COMPONENTS:
  * 01. Hero - Full viewport with animated grid + status board
  * 02. ScrollProgress - Fixed progress indicator
- * 03. StatsStrip - Animated counters with icons
  * 04. Philosophy - Split text with floating elements
  * 05. ServicesGrid - 3D hover cards for services
  * 06. Timeline - Maintenance history/milestones
@@ -39,6 +38,7 @@ import { buildService, buildBreadcrumbList } from '../components/seo/jsonLd';
 import FooterMinimal from '../components/FooterMinimal';
 import FacilityGallery from '../components/Maintenance/FacilityGallery';
 import PartsEnquiry from '../components/Maintenance/PartsEnquiry';
+import { MAINTENANCE_PHONE, MAINTENANCE_PHONE_TEL } from '../constants/contactInfo';
 
 // ============================================
 // UTILITY COMPONENTS
@@ -72,34 +72,6 @@ function Reveal({ children, delay = 0, direction = 'up' }) {
       {children}
     </motion.div>
   );
-}
-
-function AnimatedNumber({ value, suffix = '', prefix = '' }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
-  useEffect(() => {
-    if (isInView) {
-      const num = parseInt(value.toString().replace(/[^0-9]/g, ''));
-      const duration = 2000;
-      const steps = 60;
-      const increment = num / steps;
-      let current = 0;
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= num) {
-          setCount(num);
-          clearInterval(timer);
-        } else {
-          setCount(Math.floor(current));
-        }
-      }, duration / steps);
-      return () => clearInterval(timer);
-    }
-  }, [isInView, value]);
-
-  return <span ref={ref}>{prefix}{count.toLocaleString()}{suffix}</span>;
 }
 
 // ============================================
@@ -257,7 +229,7 @@ function ParallaxSection({ image, number, label, largeText }) {
       </svg>
 
       <div className="maint-parallax__content">
-        <span className="maint-parallax__number">— {number} —</span>
+        <span className="maint-parallax__number">{number}</span>
         <span className="maint-parallax__label">{label}</span>
         <span className="maint-parallax__large">{largeText}</span>
       </div>
@@ -370,40 +342,6 @@ function ScrollProgress() {
   );
 }
 
-// ============================================
-// COMPONENT 03: STATS STRIP
-// ============================================
-
-function StatsStrip() {
-  const stats = [
-    { icon: 'fa-helicopter', value: 85, suffix: '+', label: 'Aircraft Under Care' },
-    { icon: 'fa-calendar-check', value: 15, suffix: '+', label: 'Years Experience' },
-    { icon: 'fa-wrench', value: 2500, suffix: '+', label: 'Services Completed' },
-    { icon: 'fa-users', value: 12, suffix: '', label: 'Expert Engineers' },
-  ];
-
-  return (
-    <section className="maint-stats">
-      <div className="maint-stats__container">
-        {stats.map((stat, i) => (
-          <motion.div
-            key={i}
-            className="maint-stats__item"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: i * 0.1 }}
-            viewport={{ once: true }}
-          >
-            <span className="maint-stats__value">
-              <AnimatedNumber value={stat.value} suffix={stat.suffix} />
-            </span>
-            <span className="maint-stats__label">{stat.label}</span>
-          </motion.div>
-        ))}
-      </div>
-    </section>
-  );
-}
 
 // ============================================
 // COMPONENT 04: PHILOSOPHY SECTION
@@ -437,7 +375,7 @@ function PhilosophySection() {
           email: partsForm.email,
           subject: 'Parts Enquiry',
           message: messageParts.join('\n'),
-          source: 'Maintenance — Parts Enquiry',
+          source: 'Maintenance: Parts Enquiry',
         }),
       });
       if (res.ok) {
@@ -511,7 +449,7 @@ function PhilosophySection() {
           <Reveal delay={0.2}>
             <p className="maint-philosophy__body">
               As one of the biggest Robinson service centres in Europe, we hold a £500K+ genuine
-              parts inventory — engine components, airframe parts, consumables, avionics, and
+              parts inventory: engine components, airframe parts, consumables, avionics, and
               accessories. Same-day dispatch available for AOG situations.
             </p>
           </Reveal>
@@ -578,7 +516,7 @@ function PhilosophySection() {
                     <label className="maint-philosophy__parts-field-label">Description <span style={{ fontWeight: 400, color: '#bbb' }}>(optional)</span></label>
                     <textarea
                       className="maint-philosophy__parts-textarea"
-                      placeholder="Any additional details — e.g. hit my tail rotor, need a new blade..."
+                      placeholder="Any additional details, e.g. hit my tail rotor, need a new blade..."
                       value={partsForm.description || ''}
                       onChange={e => setPartsForm(prev => ({ ...prev, description: e.target.value }))}
                       rows={3}
@@ -598,14 +536,14 @@ function PhilosophySection() {
                   <div className="maint-philosophy__parts-submit">
                     {partsSubmitted ? (
                       <div className="maint-philosophy__parts-success">
-                        <i className="fas fa-check"></i> Enquiry sent — we'll be in touch shortly
+                        <i className="fas fa-check"></i> Enquiry sent. We'll be in touch shortly
                       </div>
                     ) : (
                       <>
                         <button type="submit" className="maint-btn maint-btn--primary" style={{ width: '100%', justifyContent: 'center', opacity: partsSubmitting ? 0.7 : 1, cursor: partsSubmitting ? 'wait' : 'pointer' }} disabled={partsSubmitting}>
                           {partsSubmitting ? 'Sending…' : <> Send Parts Enquiry <i className="fas fa-arrow-right" style={{ fontSize: '0.65rem' }}></i></>}
                         </button>
-                        {partsError && <p style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#c0392b', textAlign: 'center' }}>Something went wrong — please try again.</p>}
+                        {partsError && <p style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#c0392b', textAlign: 'center' }}>Something went wrong. Please try again.</p>}
                       </>
                     )}
                   </div>
@@ -807,7 +745,7 @@ function RebuildsSection() {
           </Reveal>
           <Reveal delay={0.2}>
             <p className="maint-rb__body">
-              At 2200 hours or 12 years — whichever comes first — Robinson helicopters require a complete
+              At 2200 hours or 12 years (whichever comes first), Robinson helicopters require a complete
               overhaul. We don't just check it, we transform it. Complete disassembly, inspection of every
               component, replacement of what's needed, and reassembly to factory-fresh condition.
             </p>
@@ -885,7 +823,7 @@ function RebuildsSection() {
               <div className="maint-rb__showcase-inner">
                 <div className="maint-rb__showcase-topbar">
                   <span className="maint-rb__showcase-counter">{String(rebuildDetailOpen + 1).padStart(2, '0')} / {String(rebuilds.length).padStart(2, '0')}</span>
-                  <span className="maint-rb__showcase-label">HQ Aviation — Rebuild Portfolio</span>
+                  <span className="maint-rb__showcase-label">HQ Aviation Rebuild Portfolio</span>
                   <button className="maint-rb__showcase-close" onClick={() => setRebuildDetailOpen(null)}>Close</button>
                 </div>
                 <div className="maint-rb__showcase-content">
@@ -896,7 +834,7 @@ function RebuildsSection() {
                     </div>
                     <div className="maint-rb__showcase-thumbs">
                       {rb.gallery.map((src, ti) => (
-                        <button key={ti} className="maint-rb__showcase-thumb" onClick={() => setRebuildLightbox({ src, alt: `${rb.model} — ${ti + 1}` })}>
+                        <button key={ti} className="maint-rb__showcase-thumb" onClick={() => setRebuildLightbox({ src, alt: `${rb.model} ${ti + 1}` })}>
                           <img src={src} alt="" />
                         </button>
                       ))}
@@ -980,7 +918,7 @@ function WeBuySection() {
               If you're a Robinson aircraft owner, we're interested in purchasing your helicopter.
               We're especially keen on aircraft from private owners who are running lower on years
               but still have plentiful hours remaining. We can put your aircraft on our training
-              school fleet and use those hours up before the 12-year rebuild—maximising the value
+              school fleet and use those hours up before the 12-year rebuild, maximising the value
               for everyone.
             </p>
           </Reveal>
@@ -1238,7 +1176,7 @@ function TeamProfiles() {
 
         <Reveal delay={0.5}>
           <div className="maint-team__cta">
-            <p>A team that lives and breathes rotary-wing aviation — factory-trained, continuously developing, and always investing in the latest techniques</p>
+            <p>A team that lives and breathes rotary-wing aviation: factory-trained, continuously developing, and always investing in the latest techniques</p>
           </div>
         </Reveal>
       </div>
@@ -1572,7 +1510,7 @@ const styles = `
   background: #faf9f6;
   color: #1a1a1a;
   line-height: 1.6;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .maint * {
@@ -1686,6 +1624,27 @@ const styles = `
   align-items: center;
   justify-content: center;
   overflow: hidden;
+}
+
+/* Sticky-blur: pin .maint-hero at viewport bottom on desktop;
+   the next section rises over it with progressive blur. */
+@media (min-width: 901px) {
+  .maint-hero {
+    position: sticky;
+    top: var(--maint-hero-stick-top, 0);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .maint-hero {
+      filter: blur(var(--maint-hero-blur, 0px));
+      will-change: filter;
+    }
+  }
+
+  .maint-hero ~ * {
+    position: relative;
+    z-index: 5;
+  }
 }
 
 .maint-hero__bg {
@@ -1934,47 +1893,32 @@ const styles = `
   color: #888;
 }
 
-/* === 03. STATS === */
-.maint-stats {
-  background: #1a1a1a;
-  padding: 1rem 2rem;
-}
-
-.maint-stats__container {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  gap: 3rem;
-  flex-wrap: wrap;
-}
-
-.maint-stats__item {
-  text-align: center;
-  min-width: 110px;
-}
-
-.maint-stats__value {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 1.4rem;
-  color: #faf9f6;
-  display: block;
-  font-weight: 600;
-}
-
-.maint-stats__label {
-  font-size: 0.55rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(250,249,246,0.5);
-  margin-top: 0.1rem;
-  display: block;
-}
-
 /* === 04. PHILOSOPHY (SPLIT: MAINTENANCE | PARTS) === */
 .maint-philosophy {
   padding: 6rem 2rem;
   background: #faf9f6;
+  position: relative;
+}
+
+/* Sticky-blur: pin .maint-philosophy at viewport bottom on desktop;
+   the next section rises over it with progressive blur. */
+@media (min-width: 901px) {
+  .maint-philosophy {
+    position: sticky;
+    top: var(--maint-philosophy-stick-top, 0);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .maint-philosophy {
+      filter: blur(var(--maint-philosophy-blur, 0px));
+      will-change: filter;
+    }
+  }
+
+  .maint-philosophy ~ * {
+    position: relative;
+    z-index: 5;
+  }
 }
 .maint-philosophy__container {
   max-width: 1200px;
@@ -2295,17 +2239,6 @@ const styles = `
   background: #ffffff;
   padding: 5rem 2rem;
   position: relative;
-}
-
-.maint-core-services::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #bbb, transparent);
 }
 
 .maint-core-services__header {
@@ -5282,15 +5215,14 @@ function MaintenanceEnquiryForm() {
   }
 
   return (
-    <div style={{ background: '#f0efec', padding: '0 2rem 2rem' }}>
-      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-        <div style={{ width: '100%' }}>
+    <>
+      <div style={{ width: '100%' }}>
 
           {!formOpen && !submitted && (
             <button className="fd-sales__intent-btn fd-sales__intent-btn--full" onClick={() => setFormOpen(true)}>
               <span className="fd-sales__intent-icon">↗</span>
-              <span className="fd-sales__intent-title">Start Your Maintenance with HQ</span>
-              <span className="fd-sales__intent-sub">50-hour, 100-hour, annual, or full overhaul — tell us what your aircraft needs and we'll take it from there.</span>
+              <span className="fd-sales__intent-title">Investigate Making HQ Aviation Your Service Center</span>
+              <span className="fd-sales__intent-sub">50-hour, 100-hour, annual, or full overhaul. Tell us what your aircraft needs and we'll take it from there.</span>
             </button>
           )}
 
@@ -5329,7 +5261,7 @@ function MaintenanceEnquiryForm() {
 
               <div className="fd-sales__unmanned-field">
                 <label className="fd-sales__unmanned-label">Additional Notes <span className="fd-sales__unmanned-optional">(optional)</span></label>
-                <textarea className="fd-sales__unmanned-input fd-sales__unmanned-textarea" placeholder="Any other details — defects noticed, parts needed, access constraints…" rows={3} value={notes} onChange={e => setNotes(e.target.value)} />
+                <textarea className="fd-sales__unmanned-input fd-sales__unmanned-textarea" placeholder="Any other details, e.g. defects noticed, parts needed, access constraints…" rows={3} value={notes} onChange={e => setNotes(e.target.value)} />
               </div>
 
               {error && <p className="fd-sales__unmanned-error">{error}</p>}
@@ -5346,17 +5278,16 @@ function MaintenanceEnquiryForm() {
             <div className="fd-sales__unmanned-success">
               <span className="fd-sales__unmanned-success-icon">✓</span>
               <p className="fd-sales__unmanned-success-title">Enquiry Received</p>
-              <p className="fd-sales__unmanned-success-sub">Thank you — a member of our maintenance team will be in touch to confirm the details.</p>
+              <p className="fd-sales__unmanned-success-sub">Thank you. A member of our maintenance team will be in touch to confirm the details.</p>
             </div>
           )}
-        </div>
-
-        <a href="tel:+441895833838" className="rb__cta-phone">
-          <span>Or call directly</span>
-          <strong>+44 (0) 1895 833 838</strong>
-        </a>
       </div>
-    </div>
+
+      <a href={`tel:${MAINTENANCE_PHONE_TEL}`} className="rb__cta-phone">
+        <span>Or call directly</span>
+        <strong>{MAINTENANCE_PHONE}</strong>
+      </a>
+    </>
   );
 }
 
@@ -5365,14 +5296,6 @@ function MaintenanceEnquiryForm() {
 // ============================================
 
 function TurnaroundTimes() {
-  const times = [
-    { service: '50-Hour Inspection', time: '1-2 days' },
-    { service: '100-Hour Inspection', time: '2-3 days' },
-    { service: 'Annual Inspection', time: '3-5 days' },
-    { service: '2200-Hour Overhaul', time: '4-6 weeks' },
-    { service: 'AOG Response', time: 'Same day' },
-  ];
-
   const certs = [
     { logo: '/assets/images/logos/easa-logo.png', title: 'EASA Part 145', desc: 'European approved maintenance organisation' },
     { logo: '/assets/images/robinson-assets/logos/rhc_authorized-service-center-logo-logo-yellow-rotor-black-type.svg', title: 'Robinson Authorized', desc: 'Factory-authorized since 1990' },
@@ -5383,17 +5306,9 @@ function TurnaroundTimes() {
     <>
     <section className="maint-turnaround">
       <div className="maint-turnaround__container">
-        {/* Left: Turnaround Times */}
+        {/* Left: Maintenance CTA */}
         <div className="maint-turnaround__left">
-          <h3 className="maint-turnaround__title">Typical Turnaround</h3>
-          <div className="maint-turnaround__list">
-            {times.map((item) => (
-              <div key={item.service} className="maint-turnaround__item">
-                <span className="maint-turnaround__service">{item.service}</span>
-                <span className="maint-turnaround__time">{item.time}</span>
-              </div>
-            ))}
-          </div>
+          <MaintenanceEnquiryForm />
         </div>
 
         {/* Vertical Divider */}
@@ -5436,6 +5351,10 @@ function TurnaroundTimes() {
         .maint-turnaround__right {
           display: flex;
           flex-direction: column;
+        }
+        .maint-turnaround__left {
+          justify-content: center;
+          gap: 2rem;
         }
         .maint-turnaround__title {
           font-family: 'Space Grotesk', sans-serif;
@@ -5560,7 +5479,6 @@ function TurnaroundTimes() {
         }
       `}</style>
     </section>
-    <MaintenanceEnquiryForm />
     </>
   );
 }
@@ -5748,6 +5666,182 @@ function FinalMaintenance() {
     return () => window.removeEventListener('scroll', handleInspectScroll);
   }, []);
 
+  // Sticky-blur: pin .maint-hero so it shares the viewport with .maint-philosophy
+  // as a single frozen pair. Hero's top is at vh - hero - philosophy (often
+  // negative) so the bottom portion of hero fills the upper viewport while
+  // philosophy fills the lower viewport. Both start sticking at the same scroll
+  // position; only .maint-core-services rising covers them. Desktop only.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const section = document.querySelector('.maint-hero');
+    if (!section) return;
+
+    const MAX_BLUR = 10;
+    const EFFECT_START = 0.6;
+    const MEDIA = window.matchMedia('(min-width: 901px)');
+
+    const findRisingSection = () => document.querySelector('.maint-core-services');
+
+    const setStickTop = () => {
+      if (!MEDIA.matches) {
+        section.style.removeProperty('--maint-hero-stick-top');
+        return;
+      }
+      const h = section.offsetHeight;
+      const header = document.querySelector('.Header');
+      const hHeader = header ? header.offsetHeight : 0;
+      // Hero shares the same trigger as philosophy: both pin when philosophy's
+      // top reaches the header's bottom. Hero pins at `headerHeight - heroHeight`
+      // (very negative) so its bottom aligns to the header's bottom at the same
+      // scroll moment philosophy starts sticking.
+      section.style.setProperty('--maint-hero-stick-top', `${hHeader - h}px`);
+    };
+
+    let prevY = window.scrollY;
+    const onScroll = () => {
+      if (!MEDIA.matches) {
+        section.style.setProperty('--maint-hero-blur', '0px');
+        section.style.visibility = '';
+        return;
+      }
+      const next = findRisingSection();
+      if (!next) return;
+      const currentY = window.scrollY;
+      const goingUp = currentY < prevY;
+      prevY = currentY;
+
+      const vh = window.innerHeight;
+      const h = section.offsetHeight;
+      const rect = next.getBoundingClientRect();
+
+      section.style.visibility = (rect.top <= vh - h) ? 'hidden' : 'visible';
+
+      if (goingUp) {
+        section.style.transition = 'none';
+        section.style.setProperty('--maint-hero-blur', '0px');
+        return;
+      }
+
+      section.style.transition = 'none';
+      const progress = Math.min(1, Math.max(0, (vh - rect.top) / vh));
+      const effective = Math.max(0, (progress - EFFECT_START) / (1 - EFFECT_START));
+      section.style.setProperty('--maint-hero-blur', `${effective * MAX_BLUR}px`);
+    };
+
+    const onResize = () => { setStickTop(); onScroll(); };
+    const onMediaChange = () => { setStickTop(); onScroll(); };
+
+    setStickTop();
+    onScroll();
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    MEDIA.addEventListener('change', onMediaChange);
+
+    const ro = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(() => { setStickTop(); onScroll(); })
+      : null;
+    if (ro) {
+      ro.observe(section);
+      const header = document.querySelector('.Header');
+      if (header) ro.observe(header);
+    }
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      MEDIA.removeEventListener('change', onMediaChange);
+      if (ro) ro.disconnect();
+    };
+  }, []);
+
+  // Sticky-blur: pin .maint-philosophy when its bottom reaches the viewport bottom,
+  // let the next section rise over it with a progressive blur. Desktop only.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const section = document.querySelector('.maint-philosophy');
+    if (!section) return;
+
+    const MAX_BLUR = 10;
+    const EFFECT_START = 0.6;
+    const MEDIA = window.matchMedia('(min-width: 901px)');
+
+    const findRisingSection = () => section.nextElementSibling;
+
+    const setStickTop = () => {
+      if (!MEDIA.matches) {
+        section.style.removeProperty('--maint-philosophy-stick-top');
+        return;
+      }
+      const header = document.querySelector('.Header');
+      const hHeader = header ? header.offsetHeight : 0;
+      // Pin philosophy with its top at the header's bottom.
+      // -1px overlap covers sub-pixel seam between header and philosophy.
+      section.style.setProperty('--maint-philosophy-stick-top', `${hHeader - 1}px`);
+    };
+
+    let prevY = window.scrollY;
+    const onScroll = () => {
+      if (!MEDIA.matches) {
+        section.style.setProperty('--maint-philosophy-blur', '0px');
+        section.style.visibility = '';
+        return;
+      }
+      const next = findRisingSection();
+      if (!next) return;
+      const currentY = window.scrollY;
+      const goingUp = currentY < prevY;
+      prevY = currentY;
+
+      const vh = window.innerHeight;
+      const header = document.querySelector('.Header');
+      const hHeader = header ? header.offsetHeight : 0;
+      const rect = next.getBoundingClientRect();
+
+      // Philosophy pinned at top: hHeader - 1. Hide once core-services has fully covered it.
+      section.style.visibility = (rect.top <= hHeader - 1) ? 'hidden' : 'visible';
+
+      if (goingUp) {
+        section.style.transition = 'none';
+        section.style.setProperty('--maint-philosophy-blur', '0px');
+        return;
+      }
+
+      section.style.transition = 'none';
+      const progress = Math.min(1, Math.max(0, (vh - rect.top) / vh));
+      const effective = Math.max(0, (progress - EFFECT_START) / (1 - EFFECT_START));
+      section.style.setProperty('--maint-philosophy-blur', `${effective * MAX_BLUR}px`);
+    };
+
+    const onResize = () => { setStickTop(); onScroll(); };
+    const onMediaChange = () => { setStickTop(); onScroll(); };
+
+    setStickTop();
+    onScroll();
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    MEDIA.addEventListener('change', onMediaChange);
+
+    const ro = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(() => { setStickTop(); onScroll(); })
+      : null;
+    if (ro) {
+      ro.observe(section);
+      const header = document.querySelector('.Header');
+      if (header) ro.observe(header);
+    }
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      MEDIA.removeEventListener('change', onMediaChange);
+      if (ro) ro.disconnect();
+    };
+  }, []);
+
   return (
     <div className="maint">
       <Seo
@@ -5775,7 +5869,6 @@ function FinalMaintenance() {
       <MaintenanceHeader />
 
       {/* 01 */ } <HeroSection />
-      {/* 02 */ } <StatsStrip />
       {/* 04 */ } <PhilosophySection />
 
       {/* ========== SECTION 6-7: CORE SERVICES ========== */}

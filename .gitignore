@@ -40,11 +40,23 @@ build/
 # Superpowers brainstorm artefacts
 .superpowers/
 
+# Git worktrees (isolated branch workspaces)
+.worktrees/
+
+# One-off ops / seed scripts (contain live data — never commit)
+scripts/seed-comparables.js
+scripts/google-reviews.json
+
 # Firebase deploy cache
 .firebase/
 
 # Claude Code local state
 .claude-playwright/
+.claude/
 
 # Local research / scratch assets
 R44-Claude/
+assets-source/
+eyeinthesky-robbie/
+Shyam Maintenance Photos/
+images.txt

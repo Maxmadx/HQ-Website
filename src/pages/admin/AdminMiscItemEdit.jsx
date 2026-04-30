@@ -18,6 +18,8 @@ const EMPTY = {
   condition: 'new',
   description: '',
   images: [],
+  discoveryAddon: false,
+  discoveryAddonDiscountPct: 0,
 };
 
 export default function AdminMiscItemEdit() {
@@ -95,10 +97,13 @@ export default function AdminMiscItemEdit() {
       const priceDisplay = form.priceType === 'fixed' && form.price > 0
         ? `£${(form.price / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
         : 'POA';
+      const isAddon = form.priceType === 'fixed' && form.discoveryAddon === true;
       const payload = {
         ...form,
         priceDisplay,
         ...(form.priceType === 'poa' ? { price: 0, hasQuantity: false, stock: 1, requiresShipping: false } : {}),
+        discoveryAddon: isAddon,
+        discoveryAddonDiscountPct: isAddon ? Math.max(0, Math.min(100, parseInt(form.discoveryAddonDiscountPct, 10) || 0)) : 0,
       };
       if (isNew) {
         const newId = await createDoc('misc_items', payload);
@@ -169,7 +174,11 @@ export default function AdminMiscItemEdit() {
                     name="priceType"
                     value={pt}
                     checked={form.priceType === pt}
-                    onChange={() => set('priceType', pt)}
+                    onChange={() => setForm((f) => ({
+                      ...f,
+                      priceType: pt,
+                      ...(pt === 'poa' ? { discoveryAddon: false, discoveryAddonDiscountPct: 0 } : {}),
+                    }))}
                   />
                   {pt === 'poa' ? 'Price on Application' : 'Fixed Price'}
                 </label>
@@ -241,6 +250,39 @@ export default function AdminMiscItemEdit() {
                   Requires delivery address at checkout
                 </label>
               </div>
+            </div>
+          )}
+
+          {form.priceType === 'fixed' && (
+            <div>
+              <label style={labelStyle}>Discovery Flight Add-on</label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: '#374151', marginBottom: '0.5rem' }}>
+                <input
+                  type="checkbox"
+                  checked={form.discoveryAddon}
+                  onChange={(e) => set('discoveryAddon', e.target.checked)}
+                />
+                Show on Discovery Flight checkout
+              </label>
+              {form.discoveryAddon && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
+                  <label style={{ ...labelStyle, margin: 0, textTransform: 'none', letterSpacing: 0, fontSize: '0.8rem' }}>
+                    Discount on Discovery Flight checkout:
+                  </label>
+                  <input
+                    style={{ ...fieldStyle, width: '80px' }}
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="1"
+                    value={form.discoveryAddonDiscountPct}
+                    onChange={(e) => set('discoveryAddonDiscountPct', e.target.value)}
+                    onBlur={() => set('discoveryAddonDiscountPct', Math.max(0, Math.min(100, parseInt(form.discoveryAddonDiscountPct, 10) || 0)))}
+                  />
+                  <span style={{ fontSize: '0.85rem', color: '#374151' }}>%</span>
+                  <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>Leave as 0 for no discount.</span>
+                </div>
+              )}
             </div>
           )}
 

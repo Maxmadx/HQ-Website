@@ -23,6 +23,7 @@ import '../assets/css/components.css';
 // Import FooterMinimal component
 import FooterMinimal from '../components/FooterMinimal';
 import { arrivalStyles } from '../components/ArrivalSection';
+import HqMenuPanel from '../components/HqMenuPanel';
 
 
 /**
@@ -79,61 +80,7 @@ function PPLHeader() {
   return (
     <>
       {/* Menu Panel */}
-      <div className={`hq-menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="hq-menu-grid">
-          <div className="hq-menu-section">
-            <h3>About</h3>
-            <ul>
-              <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-              <li><Link to="/about-us" onClick={closeMenu}>About Us</Link></li>
-              <li><Link to="/about-us/team" onClick={closeMenu}>Meet The Team</Link></li>
-              <li><Link to="/about-us/captain-q" onClick={closeMenu}>Quentin Smith</Link></li>
-              <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Aircraft Sales</h3>
-            <ul>
-              <li><Link to="/aircraft-sales" onClick={closeMenu}>New Aircraft</Link></li>
-              <li><Link to="/aircraft-sales/new/r88" onClick={closeMenu}>R88</Link></li>
-              <li><Link to="/aircraft-sales/new/r66" onClick={closeMenu}>R66</Link></li>
-              <li><Link to="/aircraft-sales/new/r44" onClick={closeMenu}>R44</Link></li>
-              <li><Link to="/aircraft-sales/new/r22" onClick={closeMenu}>R22</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Flight Training</h3>
-            <ul>
-              <li><Link to="/training" onClick={closeMenu}>Training Overview</Link></li>
-              <li><Link to="/training/trial-lessons" onClick={closeMenu}>Trial Lessons</Link></li>
-              <li><Link to="/training/ppl" onClick={closeMenu}>Private Pilot License</Link></li>
-              <li><Link to="/training/faq" onClick={closeMenu}>Training FAQ</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Services</h3>
-            <ul>
-              <li><Link to="/services" onClick={closeMenu}>Services Overview</Link></li>
-              <li><Link to="/services/maintenance" onClick={closeMenu}>Maintenance</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Experiences</h3>
-            <ul>
-              <li><Link to="/expeditions" onClick={closeMenu}>Expeditions</Link></li>
-              <li><Link to="/expeditions/calendar" onClick={closeMenu}>Calendar</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Contact</h3>
-            <ul>
-              <li><Link to="/contact" onClick={closeMenu}>Contact Us</Link></li>
-              <li><Link to="/contact/careers" onClick={closeMenu}>Careers</Link></li>
-              <li><Link to="/contact/pricing" onClick={closeMenu}>Pricing</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <HqMenuPanel open={menuOpen} onClose={closeMenu} />
 
       {/* Menu Button */}
       <button
@@ -292,6 +239,85 @@ function FinalPPL() {
   // Scroll to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, []);
+
+  // Sticky-blur: pin .fppl-intro when its bottom reaches the viewport bottom,
+  // let the next section (.fppl-ground) rise over it with a progressive blur.
+  // Mirrors the .fd-sales pattern on the main page.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const section = document.querySelector('.fppl-intro');
+    if (!section) return;
+
+    const MAX_BLUR = 10;
+    const EFFECT_START = 0.6;
+    const MEDIA = window.matchMedia('(min-width: 901px)');
+
+    const findRisingSection = () => section.nextElementSibling;
+
+    const setStickTop = () => {
+      if (!MEDIA.matches) {
+        section.style.removeProperty('--fppl-intro-stick-top');
+        return;
+      }
+      const vh = window.innerHeight;
+      const h = section.offsetHeight;
+      section.style.setProperty('--fppl-intro-stick-top', `${vh - h}px`);
+    };
+
+    let prevY = window.scrollY;
+    const onScroll = () => {
+      if (!MEDIA.matches) {
+        section.style.setProperty('--fppl-intro-blur', '0px');
+        section.style.visibility = '';
+        return;
+      }
+      const next = findRisingSection();
+      if (!next) return;
+      const currentY = window.scrollY;
+      const goingUp = currentY < prevY;
+      prevY = currentY;
+
+      const vh = window.innerHeight;
+      const h = section.offsetHeight;
+      const rect = next.getBoundingClientRect();
+
+      section.style.visibility = (rect.top <= vh - h) ? 'hidden' : 'visible';
+
+      if (goingUp) {
+        section.style.transition = 'none';
+        section.style.setProperty('--fppl-intro-blur', '0px');
+        return;
+      }
+
+      section.style.transition = 'none';
+      const progress = Math.min(1, Math.max(0, (vh - rect.top) / vh));
+      const effective = Math.max(0, (progress - EFFECT_START) / (1 - EFFECT_START));
+      section.style.setProperty('--fppl-intro-blur', `${effective * MAX_BLUR}px`);
+    };
+
+    const onResize = () => { setStickTop(); onScroll(); };
+    const onMediaChange = () => { setStickTop(); onScroll(); };
+
+    setStickTop();
+    onScroll();
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    MEDIA.addEventListener('change', onMediaChange);
+
+    const ro = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(() => { setStickTop(); onScroll(); })
+      : null;
+    if (ro) ro.observe(section);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      MEDIA.removeEventListener('change', onMediaChange);
+      if (ro) ro.disconnect();
+    };
   }, []);
 
 
@@ -454,7 +480,7 @@ function FinalPPL() {
                 <span className="fppl-text--light">Extraordinary Instructors</span>
               </h2>
               <p>
-                If the quality of instructing counts for anything—and it certainly does—you will learn at an
+                If the quality of instructing counts for anything (and it certainly does) you will learn at an
                 exceptionally high standard, develop no bad habits, and become a better pilot at a much faster
                 pace with our rigorous, hands-on training program.
               </p>
@@ -671,7 +697,7 @@ function FinalPPL() {
                       <span className="fppl-pre-text">Your First Flight</span>
                       <h2><span className="fppl-text--dark">Discovery</span> <span className="fppl-text--mid">Flight</span></h2>
                     </div>
-                    <p className="fppl-discovery__desc">Not sure if flying is for you? A Discovery Flight puts you in the seat and at the controls in under an hour — no experience needed, no commitment required.</p>
+                    <p className="fppl-discovery__desc">Not sure if flying is for you? A Discovery Flight puts you in the seat and at the controls in under an hour. No experience needed, no commitment required.</p>
                     <div className="fppl-discovery__selling-points fppl-discovery__selling-points--below">
                       <div className="fppl-discovery__point">
                         <span className="fppl-discovery__point-icon">⏱</span>
@@ -802,7 +828,7 @@ function FinalPPL() {
                         <span className="arrival__detail-icon"><i className="fas fa-envelope"></i></span>
                         <div>
                           <span className="arrival__detail-label">Email</span>
-                          <p className="arrival__detail-text"><a href="mailto:Operations@HQAviation.com" className="arrival__detail-link">Operations@HQAviation.com</a></p>
+                          <p className="arrival__detail-text"><a href="mailto:operations@hqaviation.com" className="arrival__detail-link">operations@hqaviation.com</a></p>
                         </div>
                       </div>
                       <div className="arrival__detail">
@@ -826,6 +852,16 @@ function FinalPPL() {
 
                 </div>
               </div>
+            </Reveal>
+            <Reveal delay={0.3}>
+              <a
+                href="https://maps.google.com/?q=HQ+Aviation+Denham"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="df-btn df-btn--outline df-location-faq__col-cta"
+              >
+                Get Directions
+              </a>
             </Reveal>
           </div>
 
@@ -872,18 +908,13 @@ function FinalPPL() {
                 Load More
               </button>
             )}
+            <Reveal delay={0.3}>
+              <Link to="/training/faq" className="df-btn df-btn--outline df-location-faq__col-cta">
+                View All FAQs
+              </Link>
+            </Reveal>
           </div>
         </div>
-
-        {/* Action Buttons */}
-        <Reveal delay={0.3}>
-          <div className="df-location-faq__actions">
-            <a href="https://maps.google.com/?q=HQ+Aviation+Denham" target="_blank" rel="noopener noreferrer" className="df-btn df-btn--outline">
-              Get Directions
-            </a>
-            <Link to="/training/faq" className="df-btn df-btn--outline">View All FAQs</Link>
-          </div>
-        </Reveal>
       </section>
 
 
@@ -899,7 +930,7 @@ function FinalPPL() {
           font-family: 'Space Grotesk', -apple-system, sans-serif;
           background: #faf9f6;
           color: #1a1a1a;
-          overflow-x: hidden;
+          overflow-x: clip;
         }
 
         .fppl-label {
@@ -1271,8 +1302,29 @@ function FinalPPL() {
 
         /* ===== INTRO ===== */
         .fppl-intro {
-          padding: 3rem 2rem;
+          padding: 3rem 2rem 7rem;
           background: #fff;
+        }
+
+        /* Sticky-blur: pin .fppl-intro at viewport bottom on desktop;
+           the next section rises over it with progressive blur. */
+        @media (min-width: 901px) {
+          .fppl-intro {
+            position: sticky;
+            top: var(--fppl-intro-stick-top, 0);
+          }
+
+          @media (prefers-reduced-motion: no-preference) {
+            .fppl-intro {
+              filter: blur(var(--fppl-intro-blur, 0px));
+              will-change: filter;
+            }
+          }
+
+          .fppl-intro ~ * {
+            position: relative;
+            z-index: 5;
+          }
         }
 
         .fppl-intro__container {
@@ -1674,23 +1726,21 @@ function FinalPPL() {
           display: flex;
           flex-direction: column;
         }
+        .df-location-faq__right {
+          height: 0;
+          min-height: 100%;
+          overflow: hidden;
+        }
 
         .df-location-faq__divider {
           width: 1px;
           background: linear-gradient(to bottom, transparent, #e0deda 20%, #e0deda 80%, transparent);
         }
 
-        .df-location-faq__actions {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          align-items: center;
-          gap: 3rem;
-          max-width: 1100px;
-          margin: 2rem auto 0;
-        }
-
-        .df-location-faq__actions .df-btn {
+        .df-location-faq__col-cta {
+          display: inline-block;
           width: 100%;
+          margin-top: 1.5rem;
           text-align: center;
         }
 
@@ -1747,6 +1797,7 @@ function FinalPPL() {
           flex: 1;
           min-height: 0;
           overflow-y: auto;
+          padding-right: 1.75rem;
           scrollbar-width: thin;
           scrollbar-color: #e0deda transparent;
         }
@@ -2498,10 +2549,6 @@ function FinalPPL() {
             display: none;
           }
 
-          .df-location-faq__actions {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-          }
 
           .df-faq__header h2 {
             text-align: center;
@@ -2696,10 +2743,6 @@ function FinalPPL() {
           }
 
 
-          .df-location-faq__actions {
-            display: none;
-          }
-
           .fppl-visit__header {
             margin-bottom: 0.875rem;
           }
@@ -2870,6 +2913,11 @@ function FinalPPL() {
         }
 
         @media (max-width: 768px) {
+          .df-location-faq__right {
+            overflow-y: visible;
+            height: auto;
+            min-height: unset;
+          }
           .df-faq__list {
             overflow-y: visible;
             flex: unset;

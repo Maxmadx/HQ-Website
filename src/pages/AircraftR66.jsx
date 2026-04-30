@@ -36,6 +36,9 @@ import '../assets/css/components.css';
 
 // Import Footer
 import FooterMinimal from '../components/FooterMinimal';
+import AircraftPriceBlock from '../components/AircraftPriceBlock';
+import { getSubtypes } from '../config/aircraftCatalog';
+import HqMenuPanel from '../components/HqMenuPanel';
 import R66Case from '../components/R66/R66Case';
 
 // ============================================================================
@@ -80,45 +83,7 @@ function R66Header() {
 
   return (
     <>
-      <div className={`hq-menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="hq-menu-grid">
-          <div className="hq-menu-section">
-            <h3>About</h3>
-            <ul>
-              <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-              <li><Link to="/about-us" onClick={closeMenu}>About Us</Link></li>
-              <li><Link to="/about-us/team" onClick={closeMenu}>Meet The Team</Link></li>
-              <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Aircraft Sales</h3>
-            <ul>
-              <li><Link to="/sales/new" onClick={closeMenu}>New Aircraft</Link></li>
-              <li><Link to="/aircraft/r66" onClick={closeMenu}>R66 Turbine</Link></li>
-              <li><Link to="/aircraft/r44" onClick={closeMenu}>R44</Link></li>
-              <li><Link to="/aircraft/r22" onClick={closeMenu}>R22</Link></li>
-              <li><Link to="/sales/pre-owned" onClick={closeMenu}>Pre-Owned Aircraft</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Training</h3>
-            <ul>
-              <li><Link to="/training" onClick={closeMenu}>Training Overview</Link></li>
-              <li><Link to="/training/ppl" onClick={closeMenu}>Private Pilot License</Link></li>
-              <li><Link to="/training/type-rating" onClick={closeMenu}>Type Ratings</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Services</h3>
-            <ul>
-              <li><Link to="/services" onClick={closeMenu}>Services</Link></li>
-              <li><Link to="/maintenance" onClick={closeMenu}>Maintenance</Link></li>
-              <li><Link to="/expeditions" onClick={closeMenu}>Expeditions</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <HqMenuPanel open={menuOpen} onClose={closeMenu} />
 
       <button
         className={`hq-menu-btn ${colorDark ? 'color-dark' : ''} ${scrolled ? 'scrolled' : ''} ${menuOpen ? 'open' : ''}`}
@@ -232,31 +197,35 @@ function AnimatedNumber({ value, suffix = '', prefix = '' }) {
 // DATA
 // ============================================================================
 
-const r66SpecsStandard = [
+// Static R66 specs (engine, dimensions, etc.) that don't change with aux fuel.
+const r66SpecsStatic = [
   { label: 'Engine', value: 'Rolls-Royce RR300', icon: 'fa-cog' },
   { label: 'Power', value: '270 SHP', icon: 'fa-bolt' },
   { label: 'Max Speed', value: '140 kts', icon: 'fa-tachometer-alt' },
   { label: 'Cruise Speed', value: '110 kts', icon: 'fa-plane' },
-  { label: 'Range', value: '350 nm', icon: 'fa-route' },
   { label: 'Useful Load', value: '1,200 lbs', icon: 'fa-weight-hanging' },
   { label: 'Seats', value: '5', icon: 'fa-users' },
   { label: 'Rotor Diameter', value: '33 ft', icon: 'fa-circle-notch' },
-  { label: 'Fuel Capacity', value: '73.3 gal', icon: 'fa-gas-pump' },
-  { label: 'Endurance', value: '3+ hrs', icon: 'fa-clock' },
 ];
 
-const r66SpecsExtended = [
-  { label: 'Engine', value: 'Rolls-Royce RR300', icon: 'fa-cog' },
-  { label: 'Power', value: '270 SHP', icon: 'fa-bolt' },
-  { label: 'Max Speed', value: '140 kts', icon: 'fa-tachometer-alt' },
-  { label: 'Cruise Speed', value: '110 kts', icon: 'fa-plane' },
-  { label: 'Range', value: '450+ nm', icon: 'fa-route' },
-  { label: 'Useful Load', value: '1,200 lbs', icon: 'fa-weight-hanging' },
-  { label: 'Seats', value: '5', icon: 'fa-users' },
-  { label: 'Rotor Diameter', value: '33 ft', icon: 'fa-circle-notch' },
-  { label: 'Fuel Capacity', value: '98.3 gal', icon: 'fa-gas-pump' },
-  { label: 'Endurance', value: '4+ hrs', icon: 'fa-clock' },
-];
+// Aux-fuel-dependent specs. Per RHC: 23-gal aux = +100 nm / +1 hr; 43-gal aux = +200 nm / +2 hr.
+// The two tanks are mutually exclusive (only one can be installed at a time).
+const r66AuxConfigs = {
+  none:  { range: '350 nm',  fuelCapacity: '73.3 gal',  endurance: '3+ hrs' },
+  aux23: { range: '450 nm',  fuelCapacity: '96.3 gal',  endurance: '4+ hrs' },
+  aux43: { range: '550 nm',  fuelCapacity: '116.3 gal', endurance: '5+ hrs' },
+};
+
+function buildR66Specs(auxKey) {
+  const aux = r66AuxConfigs[auxKey] ?? r66AuxConfigs.none;
+  return [
+    ...r66SpecsStatic.slice(0, 4),
+    { label: 'Range',         value: aux.range,         icon: 'fa-route' },
+    ...r66SpecsStatic.slice(4),
+    { label: 'Fuel Capacity', value: aux.fuelCapacity,  icon: 'fa-gas-pump' },
+    { label: 'Endurance',     value: aux.endurance,     icon: 'fa-clock' },
+  ];
+}
 
 const historyTimeline = [
   { year: '2007', title: 'First Flight', description: 'The R66 prototype took to the skies, marking Robinson\'s entry into the turbine helicopter market.', status: 'completed' },
@@ -308,17 +277,6 @@ const nxgCockpitFeatures = [
   },
 ];
 
-const nxgStandardFeatures = [
-  'Garmin G500H TXi Flight Display',
-  'Garmin GTN 650Xi Touchscreen Navigator',
-  'Hand-Stitched Leather Seating',
-  'Impact-Resistant Windshield',
-  'GFC 600H Two-Axis Autopilot (option)',
-  'GTX 345 ADS-B Transponder',
-  'Integrated Engine Monitoring',
-  'USB Charging Ports',
-];
-
 const autopilotModes = [
   {
     mode: 'ALT',
@@ -357,7 +315,7 @@ const r66Variants = [
     name: 'NxG Palo Verde',
     subtitle: 'Rugged but Refined',
     tagline: 'Rugged but refined.',
-    description: 'The R66 is known for its reliability, value, ease of maintenance and low operating costs. The five-seat Palo Verde builds on that foundation with modern technology, upgraded interior finishes and refined styling — delivering turbine performance and everyday usability in a package designed for the long haul.',
+    description: 'The R66 is known for its reliability, value, ease of maintenance and low operating costs. The five-seat Palo Verde builds on that foundation with modern technology, upgraded interior finishes and refined styling, delivering turbine performance and everyday usability in a package designed for the long haul.',
     image: '/assets/images/new-aircraft/r66/variants/r66-turbine.png',
     icon: 'fa-helicopter',
     useCases: ['Stylish, reliable, and safe'],
@@ -408,7 +366,7 @@ const r66Variants = [
     name: 'NxG Police',
     subtitle: 'Built to Protect & Serve',
     tagline: 'Built to protect & serve.',
-    description: 'Fully outfitted and ready for service on delivery, the four-seat R66 NxG Police gives law enforcement every advantage at roughly one-third the acquisition cost and half the operating cost of comparable helicopters. A Rolls-Royce RR300 turbine, state-of-the-art imaging, advanced navigation and up to three hours of flight time mean more proactive patrolling and faster reaction times — backed by Robinson\'s vertically integrated parts supply.',
+    description: 'Fully outfitted and ready for service on delivery, the four-seat R66 NxG Police gives law enforcement every advantage at roughly one-third the acquisition cost and half the operating cost of comparable helicopters. A Rolls-Royce RR300 turbine, state-of-the-art imaging, advanced navigation and up to three hours of flight time mean more proactive patrolling and faster reaction times, backed by Robinson\'s vertically integrated parts supply.',
     image: '/assets/images/new-aircraft/r66/variants/r66-police.png',
     icon: 'fa-shield-alt',
     useCases: ['Patrol', 'Tracking suspects', 'Supporting tactical teams'],
@@ -568,6 +526,29 @@ function R66Hero() {
     };
   }, []);
 
+  // Suppress the OS/browser Now Playing overlay (skip-back / pause / skip-forward
+  // controls) that the YouTube iframe's Media Session would otherwise surface on
+  // macOS Safari/Chrome. Clearing metadata + nulling action handlers from the
+  // parent document prevents the system from rendering controls for this tab.
+  useEffect(() => {
+    if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) return;
+    const ms = navigator.mediaSession;
+    const actions = [
+      'play', 'pause', 'stop', 'seekbackward', 'seekforward',
+      'seekto', 'previoustrack', 'nexttrack',
+    ];
+    const clear = () => {
+      try { ms.metadata = null; } catch { /* no-op */ }
+      try { ms.playbackState = 'none'; } catch { /* no-op */ }
+      actions.forEach((a) => {
+        try { ms.setActionHandler(a, null); } catch { /* no-op */ }
+      });
+    };
+    clear();
+    const interval = setInterval(clear, 750);
+    return () => clearInterval(interval);
+  }, []);
+
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
   const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
@@ -588,11 +569,11 @@ function R66Hero() {
         <iframe
           ref={videoRef}
           className={`r66-hero__video${videoReady ? ' r66-hero__video--ready' : ''}`}
-          src="https://www.youtube.com/embed/rmklfP_SF3o?autoplay=1&mute=1&loop=1&playlist=rmklfP_SF3o&controls=0&modestbranding=1&playsinline=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&enablejsapi=1&start=1"
+          src="https://www.youtube-nocookie.com/embed/rmklfP_SF3o?autoplay=1&mute=1&loop=1&playlist=rmklfP_SF3o&controls=0&modestbranding=1&playsinline=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&enablejsapi=1&start=1&fs=0"
           title="R66 in flight"
           frameBorder="0"
-          allow="autoplay; encrypted-media; picture-in-picture"
-          allowFullScreen
+          allow="autoplay"
+          allowFullScreen={false}
           aria-hidden="true"
           tabIndex={-1}
         />
@@ -895,8 +876,6 @@ function R66Introduction() {
             </div>
           </Reveal>
           <div className="r66-intro__divider" />
-          <R66History />
-          <div className="r66-intro__divider" />
           <R66Expedition />
         </div>
       </div>
@@ -910,7 +889,6 @@ function R66Introduction() {
 function R66History() {
   return (
     <section className="r66-timeline">
-      <div className="r66-timeline__container">
         <Reveal>
           <div className="r66-section-header">
             <h2>
@@ -945,7 +923,6 @@ function R66History() {
             </Reveal>
           ))}
         </div>
-      </div>
     </section>
   );
 }
@@ -955,8 +932,14 @@ function R66History() {
 // ============================================================================
 function R66Specifications() {
   const [activeSpec, setActiveSpec] = useState(null);
-  const [isExtendedRange, setIsExtendedRange] = useState(false);
-  const r66Specs = isExtendedRange ? r66SpecsExtended : r66SpecsStandard;
+  // Aux tank selection — mutually exclusive: 'none' | 'aux23' | 'aux43'
+  const [auxKey, setAuxKey] = useState('none');
+  const aux23Enabled = auxKey === 'aux23';
+  const aux43Enabled = auxKey === 'aux43';
+  const isExtendedRange = auxKey !== 'none';
+  const setAux23Enabled = (on) => setAuxKey(on ? 'aux23' : 'none');
+  const setAux43Enabled = (on) => setAuxKey(on ? 'aux43' : 'none');
+  const r66Specs = buildR66Specs(auxKey);
 
   return (
     <section className="r66-specs">
@@ -1004,18 +987,30 @@ function R66Specifications() {
             <div className="r66-specs__table">
               <div className="r66-specs__row r66-specs__row--header">
                 <div className="r66-specs__cell">Specification</div>
-                <div className="r66-specs__cell">
+                <div className="r66-specs__cell r66-specs__aux-cell">
                   <label className="r66-specs__aux-label">
                     <input
                       type="checkbox"
-                      checked={isExtendedRange}
-                      onChange={(e) => setIsExtendedRange(e.target.checked)}
+                      checked={aux23Enabled}
+                      onChange={(e) => setAux23Enabled(e.target.checked)}
                       className="r66-specs__aux-checkbox"
                     />
                     <span className="r66-specs__aux-check">
-                      {isExtendedRange && <span>✓</span>}
+                      {aux23Enabled && <span>✓</span>}
                     </span>
-                    <span className="r66-specs__aux-text">+ Extended Range</span>
+                    <span className="r66-specs__aux-text">+ 23-gal Aux</span>
+                  </label>
+                  <label className="r66-specs__aux-label">
+                    <input
+                      type="checkbox"
+                      checked={aux43Enabled}
+                      onChange={(e) => setAux43Enabled(e.target.checked)}
+                      className="r66-specs__aux-checkbox"
+                    />
+                    <span className="r66-specs__aux-check">
+                      {aux43Enabled && <span>✓</span>}
+                    </span>
+                    <span className="r66-specs__aux-text">+ 43-gal Aux</span>
                   </label>
                 </div>
               </div>
@@ -1095,7 +1090,7 @@ function R66NXGCockpit() {
               <p className="r66-nxg__intro">
                 The NxG avionics package transforms the R66 cockpit with a full Garmin glass
                 suite, hand-stitched leather seating and a factory-integrated two-axis autopilot
-                option — now the standard spec on new-production R66s.
+                option, now the standard spec on new-production R66s.
               </p>
             </Reveal>
             <Reveal delay={0.2}>
@@ -1133,17 +1128,6 @@ function R66NXGCockpit() {
           </div>
         </div>
 
-        <div className="r66-nxg__standard">
-          <h3>NXG Standard Equipment</h3>
-          <div className="r66-nxg__standard-grid">
-            {nxgStandardFeatures.map((feature, i) => (
-              <div key={i} className="r66-nxg__standard-item">
-                <i className="fas fa-check"></i>
-                <span>{feature}</span>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </section>
   );
@@ -1552,7 +1536,7 @@ function R66WhyTurbine() {
               </h3>
             </div>
             <p className="r66-turbine__cost-lead">
-              Turbine economics look different to piston — but with the RR300 they stay
+              Turbine economics look different to piston, but with the RR300 they stay
               predictable. Jet-A burn is the dominant line item, reserves are set against
               a 2,000-hour TBO, and the single-engine turbine architecture keeps
               scheduled maintenance simple. For operators stepping up from an R44, the
@@ -1560,7 +1544,7 @@ function R66WhyTurbine() {
               the way it does on twin-engine turbines.
             </p>
             <ul className="r66-turbine__cost-list">
-              <li><i className="fas fa-gas-pump"></i><span>~20–22 US gal/hr Jet-A — dominant line item</span></li>
+              <li><i className="fas fa-gas-pump"></i><span>~20–22 US gal/hr Jet-A, dominant line item</span></li>
               <li><i className="fas fa-tools"></i><span>Reserves against a 2,000-hour RR300 TBO</span></li>
               <li><i className="fas fa-infinity"></i><span>Global Robinson &amp; Rolls-Royce parts availability</span></li>
             </ul>
@@ -1767,7 +1751,7 @@ const r66CtaContent = {
     preTextShort: 'LEARN TO FLY',
     headingDark: 'Fly a',
     headingLight: 'Turbine Helicopter',
-    lead: "Transition onto the R66 with HQ Aviation's experienced instructors. Type rating, PPL conversions, and self-fly hire from Denham Aerodrome — all on our own R66 fleet.",
+    lead: "Transition onto the R66 with HQ Aviation's experienced instructors. Type rating, PPL conversions, and self-fly hire from Denham Aerodrome, all on our own R66 fleet.",
     benefits: [
       { icon: 'fa-user-graduate',       text: 'R66 Type Rating Courses' },
       { icon: 'fa-plane-departure',     text: 'Self-Fly Hire From Our Fleet' },
@@ -1817,7 +1801,7 @@ function R66CTA() {
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
-          subject: `R66 Enquiry — ${useType === 'purchase' ? 'Purchase' : 'Training'}`,
+          subject: `R66 Enquiry: ${useType === 'purchase' ? 'Purchase' : 'Training'}`,
           message: messageParts.join('\n'),
           source: 'R66 Enquiry',
         }),
@@ -1918,7 +1902,7 @@ function R66CTA() {
               </div>
               {formStatus === 'error' && (
                 <p className="r66-cta__error">
-                  Something went wrong — please try again or email{' '}
+                  Something went wrong. Please try again or email{' '}
                   <a href="mailto:sales@hqaviation.com">sales@hqaviation.com</a>
                 </p>
               )}
@@ -2735,6 +2719,13 @@ const R66Styles = () => (
       .r66-specs__table { order: 1; }
     }
 
+    .r66-specs__aux-cell {
+      display: flex !important;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.4rem;
+    }
+
     .r66-specs__aux-label {
       display: flex;
       align-items: center;
@@ -2868,19 +2859,19 @@ const R66Styles = () => (
     }
 
     .r66-specs__blueprint-card {
-      background: #fff;
-      border: 1px solid #e8e6e2;
-      border-radius: 8px;
-      padding: 1.5rem;
       flex: 1;
       display: flex;
       align-items: center;
+      border: 1px solid #fff;
+      border-radius: 8px;
+      padding: 1px;
     }
 
     .r66-specs__blueprint {
       width: 100%;
       display: block;
       border-radius: 6px;
+      filter: invert(1);
     }
 
     .r66-specs__overlay-data {
@@ -4592,12 +4583,60 @@ const R66Styles = () => (
     /* ====================================================================
        GALLERY SECTION
        ==================================================================== */
-    .r66-gallery {
-      /* Rises above earlier sticky/pinned sections. See .r66-variants. */
+    /* ====================================================================
+       FINAL STACK — wraps R66Case sections + R66Gallery + R66CTA so each
+       becomes a sticky-at-end step and the next one rises over it. Each
+       step blurs + fades to the next section's palette via JS-set
+       --r66-stack-blur and --r66-stack-darken.
+       ==================================================================== */
+    .r66-final-stack {
       position: relative;
-      z-index: 50;
-      padding: 3rem 2rem 5rem;
+    }
+
+    /* Each participating section (except the last, which rises and then
+       flows into the footer) is sticky-at-end. --r66-stack-stick-top is
+       set per-element in JS to min(0, vh - sectionH) so tall sections
+       scroll naturally until their bottom reaches the viewport bottom,
+       then pin there while the next rises up over them. */
+    .r66-final-stack > .r66b-exp,
+    .r66-final-stack > .r66b-seamP,
+    .r66-final-stack > .r66b-range,
+    .r66-final-stack > .r66b-closeA,
+    .r66-final-stack > .r66-gallery {
+      position: sticky;
+      top: var(--r66-stack-stick-top, 0);
+      filter: blur(var(--r66-stack-blur, 0px));
+    }
+    /* The last section (CTA) stays relative — it rises over the previous
+       sticky section and then scrolls into the footer naturally instead of
+       creating a pinned "dead zone" at the page bottom. */
+    .r66-final-stack > .r66-cta {
+      position: relative;
+    }
+
+    /* Overlay that fades the underlying section into the next section's
+       palette (dark for rising dark sections, light for rising light).
+       z-index: 10 so it sits above internal content but below the next
+       section that will eventually cover this one. */
+    .r66-final-stack > .r66b-exp::after,
+    .r66-final-stack > .r66b-seamP::after,
+    .r66-final-stack > .r66b-range::after,
+    .r66-final-stack > .r66b-closeA::after,
+    .r66-final-stack > .r66-gallery::after,
+    .r66-final-stack > .r66-cta::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: var(--r66-stack-darken, 0);
+      z-index: 10;
+    }
+    .r66-final-stack > .r66-next-dark::after  { background: #0a0a0a; }
+    .r66-final-stack > .r66-next-light::after { background: #faf9f6; }
+
+    .r66-gallery {
       background: #faf9f6;
+      padding: 5rem 2rem;
     }
 
     .r66-gallery__container {
@@ -5366,8 +5405,145 @@ const R66Styles = () => (
 // ============================================================================
 // MAIN PAGE COMPONENT
 // ============================================================================
+// Background palette per participating section class. Used to choose the
+// overlay color (which blurs to match the RISING section's palette), so a
+// light section fading into a dark rising one gets a black overlay, and
+// vice-versa.
+const R66_STACK_SECTIONS = [
+  { selector: '.r66b-exp',     palette: 'light' },
+  { selector: '.r66b-seamP',   palette: 'light' },
+  { selector: '.r66b-range',   palette: 'light' },
+  { selector: '.r66b-closeA',  palette: 'dark'  },
+  { selector: '.r66-gallery',  palette: 'light' },
+  { selector: '.r66-cta',      palette: 'dark'  },
+];
+const R66_STACK_MEMBER_SELECTOR = R66_STACK_SECTIONS.map(s => s.selector).join(',');
+
+function useR66FinalStack() {
+  useEffect(() => {
+    const stack = document.querySelector('.r66-final-stack');
+    if (!stack) return undefined;
+
+    // Collect participating sections in DOM order. Each entry carries its
+    // own palette + the palette of the NEXT section — that determines the
+    // overlay color (dark when the next section is dark, light otherwise).
+    const collect = () => {
+      const all = Array.from(stack.children)
+        .filter(el => el.matches(R66_STACK_MEMBER_SELECTOR));
+      const paletteFor = (el) => {
+        const match = R66_STACK_SECTIONS.find(s => el.matches(s.selector));
+        return match ? match.palette : 'light';
+      };
+      return all.map((el, i) => {
+        const next = all[i + 1] || null;
+        return {
+          el,
+          palette: paletteFor(el),
+          nextPalette: next ? paletteFor(next) : null,
+          next,
+          index: i,
+        };
+      });
+    };
+
+    let steps = collect();
+
+    // Apply one-time setup: overlay-color class + z-index so later sections
+    // always paint over earlier ones (they visually rise).
+    const applySetup = () => {
+      steps.forEach(({ el, nextPalette, index }) => {
+        el.classList.remove('r66-next-dark', 'r66-next-light');
+        if (nextPalette === 'dark')  el.classList.add('r66-next-dark');
+        if (nextPalette === 'light') el.classList.add('r66-next-light');
+        el.style.zIndex = String(index + 1);
+      });
+    };
+
+    // Recompute per-section sticky-top (at-end pattern: pin only when the
+    // section's bottom hits the viewport bottom, so tall sections scroll
+    // through naturally first).
+    const updateStickyTops = () => {
+      const vh = window.innerHeight;
+      steps.forEach(({ el }) => {
+        const stickTop = Math.min(0, vh - el.offsetHeight);
+        el.style.setProperty('--r66-stack-stick-top', `${stickTop}px`);
+      });
+    };
+
+    // Scroll handler: for each step, compute progress of the NEXT section
+    // rising into view and apply blur + overlay opacity to the current one.
+    const MAX_BLUR = 10;
+    let rafId = null;
+    const onScroll = () => {
+      if (rafId != null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        const vh = window.innerHeight;
+        const catchTopVar = parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue('--catch-top')
+        );
+        const catchTop = Number.isFinite(catchTopVar) ? catchTopVar : 90;
+        const span = Math.max(1, vh - catchTop);
+        steps.forEach(({ el, next }) => {
+          if (!next) {
+            el.style.setProperty('--r66-stack-blur', '0px');
+            el.style.setProperty('--r66-stack-darken', '0');
+            return;
+          }
+          const rect = next.getBoundingClientRect();
+          const progress = Math.min(1, Math.max(0, 1 - (rect.top - catchTop) / span));
+          // Blur is fully off until the rising section is almost at the
+          // top of the viewport (progress > BLUR_START), then ramps to
+          // MAX_BLUR over the final sliver of scroll. Keeps content
+          // readable for the maximum amount of time — the haze only lands
+          // just before the next section covers the view.
+          const BLUR_START = 0.85;
+          const blurProgress = progress <= BLUR_START
+            ? 0
+            : (progress - BLUR_START) / (1 - BLUR_START);
+          el.style.setProperty('--r66-stack-blur', `${blurProgress * MAX_BLUR}px`);
+          // Darken ramps in a bit earlier than the blur so the palette
+          // tint is visible while the underlying content is still sharp.
+          const TINT_COMPLETE = 0.9;
+          const adjusted = Math.min(1, progress / TINT_COMPLETE);
+          el.style.setProperty('--r66-stack-darken', `${Math.pow(adjusted, 3)}`);
+        });
+      });
+    };
+
+    applySetup();
+    updateStickyTops();
+    onScroll();
+
+    const onResize = () => { updateStickyTops(); onScroll(); };
+    // Children can be added/removed by React (e.g., CMS gallery re-renders)
+    // — re-collect on mutations so new sections get wired up.
+    const mo = new MutationObserver(() => {
+      steps = collect();
+      applySetup();
+      updateStickyTops();
+      onScroll();
+    });
+    mo.observe(stack, { childList: true });
+
+    const ro = new ResizeObserver(updateStickyTops);
+    steps.forEach(({ el }) => ro.observe(el));
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    return () => {
+      if (rafId != null) cancelAnimationFrame(rafId);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      mo.disconnect();
+      ro.disconnect();
+    };
+  }, []);
+}
+
 function AircraftR66() {
   useCmsHighlight();
+  useR66FinalStack();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -5407,9 +5583,11 @@ function AircraftR66() {
           <R66Specifications />
         </div>
         <R66NXGCockpit />
-        <R66Case />
-        <R66Gallery />
-        <R66CTA />
+        <div className="r66-final-stack">
+          <R66Case />
+          <R66Gallery />
+          <R66CTA />
+        </div>
       </main>
       <FooterMinimal />
     </div>

@@ -27,7 +27,7 @@ function WhyWeFly() {
 
       <p>
         In recent years, we have become increasingly aware of something our pilots have known
-        instinctively all along — that flying offers profound benefits for mental health and wellbeing.
+        instinctively all along: that flying offers profound benefits for mental health and wellbeing.
         This is not about escapism or avoiding life's challenges. It is about something more
         fundamental: the way aviation can recalibrate our minds, restore our sense of capability,
         and reconnect us with what matters.
@@ -35,7 +35,7 @@ function WhyWeFly() {
 
       <p>
         This article is more personal than our usual technical guides. We wanted to explore why
-        we fly — not just the mechanics of it, but the deeper reasons that keep us coming back
+        we fly, not just the mechanics of it but the deeper reasons that keep us coming back
         to Denham Aerodrome, lesson after lesson, flight after flight, year after year.
       </p>
 
@@ -63,18 +63,18 @@ function WhyWeFly() {
       <p>
         This might sound stressful, and at first, it is. New students often feel overwhelmed by
         the cognitive demands of managing three controls, monitoring instruments, scanning for
-        traffic, listening to radio calls, and navigating — all simultaneously. But something
+        traffic, listening to radio calls, and navigating, all simultaneously. But something
         remarkable happens as those skills become more automatic: the intensity of focus that
         once felt like a burden transforms into a gift.
       </p>
 
       <Callout variant="quote">
         "When I'm flying, my mind goes quiet in a way it never does on the ground. All the things
-        I'm worried about — work deadlines, family obligations, finances — they don't disappear
+        I'm worried about, whether it's work deadlines, family obligations, or finances, they don't disappear
         exactly, but they move to the background. For that hour, there's only the helicopter. It's
         the closest thing to meditation I've ever experienced."
         <br /><br />
-        — James, PPL(H) student
+        James, PPL(H) student
       </Callout>
 
       <p>
@@ -87,7 +87,7 @@ function WhyWeFly() {
 
       <p>
         Flying generates flow states reliably and repeatedly. The challenge scales with your
-        abilities — as you master basic skills, more complex manoeuvres become available, always
+        abilities. As you master basic skills, more complex manoeuvres become available, always
         keeping you at that sweet spot where the task is neither boring nor overwhelming. Many
         of our pilots describe their time in the cockpit as the only hour in their week when
         they achieve this quality of focused presence.
@@ -99,14 +99,14 @@ function WhyWeFly() {
         There is a moment on every flight when we climb above about 1,500 feet and reality shifts
         subtly. It is not just that the view changes, though it does. It is that the invisible
         tethers connecting you to your everyday concerns begin to dissolve. Your mobile phone
-        might technically have signal at altitude, but it does not matter — checking it is not
+        might technically have signal at altitude, but it does not matter. Checking it is not
         an option, and more importantly, the thought of checking it simply does not arise.
       </p>
 
       <p>
         We live in an age of unprecedented connectivity, and the costs of that connectivity are
         still being understood. The constant availability, the expectation of immediate response,
-        the subtle anxiety of always being reachable — these take a toll that we often do not
+        the subtle anxiety of always being reachable: these take a toll that we often do not
         recognise until we temporarily escape them. Flight provides that escape in its purest form.
       </p>
 
@@ -118,7 +118,7 @@ function WhyWeFly() {
       <p>
         During an hour of flight, the emails keep arriving, but you will not see them. Meetings
         may be scheduled, but you will not receive the invites. Whatever crisis is unfolding in
-        your inbox will continue to unfold, and you will deal with it later — or discover, as
+        your inbox will continue to unfold, and you will deal with it later, or discover, as
         often happens, that it resolved itself without your intervention. The world continued
         turning while you were unreachable, and somehow, everything was fine.
       </p>
@@ -129,7 +129,7 @@ function WhyWeFly() {
         discover that stepping away does not cause catastrophe. Gradually, this understanding
         extends beyond the cockpit. We become more willing to put down our phones, to protect
         our attention, to create boundaries. Flying does not just give us a break from
-        hyperconnectivity — it shows us how to live with it more healthily.
+        hyperconnectivity. It shows us how to live with it more healthily.
       </p>
 
       <Callout variant="tip" title="The Untethered Hour">
@@ -143,7 +143,7 @@ function WhyWeFly() {
 
       <p>
         Denham Aerodrome is not just a place where helicopters are parked and lessons happen.
-        It is a community — and a remarkably welcoming one. Walk into our clubhouse on any
+        It is a community, and a remarkably welcoming one. Walk into our clubhouse on any
         Saturday morning and you will find pilots at every stage of their journey: students
         nervously anticipating their first lesson, recently qualified PPL holders buzzing
         with confidence, seasoned aviators with thousands of hours swapping stories over tea.
@@ -151,7 +151,7 @@ function WhyWeFly() {
 
       <p>
         The conversations in that room cut across all the usual social dividers. Age, profession,
-        background, politics — these matter far less than your shared passion for flight. We have
+        background, politics: these matter far less than your shared passion for flight. We have
         seen friendships form between people who would never have met in their ordinary lives:
         a retired banker and a young entrepreneur, a surgeon and a tradesman, a teacher and a
         television producer. Aviation creates connections that transcend the categories we usually
@@ -181,7 +181,7 @@ function WhyWeFly() {
 
       <p>
         The mental health benefits of genuine community are well documented. Belonging to a
-        group, feeling known and valued, having people who share your interests — these are
+        group, feeling known and valued, having people who share your interests: these are
         protective factors against depression and anxiety. For many of our members, the
         clubhouse provides something their working and social lives lack: a place where they
         truly belong, among people who understand their enthusiasm.
@@ -192,8 +192,8 @@ function WhyWeFly() {
       <p>
         Learning to fly a helicopter is difficult. We will not pretend otherwise. There will be
         lessons where nothing seems to work, where you leave the airfield feeling frustrated and
-        doubtful. The skills you are developing — the hovering, the autorotations, the navigation,
-        the decision-making — demand time and persistence to acquire.
+        doubtful. The skills you are developing, including the hovering, the autorotations, the navigation,
+        and the decision-making, demand time and persistence to acquire.
       </p>
 
       <p>
@@ -216,13 +216,13 @@ function WhyWeFly() {
         "After I got my licence, I started approaching other challenges differently. If I could
         learn to fly a helicopter, what else might I be capable of? I ended up changing careers,
         starting a business, doing things I would never have attempted before. Flying didn't just
-        give me a skill — it gave me a new understanding of what I could achieve."
+        give me a skill. It gave me a new understanding of what I could achieve."
         <br /><br />
-        — Rebecca, commercial pilot
+        Rebecca, commercial pilot
       </Callout>
 
       <p>
-        Psychologists call this "self-efficacy" — the belief in your ability to succeed in specific
+        Psychologists call this "self-efficacy": the belief in your ability to succeed in specific
         situations and accomplish tasks. High self-efficacy is associated with better mental health,
         greater resilience, and more willingness to tackle challenges. Aviation builds self-efficacy
         in ways that few other pursuits can match, because the evidence of your competence is
@@ -236,14 +236,14 @@ function WhyWeFly() {
         There is a reason humans have always dreamed of flight. From our earliest myths to our
         most persistent fantasies, we have longed to see the world from above, to escape the
         flatness of our everyday vantage point. Now, in the cockpit of a helicopter, that dream
-        becomes real — and it affects us more profoundly than we might expect.
+        becomes real, and it affects us more profoundly than we might expect.
       </p>
 
       <p>
         From 1,500 feet, the concerns that loom so large on the ground begin to look different.
         The traffic jam that ruined your morning is invisible from altitude. The office building
         where you spent your week is a small rectangle among many. Your neighbourhood, your
-        town, your city — all shrink into context, parts of a larger whole that extends to
+        town, your city, all shrink into context, parts of a larger whole that extends to
         the horizon and beyond.
       </p>
 
@@ -255,7 +255,7 @@ function WhyWeFly() {
       <p>
         This physical change of perspective creates a psychological shift. Problems that felt
         overwhelming on Monday morning seem more manageable from the air on Saturday. Not
-        because they have disappeared, but because you have gained distance — literal distance
+        because they have disappeared, but because you have gained distance: literal distance
         that somehow translates into emotional distance. You return to ground level with fresh
         eyes, able to see your life from a slightly different angle.
       </p>
@@ -263,7 +263,7 @@ function WhyWeFly() {
       <p>
         Flying also reconnects us with the natural world in unexpected ways. We become attuned
         to weather in a way that ground-dwellers rarely experience. We notice the changing
-        seasons from above — the brown winter fields giving way to spring green, the summer
+        seasons from above: the brown winter fields giving way to spring green, the summer
         ripening of crops, the autumn colours spreading across woodland. We see deer running
         through meadows, boats on rivers, villages waking up on Sunday mornings. This connection
         to the landscape below us, even when we are separate from it, nurtures something
@@ -284,13 +284,13 @@ function WhyWeFly() {
         doesn't know this, but those lessons kept me together during the hardest year of my life.
         Now, three years later, flying is still my sanctuary."
         <br /><br />
-        — Anonymous member
+        Anonymous member
       </Callout>
 
       <p>
         One of our instructors, who has been flying for over twenty years, reflected on how
         aviation has sustained him through life's challenges: "I've been through career changes,
-        health scares, family difficulties — the normal turbulence of a life lived. Through all
+        health scares, family difficulties: the normal turbulence of a life lived. Through all
         of it, flying has been constant. It's not an escape from reality; it's a place where
         I process reality. Some people have therapy; I have the cockpit."
       </p>
@@ -298,8 +298,8 @@ function WhyWeFly() {
       <p>
         A student who recently completed her PPL(H) described the unexpected confidence she
         gained: "I run my own business, and people assume I'm naturally confident. The truth
-        is, I doubted myself constantly. Learning to fly — and more importantly, learning that
-        I could fly — changed something fundamental. Now when I face a challenge at work, I
+        is, I doubted myself constantly. Learning to fly, and more importantly learning that
+        I could fly, changed something fundamental. Now when I face a challenge at work, I
         think: I can hover a helicopter. I can handle this."
       </p>
 
@@ -328,7 +328,7 @@ function WhyWeFly() {
         This is not to suggest that flying is a substitute for professional mental health
         support when it is needed. If you are struggling with depression, anxiety, or other
         mental health challenges, please seek appropriate help. What we are suggesting is that
-        aviation can be part of a healthy, balanced approach to psychological wellbeing — a
+        aviation can be part of a healthy, balanced approach to psychological wellbeing: a
         practice that complements other self-care strategies rather than replacing them.
       </p>
 

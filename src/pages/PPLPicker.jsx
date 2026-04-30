@@ -1732,7 +1732,7 @@ function HeroComponent({ variation }) {
           <img src="/assets/images/gallery/carousel/rotating6.jpg" alt="Scenic flight" className="hero-preview__bg-image" />
           <div className="hero-preview__v55-overlay"></div>
           <div className="hero-preview__v55-content">
-            <span className="hero-preview__v55-issue">VOL. 35 — SINCE 2010</span>
+            <span className="hero-preview__v55-issue">VOL. 35, SINCE 2010</span>
             <h1 className="hero-preview__v55-title">
               <span>THE</span>
               <span>ART OF</span>
@@ -1881,7 +1881,7 @@ function IntroComponent({ variation }) {
               <span className="intro-preview__label">World-Class Training</span>
               <h2>Training Under <span className="intro-preview__accent">Extraordinary</span> Instructors</h2>
               <p className="intro-preview__network-tagline">
-                If the quality of instructing counts for anything—and it certainly does—you will learn at an exceptionally high standard,
+                If the quality of instructing counts for anything (and it certainly does) you will learn at an exceptionally high standard,
                 develop no bad habits, and become a better pilot at a much faster pace with our rigorous, hands-on training program.
               </p>
             </div>
@@ -1944,7 +1944,7 @@ function IntroComponent({ variation }) {
 
             <div className="intro-preview__network-promise">
               <p>
-                Even if other instructors teach you, they benefit from the same mentality and rigorous standards—
+                Even if other instructors teach you, they benefit from the same mentality and rigorous standards,
                 ensuring you receive consistent, world-class instruction every time you fly.
               </p>
             </div>
@@ -2068,7 +2068,7 @@ function IntroComponent({ variation }) {
                 <p className="intro-preview__letter-greeting">Dear Future Pilot,</p>
                 <p>
                   Learning to fly a helicopter is one of the most rewarding experiences you'll ever have.
-                  I've dedicated over 15 years at HQ Aviation to teaching this incredible skill, and I can tell you—there's
+                  I've dedicated over 15 years at HQ Aviation to teaching this incredible skill, and I can tell you, there's
                   nothing quite like the moment you first hover on your own.
                 </p>
                 <p>
@@ -3006,7 +3006,7 @@ function FAQComponent({ variation }) {
                   instructor is one of the <em>best</em> times to fly.
                 </p>
                 <p className="faq-preview__video-highlight">
-                  One of the greatest benefits of training in the UK is that it makes <strong>better pilots</strong>—pilots who
+                  One of the greatest benefits of training in the UK is that it makes <strong>better pilots</strong>, the kind of pilots who
                   are more conscientious and truly understand the effects of weather and wind on flying as part of their core
                   training process.
                 </p>
@@ -3115,7 +3115,7 @@ function CTAComponent({ variation }) {
         <div className="cta-preview__call">
           <h2>Speak to an Instructor</h2>
           <p>Have questions? Our team is ready to help</p>
-          <a href="tel:+441234567890" className="cta-preview__phone">01234 567 890</a>
+          <a href="tel:+441895833373" className="cta-preview__phone">01895 833 373</a>
           <p className="cta-preview__hours">Mon-Sun 8am-6pm</p>
           <div className="cta-preview__call-alt">
             <span>Or</span>
@@ -3129,7 +3129,7 @@ function CTAComponent({ variation }) {
           <div className="cta-preview__visit-map">
             <div className="cta-preview__map-placeholder">
               <span>📍 Denham Aerodrome</span>
-              <span>Tilehouse Lane, Denham UB9 5DF</span>
+              <span>Uxbridge, London, UB9 5DF</span>
             </div>
           </div>
           <div className="cta-preview__visit-info">
@@ -3260,7 +3260,7 @@ function CTAComponent({ variation }) {
                   <span className="cta-preview__tour-icon">📍</span>
                   <div>
                     <strong>Denham Aerodrome</strong>
-                    <small>Tilehouse Lane, Denham UB9 5DF</small>
+                    <small>Uxbridge, London, UB9 5DF</small>
                   </div>
                 </div>
                 <div className="cta-preview__tour-hours">
@@ -3311,17 +3311,17 @@ function CTAComponent({ variation }) {
               <h3>Get In Touch</h3>
             </div>
             <div className="cta-preview__glass-options">
-              <a href="tel:+441234567890" className="cta-preview__glass-option">
+              <a href="tel:+441895833373" className="cta-preview__glass-option">
                 <span className="cta-preview__glass-icon">📞</span>
-                <span>01234 567 890</span>
+                <span>01895 833 373</span>
               </a>
-              <a href="mailto:info@hqaviation.com" className="cta-preview__glass-option">
+              <a href="mailto:operations@hqaviation.com" className="cta-preview__glass-option">
                 <span className="cta-preview__glass-icon">✉️</span>
-                <span>info@hqaviation.com</span>
+                <span>operations@hqaviation.com</span>
               </a>
               <div className="cta-preview__glass-option">
                 <span className="cta-preview__glass-icon">📍</span>
-                <span>Denham Aerodrome, UB9 5DF</span>
+                <span>Denham Aerodrome, Uxbridge, London, UB9 5DF</span>
               </div>
             </div>
             <button className="cta-preview__btn cta-preview__btn--primary cta-preview__btn--large">Book Consultation</button>

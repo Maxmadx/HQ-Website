@@ -914,7 +914,7 @@ function LondonTourTicket() {
             <li>Turbine Engine Helicopter</li>
           </ul>
           <div className="ltour-ticket__gift-note">
-            <strong>Gift Vouchers Available</strong> — The perfect present for aviation enthusiasts
+            <strong>Gift Vouchers Available.</strong> The perfect present for aviation enthusiasts
           </div>
           <div className="refund-notice refund-notice--outer">
             <strong>Fully Refundable</strong> &amp; Subject to weather and availability

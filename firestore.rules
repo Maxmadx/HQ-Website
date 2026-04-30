@@ -210,6 +210,18 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Aircraft comparables — public read, admin write
+    match /comparables/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Comparison defaults singleton (fuel prices etc.) — public read, admin write
+    match /comparison_defaults/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Blog posts — public read, admin write
     match /blog_posts/{id} {
       allow read: if true;
@@ -224,6 +236,20 @@ service cloud.firestore {
 
     // FAQs — public read, editor+ write
     match /faqs/{faqId} {
+      allow read: if true;
+      allow create: if isEditor();
+      allow update: if isEditor();
+      allow delete: if isAdmin();
+    }
+
+    // SFH Where & When — public read, editor+ write (admin API also writes via Admin SDK which bypasses these rules)
+    match /sfh_partners/{partnerId} {
+      allow read: if true;
+      allow create: if isEditor();
+      allow update: if isEditor();
+      allow delete: if isAdmin();
+    }
+    match /sfh_events/{eventId} {
       allow read: if true;
       allow create: if isEditor();
       allow update: if isEditor();

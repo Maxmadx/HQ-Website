@@ -12,6 +12,7 @@ import { motion, useInView } from 'framer-motion';
 import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { useFaqs } from '../hooks/useFaqs';
+import { useWhereWhen } from '../hooks/useWhereWhen';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
@@ -21,6 +22,8 @@ import '../assets/css/components.css';
 
 // Import FooterMinimal component
 import FooterMinimal from '../components/FooterMinimal';
+import HqMenuPanel from '../components/HqMenuPanel';
+import WallOfCoolGr11 from '../components/WallOfCoolGr11';
 
 /**
  * SELF-FLY HIRE PAGE HEADER COMPONENT
@@ -64,57 +67,7 @@ function SelfFlyHireHeader() {
 
   return (
     <>
-      <div className={`hq-menu-panel ${menuOpen ? 'open' : ''}`}>
-        <div className="hq-menu-grid">
-          <div className="hq-menu-section">
-            <h3>About</h3>
-            <ul>
-              <li><Link to="/" onClick={closeMenu}>Home</Link></li>
-              <li><Link to="/about-us" onClick={closeMenu}>About Us</Link></li>
-              <li><Link to="/about-us/team" onClick={closeMenu}>Meet The Team</Link></li>
-              <li><Link to="/about-us/captain-q" onClick={closeMenu}>Quentin Smith</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Aircraft Sales</h3>
-            <ul>
-              <li><Link to="/aircraft-sales" onClick={closeMenu}>New Aircraft</Link></li>
-              <li><Link to="/aircraft-sales/new/r66" onClick={closeMenu}>R66</Link></li>
-              <li><Link to="/aircraft-sales/new/r44" onClick={closeMenu}>R44</Link></li>
-              <li><Link to="/aircraft-sales/new/r22" onClick={closeMenu}>R22</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Flight Training</h3>
-            <ul>
-              <li><Link to="/training" onClick={closeMenu}>Training Overview</Link></li>
-              <li><Link to="/training/ppl" onClick={closeMenu}>Private Pilot License</Link></li>
-              <li><Link to="/training/faq" onClick={closeMenu}>Training FAQ</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Services</h3>
-            <ul>
-              <li><Link to="/services" onClick={closeMenu}>Services Overview</Link></li>
-              <li><Link to="/self-fly-hire" onClick={closeMenu}>Self-Fly Hire</Link></li>
-              <li><Link to="/services/maintenance" onClick={closeMenu}>Maintenance</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Experiences</h3>
-            <ul>
-              <li><Link to="/expeditions" onClick={closeMenu}>Expeditions</Link></li>
-              <li><Link to="/expeditions/calendar" onClick={closeMenu}>Calendar</Link></li>
-            </ul>
-          </div>
-          <div className="hq-menu-section">
-            <h3>Contact</h3>
-            <ul>
-              <li><Link to="/contact" onClick={closeMenu}>Contact Us</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      <HqMenuPanel open={menuOpen} onClose={closeMenu} />
 
       <button
         className={`hq-menu-btn ${colorDark ? 'color-dark' : ''} ${scrolled ? 'scrolled' : ''} ${menuOpen ? 'open' : ''}`}
@@ -179,7 +132,7 @@ const FLEET = [
     cruise: '96 kts',
     range: '190 nm',
     rate: '£375 / hr',
-    description: "Ideal for pilots looking to stay current or explore solo. The R22 is the world's most popular training helicopter — nimble, economical, and endlessly rewarding to fly.",
+    description: "Ideal for pilots looking to stay current or explore solo. The R22 is the world's most popular training helicopter: nimble, economical, and endlessly rewarding to fly.",
     image: '/assets/images/gallery/carousel/rotating1.jpg',
     features: ['2 seats', 'Lycoming O-320 engine', 'Ideal for currency flying', 'Up to 3hrs endurance'],
   },
@@ -205,30 +158,33 @@ const FLEET = [
     cruise: '120 kts',
     range: '350 nm',
     rate: '£595 / hr',
-    description: "Turbine reliability meets Robinson simplicity. The R66 is the pinnacle of piston-to-turbine transition — exceptional range, five seats, and a Garmin G500H avionics suite.",
+    description: "Turbine reliability meets Robinson simplicity. The R66 is the pinnacle of piston-to-turbine transition: exceptional range, five seats, and a Garmin G500H avionics suite.",
     image: '/assets/images/expeditions/north-pole.jpg',
     features: ['5 seats', 'Rolls-Royce RR300 turbine', 'Garmin G500H avionics', 'Up to 5hrs endurance'],
   },
 ];
 
-const DESTINATIONS = [
-  { name: 'Goodwood',        time: '25 min',   region: 'South England'   },
-  { name: 'Oxford',          time: '25 min',   region: 'South England'   },
-  { name: 'Cambridge',       time: '30 min',   region: 'East England'    },
-  { name: 'Brighton',        time: '30 min',   region: 'South England'   },
-  { name: 'Cotswolds',       time: '35 min',   region: 'South England'   },
-  { name: 'Silverstone',     time: '35 min',   region: 'Midlands'        },
-  { name: 'Channel Islands', time: '1h 15m',   region: 'Channel Islands' },
-  { name: 'Le Touquet',      time: '45 min',   region: 'France'          },
-  { name: 'Lake District',   time: '1h 50m',   region: 'North England'   },
-  { name: 'Paris',           time: '1h 30m',   region: 'France'          },
-  { name: 'Amsterdam',       time: '1h 45m',   region: 'Europe'          },
-  { name: 'Edinburgh',       time: '3h',        region: 'Scotland'        },
+const PARTNERS_FALLBACK = [
+  { category: 'Shooting Ground', name: 'Holland & Holland', location: 'Northwood' },
+  { category: 'Restaurant',      name: 'The Hut',           location: 'Isle of Wight' },
+  { category: 'Shooting Ground', name: 'E.J. Churchill',    location: 'West Wycombe' },
+];
+
+const EVENTS_FALLBACK = [
+  { region: 'Gloucestershire', name: 'Cheltenham Festival',        month: '10–13 Mar' },
+  { region: 'Merseyside',      name: 'Grand National (Aintree)',   month: '9–11 Apr' },
+  { region: 'Surrey',          name: 'Epsom Derby',                month: '5–6 Jun' },
+  { region: 'Berkshire',       name: 'Royal Ascot',                month: '16–20 Jun' },
+  { region: 'Oxfordshire',     name: 'Henley Royal Regatta',       month: '1–5 Jul' },
+  { region: 'West Sussex',     name: 'Goodwood Festival of Speed', month: '9–12 Jul' },
+  { region: 'West Sussex',     name: 'Glorious Goodwood',          month: '28 Jul–1 Aug' },
+  { region: 'Suffolk',         name: 'Newmarket Racing',           month: 'May–Oct' },
+  { region: 'Yorkshire',       name: 'York Racecourse',            month: 'May–Oct' },
 ];
 
 const REQUIREMENTS = [
   { num: '01', title: 'Valid PPL(H)',       body: 'A current Private Pilot Licence (Helicopters) with a valid Class 2 medical certificate.' },
-  { num: '02', title: 'Current Type Rating', body: 'A current type rating for the aircraft you wish to fly — R22, R44 or R66.' },
+  { num: '02', title: 'Current Type Rating', body: 'A current type rating for the aircraft you wish to fly, whether R22, R44 or R66.' },
   { num: '03', title: 'Recent Currency',    body: "Minimum recent experience requirements met. If you're not current, we offer a checkout flight with one of our instructors." },
   { num: '04', title: 'Insurance Included', body: 'Third-party liability insurance is included in your hire rate. No additional policy required.' },
 ];
@@ -239,6 +195,9 @@ const REQUIREMENTS = [
 export default function SelfFlyHire() {
   const pageImages = usePageImages('sfh');
   useCmsHighlight();
+  const { partners: cmsPartners, events: cmsEvents } = useWhereWhen({ visibleOnly: true });
+  const partners = cmsPartners.length ? cmsPartners : PARTNERS_FALLBACK;
+  const events = cmsEvents.length ? cmsEvents : EVENTS_FALLBACK;
   const heroUrl  = pageImages['sfh-hero']?.[0]?.url  ?? '/assets/images/gallery/carousel/rotating1.jpg';
   const introUrl = pageImages['sfh-intro']?.[0]?.url ?? '/assets/images/facility/hq-0153.jpg';
 
@@ -247,14 +206,11 @@ export default function SelfFlyHire() {
   const aircraftDropdownRef = useRef(null);
   const [openFaq, setOpenFaq] = useState(null);
   const [showAllFaqs, setShowAllFaqs] = useState(false);
-  const [destPage, setDestPage] = useState(0);
-  const destGridRef = useRef(null);
   const [pricingNotesPage, setPricingNotesPage] = useState(0);
   const pricingNotesGridRef = useRef(null);
   const fleetImgRef = useRef(null);
   const fleetTopBodyRef = useRef(null);
   const fleetSpecsRef = useRef(null);
-  const DEST_PAGES = Math.ceil(DESTINATIONS.length / 4); // 2 rows × 2 cols per view = 4 cards per page
   const { faqs } = useFaqs('sfh', { visibleOnly: true });
   const [form, setForm] = useState({ name: '', email: '', phone: '', aircraft: '', dates: '', message: '' });
   const [formStatus, setFormStatus] = useState(null);
@@ -592,52 +548,57 @@ export default function SelfFlyHire() {
             <span className="sfh2-pre-label">Where You Can Go</span>
             <h2 className="sfh2-section-heading">Where Will You Go?</h2>
             <p className="sfh2-destinations__intro">
-              The UK and beyond are on your doorstep. Below is just a sample of where our
-              pilots fly. If it has a landing site, you can get there.
+              The UK and beyond are on your doorstep. From country estates to the
+              calendar's biggest fixtures, if it has a landing site, you can get there.
             </p>
           </motion.div>
 
-          <div
-            className="sfh2-destinations__grid"
-            ref={destGridRef}
-            onScroll={() => {
-              const el = destGridRef.current;
-              if (!el) return;
-              setDestPage(Math.round(el.scrollLeft / el.clientWidth));
-            }}
-          >
-            {DESTINATIONS.map((dest, i) => (
-              <motion.div
-                key={dest.name}
-                className="sfh2-destinations__card"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.05 }}
-                transition={{ duration: 0.3, delay: (i % 4) * 0.05, ease: [0.16, 1, 0.3, 1] }}
+          <div className="sfh2-where__split" data-cms-section="sfh-where">
+            <div className="sfh2-where__col">
+              <h3 className="sfh2-where__sub-label">Destination Partners</h3>
+              <div
+                className="sfh2-where__scroll sfh2-where__cards"
+                role="region"
+                aria-label="Destination Partners"
+                tabIndex={0}
               >
-                <div className="sfh2-destinations__card-region">{dest.region}</div>
-                <div className="sfh2-destinations__card-name">{dest.name}</div>
-                <div className="sfh2-destinations__card-time">{dest.time}</div>
-              </motion.div>
-            ))}
-          </div>
-          <div className="sfh2-destinations__dots">
-            {Array.from({ length: DEST_PAGES }).map((_, i) => (
-              <span
-                key={i}
-                className={`sfh2-destinations__dot${destPage === i ? ' sfh2-destinations__dot--active' : ''}`}
-                onClick={() => {
-                  destGridRef.current?.scrollTo({ left: i * destGridRef.current.clientWidth, behavior: 'smooth' });
-                }}
-              />
-            ))}
-          </div>
+                {partners.map((partner) => (
+                  <div key={partner.name} className="sfh2-where__card">
+                    <span className="sfh2-where__card-cat">{partner.category}</span>
+                    <span className="sfh2-where__card-name">{partner.name}</span>
+                    <span className="sfh2-where__card-loc">{partner.location}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-          <p className="sfh2-destinations__footer">
-            Plus thousands more — you pick the destination.
-          </p>
+            <div className="sfh2-where__divider" aria-hidden="true" />
+
+            <div className="sfh2-where__col">
+              <h3 className="sfh2-where__sub-label">Event Partners</h3>
+              <div
+                className="sfh2-where__scroll sfh2-where__events"
+                role="region"
+                aria-label="Event Partners"
+                tabIndex={0}
+              >
+                {events.map((event) => (
+                  <div key={event.name} className="sfh2-where__events-row">
+                    <div className="sfh2-where__events-month">{event.month}</div>
+                    <div className="sfh2-where__events-name">{event.name}</div>
+                  </div>
+                ))}
+              </div>
+              <p className="sfh2-where__cal-note">
+                Calendar kept current. Talk to HQ for slot availability or to share a flight already going.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
+
+      {/* ── Community Wall (drop-in component) ──────────────────── */}
+      <WallOfCoolGr11 />
 
       {/* ── Enquiry Form ───────────────────────────────────────── */}
       <section className="sfh2-enquiry" id="enquire">
@@ -675,7 +636,7 @@ export default function SelfFlyHire() {
                   <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                   <polyline points="22 4 12 14.01 9 11.01"/>
                 </svg>
-                <p>Enquiry received — we'll be back in touch within one business day.</p>
+                <p>Enquiry received. We'll be back in touch within one business day.</p>
               </div>
             ) : (
               <form className="sfh2-enquiry__form" onSubmit={handleSubmit} noValidate>
@@ -776,8 +737,8 @@ export default function SelfFlyHire() {
                 </div>
                 {formStatus === 'error' && (
                   <p className="sfh2-enquiry__error">
-                    Something went wrong — please try again or email{' '}
-                    <a href="mailto:hire@hqaviation.com">hire@hqaviation.com</a>
+                    Something went wrong. Please try again or email{' '}
+                    <a href="mailto:operations@hqaviation.com">operations@hqaviation.com</a>
                   </p>
                 )}
                 <button
@@ -1443,63 +1404,118 @@ export default function SelfFlyHire() {
           color: #555;
           margin: 0 0 0.5rem;
         }
-        .sfh2-destinations__base-note {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.7rem;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          color: #9ca3af;
-          margin: 0;
-        }
-        .sfh2-destinations__grid {
+
+        /* ── Where & When (lives inside .sfh2-destinations__inner) ─── */
+        .sfh2-where__split {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 1px;
+          grid-template-columns: 1fr 1px 2fr;
+          column-gap: 2.5rem;
+        }
+        .sfh2-where__divider {
           background: #e8e6e2;
-          border: 1px solid #e8e6e2;
         }
-        .sfh2-destinations__card {
-          background: #fff;
-          padding: 1.5rem;
-          display: flex;
-          flex-direction: column;
-          gap: 0.35rem;
-          transition: background 0.2s;
-        }
-        .sfh2-destinations__card:hover {
-          background: #faf9f6;
-        }
-        .sfh2-destinations__card-region {
+        .sfh2-where__sub-label {
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.6rem;
+          font-weight: 400;
+          letter-spacing: 0.22em;
           text-transform: uppercase;
-          letter-spacing: 0.12em;
           color: #9ca3af;
+          margin: 0 0 0.85rem;
         }
-        .sfh2-destinations__card-name {
+        .sfh2-where__scroll {
+          max-height: 420px;
+          overflow-y: auto;
+          overflow-x: hidden;
+          padding-right: 0.5rem;
+          scrollbar-width: thin;
+          scrollbar-color: #ccc8c1 transparent;
+        }
+        .sfh2-where__events {
+          background: #fff;
+        }
+        .sfh2-where__scroll::-webkit-scrollbar {
+          width: 6px;
+        }
+        .sfh2-where__scroll::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .sfh2-where__scroll::-webkit-scrollbar-thumb {
+          background: #ccc8c1;
+          border-radius: 3px;
+          transition: background 0.2s;
+        }
+        .sfh2-where__scroll::-webkit-scrollbar-thumb:hover {
+          background: #1a1a1a;
+        }
+        .sfh2-where__cards {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+        .sfh2-where__card {
+          background: #fff;
+          border: 1px solid #e8e6e2;
+          padding: 0.85rem 1rem;
+          border-radius: 6px;
+          transition: background 0.2s;
+          display: flex;
+          flex-direction: column;
+        }
+        .sfh2-where__card:hover {
+          background: #faf9f6;
+        }
+        .sfh2-where__card-cat {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.55rem;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: #9ca3af;
+          margin-bottom: 0.2rem;
+        }
+        .sfh2-where__card-name {
           font-family: 'Space Grotesk', sans-serif;
-          font-size: 1rem;
+          font-size: 0.95rem;
           font-weight: 600;
           color: #1a1a1a;
         }
-        .sfh2-destinations__card-time {
+        .sfh2-where__card-loc {
           font-family: 'Share Tech Mono', monospace;
-          font-size: 0.85rem;
+          font-size: 0.65rem;
+          letter-spacing: 0.05em;
           color: #666;
-          margin-top: auto;
-          padding-top: 0.5rem;
+          margin-top: 0.15rem;
         }
-        .sfh2-destinations__dots {
-          display: none;
+        .sfh2-where__events-row {
+          display: grid;
+          grid-template-columns: 110px 1fr;
+          column-gap: 1.5rem;
+          padding: 0.55rem 0.85rem;
+          align-items: center;
         }
-        .sfh2-destinations__footer {
-          text-align: center;
-          margin: 2.5rem 0 0;
+        .sfh2-where__events-row:nth-child(odd) {
+          background: #faf9f6;
+        }
+        .sfh2-where__events-month {
           font-family: 'Share Tech Mono', monospace;
-          font-size: 0.7rem;
+          font-size: 0.72rem;
+          letter-spacing: 0.1em;
           text-transform: uppercase;
-          letter-spacing: 0.12em;
-          color: #9ca3af;
+          color: #666;
+        }
+        .sfh2-where__events-name {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.95rem;
+          color: #1a1a1a;
+        }
+        .sfh2-where__cal-note {
+          margin: 1rem 0 0;
+          padding-top: 0.85rem;
+          border-top: 1px solid #f3f1ed;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.78rem;
+          line-height: 1.5;
+          color: #666;
         }
 
         /* ── Process ───────────────────────────────────────────── */
@@ -1914,9 +1930,6 @@ export default function SelfFlyHire() {
             width: 100%;
             height: auto;
           }
-          .sfh2-destinations__grid {
-            grid-template-columns: repeat(3, 1fr);
-          }
         }
 
         @media (max-width: 768px) {
@@ -2061,42 +2074,16 @@ export default function SelfFlyHire() {
           .sfh2-pricing-notes__dot--active {
             background: #1a1a1a;
           }
-          .sfh2-destinations__grid {
-            grid-template-columns: unset;
-            grid-template-rows: repeat(2, auto);
-            grid-auto-flow: column;
-            grid-auto-columns: 50%;
-            overflow-x: auto;
-            overflow-y: hidden;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            scroll-snap-type: x mandatory;
+          /* Where & When: stack columns on mobile */
+          .sfh2-where__split {
+            grid-template-columns: 1fr;
+            row-gap: 2rem;
           }
-          .sfh2-destinations__grid::-webkit-scrollbar {
+          .sfh2-where__divider {
             display: none;
           }
-          .sfh2-destinations__card {
-            scroll-snap-align: start;
-          }
-          .sfh2-destinations__dots {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            padding-top: 14px;
-          }
-          .sfh2-destinations__dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #ccc8c1;
-            transition: background 0.2s;
-            cursor: pointer;
-          }
-          .sfh2-destinations__dot--active {
-            background: #1a1a1a;
-          }
-          .sfh2-destinations__dots {
-            display: flex;
+          .sfh2-where__scroll {
+            max-height: 320px;
           }
           .sfh2-enquiry__row {
             grid-template-columns: 1fr;
