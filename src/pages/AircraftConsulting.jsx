@@ -462,7 +462,7 @@ function AircraftConsulting() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              Advisory Services
+              For buyers, owners, and disputes
             </motion.span>
 
             <div className="ac-hero__headline">
@@ -472,7 +472,7 @@ function AircraftConsulting() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
               >
-                AIRCRAFT
+                HELICOPTER
               </motion.span>
               <motion.span
                 className="ac-hero__word ac-hero__word--2"
@@ -517,9 +517,9 @@ function AircraftConsulting() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.2 }}
             >
-              Pre-purchase inspections, ownership advice, fleet planning, and bespoke acquisition
-              services — grounded in thirty-five years of Robinson expertise and 500+ transactions
-              across Europe.
+              Robinson specialists. Independent advice across the helicopter ownership lifecycle —
+              from short-list to settlement, and through the disputes and decisions in between.
+              Grounded in 35 years and 500+ transactions.
             </motion.p>
           </div>
         </motion.div>
