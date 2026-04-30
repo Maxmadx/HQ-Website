@@ -630,11 +630,10 @@ function AircraftConsulting() {
                       onChange={(e) => setFormData(p => ({ ...p, serviceType: e.target.value }))}
                     >
                       <option value="">Select a service...</option>
-                      <option value="Pre-Purchase Inspection">Pre-Purchase Inspection</option>
-                      <option value="Ownership Advisory">Ownership Advisory</option>
-                      <option value="Fleet Planning">Fleet Planning</option>
-                      <option value="Acquisition Services">Acquisition Services</option>
-                      <option value="Other">Other</option>
+                      {SERVICE_TYPES.map(s => (
+                        <option key={s.slug} value={s.slug}>{s.label}</option>
+                      ))}
+                      <option value="other">Something else</option>
                     </select>
                   </div>
 
