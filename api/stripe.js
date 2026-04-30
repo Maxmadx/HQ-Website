@@ -39,9 +39,12 @@ function parseAddonsFromMetadata(metadata = {}) {
   return { addons, fulfilment, shippingAddress };
 }
 
-async function recordPurchaseEvent({ paymentIntentId, value, currency, items, itemCategory, sessionId, country, countryCode }) {
+async function recordPurchaseEvent({ paymentIntentId, value, currency, items, itemCategory, sessionId }) {
   try {
-    // Idempotency: skip if a purchase event for this transactionId already exists
+    // Idempotency: skip if a purchase event for this transactionId already exists.
+    // Note: this check-then-write is intentionally non-transactional. Stripe's
+    // minimum retry gap (~5s) makes a near-simultaneous duplicate effectively
+    // impossible. If volumes grow, switch to a Firestore transaction here.
     const existing = await admin.firestore()
       .collection('page_events')
       .where('eventType', '==', 'purchase')
@@ -59,8 +62,10 @@ async function recordPurchaseEvent({ paymentIntentId, value, currency, items, it
       currency: currency || 'gbp',
       items: items || null,
       itemCategory: itemCategory || null,
-      country: country || null,
-      countryCode: countryCode || null,
+      // Geo enrichment intentionally omitted — webhook IP is Stripe's, not the buyer's.
+      // TODO: pull country/countryCode from the original session (via sessionId join) in a follow-up.
+      country: null,
+      countryCode: null,
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
     });
   } catch (err) {
@@ -746,23 +751,25 @@ async function handleWebhook(req) {
       const purchaseItems = (() => {
         if (productType === 'london-tour') {
           const { experience, timeOfDay, quantity } = pi.metadata;
+          const qty = Number(quantity) || 1;
           return [{
             item_id: `london-tour-${experience}-${timeOfDay}`,
             item_name: `London Tour: ${experience} ${timeOfDay}`,
             item_category: 'london-tour',
-            price: pi.amount / 100,
-            quantity: Number(quantity) || 1,
+            price: (pi.amount / 100) / qty,
+            quantity: qty,
             currency: 'gbp',
           }];
         }
         if (productType === 'misc') {
           const { itemId, itemName, qty } = pi.metadata;
+          const quantity = Number(qty) || 1;
           return [{
             item_id: itemId || 'misc',
             item_name: itemName || 'Misc item',
             item_category: 'misc',
-            price: pi.amount / 100,
-            quantity: Number(qty) || 1,
+            price: (pi.amount / 100) / quantity,
+            quantity,
             currency: 'gbp',
           }];
         }
@@ -784,6 +791,10 @@ async function handleWebhook(req) {
         items: purchaseItems,
         itemCategory: productCategory,
         sessionId: pi.metadata.sessionId || null,
+      }).catch((err) => {
+        // Belt-and-suspenders: helper has internal try/catch but never let an unexpected
+        // throw bubble up to Stripe — that would trigger a webhook retry on a successful payment.
+        console.error('[stripe webhook] recordPurchaseEvent unexpected throw:', err.message);
       });
     }
 
