@@ -1,9 +1,8 @@
 /**
  * AIRCRAFT CONSULTING PAGE
  *
- * Advisory and inspection services for helicopter buyers and owners.
- * Independent expertise — pre-purchase inspections, ownership advisory,
- * fleet planning, and full acquisition services.
+ * Helicopter consulting page. Robinson specialists.
+ * Buying, owning & operating, valuations, and independent expert work.
  *
  * Brand: Luxury Minimal Aviation
  * Typography: Space Grotesk + Share Tech Mono
@@ -21,7 +20,7 @@ import '../assets/css/main.css';
 import '../assets/css/components.css';
 import FooterMinimal from '../components/FooterMinimal';
 import HqMenuPanel from '../components/HqMenuPanel';
-import { INITIAL_FORM_STATE, SERVICE_TYPES, SERVICE_FIELD_MAP, getServiceFields, clearConditionalFields } from './aircraftConsultingForm';
+import { INITIAL_FORM_STATE, SERVICE_TYPES, getServiceFields, clearConditionalFields } from './aircraftConsultingForm';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HEADER COMPONENT
@@ -584,7 +583,7 @@ function AircraftConsulting() {
       </section>
 
       {/* ====================================================================
-          SERVICES — 2×2 card grid
+          SERVICES — 3 groups, 8 cards total
       ==================================================================== */}
       <section className="ac-services">
         <div className="ac-services__container">
@@ -1632,24 +1631,6 @@ function AircraftConsulting() {
           font-weight: 700;
           flex-shrink: 0;
           margin-top: 0.15rem;
-        }
-        .ac-service-card__cta {
-          display: block;
-          text-align: center;
-          padding: 0.85rem 1.5rem;
-          background: #1a1a1a;
-          color: #ffffff;
-          font-size: 0.72rem;
-          font-weight: 600;
-          text-decoration: none;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          border-radius: 4px;
-          transition: background 0.2s ease;
-          margin-top: auto;
-        }
-        .ac-service-card__cta:hover {
-          background: #333333;
         }
 
         /* ============================================================
