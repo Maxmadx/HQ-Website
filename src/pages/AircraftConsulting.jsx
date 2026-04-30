@@ -359,53 +359,6 @@ function AircraftConsulting() {
     { id: 'expert',  label: 'Independent expert work' },
   ];
 
-  const processSteps = [
-    {
-      num: '01',
-      title: 'Brief',
-      description: "Tell us what you need. We confirm scope and whether we're the right firm.",
-    },
-    {
-      num: '02',
-      title: 'Scope & fee',
-      description: "Written, upfront. What's in, what's out, what it costs. Fixed where possible; capped where not.",
-    },
-    {
-      num: '03',
-      title: 'Engagement',
-      description: 'The work itself: an inspection, a market search, a model build, a documentation sequence, a written opinion.',
-    },
-    {
-      num: '04',
-      title: 'Deliverable',
-      description: 'In writing. Report, valuation, TCO model, policy recommendation, expert opinion — with a clear position you can act on.',
-    },
-    {
-      num: '05',
-      title: 'Continued',
-      description: 'Open line afterwards. Available to talk through findings, support negotiations, take the next call. For retainer clients, this is the relationship.',
-    },
-  ];
-
-  const credentials = [
-    {
-      title: 'Robinson Authorised Service Centre',
-      desc: "Factory-authorised on every Robinson type — the qualification that backs the inspection, the valuation, the expert opinion, and every Robinson recommendation HQ writes.",
-    },
-    {
-      title: 'CAA Part 145 Approved',
-      desc: 'Approved Maintenance Organisation. Airworthiness standards in operational detail, not theory.',
-    },
-    {
-      title: '35 Years of Robinson Experience',
-      desc: 'More Robinson hours, more Robinson logbooks, and more Robinson problems solved than almost any organisation in Europe.',
-    },
-    {
-      title: '500+ Transactions Supported',
-      desc: 'Acquisitions, ownership transitions, valuations, and disputes — a track record across the helicopter ownership lifecycle, not just at the point of sale.',
-    },
-  ];
-
   const independencePoints = [
     {
       num: '01',
@@ -667,61 +620,6 @@ function AircraftConsulting() {
                   <span className="ac-why__card-num">{point.num}</span>
                   <h4 className="ac-why__card-title">{point.title}</h4>
                   <p className="ac-why__card-desc">{point.desc}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          PROCESS — Numbered steps, light background
-      ==================================================================== */}
-      <section className="ac-process">
-        <div className="ac-process__container">
-          <Reveal>
-            <div className="ac-section-header">
-              <span className="ac-pre-text">How It Works</span>
-              <h2 className="ac-section-header__h2">The Process</h2>
-            </div>
-          </Reveal>
-
-          <div className="ac-process__steps">
-            {processSteps.map((step, i) => (
-              <Reveal key={step.num} delay={i * 0.08}>
-                <div className="ac-process__step">
-                  <div className="ac-process__step-num">{step.num}</div>
-                  <div className="ac-process__step-content">
-                    <div className="ac-process__step-header">
-                      <h4 className="ac-process__step-title">{step.title}</h4>
-                    </div>
-                    <p className="ac-process__step-desc">{step.description}</p>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          CREDENTIALS — Horizontal authority bars
-      ==================================================================== */}
-      <section className="ac-credentials">
-        <div className="ac-credentials__container">
-          <Reveal>
-            <div className="ac-section-header">
-              <span className="ac-pre-text">Our Credentials</span>
-              <h2 className="ac-section-header__h2">Why Trust HQ</h2>
-            </div>
-          </Reveal>
-
-          <div className="ac-credentials__list">
-            {credentials.map((cred, i) => (
-              <Reveal key={cred.title} delay={i * 0.08}>
-                <div className="ac-credential-bar">
-                  <h4 className="ac-credential-bar__title">{cred.title}</h4>
-                  <p className="ac-credential-bar__desc">{cred.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -1154,14 +1052,6 @@ function AircraftConsulting() {
               a dispute on the desk — an hour with us is the cheapest read you'll get. No
               obligation, no sales pitch, just an honest opinion you can act on.
             </p>
-            <div className="ac-cta__buttons">
-              <Link to="/fleet" className="ac-cta__link">
-                View Our Fleet
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </Link>
-            </div>
           </Reveal>
         </div>
       </section>
@@ -1690,126 +1580,6 @@ function AircraftConsulting() {
         }
 
         /* ============================================================
-           PROCESS
-        ============================================================ */
-        .ac-process {
-          background: #faf9f6;
-          padding: 6rem 4rem;
-          border-top: 1px solid #eeecea;
-        }
-        .ac-process__container {
-          max-width: 860px;
-          margin: 0 auto;
-        }
-        .ac-process__steps {
-          display: flex;
-          flex-direction: column;
-        }
-        .ac-process__step {
-          display: flex;
-          gap: 2.5rem;
-          align-items: flex-start;
-          padding: 2rem 0;
-          border-bottom: 1px solid #e8e6e2;
-          border-left: 3px solid transparent;
-          padding-left: 1.5rem;
-          transition: border-color 0.2s ease;
-        }
-        .ac-process__step:first-child {
-          padding-top: 0;
-        }
-        .ac-process__step:hover {
-          border-left-color: #1a1a1a;
-        }
-        .ac-process__step-num {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.6rem;
-          color: #cccccc;
-          letter-spacing: 0.1em;
-          flex-shrink: 0;
-          padding-top: 0.25rem;
-          min-width: 24px;
-        }
-        .ac-process__step-content {
-          flex: 1;
-        }
-        .ac-process__step-header {
-          display: flex;
-          align-items: center;
-          gap: 0.85rem;
-          margin-bottom: 0.6rem;
-          flex-wrap: wrap;
-        }
-        .ac-process__step-title {
-          font-size: 1rem;
-          font-weight: 700;
-          color: #1a1a1a;
-          margin: 0;
-          line-height: 1.3;
-        }
-        .ac-process__step-duration {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.65rem;
-          color: #777777;
-          background: #f5f5f2;
-          padding: 0.2rem 0.65rem;
-          border-radius: 4px;
-          letter-spacing: 0.05em;
-          border: 1px solid #eeecea;
-        }
-        .ac-process__step-desc {
-          font-size: 0.9rem;
-          line-height: 1.65;
-          color: #666666;
-          margin: 0;
-        }
-
-        /* ============================================================
-           CREDENTIALS
-        ============================================================ */
-        .ac-credentials {
-          background: #faf9f6;
-          padding: 6rem 4rem;
-          border-top: 1px solid #eeecea;
-        }
-        .ac-credentials__container {
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-        .ac-credentials__list {
-          display: flex;
-          flex-direction: column;
-          border-top: 1px solid #e8e6e2;
-          margin-top: 0.5rem;
-        }
-        .ac-credential-bar {
-          display: flex;
-          align-items: baseline;
-          gap: 3rem;
-          padding: 1.75rem 0;
-          border-bottom: 1px solid #e8e6e2;
-          transition: background 0.15s ease;
-        }
-        .ac-credential-bar:hover {
-          padding-left: 0.5rem;
-        }
-        .ac-credential-bar__title {
-          font-size: 1rem;
-          font-weight: 700;
-          color: #1a1a1a;
-          margin: 0;
-          min-width: 280px;
-          flex-shrink: 0;
-          line-height: 1.4;
-        }
-        .ac-credential-bar__desc {
-          font-size: 0.95rem;
-          line-height: 1.6;
-          color: #666666;
-          margin: 0;
-        }
-
-        /* ============================================================
            ENQUIRY FORM
         ============================================================ */
         .ac-enquiry {
@@ -2052,34 +1822,6 @@ function AircraftConsulting() {
           color: rgba(255, 255, 255, 0.65);
           margin: 0 0 2.5rem;
         }
-        .ac-cta__buttons {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 2rem;
-          flex-wrap: wrap;
-        }
-        .ac-cta__link {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.45rem;
-          font-size: 0.8rem;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          color: rgba(255, 255, 255, 0.6);
-          text-decoration: none;
-          transition: color 0.2s ease;
-        }
-        .ac-cta__link:hover {
-          color: #ffffff;
-        }
-        .ac-cta__link svg {
-          transition: transform 0.2s ease;
-        }
-        .ac-cta__link:hover svg {
-          transform: translateX(3px);
-        }
 
         /* ============================================================
            RESPONSIVE — 1024px
@@ -2105,12 +1847,6 @@ function AircraftConsulting() {
             grid-template-columns: 1fr;
             gap: 3rem;
           }
-          .ac-credential-bar {
-            gap: 2rem;
-          }
-          .ac-credential-bar__title {
-            min-width: 220px;
-          }
         }
 
         /* ============================================================
@@ -2127,12 +1863,6 @@ function AircraftConsulting() {
             padding: 4rem 1.5rem;
           }
           .ac-why {
-            padding: 4rem 1.5rem;
-          }
-          .ac-process {
-            padding: 4rem 1.5rem;
-          }
-          .ac-credentials {
             padding: 4rem 1.5rem;
           }
           .ac-enquiry {
@@ -2153,22 +1883,8 @@ function AircraftConsulting() {
           .ac-enquiry__row {
             grid-template-columns: 1fr;
           }
-          .ac-process__step {
-            gap: 1.5rem;
-          }
-          .ac-credential-bar {
-            flex-direction: column;
-            gap: 0.6rem;
-          }
-          .ac-credential-bar__title {
-            min-width: unset;
-          }
           .ac-why__grid {
             grid-template-columns: 1fr;
-          }
-          .ac-cta__buttons {
-            flex-direction: column;
-            gap: 1.25rem;
           }
         }
 
@@ -2201,13 +1917,6 @@ function AircraftConsulting() {
           }
           .ac-service-card {
             padding: 1.5rem;
-          }
-          .ac-process__step {
-            padding-left: 0;
-            border-left: none;
-          }
-          .ac-cta__buttons {
-            width: 100%;
           }
           .ac-btn--white {
             width: 100%;
