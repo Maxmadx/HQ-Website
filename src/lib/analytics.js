@@ -33,23 +33,32 @@ function getUtmParams() {
 
 /**
  * Send a tracking event to the server. Fire-and-forget — never throws.
- * @param {string} eventType  pageview | cta_click | form_submit | image_view | scroll_depth | page_exit
+ * @param {string} eventType  pageview | cta_click | form_submit | image_view | scroll_depth | page_exit | view_item | begin_checkout | add_payment_info | purchase
  * @param {string|null} [elementId]  Optional element identifier
  * @param {string|null} [page]  Defaults to window.location.pathname
+ * @param {object} [data]  Optional ecommerce payload: { items, value, currency, transactionId, itemCategory }
  */
-export async function trackEvent(eventType, elementId = null, page = null) {
+export async function trackEvent(eventType, elementId = null, page = null, data = null) {
   try {
+    const body = {
+      sessionId: getSessionId(),
+      page: page ?? (typeof window !== 'undefined' ? window.location.pathname : ''),
+      eventType,
+      elementId,
+      referrer: typeof document !== 'undefined' ? document.referrer : '',
+      ...getUtmParams(),
+    };
+    if (data) {
+      if (data.items !== undefined) body.items = data.items;
+      if (data.value !== undefined) body.value = data.value;
+      if (data.currency !== undefined) body.currency = data.currency;
+      if (data.transactionId !== undefined) body.transactionId = data.transactionId;
+      if (data.itemCategory !== undefined) body.itemCategory = data.itemCategory;
+    }
     await fetch('/api/analytics', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        sessionId: getSessionId(),
-        page: page ?? (typeof window !== 'undefined' ? window.location.pathname : ''),
-        eventType,
-        elementId,
-        referrer: typeof document !== 'undefined' ? document.referrer : '',
-        ...getUtmParams(),
-      }),
+      body: JSON.stringify(body),
     });
   } catch {
     // Silently swallow — analytics must never break the site

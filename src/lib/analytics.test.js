@@ -77,4 +77,41 @@ describe('analytics', () => {
     expect(body.utmTerm).toBeNull();
     expect(body.utmContent).toBeNull();
   });
+
+  it('trackEvent passes ecommerce payload fields through', async () => {
+    await trackEvent('view_item', null, '/training/trial-lessons', {
+      items: [{ item_id: 'r44-60', item_name: 'R44 60min', item_category: 'discovery-flight', price: 350, currency: 'gbp' }],
+      value: 350,
+      currency: 'gbp',
+      itemCategory: 'discovery-flight',
+    });
+    const body = JSON.parse(fetch.mock.calls[0][1].body);
+    expect(body.eventType).toBe('view_item');
+    expect(body.items).toEqual([{ item_id: 'r44-60', item_name: 'R44 60min', item_category: 'discovery-flight', price: 350, currency: 'gbp' }]);
+    expect(body.value).toBe(350);
+    expect(body.currency).toBe('gbp');
+    expect(body.itemCategory).toBe('discovery-flight');
+  });
+
+  it('trackEvent omits ecommerce fields when not provided', async () => {
+    await trackEvent('pageview');
+    const body = JSON.parse(fetch.mock.calls[0][1].body);
+    expect(body.items).toBeUndefined();
+    expect(body.value).toBeUndefined();
+    expect(body.currency).toBeUndefined();
+    expect(body.transactionId).toBeUndefined();
+    expect(body.itemCategory).toBeUndefined();
+  });
+
+  it('trackEvent passes transactionId for purchase events', async () => {
+    await trackEvent('purchase', null, '/booking-confirmed', {
+      transactionId: 'pi_123abc',
+      value: 350,
+      currency: 'gbp',
+      items: [{ item_id: 'r44-60', item_category: 'discovery-flight' }],
+      itemCategory: 'discovery-flight',
+    });
+    const body = JSON.parse(fetch.mock.calls[0][1].body);
+    expect(body.transactionId).toBe('pi_123abc');
+  });
 });
