@@ -29,6 +29,22 @@ function isAdminEmail(email) {
   return list.includes(email.toLowerCase());
 }
 
+async function requireAdmin(req, res, next) {
+  const header = req.headers.authorization || '';
+  const token = header.replace('Bearer ', '').trim();
+  if (!token) return res.status(401).json({ error: 'Unauthorized' });
+  try {
+    const decoded = await admin.auth().verifyIdToken(token);
+    if (decoded.role !== 'admin' && decoded.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+    req.adminUid = decoded.uid;
+    next();
+  } catch {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+}
+
 // POST /api/carts — upsert by sessionId
 router.post('/', cartLimiter, async (req, res) => {
   try {
@@ -143,6 +159,44 @@ router.get('/by-token', async (req, res) => {
   } catch (err) {
     console.error('[carts] by-token error:', err.message);
     return res.status(500).json({ error: 'Failed to load cart' });
+  }
+});
+
+// GET /api/carts/unsubscribe?t=<token> — set noEmail flag, no auth required (token IS the auth)
+router.get('/unsubscribe', async (req, res) => {
+  const token = String(req.query.t || '').trim();
+  if (!token || token.length < 16) {
+    return res.status(400).send('Invalid unsubscribe link');
+  }
+  try {
+    const snap = await admin.firestore()
+      .collection('carts')
+      .where('recoveryToken', '==', token)
+      .limit(1)
+      .get();
+    if (snap.empty) return res.status(404).send('Link expired');
+    await snap.docs[0].ref.set({ noEmail: true, updatedAt: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    return res.send(`<!doctype html><html><body style="font-family:system-ui;max-width:480px;margin:80px auto;padding:24px;text-align:center"><h2>Unsubscribed</h2><p>You won't receive any more booking-recovery emails from HQ Aviation.</p></body></html>`);
+  } catch (err) {
+    console.error('[carts] unsubscribe error:', err.message);
+    return res.status(500).send('Something went wrong');
+  }
+});
+
+// GET /api/carts (admin) — list non-completed carts for the dashboard
+router.get('/', requireAdmin, async (_req, res) => {
+  try {
+    const snap = await admin.firestore()
+      .collection('carts')
+      .where('status', 'in', ['active', 'checkout_initiated', 'abandoned'])
+      .orderBy('updatedAt', 'desc')
+      .limit(200)
+      .get();
+    const carts = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    return res.json({ carts });
+  } catch (err) {
+    console.error('[carts] admin list error:', err.message);
+    return res.status(500).json({ error: 'Failed to list carts' });
   }
 });
 
