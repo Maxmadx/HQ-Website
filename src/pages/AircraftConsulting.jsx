@@ -229,7 +229,6 @@ function AircraftConsulting() {
       group: 'buying',
       title: 'Pre-Purchase Inspection',
       scope: 'Robinson only',
-      chip: 'Most common',
       description: "A full airframe, engine, avionics, and logbook inspection of any Robinson helicopter under offer. Factory-authorised verdict in writing — buy, renegotiate, or walk — within 48 hours.",
       includes: [
         'Physical airframe inspection',
@@ -279,7 +278,6 @@ function AircraftConsulting() {
       group: 'owning',
       title: 'Aircraft Management',
       scope: 'All helicopters',
-      chip: 'Retainer',
       description: "An ongoing relationship for owners who'd rather not run the aircraft themselves. We oversee maintenance, engineer relationships, scheduling, and keep the file in order so the aircraft stays serviceable and saleable.",
       includes: [
         'Maintenance scheduling oversight',
@@ -579,9 +577,6 @@ function AircraftConsulting() {
                           <span className="ac-service-card__tag">{service.scope}</span>
                           <span className="ac-service-card__num">{service.num}</span>
                         </div>
-                        {service.chip && (
-                          <span className="ac-service-card__chip">{service.chip}</span>
-                        )}
                         <h3 className="ac-service-card__title">{service.title}</h3>
                         <span className="ac-service-card__indicator" aria-hidden="true">
                           {expandedServiceSlug === service.enquiry ? '−' : '+'}
@@ -1429,18 +1424,6 @@ function AircraftConsulting() {
           margin: 0 0 1.5rem;
           padding-bottom: 0.75rem;
           border-bottom: 1px solid #eeecea;
-        }
-        .ac-service-card__chip {
-          display: inline-block;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.6rem;
-          letter-spacing: 0.15em;
-          text-transform: uppercase;
-          color: #6b6b6b;
-          background: #f1efeb;
-          padding: 0.25rem 0.6rem;
-          border-radius: 999px;
-          margin-bottom: 0.75rem;
         }
         .ac-service-card {
           cursor: pointer;
