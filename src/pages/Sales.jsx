@@ -14,6 +14,8 @@ import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { usePageText } from '../hooks/usePageText';
 import { useFaqs } from '../hooks/useFaqs';
+import { useFx } from '../hooks/useFx';
+import { useAircraftPricing } from '../hooks/useAircraftPricing';
 
 // Import styles
 import '../assets/css/main.css';
@@ -142,17 +144,16 @@ const aircraftModels = [
     id: 'r88',
     name: 'R88',
     tagline: 'The Future of Rotorcraft',
-    description: 'Revolutionary 8-seat turbine helicopter with unmatched capability.',
-    seats: 8,
+    description: 'Revolutionary turbine helicopter with up to 10 seats and unmatched capability.',
+    seats: 'Up to 10',
     speed: '140',
     range: '400',
     engine: 'Safran Arriel',
-    price: 'POA',
     image: '/assets/images/new-aircraft/r88/rhc-r88-3-spotlights-left-side-atmospheric-effect-21794_2.jpg',
     cutout: '/assets/images/new-aircraft/r88/r88-jellybean-left.png',
     featured: true,
     subtypes: [
-      { id: 'standard', name: 'Standard', description: 'Base configuration with premium features.' },
+      { id: 'standard', name: 'Standard', description: 'Base configuration with premium features.', priceUsd: 3300000 },
     ],
   },
   {
@@ -163,16 +164,18 @@ const aircraftModels = [
     seats: 5,
     speed: '120',
     range: '350',
-    engine: 'RR300',
-    price: '$1,290,000',
+    engine: 'RR‑300',
     image: '/assets/images/new-aircraft/r66/rhc-r66-nxg-riviera-center-spotlight-vertical-format-14184-2.jpg',
     cutout: '/assets/images/new-aircraft/r66/blue-r66-palo-verde-front-v4.png',
     featured: false,
     badge: null,
     subtypes: [
-      { id: 'standard', name: 'Standard', description: 'Five-seat turbine helicopter with Robinson reliability.' },
-      { id: 'turbine-marine', name: 'Turbine Marine', description: 'Equipped with pop-out floats for overwater operations.' },
-      { id: 'southwood', name: 'Southwood', description: 'Premium leather interior with bespoke finishing by Southwood Aviation.' },
+      { id: 'southwood', name: 'Southwood', description: 'NxG with Stone & Graphite leather. The R66 entry into the NxG lineup.', priceUsd: 1456000,
+        cutout: '/assets/images/new-aircraft/r66/variants/r66-southwood-front.png' },
+      { id: 'palo-verde', name: 'Palo Verde', description: 'NxG with full Garmin G500H suite, autopilot and three-tone leather.', priceUsd: 1563500,
+        cutout: '/assets/images/new-aircraft/r66/blue-r66-palo-verde-front-v4.png' },
+      { id: 'riviera', name: 'Riviera', description: 'Limited-edition NxG in Monarch Orange, Sky Blue and Pacific Blue with ceramic coating.', priceUsd: 1777500,
+        cutout: '/assets/images/new-aircraft/r66/variants/r66-riviera-front.png' },
     ],
   },
   {
@@ -183,16 +186,18 @@ const aircraftModels = [
     seats: 4,
     speed: '113',
     range: '300',
-    engine: 'Lycoming IO-540',
-    price: '$535,000',
+    engine: 'Lycoming IO‑540',
     image: '/assets/images/new-aircraft/r44/r44blueprint.jpg',
     cutout: '/assets/images/new-aircraft/r44/raven-ii-front-alpha.png',
     featured: false,
     badge: null,
     subtypes: [
-      { id: 'raven-i', name: 'Raven I', description: 'Carbureted engine. Ideal for lower altitude operations.' },
-      { id: 'raven-ii', name: 'Raven II', description: 'Fuel-injected engine. Enhanced high-altitude performance.' },
-      { id: 'cadet', name: 'Cadet', description: 'Two-seat training variant with extended range.' },
+      { id: 'cadet', name: 'Cadet', description: 'Two-seat training variant with extended range.', priceUsd: 520000,
+        cutout: '/assets/images/new-aircraft/r44/r44-cadet-front.png' },
+      { id: 'raven-i', name: 'Raven I', description: 'Carbureted engine. Ideal for lower altitude operations.', priceUsd: 553500,
+        cutout: '/assets/images/new-aircraft/r44/r44-raven-i-front-alpha.png' },
+      { id: 'raven-ii', name: 'Raven II', description: 'Fuel-injected engine. Enhanced high-altitude performance.', priceUsd: 646000,
+        cutout: '/assets/images/new-aircraft/r44/raven-ii-front-alpha.png' },
     ],
   },
   {
@@ -203,15 +208,13 @@ const aircraftModels = [
     seats: 2,
     speed: '96',
     range: '200',
-    engine: 'Lycoming O-360',
-    price: '$345,000',
+    engine: 'Lycoming O‑360',
     image: '/assets/images/new-aircraft/r22/r22blueprint.jpg',
     cutout: '/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png',
     featured: false,
     badge: null,
     subtypes: [
-      { id: 'beta-ii', name: 'Beta II', description: 'Standard two-seat trainer with proven reliability.' },
-      { id: 'mariner', name: 'Mariner', description: 'Float-equipped variant for water operations.' },
+      { id: 'beta-ii', name: 'Beta II', description: 'Standard two-seat trainer with proven reliability.', priceUsd: 375000 },
     ],
   },
 ];
@@ -296,19 +299,24 @@ const financingOptions = [
   },
 ];
 
-// Comparison specs
+// Comparison specs. Cross-checked against Robinson Helicopter Company
+// product pages (April 2026). Useful load uses RHC's "with maximum fuel" figure.
+// "From" prices reflect the cheapest current variant of each model (RHC 2026 list).
 const comparisonSpecs = [
-  { spec: 'Seats', r88: '8', r66: '5', r44: '4', r22: '2' },
-  { spec: 'Max Speed (kts)', r88: '140', r66: '120', r44: '113', r22: '96' },
-  { spec: 'Range (NM)', r88: '400', r66: '350', r44: '300', r22: '200' },
+  { spec: 'Seats', r88: 'Up to 10', r66: '5', r44: '4', r22: '2' },
+  { spec: 'Max Speed (kts)', r88: '140', r66: '140', r44: '130', r22: '102' },
+  { spec: 'Cruise Speed (kts)', r88: '140', r66: '120', r44: '109', r22: '96' },
+  { spec: 'Range (NM)', r88: '400', r66: '350', r44: '350', r22: '250' },
   { spec: 'Engine Type', r88: 'Turbine', r66: 'Turbine', r44: 'Piston', r22: 'Piston' },
-  { spec: 'Useful Load (lb)', r88: '2,100', r66: '1,270', r44: '1,025', r22: '407' },
+  { spec: 'Useful Load (lb)', r88: '2,100', r66: '1,270', r44: '818', r22: '389' },
   { spec: 'Hover Ceiling IGE (ft)', r88: '10,000', r66: '10,000', r44: '8,950', r22: '6,400' },
-  { spec: 'Fuel Capacity (gal)', r88: '120', r66: '73.3', r44: '50.5', r22: '19.2' },
-  { spec: 'Price From', r88: 'POA', r66: '$1.29M', r44: '$535K', r22: '$345K' },
+  { spec: 'Fuel Capacity (gal)', r88: '120', r66: '73.3', r44: '29.5', r22: '16.9' },
+  { spec: 'Price From', r88: '$3.3M', r66: '$1.46M', r44: '$520K', r22: '$375K' },
 ];
 
-// Aircraft specs for comparison tool
+// Aircraft specs for comparison tool. Source: Robinson Helicopter Company
+// product pages (cross-checked April 2026). Useful load values use RHC's
+// "with maximum fuel" figure for consistency.
 const aircraftSpecsForCompare = [
   {
     model: 'R66 Turbine',
@@ -321,44 +329,46 @@ const aircraftSpecsForCompare = [
     usefulLoad: '1,270 lbs',
     fuelCapacity: '73.3 gal',
     hasAuxTank: true,
-    auxTankSpecs: {
-      range: '400 nm',
-      endurance: '3.5 hrs',
-      fuelCapacity: '91.5 gal'
-    }
+    // RHC official: 23-gal aux = +100 nm / +1 hr; 43-gal aux = +200 nm / +2 hr.
+    // The two tanks are mutually exclusive (only one can be installed at a time).
+    auxConfigs: {
+      none:  { range: '350 nm', endurance: '3.0 hrs', fuelCapacity: '73.3 gal' },
+      aux23: { range: '450 nm', endurance: '4.0 hrs', fuelCapacity: '96.3 gal' },
+      aux43: { range: '550 nm', endurance: '5.0 hrs', fuelCapacity: '116.3 gal' },
+    },
   },
   {
     model: 'R44 Raven II',
     seats: 4,
-    engine: 'IO-540 Piston',
+    engine: 'Lycoming IO-540, fuel injected',
     maxSpeed: '130 kts',
-    cruiseSpeed: '113 kts',
-    range: '300 nm',
+    cruiseSpeed: '109 kts',
+    range: '350 nm',
     endurance: '3.0 hrs',
-    usefulLoad: '1,025 lbs',
-    fuelCapacity: '50.5 gal'
+    usefulLoad: '818 lbs',
+    fuelCapacity: '29.5 gal'
   },
   {
     model: 'R44 Cadet',
     seats: 2,
-    engine: 'IO-540 Piston',
+    engine: 'Lycoming O-540, carbureted',
     maxSpeed: '130 kts',
-    cruiseSpeed: '113 kts',
-    range: '350 nm',
-    endurance: '3.5 hrs',
-    usefulLoad: '838 lbs',
-    fuelCapacity: '50.5 gal'
+    cruiseSpeed: '107 kts',
+    range: '300 nm',
+    endurance: '2.6 hrs',
+    usefulLoad: '586 lbs',
+    fuelCapacity: '29.5 gal'
   },
   {
     model: 'R22 Beta II',
     seats: 2,
-    engine: 'O-360 Piston',
+    engine: 'Lycoming O-360, carbureted',
     maxSpeed: '102 kts',
     cruiseSpeed: '96 kts',
-    range: '200 nm',
-    endurance: '2.5 hrs',
-    usefulLoad: '407 lbs',
-    fuelCapacity: '19.2 gal'
+    range: '250 nm',
+    endurance: '2.0 hrs',
+    usefulLoad: '389 lbs',
+    fuelCapacity: '16.9 gal'
   },
 ];
 
@@ -495,7 +505,7 @@ const heritageTimeline = [
   { year: '2010', event: 'R66 Turbine added to lineup' },
   { year: '2015', event: 'New state-of-the-art hangar complex' },
   { year: '2020', event: '500th helicopter delivered' },
-  { year: '2024', event: 'R88 launch — A new era begins' },
+  { year: '2024', event: 'R88 launch. A new era begins' },
 ];
 
 // Paint scheme options
@@ -847,6 +857,105 @@ const salesModelSectionId = {
   r22: 'sales-model-r22',
 };
 
+// "Looking to Sell" intent button + collapsible enquiry form, lives inside the contact CTA.
+// Posts to /api/leads — same endpoint the AircraftR66 enquiry form uses.
+function SalesSellIntent() {
+  const [open, setOpen] = useState(false);
+  const [data, setData] = useState({ name: '', email: '', phone: '', interest: 'r66', message: '' });
+  const [status, setStatus] = useState('idle'); // idle | sending | success | error
+  const interestOptions = [
+    { value: 'r88', label: 'Interested in an R88' },
+    { value: 'r66', label: 'Interested in an R66' },
+    { value: 'r44', label: 'Interested in an R44' },
+    { value: 'r22', label: 'Interested in an R22' },
+    { value: 'used', label: 'Looking at used aircraft' },
+    { value: 'undecided', label: 'Not sure yet, I need guidance' },
+  ];
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setStatus('sending');
+    const interestLabel = interestOptions.find((o) => o.value === data.interest)?.label || data.interest;
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          subject: `Sales: Consultation Request (${interestLabel})`,
+          message: [`Interest: ${interestLabel}`, data.message].filter(Boolean).join('\n'),
+          source: 'Sales: Consultation Request',
+        }),
+      });
+      setStatus(res.ok ? 'success' : 'error');
+    } catch {
+      setStatus('error');
+    }
+  }
+
+  return (
+    <div className="sales-sell">
+      {!open && (
+        <button type="button" className="sales-sell__intent" onClick={() => setOpen(true)}>
+          <span className="sales-sell__intent-icon" aria-hidden="true">→</span>
+          <span className="sales-sell__intent-title">Request a Consultation</span>
+          <span className="sales-sell__intent-sub">Tell us what you're looking for. We'll match you to the right aircraft and walk you through purchase, finance, and delivery.</span>
+        </button>
+      )}
+
+      {open && status === 'success' && (
+        <div className="sales-sell__form sales-sell__form--success">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+          <p>Thanks. We've received your details and a member of our sales team will be in touch shortly.</p>
+        </div>
+      )}
+
+      {open && status !== 'success' && (
+        <form className="sales-sell__form" onSubmit={handleSubmit}>
+          <div className="sales-sell__form-head">
+            <h3>Tell us what you're looking for</h3>
+            <button type="button" className="sales-sell__close" aria-label="Close" onClick={() => setOpen(false)}>×</button>
+          </div>
+          <div className="sales-sell__group">
+            <input type="text" placeholder="Full Name *" required value={data.name} onChange={(e) => setData({ ...data, name: e.target.value })} />
+          </div>
+          <div className="sales-sell__group">
+            <input type="email" placeholder="Email Address *" required value={data.email} onChange={(e) => setData({ ...data, email: e.target.value })} />
+          </div>
+          <div className="sales-sell__group">
+            <input type="tel" placeholder="Phone Number" value={data.phone} onChange={(e) => setData({ ...data, phone: e.target.value })} />
+          </div>
+          <div className="sales-sell__group">
+            <select value={data.interest} onChange={(e) => setData({ ...data, interest: e.target.value })}>
+              {interestOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
+          </div>
+          <div className="sales-sell__group">
+            <textarea placeholder="Use case, mission profile, timeline, financing requirements…" rows="3" value={data.message} onChange={(e) => setData({ ...data, message: e.target.value })} />
+          </div>
+          {status === 'error' && (
+            <p className="sales-sell__error">
+              Something went wrong. Please try again or email <a href="mailto:sales@hqaviation.com">sales@hqaviation.com</a>.
+            </p>
+          )}
+          <button type="submit" className="sales-sell__submit" disabled={status === 'sending'}>
+            {status === 'sending' ? 'Sending…' : 'Submit Enquiry'}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </button>
+        </form>
+      )}
+    </div>
+  );
+}
+
 function Sales() {
   const pageImages = usePageImages('sales');
   useCmsHighlight();
@@ -857,7 +966,10 @@ function Sales() {
 
   // Per-model CMS image helpers (keyed by index matching aircraftModels order)
   const getModelHero   = (model) => pageImages['sales-aircraft-hero']?.[aircraftModels.findIndex(m => m.id === model.id)]?.url   ?? model.image;
-  const getModelCutout = (model) => pageImages['sales-aircraft-cutout']?.[aircraftModels.findIndex(m => m.id === model.id)]?.url ?? model.cutout;
+  // Subtype cutout takes precedence over CMS-overridden model cutout, then model.cutout
+  const getModelCutout = (model, subtype) => subtype?.cutout
+    ?? pageImages['sales-aircraft-cutout']?.[aircraftModels.findIndex(m => m.id === model.id)]?.url
+    ?? model.cutout;
 
   const usedAircraftWithCms = usedAircraft.map((a, i) => ({
     ...a,
@@ -872,9 +984,46 @@ function Sales() {
   const [activeModel, setActiveModel] = useState(aircraftModels[0]);
   const [activeSubtype, setActiveSubtype] = useState(aircraftModels[0].subtypes[0]);
   const [hoveredModel, setHoveredModel] = useState(null);
+  const fx = useFx();
+  const aircraftPricing = useAircraftPricing();
+  const priceCardRef = useRef(null);
+  const priceChipRef = useRef(null);
+  const [priceMatchedWidth, setPriceMatchedWidth] = useState(null);
+  useEffect(() => {
+    const card = priceCardRef.current;
+    const chip = priceChipRef.current;
+    if (!card) return;
+    const measure = () => {
+      // Read each element's natural content width by clearing any locked width first.
+      const cardPrev = card.style.width;
+      card.style.width = 'auto';
+      const cardNatural = card.scrollWidth;
+      card.style.width = cardPrev;
+
+      let chipNatural = 0;
+      if (chip) {
+        const chipPrev = chip.style.width;
+        chip.style.width = 'auto';
+        chipNatural = chip.scrollWidth;
+        chip.style.width = chipPrev;
+      }
+      setPriceMatchedWidth(Math.max(cardNatural, chipNatural));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(card);
+    if (chip) ro.observe(chip);
+    return () => ro.disconnect();
+  }, [activeModel.id, activeSubtype.id]);
   const [slideDirection, setSlideDirection] = useState(0); // -1 = left, 1 = right
   const [compareSelected, setCompareSelected] = useState([]);
-  const [auxTankEnabled, setAuxTankEnabled] = useState(false);
+  // R66 aux tank selection — mutually exclusive: 'none' | 'aux23' | 'aux43'
+  const [auxConfigKey, setAuxConfigKey] = useState('none');
+  const aux23Enabled = auxConfigKey === 'aux23';
+  const aux43Enabled = auxConfigKey === 'aux43';
+  const auxTankEnabled = auxConfigKey !== 'none';
+  const setAux23Enabled = (on) => setAuxConfigKey(on ? 'aux23' : 'none');
+  const setAux43Enabled = (on) => setAuxConfigKey(on ? 'aux43' : 'none');
   const heroRef = useRef(null);
   const galleryRef = useRef(null);
 
@@ -882,15 +1031,15 @@ function Sales() {
   const toggleCompareSelect = (model) => {
     if (compareSelected.includes(model)) {
       setCompareSelected(compareSelected.filter(s => s !== model));
-      if (model === 'R66 Turbine') setAuxTankEnabled(false);
+      if (model === 'R66 Turbine') setAuxConfigKey('none');
     } else if (compareSelected.length < 3) {
       setCompareSelected([...compareSelected, model]);
     }
   };
 
   const getCompareValue = (aircraft, field) => {
-    if (auxTankEnabled && aircraft.model === 'R66 Turbine' && aircraft.auxTankSpecs?.[field]) {
-      return aircraft.auxTankSpecs[field];
+    if (aircraft.model === 'R66 Turbine' && aircraft.auxConfigs?.[auxConfigKey]?.[field]) {
+      return aircraft.auxConfigs[auxConfigKey][field];
     }
     return aircraft[field];
   };
@@ -915,24 +1064,6 @@ function Sales() {
     setSlideDirection(newIndex > currentIndex ? 1 : -1);
     setActiveModel(newModel);
     setActiveSubtype(newModel.subtypes[0]); // Reset to first subtype
-  }, [activeModel.id]);
-
-  const handlePrevModel = useCallback(() => {
-    const currentIndex = aircraftModels.findIndex(m => m.id === activeModel.id);
-    const prevIndex = currentIndex === 0 ? aircraftModels.length - 1 : currentIndex - 1;
-    const newModel = aircraftModels[prevIndex];
-    setSlideDirection(-1);
-    setActiveModel(newModel);
-    setActiveSubtype(newModel.subtypes[0]);
-  }, [activeModel.id]);
-
-  const handleNextModel = useCallback(() => {
-    const currentIndex = aircraftModels.findIndex(m => m.id === activeModel.id);
-    const nextIndex = currentIndex === aircraftModels.length - 1 ? 0 : currentIndex + 1;
-    const newModel = aircraftModels[nextIndex];
-    setSlideDirection(1);
-    setActiveModel(newModel);
-    setActiveSubtype(newModel.subtypes[0]);
   }, [activeModel.id]);
 
   const { scrollYProgress } = useScroll({
@@ -1006,7 +1137,7 @@ function Sales() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.1 }}
             >
-              The UK's leading Robinson dealer since 2010. New and pre-owned helicopters, factory support, and lifetime partnership.
+              Authorised UK Robinson dealer since 2011. New and pre-owned helicopters, factory support, and lifetime partnership.
             </motion.p>
 
             <motion.div
@@ -1082,11 +1213,12 @@ function Sales() {
             </div>
           </Reveal>
 
-          {/* Model Selector */}
-          <div className="sales-lineup__selector">
-            {aircraftModels.map((model, i) => (
-              <Reveal key={model.id} delay={i * 0.1}>
+          {/* Card: tabs connected to top, image+info content, full-width CTA at bottom */}
+          <div className="sales-lineup__card">
+            <div className="sales-lineup__tabs">
+              {aircraftModels.map((model) => (
                 <button
+                  key={model.id}
                   className={`sales-lineup__tab ${activeModel.id === model.id ? 'sales-lineup__tab--active' : ''}`}
                   onClick={() => handleModelChange(model)}
                   onMouseEnter={() => setHoveredModel(model.id)}
@@ -1096,54 +1228,26 @@ function Sales() {
                   <span className="sales-lineup__tab-name">{t(salesModelSectionId[model.id], 'name') || model.name}</span>
                   <span className="sales-lineup__tab-tagline">{t(salesModelSectionId[model.id], 'tagline') || model.tagline}</span>
                 </button>
-              </Reveal>
-            ))}
-          </div>
-
-          {/* Active Model Display */}
-          <div key={activeModel.id} className="sales-lineup__display">
-            <div className="sales-lineup__image-wrapper">
-              <div className="sales-lineup__image-row">
-                <button className="sales-lineup__chevron sales-lineup__chevron--prev" onClick={handlePrevModel} aria-label="Previous model">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="15 18 9 12 15 6" />
-                  </svg>
-                </button>
-
-                <div className="sales-lineup__image">
-                  <AnimatePresence mode="wait" custom={slideDirection}>
-                    <motion.img
-                      key={activeModel.id}
-                      src={getModelCutout(activeModel)}
-                      alt={activeModel.name}
-                      custom={slideDirection}
-                      initial={{ x: slideDirection * 100, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      exit={{ x: slideDirection * -100, opacity: 0 }}
-                      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    />
-                  </AnimatePresence>
-                </div>
-
-                <button className="sales-lineup__chevron sales-lineup__chevron--next" onClick={handleNextModel} aria-label="Next model">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </button>
-              </div>
-
-              <div className="sales-lineup__divider" />
-
-              <div className="sales-lineup__actions">
-                <Link to={`/aircraft-sales/new/${activeModel.id}`} className="sales-btn sales-btn--primary">
-                  View Details
-                </Link>
-              </div>
+              ))}
             </div>
 
-            <div className="sales-lineup__divider-vertical"></div>
+            <div key={activeModel.id} className="sales-lineup__display">
+              <div className="sales-lineup__image">
+                <AnimatePresence mode="wait" custom={slideDirection}>
+                  <motion.img
+                    key={`${activeModel.id}-${activeSubtype.id}`}
+                    src={getModelCutout(activeModel, activeSubtype)}
+                    alt={`${activeModel.name} ${activeSubtype.name}`}
+                    custom={slideDirection}
+                    initial={{ x: slideDirection * 100, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: slideDirection * -100, opacity: 0 }}
+                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  />
+                </AnimatePresence>
+              </div>
 
-            <div className="sales-lineup__info">
+              <div className="sales-lineup__info">
                 <div className="sales-lineup__model-header">
                   <h3>{t(salesModelSectionId[activeModel.id], 'name') || activeModel.name}</h3>
                   <span className="sales-lineup__tagline">{t(salesModelSectionId[activeModel.id], 'tagline') || activeModel.tagline}</span>
@@ -1186,12 +1290,52 @@ function Sales() {
                   </div>
                 </div>
 
-                <div className="sales-lineup__price">
-                  <span className="sales-lineup__price-label">From</span>
-                  <span className="sales-lineup__price-value">{t(salesModelSectionId[activeModel.id], 'price') || activeModel.price}</span>
-                </div>
+                {(() => {
+                  const usd = aircraftPricing.getPriceUsd(activeModel.id, activeSubtype);
+                  return (
+                    <div className="sales-lineup__price">
+                      {usd ? (
+                        <div className="sales-lineup__price-stack">
+                          <div
+                            ref={priceCardRef}
+                            className="sales-lineup__price-card"
+                            style={priceMatchedWidth ? { width: priceMatchedWidth } : undefined}
+                          >
+                            <span className="sales-lineup__price-label">From</span>
+                            <span className="sales-lineup__price-value">{fx.format(usd, 'USD')}</span>
+                          </div>
+                          <div
+                            ref={priceChipRef}
+                            className="sales-lineup__price-chip"
+                            style={priceMatchedWidth ? { width: priceMatchedWidth } : undefined}
+                          >
+                            ~{fx.format(usd, 'GBP')}
+                            <span className="sales-lineup__price-sep">·</span>
+                            ~{fx.format(usd, 'EUR')}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="sales-lineup__price-stack">
+                          <div className="sales-lineup__price-card">
+                            <span className="sales-lineup__price-label">From</span>
+                            <span className="sales-lineup__price-value">POA</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
             </div>
+
+            <Link to={`/aircraft-sales/new/${activeModel.id}`} className="sales-lineup__cta">
+              View More Details
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -1228,14 +1372,26 @@ function Sales() {
                       <label className="sales-compare__aux-label">
                         <input
                           type="checkbox"
-                          checked={auxTankEnabled}
-                          onChange={(e) => setAuxTankEnabled(e.target.checked)}
+                          checked={aux23Enabled}
+                          onChange={(e) => setAux23Enabled(e.target.checked)}
                           className="sales-compare__aux-checkbox"
                         />
                         <span className="sales-compare__aux-check">
-                          {auxTankEnabled && <span>✓</span>}
+                          {aux23Enabled && <span>✓</span>}
                         </span>
-                        <span className="sales-compare__aux-text">+ Auxiliary Tank</span>
+                        <span className="sales-compare__aux-text">+ 23-gal Aux</span>
+                      </label>
+                      <label className="sales-compare__aux-label">
+                        <input
+                          type="checkbox"
+                          checked={aux43Enabled}
+                          onChange={(e) => setAux43Enabled(e.target.checked)}
+                          className="sales-compare__aux-checkbox"
+                        />
+                        <span className="sales-compare__aux-check">
+                          {aux43Enabled && <span>✓</span>}
+                        </span>
+                        <span className="sales-compare__aux-text">+ 43-gal Aux</span>
                       </label>
                     </motion.div>
                   )}
@@ -1250,7 +1406,11 @@ function Sales() {
                 {selectedCompareSpecs.map(a => (
                   <div key={a.model} className="sales-compare__cell">
                     {a.model}
-                    {a.model === 'R66 Turbine' && auxTankEnabled && <span className="sales-compare__aux-badge">+ AUX</span>}
+                    {a.model === 'R66 Turbine' && auxTankEnabled && (
+                      <span className="sales-compare__aux-badge">
+                        + {auxConfigKey === 'aux23' ? '23 AUX' : '43 AUX'}
+                      </span>
+                    )}
                   </div>
                 ))}
               </div>
@@ -1303,8 +1463,8 @@ function Sales() {
         </div>
       </section>
 
-      {/* ========== VIDEO WALKTHROUGHS ========== */}
-      <section className="sales-video sales-video--compact">
+      {/* ========== VIDEO WALKTHROUGHS (hidden) ========== */}
+      <section className="sales-video sales-video--compact" style={{ display: 'none' }}>
         <div className="sales-video__container">
           <div className="sales-video__divider" />
           <h3 className="sales-video__label">See our Aircraft Walkthroughs</h3>
@@ -1490,8 +1650,7 @@ function Sales() {
                 <span className="sales-why__num">02</span>
                 <h4>Expert Knowledge</h4>
                 <p>
-                  15 years of exclusive Robinson focus. Our team knows these aircraft
-                  better than anyone in the UK.
+                  Generations of Robinson Helicopter Experience.
                 </p>
               </div>
             </Reveal>
@@ -1501,7 +1660,7 @@ function Sales() {
                 <span className="sales-why__num">03</span>
                 <h4>Complete Service</h4>
                 <p>
-                  Sales, maintenance, training, hangarage, and expeditions—
+                  Sales, maintenance, training, hangarage, and expeditions, all
                   everything under one roof at Denham Aerodrome.
                 </p>
               </div>
@@ -1562,7 +1721,7 @@ function Sales() {
             <div className="sales-gallery__scroll" ref={galleryRef} data-cms-section="sales-gallery">
               <motion.div className="sales-gallery__item sales-gallery__item--tall" whileHover={{ scale: 1.02 }}>
                 <img src={pageImages['sales-gallery']?.[0]?.url || '/assets/images/new-aircraft/r88/rhc-r88-atmospheric-effect-front-view-218022.jpg'} alt="R88" />
-                <span className="sales-gallery__label">R88 — The Future</span>
+                <span className="sales-gallery__label">R88, The Future</span>
               </motion.div>
               <div className="sales-gallery__stack">
                 <motion.div className="sales-gallery__item sales-gallery__item--small" whileHover={{ scale: 1.02 }}>
@@ -1671,11 +1830,9 @@ function Sales() {
               <p>
                 {t('sales-cta', 'description') || "Whether you're a first-time buyer or expanding your fleet, our team is ready to guide you to the perfect helicopter."}
               </p>
-              <div className="sales-contact__actions">
-                <a href="tel:+441895833373" className="sales-btn sales-btn--white">
-                  {t('sales-cta', 'cta_phone') || 'Call +44 1895 833 373'}
-                </a>
-              </div>
+
+              <SalesSellIntent />
+
               <div className="sales-contact__location">
                 <span>{t('sales-cta', 'location') || 'HQ Aviation · Denham Aerodrome · London · UB9 5DF'}</span>
               </div>
@@ -2046,46 +2203,91 @@ function Sales() {
           line-height: 1.7;
         }
 
-        .sales-lineup__selector {
-          display: inline-flex;
-          justify-content: center;
-          gap: 0;
-          margin: 0 auto 1.5rem;
-          border: 1px solid #e8e6e2;
-          border-radius: 6px;
+        /* ===== Aircraft selector card (inspired by .r66-variants__card) ===== */
+        .sales-lineup__card {
+          position: relative;
+          margin: 3rem auto 0;
+          max-width: 1200px;
+          background: #ffffff;
+          border: 1px solid rgba(0,0,0,0.07);
+          border-radius: 16px;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.06);
           overflow: hidden;
         }
 
-        .sales-lineup__tab {
-          padding: 0.75rem 1.25rem;
-          background: #faf9f6;
-          border: none;
-          border-right: 1px solid #e8e6e2;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          text-align: center;
-          position: relative;
-        }
-
-        .sales-lineup__tab:last-child {
-          border-right: none;
-        }
-
-        .sales-lineup__tab:hover {
-          background: #f0efe8;
-        }
-
-        .sales-lineup__tab--active {
+        .sales-lineup__card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
           background: #1a1a1a;
+          z-index: 2;
         }
 
-        .sales-lineup__tab--active .sales-lineup__tab-name {
-          color: #fff;
+        .sales-lineup__tabs {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 0;
+          background: #fbfaf7;
+          border-bottom: 1px solid rgba(0,0,0,0.08);
         }
 
-        .sales-lineup__tab--active .sales-lineup__tab-tagline {
-          color: rgba(255,255,255,0.6);
+        .sales-lineup__tab {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: center;
+          gap: 0.25rem;
+          padding: 1.1rem 1.25rem;
+          min-height: 84px;
+          font-family: 'Space Grotesk', sans-serif;
+          text-align: left;
+          background: transparent;
+          border: none;
+          border-right: 1px solid rgba(0,0,0,0.06);
+          cursor: pointer;
+          transition: color 0.25s ease, background 0.25s ease;
         }
+
+        .sales-lineup__tab:last-child { border-right: none; }
+
+        .sales-lineup__tab::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 3px;
+          background: #1a1a1a;
+          transform: scaleX(0);
+          transform-origin: left center;
+          transition: transform 0.3s ease;
+        }
+
+        .sales-lineup__tab:hover { background: #f6f3ed; }
+        .sales-lineup__tab--active { background: #ffffff; }
+        .sales-lineup__tab--active::after { transform: scaleX(1); }
+
+        .sales-lineup__tab-name {
+          display: block;
+          font-size: 1.05rem;
+          font-weight: 700;
+          color: #1a1a1a;
+          letter-spacing: 0.01em;
+        }
+
+        .sales-lineup__tab-tagline {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.6rem;
+          color: #9a9a9a;
+          text-transform: uppercase;
+          letter-spacing: 0.14em;
+        }
+
+        .sales-lineup__tab--active .sales-lineup__tab-tagline { color: #1a1a1a; }
 
         .sales-lineup__tab-badge {
           position: absolute;
@@ -2100,157 +2302,115 @@ function Sales() {
           border-radius: 2px;
         }
 
-        .sales-lineup__tab-name {
-          display: block;
-          font-size: 1.1rem;
-          font-weight: 700;
-          color: #1a1a1a;
-          margin-bottom: 0.15rem;
-        }
-
-        .sales-lineup__tab-tagline {
-          font-size: 0.55rem;
-          color: #888;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-        }
-
         .sales-lineup__display {
           display: grid;
-          grid-template-columns: 1fr auto 1fr;
-          gap: 2rem;
-          align-items: start;
-          padding: 2rem 2rem 2.5rem;
-          background: linear-gradient(135deg, #faf9f6 0%, #f0efe8 100%);
-          border-radius: 12px;
-          height: 520px;
-          overflow: hidden;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-          border: 1px solid rgba(0,0,0,0.06);
+          grid-template-columns: 1fr 1fr;
+          gap: 0;
+          align-items: stretch;
+          background:
+            radial-gradient(ellipse at center left, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 70%),
+            linear-gradient(135deg, #ececea 0%, #ffffff 70%);
+          position: relative;
+          min-height: 460px;
         }
 
-        .sales-lineup__image-wrapper {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 1.5rem;
-          height: 100%;
-        }
-
-        .sales-lineup__image-row {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 1rem;
-        }
-
-        .sales-lineup__chevron {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 48px;
-          height: 48px;
-          border: 1.5px solid #1a1a1a;
-          border-radius: 50%;
-          background: transparent;
-          color: #1a1a1a;
-          cursor: pointer;
-          transition: background 0.3s cubic-bezier(0.33, 1, 0.68, 1),
-                      color 0.3s cubic-bezier(0.33, 1, 0.68, 1),
-                      border-color 0.3s cubic-bezier(0.33, 1, 0.68, 1);
-          flex-shrink: 0;
-        }
-
-        .sales-lineup__chevron:hover {
-          background: #1a1a1a;
-          color: #fff;
-          border-color: #1a1a1a;
-        }
-
-        .sales-lineup__chevron:active {
-          background: #E04A2F;
-          border-color: #E04A2F;
-          color: #fff;
+        .sales-lineup__display::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background-image:
+            linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+          background-size: 40px 40px;
+          opacity: 0.6;
+          pointer-events: none;
         }
 
         .sales-lineup__image {
           position: relative;
-          flex: 1;
-          min-width: 0;
+          z-index: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 2rem 2.5rem;
+          min-height: 300px;
         }
 
         .sales-lineup__image img {
           width: 100%;
           height: auto;
-          max-height: 400px;
+          max-height: 360px;
           object-fit: contain;
+          filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));
         }
 
         .sales-lineup__info {
-          max-width: 450px;
           position: relative;
-          height: 100%;
+          z-index: 1;
           display: flex;
           flex-direction: column;
+          padding: 2.5rem 3rem;
+          background: #ffffff;
+          border-left: 1px solid rgba(0,0,0,0.06);
+          gap: 1.25rem;
         }
 
         .sales-lineup__model-header {
-          margin-bottom: 0;
-          text-align: center;
-        }
-
-        .sales-lineup__header-divider {
-          width: 60px;
-          height: 1px;
-          background: rgba(0,0,0,0.15);
-          margin: 0.75rem auto 0;
-        }
-
-        .sales-lineup__middle {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
+          text-align: left;
         }
 
         .sales-lineup__model-header h3 {
-          font-size: 2.5rem;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: clamp(1.8rem, 3vw, 2.4rem);
           font-weight: 700;
           text-transform: uppercase;
           margin: 0;
           line-height: 1;
+          letter-spacing: -0.01em;
         }
 
         .sales-lineup__tagline {
-          font-size: 0.9rem;
-          color: #666;
+          display: block;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.7rem;
+          color: #9a9a9a;
+          margin-top: 0.5rem;
+          text-transform: uppercase;
+          letter-spacing: 0.18em;
+        }
+
+        .sales-lineup__header-divider {
+          width: 50px;
+          height: 2px;
+          background: #1a1a1a;
+          margin: 1rem 0 0;
+          border-radius: 2px;
         }
 
         .sales-lineup__subtypes {
           display: flex;
           flex-wrap: wrap;
-          justify-content: center;
-          gap: 0.5rem;
-          margin: 1rem 0;
+          gap: 0.4rem;
+          margin: 1rem 0 0;
         }
 
         .sales-lineup__subtype {
-          padding: 0.5rem 1rem;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.75rem;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-          background: transparent;
-          border: 1px solid #ddd;
-          color: #666;
+          padding: 0.45rem 0.95rem;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.78rem;
+          font-weight: 500;
+          background: #fff;
+          border: 1px solid rgba(0,0,0,0.12);
+          color: #4a4a4a;
+          border-radius: 100px;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: background 0.2s, color 0.2s, border-color 0.2s;
         }
 
         .sales-lineup__subtype:hover {
+          background: #1a1a1a;
           border-color: #1a1a1a;
-          color: #1a1a1a;
+          color: #fff;
         }
 
         .sales-lineup__subtype--active {
@@ -2259,37 +2419,44 @@ function Sales() {
           color: #fff;
         }
 
+        .sales-lineup__middle {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
         .sales-lineup__desc {
-          color: #666;
-          line-height: 1.7;
-          margin-bottom: 1.5rem;
+          color: #555;
+          line-height: 1.6;
+          margin: 0;
+          font-size: 0.95rem;
+          text-align: left;
         }
 
         .sales-lineup__specs {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          gap: 1rem;
-          margin-bottom: 1.5rem;
+          gap: 0.75rem;
           padding: 1rem 0;
-          border-top: 1px solid #e8e6e2;
-          border-bottom: 1px solid #e8e6e2;
+          border-top: 1px solid rgba(0,0,0,0.08);
+          border-bottom: 1px solid rgba(0,0,0,0.08);
         }
 
         .sales-lineup__spec {
           display: flex;
           flex-direction: column;
-          align-items: center;
+          align-items: flex-start;
           justify-content: center;
         }
 
         .sales-lineup__spec-value {
-          display: block;
           font-family: 'Share Tech Mono', monospace;
-          font-size: 1.25rem;
+          font-size: 0.85rem;
           font-weight: 700;
           color: #1a1a1a;
-          line-height: 1;
-          margin-bottom: 0.25rem;
+          line-height: 1.25;
+          margin-bottom: 0.35rem;
+          white-space: nowrap;
         }
 
         .sales-lineup__spec-label {
@@ -2301,49 +2468,102 @@ function Sales() {
 
         .sales-lineup__price {
           display: flex;
-          align-items: baseline;
           justify-content: flex-end;
-          gap: 0.5rem;
           margin-top: auto;
-          text-align: right;
+          padding-top: 0.5rem;
+        }
+
+        .sales-lineup__price-stack {
+          display: inline-flex;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 0.5rem;
+        }
+
+        .sales-lineup__price-card {
+          display: flex;
+          align-items: baseline;
+          justify-content: space-between;
+          gap: 0.85rem;
+          white-space: nowrap;
+          box-sizing: border-box;
         }
 
         .sales-lineup__price-label {
+          font-family: 'Share Tech Mono', monospace;
           font-size: 0.7rem;
-          color: #888;
+          color: #9a9a9a;
           text-transform: uppercase;
+          letter-spacing: 0.18em;
         }
 
         .sales-lineup__price-value {
           font-family: 'Share Tech Mono', monospace;
-          font-size: 1.75rem;
+          font-size: 1.5rem;
           font-weight: 700;
+          color: #1a1a1a;
+          line-height: 1;
+        }
+
+        .sales-lineup__price-chip {
+          display: block;
+          box-sizing: border-box;
+          padding: 0.5rem 0.95rem;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.8rem;
+          font-weight: 500;
+          color: #4a4a4a;
+          background: #fbfaf7;
+          border: 1px solid rgba(0,0,0,0.08);
+          border-radius: 6px;
+          letter-spacing: 0.01em;
+          text-align: center;
+          white-space: nowrap;
+        }
+
+        .sales-lineup__price-sep {
+          color: #c0c0c0;
+          margin: 0 0.25rem;
+        }
+
+        .sales-lineup__cta {
+          display: flex;
+          width: 100%;
+          align-items: center;
+          justify-content: center;
+          gap: 0.65rem;
+          padding: 1.1rem 2rem;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.9rem;
+          font-weight: 500;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          color: #fff;
+          background: #1a1a1a;
+          border: none;
+          border-top: 1px solid rgba(0,0,0,0.07);
+          text-decoration: none;
+          transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .sales-lineup__cta:hover {
+          background: #fff;
           color: #1a1a1a;
         }
 
-        .sales-lineup__price-note {
-          font-size: 0.7rem;
-          color: #888;
-        }
+        .sales-lineup__cta svg { transition: transform 0.2s ease; }
+        .sales-lineup__cta:hover svg { transform: translateX(4px); }
 
-        .sales-lineup__divider {
-          width: 100%;
-          max-width: 300px;
-          height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(0,0,0,0.15), transparent);
-          margin: 1rem auto;
-        }
-
-        .sales-lineup__divider-vertical {
-          width: 1px;
-          align-self: stretch;
-          background: linear-gradient(180deg, transparent, rgba(0,0,0,0.1), transparent);
-        }
-
-        .sales-lineup__actions {
-          display: flex;
-          gap: 1rem;
-          justify-content: center;
+        @media (max-width: 900px) {
+          .sales-lineup__display {
+            grid-template-columns: 1fr;
+            min-height: 0;
+          }
+          .sales-lineup__info { border-left: none; border-top: 1px solid rgba(0,0,0,0.06); padding: 2rem 1.5rem; }
+          .sales-lineup__image { padding: 1.5rem; }
+          .sales-lineup__tabs { grid-template-columns: repeat(2, 1fr); }
+          .sales-lineup__tab:nth-child(2) { border-right: none; }
+          .sales-lineup__tab:nth-child(-n+2) { border-bottom: 1px solid rgba(0,0,0,0.06); }
         }
 
         /* ===== COMPARE ===== */
@@ -2407,6 +2627,10 @@ function Sales() {
 
         .sales-compare__aux-dropdown {
           overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+          gap: 0.4rem;
         }
 
         .sales-compare__aux-label {
@@ -2910,6 +3134,193 @@ function Sales() {
           margin: 0 auto 2rem;
         }
 
+        /* ===== Sell Intent CTA ===== */
+        .sales-sell {
+          max-width: 520px;
+          margin: 0 auto 2rem;
+        }
+
+        .sales-sell__intent {
+          display: grid;
+          grid-template-columns: auto 1fr;
+          grid-template-rows: auto auto;
+          column-gap: 0.85rem;
+          row-gap: 0.3rem;
+          align-items: center;
+          width: 100%;
+          padding: 1.25rem 1.5rem;
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.18);
+          border-radius: 8px;
+          cursor: pointer;
+          font-family: inherit;
+          color: #fff;
+          text-align: left;
+          transition: background 0.22s ease, border-color 0.22s ease, transform 0.22s ease;
+        }
+
+        .sales-sell__intent:hover {
+          background: rgba(255,255,255,0.08);
+          border-color: rgba(255,255,255,0.4);
+          transform: translateY(-1px);
+        }
+
+        .sales-sell__intent-icon {
+          grid-column: 1;
+          grid-row: 1 / span 2;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 1.4rem;
+          color: rgba(255,255,255,0.7);
+          line-height: 1;
+        }
+
+        .sales-sell__intent-title {
+          grid-column: 2;
+          grid-row: 1;
+          font-size: 0.95rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: #fff;
+        }
+
+        .sales-sell__intent-sub {
+          grid-column: 2;
+          grid-row: 2;
+          font-size: 0.8rem;
+          color: rgba(255,255,255,0.6);
+          line-height: 1.5;
+        }
+
+        .sales-sell__form {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+          padding: 1.75rem;
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.15);
+          border-radius: 8px;
+          text-align: left;
+        }
+
+        .sales-sell__form--success {
+          align-items: center;
+          text-align: center;
+          gap: 1rem;
+          padding: 2.5rem 1.75rem;
+        }
+
+        .sales-sell__form--success p {
+          color: rgba(255,255,255,0.85);
+          margin: 0;
+          max-width: 420px;
+        }
+
+        .sales-sell__form-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 0.25rem;
+        }
+
+        .sales-sell__form-head h3 {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1rem;
+          font-weight: 700;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          color: #fff;
+          margin: 0;
+        }
+
+        .sales-sell__close {
+          background: transparent;
+          border: none;
+          color: rgba(255,255,255,0.5);
+          font-size: 1.5rem;
+          line-height: 1;
+          cursor: pointer;
+          padding: 0 0.4rem;
+          transition: color 0.15s ease;
+        }
+
+        .sales-sell__close:hover { color: #fff; }
+
+        .sales-sell__group input,
+        .sales-sell__group select,
+        .sales-sell__group textarea {
+          width: 100%;
+          padding: 0.85rem 1rem;
+          background: rgba(0,0,0,0.25);
+          border: 1px solid rgba(255,255,255,0.15);
+          border-radius: 6px;
+          color: #fff;
+          font-family: inherit;
+          font-size: 0.9rem;
+          box-sizing: border-box;
+          transition: border-color 0.15s ease, background 0.15s ease;
+        }
+
+        .sales-sell__group select {
+          appearance: none;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          padding-right: 2.75rem;
+          background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'><path d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.6)' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+          background-repeat: no-repeat;
+          background-position: right 1rem center;
+          background-size: 12px 8px;
+        }
+
+        .sales-sell__group input::placeholder,
+        .sales-sell__group textarea::placeholder {
+          color: rgba(255,255,255,0.4);
+        }
+
+        .sales-sell__group input:focus,
+        .sales-sell__group select:focus,
+        .sales-sell__group textarea:focus {
+          outline: none;
+          border-color: rgba(255,255,255,0.5);
+          background: rgba(0,0,0,0.35);
+        }
+
+        .sales-sell__group select option {
+          background: #1a1a1a;
+          color: #fff;
+        }
+
+        .sales-sell__error {
+          font-size: 0.8rem;
+          color: #fca5a5;
+          margin: 0;
+        }
+
+        .sales-sell__error a { color: #fff; text-decoration: underline; }
+
+        .sales-sell__submit {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          padding: 0.95rem 1.5rem;
+          background: #fff;
+          color: #1a1a1a;
+          border: none;
+          border-radius: 6px;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.85rem;
+          font-weight: 700;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          cursor: pointer;
+          margin-top: 0.5rem;
+          transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .sales-sell__submit:hover { transform: translateY(-1px); }
+        .sales-sell__submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
         .sales-contact__actions {
           display: flex;
           justify-content: center;
@@ -2927,34 +3338,6 @@ function Sales() {
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
-          .sales-lineup__display {
-            grid-template-columns: 1fr;
-            gap: 2rem;
-            height: auto;
-          }
-
-          .sales-lineup__image-wrapper {
-            order: -1;
-          }
-
-          .sales-lineup__divider {
-            display: none;
-          }
-
-          .sales-lineup__chevron {
-            width: 40px;
-            height: 40px;
-          }
-
-          .sales-lineup__info {
-            max-width: 100%;
-            text-align: center;
-          }
-
-          .sales-lineup__actions {
-            justify-content: center;
-          }
-
           .sales-why__grid {
             grid-template-columns: repeat(2, 1fr);
           }
@@ -2992,13 +3375,13 @@ function Sales() {
             display: none;
           }
 
-          .sales-lineup__selector {
-            flex-direction: column;
+          .sales-lineup__tabs {
+            grid-template-columns: 1fr;
           }
 
           .sales-lineup__tab {
             border-right: none;
-            border-bottom: 1px solid #e8e6e2;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
           }
 
           .sales-lineup__tab:last-child {
@@ -3288,6 +3671,12 @@ function Sales() {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
           gap: 2rem;
+          align-items: stretch;
+        }
+
+        .sales-tradein__grid > * {
+          height: 100%;
+          display: flex;
         }
 
         .sales-tradein__card {
@@ -3295,6 +3684,14 @@ function Sales() {
           border: 1px solid rgba(255,255,255,0.1);
           padding: 2rem;
           color: #fff;
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+        }
+
+        .sales-tradein__card .sales-btn {
+          margin-top: auto;
+          align-self: flex-start;
         }
 
         .sales-tradein__card .sales-pre-text {
