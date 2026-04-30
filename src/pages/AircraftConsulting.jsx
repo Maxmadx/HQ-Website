@@ -389,10 +389,22 @@ function AircraftConsulting() {
   ];
 
   const credentials = [
-    { title: 'Robinson Authorised Service Centre', desc: "Factory-authorised to inspect and certify every Robinson type — the qualification that matters most for pre-purchase work on the aircraft you are most likely buying." },
-    { title: 'CAA Part 145 Approved', desc: 'Approved Maintenance Organisation. Airworthiness standards in operational detail — not theory.' },
-    { title: '35 Years of Robinson Experience', desc: 'More Robinson hours, more Robinson logbooks, and more Robinson problems solved than almost any organisation in Europe.' },
-    { title: '500+ Transactions Supported', desc: 'Acquisitions, sales, and ownership transitions — a track record that gives us genuine feel for the market, not just the aircraft.' },
+    {
+      title: 'Robinson Authorised Service Centre',
+      desc: "Factory-authorised on every Robinson type — the qualification that backs the inspection, the valuation, the expert opinion, and every Robinson recommendation HQ writes.",
+    },
+    {
+      title: 'CAA Part 145 Approved',
+      desc: 'Approved Maintenance Organisation. Airworthiness standards in operational detail, not theory.',
+    },
+    {
+      title: '35 Years of Robinson Experience',
+      desc: 'More Robinson hours, more Robinson logbooks, and more Robinson problems solved than almost any organisation in Europe.',
+    },
+    {
+      title: '500+ Transactions Supported',
+      desc: 'Acquisitions, ownership transitions, valuations, and disputes — a track record across the helicopter ownership lifecycle, not just at the point of sale.',
+    },
   ];
 
   const independencePoints = [
