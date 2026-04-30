@@ -39,6 +39,35 @@ function parseAddonsFromMetadata(metadata = {}) {
   return { addons, fulfilment, shippingAddress };
 }
 
+async function recordPurchaseEvent({ paymentIntentId, value, currency, items, itemCategory, sessionId, country, countryCode }) {
+  try {
+    // Idempotency: skip if a purchase event for this transactionId already exists
+    const existing = await admin.firestore()
+      .collection('page_events')
+      .where('eventType', '==', 'purchase')
+      .where('transactionId', '==', paymentIntentId)
+      .limit(1)
+      .get();
+    if (!existing.empty) return;
+
+    await admin.firestore().collection('page_events').add({
+      sessionId: sessionId || null,
+      page: '/booking-confirmed',
+      eventType: 'purchase',
+      transactionId: paymentIntentId,
+      value: typeof value === 'number' ? value : null,
+      currency: currency || 'gbp',
+      items: items || null,
+      itemCategory: itemCategory || null,
+      country: country || null,
+      countryCode: countryCode || null,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    });
+  } catch (err) {
+    console.error('[stripe webhook] failed to record purchase event:', err.message);
+  }
+}
+
 function applyDiscountPence(pricePence, qty, discountPct) {
   const pct = Math.max(0, Math.min(100, Number(discountPct) || 0));
   return Math.round(Number(pricePence) * Number(qty) * (1 - pct / 100));
@@ -706,6 +735,58 @@ async function handleWebhook(req) {
       console.error('[stripe webhook] failed to save booking to Firestore:', dbErr.message);
     }
 
+    // Record GA4-canonical purchase event for funnel analytics
+    {
+      const productCategory = (() => {
+        if (productType === 'london-tour') return 'london-tour';
+        if (productType === 'misc') return 'misc';
+        return 'discovery-flight';
+      })();
+
+      const purchaseItems = (() => {
+        if (productType === 'london-tour') {
+          const { experience, timeOfDay, quantity } = pi.metadata;
+          return [{
+            item_id: `london-tour-${experience}-${timeOfDay}`,
+            item_name: `London Tour: ${experience} ${timeOfDay}`,
+            item_category: 'london-tour',
+            price: pi.amount / 100,
+            quantity: Number(quantity) || 1,
+            currency: 'gbp',
+          }];
+        }
+        if (productType === 'misc') {
+          const { itemId, itemName, qty } = pi.metadata;
+          return [{
+            item_id: itemId || 'misc',
+            item_name: itemName || 'Misc item',
+            item_category: 'misc',
+            price: pi.amount / 100,
+            quantity: Number(qty) || 1,
+            currency: 'gbp',
+          }];
+        }
+        const { aircraft, duration } = pi.metadata;
+        return [{
+          item_id: `${aircraft}-${duration}`,
+          item_name: `${aircraft} ${duration}min Discovery Flight`,
+          item_category: 'discovery-flight',
+          price: pi.amount / 100,
+          quantity: 1,
+          currency: 'gbp',
+        }];
+      })();
+
+      await recordPurchaseEvent({
+        paymentIntentId: pi.id,
+        value: pi.amount / 100,
+        currency: 'gbp',
+        items: purchaseItems,
+        itemCategory: productCategory,
+        sessionId: pi.metadata.sessionId || null,
+      });
+    }
+
     // Send confirmation email
     try {
       if (productType === 'london-tour') {
@@ -882,4 +963,4 @@ async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmai
   return paymentIntent;
 }
 
-module.exports = { getPrice, applyDiscountPence, priceAddons, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking };
+module.exports = { getPrice, applyDiscountPence, priceAddons, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking, recordPurchaseEvent };
