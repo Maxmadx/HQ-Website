@@ -60,16 +60,12 @@ export default function ArrivalSection({ children, picker, setPicker }) {
     };
 
     let rafId = null;
-    let prevY = window.scrollY;
     const MAX_BLUR = 10;
     const FADE_WINDOW = 0.65;
     const onScroll = () => {
       if (rafId != null) return;
       rafId = requestAnimationFrame(() => {
         rafId = null;
-        const currentY = window.scrollY;
-        const goingUp = currentY < prevY;
-        prevY = currentY;
 
         const vh = window.innerHeight;
         const riser = document.getElementById('community-wall');
@@ -77,38 +73,28 @@ export default function ArrivalSection({ children, picker, setPicker }) {
         if (isMobile) {
           // Pinned to fully visible on mobile — CSS also enforces this. No JS work.
         } else if (riser) {
-          if (goingUp) {
-            // Scrolling up: snap back to full opacity with a brief eased
-            // transition so it doesn't pop. Don't track scroll position
-            // — fade only applies on the way down.
-            layout.style.transition = 'opacity 0.35s ease, filter 0.35s ease';
+          // Fade is a pure function of community-wall's viewport position,
+          // applied in both scroll directions. Small upward scrolls past
+          // the section don't resurrect the layout — community-wall is
+          // still covering, so progress is still high and the layout stays
+          // faded. It only fades back in as community-wall genuinely
+          // recedes.
+          layout.style.transition = '';
+          const rect = riser.getBoundingClientRect();
+          const progress = Math.min(1, Math.max(0, 1 - rect.top / vh));
+          const eased = Math.pow(Math.min(1, progress / FADE_WINDOW), 2);
+          // Gate the snap-to-visible by RAW progress, not eased. eased
+          // hits 0.99 at raw progress ~0.65 (two-thirds covered) which is
+          // too early — user briefly sees the layout. Wait until
+          // community-wall is genuinely at its final position.
+          if (progress >= 0.95) {
             layout.style.setProperty('--arrival-fade', '0');
             layout.style.setProperty('--arrival-blur', '0px');
-            layout.style.pointerEvents = '';
           } else {
-            // Scrolling down: scroll-driven fade. No transition — needs to
-            // track the scroll position frame-by-frame.
-            layout.style.transition = '';
-            const rect = riser.getBoundingClientRect();
-            const progress = Math.min(1, Math.max(0, 1 - rect.top / vh));
-            // Slow at the start, fast at the end (ease-in), but compress the
-            // window so the fade completes before community-wall fully pins.
-            const eased = Math.pow(Math.min(1, progress / FADE_WINDOW), 2);
-            // Gate the snap-to-visible by RAW progress, not eased. eased
-            // hits 0.99 at raw progress ~0.65 (two-thirds covered) which is
-            // too early — user briefly sees the layout. Wait until
-            // community-wall is genuinely at its final position.
-            if (progress >= 0.95) {
-              layout.style.setProperty('--arrival-fade', '0');
-              layout.style.setProperty('--arrival-blur', '0px');
-            } else {
-              layout.style.setProperty('--arrival-fade', `${eased}`);
-              layout.style.setProperty('--arrival-blur', `${eased * MAX_BLUR}px`);
-            }
-            // Drop pointer events as soon as the layout is mostly faded so
-            // it doesn't block clicks on the pricing section behind it.
-            layout.style.pointerEvents = eased >= 0.99 ? 'none' : '';
+            layout.style.setProperty('--arrival-fade', `${eased}`);
+            layout.style.setProperty('--arrival-blur', `${eased * MAX_BLUR}px`);
           }
+          layout.style.pointerEvents = eased >= 0.99 ? 'none' : '';
         }
         setCtaState(arrivalCardRef.current, document.querySelector('.arrival__actions'));
         setCtaState(arrivalMarqueeRef.current, document.querySelector('.arrival__marquee-cta'));
@@ -213,6 +199,14 @@ export default function ArrivalSection({ children, picker, setPicker }) {
           </div>
         </div>
         <div className="arrival__actions">
+          <a
+            href="https://www.google.com/maps/dir/?api=1&destination=HQ+Aviation+Ltd,+Hangar+E,+Denham+Aerodrome,+Uxbridge+UB9+5DF&destination_place_id=ChIJ36KI7NFudkgRvpfhWKl_8Xg"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="arrival__cta"
+          >
+            Get Directions <span>→</span>
+          </a>
         </div>
       </div>
 
@@ -446,7 +440,7 @@ export default function ArrivalSection({ children, picker, setPicker }) {
               </div>
               {pricingTab === 'discovery' && (
                 <>
-                  <p className="fd-pricing__tab-intro">An introductory flight with one of our qualified instructors. No experience necessary — just turn up and fly.</p>
+                  <p className="fd-pricing__tab-intro">An introductory flight with one of our qualified instructors. No experience necessary, just turn up and fly.</p>
                   <div className="fd-pricing__table-wrap">
                     <table className="fd-pricing__table">
                       <thead><tr><th>Aircraft</th><th style={{textAlign:'center'}}>30 min</th><th style={{textAlign:'center'}}>60 min</th></tr></thead>
@@ -483,7 +477,7 @@ export default function ArrivalSection({ children, picker, setPicker }) {
               )}
               {pricingTab === 'hire' && (
                 <>
-                  <p className="fd-pricing__tab-intro">Available to PPL(H) holders with appropriate type rating and recent experience. All rates are wet — fuel included.</p>
+                  <p className="fd-pricing__tab-intro">Available to PPL(H) holders with appropriate type rating and recent experience. All rates are wet, fuel included.</p>
                   <div className="fd-pricing__table-wrap">
                     <table className="fd-pricing__table">
                       <thead><tr><th>Aircraft</th><th style={{textAlign:'center'}}>Seats</th><th>Rate (60 min)</th></tr></thead>

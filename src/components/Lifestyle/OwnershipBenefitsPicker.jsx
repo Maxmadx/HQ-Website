@@ -20,7 +20,7 @@ const benefits = [
   // The Experience & Skill
   { icon: '🎬', title: 'The "007" Factor', desc: 'It is the coolest vehicle on earth. Arriving by helicopter is cinematic, commanding, and undeniably "James Bond."', stat: '←', statLabel: 'iconic arrival', category: 'Experience' },
   { icon: '🔧', title: 'Mastery of Machine', desc: 'It satisfies the urge for technical perfection. Mastering the collective and cyclic displays your skills as a master at operating machinery.', stat: '∞', statLabel: 'skill ceiling', category: 'Experience' },
-  { icon: '🧭', title: '3D Flight Dynamics', desc: 'Unlike airplanes that just go forward, you have total three-dimensional control—hovering, sliding sideways, and flying backward.', stat: '360°', statLabel: 'freedom', category: 'Experience' },
+  { icon: '🧭', title: '3D Flight Dynamics', desc: 'Unlike airplanes that just go forward, you have total three-dimensional control: hovering, sliding sideways, and flying backward.', stat: '360°', statLabel: 'freedom', category: 'Experience' },
 
   // The Lifestyle
   { icon: '💼', title: 'Business Efficiency', desc: 'The ultimate productivity multiplier, allowing for multiple meetings in a single day.', stat: '3×', statLabel: 'productivity', category: 'Lifestyle' },
@@ -28,7 +28,7 @@ const benefits = [
   { icon: '⛳', title: 'Hobby Enablement', desc: 'Direct access to golf courses or shooting grounds that have helipads.', stat: '500+', statLabel: 'helipad venues', category: 'Lifestyle' },
   { icon: '🤝', title: 'Prestige & Networking', desc: 'It is a powerful tool for business or social settings.', stat: '←', statLabel: 'elite circles', category: 'Lifestyle' },
   { icon: '✨', title: 'Lasting Impact', desc: 'Create memories that last a lifetime.', stat: '∞', statLabel: 'memories', category: 'Lifestyle' },
-  { icon: '🦅', title: 'The Ancestral Dream', desc: 'You pull up to find the helicopter fueled, cleaned, and ready. You fly yourself to your destination in a private bubble above the world—a feat our ancestors who looked up at the birds could only dream of.', stat: '←', statLabel: 'dream realized', category: 'Lifestyle' },
+  { icon: '🦅', title: 'The Ancestral Dream', desc: 'You pull up to find the helicopter fueled, cleaned, and ready. You fly yourself to your destination in a private bubble above the world, a feat our ancestors who looked up at the birds could only dream of.', stat: '←', statLabel: 'dream realized', category: 'Lifestyle' },
 ];
 
 // ============================================
@@ -128,7 +128,7 @@ const Version1_CinematicSplit = () => (
         <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Transport.</span>
       </h1>
       <p style={{ fontSize: '1.1rem', lineHeight: 1.8, color: 'rgba(248,246,241,0.7)', maxWidth: '420px', marginBottom: '3rem' }}>
-        Ownership isn't about luxury—it's about reclaiming the most precious asset: your time.
+        Ownership isn't about luxury. It's about reclaiming the most precious asset: your time.
       </p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '2rem' }}>
         {benefits.slice(0, 4).map((b, i) => (
@@ -270,7 +270,7 @@ const Version4_MagazineEditorial = () => (
         <div style={{ position: 'sticky', top: '4rem' }}>
           <div style={{ fontSize: '8rem', fontFamily: "'Playfair Display', serif", color: 'var(--own-copper)', lineHeight: 0.8, marginBottom: '1rem', opacity: 0.3 }}>"</div>
           <h2 style={{ fontSize: '2.25rem', fontWeight: 400, fontStyle: 'italic', lineHeight: 1.3, margin: '0 0 1.5rem', color: 'var(--own-charcoal)' }}>
-            Ownership isn't just about transport—it's about freedom.
+            Ownership isn't just about transport. It's about freedom.
           </h2>
           <div style={{ width: '60px', height: '2px', background: 'var(--own-copper)', marginBottom: '1.5rem' }} />
           <p style={{ fontSize: '0.95rem', color: 'var(--own-muted)', lineHeight: 1.8 }}>
@@ -1316,7 +1316,7 @@ const Version22_NewspaperEditorial = () => (
         <div style={{ borderRight: '1px solid var(--own-stone)', paddingRight: '2rem' }}>
           <h2 style={{ fontSize: '1.75rem', fontWeight: 500, margin: '0 0 1rem', color: 'var(--own-charcoal)', lineHeight: 1.3 }}>{benefits[0].title}: {benefits[0].desc}</h2>
           <p style={{ fontSize: '1rem', color: 'var(--own-muted)', lineHeight: 1.9, margin: '0 0 2rem', columnCount: 2, columnGap: '1.5rem' }}>
-            The modern helicopter owner experiences a fundamentally different relationship with travel. Where others see obstacles, owners see opportunities. Where others wait, owners arrive. The transformation is not merely practical—it's philosophical.
+            The modern helicopter owner experiences a fundamentally different relationship with travel. Where others see obstacles, owners see opportunities. Where others wait, owners arrive. The transformation is not merely practical. It's philosophical.
           </p>
           <div style={{ display: 'flex', gap: '1rem', paddingTop: '1.5rem', borderTop: '1px solid var(--own-stone)' }}>
             {benefits.slice(1, 3).map((b, i) => (
@@ -4961,7 +4961,7 @@ const Version83_MinimalTypewriter = () => {
         }}>
           <div style={{ maxWidth: '700px', textAlign: 'center' }}>
             <div style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.25em', color: '#999999', marginBottom: '3rem' }}>
-              {String(i + 1).padStart(2, '0')} — {b.category.toUpperCase()}
+              {String(i + 1).padStart(2, '0')} · {b.category.toUpperCase()}
             </div>
             <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(2.5rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 3rem', textTransform: 'uppercase', letterSpacing: '-0.03em', lineHeight: 1 }}>
               <span style={{ color: '#1a1a1a' }}>{b.title}</span>
@@ -5229,7 +5229,7 @@ const Version86_ScrollingTicker = () => {
               transition: 'all 0.5s'
             }}>
               <div style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: '0.7rem', letterSpacing: '0.25em', color: 'rgba(255,255,255,0.3)', marginBottom: '2rem' }}>
-                {String(i + 1).padStart(2, '0')} — {b.category.toUpperCase()}
+                {String(i + 1).padStart(2, '0')} · {b.category.toUpperCase()}
               </div>
               <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(3rem, 7vw, 5rem)', fontWeight: 700, margin: '0 0 2rem', textTransform: 'uppercase', lineHeight: 0.95 }}>
                 <span style={{ color: '#ffffff' }}>{b.title.split(' ')[0]}</span><br />

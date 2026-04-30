@@ -598,7 +598,7 @@ export default function WallOfCoolGr11() {
                 textAlign: 'center',
               }}>
                 {uploadResult.failed === 0
-                  ? `✓ ${uploadResult.success} file${uploadResult.success !== 1 ? 's' : ''} submitted — thanks! Closing in a moment…`
+                  ? `✓ ${uploadResult.success} file${uploadResult.success !== 1 ? 's' : ''} submitted, thanks! Closing in a moment…`
                   : uploadResult.success === 0
                     ? `Upload failed: ${uploadResult.errorMsg}`
                     : `${uploadResult.success} uploaded, ${uploadResult.failed} failed: ${uploadResult.errorMsg}`}
@@ -789,7 +789,9 @@ export default function WallOfCoolGr11() {
         .wog11-gallery--expanded { height: 80vh; min-height: 0; }
 
         /* Title sits centered behind the rows. As scroll progresses (--p
-           goes 0 → 1) the rows slide in from outside and cover this title. */
+           goes 0 → 1) the rows slide in from outside and cover this title.
+           Fade the title out slightly faster than the rows arrive so it's
+           gone before any partial overlap is visible. */
         .wog11-title-bg {
           position: absolute;
           inset: 0;
@@ -803,6 +805,8 @@ export default function WallOfCoolGr11() {
           text-align: center;
           padding: 1rem;
           pointer-events: none;
+          opacity: calc(1 - var(--p, 0));
+          transition: opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .wog11-title {
           margin: 0;

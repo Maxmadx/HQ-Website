@@ -24,18 +24,18 @@ const GALLERY_PAGES = [
   ],
   // Page 2 — Expeditions & Adventure
   [
-    { type: 'image', src: '/assets/images/expeditions/north-pole.jpg', alt: 'North Pole expedition', description: 'To the North Pole by helicopter — the ultimate expedition', span: true },
+    { type: 'image', src: '/assets/images/expeditions/north-pole.jpg', alt: 'North Pole expedition', description: 'To the North Pole by helicopter, the ultimate expedition', span: true },
     { type: 'image', src: '/assets/images/expeditions/six-helis-in-North-Pole.jpg', alt: 'Expeditions', description: 'World adventures by helicopter' },
     { type: 'image', src: '/assets/images/lifestyle/superyacht-ops.jpg', alt: 'Superyacht operations', description: 'Superyacht helicopter operations worldwide' },
-    { type: 'image', src: '/assets/images/expeditions/antartica.jpg', alt: 'Antarctica expedition', description: 'Antarctica — the final frontier of expedition flying' },
+    { type: 'image', src: '/assets/images/expeditions/antartica.jpg', alt: 'Antarctica expedition', description: 'Antarctica, the final frontier of expedition flying' },
     { type: 'image', src: '/assets/images/team/quentin-smith-world-record-holder-helicopter-aerobatics.webp', alt: 'Quentin Smith', description: 'World record holder Quentin Smith' },
   ],
   // Page 3 — Flying & Behind the Scenes
   [
-    { type: 'image', src: '/assets/images/gallery/carousel/rotating1.jpg', alt: 'HQ Aviation carousel', description: 'Life at HQ Aviation — behind the scenes', span: true },
+    { type: 'image', src: '/assets/images/gallery/carousel/rotating1.jpg', alt: 'HQ Aviation carousel', description: 'Life at HQ Aviation: behind the scenes', span: true },
     { type: 'image', src: '/assets/images/gallery/flying/james-shadow-night.jpg', alt: 'Night Rating', description: 'Night flying over the English countryside' },
     { type: 'image', src: '/assets/images/gallery/carousel/rotating2.jpg', alt: 'HQ Aviation', description: 'Every day is different at HQ Aviation' },
-    { type: 'image', src: '/assets/images/gallery/flying/flying--1.jpg', alt: 'Aerial view', description: 'The view from above — why we fly' },
+    { type: 'image', src: '/assets/images/gallery/flying/flying--1.jpg', alt: 'Aerial view', description: 'The view from above, why we fly' },
   ],
 ];
 
@@ -759,7 +759,7 @@ export const EditorialGrid = ({ centerCardSlot } = {}) => {
               textAlign: 'center',
             }}>
               {uploadResult.failed === 0
-                ? `✓ ${uploadResult.success} file${uploadResult.success !== 1 ? 's' : ''} submitted — thanks! Closing in a moment…`
+                ? `✓ ${uploadResult.success} file${uploadResult.success !== 1 ? 's' : ''} submitted, thanks! Closing in a moment…`
                 : uploadResult.success === 0
                   ? `Upload failed: ${uploadResult.errorMsg}`
                   : `${uploadResult.success} uploaded, ${uploadResult.failed} failed: ${uploadResult.errorMsg}`}

@@ -171,7 +171,7 @@ const MENU_SECTIONS = [
   {
     title: 'Aircraft Sales',
     links: [
-      { to: '/aircraft-sales',         label: 'New Aircraft' },
+      { to: '/sales/new',              label: 'New Aircraft' },
       { to: '/aircraft-sales/new/r66', label: 'R66' },
       { to: '/aircraft-sales/new/r44', label: 'R44' },
       { to: '/aircraft-sales/new/r22', label: 'R22' },

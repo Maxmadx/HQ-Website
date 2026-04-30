@@ -26,7 +26,7 @@ const FerryFlightServices = ({ showNote = true }) => {
             <div>
               <span className="hq-overline hq-overline--accent">Worldwide Delivery</span>
               <h2 className="hq-section-title" style={{ marginBottom: '1rem' }}>Ferry Flight Services</h2>
-              <p style={{ fontSize: '1rem', color: 'var(--hq-body)', lineHeight: 1.8, marginBottom: '1.5rem' }}>We deliver helicopters anywhere in the world. From factory collection in Torrance, California to your home base—we handle everything.</p>
+              <p style={{ fontSize: '1rem', color: 'var(--hq-body)', lineHeight: 1.8, marginBottom: '1.5rem' }}>We deliver helicopters anywhere in the world. From factory collection in Torrance, California to your home base, we handle everything.</p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
                 <div style={{ background: 'var(--hq-background)', padding: '1rem', borderRadius: '8px' }}>
                   <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>Trans-Atlantic</div>

@@ -17,7 +17,7 @@ function HqMenuPanel({ open, onClose }) {
         <div className="hq-menu-section">
           <h3>Aircraft Sales</h3>
           <ul>
-            <li><Link to="/aircraft-sales" onClick={close}>New Aircraft</Link></li>
+            <li><Link to="/sales/new" onClick={close}>New Aircraft</Link></li>
             <li><Link to="/aircraft-sales/new/r88" onClick={close}>R88</Link></li>
             <li><Link to="/aircraft-sales/new/r66" onClick={close}>R66</Link></li>
             <li><Link to="/aircraft-sales/new/r44" onClick={close}>R44</Link></li>

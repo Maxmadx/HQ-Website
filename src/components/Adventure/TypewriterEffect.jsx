@@ -165,7 +165,7 @@ const confirmationMessages = [
   "",
   "We look forward to welcoming you to the skies.",
   "",
-  "— The HQ Aviation Team"
+  "The HQ Aviation Team"
 ];
 
 const TypewriterEffect = () => {

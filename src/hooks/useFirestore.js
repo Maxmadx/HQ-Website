@@ -5,6 +5,7 @@ import {
   addDoc,
   updateDoc,
   deleteDoc,
+  setDoc,
   serverTimestamp,
   query,
   orderBy,
@@ -50,6 +51,19 @@ export async function createDoc(collectionName, data) {
 export async function updateDocById(collectionName, id, data) {
   const ref = doc(db, collectionName, id);
   await updateDoc(ref, { ...data, updatedAt: serverTimestamp() });
+}
+
+/**
+ * Create or replace a doc with a specific id. Useful for deterministic ids
+ * (e.g. aircraft pricing keyed by model+subtype). Sets createdAt + updatedAt.
+ */
+export async function setDocById(collectionName, id, data, { merge = false } = {}) {
+  const ref = doc(db, collectionName, id);
+  await setDoc(ref, {
+    ...data,
+    ...(merge ? {} : { createdAt: serverTimestamp() }),
+    updatedAt: serverTimestamp(),
+  }, { merge });
 }
 
 /**

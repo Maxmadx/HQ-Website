@@ -66,7 +66,7 @@ function TrainingSummary() {
             </h2>
             <p className="training-summary__desc">
               Your practical training begins with basic handling and progresses through hovering, circuits, and cross-country navigation.
-              After completing your solo flights and building confidence, you'll take your Skills Test with an examiner—a practical
+              After completing your solo flights and building confidence, you'll take your Skills Test with an examiner, a practical
               flight demonstrating everything you've learned.
             </p>
           </div>

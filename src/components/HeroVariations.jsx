@@ -303,7 +303,7 @@ export const Hero11_GradientMesh = () => (
       <p className="hero-var__mesh-subtitle">Robinson Helicopter Specialists Since 2010</p>
       <div className="hero-var__mesh-ctas">
         <Link to="/training" className="hero-var__btn--mesh-primary">Start Training</Link>
-        <Link to="/aircraft-sales" className="hero-var__btn--mesh-secondary">View Fleet</Link>
+        <Link to="/sales/new" className="hero-var__btn--mesh-secondary">View Fleet</Link>
       </div>
     </div>
     <div className="hero-var__mesh-image">
@@ -605,7 +605,7 @@ export const Hero22_SplitHover = () => {
         <div className="hero-var__split-content">
           <h2>Sales</h2>
           <p>New & Pre-owned</p>
-          <Link to="/aircraft-sales">View Fleet →</Link>
+          <Link to="/sales/new">View Fleet →</Link>
         </div>
       </div>
       <div className="hero-var__split-center">
@@ -719,7 +719,7 @@ export const Hero27_SidebarLayout = () => (
       <div className="hero-var__sidebar-logo">HQ</div>
       <nav className="hero-var__sidebar-nav">
         <Link to="/training">Training</Link>
-        <Link to="/aircraft-sales">Sales</Link>
+        <Link to="/sales/new">Sales</Link>
         <Link to="/services">Services</Link>
         <Link to="/contact">Contact</Link>
       </nav>
@@ -792,7 +792,7 @@ export const Hero29_GeometricPattern = () => (
       <p>Robinson Helicopter Specialists</p>
       <div className="hero-var__geometric-ctas">
         <Link to="/training">Training</Link>
-        <Link to="/aircraft-sales">Sales</Link>
+        <Link to="/sales/new">Sales</Link>
         <Link to="/services">Services</Link>
       </div>
     </div>
@@ -872,7 +872,7 @@ export const Hero32_NeonGlow = () => (
       <p className="hero-var__neon-tagline">Robinson Helicopter Specialists</p>
       <div className="hero-var__neon-ctas">
         <Link to="/training" className="hero-var__btn--neon">Train</Link>
-        <Link to="/aircraft-sales" className="hero-var__btn--neon hero-var__btn--neon-alt">Fly</Link>
+        <Link to="/sales/new" className="hero-var__btn--neon hero-var__btn--neon-alt">Fly</Link>
       </div>
     </div>
     <div className="hero-var__neon-scanline"></div>
@@ -1250,7 +1250,7 @@ export const Hero45_GradientText = () => (
       <p className="hero-var__gradient-text-sub">HQ Aviation • Robinson Specialists</p>
       <div className="hero-var__gradient-text-ctas">
         <Link to="/training">Training</Link>
-        <Link to="/aircraft-sales">Sales</Link>
+        <Link to="/sales/new">Sales</Link>
         <Link to="/services">Services</Link>
       </div>
     </div>
@@ -1651,7 +1651,7 @@ export const Hero59_Terminal = () => {
           <span className="hero-var__terminal-dot hero-var__terminal-dot--red"></span>
           <span className="hero-var__terminal-dot hero-var__terminal-dot--yellow"></span>
           <span className="hero-var__terminal-dot hero-var__terminal-dot--green"></span>
-          <span className="hero-var__terminal-title">hq-aviation — bash</span>
+          <span className="hero-var__terminal-title">hq-aviation: bash</span>
         </div>
         <div className="hero-var__terminal-body">
           {lines.map((line, i) => (
@@ -1841,7 +1841,7 @@ export const Hero63_ArtDeco = () => (
       <p className="hero-var__deco-tagline">The Finest in Rotorcraft Excellence</p>
       <div className="hero-var__deco-ctas">
         <Link to="/training" className="hero-var__btn--deco">Discover Training</Link>
-        <Link to="/aircraft-sales" className="hero-var__btn--deco hero-var__btn--deco-outline">View Fleet</Link>
+        <Link to="/sales/new" className="hero-var__btn--deco hero-var__btn--deco-outline">View Fleet</Link>
       </div>
     </div>
     <div className="hero-var__deco-footer">
@@ -2987,7 +2987,7 @@ export const Hero90_EditorialGrid = () => (
     <header className="hero-var__eg-header">
       <div className="hero-var__eg-logo">HQ</div>
       <div className="hero-var__eg-tagline">The Aviation Edit</div>
-      <div className="hero-var__eg-issue">Issue No. 47 — Winter 2024</div>
+      <div className="hero-var__eg-issue">Issue No. 47, Winter 2024</div>
     </header>
 
     <div className="hero-var__eg-grid">
@@ -3014,7 +3014,7 @@ export const Hero90_EditorialGrid = () => (
         <blockquote>
           "Excellence is not a destination but a continuous journey."
         </blockquote>
-        <cite>— Captain Q</cite>
+        <cite>Captain Q</cite>
       </div>
 
       <div className="hero-var__eg-cell hero-var__eg-cell--expeditions">

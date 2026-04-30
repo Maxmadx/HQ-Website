@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const rebuildStepsByModel = {
   R22: [
-    { label: 'Airframe', before: '/assets/images/rebuilds/r22/airframe-before.jpg', after: '/assets/images/rebuilds/r22/airframe-after.jpg', beforeDesc: 'Corrosion and fatigue across the tubular steel frame after 12,000 hours.', afterDesc: 'Stripped, inspected, repaired and re-protected — ready for another lifetime.' },
+    { label: 'Airframe', before: '/assets/images/rebuilds/r22/airframe-before.jpg', after: '/assets/images/rebuilds/r22/airframe-after.jpg', beforeDesc: 'Corrosion and fatigue across the tubular steel frame after 12,000 hours.', afterDesc: 'Stripped, inspected, repaired and re-protected, ready for another lifetime.' },
     { label: 'Engine', before: '/assets/images/rebuilds/r22/engine-before.jpg', after: '/assets/images/rebuilds/r22/engine-after.jpg', beforeDesc: '2,200 hours on the Lycoming O-360. Worn cam lobes, degraded seals.', afterDesc: 'Zero-time overhaul. Factory-new components throughout, test-run and certified.' },
     { label: 'Avionics', before: '/assets/images/rebuilds/r22/avionics-before.jpg', after: '/assets/images/rebuilds/r22/avionics-after.jpg', beforeDesc: 'Original steam gauges. Faded placards, intermittent radios, no GPS.', afterDesc: 'Modern glass panel. Garmin G5, GPS/COM, ADS-B Out, digital engine monitor.' },
     { label: 'Wiring', before: '/assets/images/rebuilds/r22/wiring-before.jpg', after: '/assets/images/rebuilds/r22/wiring-after.jpg', beforeDesc: 'Brittle insulation, spliced repairs, corroded connectors throughout.', afterDesc: 'Complete rewire. New looms, mil-spec connectors, laser-etched labels.' },
@@ -10,7 +10,7 @@ const rebuildStepsByModel = {
     { label: 'Paint', before: '/assets/images/rebuilds/r22/paint-before.jpg', after: '/assets/images/rebuilds/r22/paint-after.jpg', beforeDesc: 'Oxidised, chipped and faded. Multiple touch-ups visible.', afterDesc: 'Stripped to bare metal and refinished in custom livery. UV-sealed.' },
   ],
   R44: [
-    { label: 'Airframe', before: '/assets/images/rebuilds/r44/airframe-before.jpg', after: '/assets/images/rebuilds/r44/airframe-after.jpg', beforeDesc: 'Corrosion, fatigue cracks and fifteen years of wear across the bare airframe.', afterDesc: 'Stripped, inspected, repaired and re-protected — ready for another lifetime.' },
+    { label: 'Airframe', before: '/assets/images/rebuilds/r44/airframe-before.jpg', after: '/assets/images/rebuilds/r44/airframe-after.jpg', beforeDesc: 'Corrosion, fatigue cracks and fifteen years of wear across the bare airframe.', afterDesc: 'Stripped, inspected, repaired and re-protected, ready for another lifetime.' },
     { label: 'Engine', before: '/assets/images/rebuilds/r44/engine-before.jpg', after: '/assets/images/rebuilds/r44/engine-after.jpg', beforeDesc: '2,200 hours on the IO-540. Worn bearings, degraded seals, metal in the filter.', afterDesc: 'Zero-time overhaul. Factory-new components throughout, test-run and certified.' },
     { label: 'Avionics', before: '/assets/images/rebuilds/r44/avionics-before.jpg', after: '/assets/images/rebuilds/r44/avionics-after.jpg', beforeDesc: 'Original analogue panel. Faded placards, intermittent radios, no GPS.', afterDesc: 'Full glass cockpit. Garmin suite, GPS/NAV/COM, ADS-B, four-axis autopilot.' },
     { label: 'Wiring', before: '/assets/images/rebuilds/r44/wiring-before.jpg', after: '/assets/images/rebuilds/r44/wiring-after.jpg', beforeDesc: "Brittle insulation, spliced repairs, corroded connectors. An electrician's nightmare.", afterDesc: 'Complete rewire. New looms, mil-spec connectors, laser-etched labels throughout.' },
@@ -78,7 +78,7 @@ export default function BeforeAfter({ pageImages = {} }) {
         <div className="rb__beforeafter-item">
           <div className="rb__beforeafter-before">
             <div className="rb__beforeafter-img">
-              <img src={beforeSrc} alt={`${steps[rebuildStep].label} — before`} />
+              <img src={beforeSrc} alt={`${steps[rebuildStep].label} (before)`} />
             </div>
             <span>BEFORE</span>
             <p>{steps[rebuildStep].beforeDesc}</p>
@@ -86,7 +86,7 @@ export default function BeforeAfter({ pageImages = {} }) {
           <div className="rb__beforeafter-arrow">&rarr;</div>
           <div className="rb__beforeafter-after">
             <div className="rb__beforeafter-img">
-              <img src={afterSrc} alt={`${steps[rebuildStep].label} — after`} />
+              <img src={afterSrc} alt={`${steps[rebuildStep].label} (after)`} />
             </div>
             <span>AFTER</span>
             <p>{steps[rebuildStep].afterDesc}</p>
