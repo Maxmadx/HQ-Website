@@ -198,6 +198,14 @@ function AircraftConsulting() {
     } catch { setFormStatus('error'); }
   }
 
+  function handleServiceTypeChange(e) {
+    const nextServiceType = e.target.value;
+    setFormData(p => ({
+      ...clearConditionalFields(p),
+      serviceType: nextServiceType,
+    }));
+  }
+
   // ── Data Arrays ────────────────────────────────────────────────────────────
 
   const services = [
@@ -627,7 +635,7 @@ function AircraftConsulting() {
                       id="ac-service-type"
                       name="serviceType"
                       value={formData.serviceType}
-                      onChange={(e) => setFormData(p => ({ ...p, serviceType: e.target.value }))}
+                      onChange={handleServiceTypeChange}
                     >
                       <option value="">Select a service...</option>
                       {SERVICE_TYPES.map(s => (
