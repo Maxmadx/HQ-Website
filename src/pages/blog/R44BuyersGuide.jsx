@@ -205,7 +205,7 @@ function R44BuyersGuide() {
         first-time buyers who see a seemingly affordable entry point. An R44 at GBP 75,000
         looks enticingly accessible, but you must factor in the impending overhaul cost.
         If the aircraft needs a full factory overhaul at GBP 300,000, your total investment
-        reaches GBP 375,000 — only marginally less than buying a mid-time aircraft that
+        reaches GBP 375,000,only marginally less than buying a mid-time aircraft that
         comes with years of operation ahead. The near-TBO purchase can make sense if you
         have a clear plan for the overhaul and have budgeted accordingly, but it should
         never be viewed as a shortcut to cheap ownership.
@@ -288,8 +288,8 @@ function R44BuyersGuide() {
         Select an engineer who is genuinely independent of the seller and who has specific
         Robinson experience. General aviation engineers may be excellent at their craft but
         lack familiarity with Robinson-specific issues and the factory's maintenance
-        philosophy. An engineer from an established Robinson service centre — ideally one
-        not connected to the sale — will know exactly where to look and what to look for.
+        philosophy. An engineer from an established Robinson service centre,ideally one
+        not connected to the sale,will know exactly where to look and what to look for.
         At HQ Aviation, our Part 145 engineering team carries out pre-purchase inspections
         regularly and can provide a detailed, impartial assessment.
       </Callout>
@@ -419,8 +419,8 @@ function R44BuyersGuide() {
         <li>
           <strong>Hangarage:</strong> Keeping your R44 in a hangar protects it from the
           elements and significantly reduces corrosion risk. At Denham, monthly hangarage
-          rates apply, and while it represents an ongoing cost, the alternative — leaving
-          the aircraft outside — will cost far more in accelerated maintenance and
+          rates apply, and while it represents an ongoing cost, the alternative,leaving
+          the aircraft outside,will cost far more in accelerated maintenance and
           reduced resale value over time.
         </li>
         <li>
@@ -519,7 +519,7 @@ function R44BuyersGuide() {
 
       <p>
         Buying your first R44 is a significant milestone in your flying career. It represents
-        freedom — the ability to fly when you want, where you want, without the constraints
+        freedom,the ability to fly when you want, where you want, without the constraints
         of club availability and booking systems. It is also a serious financial commitment
         that demands respect and careful planning.
       </p>
@@ -541,7 +541,7 @@ function R44BuyersGuide() {
       </p>
 
       <Callout variant="info" title="We're Here to Help">
-        At HQ Aviation, we support R44 owners at every stage — from pre-purchase inspections
+        At HQ Aviation, we support R44 owners at every stage,from pre-purchase inspections
         and acquisition advice through to ongoing maintenance, hangarage, and leaseback
         arrangements. If you are considering purchasing an R44 and would like impartial,
         expert guidance, our sales and engineering teams are always happy to have a

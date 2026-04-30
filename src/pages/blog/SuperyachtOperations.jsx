@@ -30,8 +30,8 @@ function SuperyachtOperations() {
 
       <p>
         The combination of superyacht and helicopter is, quite simply, the ultimate
-        expression of freedom. The yacht provides the floating base — the comfort, the
-        space, the sense of home — while the helicopter extends its reach exponentially.
+        expression of freedom. The yacht provides the floating base,the comfort, the
+        space, the sense of home,while the helicopter extends its reach exponentially.
         Shore excursions that would otherwise require a tender ride, a car transfer, and
         hours of planning become spontaneous thirty-minute flights. Airport transfers
         that once meant arriving a day early in port can be accomplished in minutes.
@@ -51,7 +51,7 @@ function SuperyachtOperations() {
       <p>
         Not all yacht helipads are created equal, and the distinction between a certified
         and a non-certified helideck has profound implications for how the helicopter
-        can be used — particularly if the yacht is engaged in charter operations.
+        can be used,particularly if the yacht is engaged in charter operations.
       </p>
 
       <p>
@@ -59,8 +59,8 @@ function SuperyachtOperations() {
         (the UK CAA's Standards for Offshore Helicopter Landing Areas) or the equivalent
         ICAO Annex 14 standards. This means the deck has been assessed for structural
         load-bearing capacity, is marked with the correct "H" designation and D-value
-        circle, has proper perimeter netting, tie-down points, drainage, and — crucially
-        — is supported by the full complement of firefighting and rescue equipment. A
+        circle, has proper perimeter netting, tie-down points, drainage, and,crucially
+       ,is supported by the full complement of firefighting and rescue equipment. A
         certified deck allows scheduled, repeatable helicopter operations and is generally
         required for charter yachts carrying paying passengers.
       </p>
@@ -69,7 +69,7 @@ function SuperyachtOperations() {
         A <strong>non-certified helideck</strong> (sometimes referred to as a helicopter
         operating area or "touch-and-go" pad) may be structurally capable of supporting a
         helicopter but lacks one or more of the formal requirements. Many private yachts
-        in the 40- to 50-metre range feature non-certified landing areas — often a
+        in the 40- to 50-metre range feature non-certified landing areas,often a
         reinforced foredeck or a designated area on the sun deck. These can be used for
         private operations under certain conditions, but limitations apply, and a thorough
         risk assessment is essential before each landing.
@@ -97,7 +97,7 @@ function SuperyachtOperations() {
       <h3>Airbus ACH135</h3>
 
       <p>
-        The ACH135 — Airbus Corporate Helicopters' executive variant of the H135 — is
+        The ACH135,Airbus Corporate Helicopters' executive variant of the H135,is
         arguably the definitive yacht helicopter. With a D-value (the largest dimension
         of the helicopter with rotors turning) of approximately 12.19 metres, it is the
         smallest certified twin-engine helicopter available. This is significant: a
@@ -125,7 +125,7 @@ function SuperyachtOperations() {
         is a popular Italian alternative. Fast, sleek, and with retractable landing gear
         that reduces drag in cruise, the AW109 series has a long history in VIP and
         corporate transport. Its D-value sits between the ACH135 and ACH145, and its
-        higher cruise speed — typically around 150 knots — makes it attractive for longer
+        higher cruise speed,typically around 150 knots,makes it attractive for longer
         transfers. The fixed-skid Trekker variant is often preferred for yacht operations
         due to its simplified undercarriage and reduced maintenance requirements compared
         to the retractable-gear models.
@@ -150,9 +150,9 @@ function SuperyachtOperations() {
       </p>
 
       <p>
-        For a <strong>non-certified touch-and-go operation</strong> — where the
+        For a <strong>non-certified touch-and-go operation</strong>,where the
         helicopter lands briefly to embark or disembark passengers before departing to
-        a shore base — yachts of approximately <strong>40 metres and above</strong> can
+        a shore base,yachts of approximately <strong>40 metres and above</strong> can
         potentially accommodate operations with smaller types like the ACH135. This
         typically involves a reinforced area on the foredeck or aft deck, though
         significant constraints apply regarding obstacle clearance, ship motion limits,
@@ -160,8 +160,8 @@ function SuperyachtOperations() {
       </p>
 
       <p>
-        A <strong>certified helideck</strong> — with full markings, lighting, and
-        firefighting capability — generally requires a yacht of <strong>50 metres or
+        A <strong>certified helideck</strong>,with full markings, lighting, and
+        firefighting capability,generally requires a yacht of <strong>50 metres or
         more</strong>. At this size, there is sufficient deck area for a properly marked
         landing circle, clear approach and departure paths, and space for the required
         safety equipment and crew.
@@ -173,7 +173,7 @@ function SuperyachtOperations() {
         typically required. These installations represent the pinnacle of yacht aviation
         integration. The helicopter is stored below deck, protected from the marine
         environment, with the hangar providing space for maintenance, spare parts storage,
-        and blade folding. An elevator — hydraulic or electric — raises the aircraft to
+        and blade folding. An elevator,hydraulic or electric,raises the aircraft to
         the helideck for operations. Vessels like the 136-metre <em>Flying Fox</em> and
         the 110-metre <em>Ulysses</em> feature such installations, allowing truly
         autonomous helicopter operations far from shore.
@@ -185,7 +185,7 @@ function SuperyachtOperations() {
           "40m+ yachts: non-certified touch-and-go operations with compact types (e.g. ACH135)",
           "50m+ yachts: certified helidecks with full markings, lighting, and firefighting equipment",
           "80m+ yachts: below-deck hangars with elevators, enabling fully autonomous operations",
-          "D-value compatibility must be confirmed — the helicopter's rotor disc must clear all obstacles",
+          "D-value compatibility must be confirmed,the helicopter's rotor disc must clear all obstacles",
           "Flag state regulations and classification society rules may impose additional requirements"
         ]}
       />
@@ -193,7 +193,7 @@ function SuperyachtOperations() {
       <h2>Crew Requirements</h2>
 
       <p>
-        A helideck is not simply a flat surface — it is a managed operational environment
+        A helideck is not simply a flat surface,it is a managed operational environment
         that requires trained personnel. The crew requirements for yacht helicopter
         operations are often underestimated, yet they are critical to safety.
       </p>
@@ -205,7 +205,7 @@ function SuperyachtOperations() {
         operations on the vessel. This person controls the helideck, communicates with
         the pilot via radio, manages passenger movements, and makes the final decision
         on whether conditions are suitable for landing. The HLO must hold a recognised
-        qualification — typically achieved through a two- to three-day training course
+        qualification,typically achieved through a two- to three-day training course
         covering meteorological assessment, radio procedures, helideck management, and
         emergency response. On many yachts, the First Officer or Bosun is dual-roled
         as HLO.
@@ -234,7 +234,7 @@ function SuperyachtOperations() {
 
       <Callout variant="warning" title="Crew Training Recurrency">
         Helideck crew qualifications are not lifetime endorsements. HLOs and HDAs must
-        undergo regular recurrent training — typically every two to four years depending
+        undergo regular recurrent training,typically every two to four years depending
         on the certifying body. Additionally, if crew members change between yachting
         seasons (as is common), the new personnel must be trained and assessed before
         helicopter operations can resume. Yacht managers should build helideck training
@@ -246,7 +246,7 @@ function SuperyachtOperations() {
       <p>
         Flying a helicopter onto a moving vessel at sea is a fundamentally different
         discipline from operating at a land-based aerodrome. The deck moves in six axes
-        — pitch, roll, yaw, heave, surge, and sway — and the turbulence generated by
+       ,pitch, roll, yaw, heave, surge, and sway,and the turbulence generated by
         the yacht's superstructure can be severe and unpredictable. A standard commercial
         pilot's licence does not, by itself, qualify a pilot for these operations.
       </p>
@@ -285,7 +285,7 @@ function SuperyachtOperations() {
         helicopter types used in yacht operations. Each main rotor blade has a fold
         hinge that is unlocked, allowing the blade to be swung rearward and secured
         against the tail boom or fuselage. On an ACH135, manual folding by a trained
-        crew takes approximately ten to fifteen minutes. The process requires care —
+        crew takes approximately ten to fifteen minutes. The process requires care.
         blades are large, flexible, and surprisingly heavy at the tip, and any damage to
         a blade or fold mechanism during handling can ground the aircraft.
       </p>
@@ -300,8 +300,8 @@ function SuperyachtOperations() {
       </p>
 
       <p>
-        On the largest superyachts — those of 80 metres and above with below-deck hangars
-        — the folded helicopter is moved onto an elevator platform and lowered into the
+        On the largest superyachts,those of 80 metres and above with below-deck hangars
+       ,the folded helicopter is moved onto an elevator platform and lowered into the
         hull. The hangar provides a climate-controlled environment that protects the
         aircraft from salt air corrosion, one of the most significant maintenance
         challenges in the marine aviation environment. Some hangars are equipped with
@@ -362,8 +362,8 @@ function SuperyachtOperations() {
       <h3>Refuelling from Yacht Tanks</h3>
 
       <p>
-        Many yachts equipped for helicopter operations carry aviation fuel — typically
-        Jet A-1 — in dedicated, segregated tanks within the hull. The refuelling system
+        Many yachts equipped for helicopter operations carry aviation fuel,typically
+        Jet A-1,in dedicated, segregated tanks within the hull. The refuelling system
         includes filtration, water separation, and a dispensing point on or adjacent to
         the helideck. Fuel quality management is paramount: contamination from water
         ingress, microbial growth, or cross-contamination with marine diesel is a
@@ -393,12 +393,12 @@ function SuperyachtOperations() {
 
       <p>
         At HQ Aviation, we offer type rating training on the Robinson R66 turbine
-        helicopter — an excellent stepping stone for pilots building turbine experience
+        helicopter,an excellent stepping stone for pilots building turbine experience
         before progressing to twin-engine types like the H135. Our instructors
         understand the demands of commercial helicopter operations, including the unique
         pressures of the private and charter sectors where client expectations are high
         and operating environments are varied. We focus on producing pilots who are not
-        just competent on type but who exercise sound judgement — the quality that
+        just competent on type but who exercise sound judgement,the quality that
         matters most when you are the sole pilot aboard a yacht, potentially hundreds of
         miles from the nearest diversion, with the owner's family in the cabin.
       </p>
@@ -406,19 +406,19 @@ function SuperyachtOperations() {
       <p>
         Whether you are beginning your professional helicopter career or seeking to add
         a turbine type rating to your qualifications, the foundation we build at Denham
-        will serve you well in whatever direction your flying takes you — including,
+        will serve you well in whatever direction your flying takes you,including,
         perhaps, the foredeck of a superyacht in the Mediterranean.
       </p>
 
       <KeyPoint
         title="Key Takeaways"
         points={[
-          "A helicopter extends a superyacht's reach from nautical miles to hundreds of miles — transforming logistics and guest experience",
+          "A helicopter extends a superyacht's reach from nautical miles to hundreds of miles,transforming logistics and guest experience",
           "Certified helidecks (CAP 437 / ICAO Annex 14) are essential for charter operations; non-certified pads suit private use with limitations",
-          "The ACH135 is the benchmark yacht helicopter — the smallest certified twin-engine type with a 12m D-value",
+          "The ACH135 is the benchmark yacht helicopter,the smallest certified twin-engine type with a 12m D-value",
           "Yacht size matters: 40m+ for touch-and-go, 50m+ for certified helidecks, 80m+ for below-deck hangars",
           "Trained crew (HLO, HDAs, firefighting team) and DLQ-endorsed pilots are non-negotiable safety requirements",
-          "Operational procedures — from fuel quality management to deck markings — demand constant diligence in the marine environment",
+          "Operational procedures,from fuel quality management to deck markings,demand constant diligence in the marine environment",
           "Strong type rating training and sound decision-making form the foundation for any career in yacht aviation"
         ]}
       />
