@@ -6,7 +6,10 @@ const admin = require('./firebase-admin');
 
 const router = express.Router();
 
-const ALLOWED_TYPES = ['pageview', 'cta_click', 'form_submit', 'image_view', 'scroll_depth', 'page_exit'];
+const ALLOWED_TYPES = [
+  'pageview', 'cta_click', 'form_submit', 'image_view', 'scroll_depth', 'page_exit',
+  'view_item', 'begin_checkout', 'add_payment_info', 'purchase',
+];
 
 // Private / loopback IPs (IPv4 + IPv6) — skip geo lookup for these
 const PRIVATE_IP_RE = /^(127\.|::1$|::ffff:127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|fc[0-9a-f]{2}:|fd[0-9a-f]{2}:|fe80:)/i;
@@ -79,6 +82,7 @@ router.post('/', analyticsLimiter, async (req, res) => {
     const {
       sessionId, page, eventType, elementId, referrer,
       utmSource, utmMedium, utmCampaign, utmTerm, utmContent,
+      items, value, currency, transactionId, itemCategory,
     } = req.body;
 
     if (!ALLOWED_TYPES.includes(eventType)) {
@@ -87,6 +91,20 @@ router.post('/', analyticsLimiter, async (req, res) => {
 
     const ip = req.ip || null;
     const geo = await geoLookup(ip);
+
+    // Items: cap at 20 entries; drop any entry whose JSON-stringified form is >500 chars
+    let safeItems = null;
+    if (Array.isArray(items)) {
+      safeItems = items
+        .slice(0, 20)
+        .filter((it) => {
+          try {
+            return JSON.stringify(it || {}).length <= 500;
+          } catch {
+            return false;
+          }
+        });
+    }
 
     await admin.firestore().collection('page_events').add({
       sessionId: String(sessionId || '').slice(0, 64),
@@ -104,6 +122,11 @@ router.post('/', analyticsLimiter, async (req, res) => {
       utmCampaign: utmCampaign ? String(utmCampaign).slice(0, 100) : null,
       utmTerm: utmTerm ? String(utmTerm).slice(0, 100) : null,
       utmContent: utmContent ? String(utmContent).slice(0, 100) : null,
+      items: safeItems,
+      value: typeof value === 'number' ? value : null,
+      currency: currency ? String(currency).slice(0, 8) : null,
+      transactionId: transactionId ? String(transactionId).slice(0, 100) : null,
+      itemCategory: itemCategory ? String(itemCategory).slice(0, 64) : null,
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
     });
 
