@@ -259,6 +259,9 @@ function AircraftConsulting() {
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
+  const visibleConditionalFields = getServiceFields(formData.serviceType);
+  const isVisible = (name) => visibleConditionalFields.includes(name);
+
   return (
     <div className="ac">
       <AircraftConsultingHeader />
@@ -616,17 +619,19 @@ function AircraftConsulting() {
                         placeholder="+44 7700 000000"
                       />
                     </div>
-                    <div className="ac-field">
-                      <label htmlFor="ac-registration">Aircraft Registration</label>
-                      <input
-                        id="ac-registration"
-                        type="text"
-                        name="registration"
-                        value={formData.registration}
-                        onChange={(e) => setFormData(p => ({ ...p, registration: e.target.value }))}
-                        placeholder="e.g. G-ABCD (if applicable)"
-                      />
-                    </div>
+                    {isVisible('registration') && (
+                      <div className="ac-field">
+                        <label htmlFor="ac-registration">Aircraft Registration</label>
+                        <input
+                          id="ac-registration"
+                          type="text"
+                          name="registration"
+                          value={formData.registration}
+                          onChange={(e) => setFormData(p => ({ ...p, registration: e.target.value }))}
+                          placeholder="e.g. G-ABCD"
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div className="ac-field">
@@ -644,6 +649,224 @@ function AircraftConsulting() {
                       <option value="other">Something else</option>
                     </select>
                   </div>
+
+                  {formData.serviceType && (
+                    <>
+                      {isVisible('askingPrice') && (
+                        <div className="ac-enquiry__row">
+                          <div className="ac-field">
+                            <label htmlFor="ac-asking-price">Asking Price</label>
+                            <input
+                              id="ac-asking-price"
+                              type="text"
+                              name="askingPrice"
+                              value={formData.askingPrice}
+                              onChange={(e) => setFormData(p => ({ ...p, askingPrice: e.target.value }))}
+                              placeholder="e.g. £450,000"
+                            />
+                          </div>
+                          {isVisible('targetInspectionDate') && (
+                            <div className="ac-field">
+                              <label htmlFor="ac-target-date">Target Inspection Date</label>
+                              <input
+                                id="ac-target-date"
+                                type="text"
+                                name="targetInspectionDate"
+                                value={formData.targetInspectionDate}
+                                onChange={(e) => setFormData(p => ({ ...p, targetInspectionDate: e.target.value }))}
+                                placeholder="e.g. within 2 weeks"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {isVisible('budgetRange') && (
+                        <div className="ac-enquiry__row">
+                          <div className="ac-field">
+                            <label htmlFor="ac-budget">Budget Range</label>
+                            <input
+                              id="ac-budget"
+                              type="text"
+                              name="budgetRange"
+                              value={formData.budgetRange}
+                              onChange={(e) => setFormData(p => ({ ...p, budgetRange: e.target.value }))}
+                              placeholder="e.g. £300k–£500k"
+                            />
+                          </div>
+                          <div className="ac-field">
+                            <label htmlFor="ac-timeline">Timeline</label>
+                            <input
+                              id="ac-timeline"
+                              type="text"
+                              name="timeline"
+                              value={formData.timeline}
+                              onChange={(e) => setFormData(p => ({ ...p, timeline: e.target.value }))}
+                              placeholder="e.g. ready to buy in 3 months"
+                            />
+                          </div>
+                        </div>
+                      )}
+                      {isVisible('intendedUse') && (
+                        <div className="ac-field">
+                          <label htmlFor="ac-intended-use">Intended Use</label>
+                          <input
+                            id="ac-intended-use"
+                            type="text"
+                            name="intendedUse"
+                            value={formData.intendedUse}
+                            onChange={(e) => setFormData(p => ({ ...p, intendedUse: e.target.value }))}
+                            placeholder="Private, training, charter, utility…"
+                          />
+                        </div>
+                      )}
+
+                      {isVisible('valuationPurpose') && (
+                        <div className="ac-field">
+                          <label htmlFor="ac-valuation-purpose">Valuation Purpose</label>
+                          <select
+                            id="ac-valuation-purpose"
+                            name="valuationPurpose"
+                            value={formData.valuationPurpose}
+                            onChange={(e) => setFormData(p => ({ ...p, valuationPurpose: e.target.value }))}
+                          >
+                            <option value="">Select a purpose…</option>
+                            <option value="purchase">Purchase</option>
+                            <option value="finance">Finance / lender</option>
+                            <option value="insurance">Insurance</option>
+                            <option value="tax">Tax</option>
+                            <option value="legal">Legal / dispute</option>
+                            <option value="other">Other</option>
+                          </select>
+                        </div>
+                      )}
+
+                      {isVisible('aircraftType') && (
+                        <div className="ac-enquiry__row">
+                          <div className="ac-field">
+                            <label htmlFor="ac-aircraft-type">Aircraft Type</label>
+                            <input
+                              id="ac-aircraft-type"
+                              type="text"
+                              name="aircraftType"
+                              value={formData.aircraftType}
+                              onChange={(e) => setFormData(p => ({ ...p, aircraftType: e.target.value }))}
+                              placeholder="e.g. R44 Raven II, AS350"
+                            />
+                          </div>
+                          {isVisible('ownershipStatus') && (
+                            <div className="ac-field">
+                              <label htmlFor="ac-ownership">Ownership Status</label>
+                              <select
+                                id="ac-ownership"
+                                name="ownershipStatus"
+                                value={formData.ownershipStatus}
+                                onChange={(e) => setFormData(p => ({ ...p, ownershipStatus: e.target.value }))}
+                              >
+                                <option value="">Select…</option>
+                                <option value="own">Owned outright</option>
+                                <option value="spv">Held in SPV / company</option>
+                                <option value="lease">Leased</option>
+                                <option value="prospective">Prospective</option>
+                              </select>
+                            </div>
+                          )}
+                          {isVisible('expectedAnnualHours') && (
+                            <div className="ac-field">
+                              <label htmlFor="ac-annual-hours">Expected Annual Hours</label>
+                              <input
+                                id="ac-annual-hours"
+                                type="text"
+                                name="expectedAnnualHours"
+                                value={formData.expectedAnnualHours}
+                                onChange={(e) => setFormData(p => ({ ...p, expectedAnnualHours: e.target.value }))}
+                                placeholder="e.g. 120"
+                              />
+                            </div>
+                          )}
+                          {isVisible('currentRenewalDate') && (
+                            <div className="ac-field">
+                              <label htmlFor="ac-renewal-date">Current Renewal Date</label>
+                              <input
+                                id="ac-renewal-date"
+                                type="text"
+                                name="currentRenewalDate"
+                                value={formData.currentRenewalDate}
+                                onChange={(e) => setFormData(p => ({ ...p, currentRenewalDate: e.target.value }))}
+                                placeholder="e.g. 2026-09-01"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {isVisible('fromRegistry') && (
+                        <div className="ac-enquiry__row">
+                          <div className="ac-field">
+                            <label htmlFor="ac-from-registry">From Registry</label>
+                            <input
+                              id="ac-from-registry"
+                              type="text"
+                              name="fromRegistry"
+                              value={formData.fromRegistry}
+                              onChange={(e) => setFormData(p => ({ ...p, fromRegistry: e.target.value }))}
+                              placeholder="e.g. G (UK CAA), N (FAA)"
+                            />
+                          </div>
+                          {isVisible('toRegistry') && (
+                            <div className="ac-field">
+                              <label htmlFor="ac-to-registry">To Registry</label>
+                              <input
+                                id="ac-to-registry"
+                                type="text"
+                                name="toRegistry"
+                                value={formData.toRegistry}
+                                onChange={(e) => setFormData(p => ({ ...p, toRegistry: e.target.value }))}
+                                placeholder="e.g. M (IoM), 2 (Guernsey)"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {isVisible('matterType') && (
+                        <div className="ac-enquiry__row">
+                          <div className="ac-field">
+                            <label htmlFor="ac-matter-type">Matter Type</label>
+                            <select
+                              id="ac-matter-type"
+                              name="matterType"
+                              value={formData.matterType}
+                              onChange={(e) => setFormData(p => ({ ...p, matterType: e.target.value }))}
+                            >
+                              <option value="">Select…</option>
+                              <option value="purchase">Purchase / sale dispute</option>
+                              <option value="maintenance">Maintenance dispute</option>
+                              <option value="insurance">Insurance / loss</option>
+                              <option value="accident">Accident / incident</option>
+                              <option value="other">Other</option>
+                            </select>
+                          </div>
+                          <div className="ac-field">
+                            <label htmlFor="ac-party">Instructing Party</label>
+                            <select
+                              id="ac-party"
+                              name="party"
+                              value={formData.party}
+                              onChange={(e) => setFormData(p => ({ ...p, party: e.target.value }))}
+                            >
+                              <option value="">Select…</option>
+                              <option value="claimant">Claimant</option>
+                              <option value="defendant">Defendant</option>
+                              <option value="single-joint">Single joint expert</option>
+                              <option value="insurer">Insurer</option>
+                              <option value="other">Other</option>
+                            </select>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
 
                   <div className="ac-field">
                     <label htmlFor="ac-message">Message</label>
