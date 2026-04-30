@@ -3,10 +3,11 @@
     "playwright": {
       "command": "node",
       "args": [
-        "/usr/local/lib/node_modules/claude-playwright/dist/mcp/server.cjs"
+        "/Users/maximussmith/Downloads/HQ-Website-main/.claude/mcp-patches/claude-playwright/dist/mcp/server.cjs"
       ],
       "env": {
-        "BASE_URL": "http://localhost:5173"
+        "BASE_URL": "http://localhost:5173",
+        "NODE_PATH": "/usr/local/lib/node_modules/claude-playwright/node_modules"
       }
     }
   }
