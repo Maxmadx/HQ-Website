@@ -114,4 +114,12 @@ describe('analytics', () => {
     const body = JSON.parse(fetch.mock.calls[0][1].body);
     expect(body.transactionId).toBe('pi_123abc');
   });
+
+  it('trackEvent does not forward unknown data keys', async () => {
+    await trackEvent('view_item', null, '/', { value: 100, debug: true, foo: 'bar' });
+    const body = JSON.parse(fetch.mock.calls[0][1].body);
+    expect(body.debug).toBeUndefined();
+    expect(body.foo).toBeUndefined();
+    expect(body.value).toBe(100);
+  });
 });
