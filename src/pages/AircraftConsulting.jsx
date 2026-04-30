@@ -535,16 +535,18 @@ function AircraftConsulting() {
               <span className="ac-pre-text">Expertise Before Commitment</span>
               <h2 className="ac-intro__heading">Independent.&nbsp;Thorough.&nbsp;Honest.</h2>
               <p className="ac-intro__body">
-                Most people buy their first helicopter once. The margin for error — wrong type,
-                wrong configuration, undisclosed history — is narrow, and the consequences last
-                years. HQ Aviation's consulting service exists to close that margin before you
-                commit.
+                Buyers shortlisting their first helicopter. Owners running one or several. Lawyers,
+                insurers, and lenders who need an independent expert on a matter where opinions
+                cost real money. HQ Aviation consults across the helicopter ownership lifecycle —
+                with Robinson factory authorisation backing the work where type-specific depth
+                changes the answer.
               </p>
               <p className="ac-intro__body">
-                From a single pre-purchase inspection to full acquisition management, our work
-                draws on the same hangar floor, logbook library, and maintenance experience that
-                supports owners across Europe — brought to bear on your aircraft, your budget,
-                and your plan.
+                The same hangar floor, logbook library, and maintenance experience that informs
+                every Robinson service-centre engagement is what backs every consulting opinion
+                we write — for any helicopter, not just the ones we are authorised to certify.
+                Brought to bear on your aircraft, your budget, your policy, your plan, or your
+                dispute.
               </p>
             </Reveal>
             <Reveal delay={0.2}>
