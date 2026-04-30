@@ -557,7 +557,7 @@ function AircraftConsulting() {
                 <Reveal>
                   <h3 className="ac-services__group-title">{group.label}</h3>
                 </Reveal>
-                <div className="ac-services__grid" style={{ '--cols': Math.min(groupServices.length, 3) }}>
+                <div className="ac-services__grid" style={{ '--cols': groupServices.length }}>
                   {groupServices.map((service, i) => (
                     <Reveal key={service.num} delay={i * 0.1}>
                       <div
@@ -1406,8 +1406,7 @@ function AircraftConsulting() {
           border-top: 1px solid #eeecea;
         }
         .ac-services__container {
-          max-width: 1200px;
-          margin: 0 auto;
+          width: 100%;
         }
         .ac-services__group {
           margin-top: 3.5rem;
@@ -1479,7 +1478,7 @@ function AircraftConsulting() {
         .ac-services__grid {
           display: grid;
           grid-template-columns: repeat(var(--cols, 2), 1fr);
-          gap: 1.5rem;
+          gap: 0.75rem;
           align-items: stretch;
         }
         .ac-services__grid > * {
