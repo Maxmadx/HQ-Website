@@ -45,6 +45,7 @@ build/
 
 # One-off ops / seed scripts (contain live data — never commit)
 scripts/seed-comparables.js
+scripts/google-reviews.json
 
 # Firebase deploy cache
 .firebase/
