@@ -209,30 +209,145 @@ function AircraftConsulting() {
   // ── Data Arrays ────────────────────────────────────────────────────────────
 
   const services = [
+    // GROUP: Buying a helicopter
     {
-      num: '01', tag: 'Most Common', title: 'Pre-Purchase Inspection',
-      description: 'A thorough airframe, engine, avionics, and logbook inspection of any Robinson helicopter before purchase. We check everything a pre-purchase should cover — and more. Written report within 48 hours of inspection.',
-      includes: ['Physical airframe inspection', 'Engine and systems check', 'Full logbook audit', 'Written report with photography', 'Rectification cost estimates', 'Price guidance'],
+      num: '01',
+      group: 'buying',
+      title: 'Pre-Purchase Inspection',
+      scope: 'Robinson only',
+      chip: 'Most common',
+      description: "A full airframe, engine, avionics, and logbook inspection of any Robinson helicopter under offer. Factory-authorised verdict in writing — buy, renegotiate, or walk — within 48 hours.",
+      includes: [
+        'Physical airframe inspection',
+        'Engine and systems check',
+        'Full logbook audit',
+        'Written report with photography',
+        'Rectification cost estimates',
+        'Price-position guidance',
+      ],
       enquiry: 'pre-purchase-inspection',
     },
     {
-      num: '02', tag: 'Ongoing', title: 'Ownership Advisory',
-      description: "For first-time helicopter owners navigating the responsibilities of ownership — insurance, maintenance scheduling, hangarage, pilot currency, operating costs. Ongoing support so you're never left guessing.",
-      includes: ['Operating cost modelling', 'Operator and engineer selection', 'Maintenance schedule planning', 'Insurance guidance', 'Regulatory compliance advice'],
-      enquiry: 'ownership-advisory',
+      num: '02',
+      group: 'buying',
+      title: 'Acquisition Advisory',
+      scope: 'All helicopters',
+      description: "We find the right aircraft, negotiate the deal, manage independent surveys, and run the paperwork through to delivery. A hands-off route to ownership for buyers who'd rather hire it done.",
+      includes: [
+        'Aircraft sourcing in the UK and abroad',
+        'Seller and broker negotiation',
+        'Independent survey management',
+        'Import/export documentation',
+        'Delivery coordination and handover',
+        'First-year operating support',
+      ],
+      enquiry: 'acquisition-advisory',
     },
     {
-      num: '03', tag: 'Corporate', title: 'Fleet Planning',
-      description: "Corporate clients planning a helicopter fleet benefit from HQ's knowledge of operational costs, maintenance patterns, and type suitability. We model the numbers and give you a clear picture before any purchase commitment.",
-      includes: ['Aircraft type comparison', 'Lifecycle cost projections', 'Operational requirements analysis', 'Supplier and engineer evaluation', 'Procurement strategy support'],
-      enquiry: 'fleet-planning',
+      num: '03',
+      group: 'buying',
+      title: 'Valuation & Appraisal',
+      scope: 'All helicopters · Robinson-deep',
+      description: "An independent written value opinion for purchase, finance, insurance, tax, lease return, divorce, or estate purposes. Methodology you can hand to a banker, lender, lawyer, or insurer.",
+      includes: [
+        'Inspection-based or desk-based valuation',
+        'Robinson type-specific market context',
+        'Methodology and comparables',
+        'Litigation-ready report formats',
+        'Lender / insurer-acceptable templates',
+        'Single-aircraft or fleet portfolio',
+      ],
+      enquiry: 'valuation',
+    },
+    // GROUP: Owning & operating
+    {
+      num: '04',
+      group: 'owning',
+      title: 'Aircraft Management',
+      scope: 'All helicopters',
+      chip: 'Retainer',
+      description: "An ongoing relationship for owners who'd rather not run the aircraft themselves. We oversee maintenance, engineer relationships, scheduling, and keep the file in order so the aircraft stays serviceable and saleable.",
+      includes: [
+        'Maintenance scheduling oversight',
+        'Engineer and operator coordination',
+        'Records and documentation upkeep',
+        'Hangarage, insurance, and currency tracking',
+        'Quarterly cost reviews',
+        'Single point of contact across the lifecycle',
+      ],
+      enquiry: 'aircraft-management',
     },
     {
-      num: '04', tag: 'Full Service', title: 'Acquisition Services',
-      description: 'HQ manages the entire acquisition process — identifying aircraft, conducting negotiations, arranging surveys, handling documentation, and coordinating delivery. A complete hands-off service for buyers who value their time.',
-      includes: ['Aircraft sourcing worldwide', 'Seller negotiation', 'Independent survey management', 'Import/export documentation', 'Delivery coordination and handover'],
-      enquiry: 'acquisition-services',
+      num: '05',
+      group: 'owning',
+      title: 'Operating Cost & TCO',
+      scope: 'All helicopters',
+      description: "A defensible total cost of ownership model for a specific aircraft, fleet, or use case. Numbers built from real maintenance bills and live insurance market — not OEM brochures.",
+      includes: [
+        'Type-specific fixed and variable costs',
+        'One, five, and ten-year projections',
+        'Maintenance reserves modelling',
+        'Hours-flown sensitivity and break-even',
+        'Financing scenario comparisons',
+        'Cross-type comparison',
+      ],
+      enquiry: 'tco-modelling',
     },
+    {
+      num: '06',
+      group: 'owning',
+      title: 'Insurance Advisory',
+      scope: 'All helicopters',
+      description: "Independent review of hull and liability cover, broker introductions, and policy comparisons. We read the policy with the aircraft in mind — what's actually flown, where, and by whom — not just what's quoted.",
+      includes: [
+        'Cover review against operating reality',
+        'Broker selection and introduction',
+        'Policy and exclusion comparison',
+        'Claims advocacy and support',
+        'Renewal-cycle reviews',
+        'Lessor and financier requirement alignment',
+      ],
+      enquiry: 'insurance-advisory',
+    },
+    {
+      num: '07',
+      group: 'owning',
+      title: 'Import / Export & Register Transfer',
+      scope: 'All helicopters',
+      description: "Cross-border transactions and register transfers handled end-to-end — UK CAA, FAA, IoM, Guernsey — with the documentation, customs, and airworthiness pieces sequenced correctly.",
+      includes: [
+        'Import and export documentation',
+        'Customs and duty handling',
+        'De-registration and re-registration',
+        'Airworthiness review handover',
+        'Transit and ferry coordination',
+        'VAT and tax sequencing in partnership',
+      ],
+      enquiry: 'import-export',
+    },
+    // GROUP: Independent expert work
+    {
+      num: '08',
+      group: 'expert',
+      title: 'Expert Witness & Litigation Support',
+      scope: 'All helicopters · Robinson-deep',
+      description: "Independent expert opinion for legal, insurance, and dispute matters. Written reports, expert determination, and court-acceptable testimony — drawn from 35 years on the hangar floor.",
+      includes: [
+        'Pre-action expert opinion',
+        'Formal CPR Part 35 expert reports',
+        'Insurance loss adjusting support',
+        'Maintenance dispute resolution',
+        'Sale dispute and warranty claims',
+        'Single joint expert appointments',
+      ],
+      enquiry: 'expert-witness',
+    },
+  ];
+
+  const SERVICE_GROUPS = [
+    { id: 'buying',  label: 'Buying a helicopter' },
+    { id: 'owning',  label: 'Owning & operating' },
+    { id: 'expert',  label: 'Independent expert work' },
   ];
 
   const processSteps = [
@@ -456,29 +571,42 @@ function AircraftConsulting() {
             </div>
           </Reveal>
 
-          <div className="ac-services__grid">
-            {services.map((service, i) => (
-              <Reveal key={service.num} delay={i * 0.1}>
-                <div className="ac-service-card">
-                  <div className="ac-service-card__top">
-                    <span className="ac-service-card__tag">{service.tag}</span>
-                    <span className="ac-service-card__num">{service.num}</span>
-                  </div>
-                  <h3 className="ac-service-card__title">{service.title}</h3>
-                  <p className="ac-service-card__desc">{service.description}</p>
-                  <p className="ac-service-card__includes-label">What's included</p>
-                  <ul className="ac-service-card__includes">
-                    {service.includes.map((item) => (
-                      <li key={item} className="ac-service-card__include-item">
-                        <span className="ac-service-card__check">✓</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
+          {SERVICE_GROUPS.map((group) => {
+            const groupServices = services.filter(s => s.group === group.id);
+            return (
+              <div key={group.id} className="ac-services__group">
+                <Reveal>
+                  <h3 className="ac-services__group-title">{group.label}</h3>
+                </Reveal>
+                <div className="ac-services__grid">
+                  {groupServices.map((service, i) => (
+                    <Reveal key={service.num} delay={i * 0.1}>
+                      <div className="ac-service-card">
+                        <div className="ac-service-card__top">
+                          <span className="ac-service-card__tag">{service.scope}</span>
+                          <span className="ac-service-card__num">{service.num}</span>
+                        </div>
+                        {service.chip && (
+                          <span className="ac-service-card__chip">{service.chip}</span>
+                        )}
+                        <h3 className="ac-service-card__title">{service.title}</h3>
+                        <p className="ac-service-card__desc">{service.description}</p>
+                        <p className="ac-service-card__includes-label">What's included</p>
+                        <ul className="ac-service-card__includes">
+                          {service.includes.map((item) => (
+                            <li key={item} className="ac-service-card__include-item">
+                              <span className="ac-service-card__check">✓</span>
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </Reveal>
+                  ))}
                 </div>
-              </Reveal>
-            ))}
-          </div>
+              </div>
+            );
+          })}
         </div>
       </section>
 
@@ -1338,6 +1466,34 @@ function AircraftConsulting() {
         .ac-services__container {
           max-width: 1200px;
           margin: 0 auto;
+        }
+        .ac-services__group {
+          margin-top: 3.5rem;
+        }
+        .ac-services__group:first-of-type {
+          margin-top: 2.5rem;
+        }
+        .ac-services__group-title {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 1.25rem;
+          font-weight: 600;
+          letter-spacing: 0.02em;
+          color: #1a1a1a;
+          margin: 0 0 1.5rem;
+          padding-bottom: 0.75rem;
+          border-bottom: 1px solid #eeecea;
+        }
+        .ac-service-card__chip {
+          display: inline-block;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.6rem;
+          letter-spacing: 0.15em;
+          text-transform: uppercase;
+          color: #6b6b6b;
+          background: #f1efeb;
+          padding: 0.25rem 0.6rem;
+          border-radius: 999px;
+          margin-bottom: 0.75rem;
         }
         .ac-services__grid {
           display: grid;
