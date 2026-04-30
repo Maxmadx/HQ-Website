@@ -6,7 +6,8 @@ import {
   medianTimeToConversionHours,
 } from './funnelAggregations';
 
-const tsHoursAgo = (h) => ({ toMillis: () => Date.now() - h * 3600 * 1000 });
+const NOW = Date.now();
+const tsHoursAgo = (h) => ({ toMillis: () => NOW - h * 3600 * 1000 });
 
 const fixtureEvents = [
   // session A: full funnel, converted

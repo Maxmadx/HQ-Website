@@ -89,16 +89,23 @@ export function segmentFunnelBySource(events, opts = {}) {
     return (ev.utmSource && String(ev.utmSource).trim()) || 'direct';
   }
 
-  // First, group sessionId → source by the earliest event's utmSource
+  // Group sessionId → source by the EARLIEST event's utmSource (first-touch attribution).
+  // We don't trust the caller's array order — Firestore queries often come back DESC.
+  const sessionEarliestMs = new Map();
   const sessionSource = new Map();
   for (const ev of events) {
     if (!ev.sessionId) continue;
-    if (!sessionSource.has(ev.sessionId)) {
+    const ms = eventTimeMs(ev);
+    const prev = sessionEarliestMs.get(ev.sessionId);
+    if (prev === undefined || ms < prev) {
+      sessionEarliestMs.set(ev.sessionId, ms);
       sessionSource.set(ev.sessionId, bucket(ev));
     }
   }
 
-  // Then walk events and group funnel counts per source
+  // Then walk events and group funnel counts per source. Visits are category-scoped
+  // here to match computeFunnel — the dashboard expects funnel and per-source rows
+  // to reconcile.
   const grouped = new Map();
   for (const ev of events) {
     if (!ev.sessionId) continue;
@@ -107,8 +114,8 @@ export function segmentFunnelBySource(events, opts = {}) {
       grouped.set(source, { source, visits: new Set(), viewed: new Set(), began: new Set(), purchasedTx: new Set() });
     }
     const row = grouped.get(source);
-    row.visits.add(ev.sessionId);
     if (!isCategoryMatch(ev, opts.itemCategory)) continue;
+    row.visits.add(ev.sessionId);
     if (ev.eventType === 'view_item') row.viewed.add(ev.sessionId);
     if (ev.eventType === 'begin_checkout') row.began.add(ev.sessionId);
     if (ev.eventType === 'purchase' && ev.transactionId) row.purchasedTx.add(ev.transactionId);
