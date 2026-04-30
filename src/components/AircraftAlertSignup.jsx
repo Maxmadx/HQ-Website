@@ -19,6 +19,56 @@ function formatBudget(raw) {
   return Number(digits).toLocaleString('en-GB');
 }
 
+function Autocomplete({ value, onChange, options, placeholder, onBlur }) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef(null);
+
+  useEffect(() => {
+    function onDoc(e) {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
+    }
+    document.addEventListener('mousedown', onDoc);
+    return () => document.removeEventListener('mousedown', onDoc);
+  }, []);
+
+  const q = (value || '').toLowerCase().trim();
+  const filtered = q
+    ? options.filter(o => o.toLowerCase().includes(q))
+    : options;
+
+  return (
+    <div className="alert-adv__autocomplete" ref={wrapRef}>
+      <input
+        type="text"
+        className="alert-adv__input"
+        placeholder={placeholder}
+        value={value}
+        onFocus={() => setOpen(true)}
+        onChange={e => { onChange(e.target.value); setOpen(true); }}
+        onKeyDown={e => { if (e.key === 'Escape') setOpen(false); }}
+        onBlur={e => {
+          if (wrapRef.current && wrapRef.current.contains(e.relatedTarget)) return;
+          onBlur && onBlur();
+        }}
+      />
+      {open && filtered.length > 0 && (
+        <div className="alert-adv__autocomplete-list">
+          {filtered.map(opt => (
+            <button
+              type="button"
+              key={opt}
+              className="alert-adv__autocomplete-option"
+              onMouseDown={e => { e.preventDefault(); onChange(opt); setOpen(false); }}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function AircraftAlertSignup() {
   const [intent, setIntent] = useState(null); // 'buy' | 'sell'
   const [submitted, setSubmitted] = useState(false);
@@ -38,7 +88,8 @@ export default function AircraftAlertSignup() {
   }, [intent]);
 
   // Buyer state
-  const [expandedMakes, setExpandedMakes] = useState([]);
+  const [activeMake, setActiveMake] = useState('');
+  const [customModelInput, setCustomModelInput] = useState('');
   const [selectedModels, setSelectedModels] = useState([]);
   const [maxHours, setMaxHours] = useState('');
   const [maxAge, setMaxAge] = useState('');
@@ -60,12 +111,6 @@ export default function AircraftAlertSignup() {
   const [sellEmail, setSellEmail] = useState('');
   const [sellPhone, setSellPhone] = useState('');
   const [sellNotes, setSellNotes] = useState('');
-
-  function toggleMake(make) {
-    setExpandedMakes(prev =>
-      prev.includes(make) ? prev.filter(m => m !== make) : [...prev, make]
-    );
-  }
 
   function toggleModel(model) {
     setSelectedModels(prev =>
@@ -179,7 +224,7 @@ export default function AircraftAlertSignup() {
           {!intent && (
             <div className="alert-adv__intro">
               <p className="alert-adv__intro-title">Register Interest</p>
-              <p className="alert-adv__intro-text">The best helicopters rarely reach public listings. Tell us what you're looking for — or what you're ready to move on — and we'll work our network quietly on your behalf.</p>
+              <p className="alert-adv__intro-text">The best helicopters rarely reach public listings. Tell us what you're looking for, or what you're ready to move on, and we'll work our network quietly on your behalf.</p>
             </div>
           )}
 
@@ -188,7 +233,7 @@ export default function AircraftAlertSignup() {
               <button className="alert-adv__intent-btn" onClick={() => setIntent('buy')}>
                 <span className="alert-adv__intent-icon">→</span>
                 <span className="alert-adv__intent-title">I'm Looking to Buy</span>
-                <span className="alert-adv__intent-sub">Register your requirements. We'll notify you the moment a match arrives — often before it's publicly listed.</span>
+                <span className="alert-adv__intent-sub">Register your requirements. We'll notify you the moment a match arrives, often before it's publicly listed.</span>
               </button>
               <button className="alert-adv__intent-btn" onClick={() => setIntent('sell')}>
                 <span className="alert-adv__intent-icon">↗</span>
@@ -208,35 +253,53 @@ export default function AircraftAlertSignup() {
 
               <div className="alert-adv__field-group">
                 <label className="alert-adv__field-label">
-                  Aircraft of Interest <span className="alert-adv__optional">— expand a manufacturer and select models</span>
+                  Aircraft of Interest <span className="alert-adv__optional">(type or pick a manufacturer, then choose models or type your own)</span>
                 </label>
-                <div className="alert-adv__makes-grid">
-                  {AIRCRAFT_CATALOGUE.map(({ make, models }) => (
-                    <div key={make} className="alert-adv__make-block">
-                      <button
-                        type="button"
-                        className={`alert-adv__make-toggle${expandedMakes.includes(make) ? ' active' : ''}`}
-                        onClick={() => toggleMake(make)}
-                      >
-                        <span>{make}</span>
-                        <span className="alert-adv__make-arrow">{expandedMakes.includes(make) ? '−' : '+'}</span>
-                      </button>
-                      {expandedMakes.includes(make) && (
-                        <div className="alert-adv__models-list">
-                          {models.map(model => (
-                            <label
-                              key={model}
-                              className={`alert-adv__model-chip${selectedModels.includes(model) ? ' selected' : ''}`}
-                            >
-                              <input type="checkbox" checked={selectedModels.includes(model)} onChange={() => toggleModel(model)} />
-                              <span>{model}</span>
-                            </label>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                <div className="alert-adv__field-row">
+                  <div className="alert-adv__field">
+                    <Autocomplete
+                      value={activeMake}
+                      onChange={setActiveMake}
+                      options={AIRCRAFT_CATALOGUE.map(c => c.make)}
+                      placeholder="Type or select manufacturer"
+                    />
+                  </div>
                 </div>
+                {activeMake && (() => {
+                  const knownModels = AIRCRAFT_CATALOGUE.find(c => c.make === activeMake)?.models || [];
+                  return (
+                    <>
+                      <div className="alert-adv__custom-model-row">
+                        <Autocomplete
+                          value={customModelInput}
+                          onChange={setCustomModelInput}
+                          options={knownModels.filter(m => !selectedModels.includes(m))}
+                          placeholder="Type a model or pick a suggestion"
+                          onBlur={() => {
+                            const trimmed = customModelInput.trim();
+                            if (trimmed && !selectedModels.includes(trimmed)) {
+                              setSelectedModels(prev => [...prev, trimmed]);
+                            }
+                            if (trimmed) setCustomModelInput('');
+                          }}
+                        />
+                        <button
+                          type="button"
+                          className="alert-adv__custom-model-add"
+                          onClick={() => {
+                            const trimmed = customModelInput.trim();
+                            if (trimmed && !selectedModels.includes(trimmed)) {
+                              setSelectedModels(prev => [...prev, trimmed]);
+                            }
+                            setCustomModelInput('');
+                          }}
+                        >
+                          Add
+                        </button>
+                      </div>
+                    </>
+                  );
+                })()}
                 {selectedModels.length > 0 && (
                   <div className="alert-adv__selected-summary">
                     {selectedModels.map(m => (
@@ -310,27 +373,36 @@ export default function AircraftAlertSignup() {
                 <button type="button" className="alert-adv__back-btn" onClick={() => setIntent(null)}>← Change</button>
               </div>
 
-              <div className="alert-adv__field-row">
-                <div className="alert-adv__field">
-                  <label className="alert-adv__field-label">Manufacturer</label>
-                  <select className="alert-adv__input alert-adv__select" value={sellMake} onChange={e => { setSellMake(e.target.value); setSellModel(''); }}>
-                    <option value="">Select manufacturer</option>
-                    {AIRCRAFT_CATALOGUE.map(({ make }) => <option key={make} value={make}>{make}</option>)}
-                    <option value="Other">Other</option>
-                  </select>
+              <div className="alert-adv__field-group">
+                <label className="alert-adv__field-label">
+                  Aircraft <span className="alert-adv__optional">(type or pick a manufacturer, then choose a model or type your own)</span>
+                </label>
+                <div className="alert-adv__field-row">
+                  <div className="alert-adv__field">
+                    <Autocomplete
+                      value={sellMake}
+                      onChange={v => { setSellMake(v); setSellModel(''); }}
+                      options={AIRCRAFT_CATALOGUE.map(c => c.make)}
+                      placeholder="Type or select manufacturer"
+                    />
+                  </div>
                 </div>
-                <div className="alert-adv__field">
-                  <label className="alert-adv__field-label">Model</label>
-                  {sellMake && sellMake !== 'Other' ? (
-                    <select className="alert-adv__input alert-adv__select" value={sellModel} onChange={e => setSellModel(e.target.value)}>
-                      <option value="">Select model</option>
-                      {(AIRCRAFT_CATALOGUE.find(c => c.make === sellMake)?.models || []).map(m => <option key={m} value={m}>{m}</option>)}
-                      <option value="Other">Other / Not listed</option>
-                    </select>
-                  ) : (
-                    <input type="text" className="alert-adv__input" placeholder="Model designation" value={sellModel} onChange={e => setSellModel(e.target.value)} />
-                  )}
-                </div>
+                {sellMake && (() => {
+                  const knownModels = AIRCRAFT_CATALOGUE.find(c => c.make === sellMake)?.models || [];
+                  const customModelValue = knownModels.includes(sellModel) ? '' : sellModel;
+                  return (
+                    <>
+                      <div className="alert-adv__custom-model-row">
+                        <Autocomplete
+                          value={customModelValue}
+                          onChange={setSellModel}
+                          options={knownModels}
+                          placeholder="Type a model or pick a suggestion"
+                        />
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
 
               <div className="alert-adv__field-row">
@@ -635,6 +707,64 @@ const styles = `
   border-top: none;
   background: #f5f4f1;
 }
+.alert-adv__models-list--standalone {
+  border-top: 1px solid #e0ddd8;
+  margin-top: 0.75rem;
+}
+.alert-adv__autocomplete {
+  position: relative;
+  width: 100%;
+}
+.alert-adv__autocomplete-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background: #fff;
+  border: 1px solid #e0ddd8;
+  border-top: none;
+  max-height: 220px;
+  overflow-y: auto;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+.alert-adv__autocomplete-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.6rem 0.9rem;
+  background: #fff;
+  border: none;
+  border-bottom: 1px solid #f0eee9;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.85rem;
+  color: #1a1a1a;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.alert-adv__autocomplete-option:hover { background: #faf9f6; }
+.alert-adv__autocomplete-option:last-child { border-bottom: none; }
+.alert-adv__custom-model-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+  align-items: stretch;
+}
+.alert-adv__custom-model-row .alert-adv__autocomplete { flex: 1; }
+.alert-adv__custom-model-add {
+  padding: 0 1.1rem;
+  background: #1a1a1a;
+  border: 1px solid #1a1a1a;
+  color: #fff;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.18s;
+}
+.alert-adv__custom-model-add:hover { background: #333; }
 .alert-adv__model-chip {
   display: flex;
   align-items: center;

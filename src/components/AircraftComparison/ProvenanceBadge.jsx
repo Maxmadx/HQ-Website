@@ -1,9 +1,13 @@
+const STYLES = {
+  verified:         { bg: '#e8f0e8', fg: '#2a652a', label: 'verified' },
+  estimate:         { bg: '#fff4e0', fg: '#a06a00', label: 'estimate' },
+  'pre-production': { bg: '#eef0f7', fg: '#3d4a8a', label: 'pre-production' },
+};
+
 export default function ProvenanceBadge({ confidence, source, lastUpdated }) {
-  const isVerified = confidence === 'verified';
-  const colors = isVerified
-    ? { bg: '#e8f0e8', fg: '#2a652a' }
-    : { bg: '#fff4e0', fg: '#a06a00' };
-  const label = isVerified ? 'verified' : 'estimate';
+  const style = STYLES[confidence] || STYLES.estimate;
+  const colors = { bg: style.bg, fg: style.fg };
+  const label = style.label;
   const tooltip = source ? `${source}${lastUpdated ? ` · ${lastUpdated}` : ''}` : label;
 
   return (

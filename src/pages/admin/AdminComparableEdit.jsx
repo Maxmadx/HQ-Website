@@ -155,11 +155,15 @@ export default function AdminComparableEdit() {
         }
       }
       const { id: _, ...toWrite } = payload;
+      const existingDoc = isNew ? null : await getDoc(doc(db, 'comparables', id));
+      const preservedCreatedAt = existingDoc?.exists()
+        ? existingDoc.data().createdAt || serverTimestamp()
+        : serverTimestamp();
       await setDoc(doc(db, 'comparables', id), {
         ...toWrite,
+        createdAt: preservedCreatedAt,
         costsLastUpdated: serverTimestamp(),
         updatedAt: serverTimestamp(),
-        ...(isNew ? { createdAt: serverTimestamp() } : {}),
       }, { merge: false });
       navigate('/admin/comparables');
     } catch (err) {

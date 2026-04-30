@@ -1,7 +1,9 @@
 import ProvenanceBadge from './ProvenanceBadge';
 import { fuelCostPerHour, docPerHour, annualFixed } from '../../lib/tco';
+import { isPreProduction } from '../../lib/comparablesSchema';
 
 const GBP = (v) => (v == null ? '—' : `£${Math.round(v).toLocaleString()}`);
+const cell = (a, v) => (isPreProduction(a) ? '—' : GBP(v));
 
 export default function CostBreakdownTable({ aircraft, defaults, onReportMistake }) {
   if (!aircraft.length) return null;
@@ -30,24 +32,24 @@ export default function CostBreakdownTable({ aircraft, defaults, onReportMistake
             <tr>
               <th scope="row">Fuel</th>
               {aircraft.map((a) => (
-                <td key={a.id}>{GBP(fuelCostPerHour(a, defaults))}</td>
+                <td key={a.id}>{cell(a, fuelCostPerHour(a, defaults))}</td>
               ))}
             </tr>
             <tr>
               <th scope="row">Scheduled MX</th>
-              {aircraft.map((a) => <td key={a.id}>{GBP(a.costsPerHour?.mxScheduled)}</td>)}
+              {aircraft.map((a) => <td key={a.id}>{cell(a, a.costsPerHour?.mxScheduled)}</td>)}
             </tr>
             <tr>
               <th scope="row">Engine reserve</th>
-              {aircraft.map((a) => <td key={a.id}>{GBP(a.costsPerHour?.engineReserve)}</td>)}
+              {aircraft.map((a) => <td key={a.id}>{cell(a, a.costsPerHour?.engineReserve)}</td>)}
             </tr>
             <tr>
               <th scope="row">Airframe reserve</th>
-              {aircraft.map((a) => <td key={a.id}>{GBP(a.costsPerHour?.airframeReserve)}</td>)}
+              {aircraft.map((a) => <td key={a.id}>{cell(a, a.costsPerHour?.airframeReserve)}</td>)}
             </tr>
             <tr className="comparison-table__total-row">
               <th scope="row">Total per hour (DOC)</th>
-              {aircraft.map((a) => <td key={a.id}>{GBP(docPerHour(a, defaults))}</td>)}
+              {aircraft.map((a) => <td key={a.id}>{cell(a, docPerHour(a, defaults))}</td>)}
             </tr>
 
             <tr className="comparison-table__group-row">
@@ -55,19 +57,19 @@ export default function CostBreakdownTable({ aircraft, defaults, onReportMistake
             </tr>
             <tr>
               <th scope="row">Insurance</th>
-              {aircraft.map((a) => <td key={a.id}>{GBP(a.costsAnnual?.insurance)}</td>)}
+              {aircraft.map((a) => <td key={a.id}>{cell(a, a.costsAnnual?.insurance)}</td>)}
             </tr>
             <tr>
               <th scope="row">Annual inspection</th>
-              {aircraft.map((a) => <td key={a.id}>{GBP(a.costsAnnual?.annualInspection)}</td>)}
+              {aircraft.map((a) => <td key={a.id}>{cell(a, a.costsAnnual?.annualInspection)}</td>)}
             </tr>
             <tr>
               <th scope="row">Hangarage</th>
-              {aircraft.map((a) => <td key={a.id}>{GBP(a.costsAnnual?.hangarage)}</td>)}
+              {aircraft.map((a) => <td key={a.id}>{cell(a, a.costsAnnual?.hangarage)}</td>)}
             </tr>
             <tr className="comparison-table__total-row">
               <th scope="row">Total annual fixed</th>
-              {aircraft.map((a) => <td key={a.id}>{GBP(annualFixed(a))}</td>)}
+              {aircraft.map((a) => <td key={a.id}>{cell(a, annualFixed(a))}</td>)}
             </tr>
           </tbody>
         </table>

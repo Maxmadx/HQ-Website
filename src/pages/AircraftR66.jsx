@@ -34,6 +34,8 @@ import '../assets/css/components.css';
 
 // Import Footer
 import FooterMinimal from '../components/FooterMinimal';
+import AircraftPriceBlock from '../components/AircraftPriceBlock';
+import { getSubtypes } from '../config/aircraftCatalog';
 import HqMenuPanel from '../components/HqMenuPanel';
 import R66Case from '../components/R66/R66Case';
 
@@ -193,31 +195,35 @@ function AnimatedNumber({ value, suffix = '', prefix = '' }) {
 // DATA
 // ============================================================================
 
-const r66SpecsStandard = [
+// Static R66 specs (engine, dimensions, etc.) that don't change with aux fuel.
+const r66SpecsStatic = [
   { label: 'Engine', value: 'Rolls-Royce RR300', icon: 'fa-cog' },
   { label: 'Power', value: '270 SHP', icon: 'fa-bolt' },
   { label: 'Max Speed', value: '140 kts', icon: 'fa-tachometer-alt' },
   { label: 'Cruise Speed', value: '110 kts', icon: 'fa-plane' },
-  { label: 'Range', value: '350 nm', icon: 'fa-route' },
   { label: 'Useful Load', value: '1,200 lbs', icon: 'fa-weight-hanging' },
   { label: 'Seats', value: '5', icon: 'fa-users' },
   { label: 'Rotor Diameter', value: '33 ft', icon: 'fa-circle-notch' },
-  { label: 'Fuel Capacity', value: '73.3 gal', icon: 'fa-gas-pump' },
-  { label: 'Endurance', value: '3+ hrs', icon: 'fa-clock' },
 ];
 
-const r66SpecsExtended = [
-  { label: 'Engine', value: 'Rolls-Royce RR300', icon: 'fa-cog' },
-  { label: 'Power', value: '270 SHP', icon: 'fa-bolt' },
-  { label: 'Max Speed', value: '140 kts', icon: 'fa-tachometer-alt' },
-  { label: 'Cruise Speed', value: '110 kts', icon: 'fa-plane' },
-  { label: 'Range', value: '450+ nm', icon: 'fa-route' },
-  { label: 'Useful Load', value: '1,200 lbs', icon: 'fa-weight-hanging' },
-  { label: 'Seats', value: '5', icon: 'fa-users' },
-  { label: 'Rotor Diameter', value: '33 ft', icon: 'fa-circle-notch' },
-  { label: 'Fuel Capacity', value: '98.3 gal', icon: 'fa-gas-pump' },
-  { label: 'Endurance', value: '4+ hrs', icon: 'fa-clock' },
-];
+// Aux-fuel-dependent specs. Per RHC: 23-gal aux = +100 nm / +1 hr; 43-gal aux = +200 nm / +2 hr.
+// The two tanks are mutually exclusive (only one can be installed at a time).
+const r66AuxConfigs = {
+  none:  { range: '350 nm',  fuelCapacity: '73.3 gal',  endurance: '3+ hrs' },
+  aux23: { range: '450 nm',  fuelCapacity: '96.3 gal',  endurance: '4+ hrs' },
+  aux43: { range: '550 nm',  fuelCapacity: '116.3 gal', endurance: '5+ hrs' },
+};
+
+function buildR66Specs(auxKey) {
+  const aux = r66AuxConfigs[auxKey] ?? r66AuxConfigs.none;
+  return [
+    ...r66SpecsStatic.slice(0, 4),
+    { label: 'Range',         value: aux.range,         icon: 'fa-route' },
+    ...r66SpecsStatic.slice(4),
+    { label: 'Fuel Capacity', value: aux.fuelCapacity,  icon: 'fa-gas-pump' },
+    { label: 'Endurance',     value: aux.endurance,     icon: 'fa-clock' },
+  ];
+}
 
 const historyTimeline = [
   { year: '2007', title: 'First Flight', description: 'The R66 prototype took to the skies, marking Robinson\'s entry into the turbine helicopter market.', status: 'completed' },
@@ -924,8 +930,14 @@ function R66History() {
 // ============================================================================
 function R66Specifications() {
   const [activeSpec, setActiveSpec] = useState(null);
-  const [isExtendedRange, setIsExtendedRange] = useState(false);
-  const r66Specs = isExtendedRange ? r66SpecsExtended : r66SpecsStandard;
+  // Aux tank selection — mutually exclusive: 'none' | 'aux23' | 'aux43'
+  const [auxKey, setAuxKey] = useState('none');
+  const aux23Enabled = auxKey === 'aux23';
+  const aux43Enabled = auxKey === 'aux43';
+  const isExtendedRange = auxKey !== 'none';
+  const setAux23Enabled = (on) => setAuxKey(on ? 'aux23' : 'none');
+  const setAux43Enabled = (on) => setAuxKey(on ? 'aux43' : 'none');
+  const r66Specs = buildR66Specs(auxKey);
 
   return (
     <section className="r66-specs">
@@ -973,18 +985,30 @@ function R66Specifications() {
             <div className="r66-specs__table">
               <div className="r66-specs__row r66-specs__row--header">
                 <div className="r66-specs__cell">Specification</div>
-                <div className="r66-specs__cell">
+                <div className="r66-specs__cell r66-specs__aux-cell">
                   <label className="r66-specs__aux-label">
                     <input
                       type="checkbox"
-                      checked={isExtendedRange}
-                      onChange={(e) => setIsExtendedRange(e.target.checked)}
+                      checked={aux23Enabled}
+                      onChange={(e) => setAux23Enabled(e.target.checked)}
                       className="r66-specs__aux-checkbox"
                     />
                     <span className="r66-specs__aux-check">
-                      {isExtendedRange && <span>✓</span>}
+                      {aux23Enabled && <span>✓</span>}
                     </span>
-                    <span className="r66-specs__aux-text">+ Extended Range</span>
+                    <span className="r66-specs__aux-text">+ 23-gal Aux</span>
+                  </label>
+                  <label className="r66-specs__aux-label">
+                    <input
+                      type="checkbox"
+                      checked={aux43Enabled}
+                      onChange={(e) => setAux43Enabled(e.target.checked)}
+                      className="r66-specs__aux-checkbox"
+                    />
+                    <span className="r66-specs__aux-check">
+                      {aux43Enabled && <span>✓</span>}
+                    </span>
+                    <span className="r66-specs__aux-text">+ 43-gal Aux</span>
                   </label>
                 </div>
               </div>
@@ -2691,6 +2715,13 @@ const R66Styles = () => (
       }
       .r66-specs__right { order: 2; }
       .r66-specs__table { order: 1; }
+    }
+
+    .r66-specs__aux-cell {
+      display: flex !important;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.4rem;
     }
 
     .r66-specs__aux-label {

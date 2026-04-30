@@ -49,7 +49,7 @@ export default function ReportMistakeModal({ open, aircraft, defaultAircraftId, 
       setSubmitted(true);
     } catch (err) {
       console.error('Mistake-report submit error', err);
-      alert("Couldn't submit right now — please try again, or use the Talk to our team form.");
+      alert("Couldn't submit right now. Please try again, or use the Talk to our team form.");
     } finally {
       setSubmitting(false);
     }
@@ -61,14 +61,14 @@ export default function ReportMistakeModal({ open, aircraft, defaultAircraftId, 
         <div className="report-mistake__head">
           <div>
             <h3 id="report-mistake-title">Spot a mistake?</h3>
-            <p className="report-mistake__subtitle">Tell us what you think is wrong — we'll review it.</p>
+            <p className="report-mistake__subtitle">Tell us what you think is wrong and we'll review it.</p>
           </div>
           <button type="button" onClick={onClose} aria-label="Close" className="report-mistake__close">✕</button>
         </div>
 
         {submitted ? (
           <div className="report-mistake__thanks">
-            <p>Thanks — we'll review your correction and update the data if it checks out.</p>
+            <p>Thanks. We'll review your correction and update the data if it checks out.</p>
             <button type="button" className="report-mistake__btn-primary" onClick={onClose}>Close</button>
           </div>
         ) : (
@@ -99,7 +99,7 @@ export default function ReportMistakeModal({ open, aircraft, defaultAircraftId, 
               <textarea value={message} onChange={(e) => setMessage(e.target.value)} required minLength={3} rows={3} placeholder="What you're seeing differently. Sources welcome but not required." />
             </label>
             <label>
-              Email <span className="report-mistake__optional">(optional — only if you want a reply)</span>
+              Email <span className="report-mistake__optional">(optional, only if you want a reply)</span>
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
             </label>
             <div className="report-mistake__actions">

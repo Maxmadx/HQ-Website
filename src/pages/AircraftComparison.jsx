@@ -38,17 +38,13 @@ export default function AircraftComparison() {
         <header className="aircraft-comparison__hero">
           <div className="aircraft-comparison__eyebrow">Decision Tool</div>
           <h1>Compare <span className="aircraft-comparison__hero-em">Aircraft</span></h1>
-          <p className="aircraft-comparison__intro">
-            Honest spec, cost, and ownership data. Robinson figures from HQ's own MX records;
-            other manufacturers from publicly sourced industry data, clearly labelled.
-          </p>
         </header>
 
         {loading ? (
           <div className="aircraft-comparison__loading">Loading aircraft data…</div>
         ) : error ? (
           <div className="aircraft-comparison__error">
-            Couldn't load aircraft data — please refresh, or call our team.
+            Couldn't load aircraft data. Please refresh, or call our team.
           </div>
         ) : comparables.length === 0 ? (
           <div className="aircraft-comparison__placeholder">

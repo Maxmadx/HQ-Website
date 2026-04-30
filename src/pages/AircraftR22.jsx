@@ -23,6 +23,8 @@ import '../assets/css/components.css';
 // Import FooterMinimal component
 import FooterMinimal from '../components/FooterMinimal';
 import HqMenuPanel from '../components/HqMenuPanel';
+import AircraftPriceBlock from '../components/AircraftPriceBlock';
+import { getSubtypes } from '../config/aircraftCatalog';
 
 // ============================================================================
 // R22 HEADER COMPONENT
@@ -343,7 +345,7 @@ const R22_WHY_TRAINER = [
   {
     eyebrow: 'Skill transfer',
     title: 'Controls that tell you everything',
-    copy: 'Direct push-rod controls with no hydraulic assistance mean every input is felt. Pilots trained on the R22 read rotor state instinctively — a habit that carries over to every heavier type they fly afterwards.',
+    copy: 'Direct push-rod controls with no hydraulic assistance mean every input is felt. Pilots trained on the R22 read rotor state instinctively, a habit that carries over to every heavier type they fly afterwards.',
     stat: { value: 'Zero hydraulics', caption: 'Pure mechanical feedback' },
   },
   {
@@ -2125,7 +2127,7 @@ function R22Introduction() {
             Frank Robinson drew the R22 in 1973 with a single objective: make personal helicopter
             flight affordable without compromising integrity. He had left Hughes and Bell in pursuit
             of a light two-seater that private pilots could actually own and instructors could
-            actually teach on — a gap the industry had failed to close in thirty years.
+            actually teach on, a gap the industry had failed to close in thirty years.
           </p>
           <p>
             The first flight in 1975 proved the design; production began in 1979. Four decades
@@ -2136,7 +2138,7 @@ function R22Introduction() {
           <p>
             The reason the design has endured is not nostalgia. It is that the R22's combination of
             low inertia, direct controls and honest handling creates pilots who understand
-            rotorcraft at a mechanical level — and that understanding transfers to every aircraft
+            rotorcraft at a mechanical level, and that understanding transfers to every aircraft
             they fly afterwards.
           </p>
         </div>
@@ -2162,7 +2164,7 @@ function R22HistoryTimeline() {
     { year: '1979', title: 'Production Begins', status: 'completed', description: 'Robinson Helicopter Company begins production of the R22, launching the most successful light helicopter program in history.' },
     { year: '1996', title: 'Beta II Introduction', status: 'completed', description: 'The improved R22 Beta II model launches with enhanced performance and safety features.' },
     { year: '1997', title: 'Safety Milestone', status: 'completed', description: 'Fatal accident rate drops to 0.7 per 100,000 flight hours, down from 6.0 in 1982, following implementation of the Robinson Pilot Safety Course.' },
-    { year: '2012', title: 'World Champion Aircraft', status: 'completed', description: "Captain Quentin Smith wins the World Helicopter Aerobatic Championship in Russia flying the R22 — the only piston trainer ever to take the title, and the defining moment that confirmed the aircraft's handling pedigree beyond the training arena." },
+    { year: '2012', title: 'World Champion Aircraft', status: 'completed', description: "Captain Quentin Smith wins the World Helicopter Aerobatic Championship in Russia flying the R22, the only piston trainer ever to take the title, and the defining moment that confirmed the aircraft's handling pedigree beyond the training arena." },
     { year: '2024', title: '4,800+ Built', status: 'active', description: 'Over 4,800 R22 helicopters delivered worldwide, making it the most popular training helicopter ever produced.' },
   ];
 
@@ -2403,7 +2405,7 @@ function R22Champion({ pageImages }) {
           <h2>Captain Q and the R22</h2>
           <p>
             In 2012, Captain Quentin Smith took an R22 to Russia and won the World Helicopter
-            Aerobatic Championship — the only piston trainer ever to claim the title, in a field
+            Aerobatic Championship, the only piston trainer ever to claim the title, in a field
             otherwise contested by purpose-built turbine types. It was not a quiet win. It was a
             direct statement about what the R22 is capable of when flown by someone who understands
             it completely.
@@ -2412,7 +2414,7 @@ function R22Champion({ pageImages }) {
             Captain Q's flying predates the championship by decades. He is the first pilot to have
             circumnavigated the globe pole-to-pole by helicopter, a feat that required every skill
             the R22 teaches and none of the systems that modern types provide. HQ Aviation's
-            instruction ethos — that a pilot trained properly on the R22 can fly anything — comes
+            instruction ethos, that a pilot trained properly on the R22 can fly anything, comes
             directly from this lineage.
           </p>
           <p>
@@ -2621,7 +2623,7 @@ function R22VariantComparison() {
             </h2>
             <p>
               Four variants, one airframe. Compare the Alpha, Beta, Beta II and
-              Mariner to land on the R22 that fits your mission — then talk to
+              Mariner to land on the R22 that fits your mission. Then talk to
               HQ Aviation about sourcing one.
             </p>
           </div>
@@ -2736,6 +2738,17 @@ function AircraftR22() {
       <R22Styles />
       <R22Header />
       <R22Hero />
+      <section className="r22-price-section">
+        <AircraftPriceBlock modelId="r22" subtypes={getSubtypes('r22')} />
+        <style>{`
+          .r22-price-section {
+            display: flex;
+            justify-content: center;
+            padding: 3rem 1.5rem 0;
+            background: #faf9f6;
+          }
+        `}</style>
+      </section>
       <div className="r22-sticky-stack">
         <R22Highlights />
         <R22Introduction />

@@ -6,12 +6,18 @@ import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { CLASSES, CONFIDENCE, MARKET_STATUS } from '../../lib/comparablesSchema';
 
+const PILL_STYLES = {
+  verified:         { bg: '#e8f0e8', fg: '#2a652a' },
+  estimate:         { bg: '#fff4e0', fg: '#a06a00' },
+  'pre-production': { bg: '#eef0f7', fg: '#3d4a8a' },
+};
+
 function ProvenancePill({ confidence }) {
-  const isVerified = confidence === 'verified';
+  const style = PILL_STYLES[confidence] || PILL_STYLES.estimate;
   return (
     <span style={{
-      background: isVerified ? '#e8f0e8' : '#fff4e0',
-      color: isVerified ? '#2a652a' : '#a06a00',
+      background: style.bg,
+      color: style.fg,
       padding: '0.1rem 0.45rem',
       fontSize: '0.7rem',
       fontWeight: 600,

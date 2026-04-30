@@ -7,8 +7,12 @@ export const CLASSES = [
 ];
 
 export const FUEL_TYPES = ['avgas-100ll', 'jet-a1'];
-export const CONFIDENCE = ['verified', 'estimate'];
+export const CONFIDENCE = ['verified', 'estimate', 'pre-production'];
 export const MARKET_STATUS = ['in-production', 'used-only'];
+
+export function isPreProduction(doc) {
+  return doc?.costsConfidence === 'pre-production';
+}
 
 const CLASS_IDS = CLASSES.map((c) => c.id);
 

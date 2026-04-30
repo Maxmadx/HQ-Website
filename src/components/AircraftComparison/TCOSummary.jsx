@@ -1,4 +1,5 @@
 import { multiYearTCO, totalCostPerYear } from '../../lib/tco';
+import { isPreProduction } from '../../lib/comparablesSchema';
 
 const GBP_LARGE = (v) => {
   if (v == null) return '—';
@@ -44,10 +45,21 @@ export default function TCOSummary({ aircraft, hours, years, defaults, onChangeH
 
       <div className="tco-cards">
         {aircraft.map((a) => {
-          const tco = multiYearTCO(a, effectiveHours, effectiveYears, defaults);
-          const annualOp = totalCostPerYear(a, effectiveHours, defaults);
           const acquisition = a.acquisition?.priceNewGbp;
           const usedRange = a.acquisition?.priceUsedRangeGbp;
+          if (isPreProduction(a)) {
+            return (
+              <div key={a.id} className="tco-card">
+                <div className="tco-card__name">{a.model}</div>
+                <div className="tco-card__total">—</div>
+                <div className="tco-card__caption">
+                  pre-production · starting at {GBP_LARGE(acquisition)} · operating costs unavailable until certification
+                </div>
+              </div>
+            );
+          }
+          const tco = multiYearTCO(a, effectiveHours, effectiveYears, defaults);
+          const annualOp = totalCostPerYear(a, effectiveHours, defaults);
           return (
             <div key={a.id} className="tco-card">
               <div className="tco-card__name">{a.model}</div>

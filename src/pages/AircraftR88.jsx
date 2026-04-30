@@ -30,6 +30,8 @@ import '../assets/css/components.css';
 
 // Import Footer
 import FooterMinimal from '../components/FooterMinimal';
+import AircraftPriceBlock from '../components/AircraftPriceBlock';
+import { getSubtypes } from '../config/aircraftCatalog';
 import HqMenuPanel from '../components/HqMenuPanel';
 
 // ============================================================================
@@ -779,7 +781,7 @@ function R88Engine() {
                   The Safran Arriel family represents one of the most successful turboshaft
                   engine programs in aviation history, with over 66 million flight hours
                   accumulated across the global fleet. This partnership extends Robinson's
-                  reliability and affordability heritage to their most ambitious airframe yet —
+                  reliability and affordability heritage to their most ambitious airframe yet,
                   delivering turbine capability at an operating cost that undercuts comparable
                   turbine twins.
                 </p>
@@ -851,7 +853,7 @@ function R88Engine() {
                   </div>
                   <p className="r88-engine__serenity-lead">
                     Robinson is the only helicopter manufacturer to bundle Safran's Serenity
-                    engine support standard with every aircraft — a first-of-its-kind offering
+                    engine support standard with every aircraft, a first-of-its-kind offering
                     in commercial rotorcraft.
                   </p>
                   <ul className="r88-engine__serenity-list">
@@ -948,7 +950,7 @@ function R88Avionics() {
               <Reveal delay={0.1}>
                 <p className="r88-avionics__intro">
                   The R88 pairs a full Garmin glass flight deck with conventional dual
-                  pilot controls and a fully integrated avionics architecture — engine
+                  pilot controls and a fully integrated avionics architecture: engine
                   monitoring, autopilot interfaces and communication systems all routed
                   through a single modern cockpit designed for commercial and multi-pilot
                   operations from day one.
@@ -1341,7 +1343,7 @@ function R88Reconfigurable() {
                   Switch the R88 from a full eight-passenger commuter to a cargo hauler,
                   medevac platform, or executive shuttle without tools or a trip to the
                   hangar. Every seat row slides on rails, latches into floor tracks, and
-                  removes in seconds — letting a single operator reshape the cabin to
+                  removes in seconds, letting a single operator reshape the cabin to
                   match the mission.
                 </p>
               </Reveal>
@@ -1528,7 +1530,7 @@ function TimelineVideoFacade({ videoId, label, title, onPlay }) {
                   ref={iframeRef}
                   className="r88-timeline__video-iframe"
                   src={embedSrc}
-                  title={`${title} — development footage`}
+                  title={`${title} development footage`}
                   loading="lazy"
                   tabIndex={-1}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -1674,7 +1676,7 @@ const ctaContent = {
     preTextShort: 'BETTER ECONOMICS',
     headingDark: 'Understand How',
     headingLight: 'the R88 Fits',
-    lead: "150+ operators have already registered. The R88's lower operating cost per seat means that if your competitors adopt it before you, they can undercut your rates, win more contracts, and scale faster — while you're still flying older, more expensive iron.",
+    lead: "150+ operators have already registered. The R88's lower operating cost per seat means that if your competitors adopt it before you, they can undercut your rates, win more contracts, and scale faster, while you're still flying older, more expensive iron.",
     benefits: [
       { icon: 'fa-chart-line', text: 'Understand How the R88 Fits Your Operation' },
       { icon: 'fa-users',      text: 'Learn How Peer Operators Are Deploying' },
@@ -1688,7 +1690,7 @@ const ctaContent = {
     preTextShort: 'THE NEW STANDARD',
     headingDark: 'Own the',
     headingLight: 'Unfair Advantage',
-    lead: "Ten seats, turbine power, 350+ nm range. The R88 does what no Robinson has ever done — and at a fraction of what comparable turbine aircraft cost to own and operate. Reserve your position before deliveries fill.",
+    lead: "Ten seats, turbine power, 350+ nm range. The R88 does what no Robinson has ever done, and at a fraction of what comparable turbine aircraft cost to own and operate. Reserve your position before deliveries fill.",
     benefits: [
       { icon: 'fa-shield-alt', text: 'Reserve Your Delivery Position Now' },
       { icon: 'fa-tag',        text: 'Lock In Pre-Production Pricing' },
@@ -1733,7 +1735,7 @@ function R88CTA() {
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
-          subject: `R88 Register — ${useType === 'commercial' ? 'Commercial' : 'Private'} Use`,
+          subject: `R88 Register: ${useType === 'commercial' ? 'Commercial' : 'Private'} Use`,
           message: messageParts.join('\n'),
           source: 'R88 Register',
         }),
@@ -1870,7 +1872,7 @@ function R88CTA() {
             </div>
             {formStatus === 'error' && (
               <p className="r88-cta__error">
-                Something went wrong — please try again or email{' '}
+                Something went wrong. Please try again or email{' '}
                 <a href="mailto:sales@hqaviation.com">sales@hqaviation.com</a>
               </p>
             )}
@@ -5296,6 +5298,9 @@ function AircraftR88() {
       <R88Header />
       <main>
         <R88Hero />
+        <section style={{ display: 'flex', justifyContent: 'center', padding: '3rem 1.5rem 0', background: '#faf9f6' }}>
+          <AircraftPriceBlock modelId="r88" subtypes={getSubtypes('r88')} />
+        </section>
         <div className="r88-sticky-stack">
           <R88Highlights />
           <R88Introduction />

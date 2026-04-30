@@ -6,6 +6,7 @@ import {
   MARKET_STATUS,
   validateComparable,
   isUsedOnly,
+  isPreProduction,
 } from './comparablesSchema';
 
 describe('comparablesSchema constants', () => {
@@ -24,7 +25,7 @@ describe('comparablesSchema constants', () => {
   });
 
   it('lists confidence levels', () => {
-    expect(CONFIDENCE).toEqual(['verified', 'estimate']);
+    expect(CONFIDENCE).toEqual(['verified', 'estimate', 'pre-production']);
   });
 
   it('lists market status values', () => {
@@ -40,6 +41,18 @@ describe('isUsedOnly', () => {
   it('returns false otherwise', () => {
     expect(isUsedOnly({ marketStatus: 'in-production' })).toBe(false);
     expect(isUsedOnly({})).toBe(false);
+  });
+});
+
+describe('isPreProduction', () => {
+  it('returns true when costsConfidence is pre-production', () => {
+    expect(isPreProduction({ costsConfidence: 'pre-production' })).toBe(true);
+  });
+
+  it('returns false otherwise', () => {
+    expect(isPreProduction({ costsConfidence: 'verified' })).toBe(false);
+    expect(isPreProduction({ costsConfidence: 'estimate' })).toBe(false);
+    expect(isPreProduction({})).toBe(false);
   });
 });
 
@@ -112,5 +125,23 @@ describe('validateComparable', () => {
   it('returns the guard-clause error for non-object input', () => {
     expect(validateComparable(null)).toEqual(['document must be an object']);
     expect(validateComparable('string')).toEqual(['document must be an object']);
+  });
+
+  it('accepts a pre-production aircraft with omitted cost fields', () => {
+    const r88 = {
+      id: 'r88',
+      manufacturer: 'Robinson',
+      model: 'R88',
+      displayName: 'R88',
+      class: 'medium-turbine',
+      marketStatus: 'in-production',
+      isRobinson: true,
+      fuelType: 'jet-a1',
+      specs: { seats: 10, cruiseSpeedKts: 120, rangeNm: 350, usefulLoadLbs: 2800, fuelCapacityGal: 130 },
+      acquisition: { priceNewGbp: 2600000 },
+      costsSource: 'Pre-production. Specs from Robinson at Verticon 2025.',
+      costsConfidence: 'pre-production',
+    };
+    expect(validateComparable(r88)).toEqual([]);
   });
 });

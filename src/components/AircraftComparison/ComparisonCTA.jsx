@@ -42,7 +42,7 @@ export default function ComparisonCTA({ selectedAircraft }) {
       </div>
 
       {submitted ? (
-        <p className="comparison-cta__thanks">Thanks — we'll be in touch within one working day.</p>
+        <p className="comparison-cta__thanks">Thanks. We'll be in touch within one working day.</p>
       ) : (
         <form className="comparison-cta__form" onSubmit={handleSubmit}>
           <input type="text" required placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} />

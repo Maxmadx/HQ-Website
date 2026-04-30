@@ -29,6 +29,8 @@ import '../assets/css/components.css';
 
 // Import Footer
 import FooterMinimal from '../components/FooterMinimal';
+import AircraftPriceBlock from '../components/AircraftPriceBlock';
+import { getSubtypes } from '../config/aircraftCatalog';
 import HqMenuPanel from '../components/HqMenuPanel';
 
 // ============================================================================
@@ -320,7 +322,7 @@ const r44ProvenCards = [
   },
   {
     title: 'Proven Worldwide',
-    description: 'Over 6,500 delivered and in active service on every continent — the most-produced civilian helicopter of its era, with the deepest global support network in piston rotorcraft.',
+    description: 'Over 6,500 delivered and in active service on every continent. The most-produced civilian helicopter of its era, with the deepest global support network in piston rotorcraft.',
     icon: 'fa-globe',
   },
 ];
@@ -329,7 +331,7 @@ const r44ProvenCards = [
 const lycomingFeatures = [
   {
     title: 'Proven Powerplant',
-    description: "The Lycoming IO-540 is one of general aviation's most trusted engines — a fuel-injected, air-cooled flat-six with decades of service across fixed-wing and rotary aircraft worldwide.",
+    description: "The Lycoming IO-540 is one of general aviation's most trusted engines: a fuel-injected, air-cooled flat-six with decades of service across fixed-wing and rotary aircraft worldwide.",
     stat: 'IO-540',
     statLabel: 'Engine Family',
   },
@@ -341,13 +343,13 @@ const lycomingFeatures = [
   },
   {
     title: 'Torque-Rich Design',
-    description: "Spinning a 33-foot main rotor plus tail rotor demands torque, not just horsepower. The IO-540 delivers nearly 800 ft·lbs — the muscle that makes the R44 smooth in every flight regime.",
+    description: "Spinning a 33-foot main rotor plus tail rotor demands torque, not just horsepower. The IO-540 delivers nearly 800 ft·lbs, the muscle that makes the R44 smooth in every flight regime.",
     stat: '~800',
     statLabel: 'FT·LBS Torque',
   },
   {
     title: '2,200-Hour TBO',
-    description: "Factory time-between-overhaul is 2,200 hours or 12 years — a direct reflection of how gently the airframe treats the engine, keeping ownership costs predictable year after year.",
+    description: "Factory time-between-overhaul is 2,200 hours or 12 years, a direct reflection of how gently the airframe treats the engine, keeping ownership costs predictable year after year.",
     stat: '2,200',
     statLabel: 'Hours TBO',
   },
@@ -423,12 +425,12 @@ const variantComparison = {
 const r44Timeline = [
   { year: '1990', title: 'First Flight', description: 'R44 prototype takes to the skies on 31 March.', status: 'completed' },
   { year: '1992', title: 'FAA Certification', description: 'R44 Astro receives its FAA Type Certificate; first delivery follows in February 1993.', status: 'completed' },
-  { year: '1997', title: 'First Woman Around The World', highlight: 'Around The World', description: 'Jennifer Murray and co-pilot Quentin Smith complete the first female circumnavigation of the globe by helicopter in an R44 — 97 days, 28 countries.', status: 'completed' },
-  { year: '1999', title: 'Best-Selling Helicopter', description: 'R44 becomes the world\'s best-selling general aviation helicopter — a title it still holds.', status: 'completed' },
-  { year: '2000', title: 'Solo World Circumnavigation', highlight: 'World Circumnavigation', description: 'At age 60, Jennifer Murray flies an R44 solo around the world: 99 days, 36,000 miles, 30 countries — a Guinness World Record.', status: 'completed' },
+  { year: '1997', title: 'First Woman Around The World', highlight: 'Around The World', description: 'Jennifer Murray and co-pilot Quentin Smith complete the first female circumnavigation of the globe by helicopter in an R44. 97 days, 28 countries.', status: 'completed' },
+  { year: '1999', title: 'Best-Selling Helicopter', description: 'R44 becomes the world\'s best-selling general aviation helicopter, a title it still holds.', status: 'completed' },
+  { year: '2000', title: 'Solo World Circumnavigation', highlight: 'World Circumnavigation', description: 'At age 60, Jennifer Murray flies an R44 solo around the world: 99 days, 36,000 miles, 30 countries. A Guinness World Record.', status: 'completed' },
   { year: '2002', title: 'Raven II Launch', description: 'Fuel-injected IO-540 variant introduced, unlocking hot-and-high performance.', status: 'completed' },
-  { year: '2002', title: 'First Piston Helicopter To The North Pole', highlight: 'North Pole', description: 'Captain Quentin Smith and Steve Brooks land an R44 at the Geographic North Pole — the first piston-engined helicopter ever to do so.', status: 'completed' },
-  { year: '2005', title: 'First Piston Helicopter To The South Pole', highlight: 'South Pole', description: 'On 18 January, Smith and Brooks land an R44 Raven II at the Geographic South Pole — making the R44 the first piston helicopter to reach both poles.', status: 'completed' },
+  { year: '2002', title: 'First Piston Helicopter To The North Pole', highlight: 'North Pole', description: 'Captain Quentin Smith and Steve Brooks land an R44 at the Geographic North Pole, the first piston-engined helicopter ever to do so.', status: 'completed' },
+  { year: '2005', title: 'First Piston Helicopter To The South Pole', highlight: 'South Pole', description: 'On 18 January, Smith and Brooks land an R44 Raven II at the Geographic South Pole, making the R44 the first piston helicopter to reach both poles.', status: 'completed' },
   { year: '2015', title: 'Cadet Introduced', description: 'Two-seat trainer variant launched, aimed squarely at flight schools.', status: 'completed' },
   { year: '2026', title: 'R44 Utility', description: 'New heavy-duty Utility interior unveiled at Verticon for rugged mission work.', status: 'upcoming' },
 ];
@@ -439,23 +441,23 @@ const r44ExpeditionSlides = [
     image: '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp',
     alt: 'Jennifer Murray and Quentin Smith with their R44 during the 1997 circumnavigation',
     paragraphs: [
-      "1997 — Jennifer Murray and Captain Quentin Smith become the first female-led crew to circumnavigate the globe by helicopter, flying a piston-engined R44 across 28 countries in just 97 days.",
-      "Europe, the Middle East, India, South-East Asia, Siberia, the Bering Strait, Alaska, Canada, Greenland and Iceland — all in one small Robinson.",
+      "In 1997, Jennifer Murray and Captain Quentin Smith become the first female-led crew to circumnavigate the globe by helicopter, flying a piston-engined R44 across 28 countries in just 97 days.",
+      "Europe, the Middle East, India, South-East Asia, Siberia, the Bering Strait, Alaska, Canada, Greenland and Iceland, all in one small Robinson.",
     ],
   },
   {
     image: '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp',
     alt: 'Jennifer Murray solo R44 circumnavigation',
     paragraphs: [
-      "2000 — Jennifer Murray sets a Guinness World Record as the first woman to circumnavigate the world solo by helicopter, and the first person ever to do so without autopilot.",
-      "99 days. 36,000 miles. 30 countries. One R44, one pilot, age 60 — a benchmark the airframe has quietly carried ever since.",
+      "In 2000, Jennifer Murray sets a Guinness World Record as the first woman to circumnavigate the world solo by helicopter, and the first person ever to do so without autopilot.",
+      "99 days. 36,000 miles. 30 countries. One R44, one pilot, age 60. A benchmark the airframe has quietly carried ever since.",
     ],
   },
   {
     image: '/assets/images/expeditions/north-pole.jpg',
     alt: 'R44 at the Geographic North Pole with Captain Quentin Smith and Steve Brooks',
     paragraphs: [
-      "October 2002 — Captain Quentin Smith and Steve Brooks land an R44 at the Geographic North Pole, the first piston-engined helicopter in history to do it.",
+      "In October 2002, Captain Quentin Smith and Steve Brooks land an R44 at the Geographic North Pole, the first piston-engined helicopter in history to do it.",
       "Sub-arctic cold, deep-field fuel caches, and a two-blade rotor system that simply refused to quit.",
     ],
   },
@@ -463,8 +465,8 @@ const r44ExpeditionSlides = [
     image: '/assets/images/expeditions/antartica.jpg',
     alt: 'R44 Raven II at the Geographic South Pole with Captain Quentin Smith and Steve Brooks',
     paragraphs: [
-      "18 January 2005 — Captain Quentin Smith and Steve Brooks land an R44 Raven II at the Geographic South Pole, making the R44 the first piston-engined helicopter in history to reach both poles.",
-      "From Patagonia across the Drake Passage and down the Antarctic Peninsula — one small Robinson, two pilots, and the harshest continent on Earth.",
+      "On 18 January 2005, Captain Quentin Smith and Steve Brooks land an R44 Raven II at the Geographic South Pole, making the R44 the first piston-engined helicopter in history to reach both poles.",
+      "From Patagonia across the Drake Passage and down the Antarctic Peninsula. One small Robinson, two pilots, and the harshest continent on Earth.",
     ],
   },
 ];
@@ -483,7 +485,7 @@ const r44Variants = [
     name: 'Raven I',
     subtitle: 'The Original',
     tagline: 'The affordable four-seat classic.',
-    description: "The original R44 — a carbureted Lycoming O-540 driving hydraulic controls and a proven two-blade rotor system. The Raven I remains the most affordable route into genuine four-seat helicopter ownership, and HQ Aviation places new orders direct with Robinson in Torrance.",
+    description: "The original R44: a carbureted Lycoming O-540 driving hydraulic controls and a proven two-blade rotor system. The Raven I remains the most affordable route into genuine four-seat helicopter ownership, and HQ Aviation places new orders direct with Robinson in Torrance.",
     image: 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/RAVEN_I_LEFT_new1_57d295b1fd.png',
     useCases: ['Personal ownership', 'Low-hour training', 'Cost-conscious operators'],
     features: [
@@ -499,7 +501,7 @@ const r44Variants = [
     name: 'Raven II',
     subtitle: 'The Best-Seller',
     tagline: 'Fuel-injected, faster, higher.',
-    description: "Fuel-injected Lycoming IO-540 with wider rotor blades and an extra 100 lb of gross weight — the R44 that transformed the platform into a genuine hot-and-high performer. Far and away the most-ordered R44 and the variant most HQ Aviation customers end up choosing new from Robinson.",
+    description: "Fuel-injected Lycoming IO-540 with wider rotor blades and an extra 100 lb of gross weight. This is the R44 that transformed the platform into a genuine hot-and-high performer. Far and away the most-ordered R44 and the variant most HQ Aviation customers end up choosing new from Robinson.",
     image: 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/RAVEN_II_LEFT_v2_new1_06c267b7a0.png',
     useCases: ['Touring', 'Commercial charter', 'Hot-and-high operations'],
     features: [
@@ -515,7 +517,7 @@ const r44Variants = [
     name: 'Cadet',
     subtitle: 'Purpose-Built Trainer',
     tagline: 'Built to train the next generation.',
-    description: "A Raven I airframe with the rear seats removed for cargo, the engine derated, and engine TBO pushed to 2,400 hours — Robinson's factory-built answer to flight-school economics. Cheaper to buy, cheaper to run, and engineered around the hour-building mission.",
+    description: "A Raven I airframe with the rear seats removed for cargo, the engine derated, and engine TBO pushed to 2,400 hours. Robinson's factory-built answer to flight-school economics. Cheaper to buy, cheaper to run, and engineered around the hour-building mission.",
     image: 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/CADET_LEFT_V3_new1_dad7a93887.png',
     useCases: ['Ab-initio PPL training', 'Hour building', 'Two-up charter'],
     features: [
@@ -531,7 +533,7 @@ const r44Variants = [
     name: 'Clipper II Pop-Out',
     subtitle: 'Emergency Floats',
     tagline: 'Land R44 with over-water protection.',
-    description: "A standard Raven II airframe fitted with pop-out emergency floats that inflate in 2–3 seconds when needed — so the helicopter flies like a regular R44 day-to-day but gives pilots a survivable option if an over-water forced landing is required. The right spec for coastal touring, offshore transit and any route that spends meaningful time over water.",
+    description: "A standard Raven II airframe fitted with pop-out emergency floats that inflate in 2–3 seconds when needed, so the helicopter flies like a regular R44 day-to-day but gives pilots a survivable option if an over-water forced landing is required. The right spec for coastal touring, offshore transit and any route that spends meaningful time over water.",
     image: 'https://configurator.robinsonheli.com/assets/images/helicopters/r44-clipper-ii-popout/CLIPPER-POPOUT-LEFT-V2.png',
     useCases: ['Coastal touring', 'Offshore transit', 'Over-water routes'],
     features: [
@@ -547,7 +549,7 @@ const r44Variants = [
     name: 'Clipper II Fixed',
     subtitle: 'Fixed Utility Floats',
     tagline: 'Built to operate from water.',
-    description: "Raven II airframe with permanently-fitted utility floats — designed to operate off water as a primary mission rather than purely for emergencies. The right choice for superyacht ops, island hopping and shoreline landings where water-borne operation is a day-to-day requirement.",
+    description: "Raven II airframe with permanently-fitted utility floats, designed to operate off water as a primary mission rather than purely for emergencies. The right choice for superyacht ops, island hopping and shoreline landings where water-borne operation is a day-to-day requirement.",
     image: 'https://configurator.robinsonheli.com/assets/images/helicopters/r44-clipper-ii-fixed/CLIPPER-II-FIXED-LEFT-V3.png',
     useCases: ['Superyacht ops', 'Island hopping', 'Shoreline landings'],
     features: [
@@ -649,7 +651,7 @@ function R44Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1 }}
         >
-          Frank Robinson's four-seat masterpiece — the most-built civilian
+          Frank Robinson's four-seat masterpiece, the most-built civilian
           helicopter in history, and still the most sensible way into ownership.
         </motion.p>
 
@@ -784,7 +786,7 @@ function R44Intro() {
             <p className="r44-intro__text">
               Frank Robinson founded Robinson Helicopter Company in his Palos Verdes living
               room in 1973 with a single obsession: a civilian helicopter normal people could
-              actually afford to own and fly. The R44 — first flown in 1990, certified in 1992 —
+              actually afford to own and fly. The R44, first flown in 1990 and certified in 1992,
               is the fullest expression of that idea, and the world's best-selling general
               aviation helicopter every year since 1999.
             </p>
@@ -792,7 +794,7 @@ function R44Intro() {
           <Reveal delay={0.3}>
             <p className="r44-intro__text">
               More than 6,500 have been built. Parts are available globally, mechanics
-              everywhere are trained on it, and direct operating cost sits below £230/hr —
+              everywhere are trained on it, and direct operating cost sits below £230/hr.
               which is why it remains the smartest first helicopter most private buyers and
               schools will ever purchase. In March 2026 Robinson added the new R44 Utility
               interior package, bringing factory-built agricultural and doors-off capability
@@ -1172,7 +1174,7 @@ function R44Engine() {
             <Reveal delay={0.2}>
               <p className="r44-engine__lead">
                 Every R44 flying today is powered by a derated version of the Lycoming
-                IO-540 — one of general aviation's most respected piston engines. This
+                IO-540, one of general aviation's most respected piston engines. This
                 partnership is the single biggest reason R44 ownership costs are as
                 predictable as they are.
               </p>
@@ -1256,14 +1258,14 @@ function R44Engine() {
                     variant each year, and the figures line up with what owners actually
                     see on the invoice. Fuel is the single largest line, overhaul reserves
                     are fixed and published, and parts availability through the global
-                    dealer network keeps AOG time short — all of which is why the R44 is
+                    dealer network keeps AOG time short. All of which is why the R44 is
                     the most straightforward piston helicopter on the market to budget,
                     finance and run.
                   </p>
                   <ul className="r44-engine__cost-list">
-                    <li><i className="fas fa-gas-pump"></i><span>~15 US gal/hr fuel burn — dominant line item</span></li>
+                    <li><i className="fas fa-gas-pump"></i><span>~15 US gal/hr fuel burn, the dominant line item</span></li>
                     <li><i className="fas fa-tools"></i><span>Predictable reserves for overhaul &amp; maintenance</span></li>
-                    <li><i className="fas fa-infinity"></i><span>Global parts availability — any field, any country</span></li>
+                    <li><i className="fas fa-infinity"></i><span>Global parts availability, any field, any country</span></li>
                   </ul>
                 </div>
               </Reveal>
@@ -1318,7 +1320,7 @@ function R44VariantComparison() {
             </h2>
             <p>
               Five variants, one airframe. Use this comparison to land on the R44
-              that fits your mission — then talk to HQ Aviation about ordering one
+              that fits your mission. Then talk to HQ Aviation about ordering one
               direct from Robinson.
             </p>
           </div>
@@ -1774,7 +1776,7 @@ const r44CtaContent = {
   preTextShort: 'OWNERSHIP',
   headingDark: 'Ready to',
   headingLight: 'Experience the R44?',
-  lead: "The world's best-selling general aviation helicopter every year since 1999 — with direct operating cost below \u00a3230/hr, global parts availability and Robinson's proven Lycoming IO-540 powertrain. Speak with our sales team about new orders, trade-ins, finance and ownership packages.",
+  lead: "The world's best-selling general aviation helicopter every year since 1999, with direct operating cost below \u00a3230/hr, global parts availability and Robinson's proven Lycoming IO-540 powertrain. Speak with our sales team about new orders, trade-ins, finance and ownership packages.",
   benefits: [
     { icon: 'fa-helicopter',      text: 'Configure Your Ideal R44 Variant' },
     { icon: 'fa-handshake',       text: 'Direct Consultation With Sales Team' },
@@ -1918,7 +1920,7 @@ function R44CTA() {
               </div>
               {formStatus === 'error' && (
                 <p className="r44-cta__error">
-                  Something went wrong — please try again or email{' '}
+                  Something went wrong. Please try again or email{' '}
                   <a href="mailto:sales@hqaviation.com">sales@hqaviation.com</a>
                 </p>
               )}
@@ -1970,6 +1972,9 @@ function AircraftR44() {
     <div className="r44">
       <R44Header />
       <R44Hero />
+      <section style={{ display: 'flex', justifyContent: 'center', padding: '3rem 1.5rem 0', background: '#faf9f6' }}>
+        <AircraftPriceBlock modelId="r44" subtypes={getSubtypes('r44')} />
+      </section>
       <R44Intro />
       <R44Counter />
       <R44Specs />
