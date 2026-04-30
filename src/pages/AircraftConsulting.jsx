@@ -1546,6 +1546,10 @@ function AircraftConsulting() {
           grid-template-columns: repeat(3, 1fr);
           gap: 1.25rem;
           margin-top: 4rem;
+          align-items: stretch;
+        }
+        .ac-why__grid > * {
+          display: flex;
         }
         .ac-why__card {
           background: rgba(255, 255, 255, 0.04);
@@ -1553,6 +1557,9 @@ function AircraftConsulting() {
           border-radius: 8px;
           padding: 1.75rem;
           transition: background 0.2s ease;
+          display: flex;
+          flex-direction: column;
+          height: 100%;
         }
         .ac-why__card:hover {
           background: rgba(255, 255, 255, 0.07);
