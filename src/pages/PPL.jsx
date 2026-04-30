@@ -192,7 +192,7 @@ function PPL() {
             </h2>
             <div className="ppl-intro__text">
               <p>
-                The PPL(H) — Private Pilot License (Helicopters) — grants you the privilege
+                The PPL(H), or Private Pilot License (Helicopters), grants you the privilege
                 to fly helicopters for private purposes. Whether you dream of weekend adventures,
                 visiting friends across the country, or simply experiencing the pure joy of flight,
                 this is where it all begins.
@@ -252,7 +252,7 @@ function PPL() {
           <RevealSection className="ppl-journey__header">
             <span className="ppl-section-number">03</span>
             <h2>The Training Journey</h2>
-            <p>From first flight to skills test — your path to earning wings</p>
+            <p>From first flight to skills test, your path to earning wings</p>
           </RevealSection>
 
           <div className="ppl-journey__timeline">

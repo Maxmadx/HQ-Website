@@ -167,10 +167,10 @@ function PilotProvisioning() {
   const { faqs: rawFaqs } = useFaqs('pilot-provisioning', { visibleOnly: true });
   const fallbackFaqs = [
     { id: 'f1', question: 'How quickly can you provide a pilot?', answer: 'For planned operations, we ask for at least 48 hours notice to arrange briefing and documentation. For urgent requirements, contact us directly and we\'ll do our best to accommodate you.' },
-    { id: 'f2', question: 'Is the pilot insured by HQ or do I need my own cover?', answer: 'HQ arranges appropriate insurance for provisioning engagements. Details are confirmed at the time of booking — we want to be completely clear on cover before any pilot departs.' },
+    { id: 'f2', question: 'Is the pilot insured by HQ or do I need my own cover?', answer: 'HQ arranges appropriate insurance for provisioning engagements. Details are confirmed at the time of booking and we want to be completely clear on cover before any pilot departs.' },
     { id: 'f3', question: 'Can you provide pilots for aircraft not in the Robinson range?', answer: 'Our core team is Robinson-specialised, but we have relationships with pilots rated on turbine types including the AS350, Hughes 500, and Bell 407. Contact us with your specific requirement.' },
     { id: 'f4', question: 'What if the mission changes on the day?', answer: 'Our pilots are briefed to make go/no-go decisions independently based on conditions. Any significant change to the planned mission is discussed with you before departure.' },
-    { id: 'f5', question: 'Do you provide pilots for overseas operations?', answer: 'Yes — we support European and further afield operations. Additional lead time and documentation requirements apply. See our SuperYacht Operations service for yacht-based seasonal programmes.' },
+    { id: 'f5', question: 'Do you provide pilots for overseas operations?', answer: 'Yes, we support European and further afield operations. Additional lead time and documentation requirements apply. See our SuperYacht Operations service for yacht-based seasonal programmes.' },
   ];
   const faqs = rawFaqs.length > 0 ? rawFaqs : fallbackFaqs;
 
@@ -179,35 +179,35 @@ function PilotProvisioning() {
   const servicePanels = [
     {
       tag: 'Most Requested', num: '01', title: 'Safety Pilots',
-      description: 'A safety pilot flies alongside you to provide an additional layer of oversight — particularly useful when operating in unfamiliar airspace, carrying passengers on long legs, or flying in marginal conditions where a second set of eyes and hands provides genuine reassurance. All HQ safety pilots are experienced instructors.',
+      description: 'A safety pilot flies alongside you to provide an additional layer of oversight, particularly useful when operating in unfamiliar airspace, carrying passengers on long legs, or flying in marginal conditions where a second set of eyes and hands provides genuine reassurance. All HQ safety pilots are experienced instructors.',
       details: ['Current FI(H) rating', 'Minimum 500 hours total time', 'Type-rated on your aircraft', 'Fully insured for the operation'],
       image: pageImages['pp-panel-1']?.[0]?.url || '/assets/images/gallery/carousel/rotating1.jpg',
     },
     {
       tag: 'Logistics', num: '02', title: 'Ferry Flights',
-      description: 'Need an aircraft moved? Whether from a maintenance facility back to base, delivery from a purchase, or repositioning for an operation — HQ\'s ferry pilots move your aircraft wherever it needs to go. We handle fuel planning, weather routing, PPR, and all logistics.',
+      description: 'Need an aircraft moved? Whether from a maintenance facility back to base, delivery from a purchase, or repositioning for an operation, HQ\'s ferry pilots move your aircraft wherever it needs to go. We handle fuel planning, weather routing, PPR, and all logistics.',
       details: ['Pre-flight inspection included', 'Weather routing and fuel planning', 'Insurance documentation prepared', 'Full handover record on arrival'],
       image: pageImages['pp-panel-2']?.[0]?.url || '/assets/images/gallery/flying/flying-.jpg',
     },
     {
       tag: 'Extended Operations', num: '03', title: 'Dedicated Crewing',
-      description: 'For ongoing operations — seasonal superyacht programmes, corporate fleet management, extended filming contracts — HQ provides a dedicated crew member on a contract basis with rostering, currency maintenance, and compliance all managed.',
+      description: 'For ongoing operations such as seasonal superyacht programmes, corporate fleet management, or extended filming contracts, HQ provides a dedicated crew member on a contract basis with rostering, currency maintenance, and compliance all managed.',
       details: ['Rostered availability agreed in advance', 'Currency and recurrency training maintained', 'Compliance documentation managed', 'Regular operational briefings included'],
       image: pageImages['pp-panel-3']?.[0]?.url || '/assets/images/gallery/carousel/rotating2.jpg',
     },
   ];
 
   const pilotStandards = [
-    { num: '01', title: 'Current Type Rating', desc: 'Appropriate type rating on the aircraft to be flown — always' },
-    { num: '02', title: '500+ Hours Minimum', desc: 'No newly-qualified pilots — everyone has proven operational experience' },
+    { num: '01', title: 'Current Type Rating', desc: 'Appropriate type rating on the aircraft to be flown, always' },
+    { num: '02', title: '500+ Hours Minimum', desc: 'No newly-qualified pilots. Everyone has proven operational experience.' },
     { num: '03', title: 'Full Insurance Cover', desc: 'HQ arranges appropriate insurance for every provisioning engagement' },
     { num: '04', title: 'Pre-Brief Required', desc: 'Every pilot is briefed on your specific operation and aircraft history before departure' },
   ];
 
   const processSteps = [
-    { num: '01', title: 'Brief', duration: '30 mins', description: 'Tell us the mission — aircraft type, route, date, purpose, and any specific requirements or concerns. The more we know, the better we can match the right pilot.' },
+    { num: '01', title: 'Brief', duration: '30 mins', description: 'Tell us the mission: aircraft type, route, date, purpose, and any specific requirements or concerns. The more we know, the better we can match the right pilot.' },
     { num: '02', title: 'Match', duration: '24 hours', description: 'We identify the most suitable pilot from our team based on type rating, experience, and availability. We won\'t dispatch someone who isn\'t the right fit.' },
-    { num: '03', title: 'Pre-Brief', duration: '1 hour', description: 'Your pilot contacts you directly to discuss the operation. No surprises on the day — everything is agreed in advance.' },
+    { num: '03', title: 'Pre-Brief', duration: '1 hour', description: 'Your pilot contacts you directly to discuss the operation. No surprises on the day. Everything is agreed in advance.' },
     { num: '04', title: 'Debrief', duration: 'Post-mission', description: 'After the mission, a brief report is provided. For extended contracts, regular operational reviews are included as standard.' },
   ];
 
@@ -308,7 +308,7 @@ function PilotProvisioning() {
                 <h2 className="pp-intro__heading">For Every Mission</h2>
                 <p className="pp-intro__body">
                   Whether you need a safety pilot for an unfamiliar route, a ferry pilot to move an
-                  aircraft across the country, or a dedicated crew member for a longer operation — HQ
+                  aircraft across the country, or a dedicated crew member for a longer operation. HQ
                   can provide a fully qualified, current pilot from our experienced team. Every pilot
                   we provision holds the appropriate type ratings, is fully insured, and is briefed on
                   your specific operation before they fly.
@@ -373,7 +373,7 @@ function PilotProvisioning() {
               <h2 className="pp-standards__heading">Pilot Standards</h2>
               <p className="pp-standards__desc">
                 Every pilot we provision meets the same standards we hold our own instructors to.
-                We do not provide bodies — we provide people we would be happy to put in front of
+                We do not provide bodies. We provide people we would be happy to put in front of
                 our own students.
               </p>
             </div>

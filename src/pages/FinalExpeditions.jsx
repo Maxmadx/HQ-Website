@@ -411,7 +411,7 @@ const partners = [
 
 // 16. Featured quote
 const featuredQuote = {
-  text: "The moment you lift off and leave the ground behind, you enter a world that few will ever know. Flying to the ends of the Earth isn't just about the destination — it's about the profound shift in perspective that changes how you see everything.",
+  text: "The moment you lift off and leave the ground behind, you enter a world that few will ever know. Flying to the ends of the Earth isn't just about the destination. It's about the profound shift in perspective that changes how you see everything.",
   author: "Captain Quentin Smith",
   context: "On why he leads expeditions",
 };
@@ -983,7 +983,7 @@ function BookingStepsWaitlist() {
           <div className="fexp-waitlist-form__success">
             <span className="fexp-waitlist-form__success-icon">✓</span>
             <p className="fexp-waitlist-form__success-title">You're on the list</p>
-            <p className="fexp-waitlist-form__success-sub">Thank you — we'll be in touch as soon as new expeditions are announced.</p>
+            <p className="fexp-waitlist-form__success-sub">Thank you. We'll be in touch as soon as new expeditions are announced.</p>
           </div>
         )}
       </div>
@@ -1043,7 +1043,7 @@ const PHILOSOPHY_FEATURES = [
     field: 'Operations',
     title: 'Operations Team',
     body:
-      'Our dedicated team works behind the scenes — ground contacts in ' +
+      'Our dedicated team works behind the scenes, with ground contacts in ' +
       'constant communication, facilitating every aspect of travel for a ' +
       'seamless experience.',
   },

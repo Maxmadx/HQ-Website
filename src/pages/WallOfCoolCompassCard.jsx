@@ -14,7 +14,7 @@ const IMAGES = [
 const VARIATIONS = [
   { id: 'g1', title: 'Cartographer\'s Compass', desc: 'Antique 16-point rose with fleur-de-lis at North, the title arced along the inner ring. Cream parchment, ink-black detail.' },
   { id: 'g2', title: 'Minimal Geometric',       desc: 'White cell, single-weight strokes, clean star and ticks. Title set in fine type at the centre.' },
-  { id: 'g3', title: 'Cockpit HSI',             desc: 'Black instrument face — yellow heading numerals, triangle index, "Wall of Cool" engraved across the bezel.' },
+  { id: 'g3', title: 'Cockpit HSI',             desc: 'Black instrument face with yellow heading numerals, triangle index, "Wall of Cool" engraved across the bezel.' },
   { id: 'g4', title: 'Ship\'s Brass',           desc: 'Warm brass tones, baroque sun-rays, engraved title and ornamented cardinal points. Maritime gravitas.' },
 ];
 
@@ -266,7 +266,7 @@ export default function WallOfCoolCompassCard() {
   return (
     <div className="cmp-page">
       <header className="cmp-topnav">
-        <div className="cmp-topnav__title">Wall of Cool — Compass-Only Centre</div>
+        <div className="cmp-topnav__title">Wall of Cool · Compass-Only Centre</div>
         <nav className="cmp-topnav__links">
           <a className="cmp-topnav__back" href="/wall-of-cool-center-card-variations-4">← Travel II</a>
           {VARIATIONS.map((v) => (

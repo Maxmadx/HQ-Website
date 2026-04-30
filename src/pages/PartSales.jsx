@@ -33,7 +33,7 @@ function PartSales() {
         body: JSON.stringify({
           name: partsEmail, // email used as identifier since no name field
           email: partsEmail,
-          subject: partsAircraft ? `Parts Enquiry — ${partsAircraft}` : 'Parts Enquiry',
+          subject: partsAircraft ? `Parts Enquiry: ${partsAircraft}` : 'Parts Enquiry',
           message: [partsDesc && `Part: ${partsDesc}`, partsInfo && `Info: ${partsInfo}`].filter(Boolean).join('\n'),
           source: 'parts-enquiry',
         }),
@@ -438,7 +438,7 @@ function PartSales() {
           <p className="ps-hero__desc">
             As one of the biggest Robinson service centres in Europe, we have a constant influx of parts
             and excellent relations with the Robinson factory. Our £500K+ parts inventory
-            spans engine components, airframe parts, consumables, avionics, and accessories — with same-day
+            spans engine components, airframe parts, consumables, avionics, and accessories, with same-day
             dispatch available for AOG situations.
           </p>
         </section>

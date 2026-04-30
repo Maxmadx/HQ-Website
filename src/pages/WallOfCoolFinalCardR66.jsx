@@ -14,7 +14,7 @@ const IMAGES = [
 const R66_SRC = '/assets/images/icons/r66-icon-transparent going right.svg';
 
 const VARIATIONS = [
-  { id: 'h1', title: 'Helicopter Above Title',     desc: 'R66 silhouette sits between the cheatlines and the title — straightforward editorial lockup.' },
+  { id: 'h1', title: 'Helicopter Above Title',     desc: 'R66 silhouette sits between the cheatlines and the title, a straightforward editorial lockup.' },
   { id: 'h2', title: 'Helicopter Trailing Cheatlines', desc: 'The red and white stripes become a motion trail; the R66 emerges from the right edge of them.' },
   { id: 'h3', title: 'Helicopter Watermark',       desc: 'Large faint R66 sits behind the title as a watermark, the cheatlines and type stay confidently in front.' },
   { id: 'h4', title: 'Helicopter Replaces Title',  desc: 'The R66 is the dominant graphic; the wordmark drops to a fine mono caption beneath.' },
@@ -132,7 +132,7 @@ export default function WallOfCoolFinalCardR66() {
   return (
     <div className="r66-page">
       <header className="r66-topnav">
-        <div className="r66-topnav__title">Wall of Cool — Final Card · with R66</div>
+        <div className="r66-topnav__title">Wall of Cool · Final Card · with R66</div>
         <nav className="r66-topnav__links">
           <a className="r66-topnav__back" href="/wall-of-cool-final-card">← Final (no heli)</a>
           {VARIATIONS.map((v) => (

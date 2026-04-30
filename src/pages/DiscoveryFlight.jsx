@@ -399,6 +399,7 @@ function ValueProposition() {
   const [selectedTime, setSelectedTime] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const [openCard, setOpenCard] = useState(null);
+  const [carouselIndex, setCarouselIndex] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -447,27 +448,37 @@ function ValueProposition() {
     setOpenCard(prev => prev === id ? null : id);
   };
 
+  const handleCarouselPrev = () => {
+    setCarouselIndex(i => (i - 1 + aircraftWithPricing.length) % aircraftWithPricing.length);
+  };
+  const handleCarouselNext = () => {
+    setCarouselIndex(i => (i + 1) % aircraftWithPricing.length);
+  };
+
   return (
     <section id="select-flight" className="df-value">
       <div className="df-value__container">
         <div className="df-value__content">
-          <Reveal>
-            <span className="df-pre-text">{t('discovery-value-prop', 'pre_label')}</span>
-            <h2>
-              <span className="df-text--dark">{t('discovery-value-prop', 'heading_1')}</span>{' '}
-              <span className="df-text--light">{t('discovery-value-prop', 'heading_2')}</span>
-            </h2>
-            <p className="df-value__intro">
-              {t('discovery-value-prop', 'paragraph_1')}
-            </p>
-          </Reveal>
+          <div className="df-value__layout">
+            <div className="df-value__intro-col">
+              <Reveal>
+                <span className="df-pre-text">{t('discovery-value-prop', 'pre_label')}</span>
+                <h2>
+                  <span className="df-text--dark">{t('discovery-value-prop', 'heading_1')}</span>{' '}
+                  <span className="df-text--light">{t('discovery-value-prop', 'heading_2')}</span>
+                </h2>
+                <p className="df-value__intro">
+                  {t('discovery-value-prop', 'paragraph_1')}
+                </p>
+              </Reveal>
+            </div>
 
-          <div className={`df-cards ${selectedCard ? 'has-focus' : ''}`} data-cms-section="discovery-aircraft">
-            {aircraftWithPricing.map((aircraft, index) => (
-              <Reveal key={aircraft.id} delay={index * 0.1}>
-                {isMobile ? (
-                  /* ---- MOBILE: accordion ---- */
-                  <div className={`df-card ${aircraft.featured ? 'df-card--featured' : ''}`}>
+            <div className="df-value__cards-col">
+              {isMobile ? (
+                <div className={`df-cards ${selectedCard ? 'has-focus' : ''}`} data-cms-section="discovery-aircraft">
+                  {aircraftWithPricing.map((aircraft, index) => (
+                    <Reveal key={aircraft.id} delay={index * 0.1}>
+                      <div className={`df-card ${aircraft.featured ? 'df-card--featured' : ''}`}>
                     <div
                       className="df-card__acc-header"
                       onClick={() => handleAccordionToggle(aircraft.id)}
@@ -554,73 +565,109 @@ function ValueProposition() {
                         </motion.div>
                       )}
                     </AnimatePresence>
-                  </div>
-                ) : (
-                  /* ---- DESKTOP: unchanged ---- */
-                  <motion.div
-                    className={`df-card ${aircraft.featured ? 'df-card--featured' : ''} ${selectedCard === aircraft.id ? 'df-card--focused' : ''}`}
-                    whileHover={{ y: -4 }}
+                      </div>
+                    </Reveal>
+                  ))}
+                </div>
+              ) : (
+                <div className="df-carousel" data-cms-section="discovery-aircraft">
+                  <button
+                    type="button"
+                    className="df-carousel__chevron df-carousel__chevron--prev"
+                    onClick={handleCarouselPrev}
+                    aria-label="Previous aircraft"
                   >
-                    {aircraft.featured && !selectedCard && (
-                      <span className="df-card__badge">RECOMMENDED</span>
-                    )}
-                    <div className="df-card__image">
-                      <img src={aircraft.image} alt={aircraft.name} />
-                    </div>
-                    <div className="df-card__content">
-                      <div className="df-card__header">
-                        <h3 className="df-card__name">{t(sectionForAircraft[aircraft.id], 'name')}</h3>
-                        <p className="df-card__tagline">{t(sectionForAircraft[aircraft.id], 'tagline')}</p>
-                        <p className="df-card__desc">{t(sectionForAircraft[aircraft.id], 'description')}</p>
-                        <div className="df-card__seats"><span>{t(sectionForAircraft[aircraft.id], 'seats')}</span></div>
-                      </div>
-                      <div className="df-card__pricing">
-                        <div
-                          className={`df-card__time ${selectedCard === aircraft.id && selectedTime === 30 ? 'selected' : ''}`}
-                          onClick={() => handleTimeSelect(aircraft.id, 30)}
-                        >
-                          <div className="df-card__time-info">
-                            <span className="df-card__time-duration">{t(sectionForAircraft[aircraft.id], 'label_30min')}</span>
-                            <span className="df-card__time-desc">{t(sectionForAircraft[aircraft.id], 'desc_30min')}</span>
-                          </div>
-                          <span className="df-card__price">{aircraft.priceFmt[30]}</span>
-                        </div>
-                        <div
-                          className={`df-card__time ${selectedCard === aircraft.id && selectedTime === 60 ? 'selected' : ''}`}
-                          onClick={() => handleTimeSelect(aircraft.id, 60)}
-                        >
-                          <div className="df-card__time-info">
-                            <span className="df-card__time-duration">{t(sectionForAircraft[aircraft.id], 'label_60min')}</span>
-                            <span className="df-card__time-desc">{t(sectionForAircraft[aircraft.id], 'desc_60min')}</span>
-                          </div>
-                          <span className="df-card__price">{aircraft.priceFmt[60]}</span>
-                        </div>
-                      </div>
-                      <button
-                        className={`df-card__btn ${selectedCard === aircraft.id && selectedTime ? 'active' : ''}`}
-                        onClick={() => handleBook(aircraft.id)}
-                        disabled={selectedCard !== aircraft.id || !selectedTime}
-                      >
-                        {selectedCard === aircraft.id && selectedTime
-                          ? `Book Now - ${aircraft.priceFmt[selectedTime]}`
-                          : 'Select Duration'}
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
-              </Reveal>
-            ))}
-          </div>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <polyline points="14 6 8 12 14 18" />
+                    </svg>
+                  </button>
+                  <div className="df-carousel__viewport">
+                    <AnimatePresence mode="wait">
+                      {(() => {
+                        const aircraft = aircraftWithPricing[carouselIndex];
+                        if (!aircraft) return null;
+                        return (
+                          <motion.div
+                            key={aircraft.id}
+                            className={`df-card df-carousel__card ${aircraft.featured ? 'df-card--featured' : ''} ${selectedCard === aircraft.id ? 'df-card--focused' : ''}`}
+                            initial={{ opacity: 0, x: 30 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -30 }}
+                            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                          >
+                            {aircraft.featured && !selectedCard && (
+                              <span className="df-card__badge">RECOMMENDED</span>
+                            )}
+                            <div className="df-card__image">
+                              <img src={aircraft.image} alt={aircraft.name} />
+                            </div>
+                            <div className="df-card__content">
+                              <div className="df-card__header">
+                                <h3 className="df-card__name">{t(sectionForAircraft[aircraft.id], 'name')}</h3>
+                                <p className="df-card__tagline">{t(sectionForAircraft[aircraft.id], 'tagline')}</p>
+                                <p className="df-card__desc">{t(sectionForAircraft[aircraft.id], 'description')}</p>
+                                <div className="df-card__seats"><span>{t(sectionForAircraft[aircraft.id], 'seats')}</span></div>
+                              </div>
+                              <div className="df-card__pricing">
+                                <div
+                                  className={`df-card__time ${selectedCard === aircraft.id && selectedTime === 30 ? 'selected' : ''}`}
+                                  onClick={() => handleTimeSelect(aircraft.id, 30)}
+                                >
+                                  <div className="df-card__time-info">
+                                    <span className="df-card__time-duration">{t(sectionForAircraft[aircraft.id], 'label_30min')}</span>
+                                    <span className="df-card__time-desc">{t(sectionForAircraft[aircraft.id], 'desc_30min')}</span>
+                                  </div>
+                                  <span className="df-card__price">{aircraft.priceFmt[30]}</span>
+                                </div>
+                                <div
+                                  className={`df-card__time ${selectedCard === aircraft.id && selectedTime === 60 ? 'selected' : ''}`}
+                                  onClick={() => handleTimeSelect(aircraft.id, 60)}
+                                >
+                                  <div className="df-card__time-info">
+                                    <span className="df-card__time-duration">{t(sectionForAircraft[aircraft.id], 'label_60min')}</span>
+                                    <span className="df-card__time-desc">{t(sectionForAircraft[aircraft.id], 'desc_60min')}</span>
+                                  </div>
+                                  <span className="df-card__price">{aircraft.priceFmt[60]}</span>
+                                </div>
+                              </div>
+                              <button
+                                className={`df-card__btn ${selectedCard === aircraft.id && selectedTime ? 'active' : ''}`}
+                                onClick={() => handleBook(aircraft.id)}
+                                disabled={selectedCard !== aircraft.id || !selectedTime}
+                              >
+                                {selectedCard === aircraft.id && selectedTime
+                                  ? `Book Now - ${aircraft.priceFmt[selectedTime]}`
+                                  : 'Select Duration'}
+                              </button>
+                            </div>
+                          </motion.div>
+                        );
+                      })()}
+                    </AnimatePresence>
+                  </div>
+                  <button
+                    type="button"
+                    className="df-carousel__chevron df-carousel__chevron--next"
+                    onClick={handleCarouselNext}
+                    aria-label="Next aircraft"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <polyline points="10 6 16 12 10 18" />
+                    </svg>
+                  </button>
+                </div>
+              )}
 
-          <div className="df-cards__footnotes">
-            <p>* Flying time, additional instruction on the ground included within the price</p>
-            <p>* All prices exclude VAT</p>
+              <div className="df-cards__footnotes">
+                <p>* Flying time, additional instruction on the ground included</p>
+                <p>* All prices exclude VAT</p>
+              </div>
+            </div>
           </div>
 
           <Reveal delay={0.2}>
             <div className="df-selector__note">
               <div className="df-selector__note-inner">
-                <span className="df-selector__note-icon">💳</span>
                 <p>
                   <strong>{t('discovery-gift', 'bold_text')}</strong>
                 </p>
@@ -1114,7 +1161,12 @@ function LocationAndFAQ() {
           <a href="https://maps.google.com/?q=HQ+Aviation+Denham" target="_blank" rel="noopener noreferrer" className="df-btn df-btn--outline df-location-faq__directions-desktop">
             Get Directions
           </a>
-          <Link to="/training/faq" className="df-btn df-btn--outline">View All FAQs</Link>
+          <Link
+            to="/training/faq"
+            className={`df-btn df-btn--outline${faqs.length > 6 && !showAllFaqs ? ' df-faq__view-all--mobile-hidden' : ''}`}
+          >
+            View All FAQs
+          </Link>
         </div>
       </Reveal>
     </section>
@@ -1188,6 +1240,99 @@ function DiscoveryFlight() {
   }, []);
   useCmsHighlight();
 
+  // Sticky-blur: pin .df-expect at the later of (top hits header bottom) or
+  // (bottom hits viewport bottom), then progressively blur as .df-location-faq
+  // rises over it. Desktop only; mirrors the .maint-philosophy effect.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const section = document.querySelector('.df-expect');
+    if (!section) return;
+
+    const MAX_BLUR = 10;
+    const EFFECT_START = 0.6;
+    const MEDIA = window.matchMedia('(min-width: 901px)');
+
+    const findRisingSection = () => section.nextElementSibling;
+
+    const setStickTop = () => {
+      if (!MEDIA.matches) {
+        section.style.removeProperty('--df-expect-stick-top');
+        return;
+      }
+      const header = document.querySelector('.Header');
+      const hHeader = header ? header.offsetHeight : 0;
+      const vh = window.innerHeight;
+      const sectionH = section.offsetHeight;
+      // Whichever happens last: top hits header bottom (top: hHeader-1) OR
+      // bottom hits viewport bottom (top: vh - sectionH). Sticky activates
+      // when section.top ≤ stickTop, so the smaller value triggers later.
+      const stickTop = Math.min(hHeader - 1, vh - sectionH);
+      section.style.setProperty('--df-expect-stick-top', `${stickTop}px`);
+    };
+
+    let prevY = window.scrollY;
+    const onScroll = () => {
+      if (!MEDIA.matches) {
+        section.style.setProperty('--df-expect-blur', '0px');
+        section.style.visibility = '';
+        return;
+      }
+      const next = findRisingSection();
+      if (!next) return;
+      const currentY = window.scrollY;
+      const goingUp = currentY < prevY;
+      prevY = currentY;
+
+      const vh = window.innerHeight;
+      const header = document.querySelector('.Header');
+      const hHeader = header ? header.offsetHeight : 0;
+      const sectionH = section.offsetHeight;
+      const stickTop = Math.min(hHeader - 1, vh - sectionH);
+      const rect = next.getBoundingClientRect();
+
+      // Hide once the next section has fully covered the sticky one.
+      section.style.visibility = (rect.top <= stickTop) ? 'hidden' : 'visible';
+
+      if (goingUp) {
+        section.style.transition = 'none';
+        section.style.setProperty('--df-expect-blur', '0px');
+        return;
+      }
+
+      section.style.transition = 'none';
+      const progress = Math.min(1, Math.max(0, (vh - rect.top) / vh));
+      const effective = Math.max(0, (progress - EFFECT_START) / (1 - EFFECT_START));
+      section.style.setProperty('--df-expect-blur', `${effective * MAX_BLUR}px`);
+    };
+
+    const onResize = () => { setStickTop(); onScroll(); };
+    const onMediaChange = () => { setStickTop(); onScroll(); };
+
+    setStickTop();
+    onScroll();
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    MEDIA.addEventListener('change', onMediaChange);
+
+    const ro = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(() => { setStickTop(); onScroll(); })
+      : null;
+    if (ro) {
+      ro.observe(section);
+      const header = document.querySelector('.Header');
+      if (header) ro.observe(header);
+    }
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      MEDIA.removeEventListener('change', onMediaChange);
+      if (ro) ro.disconnect();
+    };
+  }, []);
+
   return (
     <div className="df">
       <DiscoveryHeader />
@@ -1208,7 +1353,7 @@ function DiscoveryFlight() {
           font-family: 'Space Grotesk', -apple-system, sans-serif;
           background: #faf9f6;
           color: #1a1a1a;
-          overflow-x: hidden;
+          overflow-x: clip;
         }
 
         .df-label {
@@ -1262,6 +1407,22 @@ function DiscoveryFlight() {
         .df-pre-text--light::before,
         .df-pre-text--light::after {
           background: rgba(255,255,255,0.2);
+        }
+
+        @media (min-width: 769px) {
+          .df-label,
+          .df-pre-text,
+          .df-hero__label {
+            display: block;
+          }
+          .df-label::before,
+          .df-label::after,
+          .df-pre-text::before,
+          .df-pre-text::after,
+          .df-hero__label::before,
+          .df-hero__label::after {
+            display: none;
+          }
         }
 
         .df-text--dark { color: #1a1a1a; }
@@ -1647,6 +1808,94 @@ function DiscoveryFlight() {
           margin: 0 auto;
         }
 
+        .df-value__layout {
+          display: grid;
+          grid-template-columns: 1fr minmax(440px, 540px);
+          gap: 3rem;
+          align-items: start;
+          margin-top: 2rem;
+          text-align: left;
+        }
+
+        .df-value__intro-col {
+          padding-top: 0.5rem;
+          position: sticky;
+          top: max(10vh, var(--catch-top, 90px));
+          align-self: start;
+        }
+
+        .df-value__cards-col {
+          min-width: 0;
+        }
+
+        .df-carousel {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 2rem 0 0;
+        }
+
+        .df-carousel__viewport {
+          flex: 1;
+          min-width: 0;
+          display: flex;
+          justify-content: center;
+        }
+
+        .df-carousel__card {
+          width: 100%;
+          max-width: 380px;
+        }
+
+        .df-carousel__chevron {
+          width: 52px;
+          height: 52px;
+          border-radius: 50%;
+          border: 1px solid #ebe8e3;
+          background: #fff;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          color: #1a1a1a;
+          box-shadow: 0 4px 18px -6px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+          transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                      box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                      background 0.25s ease,
+                      color 0.25s ease,
+                      border-color 0.25s ease;
+          padding: 0;
+        }
+
+        .df-carousel__chevron svg {
+          width: 18px;
+          height: 18px;
+          stroke: currentColor;
+          stroke-width: 1.5;
+          fill: none;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+        }
+
+        .df-carousel__chevron:hover {
+          background: #1a1a1a;
+          color: #fff;
+          border-color: #1a1a1a;
+          box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.22), 0 2px 6px rgba(0, 0, 0, 0.08);
+          transform: translateY(-2px);
+        }
+
+        .df-carousel__chevron:active {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.16);
+        }
+
+        .df-carousel__chevron:focus-visible {
+          outline: 2px solid #1a1a1a;
+          outline-offset: 3px;
+        }
+
         .df-value__content h2 {
           font-size: clamp(2rem, 4vw, 2.75rem);
           margin: 0.5rem 0 1.5rem;
@@ -1947,7 +2196,7 @@ function DiscoveryFlight() {
           align-items: center;
           gap: 0.4rem;
           padding: 0.35rem 0.75rem;
-          background: #fff;
+          background: #f0efec;
           border: 1px solid #e8e6e2;
           border-left: 3px solid #1a1a1a;
           white-space: nowrap;
@@ -2136,6 +2385,27 @@ function DiscoveryFlight() {
         .df-expect {
           padding: 3rem 2rem;
           background: #faf9f6;
+        }
+
+        /* Sticky-blur: pin .df-expect once its top reaches the header bottom OR
+           its bottom reaches the viewport bottom (whichever is later, so tall
+           sections can be fully read first). The next section rises over it
+           with progressive blur. Desktop only. */
+        @media (min-width: 901px) {
+          .df-expect {
+            position: sticky;
+            top: var(--df-expect-stick-top, 0);
+          }
+          @media (prefers-reduced-motion: no-preference) {
+            .df-expect {
+              filter: blur(var(--df-expect-blur, 0px));
+              will-change: filter;
+            }
+          }
+          .df-expect ~ * {
+            position: relative;
+            z-index: 5;
+          }
         }
 
         .df-expect__container {
@@ -2520,22 +2790,8 @@ function DiscoveryFlight() {
         }
 
         @media (min-width: 1025px) {
-          .df-faq__header .df-label {
-            display: block;
-          }
-          .df-faq__header .df-label::before,
-          .df-faq__header .df-label::after {
-            display: none;
-          }
           .df-faq__header h2 {
             text-align: center;
-          }
-          .df-location__header .df-label {
-            display: block;
-          }
-          .df-location__header .df-label::before,
-          .df-location__header .df-label::after {
-            display: none;
           }
         }
 
@@ -2740,6 +2996,12 @@ function DiscoveryFlight() {
           padding: 0 0 0.25rem;
         }
 
+        .df-value__cards-col .df-cards__footnotes {
+          padding-left: calc(52px + 1rem);
+          padding-right: calc(52px + 1rem);
+          text-align: center;
+        }
+
         .df-cards__footnotes p {
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.72rem;
@@ -2916,6 +3178,23 @@ function DiscoveryFlight() {
             grid-template-columns: repeat(2, 1fr);
           }
 
+          .df-value__layout {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            text-align: center;
+          }
+
+          .df-value__intro-col {
+            padding-top: 0;
+            position: static;
+            top: auto;
+          }
+
+          .df-value__cards-col .df-cards__footnotes {
+            padding-left: 0;
+            padding-right: 0;
+          }
+
           .df-cards {
             flex-direction: column;
             min-height: auto;
@@ -3070,6 +3349,9 @@ function DiscoveryFlight() {
           .df-faq__load-more:hover {
             background: #1a1a1a;
             color: #fff;
+          }
+          .df-faq__view-all--mobile-hidden {
+            display: none !important;
           }
 
           .df-value__stats {

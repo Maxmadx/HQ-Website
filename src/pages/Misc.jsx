@@ -242,7 +242,7 @@ export default function Misc() {
             <span className="misc-eyebrow">HQ Aviation</span>
             <h1 className="misc-title">MISCELLANEOUS</h1>
             <p className="misc-subtitle">
-              Accessories, apparel, ground equipment, training materials and more — everything beyond the aircraft itself, sourced and stocked by HQ.
+              Accessories, apparel, ground equipment, training materials and more, everything beyond the aircraft itself, sourced and stocked by HQ.
             </p>
           </div>
         </section>

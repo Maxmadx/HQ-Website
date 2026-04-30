@@ -34,7 +34,7 @@ export default function WallOfCoolFinalCardSky() {
   return (
     <div className="fcs-page">
       <header className="fcs-topnav">
-        <div className="fcs-topnav__title">Wall of Cool — Final Centre Card · Sky</div>
+        <div className="fcs-topnav__title">Wall of Cool · Final Centre Card · Sky</div>
         <a className="fcs-topnav__back" href="/wall-of-cool-final-card">← Red version</a>
       </header>
 
@@ -43,7 +43,7 @@ export default function WallOfCoolFinalCardSky() {
           <div className="fcs-variant__label">
             <span className="fcs-variant__number">SKY</span>
             <div>
-              <h2 className="fcs-variant__title">Community Wall — Helicopter Adventures</h2>
+              <h2 className="fcs-variant__title">Community Wall: Helicopter Adventures</h2>
               <p className="fcs-variant__desc">Single light-sky-blue cheatline at the top of the centre card. The gallery gradient picks up sky-blue in the middle so the card and the surrounding grid speak the same language.</p>
             </div>
           </div>

@@ -227,7 +227,7 @@ function ParallaxSection({ image, number, label, largeText }) {
       </svg>
 
       <div className="maint-parallax__content">
-        <span className="maint-parallax__number">— {number} —</span>
+        <span className="maint-parallax__number">{number}</span>
         <span className="maint-parallax__label">{label}</span>
         <span className="maint-parallax__large">{largeText}</span>
       </div>
@@ -373,7 +373,7 @@ function PhilosophySection() {
           email: partsForm.email,
           subject: 'Parts Enquiry',
           message: messageParts.join('\n'),
-          source: 'Maintenance — Parts Enquiry',
+          source: 'Maintenance: Parts Enquiry',
         }),
       });
       if (res.ok) {
@@ -447,7 +447,7 @@ function PhilosophySection() {
           <Reveal delay={0.2}>
             <p className="maint-philosophy__body">
               As one of the biggest Robinson service centres in Europe, we hold a £500K+ genuine
-              parts inventory — engine components, airframe parts, consumables, avionics, and
+              parts inventory: engine components, airframe parts, consumables, avionics, and
               accessories. Same-day dispatch available for AOG situations.
             </p>
           </Reveal>
@@ -514,7 +514,7 @@ function PhilosophySection() {
                     <label className="maint-philosophy__parts-field-label">Description <span style={{ fontWeight: 400, color: '#bbb' }}>(optional)</span></label>
                     <textarea
                       className="maint-philosophy__parts-textarea"
-                      placeholder="Any additional details — e.g. hit my tail rotor, need a new blade..."
+                      placeholder="Any additional details, e.g. hit my tail rotor, need a new blade..."
                       value={partsForm.description || ''}
                       onChange={e => setPartsForm(prev => ({ ...prev, description: e.target.value }))}
                       rows={3}
@@ -534,14 +534,14 @@ function PhilosophySection() {
                   <div className="maint-philosophy__parts-submit">
                     {partsSubmitted ? (
                       <div className="maint-philosophy__parts-success">
-                        <i className="fas fa-check"></i> Enquiry sent — we'll be in touch shortly
+                        <i className="fas fa-check"></i> Enquiry sent. We'll be in touch shortly
                       </div>
                     ) : (
                       <>
                         <button type="submit" className="maint-btn maint-btn--primary" style={{ width: '100%', justifyContent: 'center', opacity: partsSubmitting ? 0.7 : 1, cursor: partsSubmitting ? 'wait' : 'pointer' }} disabled={partsSubmitting}>
                           {partsSubmitting ? 'Sending…' : <> Send Parts Enquiry <i className="fas fa-arrow-right" style={{ fontSize: '0.65rem' }}></i></>}
                         </button>
-                        {partsError && <p style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#c0392b', textAlign: 'center' }}>Something went wrong — please try again.</p>}
+                        {partsError && <p style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#c0392b', textAlign: 'center' }}>Something went wrong. Please try again.</p>}
                       </>
                     )}
                   </div>
@@ -743,7 +743,7 @@ function RebuildsSection() {
           </Reveal>
           <Reveal delay={0.2}>
             <p className="maint-rb__body">
-              At 2200 hours or 12 years — whichever comes first — Robinson helicopters require a complete
+              At 2200 hours or 12 years (whichever comes first), Robinson helicopters require a complete
               overhaul. We don't just check it, we transform it. Complete disassembly, inspection of every
               component, replacement of what's needed, and reassembly to factory-fresh condition.
             </p>
@@ -821,7 +821,7 @@ function RebuildsSection() {
               <div className="maint-rb__showcase-inner">
                 <div className="maint-rb__showcase-topbar">
                   <span className="maint-rb__showcase-counter">{String(rebuildDetailOpen + 1).padStart(2, '0')} / {String(rebuilds.length).padStart(2, '0')}</span>
-                  <span className="maint-rb__showcase-label">HQ Aviation — Rebuild Portfolio</span>
+                  <span className="maint-rb__showcase-label">HQ Aviation Rebuild Portfolio</span>
                   <button className="maint-rb__showcase-close" onClick={() => setRebuildDetailOpen(null)}>Close</button>
                 </div>
                 <div className="maint-rb__showcase-content">
@@ -832,7 +832,7 @@ function RebuildsSection() {
                     </div>
                     <div className="maint-rb__showcase-thumbs">
                       {rb.gallery.map((src, ti) => (
-                        <button key={ti} className="maint-rb__showcase-thumb" onClick={() => setRebuildLightbox({ src, alt: `${rb.model} — ${ti + 1}` })}>
+                        <button key={ti} className="maint-rb__showcase-thumb" onClick={() => setRebuildLightbox({ src, alt: `${rb.model} ${ti + 1}` })}>
                           <img src={src} alt="" />
                         </button>
                       ))}
@@ -916,7 +916,7 @@ function WeBuySection() {
               If you're a Robinson aircraft owner, we're interested in purchasing your helicopter.
               We're especially keen on aircraft from private owners who are running lower on years
               but still have plentiful hours remaining. We can put your aircraft on our training
-              school fleet and use those hours up before the 12-year rebuild—maximising the value
+              school fleet and use those hours up before the 12-year rebuild, maximising the value
               for everyone.
             </p>
           </Reveal>
@@ -1174,7 +1174,7 @@ function TeamProfiles() {
 
         <Reveal delay={0.5}>
           <div className="maint-team__cta">
-            <p>A team that lives and breathes rotary-wing aviation — factory-trained, continuously developing, and always investing in the latest techniques</p>
+            <p>A team that lives and breathes rotary-wing aviation: factory-trained, continuously developing, and always investing in the latest techniques</p>
           </div>
         </Reveal>
       </div>
@@ -5259,7 +5259,7 @@ function MaintenanceEnquiryForm() {
 
               <div className="fd-sales__unmanned-field">
                 <label className="fd-sales__unmanned-label">Additional Notes <span className="fd-sales__unmanned-optional">(optional)</span></label>
-                <textarea className="fd-sales__unmanned-input fd-sales__unmanned-textarea" placeholder="Any other details — defects noticed, parts needed, access constraints…" rows={3} value={notes} onChange={e => setNotes(e.target.value)} />
+                <textarea className="fd-sales__unmanned-input fd-sales__unmanned-textarea" placeholder="Any other details, e.g. defects noticed, parts needed, access constraints…" rows={3} value={notes} onChange={e => setNotes(e.target.value)} />
               </div>
 
               {error && <p className="fd-sales__unmanned-error">{error}</p>}
@@ -5276,7 +5276,7 @@ function MaintenanceEnquiryForm() {
             <div className="fd-sales__unmanned-success">
               <span className="fd-sales__unmanned-success-icon">✓</span>
               <p className="fd-sales__unmanned-success-title">Enquiry Received</p>
-              <p className="fd-sales__unmanned-success-sub">Thank you — a member of our maintenance team will be in touch to confirm the details.</p>
+              <p className="fd-sales__unmanned-success-sub">Thank you. A member of our maintenance team will be in touch to confirm the details.</p>
             </div>
           )}
       </div>

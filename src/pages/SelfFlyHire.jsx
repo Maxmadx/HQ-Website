@@ -132,7 +132,7 @@ const FLEET = [
     cruise: '96 kts',
     range: '190 nm',
     rate: '£375 / hr',
-    description: "Ideal for pilots looking to stay current or explore solo. The R22 is the world's most popular training helicopter — nimble, economical, and endlessly rewarding to fly.",
+    description: "Ideal for pilots looking to stay current or explore solo. The R22 is the world's most popular training helicopter: nimble, economical, and endlessly rewarding to fly.",
     image: '/assets/images/gallery/carousel/rotating1.jpg',
     features: ['2 seats', 'Lycoming O-320 engine', 'Ideal for currency flying', 'Up to 3hrs endurance'],
   },
@@ -158,7 +158,7 @@ const FLEET = [
     cruise: '120 kts',
     range: '350 nm',
     rate: '£595 / hr',
-    description: "Turbine reliability meets Robinson simplicity. The R66 is the pinnacle of piston-to-turbine transition — exceptional range, five seats, and a Garmin G500H avionics suite.",
+    description: "Turbine reliability meets Robinson simplicity. The R66 is the pinnacle of piston-to-turbine transition: exceptional range, five seats, and a Garmin G500H avionics suite.",
     image: '/assets/images/expeditions/north-pole.jpg',
     features: ['5 seats', 'Rolls-Royce RR300 turbine', 'Garmin G500H avionics', 'Up to 5hrs endurance'],
   },
@@ -184,7 +184,7 @@ const EVENTS_FALLBACK = [
 
 const REQUIREMENTS = [
   { num: '01', title: 'Valid PPL(H)',       body: 'A current Private Pilot Licence (Helicopters) with a valid Class 2 medical certificate.' },
-  { num: '02', title: 'Current Type Rating', body: 'A current type rating for the aircraft you wish to fly — R22, R44 or R66.' },
+  { num: '02', title: 'Current Type Rating', body: 'A current type rating for the aircraft you wish to fly, whether R22, R44 or R66.' },
   { num: '03', title: 'Recent Currency',    body: "Minimum recent experience requirements met. If you're not current, we offer a checkout flight with one of our instructors." },
   { num: '04', title: 'Insurance Included', body: 'Third-party liability insurance is included in your hire rate. No additional policy required.' },
 ];
@@ -590,7 +590,7 @@ export default function SelfFlyHire() {
                 ))}
               </div>
               <p className="sfh2-where__cal-note">
-                Calendar kept current — talk to HQ for slot availability or to share a flight already going.
+                Calendar kept current. Talk to HQ for slot availability or to share a flight already going.
               </p>
             </div>
           </div>
@@ -636,7 +636,7 @@ export default function SelfFlyHire() {
                   <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                   <polyline points="22 4 12 14.01 9 11.01"/>
                 </svg>
-                <p>Enquiry received — we'll be back in touch within one business day.</p>
+                <p>Enquiry received. We'll be back in touch within one business day.</p>
               </div>
             ) : (
               <form className="sfh2-enquiry__form" onSubmit={handleSubmit} noValidate>
@@ -737,7 +737,7 @@ export default function SelfFlyHire() {
                 </div>
                 {formStatus === 'error' && (
                   <p className="sfh2-enquiry__error">
-                    Something went wrong — please try again or email{' '}
+                    Something went wrong. Please try again or email{' '}
                     <a href="mailto:operations@hqaviation.com">operations@hqaviation.com</a>
                   </p>
                 )}

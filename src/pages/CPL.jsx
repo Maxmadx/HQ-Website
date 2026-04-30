@@ -171,7 +171,7 @@ function CPL() {
     { id: 'f1', question: 'Do I need my PPL before starting CPL training?', answer: 'Yes. The PPL(H) is a prerequisite for CPL(H) training. You must also have accumulated the required flight hours before the skill test.' },
     { id: 'f2', question: 'Can I do CPL training on the Robinson R22?', answer: 'The R22 can be used for some CPL training, but most focused CPL hours are conducted on the R44 or R66 as these better represent the aircraft used in commercial operations.' },
     { id: 'f3', question: 'How long does the whole CPL process take?', answer: 'It varies significantly depending on your starting hours. Coming from a freshly-minted PPL with 45 hours, you\'ll need at least 110 more hours before the skill test. With focused flying, some candidates complete the process in 18–24 months.' },
-    { id: 'f4', question: 'What are the ATPL(H) Frozen exams?', answer: 'These are the theoretical knowledge examinations required for the CPL(H). They\'re the same exams used for the full ATPL(H) — hence \'frozen\' when held at CPL level. There are 9 subjects, all taken at a CAA-approved examination centre.' },
+    { id: 'f4', question: 'What are the ATPL(H) Frozen exams?', answer: 'These are the theoretical knowledge examinations required for the CPL(H). They\'re the same exams used for the full ATPL(H), hence \'frozen\' when held at CPL level. There are 9 subjects, all taken at a CAA-approved examination centre.' },
     { id: 'f5', question: 'Is CPL(H) training at HQ approved?', answer: 'HQ Aviation is a CAA Approved Declared Training Organisation (DTO). CPL training conducted with HQ counts towards your CAA licence requirements.' },
     { id: 'f6', question: 'What does CPL training cost?', answer: 'Costs vary depending on hours required and aircraft type. Contact us for a detailed breakdown based on your current hours and goals.' },
   ];
@@ -208,18 +208,18 @@ function CPL() {
   ];
 
   const pathway = [
-    { num: '01', title: 'PPL(H)', value: '45 Hours', desc: 'Your foundation licence — the entry point to all further helicopter training' },
+    { num: '01', title: 'PPL(H)', value: '45 Hours', desc: 'Your foundation licence and the entry point to all further helicopter training' },
     { num: '02', title: 'Hour Building', value: '110+ Hours', desc: 'Accumulate flight time to reach 155 total hours including 50 as Pilot in Command' },
     { num: '03', title: 'Ground Exams', value: '9 Subjects', desc: 'ATPL(H) Frozen theoretical knowledge examinations at approved centre' },
     { num: '04', title: 'CPL Training', value: '15+ Hours', desc: 'Focused CPL-standard instruction with an HQ approved FI(H) instructor' },
-    { num: '05', title: 'Skill Test', value: '1 Day', desc: 'CAA skill test with an authorised examiner — your CPL awaits' },
+    { num: '05', title: 'Skill Test', value: '1 Day', desc: 'CAA skill test with an authorised examiner. Your CPL awaits.' },
   ];
 
   const processSteps = [
     { num: '01', title: 'Ground School', duration: '9 Exams', description: 'Complete ATPL(H) Frozen theory examinations. Most candidates self-study with a ground school provider; HQ can recommend approved courses and supports you through the process.' },
     { num: '02', title: 'Hour Building', duration: '100+ Hours', description: 'Build the required flight time through training flights, self-fly hire, and type ratings. HQ\'s fleet and instructors support this phase throughout.' },
     { num: '03', title: 'CPL Flight Training', duration: '15+ Hours', description: 'Focused CPL-standard training covering advanced manoeuvres, precision flying, and the commercial operating standards examiners expect.' },
-    { num: '04', title: 'Skill Test', duration: '1 Day', description: 'Final assessment with a CAA-authorised examiner. HQ prepares you thoroughly — we know what examiners look for and we train to that standard, not just the minimums.' },
+    { num: '04', title: 'Skill Test', duration: '1 Day', description: 'Final assessment with a CAA-authorised examiner. HQ prepares you thoroughly. We know what examiners look for and we train to that standard, not just the minimums.' },
   ];
 
   const careers = [
@@ -321,7 +321,7 @@ function CPL() {
               transition={{ delay: 1.2 }}
             >
               Holding a Commercial Pilot Licence, CPL(H) gives you the status of professional helicopter pilot.
-              Train with HQ — one of the UK's most experienced Robinson training organisations.
+              Train with HQ, one of the UK's most experienced Robinson training organisations.
             </motion.p>
           </div>
         </motion.div>
@@ -342,7 +342,7 @@ function CPL() {
                 The Commercial Pilot Licence (CPL/H) is the gateway to a professional career in helicopter aviation.
                 Whether you're aiming for charter work, aerial survey, emergency services, or flight instruction,
                 the CPL is the qualification that makes it possible. HQ Aviation offers CPL training on the
-                Robinson range — the aircraft type you're most likely to fly in your early commercial career.
+                Robinson range, the aircraft type you're most likely to fly in your early commercial career.
               </p>
             </div>
           </Reveal>
@@ -352,10 +352,6 @@ function CPL() {
                 src={pageImages['cpl-intro']?.[0]?.url || '/assets/images/gallery/carousel/rotating-3.jpg'}
                 alt="Professional helicopter pilot training at HQ Aviation"
               />
-              <div className="cpl-intro__image-caption">
-                <span className="cpl-intro__image-caption-num">500+</span>
-                <span>Pilots Trained</span>
-              </div>
             </div>
           </Reveal>
         </div>
@@ -404,7 +400,7 @@ function CPL() {
               </h2>
               <p className="cpl-ground__desc">
                 The CPL(H) requires passing 9 ATPL(H) Frozen examinations. These cover a broad range
-                of subjects — some familiar from your PPL study, others covering entirely new material.
+                of subjects, some familiar from your PPL study, others covering entirely new material.
               </p>
             </div>
           </Reveal>
@@ -421,61 +417,6 @@ function CPL() {
             ))}
           </div>
 
-          <Reveal delay={0.4}>
-            <div className="cpl-ground__badge-row">
-              <span className="cpl-ground__included-badge">INCLUDED WITH TRAINING</span>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ========== HOURS SECTION ========== */}
-      <section className="cpl-hours">
-        <div className="cpl-hours__container">
-          <Reveal>
-            <div className="cpl-section-header">
-              <span className="cpl-pre-text">The Numbers</span>
-              <h2>
-                <span className="cpl-text--dark">Flight Hour</span>{' '}
-                <span className="cpl-text--mid">Requirements</span>
-              </h2>
-            </div>
-          </Reveal>
-
-          <div className="cpl-hours__stats">
-            <Reveal delay={0.1}>
-              <div className="cpl-hours__stat">
-                <span className="cpl-hours__stat-num">155</span>
-                <span className="cpl-hours__stat-label">Total Flight Hours Required</span>
-              </div>
-            </Reveal>
-            <Reveal delay={0.2}>
-              <div className="cpl-hours__stat">
-                <span className="cpl-hours__stat-num">50</span>
-                <span className="cpl-hours__stat-label">Hours as Pilot in Command</span>
-              </div>
-            </Reveal>
-            <Reveal delay={0.3}>
-              <div className="cpl-hours__stat">
-                <span className="cpl-hours__stat-num">35</span>
-                <span className="cpl-hours__stat-label">Hours PIC Cross-Country</span>
-              </div>
-            </Reveal>
-            <Reveal delay={0.4}>
-              <div className="cpl-hours__stat">
-                <span className="cpl-hours__stat-num">10</span>
-                <span className="cpl-hours__stat-label">Hours IFR / Instrument</span>
-              </div>
-            </Reveal>
-          </div>
-
-          <Reveal delay={0.5}>
-            <p className="cpl-hours__note">
-              These are the regulatory minimums. In practice, most students arrive at CPL training with considerably
-              more hours, which is an advantage — additional flight time builds the judgment and decision-making
-              that examiners look for.
-            </p>
-          </Reveal>
         </div>
       </section>
 
@@ -560,77 +501,29 @@ function CPL() {
         </div>
       </section>
 
-      {/* ========== FAQ SECTION ========== */}
-      <section className="cpl-faq" data-cms-section="faqs-cpl">
-        <div className="cpl-faq__container">
-          <Reveal>
-            <div className="cpl-section-header">
-              <span className="cpl-pre-text">Common Questions</span>
-              <h2>
-                <span className="cpl-text--dark">Frequently</span>{' '}
-                <span className="cpl-text--mid">Asked</span>
-              </h2>
-            </div>
-          </Reveal>
-
-          <div className="cpl-faq__list">
-            {(showAllFaqs ? faqs : faqs.slice(0, 6)).map((faq, i) => (
-              <Reveal key={faq.id} delay={i * 0.05}>
-                <div
-                  className={`cpl-faq__item ${openFaq === i ? 'cpl-faq__item--open' : ''}`}
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                >
-                  <span className="cpl-faq__number">{String(i + 1).padStart(2, '0')}</span>
-                  <div className="cpl-faq__content">
-                    <h4>
-                      {faq.question}
-                      <span className="cpl-faq__toggle">{openFaq === i ? '−' : '+'}</span>
-                    </h4>
-                    <AnimatePresence>
-                      {openFaq === i && (
-                        <motion.div
-                          className="cpl-faq__answer"
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                        >
-                          <p>{faq.answer}</p>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-          {!showAllFaqs && faqs.length > 6 && (
-            <button className="cpl-faq__load-more" onClick={() => setShowAllFaqs(true)}>Load More</button>
-          )}
-        </div>
-      </section>
-
-      {/* ========== ENQUIRY FORM SECTION ========== */}
-      <section className="cpl-enquiry">
-        <div className="cpl-enquiry__container">
-          <div className="cpl-enquiry__left">
+      {/* ========== CTA SECTION (with enquiry form on right) ========== */}
+      <section className="cpl-cta">
+        <div className="cpl-cta__inner">
+          <div className="cpl-cta__left">
             <Reveal>
-              <span className="cpl-pre-text">Get Started</span>
+              <span className="cpl-pre-text cpl-pre-text--light">Ready to Turn Professional?</span>
               <h2>
-                <span className="cpl-text--dark">Enquire About</span>
-                <br />
-                <span className="cpl-text--mid">CPL Training</span>
+                <span className="cpl-text--white">Take The</span>{' '}
+                <span className="cpl-text--white-mid">Next Step</span>
               </h2>
-              <p className="cpl-enquiry__desc">
-                Tell us about your current licence, hours, and goals. We'll give you an honest
-                assessment of where you stand and a clear path to your CPL.
+              <p>
+                Talk to our training team about your current hours, your goals, and how HQ can support
+                your CPL journey. We'll give you an honest assessment of where you stand and a clear
+                path forward.
               </p>
-              <ul className="cpl-enquiry__checklist">
-                <li>CAA Declared Training Organisation</li>
-                <li>Robinson R22, R44 &amp; R66 fleet</li>
-                <li>Experienced commercial instructors</li>
-                <li>Based at Denham Aerodrome, Buckinghamshire</li>
-              </ul>
+              <div className="cpl-cta__buttons">
+                <Link to="/training" className="cpl-cta__link">
+                  View All Training
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </Link>
+              </div>
             </Reveal>
           </div>
 
@@ -640,7 +533,7 @@ function CPL() {
                 <div className="cpl-enquiry__success">
                   <div className="cpl-enquiry__success-icon" aria-hidden="true">&#10003;</div>
                   <h3>Enquiry Sent</h3>
-                  <p>Thank you — we'll be in touch within 24 hours to discuss your CPL journey.</p>
+                  <p>Thank you. We'll be in touch within 24 hours to discuss your CPL journey.</p>
                   <button
                     type="button"
                     className="cpl-btn cpl-btn--outline"
@@ -722,29 +615,53 @@ function CPL() {
         </div>
       </section>
 
-      {/* ========== CTA SECTION ========== */}
-      <section className="cpl-cta">
-        <div className="cpl-cta__inner">
+      {/* ========== FAQ SECTION ========== */}
+      <section className="cpl-faq" data-cms-section="faqs-cpl">
+        <div className="cpl-faq__container">
           <Reveal>
-            <span className="cpl-pre-text cpl-pre-text--light">Ready to Turn Professional?</span>
-            <h2>
-              <span className="cpl-text--white">Take The</span>{' '}
-              <span className="cpl-text--white-mid">Next Step</span>
-            </h2>
-            <p>
-              Talk to our training team about your current hours, your goals, and how HQ can support
-              your CPL journey. We'll give you an honest assessment of where you stand and a clear
-              path forward.
-            </p>
-            <div className="cpl-cta__buttons">
-              <Link to="/training" className="cpl-cta__link">
-                View All Training
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </Link>
+            <div className="cpl-section-header">
+              <span className="cpl-pre-text">Common Questions</span>
+              <h2>
+                <span className="cpl-text--dark">Frequently</span>{' '}
+                <span className="cpl-text--mid">Asked</span>
+              </h2>
             </div>
           </Reveal>
+
+          <div className="cpl-faq__list">
+            {(showAllFaqs ? faqs : faqs.slice(0, 6)).map((faq, i) => (
+              <Reveal key={faq.id} delay={i * 0.05}>
+                <div
+                  className={`cpl-faq__item ${openFaq === i ? 'cpl-faq__item--open' : ''}`}
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                >
+                  <span className="cpl-faq__number">{String(i + 1).padStart(2, '0')}</span>
+                  <div className="cpl-faq__content">
+                    <h4>
+                      {faq.question}
+                      <span className="cpl-faq__toggle">{openFaq === i ? '−' : '+'}</span>
+                    </h4>
+                    <AnimatePresence>
+                      {openFaq === i && (
+                        <motion.div
+                          className="cpl-faq__answer"
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                        >
+                          <p>{faq.answer}</p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+          {!showAllFaqs && faqs.length > 6 && (
+            <button className="cpl-faq__load-more" onClick={() => setShowAllFaqs(true)}>Load More</button>
+          )}
         </div>
       </section>
 
@@ -1111,38 +1028,12 @@ function CPL() {
           display: block;
         }
 
-        .cpl-intro__image-caption {
-          position: absolute;
-          bottom: -20px;
-          right: -20px;
-          background: #1a1a1a;
-          color: #fff;
-          padding: 1.5rem 2rem;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .cpl-intro__image-caption-num {
-          font-size: 2rem;
-          font-weight: 700;
-          line-height: 1;
-          font-family: 'Share Tech Mono', monospace;
-        }
-
-        .cpl-intro__image-caption span:last-child {
-          font-size: 0.7rem;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          opacity: 0.7;
-          margin-top: 0.3rem;
-        }
-
         /* =====================================================
            PATHWAY SECTION
         ===================================================== */
         .cpl-pathway {
           padding: 6rem 4rem;
-          background: #faf9f6;
+          background: #f5f1ea;
         }
 
         .cpl-pathway__container {
@@ -1152,7 +1043,7 @@ function CPL() {
 
         .cpl-pathway__steps {
           display: flex;
-          align-items: flex-start;
+          align-items: stretch;
           gap: 0;
           position: relative;
           overflow-x: auto;
@@ -1165,15 +1056,24 @@ function CPL() {
           display: none;
         }
 
-        .cpl-pathway__step {
+        /* Reveal motion.div wrapper participates in the flex row */
+        .cpl-pathway__steps > * {
           display: flex;
-          align-items: center;
           flex: 1;
           min-width: 180px;
         }
 
+        .cpl-pathway__step {
+          display: flex;
+          align-items: center;
+          flex: 1;
+          min-width: 0;
+          height: 100%;
+        }
+
         .cpl-pathway__step-inner {
           flex: 1;
+          align-self: stretch;
           text-align: center;
           padding: 2rem 1rem;
           background: #fff;
@@ -1266,11 +1166,18 @@ function CPL() {
         .cpl-ground__grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
+          grid-auto-rows: 1fr;
           gap: 1.25rem;
           margin-bottom: 3rem;
         }
 
+        .cpl-ground__grid > * {
+          height: 100%;
+        }
+
         .cpl-ground__card {
+          height: 100%;
+          box-sizing: border-box;
           background: rgba(255,255,255,0.05);
           border: 1px solid rgba(255,255,255,0.1);
           padding: 1.5rem;
@@ -1306,94 +1213,6 @@ function CPL() {
           color: rgba(255,255,255,0.55);
           line-height: 1.55;
           margin: 0;
-        }
-
-        .cpl-ground__badge-row {
-          text-align: center;
-        }
-
-        .cpl-ground__included-badge {
-          display: inline-block;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.6rem;
-          letter-spacing: 0.2em;
-          color: rgba(255,255,255,0.4);
-          border: 1px solid rgba(255,255,255,0.15);
-          padding: 0.5rem 1.25rem;
-          border-radius: 2px;
-          text-transform: uppercase;
-        }
-
-        /* =====================================================
-           HOURS SECTION
-        ===================================================== */
-        .cpl-hours {
-          padding: 6rem 4rem;
-          background: #faf9f6;
-        }
-
-        .cpl-hours__container {
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-
-        .cpl-hours__stats {
-          display: flex;
-          gap: 2rem;
-          justify-content: center;
-          flex-wrap: wrap;
-          margin-bottom: 3rem;
-        }
-
-        .cpl-hours__stat {
-          flex: 1;
-          min-width: 160px;
-          max-width: 240px;
-          text-align: center;
-          padding: 2.5rem 1.5rem;
-          background: #fff;
-          border: 1px solid #e8e6e2;
-          border-radius: 8px;
-          transition: box-shadow 0.3s ease, transform 0.3s ease;
-        }
-
-        .cpl-hours__stat:hover {
-          box-shadow: 0 8px 30px rgba(0,0,0,0.07);
-          transform: translateY(-3px);
-        }
-
-        .cpl-hours__stat-num {
-          display: block;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: clamp(3rem, 5vw, 4.5rem);
-          font-weight: 800;
-          color: #1a1a1a;
-          line-height: 1;
-          margin-bottom: 0.75rem;
-          letter-spacing: -0.02em;
-        }
-
-        .cpl-hours__stat-label {
-          display: block;
-          font-size: 0.78rem;
-          color: #888;
-          line-height: 1.4;
-          text-transform: uppercase;
-          letter-spacing: 0.06em;
-        }
-
-        .cpl-hours__note {
-          max-width: 720px;
-          margin: 0 auto;
-          text-align: center;
-          color: #666;
-          font-size: 0.95rem;
-          line-height: 1.75;
-          padding: 1.5rem 2rem;
-          background: #fff;
-          border: 1px solid #e8e6e2;
-          border-left: 3px solid #1a1a1a;
-          border-radius: 0 4px 4px 0;
         }
 
         /* =====================================================
@@ -1528,10 +1347,17 @@ function CPL() {
         .cpl-careers__grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
+          grid-auto-rows: 1fr;
           gap: 1.5rem;
         }
 
+        .cpl-careers__grid > * {
+          height: 100%;
+        }
+
         .cpl-careers__card {
+          height: 100%;
+          box-sizing: border-box;
           border: 1px solid #e8e6e2;
           padding: 1.75rem;
           border-radius: 8px;
@@ -1653,65 +1479,8 @@ function CPL() {
         }
 
         /* =====================================================
-           ENQUIRY FORM SECTION
+           ENQUIRY FORM (lives inside CTA section)
         ===================================================== */
-        .cpl-enquiry {
-          padding: 6rem 4rem;
-          background: #fff;
-        }
-
-        .cpl-enquiry__container {
-          max-width: 1200px;
-          margin: 0 auto;
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 5rem;
-          align-items: start;
-        }
-
-        .cpl-enquiry__left h2 {
-          font-size: clamp(1.75rem, 3vw, 2.5rem);
-          font-weight: 700;
-          text-transform: uppercase;
-          margin: 0.5rem 0 1.25rem;
-          line-height: 1.15;
-          letter-spacing: -0.01em;
-        }
-
-        .cpl-enquiry__desc {
-          color: #666;
-          font-size: 1rem;
-          line-height: 1.75;
-          margin-bottom: 2rem;
-        }
-
-        .cpl-enquiry__checklist {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-          display: flex;
-          flex-direction: column;
-          gap: 0.6rem;
-        }
-
-        .cpl-enquiry__checklist li {
-          display: flex;
-          align-items: center;
-          gap: 0.6rem;
-          font-size: 0.88rem;
-          color: #555;
-        }
-
-        .cpl-enquiry__checklist li::before {
-          content: '';
-          display: inline-block;
-          width: 6px;
-          height: 6px;
-          background: #1a1a1a;
-          border-radius: 50%;
-          flex-shrink: 0;
-        }
-
         .cpl-enquiry__form {
           display: flex;
           flex-direction: column;
@@ -1739,7 +1508,7 @@ function CPL() {
         }
 
         .cpl-enquiry__field label span {
-          color: #c00;
+          color: #fff;
           margin-left: 2px;
         }
 
@@ -1818,7 +1587,7 @@ function CPL() {
         }
 
         /* =====================================================
-           CTA SECTION
+           CTA SECTION (with enquiry form on right)
         ===================================================== */
         .cpl-cta {
           background: #1a1a1a;
@@ -1835,15 +1604,18 @@ function CPL() {
         }
 
         .cpl-cta__inner {
-          max-width: 700px;
+          max-width: 1200px;
           margin: 0 auto;
           padding: 6rem 4rem;
-          text-align: center;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 5rem;
+          align-items: center;
           position: relative;
           z-index: 1;
         }
 
-        .cpl-cta__inner h2 {
+        .cpl-cta__left h2 {
           font-size: clamp(2rem, 4vw, 3rem);
           margin: 0.5rem 0 1.25rem;
           line-height: 1.1;
@@ -1852,20 +1624,59 @@ function CPL() {
           letter-spacing: -0.01em;
         }
 
-        .cpl-cta__inner p {
+        .cpl-cta__left p {
           color: rgba(255,255,255,0.65);
           font-size: 1.05rem;
           line-height: 1.75;
-          max-width: 560px;
-          margin: 0 auto 2.5rem;
+          margin: 0 0 2.5rem;
         }
 
         .cpl-cta__buttons {
           display: flex;
           align-items: center;
-          justify-content: center;
           gap: 2rem;
           flex-wrap: wrap;
+        }
+
+        /* Form readability on dark CTA background */
+        .cpl-cta .cpl-enquiry__field label {
+          color: rgba(255,255,255,0.7);
+        }
+
+        .cpl-cta .cpl-enquiry__field input,
+        .cpl-cta .cpl-enquiry__field textarea {
+          background: rgba(255,255,255,0.06);
+          border-color: rgba(255,255,255,0.15);
+          color: #fff;
+        }
+
+        .cpl-cta .cpl-enquiry__field input::placeholder,
+        .cpl-cta .cpl-enquiry__field textarea::placeholder {
+          color: rgba(255,255,255,0.35);
+        }
+
+        .cpl-cta .cpl-enquiry__field input:focus,
+        .cpl-cta .cpl-enquiry__field textarea:focus {
+          border-color: rgba(255,255,255,0.5);
+          box-shadow: 0 0 0 2px rgba(255,255,255,0.08);
+        }
+
+        .cpl-cta .cpl-enquiry__success {
+          background: rgba(255,255,255,0.04);
+          border-color: rgba(255,255,255,0.15);
+        }
+
+        .cpl-cta .cpl-enquiry__success-icon {
+          background: #fff;
+          color: #1a1a1a;
+        }
+
+        .cpl-cta .cpl-enquiry__success h3 {
+          color: #fff;
+        }
+
+        .cpl-cta .cpl-enquiry__success p {
+          color: rgba(255,255,255,0.65);
         }
 
         .cpl-cta__link {
@@ -1899,10 +1710,8 @@ function CPL() {
         @media (max-width: 1024px) {
           .cpl-intro,
           .cpl-pathway,
-          .cpl-hours,
           .cpl-careers,
-          .cpl-faq,
-          .cpl-enquiry {
+          .cpl-faq {
             padding: 5rem 3rem;
           }
 
@@ -1913,13 +1722,10 @@ function CPL() {
 
           .cpl-cta__inner {
             padding: 5rem 3rem;
-          }
-
-          .cpl-intro__container {
             gap: 3.5rem;
           }
 
-          .cpl-enquiry__container {
+          .cpl-intro__container {
             gap: 3.5rem;
           }
 
@@ -1946,10 +1752,8 @@ function CPL() {
         @media (max-width: 768px) {
           .cpl-intro,
           .cpl-pathway,
-          .cpl-hours,
           .cpl-careers,
-          .cpl-faq,
-          .cpl-enquiry {
+          .cpl-faq {
             padding: 4rem 1.5rem;
           }
 
@@ -1960,6 +1764,8 @@ function CPL() {
 
           .cpl-cta__inner {
             padding: 4rem 1.5rem;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
           }
 
           /* Hero */
@@ -2007,22 +1813,17 @@ function CPL() {
             min-height: 280px;
           }
 
-          .cpl-intro__image-caption {
-            bottom: -15px;
-            right: -10px;
-            padding: 1rem 1.25rem;
-          }
-
-          .cpl-intro__image-caption-num {
-            font-size: 1.5rem;
-          }
-
           /* Pathway — horizontal scroll on mobile */
           .cpl-pathway__steps {
             flex-direction: row;
             overflow-x: auto;
             padding-bottom: 1.5rem;
             gap: 0;
+          }
+
+          .cpl-pathway__steps > * {
+            min-width: 200px;
+            flex-shrink: 0;
           }
 
           .cpl-pathway__step {
@@ -2044,32 +1845,12 @@ function CPL() {
             gap: 0.85rem;
           }
 
-          /* Hours */
-          .cpl-hours__stats {
-            flex-direction: column;
-            align-items: center;
-          }
-
-          .cpl-hours__stat {
-            max-width: 100%;
-            width: 100%;
-          }
-
-          .cpl-hours__stat-num {
-            font-size: clamp(2.5rem, 10vw, 3.5rem);
-          }
-
           /* Careers */
           .cpl-careers__grid {
             grid-template-columns: 1fr;
           }
 
-          /* Enquiry */
-          .cpl-enquiry__container {
-            grid-template-columns: 1fr;
-            gap: 2.5rem;
-          }
-
+          /* Enquiry form (inside CTA) */
           .cpl-enquiry__row {
             grid-template-columns: 1fr;
           }
@@ -2085,7 +1866,6 @@ function CPL() {
 
           /* CTA */
           .cpl-cta__buttons {
-            flex-direction: column;
             gap: 1.25rem;
           }
 
@@ -2109,10 +1889,8 @@ function CPL() {
         @media (max-width: 480px) {
           .cpl-intro,
           .cpl-pathway,
-          .cpl-hours,
           .cpl-careers,
-          .cpl-faq,
-          .cpl-enquiry {
+          .cpl-faq {
             padding: 3.5rem 1.25rem;
           }
 
@@ -2152,10 +1930,6 @@ function CPL() {
 
           .cpl-pathway__step {
             min-width: 175px;
-          }
-
-          .cpl-hours__stat-num {
-            font-size: clamp(2.25rem, 12vw, 3.5rem);
           }
 
           .cpl-btn {

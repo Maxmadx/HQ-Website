@@ -37,7 +37,7 @@ export default function WallOfCoolFinalCard() {
   return (
     <div className="fc-page">
       <header className="fc-topnav">
-        <div className="fc-topnav__title">Wall of Cool — Final Centre Card</div>
+        <div className="fc-topnav__title">Wall of Cool · Final Centre Card</div>
         <a className="fc-topnav__back" href="/wall-of-cool-compass-card">← Compasses</a>
       </header>
 
@@ -46,7 +46,7 @@ export default function WallOfCoolFinalCard() {
           <div className="fc-variant__label">
             <span className="fc-variant__number">FINAL</span>
             <div>
-              <h2 className="fc-variant__title">Community Wall — Helicopter Adventures</h2>
+              <h2 className="fc-variant__title">Community Wall: Helicopter Adventures</h2>
               <p className="fc-variant__desc">Aircraft-cheatline header: red line on top, white line underneath. Bold uppercase title and mono subtitle, circular chevrons with page counter.</p>
             </div>
           </div>

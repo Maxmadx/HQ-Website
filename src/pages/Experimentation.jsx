@@ -584,6 +584,21 @@ const sfhDestCoords = [
   { name: 'Cornwall', x: 145, y: 560, nm: 180, carTime: '4h 30min', desc: 'Skip the M5 entirely. Land near the coast for a weekend of surfing, cream teas and dramatic clifftop walks.' },
 ];
 
+const fsdMaintRow1 = [
+  '/assets/images/facility/hq-0345.jpg',
+  '/assets/images/facility/shyam-7822.jpg',
+  '/assets/images/facility/shyam-9427.jpg',
+  '/assets/images/facility/hq-0300.jpg',
+  '/assets/images/facility/shyam-6113.jpg',
+];
+const fsdMaintRow2 = [
+  '/assets/images/facility/shyam-7346.jpg',
+  '/assets/images/facility/hq-0153-3.jpg',
+  '/assets/images/facility/shyam-8662.jpg',
+  '/assets/images/facility/shyam-9017.jpg',
+  '/assets/images/facility/hq-0388.jpg',
+];
+
 const maintGalleryRow1 = [
   '/assets/images/facility/maintenance-.jpg',
   '/assets/images/facility/hq-0391.jpg',
@@ -2129,8 +2144,6 @@ function Experimentation() {
   const clubhouseRef = useRef(null);
   const clubhouseCarouselRef = useRef(null);
   const aboutCarouselRef = useRef(null);
-  const fsdTrack1Ref = useRef(null);
-  const fsdTrack2Ref = useRef(null);
   const clubhouseMobilePhase2Ref = useRef(null);
   const globeRef = useRef(null);
   const phaseText1Ref = useRef(null);
@@ -2808,44 +2821,6 @@ function Experimentation() {
       track.removeEventListener('pointercancel', onPointerUp);
       window.removeEventListener('resize', measure);
     };
-  }, []);
-
-  // Maintenance image carousels: infinite auto-scroll
-  useEffect(() => {
-    const startCarousel = (track, speed) => {
-      if (!track) return null;
-      const GAP = 12; // 0.75rem
-      const state = { offset: 0, lastTime: 0, setWidth: 0 };
-      let rafId = 0;
-      const measure = () => {
-        const sets = track.querySelectorAll('.fsd__img-set');
-        if (sets.length > 0) {
-          let w = 0;
-          const items = sets[0].children;
-          for (let i = 0; i < items.length; i++) w += items[i].offsetWidth + GAP;
-          state.setWidth = w;
-          if (speed < 0 && state.offset === 0) state.offset = state.setWidth;
-        }
-      };
-      const tick = (time) => {
-        rafId = requestAnimationFrame(tick);
-        if (!state.lastTime) { state.lastTime = time; return; }
-        if (state.setWidth <= 0) { measure(); state.lastTime = time; return; }
-        const dt = Math.min((time - state.lastTime) / 1000, 0.1);
-        state.lastTime = time;
-        state.offset += speed * dt;
-        if (speed > 0 && state.offset >= state.setWidth) state.offset -= state.setWidth;
-        if (speed < 0 && state.offset <= 0) state.offset += state.setWidth;
-        track.style.transform = `translateX(${-state.offset}px)`;
-      };
-      measure();
-      rafId = requestAnimationFrame(tick);
-      window.addEventListener('resize', measure);
-      return () => { cancelAnimationFrame(rafId); window.removeEventListener('resize', measure); };
-    };
-    const cleanup1 = startCarousel(fsdTrack1Ref.current, 30);
-    const cleanup2 = startCarousel(fsdTrack2Ref.current, -25);
-    return () => { cleanup1?.(); cleanup2?.(); };
   }, []);
 
   // Mobile: Phase 2 fade-in via IntersectionObserver
@@ -5146,31 +5121,17 @@ function Experimentation() {
             <Link to="/parts" className="fd-maint__btn fd-maint__btn--secondary">Explore Our Parts Sales</Link>
           </div>
           <div className="fsd__img-carousel">
-            <div className="fsd__img-track" ref={fsdTrack1Ref}>
-              <div className="fsd__img-set">
-                {['/assets/images/facility/hq-0345.jpg','/assets/images/facility/hq-0354.jpg','/assets/images/facility/hq-0053.jpg','/assets/images/facility/hq-0300.jpg','/assets/images/facility/hq-0477.jpg'].map((src, i) => (
-                  <div key={i} className="fsd__img"><img src={src} alt="" loading="lazy" /></div>
-                ))}
-              </div>
-              <div className="fsd__img-set">
-                {['/assets/images/facility/hq-0345.jpg','/assets/images/facility/hq-0354.jpg','/assets/images/facility/hq-0053.jpg','/assets/images/facility/hq-0300.jpg','/assets/images/facility/hq-0477.jpg'].map((src, i) => (
-                  <div key={`d-${i}`} className="fsd__img"><img src={src} alt="" loading="lazy" /></div>
-                ))}
-              </div>
+            <div className="fsd__img-track fsd__img-track--left">
+              {[...fsdMaintRow1, ...fsdMaintRow1, ...fsdMaintRow1].map((src, i) => (
+                <div key={i} className="fsd__img"><img src={src} alt="" loading="lazy" /></div>
+              ))}
             </div>
           </div>
-          <div className="fsd__img-carousel fsd__img-carousel--reverse">
-            <div className="fsd__img-track fsd__img-track--reverse" ref={fsdTrack2Ref}>
-              <div className="fsd__img-set">
-                {['/assets/images/facility/hq-0388.jpg','/assets/images/facility/hq-0153-3.jpg','/assets/images/facility/hq-0391.jpg','/assets/images/facility/hq-0696.jpg','/assets/images/facility/hq-0345.jpg'].map((src, i) => (
-                  <div key={i} className="fsd__img"><img src={src} alt="" loading="lazy" /></div>
-                ))}
-              </div>
-              <div className="fsd__img-set">
-                {['/assets/images/facility/hq-0388.jpg','/assets/images/facility/hq-0153-3.jpg','/assets/images/facility/hq-0391.jpg','/assets/images/facility/hq-0696.jpg','/assets/images/facility/hq-0345.jpg'].map((src, i) => (
-                  <div key={`d-${i}`} className="fsd__img"><img src={src} alt="" loading="lazy" /></div>
-                ))}
-              </div>
+          <div className="fsd__img-carousel">
+            <div className="fsd__img-track fsd__img-track--right">
+              {[...fsdMaintRow2, ...fsdMaintRow2, ...fsdMaintRow2].map((src, i) => (
+                <div key={i} className="fsd__img"><img src={src} alt="" loading="lazy" /></div>
+              ))}
             </div>
           </div>
         </div>
@@ -5204,13 +5165,13 @@ function Experimentation() {
         <div className="fd-about__divider">
           <span className="fd-about__divider-line"></span>
           <div className="fd-about__socials">
-            <a href="https://www.instagram.com/haborhelicopters/" target="_blank" rel="noopener noreferrer" className="fd-about__social" aria-label="Instagram">
+            <a href="https://www.instagram.com/hqaviation/" target="_blank" rel="noopener noreferrer" className="fd-about__social" aria-label="Instagram">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="2" width="20" height="20" rx="5"></rect><circle cx="12" cy="12" r="5"></circle><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"></circle></svg>
             </a>
-            <a href="https://www.facebook.com/haborhelicopters" target="_blank" rel="noopener noreferrer" className="fd-about__social" aria-label="Facebook">
+            <a href="https://www.facebook.com/HQAviationLtd/" target="_blank" rel="noopener noreferrer" className="fd-about__social" aria-label="Facebook">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path></svg>
             </a>
-            <a href="https://www.youtube.com/@hqaviation" target="_blank" rel="noopener noreferrer" className="fd-about__social" aria-label="YouTube">
+            <a href="https://www.youtube.com/@HQAviationLtd" target="_blank" rel="noopener noreferrer" className="fd-about__social" aria-label="YouTube">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33A2.78 2.78 0 003.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29 29 0 00.46-5.25 29 29 0 00-.46-5.43z"></path><polygon points="9.75,15.02 15.5,11.75 9.75,8.48" fill="currentColor" stroke="none"></polygon></svg>
             </a>
           </div>
@@ -11215,8 +11176,23 @@ function Experimentation() {
           }
         }
         .fsd__img-carousel { overflow: hidden; }
-        .fsd__img-track { display: flex; will-change: transform; }
-        .fsd__img-set { display: flex; gap: 0.75rem; flex-shrink: 0; padding-right: 0.75rem; }
+        .fsd__img-track {
+          display: flex;
+          gap: 0.75rem;
+          padding-right: 0.75rem;
+          width: max-content;
+          will-change: transform;
+        }
+        .fsd__img-track--left  { animation: fsdImgScroll 60s linear infinite; }
+        .fsd__img-track--right { animation: fsdImgScroll 72s linear infinite reverse; }
+        @keyframes fsdImgScroll {
+          from { transform: translate3d(0, 0, 0); }
+          to   { transform: translate3d(-33.3333%, 0, 0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .fsd__img-track--left,
+          .fsd__img-track--right { animation: none; }
+        }
         .fsd__img { flex-shrink: 0; width: 220px; height: 150px; border-radius: 6px; overflow: hidden; }
         .fsd__img img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
 

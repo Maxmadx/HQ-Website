@@ -456,7 +456,7 @@ function FinalPPL() {
                 <span className="fppl-text--light">Extraordinary Instructors</span>
               </h2>
               <p>
-                If the quality of instructing counts for anything—and it certainly does—you will learn at an
+                If the quality of instructing counts for anything (and it certainly does) you will learn at an
                 exceptionally high standard, develop no bad habits, and become a better pilot at a much faster
                 pace with our rigorous, hands-on training program.
               </p>
@@ -673,7 +673,7 @@ function FinalPPL() {
                       <span className="fppl-pre-text">Your First Flight</span>
                       <h2><span className="fppl-text--dark">Discovery</span> <span className="fppl-text--mid">Flight</span></h2>
                     </div>
-                    <p className="fppl-discovery__desc">Not sure if flying is for you? A Discovery Flight puts you in the seat and at the controls in under an hour — no experience needed, no commitment required.</p>
+                    <p className="fppl-discovery__desc">Not sure if flying is for you? A Discovery Flight puts you in the seat and at the controls in under an hour. No experience needed, no commitment required.</p>
                     <div className="fppl-discovery__selling-points fppl-discovery__selling-points--below">
                       <div className="fppl-discovery__point">
                         <span className="fppl-discovery__point-icon">⏱</span>

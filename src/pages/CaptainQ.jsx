@@ -7,7 +7,7 @@ const expeditions = [
     year: '1997',
     title: 'Around the World',
     aircraft: 'Robinson R44 Astro',
-    detail: '97 days. 28 countries. Co-pilot and instructor alongside Jennifer Murray in G-MURY — the first piston-powered helicopter to circumnavigate the globe. Departed England eastbound through Europe, the Middle East, India, Southeast Asia, Russia, across the Bering Strait to Alaska, down through the USA, up Canada\'s coast, and home via Greenland, Iceland, and the Faroe Islands. The aircraft now sits in the Smithsonian National Air and Space Museum.',
+    detail: '97 days. 28 countries. Co-pilot and instructor alongside Jennifer Murray in G-MURY, the first piston-powered helicopter to circumnavigate the globe. Departed England eastbound through Europe, the Middle East, India, Southeast Asia, Russia, across the Bering Strait to Alaska, down through the USA, up Canada\'s coast, and home via Greenland, Iceland, and the Faroe Islands. The aircraft now sits in the Smithsonian National Air and Space Museum.',
     img: '/assets/images/expeditions/channel.jpg',
   },
   {
@@ -28,35 +28,35 @@ const expeditions = [
     year: '2003',
     title: 'Drake Passage',
     aircraft: 'Robinson R44 Raven II',
-    detail: 'En route from the North Pole to the South Pole, the engine failed 100 miles from the Antarctic coast over the Drake Passage — 480 miles of the most treacherous weather in the world. Q executed a masterful autorotation onto 5-metre ocean swells. Both men survived over 9 hours in a life-raft before rescue by a Chilean naval icebreaker. Brooks had jumped into the freezing water to retrieve the life-raft — an act Q describes as "one of the greatest heroic acts of behaviour ever."',
+    detail: 'En route from the North Pole to the South Pole, the engine failed 100 miles from the Antarctic coast over the Drake Passage, 480 miles of the most treacherous weather in the world. Q executed a masterful autorotation onto 5-metre ocean swells. Both men survived over 9 hours in a life-raft before rescue by a Chilean naval icebreaker. Brooks had jumped into the freezing water to retrieve the life-raft, an act Q describes as "one of the greatest heroic acts of behaviour ever."',
     img: '/assets/images/expeditions/antartica.jpg',
   },
   {
     year: '2005',
     title: 'South Pole',
     aircraft: 'Robinson R44 Raven II',
-    detail: '18 January 2005. Bright sunshine. Minus 26 degrees. The South Pole sits at 9,300 feet above sea level — Q flew the R44 at up to 14,000 feet density altitude. They built a small igloo around the engine compartment and used an avgas stove to warm it to +2°C before the final approach. With Steve Brooks, they became the first crew to fly a helicopter to both the North and South Poles.',
+    detail: '18 January 2005. Bright sunshine. Minus 26 degrees. The South Pole sits at 9,300 feet above sea level. Q flew the R44 at up to 14,000 feet density altitude. They built a small igloo around the engine compartment and used an avgas stove to warm it to +2°C before the final approach. With Steve Brooks, they became the first crew to fly a helicopter to both the North and South Poles.',
     img: '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp',
   },
   {
     year: '2007',
     title: 'Ice Challenger',
     aircraft: 'Robinson R44',
-    detail: 'Steve Brooks wanted to be the first person to drive across the frozen Bering Strait — from Alaska to Russia — in an amphibious all-terrain vehicle he built called "Snowbird VI," a machine propelled by giant Archimedes screws that could float on open water, climb onto ice floes, and grind across solid pack ice. Q flew the support helicopter, a Robinson R44, scouting the ice ahead for cracks and open water leads, guiding Steve\'s vehicle through a maze of moving ice plates and temperatures dropping to -40\u00B0C.',
+    detail: 'Steve Brooks wanted to be the first person to drive across the frozen Bering Strait, from Alaska to Russia, in an amphibious all-terrain vehicle he built called "Snowbird VI," a machine propelled by giant Archimedes screws that could float on open water, climb onto ice floes, and grind across solid pack ice. Q flew the support helicopter, a Robinson R44, scouting the ice ahead for cracks and open water leads, guiding Steve\'s vehicle through a maze of moving ice plates and temperatures dropping to -40\u00B0C.',
     img: '/assets/images/expeditions/north-pole.jpg',
   },
   {
     year: '2015',
     title: 'Three North Poles',
     aircraft: 'Robinson R66',
-    detail: 'A fleet of five Robinson R66 helicopters flew from Moscow to Svalbard, then onward to the drifting ice base "Barneo" before heading to all three North Poles — the Geographic North Pole, the Magnetic North Pole, and the Northern Pole of Inaccessibility. At the Pole, the sub-zero temperatures turned their celebratory champagne into solid slush. They ate frozen champagne with a fork.',
+    detail: 'A fleet of five Robinson R66 helicopters flew from Moscow to Svalbard, then onward to the drifting ice base "Barneo" before heading to all three North Poles: the Geographic North Pole, the Magnetic North Pole, and the Northern Pole of Inaccessibility. At the Pole, the sub-zero temperatures turned their celebratory champagne into solid slush. They ate frozen champagne with a fork.',
     img: '/assets/images/expeditions/six-helis-in-North-Pole.jpg',
   },
   {
     year: '2016',
     title: 'The Polar Triangle',
     aircraft: 'Robinson R44',
-    detail: 'First pilot to fly solo to all three North Poles in a single journey — the Geographic North Pole, the North Pole of Inaccessibility (700 miles from the nearest land), and the Magnetic North Pole. Having led the team expedition the year before, Q returned alone to prove it could be done by a single pilot in a single aircraft.',
+    detail: 'First pilot to fly solo to all three North Poles in a single journey: the Geographic North Pole, the North Pole of Inaccessibility (700 miles from the nearest land), and the Magnetic North Pole. Having led the team expedition the year before, Q returned alone to prove it could be done by a single pilot in a single aircraft.',
     img: '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp',
   },
 ];
@@ -121,12 +121,12 @@ function CaptainQ() {
             <h2 className="cq__section-title">A Life in the Air</h2>
             <p>
               Cornish by birth, a physicist by education, a pilot from the age of five.
-              Captain Quentin "Q" Smith has spent over 55 years in the air — amassing more
+              Captain Quentin "Q" Smith has spent over 55 years in the air, amassing more
               than 12,000 hours as pilot-in-command across every continent on earth.
             </p>
             <p>
               Aviation runs in the blood. Q's father, Mike Smith, was a celebrated helicopter
-              pilot in the Royal Navy's Fleet Air Arm — one of the original Borneo "Junglies"
+              pilot in the Royal Navy's Fleet Air Arm, one of the original Borneo "Junglies"
               with 848 Naval Air Squadron. In one legendary rescue in 1966, Mike was flown for
               seven miles hanging from a strap beneath a helicopter, holding a stretcher during
               an army patrol evacuation in Malaysian Borneo.
@@ -135,7 +135,7 @@ function CaptainQ() {
               Q holds an Air Transport Pilot Licence (Helicopters) and is both a helicopter
               instructor and examiner. Having taught thousands of students, he is regarded
               as one of the most experienced rotary-wing instructors in the world. He founded
-              HQ Aviation at Denham Aerodrome — a Robinson Authorized Dealer and Service Centre
+              HQ Aviation at Denham Aerodrome, a Robinson Authorized Dealer and Service Centre
               that has become the UK's leading helicopter specialists.
             </p>
             <div className="cq__bio-stats">
@@ -171,8 +171,8 @@ function CaptainQ() {
             <h2 className="cq__section-title">Two Gold Medals. One Pilot.</h2>
             <p>
               Moscow, 1994. The World Helicopter Championships. The Cold War had just
-              ended and Russian pilots — trained with military rigour, flying powerful
-              turbine-driven Mil Mi-2s and Kamov Ka-32s — dominated the sport on home
+              ended and Russian pilots, trained with military rigour and flying powerful
+              turbine-driven Mil Mi-2s and Kamov Ka-32s, dominated the sport on home
               turf. Into this arena stepped a 32-year-old British pilot, flying a humble
               Robinson R22.
             </p>
@@ -180,19 +180,19 @@ function CaptainQ() {
               Where his competitors relied on raw turbine power to muscle through manoeuvres,
               Q demonstrated something different: fluidity, precision, and an intimate
               understanding of energy management that made the light, agile Robinson dance.
-              He won the gold medal in Freestyle Aerobatics — the first British pilot ever
+              He won the gold medal in Freestyle Aerobatics, becoming the first British pilot ever
               to claim the title.
             </p>
             <p>
               Eighteen years later, in 2012, he did it again. His winning routine included
-              a manoeuvre previously deemed impossible by experts: a backwards autorotation —
+              a manoeuvre previously deemed impossible by experts: a backwards autorotation,
               an engine-off backward landing from just 300 feet. He practised for two years
               with slow, tiny incremental steps to master it. The helicopter is completely
               unstable going backwards; the airflow hits the tail from an awkward direction,
               creating severe stability issues. Q made it look effortless.
             </p>
             <p>
-              In 2019, Q was awarded the FAI Gold Rotorcraft Medal — the highest honour in
+              In 2019, Q was awarded the FAI Gold Rotorcraft Medal, the highest honour in
               international rotorcraft aviation, recognising his lifetime contribution to the sport.
             </p>
             <div className="cq__champ-awards">
@@ -265,7 +265,7 @@ function CaptainQ() {
             </div>
             <div className="cq__exp-body">
               <span className="cq__exp-aircraft">{expeditions[activeExp].aircraft}</span>
-              <h3 className="cq__exp-title">{expeditions[activeExp].year} — {expeditions[activeExp].title}</h3>
+              <h3 className="cq__exp-title">{expeditions[activeExp].year}: {expeditions[activeExp].title}</h3>
               <p className="cq__exp-text">{expeditions[activeExp].detail}</p>
             </div>
           </div>
@@ -298,7 +298,7 @@ function CaptainQ() {
               gain the skill level required for the stunts performed in the film.
             </p>
             <p>
-              The centrepiece was "The Spiral Dive" — a terrifying descending corkscrew
+              The centrepiece was "The Spiral Dive": a terrifying descending corkscrew
               manoeuvre performed down a narrow waterfall canyon in New Zealand. Cruise had
               to execute the manoeuvre while acting, maintaining a precise distance from the
               camera helicopter, and flying near mountains. Q designed the training programme
@@ -326,7 +326,7 @@ function CaptainQ() {
                 <span className="cq__tom-stat-label">Film release</span>
               </div>
             </div>
-            <img src="/assets/images/team/q-dubai.jpg" alt="Captain Q — instructor to the world's biggest stars" />
+            <img src="/assets/images/team/q-dubai.jpg" alt="Captain Q, instructor to the world's biggest stars" />
             <span className="cq__media-caption">The instructor behind the impossible</span>
           </div>
         </div>
@@ -337,7 +337,7 @@ function CaptainQ() {
       <section className="cq__special" ref={specialRef}>
         <div className="cq__special-inner">
           <div className={`cq__special-image ${specialInView ? 'cq__special-image--visible' : ''}`}>
-            <img src="/assets/images/team/quentin-smith-profile-picture-2.jpg" alt="Captain Q — advanced training" />
+            <img src="/assets/images/team/quentin-smith-profile-picture-2.jpg" alt="Captain Q advanced training" />
           </div>
           <div className={`cq__special-content ${specialInView ? 'cq__special-content--visible' : ''}`}>
             <span className="cq__pretitle">Beyond Regulation</span>
@@ -351,14 +351,14 @@ function CaptainQ() {
             <p>
               Q pushes pilots to the edge of the flight envelope so they know exactly where
               the limit is, rather than fearing it. His approach is born from decades of
-              aerobatic competition and polar expeditions — real-world experience that no
+              aerobatic competition and polar expeditions: real-world experience that no
               simulator or textbook can replicate. Autorotations from any position, confined
               area operations, advanced emergency procedures. The goal: to be so comfortable
               with autorotating that you could do it in your sleep.
             </p>
             <p>
-              It is this experience — surviving the Drake Passage, flying to both Poles,
-              winning world championships in underpowered aircraft — that makes Q one of
+              It is this experience, surviving the Drake Passage, flying to both Poles,
+              winning world championships in underpowered aircraft, that makes Q one of
               the most sought-after advanced instructors in the world.
             </p>
           </div>
@@ -370,7 +370,7 @@ function CaptainQ() {
       <section className="cq__media" ref={legacyRef}>
         <div className="cq__media-inner">
           <div className={`cq__media-image ${legacyInView ? 'cq__media-image--visible' : ''}`}>
-            <img src="/assets/images/team/helicopter-lands-on-a-car-2c-top-gear-2c-quentin-smith.webp" alt="Q landing a helicopter on a moving car — Top Gear" />
+            <img src="/assets/images/team/helicopter-lands-on-a-car-2c-top-gear-2c-quentin-smith.webp" alt="Q landing a helicopter on a moving car for Top Gear" />
             <span className="cq__media-caption">Landing a helicopter on a moving car</span>
           </div>
           <div className={`cq__media-content ${legacyInView ? 'cq__media-content--visible' : ''}`}>
@@ -385,7 +385,7 @@ function CaptainQ() {
             <p>
               His story has been told in magazines including Avaunt, featured in Breitling's
               most famous Emergency watch rescue stories, and documented in Jennifer Murray's
-              books about their shared expeditions — including the aircraft G-MURY, which now
+              books about their shared expeditions, including the aircraft G-MURY, which now
               resides in the Smithsonian.
             </p>
             <p>

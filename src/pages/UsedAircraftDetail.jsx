@@ -584,7 +584,7 @@ function UsedAircraftDetail() {
           name: `${firstName} ${lastName}`.trim(),
           email,
           phone,
-          subject: `Aircraft Enquiry — ${aircraft.model}${aircraft.registration ? ` (${aircraft.registration})` : ''}`,
+          subject: `Aircraft Enquiry: ${aircraft.model}${aircraft.registration ? ` (${aircraft.registration})` : ''}`,
           message: message || 'No additional message provided.',
           source: 'aircraft-detail-enquiry',
         }),
@@ -803,7 +803,7 @@ function UsedAircraftDetail() {
               <span className="uad-success-icon">✓</span>
               <p className="uad-success-title">Enquiry Received</p>
               <p className="uad-success-sub">
-                Thank you — we'll be in touch about this {aircraft.model} shortly.
+                Thank you. We'll be in touch about this {aircraft.model} shortly.
               </p>
             </div>
           ) : (

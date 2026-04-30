@@ -458,7 +458,7 @@ function HelicopterTourOfLondon() {
 
               <p className="ltour-intro__p2">
                 Spanning the length of London from East to West and back again, you'll observe
-                in stunning detail the whole of London—from its historic landmarks to its modern marvels.
+                in stunning detail the whole of London, from its historic landmarks to its modern marvels.
               </p>
 
               <Reveal delay={0.3}>
@@ -475,7 +475,7 @@ function HelicopterTourOfLondon() {
                 Contact us to book your flight today.
               </p>
               <div className="ltour-intro__cta-note">
-                <strong>Gift Vouchers Available</strong> — The perfect present for aviation enthusiasts
+                <strong>Gift Vouchers Available.</strong> The perfect present for aviation enthusiasts
               </div>
             </div>
 

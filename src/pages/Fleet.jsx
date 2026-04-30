@@ -1255,7 +1255,7 @@ function FleetSafety() {
             </h2>
             <p>
               Every aircraft in our fleet undergoes rigorous maintenance and inspection protocols.
-              Safety is not just a priority—it's our foundation.
+              Safety is not just a priority. It is our foundation.
             </p>
           </div>
         </Reveal>

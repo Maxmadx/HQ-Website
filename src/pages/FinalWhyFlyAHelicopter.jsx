@@ -16,21 +16,21 @@ const benefits = [
 
   // The Practical Advantage
   { icon: '🚁', title: 'Vertical Freedom', desc: 'The ultimate cheat code for travel. Land on your own property, yachts, lawns, beaches, or restaurants.', stat: '∞', statLabel: 'landing options', category: 'Practical' },
-  { icon: '⏱', title: 'Weekend Maximization', desc: 'Bypass road gridlock and turn 4-hour drives into 45-minute flights, effectively extending your leisure time—when the journey beats the destination.', stat: '85%', statLabel: 'time saved', category: 'Practical' },
+  { icon: '⏱', title: 'Weekend Maximization', desc: 'Bypass road gridlock and turn 4-hour drives into 45-minute flights, effectively extending your leisure time. Sometimes the journey beats the destination.', stat: '85%', statLabel: 'time saved', category: 'Practical' },
   { icon: '🎯', title: 'Total Control', desc: 'You leave exactly when you want. Depart from your door and arrive exactly where you need to be.', stat: '100%', statLabel: 'your schedule', category: 'Practical' },
   { icon: '🏝', title: 'Unmatched Access', desc: 'Reach secluded locations inaccessible by any other vehicle, from private islands to deep wilderness.', stat: '2,000+', statLabel: 'landing sites', category: 'Practical' },
 
   // The Experience & Skill
   { icon: '🔧', title: 'Mastery of Machine', desc: 'It satisfies the urge for technical perfection. Mastering the collective and cyclic displays your skills as a master at operating machinery.', stat: '∞', statLabel: 'skill ceiling', category: 'Experience' },
   { icon: '🎬', title: 'The "007" Factor', desc: 'It is the coolest vehicle on earth. Arriving by helicopter is cinematic, commanding, and undeniably "James Bond."', stat: '←', statLabel: 'iconic arrival', category: 'Experience' },
-  { icon: '🧭', title: '3D Flight Dynamics', desc: 'Unlike airplanes that just go forward, you have total three-dimensional control—hovering, sliding sideways, and flying backward.', stat: '360°', statLabel: 'freedom', category: 'Experience' },
+  { icon: '🧭', title: '3D Flight Dynamics', desc: 'Unlike airplanes that just go forward, you have total three-dimensional control: hovering, sliding sideways, and flying backward.', stat: '360°', statLabel: 'freedom', category: 'Experience' },
 
   // The Lifestyle
   { icon: '💼', title: 'Business Efficiency', desc: 'The ultimate productivity multiplier, allowing for multiple meetings in a single day.', stat: '3×', statLabel: 'productivity', category: 'Lifestyle' },
   { icon: '⚡', title: 'Spontaneity', desc: 'The ability to decide on a trip and be in the air within the hour.', stat: '<1', statLabel: 'hour to wheels up', category: 'Lifestyle' },
   { icon: '⛳', title: 'Hobby Enablement', desc: 'Direct access to golf courses or shooting grounds that have helipads.', stat: '500+', statLabel: 'helipad venues', category: 'Lifestyle' },
   { icon: '🤝', title: 'Prestige & Networking', desc: 'It is a powerful tool for business or social settings.', stat: '←', statLabel: 'elite circles', category: 'Lifestyle' },
-  { icon: '🦅', title: 'The Ancestral Dream', desc: 'You pull up to find the helicopter fueled, cleaned, and ready. You fly yourself to your destination in a private bubble above the world—a feat our ancestors who looked up at the birds could only dream of.', stat: '←', statLabel: 'dream realized', category: 'Lifestyle' },
+  { icon: '🦅', title: 'The Ancestral Dream', desc: 'You pull up to find the helicopter fueled, cleaned, and ready. You fly yourself to your destination in a private bubble above the world, a feat our ancestors who looked up at the birds could only dream of.', stat: '←', statLabel: 'dream realized', category: 'Lifestyle' },
   { icon: '✨', title: 'Lasting Impact', desc: 'Create memories that last a lifetime.', stat: '∞', statLabel: 'memories', category: 'Lifestyle' },
 ];
 

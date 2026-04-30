@@ -161,7 +161,7 @@ const services = [
   {
     num: '01',
     title: 'Deck Operations Training',
-    desc: 'Crew training for safe deck operations — marshalling, blade-folding, tie-down, fuelling, emergency procedures. CAA-compliant training records maintained.',
+    desc: 'Crew training for safe deck operations: marshalling, blade-folding, tie-down, fuelling, emergency procedures. CAA-compliant training records maintained.',
   },
   {
     num: '02',
@@ -171,7 +171,7 @@ const services = [
   {
     num: '03',
     title: 'Maintenance Coordination',
-    desc: 'We manage your maintenance schedule regardless of where in the world the vessel is — coordinating with approved engineers at the nearest certified facility.',
+    desc: 'We manage your maintenance schedule regardless of where in the world the vessel is, coordinating with approved engineers at the nearest certified facility.',
   },
   {
     num: '04',
@@ -181,7 +181,7 @@ const services = [
   {
     num: '05',
     title: 'Worldwide Logistics',
-    desc: 'Fuel planning, ground handling, FBO coordination, and route support. Mediterranean, Caribbean, Pacific — wherever your season takes you.',
+    desc: 'Fuel planning, ground handling, FBO coordination, and route support. Mediterranean, Caribbean, Pacific. Wherever your season takes you.',
   },
   {
     num: '06',
@@ -190,30 +190,28 @@ const services = [
   },
 ];
 
-const regions = [
-  { num: '01', name: 'Mediterranean', detail: 'Balearics, French Riviera, Italian coast, Greece, Croatia, Turkish coast' },
-  { num: '02', name: 'Caribbean', detail: 'BVI, Antigua, St Barths, Grenada, Bahamas, US Virgin Islands' },
-  { num: '03', name: 'Northern Europe', detail: 'Norwegian fjords, Scotland, Ireland, Scandinavia, Iceland' },
-  { num: '04', name: 'Indian Ocean', detail: 'Maldives, Seychelles, Mauritius, Red Sea, East Africa' },
-  { num: '05', name: 'Pacific & Americas', detail: 'Hawaii, French Polynesia, Pacific Coast, Galapagos' },
-];
-
-const trust = [
+const tracks = [
   {
-    title: 'CAA Approved',
-    desc: 'Declared Training Organisation — all training meets regulatory requirements',
+    num: '01',
+    eyebrow: 'Pilot',
+    title: 'Yacht Deck Operations',
+    lede: 'Helicopter pilots adding yacht-deck competence to their flying — whether owner-pilots already on type, or new pilots working toward operating from a vessel.',
+    bullets: [
+      'Tailored to the pilot — bespoke for those already current, structured for those building toward it',
+      'Deck, confined-area & maritime considerations — the realities of operating from a moving platform',
+      'Aircraft-flexible — Robinson and light turbine types',
+    ],
   },
   {
-    title: 'Robinson Authorised',
-    desc: 'Factory-authorised service centre for the full Robinson range',
-  },
-  {
-    title: 'Independent Advice',
-    desc: 'We work for the owner, not the manufacturer or insurer',
-  },
-  {
-    title: 'Discreet Operations',
-    desc: 'All client information treated with absolute confidentiality',
+    num: '02',
+    eyebrow: 'Crew',
+    title: 'Helideck Safety',
+    lede: 'Yacht crew preparing to support helicopter operations on board — marshalling, refuelling, securing, and emergency response.',
+    bullets: [
+      'Role-aligned — covering helideck team responsibilities at sea',
+      'Practical and procedural — drills alongside theory',
+      'Coordinated to recognised standards — aligned with industry-accepted helideck training',
+    ],
   },
 ];
 
@@ -236,9 +234,9 @@ export default function SuperYachtOps() {
   const { faqs: rawFaqs } = useFaqs('superyacht-ops', { visibleOnly: true });
   const fallbackFaqs = [
     { id: 'f1', question: 'What aircraft types does HQ support for yacht operations?', answer: 'HQ specialises in the Robinson range (R44, R66) which are the most common yacht-based helicopters due to their compact size and reliability. We also support AW109, H135, and other light turbine types through our partner network.' },
-    { id: 'f2', question: 'Do you provide pilots for the whole season?', answer: 'Yes — we can provide a dedicated pilot for the duration of your Mediterranean or Caribbean season, or for specific legs. All pilots are fully current on type, insured, and experienced in yacht deck operations.' },
+    { id: 'f2', question: 'Do you provide pilots for the whole season?', answer: 'Yes, we can provide a dedicated pilot for the duration of your Mediterranean or Caribbean season, or for specific legs. All pilots are fully current on type, insured, and experienced in yacht deck operations.' },
     { id: 'f3', question: 'How do you handle maintenance when the yacht is overseas?', answer: 'We maintain a schedule for your aircraft and coordinate with approved engineers at facilities near your itinerary. For Robinson aircraft, we work with factory-authorised service centres in key cruising regions.' },
-    { id: 'f4', question: 'Can you help set up a new yacht helicopter programme from scratch?', answer: 'Absolutely. We advise on aircraft selection, deck modifications, crew training, insurance, and operational procedures — everything needed to start operating safely and compliantly.' },
+    { id: 'f4', question: 'Can you help set up a new yacht helicopter programme from scratch?', answer: 'Absolutely. We advise on aircraft selection, deck modifications, crew training, insurance, and operational procedures: everything needed to start operating safely and compliantly.' },
     { id: 'f5', question: 'Is the service confidential?', answer: 'Completely. All client and vessel information is held in strict confidence. We do not discuss client operations or identities.' },
   ];
   const faqs = rawFaqs.length > 0 ? rawFaqs : fallbackFaqs;
@@ -431,29 +429,37 @@ export default function SuperYachtOps() {
       </section>
 
       {/* ===================================================================
-          4. REGIONS
+          4. TRAINING — TWO TRACKS
       =================================================================== */}
-      <section className="syo-regions">
-        <div className="syo-regions__inner">
+      <section className="syo-tracks">
+        <div className="syo-tracks__inner">
           <Reveal>
             <div className="syo-section-header syo-section-header--light">
-              <span className="syo-pre-text syo-pre-text--light">Where We Operate</span>
-              <h2 className="syo-section-h2 syo-section-h2--light">Global Reach</h2>
-              <p className="syo-regions__intro">
-                HQ supports yacht helicopter operations across all major cruising regions. Our network
-                of trusted partners, approved maintenance facilities, and permit agents covers the routes
-                that superyachts actually sail.
+              <span className="syo-pre-text syo-pre-text--light">Training</span>
+              <h2 className="syo-section-h2 syo-section-h2--light">Two Tracks</h2>
+              <p className="syo-tracks__intro">
+                Yacht helicopter operations rely on two distinct skill sets — the pilot in the cockpit
+                and the deck team supporting them. We work with both.
               </p>
             </div>
           </Reveal>
 
-          <div className="syo-regions__cards">
-            {regions.map((region, i) => (
-              <Reveal key={region.num} delay={i * 0.08}>
-                <div className="syo-regions__card">
-                  <span className="syo-regions__card-num">{region.num}</span>
-                  <h3 className="syo-regions__card-name">{region.name}</h3>
-                  <p className="syo-regions__card-detail">{region.detail}</p>
+          <div className="syo-tracks__grid">
+            {tracks.map((track, i) => (
+              <Reveal key={track.num} delay={i * 0.1}>
+                <div className="syo-tracks__card">
+                  <div className="syo-tracks__card-head">
+                    <span className="syo-tracks__card-num">{track.num}</span>
+                    <span className="syo-tracks__card-eyebrow">{track.eyebrow}</span>
+                  </div>
+                  <h3 className="syo-tracks__card-title">{track.title}</h3>
+                  <p className="syo-tracks__card-lede">{track.lede}</p>
+                  <ul className="syo-tracks__card-list">
+                    {track.bullets.map((b) => (
+                      <li key={b}>{b}</li>
+                    ))}
+                  </ul>
+                  <a href="#enquire" className="syo-tracks__card-cta">Enquire <span aria-hidden="true">→</span></a>
                 </div>
               </Reveal>
             ))}
@@ -462,42 +468,7 @@ export default function SuperYachtOps() {
       </section>
 
       {/* ===================================================================
-          5. TRUST
-      =================================================================== */}
-      <section className="syo-trust">
-        <div className="syo-trust__inner">
-          <Reveal>
-            <div className="syo-section-header syo-section-header--light">
-              <span className="syo-pre-text syo-pre-text--light">Why HQ</span>
-              <h2 className="syo-section-h2 syo-section-h2--light">Built on Experience</h2>
-            </div>
-          </Reveal>
-
-          <div className="syo-trust__grid">
-            {trust.map((item, i) => (
-              <Reveal key={item.title} delay={i * 0.1}>
-                <div className="syo-trust__block">
-                  <h4 className="syo-trust__block-title">{item.title}</h4>
-                  <p className="syo-trust__block-desc">{item.desc}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-
-          <Reveal delay={0.3}>
-            <div className="syo-trust__quote-wrap">
-              <p className="syo-trust__quote">
-                "The difference between a smooth operation and an operational headache is almost always
-                preparation and local knowledge. We provide both."
-              </p>
-              <span className="syo-trust__attribution">HQ Aviation Operations Team</span>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ===================================================================
-          6. ENQUIRY FORM
+          5. ENQUIRY FORM
       =================================================================== */}
       <section className="syo-enquiry" id="enquire">
         <div className="syo-enquiry__inner">
@@ -507,7 +478,7 @@ export default function SuperYachtOps() {
               <h2 className="syo-enquiry__heading">Get In Touch</h2>
               <p className="syo-enquiry__desc">
                 Every yacht operation is different. Tell us about your vessel, your aircraft, and your
-                season plans — we'll come back with a clear picture of how we can support you.
+                season plans, and we'll come back with a clear picture of how we can support you.
               </p>
             </div>
           </Reveal>
@@ -615,7 +586,7 @@ export default function SuperYachtOps() {
       </section>
 
       {/* ===================================================================
-          7. FAQ
+          6. FAQ
       =================================================================== */}
       <section className="syo-faq" data-cms-section="faqs-superyacht-ops">
         <div className="syo-faq__inner">
@@ -672,7 +643,7 @@ export default function SuperYachtOps() {
       </section>
 
       {/* ===================================================================
-          8. CTA
+          7. CTA
       =================================================================== */}
       <section className="syo-cta">
         <div className="syo-cta__inner">
@@ -1073,145 +1044,143 @@ export default function SuperYachtOps() {
         }
 
         /* ================================================================
-           4. REGIONS
+           4. TRAINING — TWO TRACKS
         ================================================================ */
-        .syo-regions {
+        .syo-tracks {
           background: #1a1a1a;
           padding: 6rem 4rem;
         }
 
-        .syo-regions__inner {
+        .syo-tracks__inner {
           max-width: 1200px;
           margin: 0 auto;
         }
 
-        .syo-regions__intro {
+        .syo-tracks__intro {
           color: rgba(255, 255, 255, 0.6);
           font-size: 1rem;
           line-height: 1.7;
-          margin: 1rem 0 0;
+          margin: 1rem auto 0;
           max-width: 640px;
-          margin-left: auto;
-          margin-right: auto;
         }
 
-        .syo-regions__cards {
-          display: flex;
-          gap: 1rem;
+        .syo-tracks__grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1.5rem;
           margin-top: 3rem;
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none;
-          padding-bottom: 0.5rem;
         }
 
-        .syo-regions__cards::-webkit-scrollbar {
-          display: none;
-        }
-
-        .syo-regions__card {
-          flex: 1;
-          min-width: 200px;
-          background: rgba(255, 255, 255, 0.05);
+        .syo-tracks__card {
+          background: rgba(255, 255, 255, 0.04);
           border: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: 8px;
-          padding: 1.75rem;
-          transition: background 0.2s ease, border-color 0.2s ease;
+          padding: 2.25rem 2rem;
+          display: flex;
+          flex-direction: column;
+          transition: background 0.2s ease, border-color 0.2s ease, transform 0.25s ease;
         }
 
-        .syo-regions__card:hover {
-          background: rgba(255, 255, 255, 0.08);
+        .syo-tracks__card:hover {
+          background: rgba(255, 255, 255, 0.07);
           border-color: rgba(255, 255, 255, 0.18);
+          transform: translateY(-2px);
         }
 
-        .syo-regions__card-num {
-          display: block;
+        .syo-tracks__card-head {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          margin-bottom: 1.25rem;
+        }
+
+        .syo-tracks__card-num {
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.6rem;
           color: rgba(255, 255, 255, 0.3);
           letter-spacing: 0.1em;
-          margin-bottom: 0.75rem;
         }
 
-        .syo-regions__card-name {
-          font-size: 1.1rem;
+        .syo-tracks__card-eyebrow {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.7rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: rgba(255, 255, 255, 0.55);
+          padding: 0.25rem 0.6rem;
+          border: 1px solid rgba(255, 255, 255, 0.18);
+          border-radius: 3px;
+        }
+
+        .syo-tracks__card-title {
+          font-size: 1.5rem;
           font-weight: 700;
           color: #ffffff;
-          margin: 0 0 0.75rem;
+          margin: 0 0 0.85rem;
           line-height: 1.2;
         }
 
-        .syo-regions__card-detail {
-          font-size: 0.85rem;
-          color: rgba(255, 255, 255, 0.55);
-          line-height: 1.6;
-          margin: 0;
-          font-style: italic;
+        .syo-tracks__card-lede {
+          font-size: 0.95rem;
+          color: rgba(255, 255, 255, 0.65);
+          line-height: 1.65;
+          margin: 0 0 1.5rem;
         }
 
-        /* ================================================================
-           5. TRUST
-        ================================================================ */
-        .syo-trust {
-          background: #1a1a1a;
-          padding: 6rem 4rem;
-          border-top: 1px solid rgba(255, 255, 255, 0.07);
+        .syo-tracks__card-list {
+          list-style: none;
+          padding: 0;
+          margin: 0 0 1.75rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.85rem;
+          flex: 1;
         }
 
-        .syo-trust__inner {
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-
-        .syo-trust__grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 0 3rem;
-          margin-top: 0.5rem;
-        }
-
-        .syo-trust__block {
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
-          padding: 1.5rem 0;
-        }
-
-        .syo-trust__block-title {
-          font-size: 1rem;
-          font-weight: 700;
-          color: #ffffff;
-          margin: 0 0 0.5rem;
-        }
-
-        .syo-trust__block-desc {
+        .syo-tracks__card-list li {
           font-size: 0.9rem;
-          color: rgba(255, 255, 255, 0.6);
-          margin: 0;
-          line-height: 1.6;
+          color: rgba(255, 255, 255, 0.7);
+          line-height: 1.55;
+          padding-left: 1.1rem;
+          position: relative;
         }
 
-        .syo-trust__quote-wrap {
-          margin-top: 3.5rem;
-          max-width: 700px;
+        .syo-tracks__card-list li::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0.6rem;
+          width: 6px;
+          height: 1px;
+          background: rgba(255, 255, 255, 0.4);
         }
 
-        .syo-trust__quote {
-          font-size: 1.1rem;
-          color: rgba(255, 255, 255, 0.6);
-          font-style: italic;
-          line-height: 1.75;
-          margin: 0 0 0.75rem;
-        }
-
-        .syo-trust__attribution {
+        .syo-tracks__card-cta {
+          align-self: flex-start;
           font-family: 'Share Tech Mono', monospace;
-          font-size: 0.6rem;
-          color: rgba(255, 255, 255, 0.3);
-          letter-spacing: 0.12em;
+          font-size: 0.72rem;
+          letter-spacing: 0.15em;
           text-transform: uppercase;
+          color: #ffffff;
+          text-decoration: none;
+          padding: 0.65rem 1.1rem;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          border-radius: 3px;
+          transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .syo-tracks__card-cta:hover {
+          background: #ffffff;
+          color: #1a1a1a;
+          border-color: #ffffff;
+        }
+
+        .syo-tracks__card-cta span {
+          margin-left: 0.4rem;
         }
 
         /* ================================================================
-           6. ENQUIRY FORM
+           5. ENQUIRY FORM
         ================================================================ */
         .syo-enquiry {
           background: #ffffff;
@@ -1319,7 +1288,7 @@ export default function SuperYachtOps() {
         }
 
         /* ================================================================
-           7. FAQ
+           6. FAQ
         ================================================================ */
         .syo-faq {
           background: #faf9f6;
@@ -1405,7 +1374,7 @@ export default function SuperYachtOps() {
         }
 
         /* ================================================================
-           8. CTA
+           7. CTA
         ================================================================ */
         .syo-cta {
           background: #1a1a1a;
@@ -1463,17 +1432,8 @@ export default function SuperYachtOps() {
             grid-template-columns: repeat(2, 1fr);
           }
 
-          .syo-regions {
+          .syo-tracks {
             padding: 5rem 3rem;
-          }
-
-          .syo-trust {
-            padding: 5rem 3rem;
-          }
-
-          .syo-trust__grid {
-            grid-template-columns: 1fr 1fr;
-            gap: 0 2rem;
           }
 
           .syo-enquiry {
@@ -1536,24 +1496,17 @@ export default function SuperYachtOps() {
             grid-template-columns: 1fr;
           }
 
-          .syo-regions {
+          .syo-tracks {
             padding: 4rem 1.5rem;
           }
 
-          .syo-regions__cards {
-            gap: 0.85rem;
-          }
-
-          .syo-regions__card {
-            min-width: 220px;
-          }
-
-          .syo-trust {
-            padding: 4rem 1.5rem;
-          }
-
-          .syo-trust__grid {
+          .syo-tracks__grid {
             grid-template-columns: 1fr;
+            gap: 1rem;
+          }
+
+          .syo-tracks__card {
+            padding: 1.75rem 1.5rem;
           }
 
           .syo-enquiry {
@@ -1591,15 +1544,6 @@ export default function SuperYachtOps() {
 
           .syo-services__card {
             padding: 1.25rem;
-          }
-
-          .syo-regions__card {
-            min-width: 200px;
-            padding: 1.25rem;
-          }
-
-          .syo-trust__quote {
-            font-size: 1rem;
           }
 
           .syo-faq__item {

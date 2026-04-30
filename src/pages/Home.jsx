@@ -36,8 +36,8 @@ function Home() {
 
   // Sales carousel — text stays hardcoded, images come from admin
   const salesSlides = [
-    { title: 'NEW HELICOPTERS',      description: 'Global Rotors, a division of HQ Aviation Ltd, are an official approved Robinson Factory distributor. GR will give you the necessary guidance to design your brand new "Robbie". With a great range of optional equipment, your R22, R44 or R66 will be tailored to your needs. Contact us to book a demo at our London showroom.', cta: 'Learn More', link: '/aircraft-sales' },
-    { title: 'USED HELICOPTERS',     description: 'If you are considering selling your machine, please contact our sales team. HQ will do the necessary arrangements to facilitate the transaction. If on the other hand, we are willing to buy a used aircraft, please let us know your criteria and HQ will look for a suitable machine for you.', cta: 'Learn More', link: '/aircraft-sales' },
+    { title: 'NEW HELICOPTERS',      description: 'Global Rotors, a division of HQ Aviation Ltd, are an official approved Robinson Factory distributor. GR will give you the necessary guidance to design your brand new "Robbie". With a great range of optional equipment, your R22, R44 or R66 will be tailored to your needs. Contact us to book a demo at our London showroom.', cta: 'Learn More', link: '/sales/new' },
+    { title: 'USED HELICOPTERS',     description: 'If you are considering selling your machine, please contact our sales team. HQ will do the necessary arrangements to facilitate the transaction. If on the other hand, we are willing to buy a used aircraft, please let us know your criteria and HQ will look for a suitable machine for you.', cta: 'Learn More', link: '/sales/new' },
     { title: 'REBUILT HELICOPTERS',  description: 'Having rebuilt over 40 Robinsons in his career, our expert Chief Engineer has gained the experience to deliver a "like new" product. Attention to details is paramount, fine tuning is a must, and there is no limit to the choice of colours and materials that can be selected to personalise your beloved machine.', cta: 'Learn More', link: '/services/maintenance' },
   ].map((slide, i) => ({ ...slide, image: salesCarouselImages[i]?.url }));
 
@@ -276,7 +276,7 @@ function Home() {
               <div className="sqs-block-content">
                 <div className="sqs-html-content">
                   <p style={{ textAlign: 'center', whiteSpace: 'pre-wrap' }}>
-                    Unlock your true potential in the skies with HQ Aviation, where world-class helicopter training meets a vibrant club atmosphere at our Denham Aerodrome base. From your very first Trial Lesson to achieving your Private (PPL) or Commercial (CPL) licences, Night Ratings, and Type Ratings, our expert instructors guide you through every rotor-turn using our pristine fleet of Robinson R22, R44, and R66 helicopters. Founded by world-record holder Captain Quentin Smith, we don't just teach you to fly; we welcome you into a passionate aviation family, ensuring your journey—whether for a hobby or a professional career—is as safe as it is exhilarating.
+                    Unlock your true potential in the skies with HQ Aviation, where world-class helicopter training meets a vibrant club atmosphere at our Denham Aerodrome base. From your very first Trial Lesson to achieving your Private (PPL) or Commercial (CPL) licences, Night Ratings, and Type Ratings, our expert instructors guide you through every rotor-turn using our pristine fleet of Robinson R22, R44, and R66 helicopters. Founded by world-record holder Captain Quentin Smith, we don't just teach you to fly; we welcome you into a passionate aviation family. Whether you're flying as a hobby or building a professional career, we make sure your journey is as safe as it is exhilarating.
                   </p>
                 </div>
               </div>
@@ -383,7 +383,7 @@ function Home() {
               <div className="sqs-block-content">
                 <div className="hq-service-grid">
                   <div className="service-item">
-                    <p>At HQ Aviation, we believe that <strong>world-class engineering is the heartbeat of flying</strong>. As a fully authorised CAA Part 145 maintenance facility and a designated Robinson Service Centre, our Denham-based hangar offers uncompromising care for your aircraft—<strong>our factory-trained engineers treat every helicopter as if it were their own</strong>.</p>
+                    <p>At HQ Aviation, we believe that <strong>world-class engineering is the heartbeat of flying</strong>. As a fully authorised CAA Part 145 maintenance facility and a designated Robinson Service Centre, our Denham-based hangar offers uncompromising care for your aircraft. <strong>Our factory-trained engineers treat every helicopter as if it were their own</strong>.</p>
                   </div>
 
                   <div className="service-item image-container">
@@ -394,7 +394,7 @@ function Home() {
                   </div>
 
                   <div className="service-item">
-                    <p>From <strong>routine 100-hour inspections</strong> to <strong>complete 12-year overhauls</strong>, we handle every task with precision and a personal touch—because keeping you safe in the air is more than a job; it's our passion. Trust HQ Aviation to keep your rotor turning smoothly for years to come.</p>
+                    <p>From <strong>routine 100-hour inspections</strong> to <strong>complete 12-year overhauls</strong>, we handle every task with precision and a personal touch, because keeping you safe in the air is more than a job; it's our passion. Trust HQ Aviation to keep your rotor turning smoothly for years to come.</p>
                   </div>
                 </div>
               </div>
@@ -518,7 +518,7 @@ function Home() {
               <div className="sqs-block-content">
                 <div className="robinson-direct-grid">
                   <div className="robinson-item">
-                    <p>As a <strong>Robinson Approved Dealer</strong>, we manage the <strong>entire ownership journey</strong>—<strong>matching pilots to machines</strong> through expert brokerage and a strong industry reputation. Our fleet is constantly evolving, allowing us to leverage our vast network of private owners to structure <strong>deals that work for all parties</strong>.</p>
+                    <p>As a <strong>Robinson Approved Dealer</strong>, we manage the <strong>entire ownership journey</strong>, <strong>matching pilots to machines</strong> through expert brokerage and a strong industry reputation. Our fleet is constantly evolving, allowing us to leverage our vast network of private owners to structure <strong>deals that work for all parties</strong>.</p>
                   </div>
 
                   <div className="robinson-item image-container">

@@ -257,7 +257,7 @@ function NightRating() {
       num: '03',
       title: 'Night Navigation',
       duration: '2-3 Hours',
-      description: 'Cross-country navigation exercises learning to read a new landscape of lights — towns, motorways, and illuminated features. Includes flight to and from another aerodrome and emergency procedures training.',
+      description: 'Cross-country navigation exercises learning to read a new landscape of lights: towns, motorways, and illuminated features. Includes flight to and from another aerodrome and emergency procedures training.',
     },
     {
       num: '04',
@@ -375,7 +375,7 @@ function NightRating() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.2 }}
             >
-              Extend your flying beyond sunset. The Night Rating opens a new dimension of aviation —
+              Extend your flying beyond sunset. The Night Rating opens a new dimension of aviation,
               cities glittering below, smooth air, quiet radio, and experiences that daylight flying simply cannot match.
             </motion.p>
           </div>
@@ -432,7 +432,7 @@ function NightRating() {
                 <h3>A Different World</h3>
                 <p>
                   London viewed from a helicopter at night becomes a living map of light and
-                  shadow — the Thames a dark ribbon winding through illuminated streets. The peace of
+                  shadow, the Thames a dark ribbon winding through illuminated streets. The peace of
                   night flying, the radio quieter, the airspace less congested, offers a meditative
                   quality many pilots find profoundly satisfying.
                 </p>
@@ -445,7 +445,7 @@ function NightRating() {
                 <p>
                   Night flying demands greater precision, more thorough planning, and heightened
                   situational awareness. Pilots who complete a Night Rating invariably report
-                  that their daylight flying improves as well — the disciplines learned at night
+                  that their daylight flying improves as well. The disciplines learned at night
                   carry over into all operations.
                 </p>
               </div>
