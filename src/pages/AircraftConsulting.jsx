@@ -1148,12 +1148,12 @@ function AircraftConsulting() {
       <section className="ac-cta">
         <div className="ac-cta__inner">
           <Reveal>
-            <span className="ac-pre-text ac-pre-text--light">Thinking of Buying?</span>
-            <h2 className="ac-cta__heading">Talk to an Expert First</h2>
+            <span className="ac-pre-text ac-pre-text--light">No matter what you're working on</span>
+            <h2 className="ac-cta__heading">Tell us what you're working on.</h2>
             <p className="ac-cta__body">
-              An hour with us before you commit is the cheapest insurance on a helicopter
-              purchase. No obligation, no sales pitch — just an honest read on whatever you are
-              considering.
+              Whether it's a shortlist, a renewal, a model in spreadsheet form, a paper trail, or
+              a dispute on the desk — an hour with us is the cheapest read you'll get. No
+              obligation, no sales pitch, just an honest opinion you can act on.
             </p>
             <div className="ac-cta__buttons">
               <Link to="/fleet" className="ac-cta__link">
