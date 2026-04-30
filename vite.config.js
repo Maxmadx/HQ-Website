@@ -12,6 +12,6 @@ export default defineConfig({
     },
   },
   test: {
-    setupFiles: ['./api/test-setup.js'],
+    setupFiles: ['./api/test-setup.js', './src/test-setup.js'],
   },
 })

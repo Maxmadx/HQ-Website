@@ -4,6 +4,7 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import { db, auth } from '../../lib/firebase';
 import AreaChart from '../../components/admin/analytics/AreaChart';
 import DonutChart from '../../components/admin/analytics/DonutChart';
+import PurchaseFunnel from '../../components/admin/analytics/PurchaseFunnel';
 import {
   countBy, topN, groupByDay, bounceRate, avgTimeOnPage, formatDuration,
   avgScrollDepth, scrollDepthByPage, topJourneys, trafficSources, parseDevices,
@@ -456,6 +457,17 @@ export default function AdminAnalytics() {
             return isFirstLoad ? <SkeletonDashboard /> : (
               <div style={{ opacity: loading ? 0.45 : 1, transition: 'opacity 0.2s', pointerEvents: loading ? 'none' : 'auto' }}>
                 <>
+              {/* ── Purchase Funnel ────────────────────────────────────────── */}
+              {import.meta.env.VITE_FUNNEL_ENABLED !== 'false' && (
+                <div style={{ marginBottom: 24 }}>
+                  <PurchaseFunnel
+                    events={filtered}
+                    itemCategory="discovery-flight"
+                    dateLabel={`Last ${days} days`}
+                  />
+                </div>
+              )}
+
               {/* ── Area Chart ─────────────────────────────────────────── */}
               <Card style={{ marginBottom: 20 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>

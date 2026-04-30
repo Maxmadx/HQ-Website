@@ -39,6 +39,40 @@ function parseAddonsFromMetadata(metadata = {}) {
   return { addons, fulfilment, shippingAddress };
 }
 
+async function recordPurchaseEvent({ paymentIntentId, value, currency, items, itemCategory, sessionId }) {
+  try {
+    // Idempotency: skip if a purchase event for this transactionId already exists.
+    // Note: this check-then-write is intentionally non-transactional. Stripe's
+    // minimum retry gap (~5s) makes a near-simultaneous duplicate effectively
+    // impossible. If volumes grow, switch to a Firestore transaction here.
+    const existing = await admin.firestore()
+      .collection('page_events')
+      .where('eventType', '==', 'purchase')
+      .where('transactionId', '==', paymentIntentId)
+      .limit(1)
+      .get();
+    if (!existing.empty) return;
+
+    await admin.firestore().collection('page_events').add({
+      sessionId: sessionId || null,
+      page: '/booking-confirmed',
+      eventType: 'purchase',
+      transactionId: paymentIntentId,
+      value: typeof value === 'number' ? value : null,
+      currency: currency || 'gbp',
+      items: items || null,
+      itemCategory: itemCategory || null,
+      // Geo enrichment intentionally omitted — webhook IP is Stripe's, not the buyer's.
+      // TODO: pull country/countryCode from the original session (via sessionId join) in a follow-up.
+      country: null,
+      countryCode: null,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    });
+  } catch (err) {
+    console.error('[stripe webhook] failed to record purchase event:', err.message);
+  }
+}
+
 function applyDiscountPence(pricePence, qty, discountPct) {
   const pct = Math.max(0, Math.min(100, Number(discountPct) || 0));
   return Math.round(Number(pricePence) * Number(qty) * (1 - pct / 100));
@@ -706,6 +740,64 @@ async function handleWebhook(req) {
       console.error('[stripe webhook] failed to save booking to Firestore:', dbErr.message);
     }
 
+    // Record GA4-canonical purchase event for funnel analytics
+    {
+      const productCategory = (() => {
+        if (productType === 'london-tour') return 'london-tour';
+        if (productType === 'misc') return 'misc';
+        return 'discovery-flight';
+      })();
+
+      const purchaseItems = (() => {
+        if (productType === 'london-tour') {
+          const { experience, timeOfDay, quantity } = pi.metadata;
+          const qty = Number(quantity) || 1;
+          return [{
+            item_id: `london-tour-${experience}-${timeOfDay}`,
+            item_name: `London Tour: ${experience} ${timeOfDay}`,
+            item_category: 'london-tour',
+            price: (pi.amount / 100) / qty,
+            quantity: qty,
+            currency: 'gbp',
+          }];
+        }
+        if (productType === 'misc') {
+          const { itemId, itemName, qty } = pi.metadata;
+          const quantity = Number(qty) || 1;
+          return [{
+            item_id: itemId || 'misc',
+            item_name: itemName || 'Misc item',
+            item_category: 'misc',
+            price: (pi.amount / 100) / quantity,
+            quantity,
+            currency: 'gbp',
+          }];
+        }
+        const { aircraft, duration } = pi.metadata;
+        return [{
+          item_id: `${aircraft}-${duration}`,
+          item_name: `${aircraft} ${duration}min Discovery Flight`,
+          item_category: 'discovery-flight',
+          price: pi.amount / 100,
+          quantity: 1,
+          currency: 'gbp',
+        }];
+      })();
+
+      await recordPurchaseEvent({
+        paymentIntentId: pi.id,
+        value: pi.amount / 100,
+        currency: 'gbp',
+        items: purchaseItems,
+        itemCategory: productCategory,
+        sessionId: pi.metadata.sessionId || null,
+      }).catch((err) => {
+        // Belt-and-suspenders: helper has internal try/catch but never let an unexpected
+        // throw bubble up to Stripe — that would trigger a webhook retry on a successful payment.
+        console.error('[stripe webhook] recordPurchaseEvent unexpected throw:', err.message);
+      });
+    }
+
     // Send confirmation email
     try {
       if (productType === 'london-tour') {
@@ -882,4 +974,4 @@ async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmai
   return paymentIntent;
 }
 
-module.exports = { getPrice, applyDiscountPence, priceAddons, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking };
+module.exports = { getPrice, applyDiscountPence, priceAddons, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking, recordPurchaseEvent };

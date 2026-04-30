@@ -287,7 +287,7 @@ app.use('/api/stripe/discovery-checkout', express.json(), stripeDiscoveryRouter)
 // ============================================
 // ANALYTICS ROUTES
 // ============================================
-app.use('/api/analytics', express.json(), analyticsRouter);
+app.use('/api/analytics', express.json({ limit: '16kb' }), analyticsRouter);
 
 // ============================================
 // PRESS CLICK ROUTES
