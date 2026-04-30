@@ -39,8 +39,8 @@ const fixtureEvents = [
 describe('computeFunnel', () => {
   it('counts unique sessions at each stage for the requested category', () => {
     const out = computeFunnel(fixtureEvents, { itemCategory: 'discovery-flight' });
-    expect(out.visits).toBe(4); // sessions a, b, c, e (d only fired non-funnel-counted events for this category)
-    expect(out.viewedProduct).toBe(4); // a, b, c, e
+    expect(out.visits).toBe(5); // all sessions: a, b, c, d, e — visits is total site reach, not category-scoped
+    expect(out.viewedProduct).toBe(4); // a, b, c, e (d viewed london-tour, not discovery-flight)
     expect(out.beganCheckout).toBe(3); // a, c, e
     expect(out.purchased).toBe(2); // a, e (e dedupes via transactionId)
   });

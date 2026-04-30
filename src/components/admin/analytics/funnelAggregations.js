@@ -29,7 +29,8 @@ function isCategoryMatch(ev, itemCategory) {
 
 /**
  * Funnel counts: unique sessionIds at each stage, with `purchased` deduped by transactionId.
- * "Visits" counts sessions that have at least one category-matching event in range.
+ * "Visits" = total site sessions in range (any event), so the funnel shows real drop-off
+ * to the category-scoped product stages. Matches Squarespace funnel semantics.
  */
 export function computeFunnel(events, { itemCategory, sinceMs, untilMs } = {}) {
   const visits = new Set();
@@ -39,10 +40,13 @@ export function computeFunnel(events, { itemCategory, sinceMs, untilMs } = {}) {
 
   for (const ev of events) {
     if (!inRange(ev, sinceMs, untilMs)) continue;
-    if (!isCategoryMatch(ev, itemCategory)) continue;
 
-    // "Visits" counts every session that fired any category-relevant event in range
+    // Visits: count every session in range, regardless of category. This is the
+    // top of the funnel — total reach — and must be a superset of viewedProduct
+    // for drop-off rates to be meaningful.
     if (ev.sessionId) visits.add(ev.sessionId);
+
+    if (!isCategoryMatch(ev, itemCategory)) continue;
     if (ev.eventType === 'view_item' && ev.sessionId) viewed.add(ev.sessionId);
     if (ev.eventType === 'begin_checkout' && ev.sessionId) began.add(ev.sessionId);
     if (ev.eventType === 'purchase' && ev.transactionId) purchasedTx.add(ev.transactionId);
@@ -103,9 +107,8 @@ export function segmentFunnelBySource(events, opts = {}) {
     }
   }
 
-  // Then walk events and group funnel counts per source. Visits are category-scoped
-  // here to match computeFunnel — the dashboard expects funnel and per-source rows
-  // to reconcile.
+  // Walk events and group funnel counts per source. Visits = all sessions per source
+  // (no category filter) to match computeFunnel — total reach, not product-scoped.
   const grouped = new Map();
   for (const ev of events) {
     if (!ev.sessionId) continue;
@@ -114,8 +117,8 @@ export function segmentFunnelBySource(events, opts = {}) {
       grouped.set(source, { source, visits: new Set(), viewed: new Set(), began: new Set(), purchasedTx: new Set() });
     }
     const row = grouped.get(source);
-    if (!isCategoryMatch(ev, opts.itemCategory)) continue;
     row.visits.add(ev.sessionId);
+    if (!isCategoryMatch(ev, opts.itemCategory)) continue;
     if (ev.eventType === 'view_item') row.viewed.add(ev.sessionId);
     if (ev.eventType === 'begin_checkout') row.began.add(ev.sessionId);
     if (ev.eventType === 'purchase' && ev.transactionId) row.purchasedTx.add(ev.transactionId);
