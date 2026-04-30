@@ -165,6 +165,7 @@ function AircraftConsulting() {
   const [openFaq, setOpenFaq] = useState(null);
   const [showAllFaqs, setShowAllFaqs] = useState(false);
   const [activeService, setActiveService] = useState(null);
+  const [expandedServiceSlug, setExpandedServiceSlug] = useState(null);
   const pageImages = usePageImages('aircraft-consulting');
   useCmsHighlight();
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
@@ -213,6 +214,10 @@ function AircraftConsulting() {
     requestAnimationFrame(() => {
       document.getElementById('ac-enquiry')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
+  }
+
+  function toggleService(slug) {
+    setExpandedServiceSlug(prev => prev === slug ? null : slug);
   }
 
   // ── Data Arrays ────────────────────────────────────────────────────────────
@@ -554,10 +559,22 @@ function AircraftConsulting() {
                 <Reveal>
                   <h3 className="ac-services__group-title">{group.label}</h3>
                 </Reveal>
-                <div className="ac-services__grid">
+                <div className="ac-services__grid" style={{ '--cols': Math.min(groupServices.length, 3) }}>
                   {groupServices.map((service, i) => (
                     <Reveal key={service.num} delay={i * 0.1}>
-                      <div className="ac-service-card">
+                      <div
+                        className={`ac-service-card${expandedServiceSlug === service.enquiry ? ' ac-service-card--expanded' : ''}`}
+                        onClick={() => toggleService(service.enquiry)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            toggleService(service.enquiry);
+                          }
+                        }}
+                        aria-expanded={expandedServiceSlug === service.enquiry}
+                      >
                         <div className="ac-service-card__top">
                           <span className="ac-service-card__tag">{service.scope}</span>
                           <span className="ac-service-card__num">{service.num}</span>
@@ -566,23 +583,33 @@ function AircraftConsulting() {
                           <span className="ac-service-card__chip">{service.chip}</span>
                         )}
                         <h3 className="ac-service-card__title">{service.title}</h3>
-                        <p className="ac-service-card__desc">{service.description}</p>
-                        <p className="ac-service-card__includes-label">What's included</p>
-                        <ul className="ac-service-card__includes">
-                          {service.includes.map((item) => (
-                            <li key={item} className="ac-service-card__include-item">
-                              <span className="ac-service-card__check">✓</span>
-                              {item}
-                            </li>
-                          ))}
-                        </ul>
-                        <button
-                          type="button"
-                          className="ac-service-card__cta"
-                          onClick={() => handleServiceCtaClick(service.enquiry)}
-                        >
-                          Enquire about this →
-                        </button>
+                        <span className="ac-service-card__indicator" aria-hidden="true">
+                          {expandedServiceSlug === service.enquiry ? '−' : '+'}
+                        </span>
+                        {expandedServiceSlug === service.enquiry && (
+                          <div className="ac-service-card__body">
+                            <p className="ac-service-card__desc">{service.description}</p>
+                            <p className="ac-service-card__includes-label">What's included</p>
+                            <ul className="ac-service-card__includes">
+                              {service.includes.map((item) => (
+                                <li key={item} className="ac-service-card__include-item">
+                                  <span className="ac-service-card__check">✓</span>
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                            <button
+                              type="button"
+                              className="ac-service-card__cta"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleServiceCtaClick(service.enquiry);
+                              }}
+                            >
+                              Enquire about this →
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </Reveal>
                   ))}
@@ -1415,6 +1442,40 @@ function AircraftConsulting() {
           border-radius: 999px;
           margin-bottom: 0.75rem;
         }
+        .ac-service-card {
+          cursor: pointer;
+          position: relative;
+        }
+        .ac-service-card:focus-visible {
+          outline: 2px solid #1a1a1a;
+          outline-offset: 4px;
+        }
+        .ac-service-card__indicator {
+          position: absolute;
+          top: 1.5rem;
+          right: 1.5rem;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 1.25rem;
+          font-weight: 400;
+          color: #6b6b6b;
+          line-height: 1;
+          transition: color 0.2s ease;
+        }
+        .ac-service-card:hover .ac-service-card__indicator {
+          color: #1a1a1a;
+        }
+        .ac-service-card--expanded {
+          background: #ffffff;
+          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        }
+        .ac-service-card__body {
+          margin-top: 1.25rem;
+          padding-top: 1.25rem;
+          border-top: 1px solid #eeecea;
+        }
+        .ac-service-card__top {
+          padding-right: 2.25rem;
+        }
         .ac-service-card__cta {
           margin-top: 1.5rem;
           font-family: 'Space Grotesk', sans-serif;
@@ -1434,8 +1495,9 @@ function AircraftConsulting() {
         }
         .ac-services__grid {
           display: grid;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: repeat(var(--cols, 2), 1fr);
           gap: 1.5rem;
+          align-items: start;
         }
         .ac-service-card {
           background: #ffffff;
