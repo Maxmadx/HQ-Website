@@ -92,14 +92,17 @@ router.post('/', analyticsLimiter, async (req, res) => {
     const ip = req.ip || null;
     const geo = await geoLookup(ip);
 
-    // Items: cap at 20 entries; drop any entry whose JSON-stringified form is >500 chars
+    // Items: accept partial data — cap at 20 entries, drop non-object entries
+    // and entries whose stringified form is >500 chars. We do NOT reject the
+    // whole event; partial ecommerce data is better than no event at all.
     let safeItems = null;
     if (Array.isArray(items)) {
       safeItems = items
         .slice(0, 20)
         .filter((it) => {
+          if (!it || typeof it !== 'object' || Array.isArray(it)) return false;
           try {
-            return JSON.stringify(it || {}).length <= 500;
+            return JSON.stringify(it).length <= 500;
           } catch {
             return false;
           }
