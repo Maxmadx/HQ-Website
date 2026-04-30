@@ -206,6 +206,16 @@ function AircraftConsulting() {
     }));
   }
 
+  function handleServiceCtaClick(enquirySlug) {
+    setFormData(p => ({
+      ...clearConditionalFields(p),
+      serviceType: enquirySlug,
+    }));
+    requestAnimationFrame(() => {
+      document.getElementById('ac-enquiry')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
   // ── Data Arrays ────────────────────────────────────────────────────────────
 
   const services = [
@@ -600,6 +610,13 @@ function AircraftConsulting() {
                             </li>
                           ))}
                         </ul>
+                        <button
+                          type="button"
+                          className="ac-service-card__cta"
+                          onClick={() => handleServiceCtaClick(service.enquiry)}
+                        >
+                          Enquire about this →
+                        </button>
                       </div>
                     </Reveal>
                   ))}
@@ -702,7 +719,7 @@ function AircraftConsulting() {
       {/* ====================================================================
           ENQUIRY FORM — 2-col layout
       ==================================================================== */}
-      <section className="ac-enquiry">
+      <section className="ac-enquiry" id="ac-enquiry">
         <div className="ac-enquiry__container">
           <div className="ac-enquiry__left">
             <Reveal>
@@ -1494,6 +1511,23 @@ function AircraftConsulting() {
           padding: 0.25rem 0.6rem;
           border-radius: 999px;
           margin-bottom: 0.75rem;
+        }
+        .ac-service-card__cta {
+          margin-top: 1.5rem;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.85rem;
+          font-weight: 600;
+          letter-spacing: 0.02em;
+          color: #1a1a1a;
+          background: transparent;
+          border: 0;
+          padding: 0;
+          cursor: pointer;
+          transition: opacity 0.2s ease;
+          align-self: flex-start;
+        }
+        .ac-service-card__cta:hover {
+          opacity: 0.7;
         }
         .ac-services__grid {
           display: grid;
