@@ -5,11 +5,11 @@
  * Scans every image in public/assets/images/ and creates a Firestore
  * document in the `media_library` collection for each one.
  *
- * Images are served as static assets — this script only indexes them
+ * Images are served as static assets,this script only indexes them
  * (stores the URL + metadata) so they appear in the admin media library
  * picker without needing to re-upload anything to Firebase Storage.
  *
- * Safe to re-run — uses the relative URL as a dedup key so existing
+ * Safe to re-run,uses the relative URL as a dedup key so existing
  * documents are skipped rather than duplicated.
  *
  * Run:
@@ -90,7 +90,7 @@ async function main() {
   console.log(`${toAdd.length} new images to index.\n`);
 
   if (toAdd.length === 0) {
-    console.log('Nothing to do — all images are already in the library.');
+    console.log('Nothing to do,all images are already in the library.');
     process.exit(0);
   }
 
@@ -111,7 +111,7 @@ async function main() {
       batch.set(ref, {
         url,
         name,
-        storagePath: null,        // local asset — not in Firebase Storage
+        storagePath: null,        // local asset,not in Firebase Storage
         size: stat.size,
         source: 'local',
         uploadedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -123,7 +123,7 @@ async function main() {
     console.log(`  Indexed ${added} / ${toAdd.length} …`);
   }
 
-  console.log(`\nDone — ${added} images added to media_library.`);
+  console.log(`\nDone,${added} images added to media_library.`);
   process.exit(0);
 }
 

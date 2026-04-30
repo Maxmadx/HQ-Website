@@ -2,8 +2,8 @@
  * Seed SFH "Where & When" data into Firestore.
  *
  * Usage:
- *   node scripts/seed-where-when.js            — skip (with warning) if either collection has data
- *   node scripts/seed-where-when.js --clear    — wipe both collections then seed fresh
+ *   node scripts/seed-where-when.js           ,skip (with warning) if either collection has data
+ *   node scripts/seed-where-when.js --clear   ,wipe both collections then seed fresh
  */
 'use strict';
 
