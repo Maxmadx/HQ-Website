@@ -49,6 +49,14 @@
         { "fieldPath": "eventType", "order": "ASCENDING" },
         { "fieldPath": "page", "order": "ASCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "page_events",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "eventType", "order": "ASCENDING" },
+        { "fieldPath": "transactionId", "order": "ASCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []
