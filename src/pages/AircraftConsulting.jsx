@@ -251,10 +251,21 @@ function AircraftConsulting() {
   ];
 
   const independencePoints = [
-    { num: '01', title: 'Paid by You, Not the Seller', desc: "Our fee comes from the buyer — never the seller. No commission, no engineer-to-seller relationship to protect, no reason to close a deal that isn't right for you." },
-    { num: '02', title: 'Factory-Trained Eyes', desc: "As an Authorised Robinson Service Centre, we know what a clean airframe looks like at 500, 1,000, and 2,000 hours. Deferred maintenance, botched repairs, and undisclosed damage rarely survive a proper inspection." },
-    { num: '03', title: 'Logbook Forensics', desc: "Logbooks tell a story — sometimes the one the seller wants, sometimes the one the aircraft actually lived. Thirty-five years of reading them catches the inconsistencies, gaps, and red flags that inexperienced eyes miss." },
-    { num: '04', title: 'A Clear Recommendation', desc: "Every report ends with one of three words: buy, negotiate, or walk. You will know exactly where you stand before you commit — not after the paperwork is signed." },
+    {
+      num: '01',
+      title: "What you can't see, we can",
+      desc: "Every aircraft we look at — to buy, to manage, to value, or to defend — is read through a working hangar floor and 500+ transactions of memory. Photos, seller demos, broker write-ups, and OEM brochures don't catch what we catch. For Robinsons specifically, factory authorisation means we know the type at the level the people who built it do.",
+    },
+    {
+      num: '02',
+      title: 'What good actually looks like',
+      desc: "Thirty-five years across the Robinson fleet means we know what 500-hour wear looks like, what 1,500-hour wear looks like, what's normal for a 2010 R44, and what's drifting. That context is what a first-time buyer or single-aircraft owner doesn't have — and what makes the difference between an opinion and an answer.",
+    },
+    {
+      num: '03',
+      title: 'A clear position, not a hedged one',
+      desc: "Every engagement ends with something concrete — a number, a verdict, or a position you can act on. We get hired to make calls, not to write neutral surveys you have to interpret yourself. That's true of a pre-purchase report, a TCO model, a cover review, or an expert opinion in a dispute.",
+    },
   ];
 
   // ── Render ─────────────────────────────────────────────────────────────────
@@ -464,10 +475,9 @@ function AircraftConsulting() {
               </h2>
               <p className="ac-why__intro-body">
                 Thirty-five years of Robinson experience and 500+ transactions sit behind every
-                consultation — because getting a helicopter purchase wrong is a mistake that is
-                hard to unwind. Our job is simple: give you an accurate, independent read before
-                you commit. What the logbooks really say, what the airframe really needs, and
-                what the aircraft is really worth.
+                engagement on the menu — buying, owning, valuing, defending. The job is the same
+                each time: an accurate, independent read on the aircraft, the cost, the policy,
+                or the dispute, written in a way you can act on.
               </p>
             </div>
           </Reveal>
@@ -1439,7 +1449,7 @@ function AircraftConsulting() {
         }
         .ac-why__grid {
           display: grid;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: repeat(3, 1fr);
           gap: 1.25rem;
           margin-top: 4rem;
         }
