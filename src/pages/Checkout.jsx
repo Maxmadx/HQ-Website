@@ -6,6 +6,7 @@ import FinalDraftHeader from '../components/FinalDraftHeader';
 import DiscoveryAddons from '../components/checkout/DiscoveryAddons';
 import { computeAddonsTotal, computeLineTotal } from '../lib/discoveryAddons';
 import { useDiscoveryAddons } from '../hooks/useDiscoveryAddons';
+import { trackEvent } from '../lib/analytics';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -48,6 +49,24 @@ function CheckoutForm({
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!stripe || !elements) return;
+
+    // Fire add_payment_info before any network work — captures intent even if Stripe call fails
+    const params = new URLSearchParams(window.location.search);
+    const aircraftParam = params.get('aircraft');
+    const durationParam = params.get('duration');
+    const priceParam = parseFloat(params.get('price') || '0');
+    trackEvent('add_payment_info', `${aircraftParam}-${durationParam}`, window.location.pathname, {
+      itemCategory: 'discovery-flight',
+      items: [{
+        item_id: `${aircraftParam}-${durationParam}`,
+        item_category: 'discovery-flight',
+        price: priceParam,
+        currency: 'gbp',
+        quantity: 1,
+      }],
+      value: priceParam,
+      currency: 'gbp',
+    });
 
     setLoading(true);
     setError('');
