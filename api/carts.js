@@ -107,4 +107,43 @@ router.post('/', cartLimiter, async (req, res) => {
   }
 });
 
+// GET /api/carts/by-token?t=<token> — rehydrate cart from recovery link
+router.get('/by-token', async (req, res) => {
+  const token = String(req.query.t || '').trim();
+  if (!token || token.length < 16) {
+    return res.status(400).json({ error: 'Missing or invalid token' });
+  }
+  try {
+    const snap = await admin.firestore()
+      .collection('carts')
+      .where('recoveryToken', '==', token)
+      .limit(1)
+      .get();
+    if (snap.empty) return res.status(404).json({ error: 'Cart not found' });
+
+    const doc = snap.docs[0];
+    const cart = doc.data();
+
+    // Don't resume a completed cart — would re-charge the customer
+    if (cart.status === 'completed') {
+      return res.status(410).json({ error: 'This booking is already complete' });
+    }
+
+    // Return only the rehydration-relevant fields (no PII beyond what's needed)
+    return res.json({
+      cartId: doc.id,
+      email: cart.email || null,
+      flight: cart.flight || null,
+      addons: cart.addons || [],
+      fulfilment: cart.fulfilment || null,
+      shippingAddress: cart.shippingAddress || null,
+      totalP: cart.totalP || 0,
+      currency: cart.currency || 'gbp',
+    });
+  } catch (err) {
+    console.error('[carts] by-token error:', err.message);
+    return res.status(500).json({ error: 'Failed to load cart' });
+  }
+});
+
 module.exports = router;
