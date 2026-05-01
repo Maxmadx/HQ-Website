@@ -324,7 +324,10 @@ export default function AdminAnalytics() {
     async function loadGsc() {
       try {
         const token = await auth.currentUser?.getIdToken();
-        if (!token) return;
+        if (!token) {
+          if (!cancelled) setGscLoading(false);
+          return;
+        }
         const res = await fetch(`/api/gsc/daily?days=${days}`, { headers: { Authorization: `Bearer ${token}` } });
         if (!res.ok) throw new Error('Failed to load GSC data');
         const data = await res.json();

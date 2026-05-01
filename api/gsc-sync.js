@@ -61,18 +61,20 @@ async function runGscSync({ days = DEFAULT_DAYS, siteUrl = process.env.GSC_SITE_
     for (let i = 0; i < rows.length; i += BATCH_SIZE) {
       const chunk = rows.slice(i, i + BATCH_SIZE);
       const batch = db.batch();
+      let queuedInBatch = 0;
       for (const row of chunk) {
         try {
           const id = gscRowToDocId(row);
           const doc = gscRowToDoc(row, syncedAt);
           batch.set(db.collection('gsc_daily').doc(id), doc);
-          log.rowsWritten += 1;
+          queuedInBatch += 1;
         } catch (transformErr) {
           log.errors.push(`transform: ${transformErr.message}`);
         }
       }
       try {
         await batch.commit();
+        log.rowsWritten += queuedInBatch;
       } catch (writeErr) {
         log.errors.push(`batch[startRow=${startRow + i}]: ${writeErr.message}`);
       }
