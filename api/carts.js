@@ -261,6 +261,25 @@ router.get('/email-pixel', async (req, res) => {
   }
 });
 
+// POST /api/carts/unsubscribe?t=<token> — RFC 8058 one-click endpoint (Gmail/Yahoo)
+router.post('/unsubscribe', async (req, res) => {
+  const token = String(req.query.t || '').trim();
+  if (!token || token.length < 16) return res.status(400).end();
+  try {
+    const snap = await admin.firestore()
+      .collection('carts')
+      .where('recoveryToken', '==', token)
+      .limit(1)
+      .get();
+    if (snap.empty) return res.status(404).end();
+    await snap.docs[0].ref.set({ noEmail: true, updatedAt: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    return res.status(200).end();
+  } catch (err) {
+    console.error('[carts] unsubscribe POST error:', err.message);
+    return res.status(500).end();
+  }
+});
+
 // GET /api/carts/unsubscribe?t=<token> — set noEmail flag, no auth required (token IS the auth)
 router.get('/unsubscribe', async (req, res) => {
   const token = String(req.query.t || '').trim();

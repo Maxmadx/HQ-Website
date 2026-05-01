@@ -17,14 +17,15 @@ function aircraftName(id) {
   return AIRCRAFT_NAMES[id] || id || 'Discovery Flight';
 }
 
-function render1hCartRecoveryEmail(cart, siteUrl, campaignTag) {
+function render1hCartRecoveryEmail(cart, siteUrl, type, campaignTag) {
   const flight = cart.flight || {};
   const aircraft = aircraftName(flight.aircraftId);
   const duration = flight.duration ? `${flight.duration}-minute` : '';
   const total = fmtGbp(cart.totalP || 0);
   const resumeUrl = `${siteUrl}/checkout?t=${encodeURIComponent(cart.recoveryToken || '')}&utm_source=recovery&utm_medium=email&utm_campaign=${encodeURIComponent(campaignTag)}`;
   const unsubUrl = `${siteUrl}/api/carts/unsubscribe?t=${encodeURIComponent(cart.recoveryToken || '')}`;
-  const pixelUrl = `${siteUrl}/api/carts/email-pixel?t=${encodeURIComponent(cart.recoveryToken || '')}&type=${encodeURIComponent(campaignTag)}`;
+  // Pixel uses canonical type ('1h' / 'manual') so it matches the value stored in recoveryEmailsSent[i].type.
+  const pixelUrl = `${siteUrl}/api/carts/email-pixel?t=${encodeURIComponent(cart.recoveryToken || '')}&type=${encodeURIComponent(type)}`;
 
   const subject = `Your HQ Aviation booking is saved`;
 
@@ -92,7 +93,7 @@ Unsubscribe: ${unsubUrl}
 function renderCartRecoveryEmail(cart, siteUrl, type = 'manual') {
   if (type === '24h') return render24hCartRecoveryEmail(cart, siteUrl);
   const campaign = type === '1h' ? 'cart-1h' : 'cart-manual';
-  return render1hCartRecoveryEmail(cart, siteUrl, campaign);
+  return render1hCartRecoveryEmail(cart, siteUrl, type, campaign);
 }
 
 module.exports = { renderCartRecoveryEmail };
