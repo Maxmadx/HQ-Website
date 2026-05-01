@@ -26,6 +26,7 @@ const stripeDiscoveryRouter = require('./api/stripe-discovery');
 const analyticsRouter = require('./api/analytics-api');
 const cartsRouter = require('./api/carts');
 const pressClickRouter = require('./api/press-click');
+const gscRouter = require('./api/gsc-api');
 
 const app = express();
 app.set('trust proxy', 1); // Read real IP from X-Forwarded-For (required for req.ip behind proxies)
@@ -300,6 +301,11 @@ app.use('/api/carts', express.json({ limit: '16kb' }), cartsRouter);
 // PRESS CLICK ROUTES
 // ============================================
 app.use('/api/press-click', express.json(), pressClickRouter);
+
+// ============================================
+// GSC ROUTES
+// ============================================
+app.use('/api/gsc', express.json(), gscRouter);
 
 // ============================================
 // WALL OF COOL ROUTES
