@@ -5,6 +5,7 @@ import { db, auth } from '../../lib/firebase';
 import AreaChart from '../../components/admin/analytics/AreaChart';
 import DonutChart from '../../components/admin/analytics/DonutChart';
 import PurchaseFunnel from '../../components/admin/analytics/PurchaseFunnel';
+import AbandonedCartTile from '../../components/admin/analytics/AbandonedCartTile';
 import {
   countBy, topN, groupByDay, bounceRate, avgTimeOnPage, formatDuration,
   avgScrollDepth, scrollDepthByPage, topJourneys, trafficSources, parseDevices,
@@ -274,6 +275,8 @@ export default function AdminAnalytics() {
   const [days, setDays] = useState(30);
   const [excludedIps, setExcludedIps] = useState([]);
   const [configLoaded, setConfigLoaded] = useState(false);
+  const [carts, setCarts] = useState([]);
+  const [cartsLoading, setCartsLoading] = useState(true);
 
   // Load excluded IPs from admin config endpoint (requires auth token)
   useEffect(() => {
@@ -287,6 +290,29 @@ export default function AdminAnalytics() {
       .then(({ excludedIps: ips }) => setExcludedIps(Array.isArray(ips) ? ips : []))
       .catch(() => {})
       .finally(() => setConfigLoaded(true));
+  }, []);
+
+  // Load abandoned carts
+  useEffect(() => {
+    let cancelled = false;
+    async function loadCarts() {
+      try {
+        const token = await auth.currentUser?.getIdToken();
+        if (!token) return;
+        const res = await fetch('/api/carts', { headers: { Authorization: `Bearer ${token}` } });
+        if (!res.ok) throw new Error('Failed to load carts');
+        const data = await res.json();
+        if (!cancelled) {
+          setCarts(data.carts || []);
+          setCartsLoading(false);
+        }
+      } catch (err) {
+        console.error(err);
+        if (!cancelled) setCartsLoading(false);
+      }
+    }
+    loadCarts();
+    return () => { cancelled = true; };
   }, []);
 
   // Load events for selected time window (current + previous period)
@@ -318,6 +344,31 @@ export default function AdminAnalytics() {
       .catch(() => setError('Failed to load analytics data'))
       .finally(() => setLoading(false));
   }, [days, configLoaded]);
+
+  // ─── Send recovery email handler ────────────────────────────────────────────
+  async function handleSendRecovery(cartId) {
+    try {
+      const token = await auth.currentUser?.getIdToken();
+      const res = await fetch(`/api/carts/${cartId}/send-recovery`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(`Failed to send: ${err.error || 'unknown error'}`);
+        return;
+      }
+      alert('Recovery email sent.');
+      // Refresh carts to show the updated sent count
+      const refresh = await fetch('/api/carts', { headers: { Authorization: `Bearer ${token}` } });
+      if (refresh.ok) {
+        const data = await refresh.json();
+        setCarts(data.carts || []);
+      }
+    } catch (err) {
+      alert(`Failed to send: ${err.message}`);
+    }
+  }
 
   // ─── Filter out admin IPs and /admin pages ────────────────────────────────
   const filtered = (excludedIps.length
@@ -465,6 +516,12 @@ export default function AdminAnalytics() {
                     itemCategory="discovery-flight"
                     dateLabel={`Last ${days} days`}
                   />
+                </div>
+              )}
+
+              {import.meta.env.VITE_FUNNEL_ENABLED !== 'false' && !cartsLoading && (
+                <div style={{ marginBottom: 24 }}>
+                  <AbandonedCartTile carts={carts} onSendRecovery={handleSendRecovery} />
                 </div>
               )}
 
