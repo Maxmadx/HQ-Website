@@ -39,7 +39,8 @@
     "marked": "^18.0.0",
     "nodemailer": "^8.0.5",
     "stripe": "^22.0.0",
-    "ua-parser-js": "^2.0.9"
+    "ua-parser-js": "^2.0.9",
+    "zod": "^4.4.1"
   },
   "devDependencies": {
     "@stripe/react-stripe-js": "^6.1.0",

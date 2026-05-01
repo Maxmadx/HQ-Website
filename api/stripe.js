@@ -1,7 +1,7 @@
 'use strict';
 
 const Stripe = require('stripe');
-const nodemailer = require('nodemailer');
+const { getTransporter } = require('./lib/mailer');
 const admin = require('./firebase-admin');
 
 const MAX_ADDON_QTY = 10;
@@ -129,22 +129,6 @@ async function priceAddons(addons) {
   return { lineItems, total };
 }
 
-// Lazy-initialise SMTP transporter — reuse the same connection pool across calls.
-let _transporter = null;
-function getTransporter() {
-  if (!_transporter) {
-    _transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: false,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-  }
-  return _transporter;
-}
 
 // Fallback prices in pence — used only if Firestore is unreachable.
 // Keep in sync with seed-pricing.js and src/hooks/usePricing.js.
@@ -213,6 +197,7 @@ async function createPaymentIntent({
   aircraft, duration, customerName, customerEmail, customerPhone,
   wantsVoucher, voucherLocation, voucherMessage,
   addons = [], fulfilment, shippingAddress,
+  cartId,
 }) {
   const flightAmount = await getPrice(aircraft, duration);
   if (flightAmount === null) {
@@ -281,6 +266,7 @@ async function createPaymentIntent({
       shippingLine2: resolvedAddress ? resolvedAddress.line2 : '',
       shippingCity: resolvedAddress ? resolvedAddress.city : '',
       shippingPostcode: resolvedAddress ? resolvedAddress.postcode : '',
+      cartId: cartId || '',
     },
   });
 
@@ -796,6 +782,25 @@ async function handleWebhook(req) {
         // throw bubble up to Stripe — that would trigger a webhook retry on a successful payment.
         console.error('[stripe webhook] recordPurchaseEvent unexpected throw:', err.message);
       });
+    }
+
+    // Promote matching cart to completed (Phase 2). Idempotent — safe on webhook retries.
+    try {
+      const cartId = pi.metadata && pi.metadata.cartId;
+      if (cartId) {
+        const cartRef = admin.firestore().collection('carts').doc(cartId);
+        const cartSnap = await cartRef.get();
+        if (cartSnap.exists && cartSnap.data().status !== 'completed') {
+          await cartRef.set({
+            status: 'completed',
+            stripePaymentIntentId: pi.id,
+            completedAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          }, { merge: true });
+        }
+      }
+    } catch (cartErr) {
+      console.error('[stripe webhook] cart promotion failed:', cartErr.message);
     }
 
     // Send confirmation email

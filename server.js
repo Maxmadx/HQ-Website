@@ -8,7 +8,7 @@ require('dotenv').config();
 
 // In production, fail fast if required env vars are missing
 if (process.env.NODE_ENV === 'production') {
-  const REQUIRED_ENV = ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'SMTP_HOST', 'SMTP_USER', 'SMTP_PASS', 'EMAIL_FROM', 'FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY'];
+  const REQUIRED_ENV = ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'SMTP_HOST', 'SMTP_USER', 'SMTP_PASS', 'EMAIL_FROM', 'FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY', 'SITE_URL'];
   const missing = REQUIRED_ENV.filter(k => !process.env[k]);
   if (missing.length) {
     console.error(`Missing required environment variables: ${missing.join(', ')}`);
@@ -24,6 +24,7 @@ const { createPaymentIntent, createLondonTourPaymentIntent, createMiscPaymentInt
 const leadsRouter = require('./api/leads');
 const stripeDiscoveryRouter = require('./api/stripe-discovery');
 const analyticsRouter = require('./api/analytics-api');
+const cartsRouter = require('./api/carts');
 const pressClickRouter = require('./api/press-click');
 
 const app = express();
@@ -127,7 +128,7 @@ function fileExists(filePath) {
 // Creates a Stripe PaymentIntent using server-side validated price.
 // Uses express.json() middleware inline so it doesn't affect the webhook route.
 app.post('/api/create-payment-intent', express.json(), async (req, res) => {
-  const { aircraft, duration, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage, addons, fulfilment, shippingAddress } = req.body || {};
+  const { aircraft, duration, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage, addons, fulfilment, shippingAddress, cartId } = req.body || {};
 
   // Validate presence
   if (!aircraft || !duration || !customerName || !customerEmail || !customerPhone) {
@@ -161,6 +162,7 @@ app.post('/api/create-payment-intent', express.json(), async (req, res) => {
       addons,
       fulfilment,
       shippingAddress,
+      cartId: cartId || '',
     });
     res.json({ clientSecret: paymentIntent.client_secret });
   } catch (err) {
@@ -288,6 +290,11 @@ app.use('/api/stripe/discovery-checkout', express.json(), stripeDiscoveryRouter)
 // ANALYTICS ROUTES
 // ============================================
 app.use('/api/analytics', express.json({ limit: '16kb' }), analyticsRouter);
+
+// ============================================
+// CARTS ROUTES
+// ============================================
+app.use('/api/carts', express.json({ limit: '16kb' }), cartsRouter);
 
 // ============================================
 // PRESS CLICK ROUTES
