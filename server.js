@@ -26,6 +26,7 @@ const stripeDiscoveryRouter = require('./api/stripe-discovery');
 const analyticsRouter = require('./api/analytics-api');
 const cartsRouter = require('./api/carts');
 const pressClickRouter = require('./api/press-click');
+const gscRouter = require('./api/gsc-api');
 
 const app = express();
 app.set('trust proxy', 1); // Read real IP from X-Forwarded-For (required for req.ip behind proxies)
@@ -302,6 +303,11 @@ app.use('/api/carts', express.json({ limit: '16kb' }), cartsRouter);
 app.use('/api/press-click', express.json(), pressClickRouter);
 
 // ============================================
+// GSC ROUTES
+// ============================================
+app.use('/api/gsc', express.json(), gscRouter);
+
+// ============================================
 // WALL OF COOL ROUTES
 // ============================================
 const wallOfCoolRouter = require('./api/wall-of-cool');
@@ -428,6 +434,23 @@ if (process.env.CART_RECOVERY_AUTO === 'true') {
   });
 } else {
   console.log('[cart-recovery] auto mode DISABLED (set CART_RECOVERY_AUTO=true to enable)');
+}
+
+// ============================================
+// GSC SYNC CRON (Phase 4)
+// ============================================
+if (process.env.GSC_SYNC_AUTO === 'true') {
+  const cron = require('node-cron');
+  const { runGscSync } = require('./api/gsc-sync');
+
+  console.log('[gsc-sync] auto mode ENABLED — scheduling daily at 03:00 Europe/London');
+  cron.schedule('0 3 * * *', () => {
+    runGscSync({}).catch((err) => {
+      console.error('[gsc-sync] tick threw:', err.message);
+    });
+  }, { timezone: 'Europe/London' });
+} else {
+  console.log('[gsc-sync] auto mode DISABLED (set GSC_SYNC_AUTO=true to enable)');
 }
 
 // ============================================

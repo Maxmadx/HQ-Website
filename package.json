@@ -36,6 +36,7 @@
     "firebase": "^12.9.0",
     "firebase-admin": "^13.6.1",
     "framer-motion": "^12.38.0",
+    "googleapis": "^171.4.0",
     "marked": "^18.0.0",
     "node-cron": "^4.2.1",
     "nodemailer": "^8.0.5",

@@ -6,6 +6,7 @@ import AreaChart from '../../components/admin/analytics/AreaChart';
 import DonutChart from '../../components/admin/analytics/DonutChart';
 import PurchaseFunnel from '../../components/admin/analytics/PurchaseFunnel';
 import AbandonedCartTile from '../../components/admin/analytics/AbandonedCartTile';
+import SearchKeywords from '../../components/admin/analytics/SearchKeywords';
 import {
   countBy, topN, groupByDay, bounceRate, avgTimeOnPage, formatDuration,
   avgScrollDepth, scrollDepthByPage, topJourneys, trafficSources, parseDevices,
@@ -277,6 +278,8 @@ export default function AdminAnalytics() {
   const [configLoaded, setConfigLoaded] = useState(false);
   const [carts, setCarts] = useState([]);
   const [cartsLoading, setCartsLoading] = useState(true);
+  const [gscRows, setGscRows] = useState([]);
+  const [gscLoading, setGscLoading] = useState(true);
 
   // Load excluded IPs from admin config endpoint (requires auth token)
   useEffect(() => {
@@ -314,6 +317,32 @@ export default function AdminAnalytics() {
     loadCarts();
     return () => { cancelled = true; };
   }, []);
+
+  // Load GSC search keywords data
+  useEffect(() => {
+    let cancelled = false;
+    async function loadGsc() {
+      try {
+        const token = await auth.currentUser?.getIdToken();
+        if (!token) {
+          if (!cancelled) setGscLoading(false);
+          return;
+        }
+        const res = await fetch(`/api/gsc/daily?days=${days}`, { headers: { Authorization: `Bearer ${token}` } });
+        if (!res.ok) throw new Error('Failed to load GSC data');
+        const data = await res.json();
+        if (!cancelled) {
+          setGscRows(data.rows || []);
+          setGscLoading(false);
+        }
+      } catch (err) {
+        console.error(err);
+        if (!cancelled) setGscLoading(false);
+      }
+    }
+    loadGsc();
+    return () => { cancelled = true; };
+  }, [days]);
 
   // Load events for selected time window (current + previous period)
   useEffect(() => {
@@ -522,6 +551,12 @@ export default function AdminAnalytics() {
               {import.meta.env.VITE_FUNNEL_ENABLED !== 'false' && !cartsLoading && (
                 <div style={{ marginBottom: 24 }}>
                   <AbandonedCartTile carts={carts} onSendRecovery={handleSendRecovery} />
+                </div>
+              )}
+
+              {import.meta.env.VITE_FUNNEL_ENABLED !== 'false' && !gscLoading && (
+                <div style={{ marginBottom: 24 }}>
+                  <SearchKeywords rows={gscRows} dateLabel={`Last ${days} days`} />
                 </div>
               )}
 
