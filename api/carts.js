@@ -6,10 +6,12 @@ const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
 const admin = require('./firebase-admin');
 const { CartUpsertSchema } = require('./lib/cartValidation');
 const { repriceCart } = require('./lib/cartPricing');
-const { getTransporter } = require('./lib/mailer');
-const { renderCartRecoveryEmail } = require('./templates/cart-recovery');
+const { sendCartRecoveryEmail } = require('./lib/cartRecoverySend');
 
 const router = express.Router();
+
+// 1×1 transparent GIF, base64
+const TRANSPARENT_GIF = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
 
 // Rate limit: 30 writes/min/IP — half of analytics rate
 const cartLimiter = rateLimit({
@@ -177,6 +179,20 @@ router.get('/by-token', async (req, res) => {
       return res.status(410).json({ error: 'This booking is already complete' });
     }
 
+    // Click tracking: mark the most-recent recoveryEmailsSent entry clicked
+    try {
+      const sent = Array.isArray(cart.recoveryEmailsSent) ? cart.recoveryEmailsSent.slice() : [];
+      if (sent.length > 0 && !sent[sent.length - 1].clicked) {
+        sent[sent.length - 1] = { ...sent[sent.length - 1], clicked: true };
+        await doc.ref.set({
+          recoveryEmailsSent: sent,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        }, { merge: true });
+      }
+    } catch (clickErr) {
+      console.error('[carts] click-track error:', clickErr.message);
+    }
+
     // Return only the rehydration-relevant fields (no PII beyond what's needed)
     return res.json({
       cartId: doc.id,
@@ -191,6 +207,76 @@ router.get('/by-token', async (req, res) => {
   } catch (err) {
     console.error('[carts] by-token error:', err.message);
     return res.status(500).json({ error: 'Failed to load cart' });
+  }
+});
+
+// GET /api/carts/email-pixel?t=<token>&type=<1h|24h|manual>
+// Returns a 1×1 transparent GIF and marks the matching recoveryEmailsSent[i].opened = true.
+router.get('/email-pixel', async (req, res) => {
+  // Always return the pixel — never reveal whether the token was valid.
+  res.set('Content-Type', 'image/gif');
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+
+  const token = String(req.query.t || '').trim();
+  const type = String(req.query.type || '').trim();
+
+  // Send pixel immediately so email clients render the image.
+  res.send(TRANSPARENT_GIF);
+
+  // Then update Firestore in the background. Errors are logged, never returned.
+  if (!token || token.length < 16) return;
+  try {
+    const snap = await admin.firestore()
+      .collection('carts')
+      .where('recoveryToken', '==', token)
+      .limit(1)
+      .get();
+    if (snap.empty) return;
+
+    const doc = snap.docs[0];
+    const cart = doc.data();
+    const sent = Array.isArray(cart.recoveryEmailsSent) ? cart.recoveryEmailsSent.slice() : [];
+    if (sent.length === 0) return;
+
+    // Find the entry that matches the type (most-recent-first)
+    let updatedIndex = -1;
+    for (let i = sent.length - 1; i >= 0; i -= 1) {
+      if (!type || sent[i].type === type) {
+        if (sent[i].opened) return; // already marked
+        sent[i] = { ...sent[i], opened: true };
+        updatedIndex = i;
+        break;
+      }
+    }
+    if (updatedIndex === -1) return;
+
+    await doc.ref.set({
+      recoveryEmailsSent: sent,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+  } catch (err) {
+    console.error('[carts] email-pixel error:', err.message);
+  }
+});
+
+// POST /api/carts/unsubscribe?t=<token> — RFC 8058 one-click endpoint (Gmail/Yahoo)
+router.post('/unsubscribe', async (req, res) => {
+  const token = String(req.query.t || '').trim();
+  if (!token || token.length < 16) return res.status(400).end();
+  try {
+    const snap = await admin.firestore()
+      .collection('carts')
+      .where('recoveryToken', '==', token)
+      .limit(1)
+      .get();
+    if (snap.empty) return res.status(404).end();
+    await snap.docs[0].ref.set({ noEmail: true, updatedAt: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    return res.status(200).end();
+  } catch (err) {
+    console.error('[carts] unsubscribe POST error:', err.message);
+    return res.status(500).end();
   }
 });
 
@@ -234,41 +320,11 @@ router.get('/', requireAdmin, async (_req, res) => {
 
 // POST /api/carts/:id/send-recovery — admin manual send
 router.post('/:id/send-recovery', requireAdmin, async (req, res) => {
-  const { id } = req.params;
   try {
-    const cartRef = admin.firestore().collection('carts').doc(id);
-    const snap = await cartRef.get();
-    if (!snap.exists) return res.status(404).json({ error: 'Cart not found' });
-    const cart = snap.data();
-
-    if (!cart.email) return res.status(400).json({ error: 'No email on file for this cart' });
-    if (cart.noEmail) return res.status(400).json({ error: 'Customer has unsubscribed' });
-    if (cart.status === 'completed') return res.status(400).json({ error: 'Cart already completed' });
-    if (cart.excludedFromAnalytics) return res.status(400).json({ error: 'Admin/excluded cart' });
-
-    const siteUrl = process.env.SITE_URL || 'http://localhost:5173';
-    const { subject, html, text } = renderCartRecoveryEmail({ ...cart, recoveryToken: cart.recoveryToken }, siteUrl);
-
-    await getTransporter().sendMail({
-      from: process.env.EMAIL_FROM,
-      to: cart.email,
-      subject, html, text,
-    });
-
-    await cartRef.set({
-      recoveryEmailsSent: [...(cart.recoveryEmailsSent || []), {
-        at: admin.firestore.FieldValue.serverTimestamp(),
-        type: 'manual',
-        sentBy: req.adminUid || 'admin',
-      }],
-      // also mark as abandoned if it was still in checkout-initiated
-      status: cart.status === 'completed' ? cart.status : 'abandoned',
-      abandonedAt: cart.abandonedAt || admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    }, { merge: true });
-
+    await sendCartRecoveryEmail(req.params.id, 'manual', req.adminUid || 'admin');
     return res.json({ ok: true });
   } catch (err) {
+    if (err.statusCode) return res.status(err.statusCode).json({ error: err.message });
     console.error('[carts] send-recovery error:', err.message);
     return res.status(500).json({ error: 'Failed to send recovery email' });
   }

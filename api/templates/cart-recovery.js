@@ -1,5 +1,7 @@
 'use strict';
 
+const { render24hCartRecoveryEmail } = require('./cart-recovery-24h');
+
 const AIRCRAFT_NAMES = {
   r22: 'Robinson R22',
   r44: 'Robinson R44',
@@ -15,19 +17,15 @@ function aircraftName(id) {
   return AIRCRAFT_NAMES[id] || id || 'Discovery Flight';
 }
 
-/**
- * Build the recovery email for an abandoned cart.
- * @param {object} cart
- * @param {string} siteUrl  e.g. https://hqaviation.co.uk
- * @returns {{ subject: string, html: string, text: string }}
- */
-function renderCartRecoveryEmail(cart, siteUrl) {
+function render1hCartRecoveryEmail(cart, siteUrl, type, campaignTag) {
   const flight = cart.flight || {};
   const aircraft = aircraftName(flight.aircraftId);
   const duration = flight.duration ? `${flight.duration}-minute` : '';
   const total = fmtGbp(cart.totalP || 0);
-  const resumeUrl = `${siteUrl}/checkout?t=${encodeURIComponent(cart.recoveryToken || '')}`;
+  const resumeUrl = `${siteUrl}/checkout?t=${encodeURIComponent(cart.recoveryToken || '')}&utm_source=recovery&utm_medium=email&utm_campaign=${encodeURIComponent(campaignTag)}`;
   const unsubUrl = `${siteUrl}/api/carts/unsubscribe?t=${encodeURIComponent(cart.recoveryToken || '')}`;
+  // Pixel uses canonical type ('1h' / 'manual') so it matches the value stored in recoveryEmailsSent[i].type.
+  const pixelUrl = `${siteUrl}/api/carts/email-pixel?t=${encodeURIComponent(cart.recoveryToken || '')}&type=${encodeURIComponent(type)}`;
 
   const subject = `Your HQ Aviation booking is saved`;
 
@@ -45,7 +43,7 @@ function renderCartRecoveryEmail(cart, siteUrl) {
       </div>
 
       <p style="margin:0 0 24px 0">
-        <a href="${resumeUrl}&utm_source=recovery&utm_medium=email&utm_campaign=cart-manual"
+        <a href="${resumeUrl}"
            style="display:inline-block;background:#a855f7;color:#fff;padding:14px 24px;border-radius:8px;text-decoration:none;font-weight:600">
           Complete your booking
         </a>
@@ -61,6 +59,7 @@ function renderCartRecoveryEmail(cart, siteUrl) {
         You're receiving this because you started a booking on hqaviation.co.uk.
         <a href="${unsubUrl}" style="color:#94a3b8">Unsubscribe</a>
       </p>
+      <img src="${pixelUrl}" width="1" height="1" alt="" style="display:block;width:1px;height:1px">
     </div>
   </body>
 </html>`;
@@ -73,7 +72,7 @@ ${aircraft} — ${duration} Discovery Flight
 ${total}
 
 Complete your booking:
-${resumeUrl}&utm_source=recovery&utm_medium=email&utm_campaign=cart-manual
+${resumeUrl}
 
 First-flight nerves are normal. Your instructor will walk you through every minute. Any questions? Reply to this email or call us — happy to help.
 
@@ -83,6 +82,18 @@ Unsubscribe: ${unsubUrl}
 `;
 
   return { subject, html, text };
+}
+
+/**
+ * Top-level dispatcher. type ∈ { 'manual', '1h', '24h' }.
+ * 'manual' uses the 1h copy with campaign='cart-manual' for attribution.
+ * '1h' uses the 1h copy with campaign='cart-1h'.
+ * '24h' delegates to render24hCartRecoveryEmail.
+ */
+function renderCartRecoveryEmail(cart, siteUrl, type = 'manual') {
+  if (type === '24h') return render24hCartRecoveryEmail(cart, siteUrl);
+  const campaign = type === '1h' ? 'cart-1h' : 'cart-manual';
+  return render1hCartRecoveryEmail(cart, siteUrl, type, campaign);
 }
 
 module.exports = { renderCartRecoveryEmail };

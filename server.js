@@ -414,6 +414,23 @@ app.use((err, req, res, next) => {
 });
 
 // ============================================
+// CART RECOVERY CRON (Phase 3)
+// ============================================
+if (process.env.CART_RECOVERY_AUTO === 'true') {
+  const cron = require('node-cron');
+  const { runRecoveryTick } = require('./api/cart-recovery-runner');
+
+  console.log('[cart-recovery] auto mode ENABLED — scheduling every 15 minutes');
+  cron.schedule('*/15 * * * *', () => {
+    runRecoveryTick(new Date()).catch((err) => {
+      console.error('[cart-recovery] tick threw:', err.message);
+    });
+  });
+} else {
+  console.log('[cart-recovery] auto mode DISABLED (set CART_RECOVERY_AUTO=true to enable)');
+}
+
+// ============================================
 // START SERVER
 // ============================================
 
