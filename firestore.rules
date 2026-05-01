@@ -284,5 +284,11 @@ service cloud.firestore {
     match /carts/{cartId} {
       allow read, write: if false;
     }
+
+    // GSC daily — server-only via Admin SDK. No client read or write.
+    // Populated by daily cron (api/gsc-sync.js); read only via /api/gsc/daily admin endpoint.
+    match /gsc_daily/{docId} {
+      allow read, write: if false;
+    }
   }
 }
