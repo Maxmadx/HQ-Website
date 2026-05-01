@@ -1,7 +1,7 @@
 'use strict';
 
 const Stripe = require('stripe');
-const nodemailer = require('nodemailer');
+const { getTransporter } = require('./lib/mailer');
 const admin = require('./firebase-admin');
 
 const MAX_ADDON_QTY = 10;
@@ -129,22 +129,6 @@ async function priceAddons(addons) {
   return { lineItems, total };
 }
 
-// Lazy-initialise SMTP transporter — reuse the same connection pool across calls.
-let _transporter = null;
-function getTransporter() {
-  if (!_transporter) {
-    _transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: false,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-  }
-  return _transporter;
-}
 
 // Fallback prices in pence — used only if Firestore is unreachable.
 // Keep in sync with seed-pricing.js and src/hooks/usePricing.js.

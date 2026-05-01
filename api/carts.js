@@ -6,6 +6,8 @@ const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
 const admin = require('./firebase-admin');
 const { CartUpsertSchema } = require('./lib/cartValidation');
 const { repriceCart } = require('./lib/cartPricing');
+const { getTransporter } = require('./lib/mailer');
+const { renderCartRecoveryEmail } = require('./templates/cart-recovery');
 
 const router = express.Router();
 
@@ -197,6 +199,48 @@ router.get('/', requireAdmin, async (_req, res) => {
   } catch (err) {
     console.error('[carts] admin list error:', err.message);
     return res.status(500).json({ error: 'Failed to list carts' });
+  }
+});
+
+// POST /api/carts/:id/send-recovery — admin manual send
+router.post('/:id/send-recovery', requireAdmin, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const cartRef = admin.firestore().collection('carts').doc(id);
+    const snap = await cartRef.get();
+    if (!snap.exists) return res.status(404).json({ error: 'Cart not found' });
+    const cart = snap.data();
+
+    if (!cart.email) return res.status(400).json({ error: 'No email on file for this cart' });
+    if (cart.noEmail) return res.status(400).json({ error: 'Customer has unsubscribed' });
+    if (cart.status === 'completed') return res.status(400).json({ error: 'Cart already completed' });
+    if (cart.excludedFromAnalytics) return res.status(400).json({ error: 'Admin/excluded cart' });
+
+    const siteUrl = process.env.SITE_URL || 'http://localhost:5173';
+    const { subject, html, text } = renderCartRecoveryEmail({ ...cart, recoveryToken: cart.recoveryToken }, siteUrl);
+
+    await getTransporter().sendMail({
+      from: process.env.EMAIL_FROM,
+      to: cart.email,
+      subject, html, text,
+    });
+
+    await cartRef.set({
+      recoveryEmailsSent: [...(cart.recoveryEmailsSent || []), {
+        at: admin.firestore.FieldValue.serverTimestamp(),
+        type: 'manual',
+        sentBy: req.adminUid || 'admin',
+      }],
+      // also mark as abandoned if it was still in checkout-initiated
+      status: cart.status === 'completed' ? cart.status : 'abandoned',
+      abandonedAt: cart.abandonedAt || admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error('[carts] send-recovery error:', err.message);
+    return res.status(500).json({ error: 'Failed to send recovery email' });
   }
 });
 
