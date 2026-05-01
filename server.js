@@ -8,7 +8,7 @@ require('dotenv').config();
 
 // In production, fail fast if required env vars are missing
 if (process.env.NODE_ENV === 'production') {
-  const REQUIRED_ENV = ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'SMTP_HOST', 'SMTP_USER', 'SMTP_PASS', 'EMAIL_FROM', 'FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY'];
+  const REQUIRED_ENV = ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'SMTP_HOST', 'SMTP_USER', 'SMTP_PASS', 'EMAIL_FROM', 'FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY', 'SITE_URL'];
   const missing = REQUIRED_ENV.filter(k => !process.env[k]);
   if (missing.length) {
     console.error(`Missing required environment variables: ${missing.join(', ')}`);

@@ -20,7 +20,10 @@ export function clearCartId() {
 /**
  * Upsert the in-progress cart on the server.
  * @param {object} payload  Matches CartUpsertSchema on server
- * @returns {Promise<string|null>} The cartId on success, null on failure.
+ * @returns {Promise<{cartId: string, email: string|null}|null>}
+ *   On success: { cartId, email } where email may be null if the user hasn't typed one
+ *   AND no lead-match backfill found a prior submission.
+ *   On any failure: null.
  */
 export async function upsertCart(payload) {
   try {
