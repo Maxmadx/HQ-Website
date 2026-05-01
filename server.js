@@ -431,6 +431,23 @@ if (process.env.CART_RECOVERY_AUTO === 'true') {
 }
 
 // ============================================
+// GSC SYNC CRON (Phase 4)
+// ============================================
+if (process.env.GSC_SYNC_AUTO === 'true') {
+  const cron = require('node-cron');
+  const { runGscSync } = require('./api/gsc-sync');
+
+  console.log('[gsc-sync] auto mode ENABLED — scheduling daily at 03:00 Europe/London');
+  cron.schedule('0 3 * * *', () => {
+    runGscSync({}).catch((err) => {
+      console.error('[gsc-sync] tick threw:', err.message);
+    });
+  }, { timezone: 'Europe/London' });
+} else {
+  console.log('[gsc-sync] auto mode DISABLED (set GSC_SYNC_AUTO=true to enable)');
+}
+
+// ============================================
 // START SERVER
 // ============================================
 
