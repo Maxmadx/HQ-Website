@@ -8,6 +8,9 @@ import { computeAddonsTotal, computeLineTotal } from '../lib/discoveryAddons';
 import { useDiscoveryAddons } from '../hooks/useDiscoveryAddons';
 import { trackEvent, getSessionId } from '../lib/analytics';
 import EmailFirstStep from './Checkout/EmailFirstStep';
+import ExitIntentModal from '../components/Checkout/ExitIntentModal';
+import useExitIntent from '../components/Checkout/useExitIntent';
+import useTabReturn from '../components/Checkout/useTabReturn';
 import { upsertCart, getCartId, rehydrateCartByToken } from '../lib/cart';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
@@ -489,6 +492,12 @@ export default function Checkout() {
   const isFlightValid = !isMisc && !!aircraft && !!duration && Number(price) > 0 && !!AIRCRAFT_NAMES[aircraft];
   const isValid = isMiscValid || isFlightValid;
 
+  const [exitDismissed, setExitDismissed] = useState(false);
+
+  const exitTriggered = useExitIntent({ enabled: !isMisc && !email && !exitDismissed });
+  const returnTriggered = useTabReturn({ enabled: !isMisc && !email && !exitDismissed });
+  const showExitModal = !isMisc && !email && !exitDismissed && (exitTriggered || returnTriggered);
+
   useEffect(() => {
     if (!isValid) {
       navigate(isMisc ? '/misc' : '/training/trial-lessons', { replace: true });
@@ -662,6 +671,11 @@ export default function Checkout() {
         </div>
       </div>
     </div>
+      <ExitIntentModal
+        open={showExitModal}
+        onSave={(typedEmail) => { setExitDismissed(true); handleEmailContinue(typedEmail); }}
+        onDismiss={() => setExitDismissed(true)}
+      />
     </>
   );
 }
