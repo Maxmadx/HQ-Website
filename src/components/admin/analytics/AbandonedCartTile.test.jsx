@@ -13,9 +13,11 @@ const carts = [
 describe('AbandonedCartTile', () => {
   it('renders the abandonment funnel stages', () => {
     render(<AbandonedCartTile carts={carts} onSendRecovery={() => {}} />);
-    expect(screen.getByText(/Carts/i)).toBeInTheDocument();
-    expect(screen.getByText(/Abandoned/i)).toBeInTheDocument();
-    expect(screen.getByText(/Recoverable/i)).toBeInTheDocument();
+    // Use getAllByText since "Carts" appears in the heading and as a stage label
+    expect(screen.getAllByText(/Carts/i).length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByText('Abandoned')).toBeInTheDocument();          // exact match: stage label
+    expect(screen.getByText('Recoverable')).toBeInTheDocument();        // exact match: stage label
+    expect(screen.getByRole('heading', { name: /abandoned carts/i })).toBeInTheDocument();
   });
 
   it('shows the recoverable email in the table', () => {
