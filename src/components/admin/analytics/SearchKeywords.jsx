@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { topLineStats, byKeyword, byPage } from './searchKeywordsAggregations';
+import InfoTooltip from './InfoTooltip';
 
 function fmtNum(n) {
   if (typeof n !== 'number' || !Number.isFinite(n)) return '0';
@@ -16,10 +17,12 @@ function fmtPos(n) {
   return n.toFixed(2);
 }
 
-function Stat({ label, value }) {
+function Stat({ label, value, topic }) {
   return (
     <div style={{ minWidth: 140 }}>
-      <div style={{ fontSize: 11, opacity: 0.6, textTransform: 'uppercase', letterSpacing: 1 }}>{label}</div>
+      <div style={{ fontSize: 11, opacity: 0.6, textTransform: 'uppercase', letterSpacing: 1 }}>
+        {label}{topic && <InfoTooltip topic={topic} />}
+      </div>
       <div style={{ fontSize: 22, fontWeight: 600 }}>{value}</div>
     </div>
   );
@@ -38,15 +41,15 @@ export default function SearchKeywords({ rows = [], dateLabel = '' }) {
   return (
     <section style={{ background: '#1a1a1a', borderRadius: 12, padding: 24, color: '#fff' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
-        <h2 style={{ margin: 0, fontSize: 18 }}>Search Keywords (Google)</h2>
+        <h2 style={{ margin: 0, fontSize: 18 }}>Search Keywords (Google)<InfoTooltip topic="searchKeywords" /></h2>
         {dateLabel && <span style={{ opacity: 0.7, fontSize: 13 }}>{dateLabel}</span>}
       </header>
 
       <div style={{ display: 'flex', gap: 24, marginBottom: 24, flexWrap: 'wrap' }}>
-        <Stat label="Clicks" value={fmtNum(stats.clicks)} />
-        <Stat label="Impressions" value={fmtNum(stats.impressions)} />
-        <Stat label="CTR" value={fmtPct(stats.ctr)} />
-        <Stat label="Avg. Position" value={fmtPos(stats.avgPosition)} />
+        <Stat label="Clicks" value={fmtNum(stats.clicks)} topic="gscClicks" />
+        <Stat label="Impressions" value={fmtNum(stats.impressions)} topic="gscImpressions" />
+        <Stat label="CTR" value={fmtPct(stats.ctr)} topic="gscCtr" />
+        <Stat label="Avg. Position" value={fmtPos(stats.avgPosition)} topic="gscAvgPosition" />
       </div>
 
       {isEmpty ? (
