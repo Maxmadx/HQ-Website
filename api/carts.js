@@ -10,6 +10,9 @@ const { sendCartRecoveryEmail } = require('./lib/cartRecoverySend');
 
 const router = express.Router();
 
+// 1×1 transparent GIF, base64
+const TRANSPARENT_GIF = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
+
 // Rate limit: 30 writes/min/IP — half of analytics rate
 const cartLimiter = rateLimit({
   windowMs: 60 * 1000,
@@ -176,6 +179,20 @@ router.get('/by-token', async (req, res) => {
       return res.status(410).json({ error: 'This booking is already complete' });
     }
 
+    // Click tracking: mark the most-recent recoveryEmailsSent entry clicked
+    try {
+      const sent = Array.isArray(cart.recoveryEmailsSent) ? cart.recoveryEmailsSent.slice() : [];
+      if (sent.length > 0 && !sent[sent.length - 1].clicked) {
+        sent[sent.length - 1] = { ...sent[sent.length - 1], clicked: true };
+        await doc.ref.set({
+          recoveryEmailsSent: sent,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        }, { merge: true });
+      }
+    } catch (clickErr) {
+      console.error('[carts] click-track error:', clickErr.message);
+    }
+
     // Return only the rehydration-relevant fields (no PII beyond what's needed)
     return res.json({
       cartId: doc.id,
@@ -190,6 +207,57 @@ router.get('/by-token', async (req, res) => {
   } catch (err) {
     console.error('[carts] by-token error:', err.message);
     return res.status(500).json({ error: 'Failed to load cart' });
+  }
+});
+
+// GET /api/carts/email-pixel?t=<token>&type=<1h|24h|manual>
+// Returns a 1×1 transparent GIF and marks the matching recoveryEmailsSent[i].opened = true.
+router.get('/email-pixel', async (req, res) => {
+  // Always return the pixel — never reveal whether the token was valid.
+  res.set('Content-Type', 'image/gif');
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+
+  const token = String(req.query.t || '').trim();
+  const type = String(req.query.type || '').trim();
+
+  // Send pixel immediately so email clients render the image.
+  res.send(TRANSPARENT_GIF);
+
+  // Then update Firestore in the background. Errors are logged, never returned.
+  if (!token || token.length < 16) return;
+  try {
+    const snap = await admin.firestore()
+      .collection('carts')
+      .where('recoveryToken', '==', token)
+      .limit(1)
+      .get();
+    if (snap.empty) return;
+
+    const doc = snap.docs[0];
+    const cart = doc.data();
+    const sent = Array.isArray(cart.recoveryEmailsSent) ? cart.recoveryEmailsSent.slice() : [];
+    if (sent.length === 0) return;
+
+    // Find the entry that matches the type (most-recent-first)
+    let updatedIndex = -1;
+    for (let i = sent.length - 1; i >= 0; i -= 1) {
+      if (!type || sent[i].type === type) {
+        if (sent[i].opened) return; // already marked
+        sent[i] = { ...sent[i], opened: true };
+        updatedIndex = i;
+        break;
+      }
+    }
+    if (updatedIndex === -1) return;
+
+    await doc.ref.set({
+      recoveryEmailsSent: sent,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+  } catch (err) {
+    console.error('[carts] email-pixel error:', err.message);
   }
 });
 
