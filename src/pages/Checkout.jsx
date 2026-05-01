@@ -401,11 +401,15 @@ export default function Checkout() {
   const [email, setEmail] = useState(null);
   const [cartId, setCartIdState] = useState(getCartId());
   const [resumeError, setResumeError] = useState(null);
+  const [resumeChecked, setResumeChecked] = useState(false);
 
   // Resume from token (recovery email link)
   useEffect(() => {
     const token = searchParams.get('t');
-    if (!token) return;
+    if (!token || isMisc) {
+      setResumeChecked(true);
+      return;
+    }
     rehydrateCartByToken(token).then((cart) => {
       if (cart) {
         setEmail(cart.email);
@@ -413,8 +417,9 @@ export default function Checkout() {
       } else {
         setResumeError('That booking link has expired or is no longer valid.');
       }
+      setResumeChecked(true);
     });
-  }, [searchParams]);
+  }, [searchParams, isMisc]);
 
   async function handleEmailContinue(typedEmail) {
     setEmail(typedEmail);
@@ -485,6 +490,11 @@ export default function Checkout() {
         {resumeError}
       </div>
     );
+  }
+
+  // Wait for token lookup to settle before deciding whether to show EmailFirstStep
+  if (!resumeChecked) {
+    return null;
   }
 
   if (!isMisc && !email) {
