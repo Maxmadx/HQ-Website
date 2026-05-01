@@ -33,7 +33,7 @@ export async function upsertCart(payload) {
     const data = await res.json();
     if (data && data.cartId) {
       setCartId(data.cartId);
-      return data.cartId;
+      return { cartId: data.cartId, email: data.email || null };
     }
     return null;
   } catch {

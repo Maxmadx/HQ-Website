@@ -27,6 +27,15 @@ describe('cart helper', () => {
     expect(getCartId()).toBe('cart_xyz');
   });
 
+  it('upsertCart returns { cartId, email } from the response', async () => {
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ ok: true, cartId: 'cart_abc', email: 'lead@example.com' }),
+    });
+    const result = await upsertCart({ sessionId: 'sess' });
+    expect(result).toEqual({ cartId: 'cart_abc', email: 'lead@example.com' });
+  });
+
   it('upsertCart silently swallows fetch errors (analytics-style)', async () => {
     fetch.mockRejectedValueOnce(new Error('network'));
     await expect(upsertCart({ sessionId: 'x', email: 'a@b.c' })).resolves.toBeNull();

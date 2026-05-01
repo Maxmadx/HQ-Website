@@ -31,6 +31,25 @@ function isAdminEmail(email) {
   return list.includes(email.toLowerCase());
 }
 
+async function leadEmailLookup(sessionId) {
+  if (!sessionId) return null;
+  try {
+    const snap = await admin.firestore()
+      .collection('leads')
+      .where('sessionId', '==', sessionId)
+      .where('email', '!=', '')
+      .orderBy('email')
+      .orderBy('createdAt', 'desc')
+      .limit(1)
+      .get();
+    if (snap.empty) return null;
+    const lead = snap.docs[0].data();
+    return lead.email || null;
+  } catch {
+    return null; // missing index or permission — fail soft
+  }
+}
+
 async function requireAdmin(req, res, next) {
   const header = req.headers.authorization || '';
   const token = header.replace('Bearer ', '').trim();
@@ -61,6 +80,17 @@ router.post('/', cartLimiter, async (req, res) => {
     }
     const data = parsed.data;
 
+    // Lead-match backfill: if no email typed but session previously submitted a lead form, use that email
+    let resolvedEmail = data.email || null;
+    let emailSource = data.email ? 'typed' : null;
+    if (!resolvedEmail) {
+      const leadEmail = await leadEmailLookup(data.sessionId);
+      if (leadEmail) {
+        resolvedEmail = leadEmail;
+        emailSource = 'lead-match';
+      }
+    }
+
     const db = admin.firestore();
 
     // Find existing non-completed cart by sessionId
@@ -79,8 +109,8 @@ router.post('/', cartLimiter, async (req, res) => {
     const now = admin.firestore.FieldValue.serverTimestamp();
     const baseFields = {
       sessionId: data.sessionId,
-      email: data.email || null,
-      emailSource: data.email ? 'typed' : null,
+      email: resolvedEmail,
+      emailSource: emailSource,
       flight: priced.flight,
       addons: priced.addons,
       fulfilment: data.fulfilment || null,
@@ -89,7 +119,7 @@ router.post('/', cartLimiter, async (req, res) => {
       currency: 'gbp',
       utm: data.utm || { source: null, medium: null, campaign: null, term: null, content: null },
       referrer: data.referrer || null,
-      excludedFromAnalytics: isAdminEmail(data.email),
+      excludedFromAnalytics: isAdminEmail(resolvedEmail),
       lawfulBasis: 'legitimate_interest',
       updatedAt: now,
     };
@@ -97,7 +127,7 @@ router.post('/', cartLimiter, async (req, res) => {
     if (!existingSnap.empty) {
       const doc = existingSnap.docs[0];
       await doc.ref.set(baseFields, { merge: true });
-      return res.json({ ok: true, cartId: doc.id });
+      return res.json({ ok: true, cartId: doc.id, email: resolvedEmail });
     }
 
     // Create new cart
@@ -115,7 +145,7 @@ router.post('/', cartLimiter, async (req, res) => {
       abandonedAt: null,
     });
 
-    return res.json({ ok: true, cartId: docRef.id });
+    return res.json({ ok: true, cartId: docRef.id, email: resolvedEmail });
   } catch (err) {
     if (err.statusCode === 400) {
       return res.status(400).json({ error: err.message });

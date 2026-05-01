@@ -403,6 +403,19 @@ export default function Checkout() {
   const [resumeError, setResumeError] = useState(null);
   const [resumeChecked, setResumeChecked] = useState(false);
 
+  // Pre-flight lead-match: ask the server if we know the email already from a prior lead form
+  useEffect(() => {
+    if (email) return; // already have one
+    if (isMisc) return; // misc flow doesn't use carts
+    if (searchParams.get('t')) return; // resume token path handles its own
+    upsertCart({ sessionId: getSessionId() }).then((result) => {
+      if (result && result.email) {
+        setEmail(result.email);
+        setCartIdState(result.cartId);
+      }
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Resume from token (recovery email link)
   useEffect(() => {
     const token = searchParams.get('t');
@@ -423,7 +436,7 @@ export default function Checkout() {
 
   async function handleEmailContinue(typedEmail) {
     setEmail(typedEmail);
-    const newCartId = await upsertCart({
+    const result = await upsertCart({
       sessionId: getSessionId(),
       email: typedEmail,
       flight: aircraft && duration ? { aircraftId: aircraft, duration: parseInt(duration, 10) } : null,
@@ -436,7 +449,7 @@ export default function Checkout() {
       },
       referrer: document.referrer || null,
     });
-    if (newCartId) setCartIdState(newCartId);
+    if (result && result.cartId) setCartIdState(result.cartId);
   }
 
   const [wantsVoucher, setWantsVoucher] = useState(false);
