@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { computeCartFunnel, recoverableCarts } from './cartAggregations';
+import InfoTooltip from './InfoTooltip';
 
 const STAGE_COLORS = {
   totalCarts:  '#5b21b6',
@@ -36,11 +37,11 @@ export default function AbandonedCartTile({ carts = [], onSendRecovery }) {
   const recoverable = useMemo(() => recoverableCarts(carts), [carts]);
 
   const stages = [
-    { key: 'totalCarts',  label: 'Carts',       count: funnel.totalCarts },
-    { key: 'abandoned',   label: 'Abandoned',   count: funnel.abandoned },
-    { key: 'recoverable', label: 'Recoverable', count: funnel.recoverable },
-    { key: 'emailed',     label: 'Emailed',     count: funnel.emailed },
-    { key: 'recovered',   label: 'Recovered',   count: funnel.recovered },
+    { key: 'totalCarts',  label: 'Carts',       count: funnel.totalCarts,  topic: 'cartsTotal' },
+    { key: 'abandoned',   label: 'Abandoned',   count: funnel.abandoned,   topic: 'cartsAbandoned' },
+    { key: 'recoverable', label: 'Recoverable', count: funnel.recoverable, topic: 'cartsRecoverable' },
+    { key: 'emailed',     label: 'Emailed',     count: funnel.emailed,     topic: 'cartsEmailed' },
+    { key: 'recovered',   label: 'Recovered',   count: funnel.recovered,   topic: 'cartsRecovered' },
   ];
   const maxCount = Math.max(...stages.map((s) => s.count), 1);
 
@@ -56,8 +57,11 @@ export default function AbandonedCartTile({ carts = [], onSendRecovery }) {
   return (
     <section style={{ background: '#1a1a1a', borderRadius: 12, padding: 24, color: '#fff' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 20 }}>
-        <h2 style={{ margin: 0, fontSize: 18 }}>Abandoned Carts</h2>
-        <span style={{ fontSize: 22, fontWeight: 600, color: '#a855f7' }}>{fmtGbp(funnel.recoverableValueP)} <span style={{ fontSize: 14, fontWeight: 400 }}>recoverable</span></span>
+        <h2 style={{ margin: 0, fontSize: 18 }}>Abandoned Carts<InfoTooltip topic="abandonedCarts" /></h2>
+        <span style={{ fontSize: 22, fontWeight: 600, color: '#a855f7' }}>
+          {fmtGbp(funnel.recoverableValueP)} <span style={{ fontSize: 14, fontWeight: 400 }}>recoverable</span>
+          <InfoTooltip topic="recoverableHeadline" />
+        </span>
       </header>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 24 }}>
@@ -65,7 +69,7 @@ export default function AbandonedCartTile({ carts = [], onSendRecovery }) {
           const widthPct = (stage.count / maxCount) * 100;
           return (
             <div key={stage.key} style={{ display: 'grid', gridTemplateColumns: '140px 1fr 60px', alignItems: 'center', gap: 12 }}>
-              <span style={{ fontSize: 14 }}>{stage.label}</span>
+              <span style={{ fontSize: 14 }}>{stage.label}<InfoTooltip topic={stage.topic} /></span>
               <div style={{ background: '#2a2a2a', borderRadius: 4, overflow: 'hidden', height: 24 }}>
                 <div style={{ width: `${widthPct}%`, background: STAGE_COLORS[stage.key], height: '100%', transition: 'width 250ms ease' }} />
               </div>
