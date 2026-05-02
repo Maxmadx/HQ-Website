@@ -389,6 +389,7 @@ export default function Checkout() {
   const navigate = useNavigate();
 
   const type = searchParams.get('type');
+  const isMisc = type === 'misc';
 
   // Misc params
   const itemId = searchParams.get('itemId');
@@ -487,7 +488,6 @@ export default function Checkout() {
   const flightPricePounds = Number(price) || 0;
   const grandTotalPounds = flightPricePounds + addonsTotalPounds;
 
-  const isMisc = type === 'misc';
   const isMiscValid = isMisc && !!itemId && !!itemName && Number(price) > 0 && Number(qty) >= 1;
   const isFlightValid = !isMisc && !!aircraft && !!duration && Number(price) > 0 && !!AIRCRAFT_NAMES[aircraft];
   const isValid = isMiscValid || isFlightValid;
