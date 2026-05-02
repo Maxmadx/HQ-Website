@@ -145,7 +145,7 @@ export const GLOSSARY = {
   },
   topCountries: {
     title: 'Top Countries',
-    body: 'Where in the world your visitors are based, by IP geolocation. UK should dominate. International visitors are interesting — they may be planning aviation holidays, looking for unusual experiences, or competitors checking up on you.',
+    body: 'Where in the world your visitors are based, by IP geolocation. The world map shades each country darker the more visits it has had — hover any country for the exact number. UK should dominate. International visitors are interesting — they may be planning aviation holidays, looking for unusual experiences, or competitors checking up on you.',
   },
   sessionsByHour: {
     title: 'Sessions by Hour (UTC)',
