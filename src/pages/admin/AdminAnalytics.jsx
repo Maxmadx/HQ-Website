@@ -8,6 +8,7 @@ import PurchaseFunnel from '../../components/admin/analytics/PurchaseFunnel';
 import AbandonedCartTile from '../../components/admin/analytics/AbandonedCartTile';
 import SearchKeywords from '../../components/admin/analytics/SearchKeywords';
 import InfoTooltip from '../../components/admin/analytics/InfoTooltip';
+import GeographyMap from '../../components/admin/analytics/GeographyMap';
 import {
   countBy, topN, groupByDay, bounceRate, avgTimeOnPage, formatDuration,
   avgScrollDepth, scrollDepthByPage, topJourneys, trafficSources, parseDevices,
@@ -441,6 +442,15 @@ export default function AdminAnalytics() {
   const sources = trafficSources(pageviews);
   const { devices, browsers } = parseDevices(pageviews);
   const topCountries = topN(countBy(filtered.filter((e) => e.country), 'country'), 7);
+  const mapData = (() => {
+    const m = new Map();
+    for (const ev of filtered) {
+      const code = ev.countryCode;
+      if (!code) continue;
+      m.set(code, (m.get(code) || 0) + 1);
+    }
+    return Array.from(m.entries()).map(([countryCode, visits]) => ({ countryCode, visits }));
+  })();
   const hours = sessionsByHour(pageviews);
   const scrollByPage = scrollDepthByPage(pageviews, scrollEvents, 4);
   const journeys = topJourneys(pageviews, 5);
@@ -733,6 +743,13 @@ export default function AdminAnalytics() {
 
                 <Card>
                   <CardTitle>Top Countries<InfoTooltip topic="topCountries" /></CardTitle>
+
+                  {mapData.length > 0 && (
+                    <div style={{ marginBottom: 16 }}>
+                      <GeographyMap data={mapData} />
+                    </div>
+                  )}
+
                   {topCountries.map(([country, count]) => {
                     const total = topCountries.reduce((s, [, c]) => s + c, 0);
                     const pct = total > 0 ? Math.round((count / total) * 100) : 0;
