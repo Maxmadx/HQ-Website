@@ -118,7 +118,7 @@ export default function AdminPartEdit() {
         navigate('/admin/parts');
       }
     } catch (err) {
-      setError(err.errors ? err.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ') : err.message);
+      setError(err.issues ? err.issues.map((issue) => `${issue.path.join('.')}: ${issue.message}`).join('; ') : err.message);
     } finally {
       setSaving(false);
     }
