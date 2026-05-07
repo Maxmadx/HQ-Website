@@ -29,6 +29,8 @@ import '../assets/css/components.css';
 // Import Footer
 import FooterMinimal from '../components/FooterMinimal';
 import HqMenuPanel from '../components/HqMenuPanel';
+import Seo from '../components/seo/Seo';
+import { buildBreadcrumbList } from '../components/seo/jsonLd';
 
 // ============================================================================
 // COMPONENT: H500Header
@@ -2371,6 +2373,17 @@ function AircraftH500() {
 
   return (
     <div className="h500-page">
+      <Seo
+        title="Hughes/Schweizer 300 (H500) — Reference"
+        description="The Hughes/Schweizer 300 (H500) — a piston-engine helicopter with a long history. Reference page; HQ Aviation does not sell new H500 aircraft."
+        jsonLd={[
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Aircraft', path: '/sales/new' },
+            { name: 'H500', path: '/aircraft/h500' },
+          ]),
+        ]}
+      />
       <H500Styles />
       <H500Header />
       <main>
