@@ -28,6 +28,7 @@ const cartsRouter = require('./api/carts');
 const pressClickRouter = require('./api/press-click');
 const sitemapRouter = require('./api/sitemap');
 const gscRouter = require('./api/gsc-api');
+const SEO_REDIRECTS = require('./api/seoRedirects');
 
 const app = express();
 app.set('trust proxy', 1); // Read real IP from X-Forwarded-For (required for req.ip behind proxies)
@@ -50,6 +51,15 @@ app.use((req, res, next) => {
   const finalHost = wantsNoWww ? host.slice(4) : host;
   const search = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
   return res.redirect(301, `https://${finalHost}${path}${search}`);
+});
+
+app.use((req, res, next) => {
+  const target = SEO_REDIRECTS[req.path];
+  if (target) {
+    const search = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+    return res.redirect(301, `${target}${search}`);
+  }
+  next();
 });
 
 const PORT = process.env.PORT || 7500;
