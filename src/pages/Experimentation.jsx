@@ -7194,6 +7194,21 @@ function Experimentation() {
           background: #333;
         }
 
+        /* Center both burger lines and force them to identical width + integer
+           height so sub-pixel rendering can't make one bar look thinner than the
+           other (navigation.css uses 2.5px which rounds inconsistently). The
+           open-state X formation is preserved via the :not(.open) guard. */
+        .fd-header-burger.hq-menu-btn {
+          align-items: center !important;
+        }
+        .fd-header-burger.hq-menu-btn span {
+          height: 3px !important;
+        }
+        .fd-header-burger.hq-menu-btn:not(.open) span {
+          width: 24px !important;
+          transform: none !important;
+        }
+
         .fd-nav__header {
           display: flex;
           align-items: center;
