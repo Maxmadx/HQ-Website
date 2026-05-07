@@ -28,6 +28,9 @@ import '../assets/css/components.css';
 
 import FooterMinimal from '../components/FooterMinimal';
 import HqMenuPanel from '../components/HqMenuPanel';
+import Seo from '../components/seo/Seo';
+import { buildService, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { SITE_URL, AREA_SERVED } from '../lib/seoDefaults';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HEADER COMPONENT
@@ -806,6 +809,23 @@ export default function Leaseback() {
 
   return (
     <div className="lb-page">
+      <Seo
+        title="Helicopter Leaseback — UK Aircraft Owner Programme"
+        description="Earn revenue from your helicopter through HQ Aviation's leaseback programme. Robinson R44 / R66 placements at Denham, UK."
+        jsonLd={[
+          buildService({
+            name: 'Helicopter Leaseback',
+            serviceType: 'Aircraft leaseback program',
+            description: 'Aircraft leaseback programme for helicopter owners — Robinson R44 and R66 placements at Denham.',
+            url: `${SITE_URL}/leaseback`,
+            areaServed: AREA_SERVED,
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Leaseback', path: '/leaseback' },
+          ]),
+        ]}
+      />
       <LeasebackStyles />
       <LeasebackHeader />
       <main>

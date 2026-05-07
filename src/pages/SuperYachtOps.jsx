@@ -21,6 +21,9 @@ import '../assets/css/main.css';
 import '../assets/css/components.css';
 import FooterMinimal from '../components/FooterMinimal';
 import HqMenuPanel from '../components/HqMenuPanel';
+import Seo from '../components/seo/Seo';
+import { buildService, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { SITE_URL, AREA_SERVED } from '../lib/seoDefaults';
 
 /* ─────────────────────────────────────────────────────────────────────────────
    HEADER COMPONENT
@@ -266,6 +269,23 @@ export default function SuperYachtOps() {
 
   return (
     <div className="syo">
+      <Seo
+        title="Superyacht Helicopter Operations — UK Support"
+        description="Helicopter operations support for superyachts — flight crew, deck-landing, refuelling, and route planning from HQ Aviation, Denham."
+        jsonLd={[
+          buildService({
+            name: 'Superyacht Helicopter Operations',
+            serviceType: 'Helicopter operations support for superyachts',
+            description: 'Helicopter operations support for superyachts — flight crew, deck-landing, refuelling, and route planning.',
+            url: `${SITE_URL}/superyacht-ops`,
+            areaServed: AREA_SERVED,
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Superyacht Operations', path: '/superyacht-ops' },
+          ]),
+        ]}
+      />
       <SuperYachtOpsHeader />
 
       {/* ===================================================================
