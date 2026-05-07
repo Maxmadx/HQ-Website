@@ -22,6 +22,8 @@ import { motion, useInView, useScroll, useTransform, AnimatePresence, LayoutGrou
 import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { SECTION_MAP } from '../lib/imageSections';
+import Seo from '../components/seo/Seo';
+import { buildProduct, buildBreadcrumbList } from '../components/seo/jsonLd';
 
 // Import styles
 import '../assets/css/main.css';
@@ -1970,6 +1972,28 @@ function AircraftR44() {
 
   return (
     <div className="r44">
+      <Seo
+        title="Robinson R44 for Sale · UK Dealer"
+        description="Buy a new Robinson R44 Raven I, II or Cadet from HQ Aviation at Denham, 30 min from London — Robinson authorised dealer, service center, CAA Part-145."
+        ogImage="/assets/images/used-aircraft/r44/r44-raven-ii-grrob.jpg"
+        jsonLd={[
+          buildProduct({
+            name: 'Robinson R44 Raven II',
+            description: 'New Robinson R44 Raven I, Raven II and Cadet — four-seat Lycoming piston helicopters.',
+            image: '/og-default.jpg',
+            brand: 'Robinson Helicopter Company',
+            url: '/aircraft/r44',
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'New Aircraft Sales', path: '/sales/new' },
+            { name: 'Robinson R44', path: '/aircraft/r44' },
+          ]),
+        ]}
+      />
+      <h1 style={{ position: 'absolute', left: '-10000px', width: '1px', height: '1px', overflow: 'hidden' }}>
+        Robinson R44 Raven I, II & Cadet — United Kingdom UK Authorised Dealer
+      </h1>
       <R44Header />
       <R44Hero />
       <section style={{ display: 'flex', justifyContent: 'center', padding: '3rem 1.5rem 0', background: '#faf9f6' }}>

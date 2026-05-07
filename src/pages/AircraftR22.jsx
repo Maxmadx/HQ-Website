@@ -15,6 +15,8 @@ import { motion, useInView, useScroll, useTransform, AnimatePresence, LayoutGrou
 import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { SECTION_MAP } from '../lib/imageSections';
+import Seo from '../components/seo/Seo';
+import { buildProduct, buildBreadcrumbList } from '../components/seo/jsonLd';
 
 // Import styles
 import '../assets/css/main.css';
@@ -2735,6 +2737,28 @@ function AircraftR22() {
 
   return (
     <div className="r22-page">
+      <Seo
+        title="Robinson R22 for Sale · UK Dealer"
+        description="Buy a new Robinson R22 Beta II — two-seat Lycoming O-360 trainer — at Denham, 30 min from London. Robinson authorised dealer and service center."
+        ogImage="/assets/images/fleet/r22-g-ulze.jpg"
+        jsonLd={[
+          buildProduct({
+            name: 'Robinson R22 Beta II',
+            description: 'New Robinson R22 Beta II — two-seat Lycoming O-360 trainer, the entry-level Robinson helicopter.',
+            image: '/og-default.jpg',
+            brand: 'Robinson Helicopter Company',
+            url: '/aircraft/r22',
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'New Aircraft Sales', path: '/sales/new' },
+            { name: 'Robinson R22', path: '/aircraft/r22' },
+          ]),
+        ]}
+      />
+      <h1 style={{ position: 'absolute', left: '-10000px', width: '1px', height: '1px', overflow: 'hidden' }}>
+        Robinson R22 Beta II — Two-Seat Trainer, United Kingdom UK Authorised Dealer
+      </h1>
       <R22Styles />
       <R22Header />
       <R22Hero />

@@ -23,6 +23,8 @@ import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'fra
 import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { SECTION_MAP } from '../lib/imageSections';
+import Seo from '../components/seo/Seo';
+import { buildProduct, buildBreadcrumbList } from '../components/seo/jsonLd';
 
 // Import styles
 import '../assets/css/main.css';
@@ -5294,6 +5296,34 @@ function AircraftR88() {
 
   return (
     <div className="r88-page">
+      <Seo
+        title="New Robinson R88 · Consultation UK and Europe"
+        description="New Robinson R88 — 10-seat utility turbine. UK consultations, pricing info, delivery slots, pre-order enquiries with HQ Aviation, Robinson dealer."
+        ogImage="/assets/images/new-aircraft/r88/rhc-r88-wide-view-instrument-panel-13175.jpg"
+        jsonLd={[
+          buildProduct({
+            name: 'Robinson R88',
+            description: 'New Robinson R88 — 10-seat utility turbine, Safran Arriel 2W. Pre-certification, UK and Europe delivery interest registration.',
+            image: '/assets/images/new-aircraft/r88/rhc-r88-wide-view-instrument-panel-13175.jpg',
+            brand: 'Robinson Helicopter Company',
+            url: '/aircraft/r88',
+            offers: {
+              '@type': 'Offer',
+              availability: 'https://schema.org/PreOrder',
+              priceCurrency: 'GBP',
+              url: 'https://hqaviation.com/aircraft/r88',
+            },
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'New Aircraft Sales', path: '/sales/new' },
+            { name: 'Robinson R88', path: '/aircraft/r88' },
+          ]),
+        ]}
+      />
+      <h1 style={{ position: 'absolute', left: '-10000px', width: '1px', height: '1px', overflow: 'hidden' }}>
+        New Robinson R88 — 10-Seat Utility Turbine, United Kingdom UK & Europe Consultation
+      </h1>
       <R88Styles />
       <R88Header />
       <main>

@@ -1,5 +1,8 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigationType } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
+import Seo from './components/seo/Seo';
+import { buildOrganization, buildWebSite, buildLocalBusiness } from './components/seo/jsonLd';
 import Layout from './layouts/Layout';
 import Home from './pages/Home';
 import AboutUs from './pages/AboutUs';
@@ -136,14 +139,21 @@ function ScrollToTop() {
   return null;
 }
 
+// Hide dev/test/picker routes from the production bundle. Flip to true if
+// you ever need them live in production for a one-off preview share.
+const SHOW_DEV_ROUTES = import.meta.env.DEV;
+
 function App() {
   return (
+    <HelmetProvider>
     <Router>
+      <Seo jsonLd={[buildOrganization(), buildWebSite(), buildLocalBusiness()]} />
       <EditModeProvider>
       <ScrollToTop />
       <PageTracker />
       <Routes>
-        {/* Test Pages - Outside layout for full-screen testing */}
+        {/* Dev/test/picker routes — hard-gated behind import.meta.env.DEV */}
+        {SHOW_DEV_ROUTES && (<>
         <Route path="/hero-test" element={<HeroTest />} />
         <Route path="/hero-section-test" element={<HeroSectionTest />} />
         <Route path="/hero-section-final" element={<HeroSectionFinal />} />
@@ -181,9 +191,11 @@ function App() {
         <Route path="/parallax-picker" element={<ParallaxPicker />} />
         <Route path="/ownership-picker" element={<OwnershipPicker />} />
         <Route path="/ppl-picker" element={<PPLPicker />} />
+        <Route path="/final-why-fly-a-helicopter" element={<FinalWhyFlyAHelicopter />} />
+        </>)}
+        {/* Production routes resume below */}
         <Route path="/final-ppl" element={<FinalPPL />} />
         <Route path="/training/ppl" element={<FinalPPL />} />
-        <Route path="/final-why-fly-a-helicopter" element={<FinalWhyFlyAHelicopter />} />
         <Route path="/type-rating" element={<TypeRating />} />
         <Route path="/training/type-rating" element={<TypeRating />} />
         <Route path="/training/night-rating" element={<NightRating />} />
@@ -194,11 +206,11 @@ function App() {
         <Route path="/london-tour-confirmed" element={<LondonTourConfirmed />} />
         <Route path="/sales/new" element={<Sales />} />
         <Route path="/aircraft-comparison" element={<AircraftComparison />} />
-        <Route path="/sales/sliding-gallery-variations" element={<SlidingGalleryVariations />} />
+        {SHOW_DEV_ROUTES && <Route path="/sales/sliding-gallery-variations" element={<SlidingGalleryVariations />} />}
         <Route path="/sales/pre-owned" element={<UsedSales />} />
         <Route path="/sales/rebuilds" element={<Rebuilds />} />
-        <Route path="/sales/pre-owned-2" element={<UsedSales2 />} />
-        <Route path="/sales/pre-owned-variations" element={<UsedSalesVariations />} />
+        {SHOW_DEV_ROUTES && <Route path="/sales/pre-owned-2" element={<UsedSales2 />} />}
+        {SHOW_DEV_ROUTES && <Route path="/sales/pre-owned-variations" element={<UsedSalesVariations />} />}
         <Route path="/sales/pre-owned/:id" element={<UsedAircraftDetail />} />
         <Route path="/self-fly-hire" element={<SelfFlyHire />} />
         <Route path="/misc" element={<Misc />} />
@@ -206,11 +218,11 @@ function App() {
         <Route path="/parts" element={<PartSales />} />
         <Route path="/maintenance" element={<FinalMaintenance />} />
         <Route path="/expeditions" element={<FinalExpeditions />} />
-        <Route path="/journey-lines-picker" element={<JourneyLinesPicker />} />
+        {SHOW_DEV_ROUTES && <Route path="/journey-lines-picker" element={<JourneyLinesPicker />} />}
         <Route path="/sitemap" element={<Sitemap />} />
-        <Route path="/journey-picker" element={<JourneyPicker />} />
-        <Route path="/video-slider-picker" element={<VideoSliderPicker />} />
-        <Route path="/testimonials-picker" element={<TestimonialsPicker />} />
+        {SHOW_DEV_ROUTES && <Route path="/journey-picker" element={<JourneyPicker />} />}
+        {SHOW_DEV_ROUTES && <Route path="/video-slider-picker" element={<VideoSliderPicker />} />}
+        {SHOW_DEV_ROUTES && <Route path="/testimonials-picker" element={<TestimonialsPicker />} />}
         <Route path="/testimonials" element={<Testimonials />} />
         <Route path="/fleet" element={<Fleet />} />
         <Route path="/aircraft/r66" element={<AircraftR66 />} />
@@ -279,6 +291,7 @@ function App() {
       </Routes>
       </EditModeProvider>
     </Router>
+    </HelmetProvider>
   );
 }
 

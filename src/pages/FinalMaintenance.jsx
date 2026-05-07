@@ -33,6 +33,8 @@ import '../assets/css/components.css';
 import { usePageText } from '../hooks/usePageText';
 import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
+import Seo from '../components/seo/Seo';
+import { buildService, buildBreadcrumbList } from '../components/seo/jsonLd';
 import FooterMinimal from '../components/FooterMinimal';
 import FacilityGallery from '../components/Maintenance/FacilityGallery';
 import PartsEnquiry from '../components/Maintenance/PartsEnquiry';
@@ -5842,6 +5844,27 @@ function FinalMaintenance() {
 
   return (
     <div className="maint">
+      <Seo
+        title="Robinson Helicopter Maintenance · UK"
+        description="Robinson and Rolls-Royce RR300 authorised service center at Denham. CAA Part-145 maintenance for R22, R44, R66. Parts sales, overhauls, AOG response."
+        ogImage="/assets/images/facility/maintenance-.jpg"
+        jsonLd={[
+          buildService({
+            name: 'Robinson Helicopter Maintenance',
+            serviceType: 'Helicopter Maintenance',
+            description: 'Robinson and Rolls-Royce RR300 authorised service center at Denham. CAA Part-145 maintenance for R22, R44, R66. Parts sales, overhauls, AOG response.',
+            url: '/maintenance',
+            areaServed: 'United Kingdom',
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Maintenance', path: '/maintenance' },
+          ]),
+        ]}
+      />
+      <h1 style={{ position: 'absolute', left: '-10000px', width: '1px', height: '1px', overflow: 'hidden' }}>
+        Robinson Helicopter Maintenance — UK's Most Important Robinson Authorised Service Center & RR300 Specialist
+      </h1>
       <style>{styles}</style>
       <MaintenanceHeader />
 

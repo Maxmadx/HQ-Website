@@ -23,6 +23,7 @@ import { usePageText } from '../hooks/usePageText';
 import { useCmsTextHighlight } from '../hooks/useCmsTextHighlight';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { SECTION_MAP } from '../lib/imageSections';
+import Seo from '../components/seo/Seo';
 
 // Import all styles - Header/Navigation styles included via main.css
 import '../assets/css/main.css';
@@ -3368,6 +3369,13 @@ function Experimentation() {
 
   return (
     <div className="final-draft" ref={containerRef}>
+      <Seo
+        title="Robinson Helicopter Dealer · London & UK"
+        description="Robinson authorised dealer and service center at Denham, 30 min from London. R22, R44, R66 sales. Helicopter operator, lessons and PPL flight training."
+      />
+      <h1 style={{ position: 'absolute', left: '-10000px', width: '1px', height: '1px', overflow: 'hidden' }}>
+        Robinson Helicopter Sales, Training & Maintenance — Just Outside London
+      </h1>
       {/* ===== HERO SECTION (Diagonal Split + Header) ===== */}
       <HeroSectionFinalTesting
         navHidden={navHidden}

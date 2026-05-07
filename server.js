@@ -26,6 +26,7 @@ const stripeDiscoveryRouter = require('./api/stripe-discovery');
 const analyticsRouter = require('./api/analytics-api');
 const cartsRouter = require('./api/carts');
 const pressClickRouter = require('./api/press-click');
+const sitemapRouter = require('./api/sitemap');
 const gscRouter = require('./api/gsc-api');
 
 const app = express();
@@ -301,6 +302,11 @@ app.use('/api/carts', express.json({ limit: '16kb' }), cartsRouter);
 // PRESS CLICK ROUTES
 // ============================================
 app.use('/api/press-click', express.json(), pressClickRouter);
+
+// ============================================
+// SITEMAP — public, no auth (search engines fetch this)
+// ============================================
+app.use(sitemapRouter);
 
 // ============================================
 // GSC ROUTES
