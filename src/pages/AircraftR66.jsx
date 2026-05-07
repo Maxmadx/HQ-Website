@@ -310,6 +310,24 @@ const R66_PALO_VERDE_EOC = 'https://robinsonstrapistorprod.blob.core.windows.net
 const R66_SOUTHWOOD_EOC  = 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/r66_nxg_southwood_2026_d1df6e9083.pdf';
 const R66_RIVIERA_EOC    = 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/r66_nxg_riviera_2026_108204ceda.pdf';
 
+const R66_CONFIGURATOR_BASE = 'https://configurator.robinsonheli.com/';
+
+// Robinson's live configurator only ships ids for Palo Verde, Southwood, and
+// Riviera. Police & Military Trainer fall back to Palo Verde (the base R66
+// platform those packages are built on); we surface a note in those cases.
+function r66ConfiguratorUrl(variantIndex) {
+  const idMap = [
+    'r66-nx-g-palo-verde',
+    'r66-nx-g-southwood',
+    'r66-nx-g-riviera',
+    'r66-nx-g-palo-verde',
+    'r66-nx-g-palo-verde',
+  ];
+  const id = idMap[variantIndex] || 'r66-nx-g-palo-verde';
+  return `${R66_CONFIGURATOR_BASE}?helicopter=${id}&splash=false`;
+}
+const R66_CONFIGURATOR_FALLBACK_INDEXES = new Set([3, 4]);
+
 const r66Variants = [
   {
     name: 'NxG Palo Verde',
@@ -1312,6 +1330,7 @@ function R66Expedition() {
 // ============================================================================
 function R66Variants() {
   const [activeVariant, setActiveVariant] = useState(0);
+  const [configuratorActive, setConfiguratorActive] = useState(false);
   const sectionRef = useRef(null);
 
   useEffect(() => {
@@ -1373,6 +1392,38 @@ function R66Variants() {
           </div>
         </Reveal>
 
+        {configuratorActive ? (
+          <div className="r66-variants__configurator">
+            <div className="r66-variants__configurator-meta">
+              <button
+                type="button"
+                className="r66-variants__configurator-back"
+                onClick={() => setConfiguratorActive(false)}
+                aria-label="Return to variant selector"
+              >
+                <i className="fas fa-arrow-left" aria-hidden="true" />
+                <span>Back to Variants</span>
+              </button>
+              <span className="r66-variants__configurator-active">
+                Configuring <strong>R66 {r66Variants[activeVariant].name}</strong>
+                {R66_CONFIGURATOR_FALLBACK_INDEXES.has(activeVariant) && (
+                  <span className="r66-variants__configurator-note">
+                    Showing base R66 — {r66Variants[activeVariant].name} package added at order
+                  </span>
+                )}
+              </span>
+            </div>
+            <iframe
+              key={`r66-cfg-${activeVariant}`}
+              className="r66-variants__configurator-frame"
+              src={r66ConfiguratorUrl(activeVariant)}
+              title={`Robinson R66 ${r66Variants[activeVariant].name} Configurator`}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allow="fullscreen"
+            />
+          </div>
+        ) : (
         <LayoutGroup id="r66-variants">
           <div className="r66-variants__card">
             <div className="r66-variants__tabs">
@@ -1481,12 +1532,25 @@ function R66Variants() {
             </div>
           </div>
         </LayoutGroup>
+        )}
 
         <div className="r66-variants__cta">
-          <a href="#enquire" className="r66-variants__cta-button">
-            Register Interest
-            <i className="fas fa-arrow-right" aria-hidden="true"></i>
-          </a>
+          {!configuratorActive ? (
+            <button
+              type="button"
+              className="r66-variants__cta-button"
+              onClick={() => setConfiguratorActive(true)}
+              aria-label={`Launch the Robinson configurator for the R66 ${r66Variants[activeVariant].name}`}
+            >
+              Launch Configurator
+              <i className="fas fa-arrow-right" aria-hidden="true"></i>
+            </button>
+          ) : (
+            <a href="#enquire" className="r66-variants__cta-button">
+              Register Interest
+              <i className="fas fa-arrow-right" aria-hidden="true"></i>
+            </a>
+          )}
         </div>
 
       </div>
@@ -5397,6 +5461,95 @@ const R66Styles = () => (
       .r66-autopilot__mode-display-code {
         font-size: 2rem;
         padding: 0.75rem 1.5rem;
+      }
+    }
+
+    /* ====================================================================
+       SECTION: R66 VARIANTS — Inline Configurator
+       Replaces the .r66-variants__card when "Launch Configurator" is clicked.
+       ==================================================================== */
+    .r66-variants__configurator {
+      border: 1px solid #e5e4df;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: 0 24px 60px -32px rgba(0,0,0,0.25);
+    }
+    .r66-variants__configurator-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid #e5e4df;
+      background: #faf9f6;
+      flex-wrap: wrap;
+    }
+    .r66-variants__configurator-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1rem;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      background: #ffffff;
+      border: 1px solid #d6d4cc;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+    }
+    .r66-variants__configurator-back:hover {
+      background: #1a1a1a;
+      border-color: #1a1a1a;
+      color: #faf9f6;
+      transform: translateY(-1px);
+    }
+    .r66-variants__configurator-active {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.15rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #7a7a7a;
+      text-align: right;
+    }
+    .r66-variants__configurator-active strong {
+      color: #1a1a1a;
+      font-weight: 600;
+    }
+    .r66-variants__configurator-note {
+      font-size: 0.65rem;
+      color: #a8a39a;
+      letter-spacing: 0.08em;
+    }
+    .r66-variants__configurator-frame {
+      display: block;
+      width: 100%;
+      height: min(82vh, 820px);
+      min-height: 520px;
+      border: 0;
+      background: #ffffff;
+    }
+    @media (max-width: 768px) {
+      .r66-variants__configurator-meta {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.6rem;
+      }
+      .r66-variants__configurator-active {
+        align-items: flex-start;
+        text-align: left;
+      }
+      .r66-variants__configurator-frame {
+        height: 70vh;
+        min-height: 460px;
       }
     }
   `}</style>
