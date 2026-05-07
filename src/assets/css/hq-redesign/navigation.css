@@ -28,14 +28,14 @@
 
 .hq-menu-btn span {
   width: 24px;
-  height: 2.5px;
+  height: 3px;
   background: #fff;
   border-radius: 1.5px;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hq-menu-btn span:nth-child(1) {
-  transform: translateX(6px);
+  transform: none;
 }
 
 .hq-menu-btn span:nth-child(2) {
@@ -43,16 +43,16 @@
 }
 
 .hq-menu-btn span:nth-child(3) {
-  transform: translateX(0);
+  transform: none;
 }
 
-/* Hover state - lines swap position */
+/* Hover state - lines stay aligned (no diagonal swap) */
 .hq-menu-btn:hover span:nth-child(1) {
-  transform: translateX(0);
+  transform: none;
 }
 
 .hq-menu-btn:hover span:nth-child(3) {
-  transform: translateX(6px);
+  transform: none;
 }
 
 /* Color dark state (at 300px) - lines turn black */
