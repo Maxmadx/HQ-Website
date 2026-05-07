@@ -216,6 +216,12 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Robinson factory spec rows shown on /aircraft/<model> pages — public read, admin write
+    match /aircraftSpecs/{model} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Comparison defaults singleton (fuel prices etc.) — public read, admin write
     match /comparison_defaults/{id} {
       allow read: if true;

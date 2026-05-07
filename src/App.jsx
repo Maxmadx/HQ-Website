@@ -122,6 +122,8 @@ import AdminWallOfCool from './pages/admin/AdminWallOfCool';
 import AdminReviews from './pages/admin/AdminReviews';
 import AdminFaqs from './pages/admin/AdminFaqs';
 import AdminWhereWhen from './pages/admin/AdminWhereWhen';
+import AdminAircraftSpecs from './pages/admin/AdminAircraftSpecs';
+import AdminAircraftSpecsEdit from './pages/admin/AdminAircraftSpecsEdit';
 import AdminEditImagesMode from './pages/admin/AdminEditImagesMode';
 import AdminEditTextMode from './pages/admin/AdminEditTextMode';
 import AdminComparables from './pages/admin/AdminComparables';
@@ -273,6 +275,8 @@ function App() {
         <Route path="/admin/reviews" element={<AdminRoute><AdminReviews /></AdminRoute>} />
         <Route path="/admin/faqs" element={<AdminRoute><AdminFaqs /></AdminRoute>} />
         <Route path="/admin/where-when" element={<AdminRoute><AdminWhereWhen /></AdminRoute>} />
+        <Route path="/admin/aircraft-specs" element={<AdminRoute><AdminAircraftSpecs /></AdminRoute>} />
+        <Route path="/admin/aircraft-specs/:model" element={<AdminRoute><AdminAircraftSpecsEdit /></AdminRoute>} />
 
         <Route path="/training/commercial" element={<CPL />} />
         <Route path="/training/advanced" element={<AdvancedTraining />} />

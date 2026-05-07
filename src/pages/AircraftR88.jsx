@@ -21,6 +21,7 @@ import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { usePageImages } from '../hooks/usePageImages';
+import { useAircraftSpecRows } from '../hooks/useAircraftSpecs';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { SECTION_MAP } from '../lib/imageSections';
 import Seo from '../components/seo/Seo';
@@ -32,8 +33,6 @@ import '../assets/css/components.css';
 
 // Import Footer
 import FooterMinimal from '../components/FooterMinimal';
-import AircraftPriceBlock from '../components/AircraftPriceBlock';
-import { getSubtypes } from '../config/aircraftCatalog';
 import HqMenuPanel from '../components/HqMenuPanel';
 
 // ============================================================================
@@ -651,10 +650,12 @@ function R88Introduction() {
 // SECTION 3: Technical Specifications
 // ============================================================================
 function R88Specifications() {
+  const adminRows = useAircraftSpecRows('r88');
+  const baseSpecs = adminRows.length ? adminRows : r88Specs;
   // Duplicate the card set so the marquee animation loops seamlessly —
   // the keyframes translate by -50%, landing exactly on the start of the
   // second copy, which visually continues the first.
-  const loopedSpecs = [...r88Specs, ...r88Specs];
+  const loopedSpecs = [...baseSpecs, ...baseSpecs];
 
   return (
     <section className="r88-specs">
@@ -664,7 +665,7 @@ function R88Specifications() {
             <div
               key={i}
               className="r88-specs__item"
-              aria-hidden={i >= r88Specs.length ? 'true' : undefined}
+              aria-hidden={i >= baseSpecs.length ? 'true' : undefined}
             >
               <div className="r88-specs__icon">
                 <i className={`fas ${spec.icon}`}></i>
@@ -5328,9 +5329,6 @@ function AircraftR88() {
       <R88Header />
       <main>
         <R88Hero />
-        <section style={{ display: 'flex', justifyContent: 'center', padding: '3rem 1.5rem 0', background: '#faf9f6' }}>
-          <AircraftPriceBlock modelId="r88" subtypes={getSubtypes('r88')} />
-        </section>
         <div className="r88-sticky-stack">
           <R88Highlights />
           <R88Introduction />
