@@ -22,7 +22,7 @@
 
 **Deferred to follow-up PRs (do NOT implement here):**
 - `/misc → /store` rename (was original Tasks 7–12) — slug polish; minimal SEO benefit; mechanical migration that deserves its own focused PR
-- `/parts` Product schema (was original Task 19) — meaningless until the parts-storefront redesign lands and gives parts real per-item data
+- `/parts` Product schema (was original Task 19) — meaningless until the parts-storefront redesign lands and gives parts real per-item data. **Completed 2026-05-07** in `docs/superpowers/plans/2026-05-07-parts-catalogue.md` (Task 7: per-listing Product JSON-LD with conditional Offer block on `/parts/:id`).
 - Static sitemap `<lastmod>` from server-start timestamp (was original Task 26) — search engines don't aggressively recrawl static pages on `lastmod` changes
 - `docs/seo/canonical-rules.md` standalone doc (was original Task 27) — folded into the final PR description
 
@@ -1239,7 +1239,7 @@ Implements `docs/superpowers/specs/2026-04-30-seo-refinements-design.md`. Trimme
 | Item | Why deferred |
 |---|---|
 | `/misc → /store` rename | Slug polish; minimal SEO benefit; mechanical migration deserves its own PR |
-| `/parts` per-part Product schema | Meaningless until the parts-storefront redesign lands |
+| `/parts` per-part Product schema | ~~Meaningless until the parts-storefront redesign lands~~ **Completed 2026-05-07 — see 2026-05-07-parts-catalogue.md** |
 | Static sitemap `<lastmod>` | Search engines don't aggressively recrawl static pages on lastmod |
 
 ### Verification
