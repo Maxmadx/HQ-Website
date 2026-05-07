@@ -83,6 +83,8 @@ import TestingHeroSection from './pages/TestingHeroSection';
 import Misc from './pages/Misc';
 import MiscItemDetail from './pages/MiscItemDetail';
 import PartSales from './pages/PartSales';
+import Parts from './pages/Parts';
+import PartDetail from './pages/PartDetail';
 import RHCConfigurator from './pages/RHCConfigurator';
 import AwardVariations from './pages/AwardVariations';
 import MobileSecondSection from './pages/MobileSecondSection';
@@ -218,7 +220,9 @@ function App() {
         <Route path="/self-fly-hire" element={<SelfFlyHire />} />
         <Route path="/misc" element={<Misc />} />
         <Route path="/misc/:id" element={<MiscItemDetail />} />
-        <Route path="/parts" element={<PartSales />} />
+        <Route path="/parts" element={<Parts />} />
+        <Route path="/parts/enquiry" element={<PartSales />} />
+        <Route path="/parts/:id" element={<PartDetail />} />
         <Route path="/maintenance" element={<FinalMaintenance />} />
         <Route path="/expeditions" element={<FinalExpeditions />} />
         {SHOW_DEV_ROUTES && <Route path="/journey-lines-picker" element={<JourneyLinesPicker />} />}
