@@ -2,7 +2,24 @@
 <html lang="en-GB">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/assets/images/logos/hq/hq-aviation-logo-black.png" />
+    <link rel="icon" type="image/png" href="/favicon-light.png?v=6" />
+    <link rel="alternate icon" href="/favicon.ico?v=6" />
+    <script>
+      (function () {
+        var V = '?v=6';
+        var mq = window.matchMedia('(prefers-color-scheme: dark)');
+        function setIcon(isDark) {
+          document.querySelectorAll('link[rel="icon"]').forEach(function (n) { n.remove(); });
+          var l = document.createElement('link');
+          l.rel = 'icon';
+          l.type = 'image/png';
+          l.href = (isDark ? '/favicon-dark.png' : '/favicon-light.png') + V;
+          document.head.appendChild(l);
+        }
+        setIcon(mq.matches);
+        mq.addEventListener('change', function (e) { setIcon(e.matches); });
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Title fallback (replaced per-route by react-helmet-async via the Seo component) -->
