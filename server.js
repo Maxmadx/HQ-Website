@@ -29,6 +29,8 @@ const pressClickRouter = require('./api/press-click');
 const sitemapRouter = require('./api/sitemap');
 const gscRouter = require('./api/gsc-api');
 const SEO_REDIRECTS = require('./api/seoRedirects');
+const seoMetaInjection = require('./api/seoMetaInjection');
+const { getMetaForPath } = require('./src/lib/getMetaForPath');
 
 const app = express();
 app.set('trust proxy', 1); // Read real IP from X-Forwarded-For (required for req.ip behind proxies)
@@ -90,6 +92,74 @@ if (process.env.NODE_ENV !== 'production') {
     next();
   });
 }
+
+// ============================================
+// SEO META INJECTION (server-side rendering of <title>, meta description,
+// canonical, Open Graph, Twitter card). Mounted BEFORE static-file serving
+// so it runs for clean HTML routes; the middleware itself skips paths
+// containing a `.` (assets) or starting with /api or /admin.
+//
+// indexHtmlPath: prefer dist/index.html (production-built artefact with
+// the <!--SSR_HEAD--> sentinel); fall back to source index.html so the
+// server still boots when `npm run build` hasn't been run yet.
+// ============================================
+const seoIndexHtmlPath = (() => {
+  const built = path.join(__dirname, 'dist', 'index.html');
+  const source = path.join(__dirname, 'index.html');
+  return fs.existsSync(built) ? built : source;
+})();
+
+app.use(seoMetaInjection({
+  indexHtmlPath: seoIndexHtmlPath,
+  getMetaForStaticPath: getMetaForPath,
+  getMetaForDynamicPath: async (reqPath) => {
+    const admin = require('./api/firebase-admin');
+    const db = admin.firestore();
+
+    const blogMatch = reqPath.match(/^\/blog\/([^/]+)$/);
+    if (blogMatch) {
+      const doc = await db.collection('blogs').doc(blogMatch[1]).get();
+      if (!doc.exists) return null;
+      const d = doc.data();
+      return {
+        title: d.title || 'Blog Post',
+        description: d.excerpt || d.description || '',
+        ogImage: d.coverImage || '/og-default.jpg',
+        canonicalUrl: `https://hqaviation.com/blog/${doc.id}`,
+      };
+    }
+
+    const listingMatch = reqPath.match(/^\/sales\/pre-owned\/([^/]+)$/);
+    if (listingMatch) {
+      const doc = await db.collection('listings').doc(listingMatch[1]).get();
+      if (!doc.exists) return null;
+      const d = doc.data();
+      return {
+        title: `${d.year} ${d.make} ${d.model}`.trim() || 'Pre-owned Helicopter',
+        description: d.shortDescription || d.description || '',
+        ogImage: d.images?.[0] || '/og-default.jpg',
+        canonicalUrl: `https://hqaviation.com/sales/pre-owned/${doc.id}`,
+      };
+    }
+
+    const miscMatch = reqPath.match(/^\/misc\/([^/]+)$/);
+    if (miscMatch) {
+      const doc = await db.collection('misc_items').doc(miscMatch[1]).get();
+      if (!doc.exists) return null;
+      const d = doc.data();
+      // Real Firestore shape: images is an array of objects {url, alt, isPrimary}
+      const primaryImage = d.images?.find?.((i) => i.isPrimary)?.url || d.images?.[0]?.url || '/og-default.jpg';
+      return {
+        title: d.name || 'Store Item',
+        description: d.description || '',
+        ogImage: primaryImage,
+        canonicalUrl: `https://hqaviation.com/misc/${doc.id}`,
+      };
+    }
+
+    return null;
+  },
+}));
 
 // Static assets - NO CACHING for development
 app.use('/assets', express.static(path.join(publicDir, 'assets'), {
