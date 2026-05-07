@@ -106,6 +106,8 @@ function R44Header() {
                 alt="HQ Aviation"
                 className="Header-branding-logo"
                 loading="lazy"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -603,7 +605,7 @@ function R44Hero() {
         className="r44-hero__bg"
         style={{ y: imageY }}
       >
-        <img src={pageImages['r44-hero']?.[0]?.url || '/assets/images/new-aircraft/r44/raven-ii-front-alpha.png'} alt="Robinson R44 Raven II" />
+        <img src={pageImages['r44-hero']?.[0]?.url || '/assets/images/new-aircraft/r44/raven-ii-front-alpha.png'} alt="Robinson R44 Raven II" width={1920} height={1080} />
       </motion.div>
 
       <div className="r44-hero__overlay" />
@@ -811,6 +813,9 @@ function R44Intro() {
               <img
                 src="/assets/images/fleet/r44-g-mxpi.png"
                 alt="HQ Aviation R44 fleet"
+                width={2197}
+                height={1350}
+                loading="lazy"
               />
             </div>
           </Reveal>
@@ -1002,6 +1007,9 @@ function R44Specs() {
                     src={model.diagram}
                     alt={`R44 ${model.name} specification diagram with dimensions`}
                     className="r44-specs__blueprint"
+                    width={2982}
+                    height={1663}
+                    loading="lazy"
                   />
                 </div>
                 <div className="r44-specs__overlay-data">
@@ -1357,7 +1365,7 @@ function R44VariantComparison() {
                       {active && <i className="fas fa-check"></i>}
                     </span>
                     <span className="r44-comparison__picker-thumb">
-                      <img src={col.image} alt="" loading="lazy" />
+                      <img src={col.image} alt="" loading="lazy" width={1920} height={1080} />
                     </span>
                     <span className="r44-comparison__picker-text">
                       <span className="r44-comparison__picker-name">{col.name}</span>
@@ -1452,7 +1460,7 @@ function R44Variants() {
                       layoutId={`r44-variant-img-${i}`}
                       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
                     >
-                      <img src={variant.image} alt="" loading="lazy" />
+                      <img src={variant.image} alt="" loading="lazy" width={1920} height={1080} />
                     </motion.span>
                   )}
                   <motion.span
@@ -1486,6 +1494,8 @@ function R44Variants() {
                   <img
                     src={r44Variants[activeVariant].image}
                     alt={`${r44Variants[activeVariant].name} configuration`}
+                    width={1920}
+                    height={1080}
                   />
                 </motion.span>
                 <div className="r44-variants__use-case-tags">
@@ -1575,7 +1585,7 @@ function R44Expedition() {
             </button>
 
             <div className="r44-expedition__image" key={slide.image + index}>
-              <img src={slide.image} alt={slide.alt} />
+              <img src={slide.image} alt={slide.alt} width={1500} height={1000} loading="lazy" />
             </div>
 
             <button
@@ -1648,6 +1658,9 @@ function R44ExpeditionsMap() {
                 src={cmsMapImgs[0]?.url || '/assets/images/expeditions/antartica.jpg'}
                 alt="Antarctic Expedition"
                 className="r44-expeditions-map__image"
+                width={2500}
+                height={1657}
+                loading="lazy"
               />
               <div className="r44-expeditions-map__routes">
                 {expeditionRoutes.map((route, i) => (
@@ -1680,14 +1693,14 @@ function R44ExpeditionsMap() {
                 className="r44-expeditions-map__image-item"
                 whileHover={{ scale: 1.03 }}
               >
-                <img src={cmsMapImgs[1]?.url || '/assets/images/expeditions/north-pole.jpg'} alt="North Pole" />
+                <img src={cmsMapImgs[1]?.url || '/assets/images/expeditions/north-pole.jpg'} alt="North Pole" width={1840} height={1232} loading="lazy" />
                 <span>North Pole - 90.0000°N</span>
               </motion.div>
               <motion.div
                 className="r44-expeditions-map__image-item"
                 whileHover={{ scale: 1.03 }}
               >
-                <img src={cmsMapImgs[2]?.url || '/assets/images/used-aircraft/r44/r44-south-pole.jpg'} alt="South Pole" />
+                <img src={cmsMapImgs[2]?.url || '/assets/images/used-aircraft/r44/r44-south-pole.jpg'} alt="South Pole" width={2500} height={1657} loading="lazy" />
                 <span>South Pole - 90.0000°S</span>
               </motion.div>
             </div>
@@ -1725,7 +1738,7 @@ function R44Gallery() {
               className={`r44-gallery__item r44-gallery__item--${i + 1}`}
               whileHover={{ scale: 1.02 }}
             >
-              <img src={img} alt={`R44 Gallery ${i + 1}`} />
+              <img src={img} alt={`R44 Gallery ${i + 1}`} width={800} height={600} loading="lazy" />
             </motion.div>
           </Reveal>
         ))}
