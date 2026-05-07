@@ -28,6 +28,9 @@ const cartsRouter = require('./api/carts');
 const pressClickRouter = require('./api/press-click');
 const sitemapRouter = require('./api/sitemap');
 const gscRouter = require('./api/gsc-api');
+// parts-enquiry is ESM; eagerly start the import so it resolves before first request.
+let partsEnquiryRouter = null;
+const partsEnquiryReady = import('./api/parts-enquiry.js').then((m) => { partsEnquiryRouter = m.default; });
 
 const app = express();
 app.set('trust proxy', 1); // Read real IP from X-Forwarded-For (required for req.ip behind proxies)
@@ -336,6 +339,14 @@ app.use('/api/admin/sfh-events', express.json(), adminSfhEventsRouter);
 // ============================================
 const miscMarketplaceRouter = require('./api/misc-marketplace');
 app.use('/api/misc-enquiry', express.json(), miscMarketplaceRouter);
+
+// ============================================
+// PARTS ENQUIRY ROUTES
+// ============================================
+app.use('/api/parts-enquiry', express.json(), async (req, res, next) => {
+  if (!partsEnquiryRouter) await partsEnquiryReady;
+  partsEnquiryRouter(req, res, next);
+});
 
 /**
  * Root route: serve index.html
