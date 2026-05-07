@@ -99,6 +99,8 @@ function R22Header() {
                 alt="HQ Aviation"
                 className="Header-branding-logo"
                 loading="lazy"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -2036,6 +2038,8 @@ function R22Hero() {
         <img
           src="/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png"
           alt="Robinson R22 Helicopter"
+          width={1920}
+          height={1080}
         />
       </motion.div>
       <div className="r22-hero__overlay" />
@@ -2149,6 +2153,8 @@ function R22Introduction() {
             src="/assets/images/new-aircraft/r22/r22-cutout.png"
             alt="R22 cutout"
             loading="lazy"
+            width={1920}
+            height={1080}
           />
         </div>
       </div>
@@ -2245,6 +2251,8 @@ function R22Specifications() {
             src="/assets/images/new-aircraft/r22/r22blueprint.jpg"
             alt="R22 blueprint"
             loading="lazy"
+            width={930}
+            height={726}
           />
         </div>
 
@@ -2265,7 +2273,7 @@ function R22Specifications() {
                       layoutId={`r22-variant-img-${i}`}
                       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
                     >
-                      <img src={variant.image} alt="" loading="lazy" />
+                      <img src={variant.image} alt="" loading="lazy" width={1920} height={1080} />
                     </motion.span>
                   )}
                   <motion.span
@@ -2299,6 +2307,8 @@ function R22Specifications() {
                   <img
                     src={active.image}
                     alt={`${active.name} configuration`}
+                    width={1920}
+                    height={1080}
                   />
                 </motion.span>
                 <div className="r22-variants__use-case-tags">
@@ -2425,7 +2435,7 @@ function R22Champion({ pageImages }) {
           </p>
         </div>
         <div className="r22-champion__image">
-          <img src={getSrc(hero)} alt={hero.alt || 'Captain Quentin Smith'} loading="lazy" />
+          <img src={getSrc(hero)} alt={hero.alt || 'Captain Quentin Smith'} loading="lazy" width={1280} height={853} />
         </div>
       </div>
     </section>
@@ -2445,7 +2455,7 @@ function R22Fleet({ pageImages }) {
   return (
     <section className="r22-fleet" data-cms-section="r22-fleet">
       <div className="r22-fleet__image">
-        <img src={getSrc(hero)} alt={hero.alt || ''} loading="lazy" />
+        <img src={getSrc(hero)} alt={hero.alt || ''} loading="lazy" width={2500} height={1590} />
       </div>
       <div className="r22-fleet__overlay">
         <span className="r22-pre-text">The Denham fleet</span>
@@ -2482,7 +2492,7 @@ function R22Gallery({ pageImages }) {
             className={`r22-gallery__tile ${WIDE_INDEXES.has(i) ? 'is-wide' : ''}`}
             onClick={() => setLightbox(img)}
           >
-            <img src={getSrc(img)} alt={img.alt || ''} loading="lazy" />
+            <img src={getSrc(img)} alt={img.alt || ''} loading="lazy" width={800} height={600} />
             {img.alt && <span className="r22-gallery__caption">{img.alt}</span>}
           </button>
         ))}
@@ -2503,7 +2513,7 @@ function R22Gallery({ pageImages }) {
               onClick={(e) => { e.stopPropagation(); setLightbox(null); }}
               aria-label="Close"
             >×</button>
-            <img src={getSrc(lightbox)} alt={lightbox.alt || ''} />
+            <img src={getSrc(lightbox)} alt={lightbox.alt || ''} width={1920} height={1280} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -2664,7 +2674,7 @@ function R22VariantComparison() {
                       {active && <i className="fas fa-check"></i>}
                     </span>
                     <span className="r22-comparison__picker-thumb">
-                      <img src={col.image} alt="" loading="lazy" />
+                      <img src={col.image} alt="" loading="lazy" width={1920} height={1080} />
                     </span>
                     <span className="r22-comparison__picker-text">
                       <span className="r22-comparison__picker-name">{col.name}</span>
