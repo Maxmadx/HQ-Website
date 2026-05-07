@@ -31,6 +31,27 @@ const gscRouter = require('./api/gsc-api');
 
 const app = express();
 app.set('trust proxy', 1); // Read real IP from X-Forwarded-For (required for req.ip behind proxies)
+
+// Canonicalisation: HTTPS, non-www, no trailing slash. 301 to canonical
+// form when the request URL doesn't match. Skipped in dev (NODE_ENV !==
+// 'production') to avoid breaking localhost.
+app.use((req, res, next) => {
+  if (process.env.NODE_ENV !== 'production') return next();
+
+  const proto = req.get('x-forwarded-proto') || req.protocol;
+  const host = req.get('host') || '';
+  const wantsHttps = proto !== 'https';
+  const wantsNoWww = host.startsWith('www.');
+  const path = req.path === '/' ? '/' : req.path.replace(/\/$/, '');
+  const wantsNoTrailingSlash = path !== req.path;
+
+  if (!wantsHttps && !wantsNoWww && !wantsNoTrailingSlash) return next();
+
+  const finalHost = wantsNoWww ? host.slice(4) : host;
+  const search = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+  return res.redirect(301, `https://${finalHost}${path}${search}`);
+});
+
 const PORT = process.env.PORT || 7500;
 const publicDir = path.join(__dirname, 'public');
 const pagesDir = path.join(publicDir, 'pages');
