@@ -111,6 +111,7 @@ import AdminMiscItemEdit from './pages/admin/AdminMiscItemEdit';
 import AdminMiscMarketplace from './pages/admin/AdminMiscMarketplace';
 import AdminParts from './pages/admin/AdminParts';
 import AdminPartEdit from './pages/admin/AdminPartEdit';
+import AdminPartsEnquiries from './pages/admin/AdminPartsEnquiries';
 import AdminBlog from './pages/admin/AdminBlog';
 import AdminBlogEdit from './pages/admin/AdminBlogEdit';
 import AdminPricing from './pages/admin/AdminPricing';
@@ -260,6 +261,7 @@ function App() {
         <Route path="/admin/misc/:id" element={<AdminRoute><AdminMiscItemEdit /></AdminRoute>} />
         <Route path="/admin/misc-marketplace" element={<AdminRoute><AdminMiscMarketplace /></AdminRoute>} />
         <Route path="/admin/parts" element={<AdminRoute><AdminParts /></AdminRoute>} />
+        <Route path="/admin/parts/enquiries" element={<AdminRoute><AdminPartsEnquiries /></AdminRoute>} />
         <Route path="/admin/parts/:id" element={<AdminRoute><AdminPartEdit /></AdminRoute>} />
         <Route path="/admin/blog" element={<AdminRoute><AdminBlog /></AdminRoute>} />
         <Route path="/admin/blog/:id" element={<AdminRoute><AdminBlogEdit /></AdminRoute>} />

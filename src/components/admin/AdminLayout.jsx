@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { to: '/admin/misc', icon: '🛒', label: 'Misc Items' },
   { to: '/admin/misc-marketplace', icon: '🛍️', label: 'Marketplace' },
   { to: '/admin/parts', icon: '🔩', label: 'Parts' },
+  { to: '/admin/parts/enquiries', icon: '📩', label: 'Parts Enquiries' },
   { to: '/admin/images', icon: '🖼️', label: 'Images' },
   { to: '/admin/text', icon: '✍️', label: 'Text' },
   { to: '/admin/blog', icon: '📝', label: 'Blog' },
@@ -29,6 +30,7 @@ export default function AdminLayout({ children }) {
   const [newLeadCount, setNewLeadCount] = useState(0);
   const [newBookingCount, setNewBookingCount] = useState(0);
   const [newMarketplaceCount, setNewMarketplaceCount] = useState(0);
+  const [openPartsEnquiryCount, setOpenPartsEnquiryCount] = useState(0);
 
   useEffect(() => {
     const q = query(collection(db, 'leads'), where('status', '==', 'new'));
@@ -45,6 +47,12 @@ export default function AdminLayout({ children }) {
   useEffect(() => {
     const q = query(collection(db, 'misc_marketplace'), where('status', '==', 'new'));
     const unsub = onSnapshot(q, (snap) => setNewMarketplaceCount(snap.size), () => {});
+    return unsub;
+  }, []);
+
+  useEffect(() => {
+    const q = query(collection(db, 'parts_enquiries'), where('status', '==', 'open'));
+    const unsub = onSnapshot(q, (snap) => setOpenPartsEnquiryCount(snap.size), () => {});
     return unsub;
   }, []);
 
@@ -105,6 +113,15 @@ export default function AdminLayout({ children }) {
                   minWidth: '18px', textAlign: 'center', lineHeight: '18px',
                 }}>
                   {newMarketplaceCount > 99 ? '99+' : newMarketplaceCount}
+                </span>
+              )}
+              {item.to === '/admin/parts/enquiries' && openPartsEnquiryCount > 0 && (
+                <span style={{
+                  background: '#ef4444', color: '#fff', borderRadius: '10px',
+                  fontSize: '0.65rem', fontWeight: 700, padding: '1px 6px',
+                  minWidth: '18px', textAlign: 'center', lineHeight: '18px',
+                }}>
+                  {openPartsEnquiryCount > 99 ? '99+' : openPartsEnquiryCount}
                 </span>
               )}
             </NavLink>
