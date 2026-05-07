@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import Header from '../components/Header';
 import FooterMinimal from '../components/FooterMinimal';
@@ -6,6 +7,7 @@ import { buildProduct, buildBreadcrumbList } from '../components/seo/jsonLd';
 import { useDocument } from '../hooks/useFirestore';
 import '../assets/css/main.css';
 import '../assets/css/components.css';
+import EnquireModal from '../components/parts/EnquireModal';
 
 const CONDITION_LABELS = {
   new: 'New',
@@ -33,6 +35,7 @@ export default function PartDetail() {
   const primaryImage = (part.images || []).find((i) => i.isPrimary) || part.images?.[0];
   const fullName = `${part.partNumber} ${part.title}`; // e.g. "A102 Tail Rotor Pitch Link"
   const inStock = part.hasQuantity ? part.stock > 0 : true;
+  const [enquireOpen, setEnquireOpen] = useState(false);
 
   const productSchema = buildProduct({
     name: fullName,
@@ -129,13 +132,10 @@ export default function PartDetail() {
                 )}
               </div>
 
-              {/* Phase 3 will replace this stub with an Enquire button. */}
-              <div style={{ padding: '1.25rem', background: '#eae8e4', borderRadius: '8px', textAlign: 'center' }}>
-                <p style={{ margin: '0 0 0.75rem', fontSize: '0.85rem', color: '#555' }}>To enquire about this part, contact our parts desk:</p>
-                <Link to="/parts/enquiry" style={{ display: 'inline-block', padding: '0.55rem 1.25rem', background: '#1a1a1a', color: '#fff', textDecoration: 'none', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                  Send Enquiry →
-                </Link>
-              </div>
+              <button onClick={() => setEnquireOpen(true)} style={{ width: '100%', padding: '0.85rem', background: '#1a1a1a', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                Enquire About This Part →
+              </button>
+              {enquireOpen && <EnquireModal part={part} onClose={() => setEnquireOpen(false)} />}
             </div>
           </div>
         </div>
