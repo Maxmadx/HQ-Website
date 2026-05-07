@@ -29,8 +29,15 @@ const pressClickRouter = require('./api/press-click');
 const sitemapRouter = require('./api/sitemap');
 const gscRouter = require('./api/gsc-api');
 // parts-enquiry is ESM; eagerly start the import so it resolves before first request.
+// Track import errors so we can return 500 to clients instead of hanging.
 let partsEnquiryRouter = null;
-const partsEnquiryReady = import('./api/parts-enquiry.js').then((m) => { partsEnquiryRouter = m.default; });
+let partsEnquiryImportError = null;
+const partsEnquiryReady = import('./api/parts-enquiry.js')
+  .then((m) => { partsEnquiryRouter = m.default; })
+  .catch((err) => {
+    partsEnquiryImportError = err;
+    console.error('[parts-enquiry] failed to load module:', err.message);
+  });
 
 const app = express();
 app.set('trust proxy', 1); // Read real IP from X-Forwarded-For (required for req.ip behind proxies)
@@ -345,6 +352,9 @@ app.use('/api/misc-enquiry', express.json(), miscMarketplaceRouter);
 // ============================================
 app.use('/api/parts-enquiry', express.json(), async (req, res, next) => {
   if (!partsEnquiryRouter) await partsEnquiryReady;
+  if (partsEnquiryImportError) {
+    return res.status(500).json({ error: 'Parts enquiry module failed to load' });
+  }
   partsEnquiryRouter(req, res, next);
 });
 
