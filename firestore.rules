@@ -278,5 +278,17 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin();
       allow create: if false;
     }
+
+    // Carts — server-only via Admin SDK. No client read or write.
+    // Contains customer email + booking-in-progress; clients access only via /api/carts.
+    match /carts/{cartId} {
+      allow read, write: if false;
+    }
+
+    // GSC daily — server-only via Admin SDK. No client read or write.
+    // Populated by daily cron (api/gsc-sync.js); read only via /api/gsc/daily admin endpoint.
+    match /gsc_daily/{docId} {
+      allow read, write: if false;
+    }
   }
 }

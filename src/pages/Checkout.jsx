@@ -6,6 +6,12 @@ import FinalDraftHeader from '../components/FinalDraftHeader';
 import DiscoveryAddons from '../components/checkout/DiscoveryAddons';
 import { computeAddonsTotal, computeLineTotal } from '../lib/discoveryAddons';
 import { useDiscoveryAddons } from '../hooks/useDiscoveryAddons';
+import { trackEvent, getSessionId } from '../lib/analytics';
+import EmailFirstStep from './Checkout/EmailFirstStep';
+import ExitIntentModal from '../components/Checkout/ExitIntentModal';
+import useExitIntent from '../components/Checkout/useExitIntent';
+import useTabReturn from '../components/Checkout/useTabReturn';
+import { upsertCart, getCartId, rehydrateCartByToken } from '../lib/cart';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -34,13 +40,14 @@ function CheckoutForm({
   aircraft, duration, price,
   wantsVoucher, setWantsVoucher, voucherLocation, setVoucherLocation, voucherMessage, setVoucherMessage,
   addons, addonsState, addonsTotalPence,
+  prefillEmail, cartId,
 }) {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(prefillEmail || '');
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -48,6 +55,24 @@ function CheckoutForm({
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!stripe || !elements) return;
+
+    // Fire add_payment_info before any network work — captures intent even if Stripe call fails
+    const params = new URLSearchParams(window.location.search);
+    const aircraftParam = params.get('aircraft');
+    const durationParam = params.get('duration');
+    const priceParam = parseFloat(params.get('price') || '0');
+    trackEvent('add_payment_info', `${aircraftParam}-${durationParam}`, window.location.pathname, {
+      itemCategory: 'discovery-flight',
+      items: [{
+        item_id: `${aircraftParam}-${durationParam}`,
+        item_category: 'discovery-flight',
+        price: priceParam,
+        currency: 'gbp',
+        quantity: 1,
+      }],
+      value: priceParam,
+      currency: 'gbp',
+    });
 
     setLoading(true);
     setError('');
@@ -72,6 +97,7 @@ function CheckoutForm({
           shippingAddress: (addons.length > 0 && (addonsState.fulfilment === 'delivery' || wantsVoucher))
             ? addonsState.shippingAddress
             : null,
+          cartId: cartId || '',
         }),
       });
       const data = await res.json();
@@ -363,6 +389,7 @@ export default function Checkout() {
   const navigate = useNavigate();
 
   const type = searchParams.get('type');
+  const isMisc = type === 'misc';
 
   // Misc params
   const itemId = searchParams.get('itemId');
@@ -374,6 +401,60 @@ export default function Checkout() {
   const aircraft = searchParams.get('aircraft');
   const duration = searchParams.get('duration');
   const price = searchParams.get('price');
+
+  const [email, setEmail] = useState(null);
+  const [cartId, setCartIdState] = useState(getCartId());
+  const [resumeError, setResumeError] = useState(null);
+  const [resumeChecked, setResumeChecked] = useState(false);
+
+  // Pre-flight lead-match: ask the server if we know the email already from a prior lead form
+  useEffect(() => {
+    if (email) return; // already have one
+    if (isMisc) return; // misc flow doesn't use carts
+    if (searchParams.get('t')) return; // resume token path handles its own
+    upsertCart({ sessionId: getSessionId() }).then((result) => {
+      if (result && result.email) {
+        setEmail(result.email);
+        setCartIdState(result.cartId);
+      }
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Resume from token (recovery email link)
+  useEffect(() => {
+    const token = searchParams.get('t');
+    if (!token || isMisc) {
+      setResumeChecked(true);
+      return;
+    }
+    rehydrateCartByToken(token).then((cart) => {
+      if (cart) {
+        setEmail(cart.email);
+        setCartIdState(cart.cartId);
+      } else {
+        setResumeError('That booking link has expired or is no longer valid.');
+      }
+      setResumeChecked(true);
+    });
+  }, [searchParams, isMisc]);
+
+  async function handleEmailContinue(typedEmail) {
+    setEmail(typedEmail);
+    const result = await upsertCart({
+      sessionId: getSessionId(),
+      email: typedEmail,
+      flight: aircraft && duration ? { aircraftId: aircraft, duration: parseInt(duration, 10) } : null,
+      utm: {
+        source: searchParams.get('utm_source'),
+        medium: searchParams.get('utm_medium'),
+        campaign: searchParams.get('utm_campaign'),
+        term: searchParams.get('utm_term'),
+        content: searchParams.get('utm_content'),
+      },
+      referrer: document.referrer || null,
+    });
+    if (result && result.cartId) setCartIdState(result.cartId);
+  }
 
   const [wantsVoucher, setWantsVoucher] = useState(false);
   const [voucherLocation, setVoucherLocation] = useState('');
@@ -407,10 +488,15 @@ export default function Checkout() {
   const flightPricePounds = Number(price) || 0;
   const grandTotalPounds = flightPricePounds + addonsTotalPounds;
 
-  const isMisc = type === 'misc';
   const isMiscValid = isMisc && !!itemId && !!itemName && Number(price) > 0 && Number(qty) >= 1;
   const isFlightValid = !isMisc && !!aircraft && !!duration && Number(price) > 0 && !!AIRCRAFT_NAMES[aircraft];
   const isValid = isMiscValid || isFlightValid;
+
+  const [exitDismissed, setExitDismissed] = useState(false);
+
+  const exitTriggered = useExitIntent({ enabled: !isMisc && !email && !exitDismissed });
+  const returnTriggered = useTabReturn({ enabled: !isMisc && !email && !exitDismissed });
+  const showExitModal = !isMisc && !email && !exitDismissed && (exitTriggered || returnTriggered);
 
   useEffect(() => {
     if (!isValid) {
@@ -419,6 +505,23 @@ export default function Checkout() {
   }, [isValid, navigate, isMisc]);
 
   if (!isValid) return null;
+
+  if (resumeError) {
+    return (
+      <div style={{ maxWidth: 480, margin: '40px auto', padding: 24, color: '#f87171', textAlign: 'center' }}>
+        {resumeError}
+      </div>
+    );
+  }
+
+  // Wait for token lookup to settle before deciding whether to show EmailFirstStep
+  if (!resumeChecked) {
+    return null;
+  }
+
+  if (!isMisc && !email) {
+    return <EmailFirstStep onContinue={handleEmailContinue} />;
+  }
 
   return (
     <>
@@ -558,6 +661,8 @@ export default function Checkout() {
                   addons={basketAddons}
                   addonsState={addonsState}
                   addonsTotalPence={addonsTotalPence}
+                  prefillEmail={email}
+                  cartId={cartId}
                 />
               )}
             </Elements>
@@ -566,6 +671,11 @@ export default function Checkout() {
         </div>
       </div>
     </div>
+      <ExitIntentModal
+        open={showExitModal}
+        onSave={(typedEmail) => { setExitDismissed(true); handleEmailContinue(typedEmail); }}
+        onDismiss={() => setExitDismissed(true)}
+      />
     </>
   );
 }

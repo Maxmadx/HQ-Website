@@ -20,6 +20,7 @@ import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'fra
 import { arrivalStyles } from '../components/ArrivalSection';
 import Seo from '../components/seo/Seo';
 import { buildCourse, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { trackEvent } from '../lib/analytics';
 
 // Import styles
 import '../assets/css/main.css';
@@ -442,7 +443,21 @@ function ValueProposition() {
   const handleBook = (cardId) => {
     if (selectedCard === cardId && selectedTime) {
       const aircraft = aircraftWithPricing.find(a => a.id === cardId);
-      navigate(`/checkout?aircraft=${cardId}&duration=${selectedTime}&price=${aircraft.pricing[selectedTime]}`);
+      const price = aircraft.pricing[selectedTime];
+      trackEvent('begin_checkout', `${cardId}-${selectedTime}`, window.location.pathname, {
+        itemCategory: 'discovery-flight',
+        items: [{
+          item_id: `${cardId}-${selectedTime}`,
+          item_name: `${aircraft.name || cardId} ${selectedTime}min Discovery Flight`,
+          item_category: 'discovery-flight',
+          price,
+          currency: 'gbp',
+          quantity: 1,
+        }],
+        value: price,
+        currency: 'gbp',
+      });
+      navigate(`/checkout?aircraft=${cardId}&duration=${selectedTime}&price=${price}`);
     }
   };
 
@@ -1240,6 +1255,15 @@ function DiscoveryFlight() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    trackEvent('view_item', null, window.location.pathname, {
+      itemCategory: 'discovery-flight',
+      items: [{ item_category: 'discovery-flight' }],
+      currency: 'gbp',
+    });
+  }, []);
+
   useCmsHighlight();
 
   // Live pricing for Offer schema (Tranche 6). usePricing() returns p(id) → pence

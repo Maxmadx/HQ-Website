@@ -1,7 +1,7 @@
 'use strict';
 
 const Stripe = require('stripe');
-const nodemailer = require('nodemailer');
+const { getTransporter } = require('./lib/mailer');
 const admin = require('./firebase-admin');
 
 const MAX_ADDON_QTY = 10;
@@ -37,6 +37,40 @@ function parseAddonsFromMetadata(metadata = {}) {
       }
     : null;
   return { addons, fulfilment, shippingAddress };
+}
+
+async function recordPurchaseEvent({ paymentIntentId, value, currency, items, itemCategory, sessionId }) {
+  try {
+    // Idempotency: skip if a purchase event for this transactionId already exists.
+    // Note: this check-then-write is intentionally non-transactional. Stripe's
+    // minimum retry gap (~5s) makes a near-simultaneous duplicate effectively
+    // impossible. If volumes grow, switch to a Firestore transaction here.
+    const existing = await admin.firestore()
+      .collection('page_events')
+      .where('eventType', '==', 'purchase')
+      .where('transactionId', '==', paymentIntentId)
+      .limit(1)
+      .get();
+    if (!existing.empty) return;
+
+    await admin.firestore().collection('page_events').add({
+      sessionId: sessionId || null,
+      page: '/booking-confirmed',
+      eventType: 'purchase',
+      transactionId: paymentIntentId,
+      value: typeof value === 'number' ? value : null,
+      currency: currency || 'gbp',
+      items: items || null,
+      itemCategory: itemCategory || null,
+      // Geo enrichment intentionally omitted — webhook IP is Stripe's, not the buyer's.
+      // TODO: pull country/countryCode from the original session (via sessionId join) in a follow-up.
+      country: null,
+      countryCode: null,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    });
+  } catch (err) {
+    console.error('[stripe webhook] failed to record purchase event:', err.message);
+  }
 }
 
 function applyDiscountPence(pricePence, qty, discountPct) {
@@ -95,22 +129,6 @@ async function priceAddons(addons) {
   return { lineItems, total };
 }
 
-// Lazy-initialise SMTP transporter — reuse the same connection pool across calls.
-let _transporter = null;
-function getTransporter() {
-  if (!_transporter) {
-    _transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: false,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-  }
-  return _transporter;
-}
 
 // Fallback prices in pence — used only if Firestore is unreachable.
 // Keep in sync with seed-pricing.js and src/hooks/usePricing.js.
@@ -179,6 +197,7 @@ async function createPaymentIntent({
   aircraft, duration, customerName, customerEmail, customerPhone,
   wantsVoucher, voucherLocation, voucherMessage,
   addons = [], fulfilment, shippingAddress,
+  cartId,
 }) {
   const flightAmount = await getPrice(aircraft, duration);
   if (flightAmount === null) {
@@ -247,6 +266,7 @@ async function createPaymentIntent({
       shippingLine2: resolvedAddress ? resolvedAddress.line2 : '',
       shippingCity: resolvedAddress ? resolvedAddress.city : '',
       shippingPostcode: resolvedAddress ? resolvedAddress.postcode : '',
+      cartId: cartId || '',
     },
   });
 
@@ -706,6 +726,83 @@ async function handleWebhook(req) {
       console.error('[stripe webhook] failed to save booking to Firestore:', dbErr.message);
     }
 
+    // Record GA4-canonical purchase event for funnel analytics
+    {
+      const productCategory = (() => {
+        if (productType === 'london-tour') return 'london-tour';
+        if (productType === 'misc') return 'misc';
+        return 'discovery-flight';
+      })();
+
+      const purchaseItems = (() => {
+        if (productType === 'london-tour') {
+          const { experience, timeOfDay, quantity } = pi.metadata;
+          const qty = Number(quantity) || 1;
+          return [{
+            item_id: `london-tour-${experience}-${timeOfDay}`,
+            item_name: `London Tour: ${experience} ${timeOfDay}`,
+            item_category: 'london-tour',
+            price: (pi.amount / 100) / qty,
+            quantity: qty,
+            currency: 'gbp',
+          }];
+        }
+        if (productType === 'misc') {
+          const { itemId, itemName, qty } = pi.metadata;
+          const quantity = Number(qty) || 1;
+          return [{
+            item_id: itemId || 'misc',
+            item_name: itemName || 'Misc item',
+            item_category: 'misc',
+            price: (pi.amount / 100) / quantity,
+            quantity,
+            currency: 'gbp',
+          }];
+        }
+        const { aircraft, duration } = pi.metadata;
+        return [{
+          item_id: `${aircraft}-${duration}`,
+          item_name: `${aircraft} ${duration}min Discovery Flight`,
+          item_category: 'discovery-flight',
+          price: pi.amount / 100,
+          quantity: 1,
+          currency: 'gbp',
+        }];
+      })();
+
+      await recordPurchaseEvent({
+        paymentIntentId: pi.id,
+        value: pi.amount / 100,
+        currency: 'gbp',
+        items: purchaseItems,
+        itemCategory: productCategory,
+        sessionId: pi.metadata.sessionId || null,
+      }).catch((err) => {
+        // Belt-and-suspenders: helper has internal try/catch but never let an unexpected
+        // throw bubble up to Stripe — that would trigger a webhook retry on a successful payment.
+        console.error('[stripe webhook] recordPurchaseEvent unexpected throw:', err.message);
+      });
+    }
+
+    // Promote matching cart to completed (Phase 2). Idempotent — safe on webhook retries.
+    try {
+      const cartId = pi.metadata && pi.metadata.cartId;
+      if (cartId) {
+        const cartRef = admin.firestore().collection('carts').doc(cartId);
+        const cartSnap = await cartRef.get();
+        if (cartSnap.exists && cartSnap.data().status !== 'completed') {
+          await cartRef.set({
+            status: 'completed',
+            stripePaymentIntentId: pi.id,
+            completedAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          }, { merge: true });
+        }
+      }
+    } catch (cartErr) {
+      console.error('[stripe webhook] cart promotion failed:', cartErr.message);
+    }
+
     // Send confirmation email
     try {
       if (productType === 'london-tour') {
@@ -882,4 +979,4 @@ async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmai
   return paymentIntent;
 }
 
-module.exports = { getPrice, applyDiscountPence, priceAddons, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking };
+module.exports = { getPrice, applyDiscountPence, priceAddons, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking, recordPurchaseEvent };

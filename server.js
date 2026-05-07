@@ -8,7 +8,7 @@ require('dotenv').config();
 
 // In production, fail fast if required env vars are missing
 if (process.env.NODE_ENV === 'production') {
-  const REQUIRED_ENV = ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'SMTP_HOST', 'SMTP_USER', 'SMTP_PASS', 'EMAIL_FROM', 'FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY'];
+  const REQUIRED_ENV = ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'SMTP_HOST', 'SMTP_USER', 'SMTP_PASS', 'EMAIL_FROM', 'FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY', 'SITE_URL'];
   const missing = REQUIRED_ENV.filter(k => !process.env[k]);
   if (missing.length) {
     console.error(`Missing required environment variables: ${missing.join(', ')}`);
@@ -24,8 +24,10 @@ const { createPaymentIntent, createLondonTourPaymentIntent, createMiscPaymentInt
 const leadsRouter = require('./api/leads');
 const stripeDiscoveryRouter = require('./api/stripe-discovery');
 const analyticsRouter = require('./api/analytics-api');
+const cartsRouter = require('./api/carts');
 const pressClickRouter = require('./api/press-click');
 const sitemapRouter = require('./api/sitemap');
+const gscRouter = require('./api/gsc-api');
 
 const app = express();
 app.set('trust proxy', 1); // Read real IP from X-Forwarded-For (required for req.ip behind proxies)
@@ -128,7 +130,7 @@ function fileExists(filePath) {
 // Creates a Stripe PaymentIntent using server-side validated price.
 // Uses express.json() middleware inline so it doesn't affect the webhook route.
 app.post('/api/create-payment-intent', express.json(), async (req, res) => {
-  const { aircraft, duration, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage, addons, fulfilment, shippingAddress } = req.body || {};
+  const { aircraft, duration, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage, addons, fulfilment, shippingAddress, cartId } = req.body || {};
 
   // Validate presence
   if (!aircraft || !duration || !customerName || !customerEmail || !customerPhone) {
@@ -162,6 +164,7 @@ app.post('/api/create-payment-intent', express.json(), async (req, res) => {
       addons,
       fulfilment,
       shippingAddress,
+      cartId: cartId || '',
     });
     res.json({ clientSecret: paymentIntent.client_secret });
   } catch (err) {
@@ -288,7 +291,12 @@ app.use('/api/stripe/discovery-checkout', express.json(), stripeDiscoveryRouter)
 // ============================================
 // ANALYTICS ROUTES
 // ============================================
-app.use('/api/analytics', express.json(), analyticsRouter);
+app.use('/api/analytics', express.json({ limit: '16kb' }), analyticsRouter);
+
+// ============================================
+// CARTS ROUTES
+// ============================================
+app.use('/api/carts', express.json({ limit: '16kb' }), cartsRouter);
 
 // ============================================
 // PRESS CLICK ROUTES
@@ -299,6 +307,11 @@ app.use('/api/press-click', express.json(), pressClickRouter);
 // SITEMAP — public, no auth (search engines fetch this)
 // ============================================
 app.use(sitemapRouter);
+
+// ============================================
+// GSC ROUTES
+// ============================================
+app.use('/api/gsc', express.json(), gscRouter);
 
 // ============================================
 // WALL OF COOL ROUTES
@@ -411,6 +424,40 @@ app.use((err, req, res, next) => {
   console.error('Server error:', err);
   res.status(500).send('<!DOCTYPE html><html><head><title>Error</title></head><body><h1>Internal Server Error</h1></body></html>');
 });
+
+// ============================================
+// CART RECOVERY CRON (Phase 3)
+// ============================================
+if (process.env.CART_RECOVERY_AUTO === 'true') {
+  const cron = require('node-cron');
+  const { runRecoveryTick } = require('./api/cart-recovery-runner');
+
+  console.log('[cart-recovery] auto mode ENABLED — scheduling every 15 minutes');
+  cron.schedule('*/15 * * * *', () => {
+    runRecoveryTick(new Date()).catch((err) => {
+      console.error('[cart-recovery] tick threw:', err.message);
+    });
+  });
+} else {
+  console.log('[cart-recovery] auto mode DISABLED (set CART_RECOVERY_AUTO=true to enable)');
+}
+
+// ============================================
+// GSC SYNC CRON (Phase 4)
+// ============================================
+if (process.env.GSC_SYNC_AUTO === 'true') {
+  const cron = require('node-cron');
+  const { runGscSync } = require('./api/gsc-sync');
+
+  console.log('[gsc-sync] auto mode ENABLED — scheduling daily at 03:00 Europe/London');
+  cron.schedule('0 3 * * *', () => {
+    runGscSync({}).catch((err) => {
+      console.error('[gsc-sync] tick threw:', err.message);
+    });
+  }, { timezone: 'Europe/London' });
+} else {
+  console.log('[gsc-sync] auto mode DISABLED (set GSC_SYNC_AUTO=true to enable)');
+}
 
 // ============================================
 // START SERVER

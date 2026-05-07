@@ -4,6 +4,11 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import { db, auth } from '../../lib/firebase';
 import AreaChart from '../../components/admin/analytics/AreaChart';
 import DonutChart from '../../components/admin/analytics/DonutChart';
+import PurchaseFunnel from '../../components/admin/analytics/PurchaseFunnel';
+import AbandonedCartTile from '../../components/admin/analytics/AbandonedCartTile';
+import SearchKeywords from '../../components/admin/analytics/SearchKeywords';
+import InfoTooltip from '../../components/admin/analytics/InfoTooltip';
+import GeographyMap from '../../components/admin/analytics/GeographyMap';
 import {
   countBy, topN, groupByDay, bounceRate, avgTimeOnPage, formatDuration,
   avgScrollDepth, scrollDepthByPage, topJourneys, trafficSources, parseDevices,
@@ -55,10 +60,10 @@ function Sparkline({ data, color }) {
   );
 }
 
-function MetricCard({ label, value, sub, subColor = C.muted, sparkData, sparkColor, change }) {
+function MetricCard({ label, value, sub, subColor = C.muted, sparkData, sparkColor, change, topic }) {
   return (
     <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: '16px 18px' }}>
-      <div style={{ fontSize: '0.7rem', color: C.muted, marginBottom: 6 }}>{label}</div>
+      <div style={{ fontSize: '0.7rem', color: C.muted, marginBottom: 6 }}>{label}{topic && <InfoTooltip topic={topic} />}</div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
         <div style={{ fontSize: '1.9rem', fontWeight: 700, color: '#f1f5f9', lineHeight: 1.1 }}>{value}</div>
         {change != null && (
@@ -273,6 +278,10 @@ export default function AdminAnalytics() {
   const [days, setDays] = useState(30);
   const [excludedIps, setExcludedIps] = useState([]);
   const [configLoaded, setConfigLoaded] = useState(false);
+  const [carts, setCarts] = useState([]);
+  const [cartsLoading, setCartsLoading] = useState(true);
+  const [gscRows, setGscRows] = useState([]);
+  const [gscLoading, setGscLoading] = useState(true);
 
   // Load excluded IPs from admin config endpoint (requires auth token)
   useEffect(() => {
@@ -287,6 +296,55 @@ export default function AdminAnalytics() {
       .catch(() => {})
       .finally(() => setConfigLoaded(true));
   }, []);
+
+  // Load abandoned carts
+  useEffect(() => {
+    let cancelled = false;
+    async function loadCarts() {
+      try {
+        const token = await auth.currentUser?.getIdToken();
+        if (!token) return;
+        const res = await fetch('/api/carts', { headers: { Authorization: `Bearer ${token}` } });
+        if (!res.ok) throw new Error('Failed to load carts');
+        const data = await res.json();
+        if (!cancelled) {
+          setCarts(data.carts || []);
+          setCartsLoading(false);
+        }
+      } catch (err) {
+        console.error(err);
+        if (!cancelled) setCartsLoading(false);
+      }
+    }
+    loadCarts();
+    return () => { cancelled = true; };
+  }, []);
+
+  // Load GSC search keywords data
+  useEffect(() => {
+    let cancelled = false;
+    async function loadGsc() {
+      try {
+        const token = await auth.currentUser?.getIdToken();
+        if (!token) {
+          if (!cancelled) setGscLoading(false);
+          return;
+        }
+        const res = await fetch(`/api/gsc/daily?days=${days}`, { headers: { Authorization: `Bearer ${token}` } });
+        if (!res.ok) throw new Error('Failed to load GSC data');
+        const data = await res.json();
+        if (!cancelled) {
+          setGscRows(data.rows || []);
+          setGscLoading(false);
+        }
+      } catch (err) {
+        console.error(err);
+        if (!cancelled) setGscLoading(false);
+      }
+    }
+    loadGsc();
+    return () => { cancelled = true; };
+  }, [days]);
 
   // Load events for selected time window (current + previous period)
   useEffect(() => {
@@ -317,6 +375,31 @@ export default function AdminAnalytics() {
       .catch(() => setError('Failed to load analytics data'))
       .finally(() => setLoading(false));
   }, [days, configLoaded]);
+
+  // ─── Send recovery email handler ────────────────────────────────────────────
+  async function handleSendRecovery(cartId) {
+    try {
+      const token = await auth.currentUser?.getIdToken();
+      const res = await fetch(`/api/carts/${cartId}/send-recovery`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(`Failed to send: ${err.error || 'unknown error'}`);
+        return;
+      }
+      alert('Recovery email sent.');
+      // Refresh carts to show the updated sent count
+      const refresh = await fetch('/api/carts', { headers: { Authorization: `Bearer ${token}` } });
+      if (refresh.ok) {
+        const data = await refresh.json();
+        setCarts(data.carts || []);
+      }
+    } catch (err) {
+      alert(`Failed to send: ${err.message}`);
+    }
+  }
 
   // ─── Filter out admin IPs and /admin pages ────────────────────────────────
   const filtered = (excludedIps.length
@@ -359,6 +442,15 @@ export default function AdminAnalytics() {
   const sources = trafficSources(pageviews);
   const { devices, browsers } = parseDevices(pageviews);
   const topCountries = topN(countBy(filtered.filter((e) => e.country), 'country'), 7);
+  const mapData = (() => {
+    const m = new Map();
+    for (const ev of filtered) {
+      const code = ev.countryCode;
+      if (!code) continue;
+      m.set(code, (m.get(code) || 0) + 1);
+    }
+    return Array.from(m.entries()).map(([countryCode, visits]) => ({ countryCode, visits }));
+  })();
   const hours = sessionsByHour(pageviews);
   const scrollByPage = scrollDepthByPage(pageviews, scrollEvents, 4);
   const journeys = topJourneys(pageviews, 5);
@@ -456,10 +548,35 @@ export default function AdminAnalytics() {
             return isFirstLoad ? <SkeletonDashboard /> : (
               <div style={{ opacity: loading ? 0.45 : 1, transition: 'opacity 0.2s', pointerEvents: loading ? 'none' : 'auto' }}>
                 <>
+              {/* ── Purchase Funnel ────────────────────────────────────────── */}
+              {import.meta.env.VITE_FUNNEL_ENABLED !== 'false' && (
+                <div style={{ marginBottom: 24 }}>
+                  <PurchaseFunnel
+                    events={filtered}
+                    itemCategory="discovery-flight"
+                    dateLabel={`Last ${days} days`}
+                  />
+                </div>
+              )}
+
+              {import.meta.env.VITE_FUNNEL_ENABLED !== 'false' && !cartsLoading && (
+                <div style={{ marginBottom: 24 }}>
+                  <AbandonedCartTile carts={carts} onSendRecovery={handleSendRecovery} />
+                </div>
+              )}
+
+              {import.meta.env.VITE_FUNNEL_ENABLED !== 'false' && !gscLoading && (
+                <div style={{ marginBottom: 24 }}>
+                  <SearchKeywords rows={gscRows} dateLabel={`Last ${days} days`} />
+                </div>
+              )}
+
               {/* ── Area Chart ─────────────────────────────────────────── */}
               <Card style={{ marginBottom: 20 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                  <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#94a3b8' }}>Page Views &amp; Sessions — Last {days} Days</span>
+                  <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#94a3b8' }}>
+                    Page Views &amp; Sessions — Last {days} Days<InfoTooltip topic="pageViewsAndSessions" />
+                  </span>
                   <div style={{ display: 'flex', gap: 16 }}>
                     {[['#3b82f6', 'Page Views'], ['#a855f7', 'Sessions']].map(([color, label]) => (
                       <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.72rem', color: C.muted }}>
@@ -475,8 +592,8 @@ export default function AdminAnalytics() {
               {/* ── Overview ───────────────────────────────────────────── */}
               <SectionLabel>Overview</SectionLabel>
               <div style={grid4}>
-                <MetricCard label="Page Views" value={pageviews.length.toLocaleString()} sparkData={pvSpark} sparkColor={C.blue} change={pctChange(pageviews.length, prevPageviews.length)} />
-                <MetricCard label="Unique Sessions" value={uniqueSessions.toLocaleString()} sparkData={sessSpark} sparkColor={C.purple} change={pctChange(uniqueSessions, prevUniqueSessions)} />
+                <MetricCard label="Page Views" value={pageviews.length.toLocaleString()} sparkData={pvSpark} sparkColor={C.blue} change={pctChange(pageviews.length, prevPageviews.length)} topic="pageViews" />
+                <MetricCard label="Unique Sessions" value={uniqueSessions.toLocaleString()} sparkData={sessSpark} sparkColor={C.purple} change={pctChange(uniqueSessions, prevUniqueSessions)} topic="uniqueSessions" />
                 <MetricCard label="CTA Clicks" value={ctaClicks.length.toLocaleString()} sparkData={ctaSpark} sparkColor={C.cyan} change={pctChange(ctaClicks.length, prevCTAs.length)} />
                 <MetricCard label="Form Submits" value={formSubmits.length.toLocaleString()} sparkData={formSpark} sparkColor={C.emerald} change={pctChange(formSubmits.length, prevForms.length)} />
               </div>
@@ -484,12 +601,12 @@ export default function AdminAnalytics() {
               {/* ── Engagement ─────────────────────────────────────────── */}
               <SectionLabel>Engagement</SectionLabel>
               <div style={grid3}>
-                <MetricCard label="Bounce Rate" value={`${bounce}%`} sub={bounce < 40 ? '↓ Good' : '↑ High'} subColor={bounce < 40 ? C.emerald : C.red} />
-                <MetricCard label="Avg. Time on Page" value={formatDuration(avgTime)} sub="across all pages" />
-                <MetricCard label="Avg. Scroll Depth" value={`${avgScroll}%`} sub={avgScroll > 60 ? '↑ Strong engagement' : 'Room to improve'} subColor={avgScroll > 60 ? C.emerald : C.muted} />
+                <MetricCard label="Bounce Rate" value={`${bounce}%`} sub={bounce < 40 ? '↓ Good' : '↑ High'} subColor={bounce < 40 ? C.emerald : C.red} topic="bounceRate" />
+                <MetricCard label="Avg. Time on Page" value={formatDuration(avgTime)} sub="across all pages" topic="avgTimeOnPage" />
+                <MetricCard label="Avg. Scroll Depth" value={`${avgScroll}%`} sub={avgScroll > 60 ? '↑ Strong engagement' : 'Room to improve'} subColor={avgScroll > 60 ? C.emerald : C.muted} topic="avgScrollDepth" />
               </div>
               <Card style={{ marginTop: 12 }}>
-                <CardTitle>Time on Page by URL</CardTitle>
+                <CardTitle>Time on Page by URL<InfoTooltip topic="timeOnPageByUrl" /></CardTitle>
                 {timeByPage.length === 0
                   ? <p style={{ color: C.muted, fontSize: '0.875rem' }}>No exit data yet — will populate after deployment</p>
                   : (
@@ -515,7 +632,7 @@ export default function AdminAnalytics() {
               {/* ── Funnel ─────────────────────────────────────────────── */}
               <SectionLabel>Conversion Funnel</SectionLabel>
               <Card>
-                <CardTitle>Booking Journey</CardTitle>
+                <CardTitle>Booking Journey<InfoTooltip topic="bookingJourney" /></CardTitle>
                 <div style={{ paddingTop: 4 }}>
                   {funnel.map((step, i) => {
                     const barW = step.pct;
@@ -555,7 +672,7 @@ export default function AdminAnalytics() {
               <SectionLabel>Acquisition</SectionLabel>
               <div style={grid3}>
                 <Card>
-                  <CardTitle>Top Pages</CardTitle>
+                  <CardTitle>Top Pages<InfoTooltip topic="topPages" /></CardTitle>
                   {topPages.length === 0 ? <p style={{ color: C.muted, fontSize: '0.875rem' }}>No data</p> : (
                     topPages.map(([page, count], i) => (
                       <TRow key={page} rank={i + 1} name={page} count={count} maxCount={topPages[0][1]} />
@@ -564,7 +681,7 @@ export default function AdminAnalytics() {
                 </Card>
 
                 <Card>
-                  <CardTitle>Traffic Sources</CardTitle>
+                  <CardTitle>Traffic Sources<InfoTooltip topic="trafficSources" /></CardTitle>
                   <div style={donutWrap}>
                     <DonutChart
                       segments={sourceDonuts}
@@ -585,7 +702,7 @@ export default function AdminAnalytics() {
                 </Card>
 
                 <Card>
-                  <CardTitle>Top Referrers</CardTitle>
+                  <CardTitle>Top Referrers<InfoTooltip topic="topReferrers" /></CardTitle>
                   {topReferrers.length === 0
                     ? <p style={{ color: C.muted, fontSize: '0.875rem' }}>No referral traffic yet</p>
                     : topReferrers.map(([domain, count], i) => (
@@ -599,7 +716,7 @@ export default function AdminAnalytics() {
               <SectionLabel>Audience</SectionLabel>
               <div style={grid2}>
                 <Card>
-                  <CardTitle>Devices &amp; Browsers</CardTitle>
+                  <CardTitle>Devices &amp; Browsers<InfoTooltip topic="devicesAndBrowsers" /></CardTitle>
                   <div style={donutWrap}>
                     <DonutChart
                       segments={deviceDonuts}
@@ -625,7 +742,14 @@ export default function AdminAnalytics() {
                 </Card>
 
                 <Card>
-                  <CardTitle>Top Countries</CardTitle>
+                  <CardTitle>Top Countries<InfoTooltip topic="topCountries" /></CardTitle>
+
+                  {mapData.length > 0 && (
+                    <div style={{ marginBottom: 16 }}>
+                      <GeographyMap data={mapData} />
+                    </div>
+                  )}
+
                   {topCountries.map(([country, count]) => {
                     const total = topCountries.reduce((s, [, c]) => s + c, 0);
                     const pct = total > 0 ? Math.round((count / total) * 100) : 0;
@@ -637,7 +761,9 @@ export default function AdminAnalytics() {
                     <p style={{ color: C.muted, fontSize: '0.875rem' }}>No geo data yet — new events will include location</p>
                   )}
                   <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 14, marginTop: 14 }}>
-                    <div style={{ fontSize: '0.7rem', color: C.dim, marginBottom: 8, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Sessions by Hour (UTC)</div>
+                    <div style={{ fontSize: '0.7rem', color: C.dim, marginBottom: 8, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      Sessions by Hour (UTC)<InfoTooltip topic="sessionsByHour" />
+                    </div>
                     <HourlyBar hours={hours} />
                   </div>
                 </Card>
@@ -647,7 +773,7 @@ export default function AdminAnalytics() {
               <SectionLabel>Behaviour</SectionLabel>
               <div style={grid2}>
                 <Card>
-                  <CardTitle>Scroll Depth by Page</CardTitle>
+                  <CardTitle>Scroll Depth by Page<InfoTooltip topic="scrollDepthByPage" /></CardTitle>
                   {scrollByPage.length > 0
                     ? <ScrollDepthSection scrollByPage={scrollByPage} />
                     : <p style={{ color: C.muted, fontSize: '0.875rem' }}>No scroll data yet — will appear after deployment</p>
@@ -655,7 +781,7 @@ export default function AdminAnalytics() {
                 </Card>
 
                 <Card>
-                  <CardTitle>Top User Journeys</CardTitle>
+                  <CardTitle>Top User Journeys<InfoTooltip topic="topUserJourneys" /></CardTitle>
                   {journeys.length > 0
                     ? journeys.map(([path, count]) => <JourneyRow key={path} path={path} count={count} />)
                     : <p style={{ color: C.muted, fontSize: '0.875rem' }}>No multi-page sessions yet</p>
@@ -669,13 +795,13 @@ export default function AdminAnalytics() {
                   <SectionLabel>Campaigns</SectionLabel>
                   <div style={grid2}>
                     <Card>
-                      <CardTitle>Top UTM Campaigns</CardTitle>
+                      <CardTitle>Top UTM Campaigns<InfoTooltip topic="topUtmCampaigns" /></CardTitle>
                       {campaigns.map(([name, count], i) => (
                         <TRow key={name} rank={i + 1} name={name} count={count} maxCount={campaigns[0][1]} />
                       ))}
                     </Card>
                     <Card>
-                      <CardTitle>Top UTM Sources</CardTitle>
+                      <CardTitle>Top UTM Sources<InfoTooltip topic="topUtmSources" /></CardTitle>
                       {utmSrc.map(([name, count], i) => (
                         <TRow key={name} rank={i + 1} name={name} count={count} maxCount={utmSrc[0][1]} />
                       ))}
@@ -688,7 +814,7 @@ export default function AdminAnalytics() {
               <SectionLabel>Interactions</SectionLabel>
               <div style={grid2}>
                 <Card>
-                  <CardTitle>Top CTA Clicks</CardTitle>
+                  <CardTitle>Top CTA Clicks<InfoTooltip topic="topCtaClicks" /></CardTitle>
                   {topCTAs.length === 0 ? <p style={{ color: C.muted, fontSize: '0.875rem' }}>No data</p> : (
                     topCTAs.map(([name, count], i) => (
                       <TRow key={name} rank={i + 1} name={name} count={count} maxCount={topCTAs[0][1]} />
@@ -696,7 +822,7 @@ export default function AdminAnalytics() {
                   )}
                 </Card>
                 <Card>
-                  <CardTitle>Top Form Submit Pages</CardTitle>
+                  <CardTitle>Top Form Submit Pages<InfoTooltip topic="topFormSubmits" /></CardTitle>
                   {topForms.length === 0 ? <p style={{ color: C.muted, fontSize: '0.875rem' }}>No data</p> : (
                     topForms.map(([page, count], i) => (
                       <TRow key={page} rank={i + 1} name={page} count={count} maxCount={topForms[0][1]} />
