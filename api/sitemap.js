@@ -93,6 +93,15 @@ async function fetchDynamicEntries(db) {
     }
   } catch (e) { console.error('[sitemap] misc fetch failed:', e.message); }
 
+  try {
+    const parts = await db.collection('parts').where('status', '==', 'active').get();
+    for (const doc of parts.docs) {
+      const data = doc.data() || {};
+      const lastmod = data.updatedAt?.toDate ? data.updatedAt.toDate().toISOString().slice(0, 10) : undefined;
+      entries.push({ path: `/parts/${doc.id}`, lastmod, changefreq: 'weekly', priority: 0.7 });
+    }
+  } catch (e) { console.error('[sitemap] parts fetch failed:', e.message); }
+
   return entries;
 }
 
