@@ -11,7 +11,6 @@
  */
 
 import React, { useRef, useEffect, useState } from 'react';
-import { useFaqs } from '../hooks/useFaqs';
 import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { Link } from 'react-router-dom';
@@ -155,8 +154,6 @@ function Reveal({ children, delay = 0, direction = 'up' }) {
 
 function PilotProvisioning() {
   const heroRef = useRef(null);
-  const [openFaq, setOpenFaq] = useState(null);
-  const [showAllFaqs, setShowAllFaqs] = useState(false);
   const pageImages = usePageImages('pilot-provisioning');
   useCmsHighlight();
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
@@ -164,54 +161,54 @@ function PilotProvisioning() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
   const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
-  const { faqs: rawFaqs } = useFaqs('pilot-provisioning', { visibleOnly: true });
-  const fallbackFaqs = [
-    { id: 'f1', question: 'How quickly can you provide a pilot?', answer: 'For planned operations, we ask for at least 48 hours notice to arrange briefing and documentation. For urgent requirements, contact us directly and we\'ll do our best to accommodate you.' },
-    { id: 'f2', question: 'Is the pilot insured by HQ or do I need my own cover?', answer: 'HQ arranges appropriate insurance for provisioning engagements. Details are confirmed at the time of booking and we want to be completely clear on cover before any pilot departs.' },
-    { id: 'f3', question: 'Can you provide pilots for aircraft not in the Robinson range?', answer: 'Our core team is Robinson-specialised, but we have relationships with pilots rated on turbine types including the AS350, Hughes 500, and Bell 407. Contact us with your specific requirement.' },
-    { id: 'f4', question: 'What if the mission changes on the day?', answer: 'Our pilots are briefed to make go/no-go decisions independently based on conditions. Any significant change to the planned mission is discussed with you before departure.' },
-    { id: 'f5', question: 'Do you provide pilots for overseas operations?', answer: 'Yes, we support European and further afield operations. Additional lead time and documentation requirements apply. See our SuperYacht Operations service for yacht-based seasonal programmes.' },
-  ];
-  const faqs = rawFaqs.length > 0 ? rawFaqs : fallbackFaqs;
+
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', aircraftType: '', mission: '', message: '' });
+  const [formStatus, setFormStatus] = useState('idle');
+  const [formOpen, setFormOpen] = useState(false);
+  const setField = (field) => (e) => setFormData((f) => ({ ...f, [field]: e.target.value }));
+
+  async function handleFormSubmit(e) {
+    e.preventDefault();
+    if (!formData.name.trim() || !formData.email.trim()) { setFormStatus('error'); return; }
+    setFormStatus('submitting');
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, subject: 'Pilot Provisioning Enquiry', source: 'pilot-provisioning-page' }),
+      });
+      if (!res.ok) throw new Error();
+      setFormStatus('success');
+      setFormData({ name: '', email: '', phone: '', aircraftType: '', mission: '', message: '' });
+    } catch {
+      setFormStatus('error');
+    }
+  }
 
   // ─── Data ──────────────────────────────────────────────────────────────────
 
   const servicePanels = [
     {
-      tag: 'Most Requested', num: '01', title: 'Safety Pilots',
+      num: '01', title: 'Safety Pilots',
       description: 'A safety pilot flies alongside you to provide an additional layer of oversight, particularly useful when operating in unfamiliar airspace, carrying passengers on long legs, or flying in marginal conditions where a second set of eyes and hands provides genuine reassurance. All HQ safety pilots are experienced instructors.',
       details: ['Current FI(H) rating', 'Minimum 500 hours total time', 'Type-rated on your aircraft', 'Fully insured for the operation'],
       image: pageImages['pp-panel-1']?.[0]?.url || '/assets/images/gallery/carousel/rotating1.jpg',
     },
     {
-      tag: 'Logistics', num: '02', title: 'Ferry Flights',
+      num: '02', title: 'Ferry Flights',
       description: 'Need an aircraft moved? Whether from a maintenance facility back to base, delivery from a purchase, or repositioning for an operation, HQ\'s ferry pilots move your aircraft wherever it needs to go. We handle fuel planning, weather routing, PPR, and all logistics.',
       details: ['Pre-flight inspection included', 'Weather routing and fuel planning', 'Insurance documentation prepared', 'Full handover record on arrival'],
       image: pageImages['pp-panel-2']?.[0]?.url || '/assets/images/gallery/flying/flying-.jpg',
     },
     {
-      tag: 'Extended Operations', num: '03', title: 'Dedicated Crewing',
+      num: '03', title: 'Dedicated Crewing',
       description: 'For ongoing operations such as seasonal superyacht programmes, corporate fleet management, or extended filming contracts, HQ provides a dedicated crew member on a contract basis with rostering, currency maintenance, and compliance all managed.',
       details: ['Rostered availability agreed in advance', 'Currency and recurrency training maintained', 'Compliance documentation managed', 'Regular operational briefings included'],
       image: pageImages['pp-panel-3']?.[0]?.url || '/assets/images/gallery/carousel/rotating2.jpg',
     },
   ];
 
-  const pilotStandards = [
-    { num: '01', title: 'Current Type Rating', desc: 'Appropriate type rating on the aircraft to be flown, always' },
-    { num: '02', title: '500+ Hours Minimum', desc: 'No newly-qualified pilots. Everyone has proven operational experience.' },
-    { num: '03', title: 'Full Insurance Cover', desc: 'HQ arranges appropriate insurance for every provisioning engagement' },
-    { num: '04', title: 'Pre-Brief Required', desc: 'Every pilot is briefed on your specific operation and aircraft history before departure' },
-  ];
-
-  const processSteps = [
-    { num: '01', title: 'Brief', duration: '30 mins', description: 'Tell us the mission: aircraft type, route, date, purpose, and any specific requirements or concerns. The more we know, the better we can match the right pilot.' },
-    { num: '02', title: 'Match', duration: '24 hours', description: 'We identify the most suitable pilot from our team based on type rating, experience, and availability. We won\'t dispatch someone who isn\'t the right fit.' },
-    { num: '03', title: 'Pre-Brief', duration: '1 hour', description: 'Your pilot contacts you directly to discuss the operation. No surprises on the day. Everything is agreed in advance.' },
-    { num: '04', title: 'Debrief', duration: 'Post-mission', description: 'After the mission, a brief report is provided. For extended contracts, regular operational reviews are included as standard.' },
-  ];
-
-  const aircraft = ['Robinson R22', 'Robinson R44', 'Robinson R66', 'Hughes 500', 'AS350 Squirrel', 'Bell 407'];
+  const aircraft = ['Robinson R22', 'Robinson R44', 'Robinson R66', 'Hughes 500', 'AS350 Squirrel', 'EC130', 'Bell 407'];
 
   // ─── JSX ──────────────────────────────────────────────────────────────────
 
@@ -267,31 +264,13 @@ function PilotProvisioning() {
               transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
             />
 
-            {/* Badge */}
-            <motion.div
-              className="pp-hero__badge"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <div className="pp-hero__badge-stat">
-                <span className="pp-hero__badge-label">Rated</span>
-                <span className="pp-hero__badge-sub">&amp; Current</span>
-              </div>
-              <div className="pp-hero__badge-divider" />
-              <div className="pp-hero__badge-stat">
-                <span className="pp-hero__badge-label">Insured</span>
-                <span className="pp-hero__badge-sub">&amp; Ready</span>
-              </div>
-            </motion.div>
-
             <motion.p
               className="pp-hero__sub"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
-              Crewing, safety pilots, and ferry flights. Fully rated, insured, and experienced across
+              Crewing, safety pilots, and ferry flights. Fully rated and experienced across
               the Robinson range and beyond. The right pilot for every mission.
             </motion.p>
           </div>
@@ -315,16 +294,6 @@ function PilotProvisioning() {
                 </p>
               </Reveal>
             </div>
-            <Reveal direction="left" delay={0.15}>
-              <div className="pp-intro__image-wrap">
-                <img
-                  src={pageImages['pp-intro']?.[0]?.url || '/assets/images/gallery/carousel/rotating8.jpg'}
-                  alt="HQ Pilot Network"
-                  className="pp-intro__image"
-                />
-                <span className="pp-intro__caption">HQ Pilot Network</span>
-              </div>
-            </Reveal>
           </div>
         </div>
       </section>
@@ -332,13 +301,6 @@ function PilotProvisioning() {
       {/* ========== SERVICE PANELS ========== */}
       <section className="pp-services" data-cms-section="pp-services">
         <div className="pp-services__container">
-          <Reveal>
-            <div className="pp-section-header">
-              <span className="pp-pre-text">What We Provide</span>
-              <h2>Provisioning Services</h2>
-            </div>
-          </Reveal>
-
           <div className="pp-panels">
             {servicePanels.map((panel, i) => (
               <Reveal key={panel.num} delay={0.05}>
@@ -347,7 +309,6 @@ function PilotProvisioning() {
                     <img src={panel.image} alt={panel.title} />
                   </div>
                   <div className="pp-panel__content">
-                    <span className="pp-panel__tag">{panel.tag}</span>
                     <div className="pp-panel__num">{panel.num}</div>
                     <h3 className="pp-panel__title">{panel.title}</h3>
                     <p className="pp-panel__desc">{panel.description}</p>
@@ -356,64 +317,6 @@ function PilotProvisioning() {
                         <li key={detail}>{detail}</li>
                       ))}
                     </ul>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ========== STANDARDS ========== */}
-      <section className="pp-standards">
-        <div className="pp-standards__container">
-          <Reveal>
-            <div className="pp-section-header pp-section-header--light">
-              <span className="pp-pre-text pp-pre-text--light">Our People</span>
-              <h2 className="pp-standards__heading">Pilot Standards</h2>
-              <p className="pp-standards__desc">
-                Every pilot we provision meets the same standards we hold our own instructors to.
-                We do not provide bodies. We provide people we would be happy to put in front of
-                our own students.
-              </p>
-            </div>
-          </Reveal>
-
-          <div className="pp-standards__grid">
-            {pilotStandards.map((standard, i) => (
-              <Reveal key={standard.num} delay={i * 0.1}>
-                <div className="pp-standard-card">
-                  <div className="pp-standard-card__num">{standard.num}</div>
-                  <h4 className="pp-standard-card__title">{standard.title}</h4>
-                  <p className="pp-standard-card__desc">{standard.desc}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ========== PROCESS ========== */}
-      <section className="pp-process">
-        <div className="pp-process__container">
-          <Reveal>
-            <div className="pp-section-header">
-              <span className="pp-pre-text">How It Works</span>
-              <h2>Simple Process</h2>
-            </div>
-          </Reveal>
-
-          <div className="pp-process__steps">
-            {processSteps.map((step, i) => (
-              <Reveal key={step.num} delay={i * 0.1}>
-                <div className="pp-process__step">
-                  <div className="pp-process__step-num">{step.num}</div>
-                  <div className="pp-process__step-content">
-                    <div className="pp-process__step-header">
-                      <h4>{step.title}</h4>
-                      <span className="pp-process__step-duration">{step.duration}</span>
-                    </div>
-                    <p>{step.description}</p>
                   </div>
                 </div>
               </Reveal>
@@ -445,70 +348,146 @@ function PilotProvisioning() {
         </div>
       </section>
 
-      {/* ========== FAQ ========== */}
-      <section className="pp-faq" data-cms-section="faqs-pilot-provisioning">
-        <div className="pp-faq__container">
+      {/* ========== ENQUIRY FORM ========== */}
+      <section className="pp-enquiry" id="enquire">
+        <div className="pp-enquiry__inner">
           <Reveal>
-            <div className="pp-section-header">
-              <span className="pp-pre-text">Common Questions</span>
-              <h2>Frequently Asked</h2>
+            <div className="pp-enquiry__head">
+              <span className="pp-pre-text">Need a Pilot?</span>
+              <h2 className="pp-enquiry__heading">Get in Touch</h2>
+              <p className="pp-enquiry__desc">
+                Tell us your mission, aircraft, and dates and we'll come back with availability and
+                costs. Most enquiries get a response within a few hours.
+              </p>
             </div>
           </Reveal>
 
-          <div className="pp-faq__list">
-            {(showAllFaqs ? faqs : faqs.slice(0, 6)).map((faq, i) => (
-              <Reveal key={faq.id} delay={i * 0.05}>
-                <div
-                  className={`pp-faq__item ${openFaq === i ? 'pp-faq__item--open' : ''}`}
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                >
-                  <span className="pp-faq__number">{String(i + 1).padStart(2, '0')}</span>
-                  <div className="pp-faq__content">
-                    <h4>
-                      {faq.question}
-                      <span className="pp-faq__toggle">{openFaq === i ? '−' : '+'}</span>
-                    </h4>
-                    <AnimatePresence>
-                      {openFaq === i && (
-                        <motion.div
-                          className="pp-faq__answer"
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                        >
-                          <p>{faq.answer}</p>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+          <Reveal delay={0.15}>
+            <div className="pp-enquiry__body">
+              {formStatus === 'success' ? (
+                <div className="pp-enquiry__success">
+                  <div className="pp-enquiry__success-icon">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                      <circle cx="14" cy="14" r="13" stroke="#1a1a1a" strokeWidth="1.5" />
+                      <path d="M8.5 14L12.5 18L19.5 10" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
                   </div>
+                  <p className="pp-enquiry__success-text">We'll be in touch within 24 hours.</p>
                 </div>
-              </Reveal>
-            ))}
-          </div>
-          {!showAllFaqs && faqs.length > 6 && (
-            <button className="pp-faq__load-more" onClick={() => setShowAllFaqs(true)}>Load More</button>
-          )}
-        </div>
-      </section>
+              ) : (
+                <>
+                  {!formOpen && (
+                    <button
+                      type="button"
+                      className="pp-intent-btn"
+                      onClick={() => setFormOpen(true)}
+                      aria-expanded={formOpen}
+                      aria-controls="pp-enquiry-form"
+                    >
+                      <span className="pp-intent-btn__icon">→</span>
+                      <span className="pp-intent-btn__title">Check Availability</span>
+                      <span className="pp-intent-btn__sub">Share your mission, aircraft, and dates. We'll come back with availability and a quote, usually within a few hours.</span>
+                    </button>
+                  )}
+                  <AnimatePresence initial={false}>
+                    {formOpen && (
+                      <motion.div
+                        key="pp-enquiry-form-wrap"
+                        id="pp-enquiry-form"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        style={{ overflow: 'hidden' }}
+                      >
+                        <form className="pp-enquiry__form" onSubmit={handleFormSubmit} noValidate>
+                  <div className="pp-enquiry__row">
+                    <div className="pp-field">
+                      <label htmlFor="pp-name">Name <span className="pp-field-req">*</span></label>
+                      <input
+                        id="pp-name"
+                        type="text"
+                        placeholder="Your full name"
+                        value={formData.name}
+                        onChange={setField('name')}
+                        required
+                      />
+                    </div>
+                    <div className="pp-field">
+                      <label htmlFor="pp-email">Email <span className="pp-field-req">*</span></label>
+                      <input
+                        id="pp-email"
+                        type="email"
+                        placeholder="your@email.com"
+                        value={formData.email}
+                        onChange={setField('email')}
+                        required
+                      />
+                    </div>
+                  </div>
 
-      {/* ========== CTA ========== */}
-      <section className="pp-cta">
-        <div className="pp-cta__inner">
-          <Reveal>
-            <span className="pp-pre-text pp-pre-text--light">Need a Pilot?</span>
-            <h2 className="pp-cta__heading">Get in Touch</h2>
-            <p className="pp-cta__body">
-              Tell us your mission and we'll come back with availability and costs.
-              Most enquiries get a response within a few hours.
-            </p>
-            <div className="pp-cta__buttons">
-              <Link to="/superyacht-ops" className="pp-cta__link">
-                SuperYacht Ops
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </Link>
+                  <div className="pp-enquiry__row">
+                    <div className="pp-field">
+                      <label htmlFor="pp-phone">Phone</label>
+                      <input
+                        id="pp-phone"
+                        type="tel"
+                        placeholder="+44 7700 000000"
+                        value={formData.phone}
+                        onChange={setField('phone')}
+                      />
+                    </div>
+                    <div className="pp-field">
+                      <label htmlFor="pp-aircraft">Aircraft Type</label>
+                      <input
+                        id="pp-aircraft"
+                        type="text"
+                        placeholder="e.g. Robinson R66, AS350"
+                        value={formData.aircraftType}
+                        onChange={setField('aircraftType')}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pp-field">
+                    <label htmlFor="pp-mission">Mission</label>
+                    <input
+                      id="pp-mission"
+                      type="text"
+                      placeholder="Safety pilot, ferry flight, dedicated crew..."
+                      value={formData.mission}
+                      onChange={setField('mission')}
+                    />
+                  </div>
+
+                  <div className="pp-field">
+                    <label htmlFor="pp-message">Message</label>
+                    <textarea
+                      id="pp-message"
+                      rows={5}
+                      placeholder="Route, dates, and anything else we should know..."
+                      value={formData.message}
+                      onChange={setField('message')}
+                    />
+                  </div>
+
+                  {formStatus === 'error' && (
+                    <p className="pp-enquiry__error">Please fill in your name and email to continue.</p>
+                  )}
+
+                  <button
+                    type="submit"
+                    className="pp-btn pp-btn--primary"
+                    disabled={formStatus === 'submitting'}
+                  >
+                    {formStatus === 'submitting' ? 'Sending...' : 'Send Enquiry'}
+                  </button>
+                </form>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </>
+              )}
             </div>
           </Reveal>
         </div>
@@ -689,48 +668,6 @@ function PilotProvisioning() {
           transform-origin: left;
         }
 
-        /* Hero Badge */
-        .pp-hero__badge {
-          display: flex;
-          align-items: center;
-          gap: 1.5rem;
-          background: rgba(255, 255, 255, 0.07);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          border-radius: 8px;
-          padding: 0.9rem 1.4rem;
-          max-width: 280px;
-          margin-bottom: 1.75rem;
-        }
-
-        .pp-hero__badge-stat {
-          display: flex;
-          flex-direction: column;
-          gap: 0.15rem;
-        }
-
-        .pp-hero__badge-label {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 1rem;
-          font-weight: 700;
-          color: #fff;
-          line-height: 1;
-        }
-
-        .pp-hero__badge-sub {
-          font-size: 0.6rem;
-          color: rgba(255, 255, 255, 0.5);
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-        }
-
-        .pp-hero__badge-divider {
-          width: 1px;
-          height: 34px;
-          background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.2), transparent);
-          flex-shrink: 0;
-        }
-
         .pp-hero__sub {
           font-size: 1.05rem;
           color: rgba(255, 255, 255, 0.62);
@@ -756,9 +693,12 @@ function PilotProvisioning() {
 
         .pp-intro__grid {
           display: grid;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: 1fr;
           gap: 5rem;
           align-items: center;
+          max-width: 800px;
+          margin: 0 auto;
+          text-align: center;
         }
 
         .pp-intro__heading {
@@ -777,27 +717,6 @@ function PilotProvisioning() {
           margin: 0;
         }
 
-        .pp-intro__image-wrap {
-          position: relative;
-        }
-
-        .pp-intro__image {
-          width: 100%;
-          aspect-ratio: 4 / 3;
-          object-fit: cover;
-          display: block;
-        }
-
-        .pp-intro__caption {
-          display: block;
-          margin-top: 0.6rem;
-          font-size: 0.65rem;
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
-          color: #aaa;
-        }
-
-
         /* ===================================================
            SERVICE PANELS
            =================================================== */
@@ -815,23 +734,19 @@ function PilotProvisioning() {
         .pp-panels {
           display: flex;
           flex-direction: column;
+          gap: 2.5rem;
         }
 
         /* Panel base — image LEFT, content RIGHT */
         .pp-panel {
           display: grid;
-          grid-template-columns: 60% 40%;
+          grid-template-columns: 50% 50%;
           min-height: 420px;
-          border-bottom: 1px solid #e8e6e2;
-        }
-
-        .pp-panel:last-child {
-          border-bottom: none;
         }
 
         /* Flipped panel — content LEFT, image RIGHT */
         .pp-panel--flipped {
-          grid-template-columns: 40% 60%;
+          grid-template-columns: 50% 50%;
         }
 
         .pp-panel--flipped .pp-panel__image {
@@ -864,20 +779,6 @@ function PilotProvisioning() {
           display: flex;
           flex-direction: column;
           justify-content: center;
-        }
-
-        .pp-panel__tag {
-          display: inline-block;
-          padding: 0.25rem 0.75rem;
-          background: #f5f5f2;
-          border-radius: 100px;
-          font-size: 0.6rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
-          color: #666;
-          margin-bottom: 1rem;
-          align-self: flex-start;
         }
 
         .pp-panel__num {
@@ -948,147 +849,6 @@ function PilotProvisioning() {
 
 
         /* ===================================================
-           STANDARDS (dark)
-           =================================================== */
-
-        .pp-standards {
-          background: #1a1a1a;
-          padding: 6rem 4rem;
-        }
-
-        .pp-standards__container {
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-
-        .pp-standards__heading {
-          color: #fff;
-        }
-
-        .pp-standards__desc {
-          color: rgba(255, 255, 255, 0.7);
-          font-size: 1.05rem;
-          line-height: 1.7;
-          max-width: 620px;
-          margin: 0 auto;
-        }
-
-        .pp-standards__grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 1.5rem;
-          max-width: 900px;
-          margin: 0 auto;
-        }
-
-        .pp-standard-card {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 8px;
-          padding: 1.75rem;
-        }
-
-        .pp-standard-card__num {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.65rem;
-          color: rgba(255, 255, 255, 0.3);
-          letter-spacing: 0.1em;
-          margin-bottom: 0.75rem;
-          display: block;
-        }
-
-        .pp-standard-card__title {
-          font-size: 1rem;
-          font-weight: 700;
-          color: #fff;
-          text-transform: uppercase;
-          margin: 0 0 0.5rem;
-        }
-
-        .pp-standard-card__desc {
-          font-size: 0.875rem;
-          color: rgba(255, 255, 255, 0.55);
-          line-height: 1.6;
-          margin: 0;
-        }
-
-
-        /* ===================================================
-           PROCESS
-           =================================================== */
-
-        .pp-process {
-          background: #faf9f6;
-          padding: 6rem 4rem;
-        }
-
-        .pp-process__container {
-          max-width: 900px;
-          margin: 0 auto;
-        }
-
-        .pp-process__steps {
-          display: flex;
-          flex-direction: column;
-          gap: 0;
-        }
-
-        .pp-process__step {
-          display: flex;
-          gap: 1.5rem;
-          padding: 1.75rem 0;
-          border-bottom: 1px solid #e8e6e2;
-        }
-
-        .pp-process__step:last-child {
-          border-bottom: none;
-        }
-
-        .pp-process__step-num {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.75rem;
-          color: #ccc;
-          flex-shrink: 0;
-          padding-top: 0.2rem;
-          min-width: 2rem;
-        }
-
-        .pp-process__step-content {
-          flex: 1;
-        }
-
-        .pp-process__step-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 0.5rem;
-        }
-
-        .pp-process__step-header h4 {
-          font-size: 1rem;
-          font-weight: 700;
-          margin: 0;
-          color: #1a1a1a;
-          text-transform: uppercase;
-        }
-
-        .pp-process__step-duration {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.7rem;
-          color: #aaa;
-          letter-spacing: 0.1em;
-          flex-shrink: 0;
-        }
-
-        .pp-process__step-content p {
-          font-size: 0.9rem;
-          color: #666;
-          line-height: 1.65;
-          margin: 0;
-        }
-
-
-        /* ===================================================
            AIRCRAFT COVERED
            =================================================== */
 
@@ -1137,159 +897,166 @@ function PilotProvisioning() {
 
 
         /* ===================================================
-           FAQ
+           ENQUIRY FORM
            =================================================== */
 
-        .pp-faq {
-          background: #faf9f6;
+        .pp-enquiry {
+          background: #ffffff;
           padding: 6rem 4rem;
         }
 
-        .pp-faq__container {
-          max-width: 800px;
+        .pp-enquiry__inner {
+          max-width: 760px;
           margin: 0 auto;
-        }
-
-        .pp-faq__list {
           display: flex;
           flex-direction: column;
+          gap: 2rem;
         }
 
-        .pp-faq__load-more { margin-top: 1.5rem; display: block; width: 100%; padding: 0.9rem 1.5rem; background: transparent; border: 1px solid #1a1a1a; color: #1a1a1a; font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
-        .pp-faq__load-more:hover { background: #1a1a1a; color: #fff; }
-
-        .pp-faq__item {
-          display: flex;
-          gap: 1.5rem;
-          padding: 1.25rem 0;
-          border-bottom: 1px solid #e8e6e2;
-          cursor: pointer;
-          transition: background 0.2s ease;
-        }
-
-        .pp-faq__item:first-child {
-          border-top: 1px solid #e8e6e2;
-        }
-
-        .pp-faq__item:hover {
-          background: rgba(0, 0, 0, 0.01);
-        }
-
-        .pp-faq__item--open {
-          background: rgba(0, 0, 0, 0.02);
-        }
-
-        .pp-faq__number {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.75rem;
-          color: #ccc;
-          flex-shrink: 0;
-          padding-top: 0.1rem;
-          min-width: 2rem;
-        }
-
-        .pp-faq__content {
-          flex: 1;
-        }
-
-        .pp-faq__content h4 {
-          margin: 0;
-          font-size: 1rem;
-          font-weight: 600;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 1rem;
-          color: #1a1a1a;
-          line-height: 1.4;
-        }
-
-        .pp-faq__toggle {
-          font-size: 1.25rem;
-          font-weight: 300;
-          color: #999;
-          flex-shrink: 0;
-          line-height: 1;
-        }
-
-        .pp-faq__answer {
-          overflow: hidden;
-        }
-
-        .pp-faq__answer p {
-          margin: 0.75rem 0 0;
-          color: #666;
-          line-height: 1.7;
-          font-size: 0.95rem;
-        }
-
-
-        /* ===================================================
-           CTA (dark)
-           =================================================== */
-
-        .pp-cta {
-          background: #1a1a1a;
-          padding: 0;
-        }
-
-        .pp-cta__inner {
-          max-width: 700px;
-          margin: 0 auto;
-          padding: 6rem 4rem;
+        .pp-enquiry__head {
           text-align: center;
         }
 
-        .pp-cta__heading {
-          font-size: clamp(1.75rem, 3.5vw, 2.8rem);
+        .pp-enquiry__heading {
+          font-size: clamp(1.6rem, 3vw, 2.25rem);
           font-weight: 700;
           text-transform: uppercase;
-          color: #fff;
-          margin: 0.5rem 0 1.5rem;
-          line-height: 1.1;
+          color: #1a1a1a;
+          margin: 0.5rem 0 1.25rem;
+          line-height: 1.2;
         }
 
-        .pp-cta__body {
-          color: rgba(255, 255, 255, 0.7);
+        .pp-enquiry__desc {
           font-size: 1rem;
           line-height: 1.75;
-          margin: 0 0 2.5rem;
-          max-width: 500px;
-          margin-left: auto;
-          margin-right: auto;
+          color: #666;
+          margin: 0;
         }
 
-        .pp-cta__buttons {
+        .pp-intent-btn {
+          display: grid;
+          grid-template-columns: auto 1fr;
+          grid-template-rows: auto auto;
+          column-gap: 0.6rem;
+          row-gap: 0.3rem;
+          align-items: center;
+          padding: 1.1rem 1.4rem;
+          background: #fff;
+          border: 1px solid #e8e6e2;
+          cursor: pointer;
+          transition: all 0.22s ease;
+          text-align: left;
+          color: #1a1a1a;
+          font-family: inherit;
+          width: 100%;
+        }
+
+        .pp-intent-btn:hover {
+          border-color: #1a1a1a;
+          background: #faf9f6;
+        }
+
+        .pp-intent-btn__icon {
+          grid-column: 1;
+          grid-row: 1 / span 2;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 1rem;
+          color: #999;
+          line-height: 1;
+          align-self: center;
+        }
+
+        .pp-intent-btn__title {
+          grid-column: 2;
+          grid-row: 1;
+          font-size: 0.78rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          color: #1a1a1a;
+        }
+
+        .pp-intent-btn__sub {
+          grid-column: 2;
+          grid-row: 2;
+          font-size: 0.78rem;
+          color: #999;
+          line-height: 1.55;
+        }
+
+        .pp-field {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          margin-bottom: 1.25rem;
+        }
+
+        .pp-field label {
+          font-size: 0.8rem;
+          font-weight: 600;
+          color: #333;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
+        .pp-field-req {
+          color: #999;
+          font-weight: 400;
+        }
+
+        .pp-field input,
+        .pp-field textarea {
+          padding: 0.85rem 1rem;
+          border: 1.5px solid #e0e0e0;
+          border-radius: 6px;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.9rem;
+          color: #1a1a1a;
+          background: #fafaf8;
+          transition: border-color 0.2s;
+          outline: none;
+          resize: vertical;
+        }
+
+        .pp-field input:focus,
+        .pp-field textarea:focus {
+          border-color: #1a1a1a;
+        }
+
+        .pp-enquiry__row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+        }
+
+        .pp-enquiry__error {
+          font-size: 0.85rem;
+          color: #c0392b;
+          margin: 0 0 1rem;
+        }
+
+        .pp-enquiry__success {
           display: flex;
           align-items: center;
-          justify-content: center;
-          gap: 2rem;
-          flex-wrap: wrap;
+          gap: 1rem;
+          padding: 2rem;
+          border: 1.5px solid #e8e6e2;
+          border-radius: 8px;
+          background: #faf9f6;
         }
 
-        .pp-cta__link {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.5rem;
-          font-size: 0.75rem;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          color: rgba(255, 255, 255, 0.65);
-          text-decoration: none;
-          transition: color 0.3s ease;
+        .pp-enquiry__success-icon {
+          flex-shrink: 0;
+          opacity: 0.6;
         }
 
-        .pp-cta__link:hover {
-          color: #fff;
+        .pp-enquiry__success-text {
+          font-size: 1rem;
+          color: #1a1a1a;
+          margin: 0;
+          line-height: 1.5;
         }
 
-        .pp-cta__link svg {
-          transition: transform 0.3s ease;
-        }
-
-        .pp-cta__link:hover svg {
-          transform: translateX(3px);
-        }
 
 
         /* ===================================================
@@ -1298,20 +1065,15 @@ function PilotProvisioning() {
 
         @media (max-width: 1024px) {
           .pp-intro__grid {
-            grid-template-columns: 1fr;
             gap: 3rem;
-          }
-
-          .pp-intro__image-wrap {
-            order: -1;
-          }
-
-          .pp-standards__grid {
-            grid-template-columns: 1fr;
           }
 
           .pp-services {
             padding: 2rem 2.5rem;
+          }
+
+          .pp-enquiry {
+            padding: 5rem 3rem;
           }
         }
 
@@ -1382,33 +1144,6 @@ function PilotProvisioning() {
             padding: 2rem 1.5rem;
           }
 
-          /* Standards */
-          .pp-standards {
-            padding: 4rem 1.5rem;
-          }
-
-          .pp-standards__grid {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-          }
-
-          /* Process */
-          .pp-process {
-            padding: 4rem 1.5rem;
-          }
-
-          .pp-process__step {
-            flex-direction: column;
-            gap: 0.5rem;
-            padding: 1.25rem 0;
-          }
-
-          .pp-process__step-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.25rem;
-          }
-
           /* Aircraft */
           .pp-aircraft {
             padding: 4rem 1.5rem;
@@ -1418,23 +1153,13 @@ function PilotProvisioning() {
             gap: 0.5rem;
           }
 
-          /* FAQ */
-          .pp-faq {
+          /* Enquiry */
+          .pp-enquiry {
             padding: 4rem 1.5rem;
           }
 
-          .pp-faq__item {
-            gap: 1rem;
-          }
-
-          /* CTA */
-          .pp-cta__inner {
-            padding: 4rem 1.5rem;
-          }
-
-          .pp-cta__buttons {
-            flex-direction: column;
-            gap: 1.25rem;
+          .pp-enquiry__row {
+            grid-template-columns: 1fr;
           }
         }
 
@@ -1448,16 +1173,8 @@ function PilotProvisioning() {
             font-size: clamp(2.5rem, 13vw, 3.5rem);
           }
 
-          .pp-hero__badge {
-            max-width: 100%;
-          }
-
           .pp-panel__title {
             font-size: 1.2rem;
-          }
-
-          .pp-faq__content h4 {
-            font-size: 0.9rem;
           }
 
           .pp-aircraft__chip {
