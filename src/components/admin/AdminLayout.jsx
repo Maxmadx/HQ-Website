@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { to: '/admin/comparables', icon: '🚁', label: 'Comparables' },
   { to: '/admin/misc', icon: '🛒', label: 'Misc Items' },
   { to: '/admin/misc-marketplace', icon: '🛍️', label: 'Marketplace' },
+  { to: '/admin/parts', icon: '🔩', label: 'Parts' },
   { to: '/admin/images', icon: '🖼️', label: 'Images' },
   { to: '/admin/text', icon: '✍️', label: 'Text' },
   { to: '/admin/blog', icon: '📝', label: 'Blog' },
