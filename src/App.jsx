@@ -83,6 +83,7 @@ import TestingHeroSection from './pages/TestingHeroSection';
 import Misc from './pages/Misc';
 import MiscItemDetail from './pages/MiscItemDetail';
 import PartSales from './pages/PartSales';
+import RHCConfigurator from './pages/RHCConfigurator';
 import AwardVariations from './pages/AwardVariations';
 import MobileSecondSection from './pages/MobileSecondSection';
 import Wireframes from './pages/Wireframes';
@@ -234,6 +235,7 @@ function App() {
         <Route path="/aircraft/h500" element={<AircraftH500 />} />
         <Route path="/aircraft/r88" element={<AircraftR88 />} />
         <Route path="/aircraft-sales/new/r88" element={<AircraftR88 />} />
+        <Route path="/rhc-configurator" element={<RHCConfigurator />} />
         <Route path="/helicopter-tour-of-london" element={<HelicopterTourOfLondon />} />
         <Route path="/hq-account" element={<HQAccount />} />
         <Route path="/blog" element={<Blog />} />
