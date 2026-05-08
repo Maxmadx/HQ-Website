@@ -254,7 +254,7 @@ function CheckoutForm({
 }
 
 // ─── Misc Payment Form ───────────────────────────────────────────────────────
-function MiscCheckoutForm({ itemId, itemName, qty, price, requiresShipping }) {
+function MiscCheckoutForm({ itemId, itemName, qty, price, requiresShipping, apparelSize }) {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -286,6 +286,7 @@ function MiscCheckoutForm({ itemId, itemName, qty, price, requiresShipping }) {
           customerEmail: email,
           customerPhone: phone,
           ...(requiresShipping ? { shippingAddress } : {}),
+          ...(apparelSize ? { size: apparelSize } : {}),
         }),
       });
       const data = await res.json();
@@ -313,7 +314,8 @@ function MiscCheckoutForm({ itemId, itemName, qty, price, requiresShipping }) {
         `/booking-confirmed?ref=${result.paymentIntent.id}` +
         `&type=misc` +
         `&itemName=${encodeURIComponent(itemName)}` +
-        `&name=${encodeURIComponent(name)}`
+        `&name=${encodeURIComponent(name)}` +
+        (apparelSize ? `&size=${encodeURIComponent(apparelSize)}` : '')
       );
     }
   };
@@ -463,6 +465,7 @@ export default function Checkout() {
   const itemName = searchParams.get('itemName');
   const qty = searchParams.get('qty') || '1';
   const requiresShipping = searchParams.get('requiresShipping') === '1';
+  const apparelSize = searchParams.get('size') || '';
 
   // Flight params (existing)
   const aircraft = searchParams.get('aircraft');
@@ -649,6 +652,12 @@ export default function Checkout() {
                   <span style={styles.summaryLabel}>Item</span>
                   <span style={styles.summaryValue}>{itemName}</span>
                 </div>
+                {apparelSize && (
+                  <div style={styles.summaryRow}>
+                    <span style={styles.summaryLabel}>Size</span>
+                    <span style={styles.summaryValue}>{apparelSize}</span>
+                  </div>
+                )}
                 {Number(qty) > 1 && (
                   <div style={styles.summaryRow}>
                     <span style={styles.summaryLabel}>Quantity</span>
@@ -718,7 +727,7 @@ export default function Checkout() {
             ) : (
               <Elements stripe={stripePromise}>
                 {isMisc ? (
-                  <MiscCheckoutForm itemId={itemId} itemName={itemName} qty={qty} price={price} requiresShipping={requiresShipping} />
+                  <MiscCheckoutForm itemId={itemId} itemName={itemName} qty={qty} price={price} requiresShipping={requiresShipping} apparelSize={apparelSize} />
                 ) : (
                   <CheckoutForm
                     aircraft={aircraft}

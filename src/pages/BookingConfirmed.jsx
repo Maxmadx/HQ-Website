@@ -18,6 +18,7 @@ export default function BookingConfirmed() {
   const name = searchParams.get('name');
   const type = searchParams.get('type');
   const itemName = searchParams.get('itemName');
+  const apparelSize = searchParams.get('size') || '';
   const isMisc = type === 'misc';
 
   const aircraftName = AIRCRAFT_NAMES[aircraft] || aircraft || 'Discovery Flight';
@@ -76,12 +77,20 @@ export default function BookingConfirmed() {
           <h2 style={styles.cardHeading}>Booking Summary</h2>
 
           {isMisc ? (
-            itemName && (
-              <div style={styles.row}>
-                <span style={styles.label}>Item</span>
-                <span style={styles.value}>{itemName}</span>
-              </div>
-            )
+            <>
+              {itemName && (
+                <div style={styles.row}>
+                  <span style={styles.label}>Item</span>
+                  <span style={styles.value}>{itemName}</span>
+                </div>
+              )}
+              {apparelSize && (
+                <div style={styles.row}>
+                  <span style={styles.label}>Size</span>
+                  <span style={styles.value}>{apparelSize}</span>
+                </div>
+              )}
+            </>
           ) : (
             <>
               <div style={styles.row}>

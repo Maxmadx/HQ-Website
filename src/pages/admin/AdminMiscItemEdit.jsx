@@ -20,6 +20,8 @@ const EMPTY = {
   images: [],
   discoveryAddon: false,
   discoveryAddonDiscountPct: 0,
+  apparel: false,
+  sizes: [],
 };
 
 export default function AdminMiscItemEdit() {
@@ -45,6 +47,16 @@ export default function AdminMiscItemEdit() {
 
   function set(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
+  }
+
+  function addSize(raw) {
+    const v = String(raw || '').trim().toUpperCase();
+    if (!v) return;
+    setForm((f) => (f.sizes.includes(v) ? f : { ...f, sizes: [...f.sizes, v] }));
+  }
+
+  function removeSize(idx) {
+    setForm((f) => ({ ...f, sizes: f.sizes.filter((_, i) => i !== idx) }));
   }
 
   async function handleImageUpload(e) {
@@ -94,6 +106,11 @@ export default function AdminMiscItemEdit() {
     setSaving(true);
     setError('');
     try {
+      if (form.apparel && (!Array.isArray(form.sizes) || form.sizes.length === 0)) {
+        setError('Apparel items need at least one size. Add a size or untick "Apparel item".');
+        setSaving(false);
+        return;
+      }
       const priceDisplay = form.priceType === 'fixed' && form.price > 0
         ? `£${(form.price / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
         : 'POA';
@@ -101,9 +118,11 @@ export default function AdminMiscItemEdit() {
       const payload = {
         ...form,
         priceDisplay,
-        ...(form.priceType === 'poa' ? { price: 0, hasQuantity: false, stock: 1, requiresShipping: false } : {}),
+        ...(form.priceType === 'poa' ? { price: 0, hasQuantity: false, stock: 1, requiresShipping: false, apparel: false, sizes: [] } : {}),
         discoveryAddon: isAddon,
         discoveryAddonDiscountPct: isAddon ? Math.max(0, Math.min(100, parseInt(form.discoveryAddonDiscountPct, 10) || 0)) : 0,
+        apparel: form.priceType === 'fixed' ? !!form.apparel : false,
+        sizes: (form.priceType === 'fixed' && form.apparel && Array.isArray(form.sizes)) ? form.sizes : [],
       };
       if (isNew) {
         const newId = await createDoc('misc_items', payload);
@@ -281,6 +300,65 @@ export default function AdminMiscItemEdit() {
                   />
                   <span style={{ fontSize: '0.85rem', color: '#374151' }}>%</span>
                   <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>Leave as 0 for no discount.</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {form.priceType === 'fixed' && (
+            <div>
+              <label style={labelStyle}>Apparel</label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: '#374151', marginBottom: '0.5rem' }}>
+                <input
+                  type="checkbox"
+                  checked={form.apparel}
+                  onChange={(e) => set('apparel', e.target.checked)}
+                />
+                Apparel item (size selection on store)
+              </label>
+              {form.apparel && (
+                <div style={{ marginTop: '0.5rem' }}>
+                  <label style={{ ...labelStyle, marginBottom: '0.4rem' }}>Sizes</label>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.5rem' }}>
+                    {form.sizes.map((s, i) => (
+                      <span key={`${s}-${i}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', background: '#e5e7eb', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 600 }}>
+                        {s}
+                        <button
+                          type="button"
+                          onClick={() => removeSize(i)}
+                          aria-label={`Remove size ${s}`}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.9rem', lineHeight: 1, color: '#6b7280', padding: 0 }}
+                        >×</button>
+                      </span>
+                    ))}
+                    {form.sizes.length === 0 && (
+                      <span style={{ fontSize: '0.75rem', color: '#9ca3af', fontStyle: 'italic' }}>No sizes added yet.</span>
+                    )}
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.4rem' }}>
+                    <input
+                      style={{ ...fieldStyle, width: '100px' }}
+                      type="text"
+                      placeholder="e.g. M"
+                      data-testid="size-input"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          addSize(e.currentTarget.value);
+                          e.currentTarget.value = '';
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        const input = e.currentTarget.previousSibling;
+                        addSize(input.value);
+                        input.value = '';
+                      }}
+                      style={{ background: '#e5e7eb', border: 'none', padding: '0 0.75rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}
+                    >Add</button>
+                  </div>
                 </div>
               )}
             </div>
