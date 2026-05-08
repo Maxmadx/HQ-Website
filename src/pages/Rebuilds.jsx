@@ -73,7 +73,7 @@ function FinalDraftHeader() {
           <div data-nc-container="top-left"></div>
           <div data-nc-container="top-center">
             <Link to="/" className="Header-branding" data-nc-element="branding">
-              <img src="/assets/images/logos/hq/hq-aviation-logo-black.png" alt="HQ Aviation" className="Header-branding-logo" loading="lazy" decoding="async" />
+              <img src="/assets/images/logos/hq/hq-aviation-logo-black.png" alt="HQ Aviation" className="Header-branding-logo" loading="lazy" decoding="async" width={405} height={245} />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
               <div className="Header-nav-inner">
@@ -218,7 +218,7 @@ function BeforeAfter({ pageImages = {} }) {
       <div className="rb__beforeafter-item">
         <div className="rb__beforeafter-before">
           <div className="rb__beforeafter-img">
-            <img src={beforeSrc} alt={`${steps[rebuildStep].label} (before)`} />
+            <img src={beforeSrc} alt={`${steps[rebuildStep].label} (before)`} width={1500} height={1000} />
           </div>
           <span>BEFORE</span>
           <p>{steps[rebuildStep].beforeDesc}</p>
@@ -226,7 +226,7 @@ function BeforeAfter({ pageImages = {} }) {
         <div className="rb__beforeafter-arrow">&rarr;</div>
         <div className="rb__beforeafter-after">
           <div className="rb__beforeafter-img">
-            <img src={afterSrc} alt={`${steps[rebuildStep].label} (after)`} />
+            <img src={afterSrc} alt={`${steps[rebuildStep].label} (after)`} width={1500} height={1000} />
           </div>
           <span>AFTER</span>
           <p>{steps[rebuildStep].afterDesc}</p>
@@ -435,7 +435,7 @@ function Rebuilds() {
       <section className="rb__hero" data-cms-section="rebuilds-hero">
         <div className="rb__hero-inner">
           <div className="rb__hero-image">
-            <img src={pageImages['rebuilds-hero']?.[0]?.url || '/assets/images/facility/main-sales-pic.jpg'} alt="Helicopter Rebuild" />
+            <img src={pageImages['rebuilds-hero']?.[0]?.url || '/assets/images/facility/main-sales-pic.jpg'} alt="Helicopter Rebuild" width={2500} height={1667} />
           </div>
           <div className="rb__hero-text">
             <div className="rb__grid-lines" />
@@ -507,7 +507,7 @@ function Rebuilds() {
                 <Reveal key={i} delay={i * 0.1}>
                   <div className="rb__model-card">
                     <div className="rb__model-img">
-                      <img src={pageImages['rebuilds-models']?.[i]?.url || m.image} alt={m.model} />
+                      <img src={pageImages['rebuilds-models']?.[i]?.url || m.image} alt={m.model} width={1920} height={1080} />
                     </div>
                     <div className="rb__model-body">
                       <h3>{m.model}</h3>
