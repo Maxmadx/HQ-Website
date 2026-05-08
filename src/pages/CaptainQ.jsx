@@ -84,7 +84,7 @@ function CaptainQ() {
       {/* ===== HERO ===== */}
       <section className="cq__hero" ref={heroRef}>
         <div className="cq__hero-bg">
-          <img src="/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp" alt="" />
+          <img src="/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp" alt="" width={2500} height={1922} />
           <div className="cq__hero-overlay" />
         </div>
         <div className={`cq__hero-content ${heroInView ? 'cq__hero-content--visible' : ''}`}>
@@ -114,7 +114,7 @@ function CaptainQ() {
       <section className="cq__bio" ref={bioRef}>
         <div className="cq__bio-inner">
           <div className={`cq__bio-image ${bioInView ? 'cq__bio-image--visible' : ''}`}>
-            <img src="/assets/images/team/world-helicopter-champion-quentin-smith.webp" alt="Captain Quentin Smith" />
+            <img src="/assets/images/team/world-helicopter-champion-quentin-smith.webp" alt="Captain Quentin Smith" width={530} height={686} />
           </div>
           <div className={`cq__bio-content ${bioInView ? 'cq__bio-content--visible' : ''}`}>
             <span className="cq__pretitle">The Man Behind the Legend</span>
@@ -159,7 +159,7 @@ function CaptainQ() {
       {/* ===== WORLD CHAMPION ===== */}
       <section className="cq__parallax">
         <div className="cq__parallax-img">
-          <img src="/assets/images/team/helicopter-genius-quentin-smith-great-britain.webp" alt="Q competing for Great Britain" />
+          <img src="/assets/images/team/helicopter-genius-quentin-smith-great-britain.webp" alt="Q competing for Great Britain" width={2048} height={1366} />
         </div>
         <h2 className="cq__parallax-title">World Champion</h2>
       </section>
@@ -214,7 +214,7 @@ function CaptainQ() {
             </div>
           </div>
           <div className={`cq__champ-image ${champInView ? 'cq__champ-image--visible' : ''}`}>
-            <img src="/assets/images/team/quentin-smith-world-record-holder-helicopter-aerobatics.webp" alt="Q performing helicopter aerobatics" />
+            <img src="/assets/images/team/quentin-smith-world-record-holder-helicopter-aerobatics.webp" alt="Q performing helicopter aerobatics" width={2500} height={1659} />
           </div>
         </div>
       </section>
@@ -223,7 +223,7 @@ function CaptainQ() {
       {/* ===== EXPEDITIONS ===== */}
       <section className="cq__parallax">
         <div className="cq__parallax-img">
-          <img src="/assets/images/expeditions/north-pole.jpg" alt="Helicopter at the North Pole" />
+          <img src="/assets/images/expeditions/north-pole.jpg" alt="Helicopter at the North Pole" width={1840} height={1232} />
         </div>
         <h2 className="cq__parallax-title">Expeditions</h2>
       </section>
@@ -260,6 +260,8 @@ function CaptainQ() {
                   src={exp.img}
                   alt={exp.title}
                   className={i === activeExp ? 'cq__exp-img--active' : ''}
+                  width={2500}
+                  height={1667}
                 />
               ))}
             </div>
@@ -280,7 +282,7 @@ function CaptainQ() {
       {/* ===== TOM CRUISE / MISSION IMPOSSIBLE ===== */}
       <section className="cq__parallax">
         <div className="cq__parallax-img">
-          <img src="/assets/images/gallery/flying/flying-tv.jpg" alt="Helicopter in flight" />
+          <img src="/assets/images/gallery/flying/flying-tv.jpg" alt="Helicopter in flight" width={405} height={89} />
         </div>
         <h2 className="cq__parallax-title">Hollywood</h2>
       </section>
@@ -326,7 +328,7 @@ function CaptainQ() {
                 <span className="cq__tom-stat-label">Film release</span>
               </div>
             </div>
-            <img src="/assets/images/team/q-dubai.jpg" alt="Captain Q, instructor to the world's biggest stars" />
+            <img src="/assets/images/team/q-dubai.jpg" alt="Captain Q, instructor to the world's biggest stars" width={2500} height={1875} />
             <span className="cq__media-caption">The instructor behind the impossible</span>
           </div>
         </div>
@@ -337,7 +339,7 @@ function CaptainQ() {
       <section className="cq__special" ref={specialRef}>
         <div className="cq__special-inner">
           <div className={`cq__special-image ${specialInView ? 'cq__special-image--visible' : ''}`}>
-            <img src="/assets/images/team/quentin-smith-profile-picture-2.jpg" alt="Captain Q advanced training" />
+            <img src="/assets/images/team/quentin-smith-profile-picture-2.jpg" alt="Captain Q advanced training" width={1440} height={961} />
           </div>
           <div className={`cq__special-content ${specialInView ? 'cq__special-content--visible' : ''}`}>
             <span className="cq__pretitle">Beyond Regulation</span>
@@ -370,7 +372,7 @@ function CaptainQ() {
       <section className="cq__media" ref={legacyRef}>
         <div className="cq__media-inner">
           <div className={`cq__media-image ${legacyInView ? 'cq__media-image--visible' : ''}`}>
-            <img src="/assets/images/team/helicopter-lands-on-a-car-2c-top-gear-2c-quentin-smith.webp" alt="Q landing a helicopter on a moving car for Top Gear" />
+            <img src="/assets/images/team/helicopter-lands-on-a-car-2c-top-gear-2c-quentin-smith.webp" alt="Q landing a helicopter on a moving car for Top Gear" width={640} height={427} />
             <span className="cq__media-caption">Landing a helicopter on a moving car</span>
           </div>
           <div className={`cq__media-content ${legacyInView ? 'cq__media-content--visible' : ''}`}>
@@ -400,7 +402,7 @@ function CaptainQ() {
       {/* ===== CTA ===== */}
       <section className="cq__cta">
         <div className="cq__cta-bg">
-          <img src="/assets/images/facility/busy-hangar.jpg" alt="" />
+          <img src="/assets/images/facility/busy-hangar.jpg" alt="" width={2500} height={1875} />
           <div className="cq__cta-overlay" />
         </div>
         <div className="cq__cta-content">
