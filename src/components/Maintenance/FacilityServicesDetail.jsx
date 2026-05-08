@@ -51,12 +51,12 @@ const FacilityServicesDetail = () => (
           <div className="fsd__img-track">
             <div className="fsd__img-set">
               {imagesRow1.map((src, i) => (
-                <div key={i} className="fsd__img"><img src={src} alt="" loading="lazy" /></div>
+                <div key={i} className="fsd__img"><img src={src} alt="" loading="lazy" width={2500} height={1667} /></div>
               ))}
             </div>
             <div className="fsd__img-set">
               {imagesRow1.map((src, i) => (
-                <div key={`d${i}`} className="fsd__img"><img src={src} alt="" loading="lazy" /></div>
+                <div key={`d${i}`} className="fsd__img"><img src={src} alt="" loading="lazy" width={2500} height={1667} /></div>
               ))}
             </div>
           </div>
@@ -65,12 +65,12 @@ const FacilityServicesDetail = () => (
           <div className="fsd__img-track fsd__img-track--reverse">
             <div className="fsd__img-set">
               {imagesRow2.map((src, i) => (
-                <div key={i} className="fsd__img"><img src={src} alt="" loading="lazy" /></div>
+                <div key={i} className="fsd__img"><img src={src} alt="" loading="lazy" width={2500} height={1667} /></div>
               ))}
             </div>
             <div className="fsd__img-set">
               {imagesRow2.map((src, i) => (
-                <div key={`d${i}`} className="fsd__img"><img src={src} alt="" loading="lazy" /></div>
+                <div key={`d${i}`} className="fsd__img"><img src={src} alt="" loading="lazy" width={2500} height={1667} /></div>
               ))}
             </div>
           </div>
