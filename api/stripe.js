@@ -796,14 +796,31 @@ async function handleWebhook(req) {
         bookingData.qty = Number(qty) || 1;
         if (apparelSize) bookingData.apparelSize = apparelSize;
       } else {
-        const { aircraft, aircraftName, duration } = pi.metadata;
+        const { aircraft, aircraftName, duration, referralCode, referredByCode } = pi.metadata;
         bookingData.aircraft = aircraft;
         bookingData.aircraftName = aircraftName || aircraft;
         bookingData.duration = Number(duration);
+        if (referralCode) bookingData.referralCode = referralCode;
+        if (referredByCode) bookingData.referredByCode = referredByCode;
+        bookingData.referralCompleted = false;
+        // Snapshot the free-item at booking write time (in case it was deleted later)
+        try {
+          const codesDoc = referralCode
+            ? await admin.firestore().collection('referral_codes').doc(referralCode).get()
+            : null;
+          if (codesDoc && codesDoc.exists) {
+            const cd = codesDoc.data();
+            if (cd.freeItemSnapshot) bookingData.referralFreeItemSnapshot = cd.freeItemSnapshot;
+          }
+        } catch {}
         const { addons: webhookParsedAddons, fulfilment: webhookFulfilment, shippingAddress: webhookShippingAddress } = parseAddonsFromMetadata(pi.metadata);
         bookingData.addons = webhookParsedAddons;
         bookingData.fulfilment = webhookFulfilment;
         bookingData.shippingAddress = webhookShippingAddress;
+        // flightAmountPence: the PI amount minus the addon line totals (used for upgrade math in Plan C)
+        const addonTotal = webhookParsedAddons.reduce((sum, a) => sum + (Number(a.lineTotal) || 0), 0);
+        bookingData.flightAmountPence = pi.amount - addonTotal;
+        bookingData.totalAmountPence = pi.amount;
       }
 
       await admin.firestore().collection('bookings').doc(pi.id).set(bookingData, { merge: true });
