@@ -163,6 +163,8 @@ function BlockRenderer({ block }) {
             src={block.url}
             alt={block.alt || ''}
             style={{ ...(imgStyles[block.placement] || imgStyles.full), borderRadius: '6px', objectFit: 'cover' }}
+            width={1500}
+            height={1000}
           />
           {block.caption && (
             <figcaption style={{ textAlign: 'center', fontSize: '0.8rem', color: '#666', marginTop: '0.5rem', fontStyle: 'italic', clear: 'both' }}>
