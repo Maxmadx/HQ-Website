@@ -459,8 +459,11 @@ export default function Checkout() {
   const navigate = useNavigate();
 
   const [referredByCode] = useState(() => {
-    const raw = searchParams.get('ref') || '';
-    return /^[A-Za-z0-9]{8}$/.test(raw.trim()) ? raw.trim().toUpperCase() : '';
+    // First try URL param; fall back to sessionStorage written by DiscoveryFlight
+    const raw = searchParams.get('ref') ||
+      (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('referredByCode') || '' : '');
+    const validated = /^[A-Za-z0-9]{8}$/.test(raw.trim()) ? raw.trim().toUpperCase() : '';
+    return validated;
   });
 
   const type = searchParams.get('type');

@@ -563,7 +563,7 @@ async function sendConfirmationEmail({ customerName, customerEmail, aircraft, du
               <p style="margin: 0 0 16px; color: #444; line-height: 1.5; font-family: Inter, -apple-system, Arial, sans-serif; font-size: 14px;">
                 Share this with a friend. When they book a Discovery Flight using your link, you get a free HQ item &mdash; collect it next time you&rsquo;re at HQ.
               </p>
-              <a href="${process.env.PUBLIC_URL || 'https://hq-aviation.com'}/training/trial-lessons?ref=${escapeHtml(referralCode)}"
+              <a href="${process.env.SITE_URL || 'https://hqaviation.co.uk'}/training/trial-lessons?ref=${escapeHtml(referralCode)}"
                  style="display: inline-block; padding: 12px 20px; background: #1a1a1a; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 600; font-family: Inter, -apple-system, Arial, sans-serif; font-size: 14px;">
                 Share with a friend
               </a>
@@ -1080,10 +1080,13 @@ async function recordBooking(paymentIntentId) {
     bookingData.timeOfDay = timeOfDay || '';
     bookingData.quantity = Number(quantity) || 1;
   } else {
-    const { aircraft, aircraftName, duration } = pi.metadata || {};
+    const { aircraft, aircraftName, duration, referralCode, referredByCode } = pi.metadata || {};
     bookingData.aircraft = aircraft || '';
     bookingData.aircraftName = aircraftName || AIRCRAFT_NAMES[aircraft] || aircraft || '';
     bookingData.duration = Number(duration) || 0;
+    if (referralCode) bookingData.referralCode = referralCode;
+    if (referredByCode) bookingData.referredByCode = referredByCode;
+    bookingData.referralCompleted = false;
   }
 
   const { addons: parsedAddons, fulfilment, shippingAddress } = parseAddonsFromMetadata(pi.metadata);
@@ -1091,6 +1094,11 @@ async function recordBooking(paymentIntentId) {
   bookingData.addons = parsedAddons;
   bookingData.fulfilment = fulfilment;
   bookingData.shippingAddress = shippingAddress;
+
+  // flightAmountPence / totalAmountPence — used for upgrade math (Plan C)
+  const addonTotal = (parsedAddons || []).reduce((sum, a) => sum + (Number(a.lineTotal) || 0), 0);
+  bookingData.flightAmountPence = pi.amount - addonTotal;
+  bookingData.totalAmountPence = pi.amount;
 
   const ref = admin.firestore().collection('bookings').doc(pi.id);
   const existing = await ref.get();
