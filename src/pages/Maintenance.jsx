@@ -87,6 +87,8 @@ function Maintenance() {
                 alt="HQ Aviation Maintenance Hangar"
                 loading="lazy"
                 style={{ borderRadius: 'var(--border-radius-md)', width: '100%' }}
+                width={750}
+                height={558}
               />
             </div>
           </div>
@@ -103,6 +105,8 @@ function Maintenance() {
                 alt="Robinson Helicopter Overhaul at HQ Aviation"
                 loading="lazy"
                 style={{ borderRadius: 'var(--border-radius-md)', width: '100%' }}
+                width={2500}
+                height={1875}
               />
             </div>
             <div>
@@ -123,11 +127,15 @@ function Maintenance() {
                   src={pageImages['maintenance-cert-logo']?.[0]?.url ?? '/assets/images/logos/certifications/robinson-authorized.jpg'}
                   alt="Robinson Authorized Service Centre"
                   style={{ height: '60px' }}
+                  width={350}
+                  height={148}
                 />
                 <img
                   src="/assets/images/logos/certifications/easa.png"
                   alt="EASA Approved"
                   style={{ height: '60px' }}
+                  width={950}
+                  height={353}
                 />
               </div>
             </div>
@@ -167,7 +175,7 @@ function Maintenance() {
             {helicopterModels.map((heli) => (
               <div key={heli.model} className="card">
                 <div className="card__image">
-                  <img src={heli.image} alt={heli.model} loading="lazy" />
+                  <img src={heli.image} alt={heli.model} loading="lazy" width={1500} height={1000} />
                 </div>
                 <div className="card__content">
                   <h3 className="card__title">{heli.model}</h3>
@@ -204,6 +212,8 @@ function Maintenance() {
                 alt="Guimbal Cabri G2 Maintenance"
                 loading="lazy"
                 style={{ borderRadius: 'var(--border-radius-md)', width: '100%' }}
+                width={1500}
+                height={1000}
               />
             </div>
           </div>
