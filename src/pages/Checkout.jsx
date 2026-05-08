@@ -315,7 +315,8 @@ function MiscCheckoutForm({ itemId, itemName, qty, price, requiresShipping, appa
         `/booking-confirmed?ref=${result.paymentIntent.id}` +
         `&type=misc` +
         `&itemName=${encodeURIComponent(itemName)}` +
-        `&name=${encodeURIComponent(name)}`
+        `&name=${encodeURIComponent(name)}` +
+        (apparelSize ? `&size=${encodeURIComponent(apparelSize)}` : '')
       );
     }
   };
@@ -586,6 +587,12 @@ export default function Checkout() {
                   <span style={styles.summaryLabel}>Item</span>
                   <span style={styles.summaryValue}>{itemName}</span>
                 </div>
+                {apparelSize && (
+                  <div style={styles.summaryRow}>
+                    <span style={styles.summaryLabel}>Size</span>
+                    <span style={styles.summaryValue}>{apparelSize}</span>
+                  </div>
+                )}
                 {Number(qty) > 1 && (
                   <div style={styles.summaryRow}>
                     <span style={styles.summaryLabel}>Quantity</span>

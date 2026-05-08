@@ -233,6 +233,7 @@ export default function MiscItemDetail() {
   const [enquiryError, setEnquiryError] = useState('');
 
   useEffect(() => {
+    setSelectedSize(''); // reset when navigating to a different item
     getDoc(doc(db, 'misc_items', id)).then((snap) => {
       if (snap.exists()) {
         setItem({ id: snap.id, ...snap.data() });
