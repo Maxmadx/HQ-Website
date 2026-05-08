@@ -39,7 +39,7 @@ function CheckoutForm({
   aircraft, duration, price,
   wantsVoucher, setWantsVoucher, voucherLocation, setVoucherLocation, voucherMessage, setVoucherMessage,
   addons, addonsState, addonsTotalPence,
-  prefillEmail, cartId,
+  prefillEmail, cartId, referredByCode,
 }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -97,6 +97,7 @@ function CheckoutForm({
             ? addonsState.shippingAddress
             : null,
           cartId: cartId || '',
+          ...(referredByCode ? { referredByCode } : {}),
         }),
       });
       const data = await res.json();
@@ -457,6 +458,11 @@ export default function Checkout() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
+  const [referredByCode] = useState(() => {
+    const raw = searchParams.get('ref') || '';
+    return /^[A-Za-z0-9]{8}$/.test(raw.trim()) ? raw.trim().toUpperCase() : '';
+  });
+
   const type = searchParams.get('type');
   const isMisc = type === 'misc';
 
@@ -744,6 +750,7 @@ export default function Checkout() {
                     addonsTotalPence={addonsTotalPence}
                     prefillEmail={email}
                     cartId={cartId}
+                    referredByCode={referredByCode}
                   />
                 )}
               </Elements>
