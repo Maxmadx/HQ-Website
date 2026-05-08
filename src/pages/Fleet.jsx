@@ -113,6 +113,8 @@ function FleetHeader() {
                 alt="HQ Aviation"
                 className="Header-branding-logo"
                 loading="lazy"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -332,7 +334,7 @@ function FleetHero() {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1.5 }}
       >
-        <img src={pageImages['fleet-hero']?.[0]?.url || '/assets/images/facility/busy-hangar.jpg'} alt="HQ Aviation Fleet" />
+        <img src={pageImages['fleet-hero']?.[0]?.url || '/assets/images/facility/busy-hangar.jpg'} alt="HQ Aviation Fleet" width={2500} height={1875} />
       </motion.div>
 
       <motion.div
@@ -548,7 +550,7 @@ function AircraftCard({ aircraft, index, onClick }) {
       onClick={() => onClick(aircraft)}
     >
       <div className="aircraft-card__image">
-        <img src={aircraft.image} alt={aircraft.model} />
+        <img src={aircraft.image} alt={aircraft.model} width={2500} height={1667} />
       </div>
 
       <div className="aircraft-card__content">
@@ -759,7 +761,7 @@ function FleetShowcase() {
               </button>
 
               <div className="fleet-modal__image">
-                <img src={selectedAircraft.heroImage} alt={selectedAircraft.model} />
+                <img src={selectedAircraft.heroImage} alt={selectedAircraft.model} width={2500} height={1667} />
               </div>
 
               <div className="fleet-modal__body">
@@ -922,7 +924,7 @@ function FleetGallery() {
           <div className="fleet-gallery__slides">
             {[...galleryRow1, ...galleryRow1].map((src, i) => (
               <div key={i} className="fleet-gallery__slide">
-                <img src={src} alt="" />
+                <img src={src} alt="" width={2500} height={1667} />
               </div>
             ))}
           </div>
@@ -935,7 +937,7 @@ function FleetGallery() {
           <div className="fleet-gallery__slides fleet-gallery__slides--reverse">
             {[...galleryRow2, ...galleryRow2].map((src, i) => (
               <div key={i} className="fleet-gallery__slide">
-                <img src={src} alt="" />
+                <img src={src} alt="" width={2500} height={1667} />
               </div>
             ))}
           </div>
@@ -955,7 +957,7 @@ function FleetHighlight() {
   return (
     <section className="fleet-highlight" data-cms-section="fleet-highlight">
       <div className="fleet-highlight__bg">
-        <img src={pageImages['fleet-highlight']?.[0]?.url || '/assets/images/gallery/carousel/rotating6.jpg'} alt="MD 500 Helicopter" />
+        <img src={pageImages['fleet-highlight']?.[0]?.url || '/assets/images/gallery/carousel/rotating6.jpg'} alt="MD 500 Helicopter" width={2500} height={1667} />
       </div>
       <div className="fleet-highlight__overlay" />
 
@@ -1011,7 +1013,7 @@ function FleetTrust() {
       <div className="fleet-trust__container">
         <Reveal>
           <div className="fleet-trust__badge">
-            <img src="/assets/images/robinson-assets/logos/rhc-authorized-dealer-logo-logo-yellow-rotor-black-type.svg" alt="Robinson Authorized Dealer" />
+            <img src="/assets/images/robinson-assets/logos/rhc-authorized-dealer-logo-logo-yellow-rotor-black-type.svg" alt="Robinson Authorized Dealer" width={578} height={288} />
           </div>
         </Reveal>
         <Reveal delay={0.1}>
@@ -1426,6 +1428,8 @@ function FleetDiscovery() {
           <img
             alt="Discovery flight over countryside"
             src="/assets/images/gallery/carousel/rotating1.jpg"
+            width={2500}
+            height={1667}
           />
           <div className="fleet-discovery__image-overlay" />
         </div>
