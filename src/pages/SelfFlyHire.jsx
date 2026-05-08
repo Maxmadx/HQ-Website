@@ -97,6 +97,8 @@ function SelfFlyHireHeader() {
                 className="Header-branding-logo"
                 loading="lazy"
                 decoding="async"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -304,7 +306,7 @@ export default function SelfFlyHire() {
       {/* ── Hero ───────────────────────────────────────────────── */}
       <section className="sfh2-hero" data-cms-section="sfh-hero">
         <div className="sfh2-hero__bg">
-          <img src={heroUrl} alt="HQ Aviation self-fly hire" />
+          <img src={heroUrl} alt="HQ Aviation self-fly hire" width={2500} height={1667} />
         </div>
         <div className="sfh2-hero__overlay" />
         <div className="sfh2-hero__content">
@@ -345,7 +347,7 @@ export default function SelfFlyHire() {
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
-            <img src={introUrl} alt="HQ Aviation fleet at Denham" className="sfh2-intro__image" />
+            <img src={introUrl} alt="HQ Aviation fleet at Denham" className="sfh2-intro__image" width={2500} height={1667} />
           </motion.div>
           <motion.div
             className="sfh2-intro__text"
@@ -427,7 +429,7 @@ export default function SelfFlyHire() {
             transition={{ duration: 0.25, ease: 'easeOut' }}
           >
             <div className="sfh2-fleet__panel-image">
-              <img ref={fleetImgRef} src={pageImages['sfh-fleet']?.[activeFleet]?.url || activeAircraft.image} alt={activeAircraft.model} onLoad={updateSpecsPadding} />
+              <img ref={fleetImgRef} src={pageImages['sfh-fleet']?.[activeFleet]?.url || activeAircraft.image} alt={activeAircraft.model} onLoad={updateSpecsPadding} width={2500} height={1667} />
             </div>
             <div ref={fleetTopBodyRef} className="sfh2-fleet__panel-top-body">
               <div className="sfh2-fleet__panel-top">
