@@ -21,6 +21,7 @@ const path = require('path');
 const fs = require('fs');
 const compression = require('compression');
 const { createPaymentIntent, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking } = require('./api/stripe');
+const { getBooking } = require('./api/booking');
 const leadsRouter = require('./api/leads');
 const stripeDiscoveryRouter = require('./api/stripe-discovery');
 const analyticsRouter = require('./api/analytics-api');
@@ -274,6 +275,11 @@ app.post('/api/record-booking', express.json(), async (req, res) => {
     res.status(status).json({ error: err.message });
   }
 });
+
+// GET /api/booking/:paymentIntentId
+// Returns the booking record for /booking-confirmed and /upgrade pages.
+// PI ID is the access token — no auth header needed.
+app.get('/api/booking/:paymentIntentId', getBooking);
 
 // POST /api/webhook
 // Receives Stripe webhook events. MUST use express.raw() — Stripe requires
