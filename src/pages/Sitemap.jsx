@@ -177,7 +177,7 @@ function SitemapHeader() {
     <header className={`sitemap-header ${scrolled ? 'sitemap-header--scrolled' : ''}`}>
       <div className="sitemap-header__inner">
         <Link to="/" className="sitemap-header__logo">
-          <img src="/assets/images/logos/hq/hq-aviation-logo-black.png" alt="HQ Aviation" />
+          <img src="/assets/images/logos/hq/hq-aviation-logo-black.png" alt="HQ Aviation" width={405} height={245} />
         </Link>
         <Link to="/" className="sitemap-header__back">← Back to Home</Link>
       </div>
