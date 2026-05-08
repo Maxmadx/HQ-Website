@@ -255,7 +255,7 @@ function CheckoutForm({
 }
 
 // ─── Misc Payment Form ───────────────────────────────────────────────────────
-function MiscCheckoutForm({ itemId, itemName, qty, price, requiresShipping }) {
+function MiscCheckoutForm({ itemId, itemName, qty, price, requiresShipping, apparelSize }) {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -287,6 +287,7 @@ function MiscCheckoutForm({ itemId, itemName, qty, price, requiresShipping }) {
           customerEmail: email,
           customerPhone: phone,
           ...(requiresShipping ? { shippingAddress } : {}),
+          ...(apparelSize ? { size: apparelSize } : {}),
         }),
       });
       const data = await res.json();
@@ -396,6 +397,7 @@ export default function Checkout() {
   const itemName = searchParams.get('itemName');
   const qty = searchParams.get('qty') || '1';
   const requiresShipping = searchParams.get('requiresShipping') === '1';
+  const apparelSize = searchParams.get('size') || '';
 
   // Flight params (existing)
   const aircraft = searchParams.get('aircraft');
@@ -646,7 +648,7 @@ export default function Checkout() {
             <h2 style={styles.formHeading}>Your Details &amp; Payment</h2>
             <Elements stripe={stripePromise}>
               {isMisc ? (
-                <MiscCheckoutForm itemId={itemId} itemName={itemName} qty={qty} price={price} requiresShipping={requiresShipping} />
+                <MiscCheckoutForm itemId={itemId} itemName={itemName} qty={qty} price={price} requiresShipping={requiresShipping} apparelSize={apparelSize} />
               ) : (
                 <CheckoutForm
                   aircraft={aircraft}
