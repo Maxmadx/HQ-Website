@@ -223,6 +223,9 @@ export default function MiscItemDetail() {
   // Qty selector
   const [qty, setQty] = useState(1);
 
+  // Size selector (apparel)
+  const [selectedSize, setSelectedSize] = useState('');
+
   // Enquiry form
   const [enquiry, setEnquiry] = useState({ name: '', email: '', phone: '', message: '' });
   const [submitting, setSubmitting] = useState(false);
@@ -256,7 +259,8 @@ export default function MiscItemDetail() {
       `&itemName=${encodeURIComponent(item.name)}` +
       `&price=${(item.price / 100).toFixed(2)}` +
       `&qty=${qty}` +
-      (item.requiresShipping ? `&requiresShipping=1` : '')
+      (item.requiresShipping ? `&requiresShipping=1` : '') +
+      (selectedSize ? `&size=${encodeURIComponent(selectedSize)}` : '')
     );
   }
 
@@ -319,6 +323,8 @@ export default function MiscItemDetail() {
 
   const isFixed = item.priceType === 'fixed';
   const stock = item.stock || 1;
+  const isApparel = !!(item.apparel && Array.isArray(item.sizes) && item.sizes.length > 0);
+  const buyDisabled = isApparel && !selectedSize;
 
   return (
     <>
@@ -414,9 +420,53 @@ export default function MiscItemDetail() {
                   </div>
                 )}
 
-                <button className="mid-buy-btn" onClick={handleBuyNow}>
+                {isApparel && (
+                  <div style={{ marginBottom: '16px' }}>
+                    <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#666', marginBottom: '8px', fontFamily: "'Share Tech Mono', monospace" }}>
+                      Size
+                    </div>
+                    <div role="radiogroup" aria-label="Size" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                      {item.sizes.map((s) => {
+                        const active = selectedSize === s;
+                        return (
+                          <button
+                            key={s}
+                            type="button"
+                            role="radio"
+                            aria-checked={active}
+                            onClick={() => setSelectedSize(s)}
+                            style={{
+                              minWidth: '44px',
+                              padding: '8px 14px',
+                              border: active ? '2px solid #1a1a1a' : '1px solid #d1d5db',
+                              background: active ? '#1a1a1a' : '#fff',
+                              color: active ? '#fff' : '#1a1a1a',
+                              borderRadius: '6px',
+                              fontSize: '0.875rem',
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            {s}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  className="mid-buy-btn"
+                  onClick={handleBuyNow}
+                  disabled={buyDisabled}
+                  data-testid="buy-now"
+                  style={{ opacity: buyDisabled ? 0.4 : undefined, cursor: buyDisabled ? 'not-allowed' : undefined }}
+                >
                   Buy Now{item.hasQuantity && qty > 1 ? ` £${((item.price / 100) * qty).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ''}
                 </button>
+                {buyDisabled && (
+                  <p style={{ fontSize: '0.8rem', color: '#999', marginTop: '6px' }}>Please select a size to continue.</p>
+                )}
               </>
             ) : (
               /* ── POA enquiry branch ── */
