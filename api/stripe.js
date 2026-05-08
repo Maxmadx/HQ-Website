@@ -162,6 +162,29 @@ function escapeHtml(str) {
     .replace(/'/g, '&#x27;');
 }
 
+const REFERRAL_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function makeCode() {
+  let out = '';
+  for (let i = 0; i < 8; i++) out += REFERRAL_ALPHABET[Math.floor(Math.random() * REFERRAL_ALPHABET.length)];
+  return out;
+}
+
+/**
+ * Generates a unique referral code, retrying up to `maxRetries` times on collision.
+ * Throws if a unique code can't be obtained.
+ */
+async function generateUniqueReferralCode(maxRetries = 5) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const code = makeCode();
+    const ref = admin.firestore().collection('referral_codes').doc(code);
+    const snap = await ref.get();
+    if (!snap.exists) return code;
+  }
+  const err = new Error('Failed to generate unique referral code after retries');
+  err.statusCode = 500;
+  throw err;
+}
+
 /**
  * Looks up the price in pence from Firestore (admin SDK — bypasses security rules).
  * Falls back to PRICE_FALLBACK if Firestore is unreachable.
