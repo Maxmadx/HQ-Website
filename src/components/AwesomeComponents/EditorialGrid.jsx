@@ -68,7 +68,7 @@ const GridCell = ({ cell }) => {
 
   return (
     <div className={classes}>
-      <img src={cell.src} alt={cell.alt} loading="lazy" />
+      <img src={cell.src} alt={cell.alt} loading="lazy" width={1500} height={1000} />
       <div className="editorial-grid__hover-overlay">
         <p className="editorial-grid__hover-text">{cell.description}</p>
       </div>
@@ -549,7 +549,7 @@ export const EditorialGrid = ({ centerCardSlot } = {}) => {
             if (!centerCardSlot) {
               return cells.map((cell, i) => (
                 <div key={`${currentPage}-${i}`} className="editorial-grid__photo-cell" onClick={() => openLightbox(i)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && openLightbox(i)}>
-                  <img src={cell.src} alt={cell.alt} loading="eager" />
+                  <img src={cell.src} alt={cell.alt} loading="eager" width={1500} height={1000} />
                 </div>
               ));
             }
@@ -559,7 +559,7 @@ export const EditorialGrid = ({ centerCardSlot } = {}) => {
               <>
                 {left.map((cell, i) => (
                   <div key={`${currentPage}-${i}`} className="editorial-grid__photo-cell" onClick={() => openLightbox(i)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && openLightbox(i)}>
-                    <img src={cell.src} alt={cell.alt} loading="eager" />
+                    <img src={cell.src} alt={cell.alt} loading="eager" width={1500} height={1000} />
                   </div>
                 ))}
                 <div key={`${currentPage}-center`} className="editorial-grid__photo-cell editorial-grid__photo-cell--center">
@@ -567,7 +567,7 @@ export const EditorialGrid = ({ centerCardSlot } = {}) => {
                 </div>
                 {right.map((cell, i) => (
                   <div key={`${currentPage}-${i + 4}`} className="editorial-grid__photo-cell" onClick={() => openLightbox(i + 4)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && openLightbox(i + 4)}>
-                    <img src={cell.src} alt={cell.alt} loading="eager" />
+                    <img src={cell.src} alt={cell.alt} loading="eager" width={1500} height={1000} />
                   </div>
                 ))}
               </>
@@ -608,7 +608,7 @@ export const EditorialGrid = ({ centerCardSlot } = {}) => {
             </button>
           )}
           <div className="woc-lb__img-wrap" onClick={(e) => e.stopPropagation()}>
-            <img src={img?.src} alt={img?.alt || ''} className="woc-lb__img" key={lbIndex} />
+            <img src={img?.src} alt={img?.alt || ''} className="woc-lb__img" key={lbIndex} width={1500} height={1000} />
           </div>
           {images.length > 1 && (
             <button className="woc-lb__chevron woc-lb__chevron--next" onClick={(e) => { e.stopPropagation(); setLbIndex(prev => (prev + 1) % images.length); }} aria-label="Next">
@@ -987,7 +987,7 @@ export const EditorialGrid = ({ centerCardSlot } = {}) => {
         {!fsScrollMode ? (
           <>
             <div className="fd-gallery-fs__img-wrap">
-              <img src={allGalleryImages[fsSlide].src} alt={allGalleryImages[fsSlide].alt} className="fd-gallery-fs__img" key={fsSlide} />
+              <img src={allGalleryImages[fsSlide].src} alt={allGalleryImages[fsSlide].alt} className="fd-gallery-fs__img" key={fsSlide} width={1500} height={1000} />
             </div>
             <div className="fd-gallery-fs__controls">
               <button onClick={() => setFsSlide((prev) => (prev - 1 + allGalleryImages.length) % allGalleryImages.length)} aria-label="Previous">&lsaquo;</button>
@@ -1000,24 +1000,24 @@ export const EditorialGrid = ({ centerCardSlot } = {}) => {
             <div className="fd-gallery-fs__scroll-row fd-gallery-fs__scroll-row--left" ref={fsRow1Ref}>
               <div className="fd-gallery-fs__scroll-set">
                 {allGalleryImages.map((img, i) => (
-                  <div key={i} className="fd-gallery-fs__scroll-img"><img src={img.src} alt={img.alt} /></div>
+                  <div key={i} className="fd-gallery-fs__scroll-img"><img src={img.src} alt={img.alt} width={1500} height={1000} /></div>
                 ))}
               </div>
               <div className="fd-gallery-fs__scroll-set">
                 {allGalleryImages.map((img, i) => (
-                  <div key={`d-${i}`} className="fd-gallery-fs__scroll-img"><img src={img.src} alt={img.alt} /></div>
+                  <div key={`d-${i}`} className="fd-gallery-fs__scroll-img"><img src={img.src} alt={img.alt} width={1500} height={1000} /></div>
                 ))}
               </div>
             </div>
             <div className="fd-gallery-fs__scroll-row fd-gallery-fs__scroll-row--right" ref={fsRow2Ref}>
               <div className="fd-gallery-fs__scroll-set">
                 {allGalleryImages.slice().reverse().map((img, i) => (
-                  <div key={i} className="fd-gallery-fs__scroll-img"><img src={img.src} alt={img.alt} /></div>
+                  <div key={i} className="fd-gallery-fs__scroll-img"><img src={img.src} alt={img.alt} width={1500} height={1000} /></div>
                 ))}
               </div>
               <div className="fd-gallery-fs__scroll-set">
                 {allGalleryImages.slice().reverse().map((img, i) => (
-                  <div key={`d-${i}`} className="fd-gallery-fs__scroll-img"><img src={img.src} alt={img.alt} /></div>
+                  <div key={`d-${i}`} className="fd-gallery-fs__scroll-img"><img src={img.src} alt={img.alt} width={1500} height={1000} /></div>
                 ))}
               </div>
             </div>
