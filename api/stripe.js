@@ -206,6 +206,47 @@ async function getFreeReferralItemSnapshot() {
 }
 
 /**
+ * Validates a `referredByCode` against constraints:
+ *   - exists in `referral_codes`
+ *   - owner's email is not the same as this customer's
+ *   - owner's PI is not refunded (Stripe lookup)
+ * Returns the owner record if valid; null otherwise. Never throws — invalid
+ * codes are silently dropped per spec (the booking still proceeds).
+ */
+async function validateReferredByCode(code, customerEmail) {
+  if (!code || typeof code !== 'string') return null;
+  const normalized = code.trim().toUpperCase();
+  if (!/^[A-Z0-9]{8}$/.test(normalized)) return null;
+  try {
+    const doc = await admin.firestore().collection('referral_codes').doc(normalized).get();
+    if (!doc.exists) return null;
+    const data = doc.data();
+    if (!data.ownerPaymentIntentId) return null;
+    if (data.ownerEmail && customerEmail && String(data.ownerEmail).toLowerCase() === String(customerEmail).toLowerCase()) {
+      return null; // self-referral
+    }
+    // Check the owner's PI isn't refunded
+    try {
+      const ownerPi = await getStripe().paymentIntents.retrieve(data.ownerPaymentIntentId);
+      if (ownerPi.status !== 'succeeded' && ownerPi.status !== 'processing') return null;
+      // also skip if any charge on the PI has been refunded
+      const chargeId = ownerPi.latest_charge;
+      if (chargeId) {
+        const charge = await getStripe().charges.retrieve(chargeId);
+        if (charge.refunded || charge.amount_refunded > 0) return null;
+      }
+    } catch (stripeErr) {
+      console.warn('[referral] owner PI lookup failed:', stripeErr.message);
+      return null;
+    }
+    return { code: normalized, ...data };
+  } catch (err) {
+    console.warn('[referral] validateReferredByCode failed:', err.message);
+    return null;
+  }
+}
+
+/**
  * Looks up the price in pence from Firestore (admin SDK — bypasses security rules).
  * Falls back to PRICE_FALLBACK if Firestore is unreachable.
  * Returns null if the aircraft/duration combination doesn't exist at all.
