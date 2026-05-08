@@ -186,6 +186,26 @@ async function generateUniqueReferralCode(maxRetries = 5) {
 }
 
 /**
+ * Returns a snapshot of the misc item currently flagged as the
+ * free-referral reward, or null if none is flagged.
+ */
+async function getFreeReferralItemSnapshot() {
+  const snap = await admin.firestore()
+    .collection('misc_items')
+    .where('freeReferralOffer', '==', true)
+    .limit(1)
+    .get();
+  if (snap.empty) return null;
+  const doc = snap.docs[0];
+  const d = doc.data();
+  return {
+    id: doc.id,
+    name: String(d.name || ''),
+    priceDisplay: String(d.priceDisplay || ''),
+  };
+}
+
+/**
  * Looks up the price in pence from Firestore (admin SDK — bypasses security rules).
  * Falls back to PRICE_FALLBACK if Firestore is unreachable.
  * Returns null if the aircraft/duration combination doesn't exist at all.
