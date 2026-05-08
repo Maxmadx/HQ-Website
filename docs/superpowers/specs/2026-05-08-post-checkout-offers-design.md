@@ -37,7 +37,7 @@ Four logical pieces, one shippable unit:
 
 **(b) Invisible referral attribution.** A short alphanumeric code is generated server-side at PI creation and stored on the booking record + a fast-lookup `referral_codes` collection. The booker only ever sees a *share link* (containing the code as a query param). When a friend opens the link, JS captures `?ref=…` silently and sends it with the friend's create-PI call. On the friend's `payment_intent.succeeded`, a webhook flips the original booker's record to `referralCompleted=true` and emails the HQ team to fulfil. The original booker never sees the bare code; the friend's checkout has no referral UI whatsoever.
 
-**(c) R22 → R44 upgrade flow.** A standalone `<UpgradePanel>` component reused on `/booking-confirmed` (inline) and `/upgrade?ref=<originalPaymentIntentId>` (standalone page from email link). User picks 30 or 60 min, sees live diff math vs already-paid-flight-amount, pays via inline Stripe Elements card form. New PI is created for the diff only; on webhook success, original booking record is updated in place (`aircraft`, `duration` overwritten; `originalAircraft`, `originalDuration` preserved; `upgrade { … }` populated). Add-ons and voucher are untouched.
+**(c) R22 → R44 upgrade flow.** A standalone `<UpgradeOfferCard>` component reused on `/booking-confirmed` (inline) and `/upgrade?ref=<originalPaymentIntentId>` (standalone page from email link). User picks 30 or 60 min, sees live diff math vs already-paid-flight-amount, pays via inline Stripe Elements card form. New PI is created for the diff only; on webhook success, original booking record is updated in place (`aircraft`, `duration` overwritten; `originalAircraft`, `originalDuration` preserved; `upgrade { … }` populated). Add-ons and voucher are untouched.
 
 **(d) Apparel + sizes for `/store`.** Two new admin fields on `misc_items`: `apparel: bool` and `sizes: string[]`. When both are present, the public product page (`MiscItemDetail`) shows a required size selector. The chosen size is sent to `create-misc-payment-intent`, stored in PI metadata, and surfaced in the order confirmation email.
 
@@ -76,6 +76,7 @@ Doc ID: `paymentIntentId` of the original booking (so upgrade lookups are O(1)).
 | `referredByCode` | `string \| null` | If this booking arrived via a share link. |
 | `referralCompleted` | `boolean` | `true` once the first qualifying redemption fires (one credit per booking). |
 | `referralFulfilledAt` | `timestamp \| null` | Set by HQ team admin action when the free item is handed over. |
+| `referralFreeItemSnapshot` | `{ id, name, priceDisplay } \| null` | Snapshot of the flagged free-item at booking-creation time. Survives later deletion of the misc item so the HQ-team email remains actionable. |
 | `upgrade` | `{ newAircraft, newDuration, upgradePaymentIntentId, upgradedAt } \| null` | |
 | `originalAircraft` | `'r22'\|'r44'\|'r66' \| null` | Populated only after upgrade. |
 | `originalDuration` | `30\|60 \| null` | Populated only after upgrade. |
@@ -144,7 +145,7 @@ Written transactionally with the booking record at create-PI time.
 ### 5.4 `<UpgradeOfferCard>` (new — used inline on `/booking-confirmed` AND on `/upgrade`)
 
 - Title: `Bring 2 extra friends — upgrade to Robinson R44`.
-- Two duration pill-buttons: `30 min` / `60 min`. Pre-selected to whatever the booker originally booked.
+- Two duration pill-buttons: `30 min` / `60 min`. Pre-selected to whatever the booker originally booked. A duration button is disabled when the resulting diff would be `≤ 0` (e.g. an R22 60min booker can't "upgrade" to R44 30min, since that's cheaper than what they already paid — no refunds in this flow).
 - Live diff math under the buttons:
   ```
   R44 30 min: £305
@@ -164,7 +165,7 @@ Written transactionally with the booking record at create-PI time.
 - Server-truth fetch: `GET /api/booking/:paymentIntentId`.
 - Validates: PI exists, `aircraft === 'r22'`, `upgrade == null`. Fail states render a friendly message:
   - Already upgraded → `You've already upgraded to an R44 — see you at HQ.`
-  - Not R22 → 404-ish.
+  - Booking is R44 or R66 (not eligible) → `This booking isn't eligible for an upgrade. Contact HQ if you'd like to discuss options.`
   - Missing/invalid ref → `Link expired or invalid. Contact HQ.`
 - Renders a recap of the original booking + the same `<UpgradeOfferCard>`.
 - On success: navigates to `/booking-confirmed?ref=<originalPaymentIntentId>` (which now reflects the upgraded state).
@@ -177,7 +178,8 @@ Written transactionally with the booking record at create-PI time.
 
 ### 5.7 Discovery Flight checkout (`src/pages/Checkout.jsx`)
 
-- On mount, read `?ref=<CODE>` from `useSearchParams`. If present, store in component state and pass to `create-payment-intent` as `referredByCode`.
+- On mount of the parent `Checkout` component, read `?ref=<CODE>` from `useSearchParams` once and store the value in component state. This state must survive the inline email-first → full form transition (the Checkout component itself doesn't unmount during that transition, so a single `useState` initialized once at mount is sufficient).
+- The value is passed to `create-payment-intent` as `referredByCode` when Y submits payment.
 - **No UI change** — no field, no expander, no hint that referral attribution exists. The friend's checkout looks identical to today's.
 - If the code is invalid, expired, or self-referring, the server silently drops it; the booking still succeeds.
 
@@ -211,6 +213,7 @@ Returns the booking record (sans sensitive Stripe internals). Used by `/booking-
 
 - Accepts new optional `referredByCode` (uppercased server-side).
 - Generates a fresh `referralCode` for the new booking (8 uppercase alphanumeric chars excluding `I/O/0/1`, retry-on-collision against `referral_codes` collection up to 5 times).
+- Reads the current `freeReferralOffer = true` misc item (if any) and stores `referralFreeItemSnapshot = { id, name, priceDisplay }` on the booking record.
 - Writes `referral_codes/<code>` and `bookings/<paymentIntentId>` in the same transaction as the PI metadata is set.
 - Validates `referredByCode` if present:
   - exists in `referral_codes`
@@ -232,7 +235,7 @@ Logic:
 1. Fetch `bookings/<originalPaymentIntentId>`. 404 if missing.
 2. Validate: `aircraft === 'r22'`, `upgrade == null`. 400 otherwise with explicit reason.
 3. Look up R44 price for `newDuration` from Firestore `pricing` collection (existing pattern from `getPrice`).
-4. `diffPence = r44Price − booking.flightAmountPence`. Reject if `<= 0` (sanity guard).
+4. `diffPence = r44Price − booking.flightAmountPence`. Reject with 400 (`Selected duration is not an upgrade.`) if `<= 0`. This guards against an R22 60min booker selecting R44 30min, which is cheaper than what they paid.
 5. Create a new Stripe PI for `diffPence` with metadata:
    - `productType: 'discovery-flight-upgrade'`
    - `originalPaymentIntentId`
@@ -248,7 +251,7 @@ Two new metadata branches in `payment_intent.succeeded`:
 **(a) `referredByCode` present on a Discovery Flight PI:**
 1. Look up `referral_codes/<referredByCode>`.
 2. Read `bookings/<ownerPaymentIntentId>`. Skip if owner's PI is refunded or `referralCompleted === true` (idempotent + single-credit).
-3. Atomic update: `referralCompleted = true`, `referralCompletedAt = now`, `referralCompletedByPaymentIntentId = <Y's PI>`.
+3. Atomic update: `referralCompleted = true`, `referralCompletedAt = now`, `referralCompletedByPaymentIntentId = <Y's PI>`, `updatedAt = now`.
 4. Send HQ-team email: `Referral redeemed: ship "<freeItemName>" to <ownerName> (<ownerEmail>) — pickup at HQ. Credit booking: <ownerPaymentIntentId>. Redemption booking: <Y's PI>.`
 
 **(b) `productType === 'discovery-flight-upgrade'`:**
@@ -260,6 +263,7 @@ Two new metadata branches in `payment_intent.succeeded`:
    - `upgrade = { newAircraft, newDuration, upgradePaymentIntentId, upgradedAt }`
    - `flightAmountPence` updated to the new R44 price
    - `totalAmountPence` recomputed
+   - `updatedAt = now`
 4. Send upgrade-confirmation email to the customer.
 
 ### 6.6 Admin save-side enforcement of single-active `freeReferralOffer`
