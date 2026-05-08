@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs, runTransaction, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { db, storage } from '../../lib/firebase';
@@ -22,6 +22,7 @@ const EMPTY = {
   discoveryAddonDiscountPct: 0,
   apparel: false,
   sizes: [],
+  freeReferralOffer: false,
 };
 
 export default function AdminMiscItemEdit() {
@@ -124,11 +125,41 @@ export default function AdminMiscItemEdit() {
         apparel: form.priceType === 'fixed' ? !!form.apparel : false,
         sizes: (form.priceType === 'fixed' && form.apparel && Array.isArray(form.sizes)) ? form.sizes : [],
       };
-      if (isNew) {
-        const newId = await createDoc('misc_items', payload);
-        navigate(`/admin/misc/${newId}`);
+      let displacedName = '';
+      if (payload.freeReferralOffer === true) {
+        // Find any other item currently flagged and untick it in the same client-side
+        // transaction as our save. Note: this is a best-effort enforcement at the
+        // application level; admins are trusted not to bypass it via direct writes.
+        const q = query(collection(db, 'misc_items'), where('freeReferralOffer', '==', true));
+        const snap = await getDocs(q);
+        await runTransaction(db, async (tx) => {
+          for (const otherDoc of snap.docs) {
+            if (otherDoc.id !== id) {
+              tx.update(otherDoc.ref, { freeReferralOffer: false });
+              if (!displacedName) displacedName = otherDoc.data().name || otherDoc.id;
+            }
+          }
+          if (isNew) {
+            const newRef = doc(collection(db, 'misc_items'));
+            tx.set(newRef, { ...payload, createdAt: serverTimestamp() });
+            payload.__newId = newRef.id;
+          } else {
+            tx.update(doc(db, 'misc_items', id), payload);
+          }
+        });
+        if (isNew) navigate(`/admin/misc/${payload.__newId}`);
       } else {
-        await updateDocById('misc_items', id, payload);
+        if (isNew) {
+          const newId = await createDoc('misc_items', payload);
+          navigate(`/admin/misc/${newId}`);
+        } else {
+          await updateDocById('misc_items', id, payload);
+        }
+      }
+
+      if (displacedName) {
+        setError(`Replaced previous referral free-item: ${displacedName}`);
+        setTimeout(() => setError(''), 4000);
       }
     } catch (err) {
       setError(err.message);
@@ -361,6 +392,23 @@ export default function AdminMiscItemEdit() {
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {form.priceType === 'fixed' && (
+            <div>
+              <label style={labelStyle}>Free Referral Offer</label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: '#374151' }}>
+                <input
+                  type="checkbox"
+                  checked={form.freeReferralOffer}
+                  onChange={(e) => set('freeReferralOffer', e.target.checked)}
+                />
+                Show as the free reward for referrals
+              </label>
+              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.4rem' }}>
+                Only one item across the store may be flagged. Saving with this ticked will untick the previous one.
+              </p>
             </div>
           )}
 
