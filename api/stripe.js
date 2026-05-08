@@ -281,7 +281,7 @@ async function createPaymentIntent({
   aircraft, duration, customerName, customerEmail, customerPhone,
   wantsVoucher, voucherLocation, voucherMessage,
   addons = [], fulfilment, shippingAddress,
-  cartId,
+  cartId, referredByCode,
 }) {
   const flightAmount = await getPrice(aircraft, duration);
   if (flightAmount === null) {
@@ -329,6 +329,10 @@ async function createPaymentIntent({
     addonKeyEntries[`addon_${i}`] = JSON.stringify(item);
   });
 
+  const referralCode = await generateUniqueReferralCode();
+  const freeItemSnapshot = await getFreeReferralItemSnapshot();
+  const validatedReferredByCode = await validateReferredByCode(referredByCode, customerEmail);
+
   const paymentIntent = await getStripe().paymentIntents.create({
     amount,
     currency: 'gbp',
@@ -351,8 +355,23 @@ async function createPaymentIntent({
       shippingCity: resolvedAddress ? resolvedAddress.city : '',
       shippingPostcode: resolvedAddress ? resolvedAddress.postcode : '',
       cartId: cartId || '',
+      referralCode,
+      referredByCode: validatedReferredByCode ? validatedReferredByCode.code : '',
     },
   });
+
+  try {
+    await admin.firestore().collection('referral_codes').doc(referralCode).set({
+      code: referralCode,
+      ownerPaymentIntentId: paymentIntent.id,
+      ownerEmail: customerEmail || '',
+      ...(freeItemSnapshot ? { freeItemSnapshot } : {}),
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+  } catch (err) {
+    console.error('[stripe] failed to write referral_codes doc:', err.message);
+    // Non-fatal: the booking proceeds, but the referral system is degraded.
+  }
 
   return paymentIntent;
 }
