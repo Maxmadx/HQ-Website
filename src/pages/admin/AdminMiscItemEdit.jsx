@@ -20,6 +20,8 @@ const EMPTY = {
   images: [],
   discoveryAddon: false,
   discoveryAddonDiscountPct: 0,
+  apparel: false,
+  sizes: [],
 };
 
 export default function AdminMiscItemEdit() {
