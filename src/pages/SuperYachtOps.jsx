@@ -97,6 +97,8 @@ function SuperYachtOpsHeader() {
                 className="Header-branding-logo"
                 loading="lazy"
                 decoding="async"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -394,7 +396,7 @@ export default function SuperYachtOps() {
           <Reveal direction="left" delay={0.2}>
             <div className="syo-intro__right">
               <div className="syo-intro__image-wrap">
-                <img src={introImage} alt="HQ superyacht helicopter operations" className="syo-intro__image" />
+                <img src={introImage} alt="HQ superyacht helicopter operations" className="syo-intro__image" width={2500} height={1875} />
                 <div className="syo-intro__caption">Global Operations Network</div>
               </div>
             </div>
