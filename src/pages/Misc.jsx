@@ -279,7 +279,7 @@ export default function Misc() {
                         <div key={item.id} className="misc-card">
                           <div className="misc-card__image">
                             {primary ? (
-                              <img src={primary.url} alt={primary.alt || item.name} />
+                              <img src={primary.url} alt={primary.alt || item.name} width={1500} height={1000} />
                             ) : (
                               <div className="misc-card__image-placeholder">
                                 <i className="fas fa-box"></i>
