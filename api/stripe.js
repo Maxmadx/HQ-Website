@@ -438,7 +438,7 @@ async function createLondonTourPaymentIntent({ experience, timeOfDay, quantity, 
 /**
  * Sends a booking confirmation email to the customer.
  */
-async function sendConfirmationEmail({ customerName, customerEmail, aircraft, duration, amount, bookingRef, addons, fulfilment, shippingAddress }) {
+async function sendConfirmationEmail({ customerName, customerEmail, aircraft, duration, amount, bookingRef, addons, fulfilment, shippingAddress, referralCode = '' }) {
   const priceFormatted = `£${(amount / 100).toFixed(2)}`;
   const aircraftName = AIRCRAFT_NAMES[aircraft] || aircraft;
 
@@ -556,6 +556,20 @@ async function sendConfirmationEmail({ customerName, customerEmail, aircraft, du
     }</p>
   `
   : ''}
+            ${referralCode ? `
+            <!-- Referral CTA -->
+            <div style="margin: 32px 0; padding: 24px; background: #faf9f6; border-radius: 12px; border: 1px solid #e8e8e8;">
+              <h2 style="margin: 0 0 12px; font-size: 18px; font-family: 'Playfair Display', Georgia, serif; color: #0A0A0A;">Refer a friend</h2>
+              <p style="margin: 0 0 16px; color: #444; line-height: 1.5; font-family: Inter, -apple-system, Arial, sans-serif; font-size: 14px;">
+                Share this with a friend. When they book a Discovery Flight using your link, you get a free HQ item &mdash; collect it next time you&rsquo;re at HQ.
+              </p>
+              <a href="${process.env.PUBLIC_URL || 'https://hq-aviation.com'}/training/trial-lessons?ref=${escapeHtml(referralCode)}"
+                 style="display: inline-block; padding: 12px 20px; background: #1a1a1a; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 600; font-family: Inter, -apple-system, Arial, sans-serif; font-size: 14px;">
+                Share with a friend
+              </a>
+            </div>
+            ` : ''}
+
             <!-- What happens next -->
             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:32px 0 0;background:#FFFFFF;border-left:3px solid #E04A2F;border-radius:0 8px 8px 0;border-top:1px solid #E8E6E1;border-right:1px solid #E8E6E1;border-bottom:1px solid #E8E6E1;">
               <tr>
@@ -1011,6 +1025,7 @@ async function handleWebhook(req) {
           addons: webhookParsedAddons,
           fulfilment: webhookFulfilment,
           shippingAddress: webhookShippingAddress,
+          referralCode: pi.metadata.referralCode || '',
         });
       }
     } catch (emailErr) {
