@@ -745,6 +745,34 @@ async function sendLondonTourConfirmationEmail({ customerName, customerEmail, ex
 }
 
 /**
+ * Notifies the HQ team that a referral code has been redeemed and a free item needs fulfilling.
+ */
+async function sendReferralRedeemedEmail({ owner, redeemer, freeItem }) {
+  if (!process.env.HQ_TEAM_EMAIL) {
+    console.warn('[referral] HQ_TEAM_EMAIL env var not set, skipping notification');
+    return;
+  }
+  const itemLine = freeItem
+    ? `Free item to ship/hand over: <strong>${escapeHtml(freeItem.name)}</strong> (id: ${escapeHtml(freeItem.id)})`
+    : 'Free item: <em>none flagged at the time of original booking</em>';
+  const html = `
+    <p>A referral has been redeemed.</p>
+    <ul>
+      <li><strong>Original booker:</strong> ${escapeHtml(owner.name || '')} &lt;${escapeHtml(owner.email || '')}&gt; (PI: ${escapeHtml(owner.paymentIntentId)})</li>
+      <li><strong>Friend who used the code:</strong> ${escapeHtml(redeemer.name || '')} &lt;${escapeHtml(redeemer.email || '')}&gt; (PI: ${escapeHtml(redeemer.paymentIntentId)})</li>
+      <li>${itemLine}</li>
+    </ul>
+    <p>Pickup is at HQ — no shipping required.</p>
+  `;
+  return getTransporter().sendMail({
+    from: process.env.EMAIL_FROM,
+    to: process.env.HQ_TEAM_EMAIL,
+    subject: 'Referral redeemed — free item to fulfil',
+    html,
+  });
+}
+
+/**
  * Handles an incoming Stripe webhook request.
  * Verifies signature and processes payment_intent.succeeded.
  * req.body MUST be a raw Buffer — use express.raw({ type: 'application/json' }) on this route.
@@ -843,6 +871,35 @@ async function handleWebhook(req) {
           ...(apparelSize ? { apparelSize } : {}),
           ...(shippingLine1 ? { shippingLine1, shippingLine2: shippingLine2 || '', shippingCity, shippingPostcode } : {}),
         });
+      }
+
+      // Referral redemption: when the friend's PI succeeds, flip the owner's record + email HQ
+      try {
+        const incomingReferredBy = pi.metadata.referredByCode;
+        if (incomingReferredBy && pi.metadata.productType !== 'discovery-flight-upgrade') {
+          const codeDoc = await admin.firestore().collection('referral_codes').doc(incomingReferredBy).get();
+          if (codeDoc.exists) {
+            const cd = codeDoc.data();
+            const ownerBookingRef = admin.firestore().collection('bookings').doc(cd.ownerPaymentIntentId);
+            const ownerSnap = await ownerBookingRef.get();
+            if (ownerSnap.exists && !ownerSnap.data().referralCompleted) {
+              await ownerBookingRef.update({
+                referralCompleted: true,
+                referralCompletedAt: admin.firestore.FieldValue.serverTimestamp(),
+                referralCompletedByPaymentIntentId: pi.id,
+                updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+              });
+              // Notify HQ team
+              await sendReferralRedeemedEmail({
+                owner: { name: ownerSnap.data().customerName, email: ownerSnap.data().customerEmail, paymentIntentId: cd.ownerPaymentIntentId },
+                redeemer: { name: customerName, email: customerEmail, paymentIntentId: pi.id },
+                freeItem: cd.freeItemSnapshot || ownerSnap.data().referralFreeItemSnapshot || null,
+              });
+            }
+          }
+        }
+      } catch (refErr) {
+        console.error('[stripe webhook] referral redemption failed:', refErr.message);
       }
     } catch (dbErr) {
       console.error('[stripe webhook] failed to save booking to Firestore:', dbErr.message);
