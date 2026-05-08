@@ -62,7 +62,7 @@ function FooterMinimal() {
       <div className="footer-minimal__bottom">
         <div className="footer-minimal__coords">
           <span>51.5751°N</span>
-          <img src="/assets/images/icons/Union Jack.svg" alt="UK" className="footer-minimal__flag" />
+          <img src="/assets/images/icons/Union Jack.svg" alt="UK" className="footer-minimal__flag" width={1200} height={600} />
           <span>0.5059°W</span>
         </div>
         <div className="footer-minimal__year">Est. 2011</div>
