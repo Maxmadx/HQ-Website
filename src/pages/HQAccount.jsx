@@ -832,6 +832,8 @@ function HQAccount() {
               src="/assets/images/logos/hq/hq-aviation-logo-black.png"
               alt="HQ Aviation"
               className="logo"
+              width={405}
+              height={245}
             />
           </Link>
           <nav>
@@ -1156,10 +1158,14 @@ function HQAccount() {
             <img
               src="/assets/images/legacy/misc/gemini_generated_image_soxg2ysoxg2ysoxg.png"
               alt="UK CAA"
+              width={2500}
+              height={1158}
             />
             <img
               src="/assets/images/legacy/misc/gemini_generated_image_9x2j059x2j059x2j.png"
               alt="Robinson Helicopter"
+              width={1600}
+              height={2656}
             />
           </div>
           <div className="footer-text">
