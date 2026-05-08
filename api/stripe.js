@@ -916,7 +916,7 @@ async function recordBooking(paymentIntentId) {
  * Creates a Stripe PaymentIntent for a misc item purchase.
  * Price is read from Firestore server-side — the client-supplied amount is never trusted.
  */
-async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmail, customerPhone, shippingAddress }) {
+async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmail, customerPhone, shippingAddress, size }) {
   const snap = await admin.firestore().collection('misc_items').doc(itemId).get();
   if (!snap.exists) {
     const err = new Error(`Misc item not found: ${itemId}`);
@@ -956,6 +956,22 @@ async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmai
     }
   }
 
+  let resolvedSize = '';
+  if (item.apparel && Array.isArray(item.sizes) && item.sizes.length > 0) {
+    const s = String(size || '').trim().toUpperCase();
+    if (!s) {
+      const err = new Error('Size is required for this apparel item');
+      err.statusCode = 400;
+      throw err;
+    }
+    if (!item.sizes.includes(s)) {
+      const err = new Error(`Size ${s} is not available for this item`);
+      err.statusCode = 400;
+      throw err;
+    }
+    resolvedSize = s;
+  }
+
   const amount = item.price * qtyNum;
 
   const paymentIntent = await getStripe().paymentIntents.create({
@@ -973,6 +989,7 @@ async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmai
       shippingLine2: shippingAddress?.line2 || '',
       shippingCity: shippingAddress?.city || '',
       shippingPostcode: shippingAddress?.postcode || '',
+      apparelSize: resolvedSize,
     },
   });
 
