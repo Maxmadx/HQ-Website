@@ -687,10 +687,11 @@ async function handleWebhook(req) {
         bookingData.timeOfDay = timeOfDay;
         bookingData.quantity = Number(quantity);
       } else if (productType === 'misc') {
-        const { itemId, itemName, qty } = pi.metadata;
+        const { itemId, itemName, qty, apparelSize } = pi.metadata;
         bookingData.itemId = itemId || '';
         bookingData.itemName = itemName || '';
         bookingData.qty = Number(qty) || 1;
+        if (apparelSize) bookingData.apparelSize = apparelSize;
       } else {
         const { aircraft, aircraftName, duration } = pi.metadata;
         bookingData.aircraft = aircraft;
@@ -706,7 +707,7 @@ async function handleWebhook(req) {
 
       // Also write misc orders to the misc_marketplace collection
       if (productType === 'misc') {
-        const { itemId, itemName, qty, shippingLine1, shippingLine2, shippingCity, shippingPostcode } = pi.metadata;
+        const { itemId, itemName, qty, apparelSize, shippingLine1, shippingLine2, shippingCity, shippingPostcode } = pi.metadata;
         await admin.firestore().collection('misc_marketplace').doc(pi.id).set({
           type: 'order',
           status: 'new',
@@ -719,6 +720,7 @@ async function handleWebhook(req) {
           customerName: customerName || '',
           customerEmail: customerEmail || '',
           customerPhone: customerPhone || '',
+          ...(apparelSize ? { apparelSize } : {}),
           ...(shippingLine1 ? { shippingLine1, shippingLine2: shippingLine2 || '', shippingCity, shippingPostcode } : {}),
         });
       }
