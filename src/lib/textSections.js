@@ -698,7 +698,7 @@ export const TEXT_SECTIONS = [
     fields: [
       { id: 'pre_label', label: 'Pre-label', type: 'text',      default: 'MAINTENANCE & SUPPORT' },
       { id: 'heading',   label: 'Heading',   type: 'heading',   default: 'Expert Care for Your Aircraft' },
-      { id: 'subtitle',  label: 'Subtitle',  type: 'paragraph', default: 'Robinson Authorised Service Centre with over 30 years of engineering excellence at Denham Aerodrome.' },
+      { id: 'subtitle',  label: 'Subtitle',  type: 'paragraph', default: 'Robinson Authorised Service Centre with generations of engineering experience at Denham Aerodrome.' },
     ],
   },
 

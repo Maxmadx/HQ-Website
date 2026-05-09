@@ -24,6 +24,7 @@ import '../assets/css/components.css';
 import FooterMinimal from '../components/FooterMinimal';
 import { arrivalStyles } from '../components/ArrivalSection';
 import HqMenuPanel from '../components/HqMenuPanel';
+import WhyFlyAHelicopter from '../components/WhyFlyAHelicopter';
 
 
 /**
@@ -767,6 +768,9 @@ function FinalPPL() {
           </div>
         </div>
       </section>
+
+      {/* ========== WHY FLY A HELICOPTER ========== */}
+      <WhyFlyAHelicopter />
 
       {/* ========== WHERE & FAQ + DISCOVERY (swapped on mobile) ========== */}
       <div className="fppl__faq-discovery-wrap">

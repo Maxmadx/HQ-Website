@@ -190,12 +190,12 @@ function GlobalTokens() {
       .r66b-inv-text--mid   { color: rgba(250,249,246,0.75); font-weight: 300; }
       .r66b-inv-text--light { color: rgba(250,249,246,0.5);  font-weight: 300; }
       .r66b-exp, .r66b-seamD, .r66b-seamP,
-      .r66b-range, .r66b-ladder, .r66b-closeA {
+      .r66b-range, .r66b-ladder {
         font-family: 'Space Grotesk', -apple-system, sans-serif;
         color: #1a1a1a;
       }
       .r66b-exp *, .r66b-seamD *, .r66b-seamP *,
-      .r66b-range *, .r66b-ladder *, .r66b-closeA * {
+      .r66b-range *, .r66b-ladder * {
         box-sizing: border-box;
       }
       .r66b-mono {
@@ -342,7 +342,7 @@ function ExplainerSplit({ argId, index, side = 'right', statHero = false }) {
         <div className="r66b-exp__text">
           <div className="r66b-exp__meta">
             <span className="r66b-mono r66b-exp__idx">
-              {String(index).padStart(2, '0')} / 07
+              {String(index).padStart(2, '0')} / 06
             </span>
           </div>
           <Headline parts={arg.parts} className="r66b-exp__h" />
@@ -555,9 +555,8 @@ function SeamPaperStat({ argId, index }) {
         <div className="r66b-seamP__text">
           <div className="r66b-seamP__meta">
             <span className="r66b-mono r66b-seamP__idx">
-              {String(index).padStart(2, '0')} / 07
+              {String(index).padStart(2, '0')} / 06
             </span>
-            <span className="r66b-mono r66b-seamP__code">{arg.code}</span>
           </div>
           <Headline parts={arg.parts} className="r66b-seamP__h" />
           <p className="r66b-seamP__p">{arg.body}</p>
@@ -735,9 +734,8 @@ function RangeMap({ argId, index }) {
           <div className="r66b-range__text">
             <div className="r66b-range__meta">
               <span className="r66b-mono r66b-range__idx">
-                {String(index).padStart(2, '0')} / 07
+                {String(index).padStart(2, '0')} / 06
               </span>
-              <span className="r66b-mono r66b-range__code">{arg.code}</span>
             </div>
             <Headline parts={arg.parts} className="r66b-range__h" />
             <p className="r66b-range__p">{arg.body}</p>
@@ -806,8 +804,11 @@ function RangeMap({ argId, index }) {
           position: relative;
           z-index: 2;
         }
-        /* Pseudo-panel layered above the map so range circles can't bleed into
-           the right column. Extends left past the grid gap to cover the seam. */
+        /* Gray panel behind the right column. Extends left only as far as the
+           grid gap so the panel's left edge lines up with the gradient seam at
+           50% — without this clamp the panel bled past the middle onto the
+           left half. The SVG itself uses overflow: hidden, so range circles
+           don't escape the map column and the panel doesn't need to cover them. */
         @media (min-width: 960px) {
           .r66b-range__text::before {
             content: '';
@@ -815,7 +816,7 @@ function RangeMap({ argId, index }) {
             top: 0;
             bottom: 0;
             right: 0;
-            left: calc(-1 * clamp(3rem, 8vw, 6rem));
+            left: calc(-1 * clamp(2rem, 5vw, 4rem) / 2);
             background: #ececec;
             z-index: -1;
           }
@@ -1035,134 +1036,6 @@ function RobinsonLadder({ argId, index }) {
 }
 
 // ===========================================================================
-// Closing argument — dark band, no CTA buttons (R66CTA handles conversion).
-// ===========================================================================
-function ClosingArgument({ argId, index }) {
-  const arg = ARGUMENTS[argId];
-  return (
-    <section className="r66b-closeA">
-      <div className="r66b-closeA__container">
-        <div className="r66b-closeA__text">
-          <div className="r66b-closeA__meta">
-            <span className="r66b-mono r66b-closeA__idx">
-              {String(index).padStart(2, '0')} / 07
-            </span>
-            <span className="r66b-mono r66b-closeA__code">{arg.code}</span>
-          </div>
-          <Headline parts={arg.parts} className="r66b-closeA__h" inverted />
-          <p className="r66b-closeA__p">{arg.body}</p>
-        </div>
-        <div className="r66b-closeA__fig">
-          <span className="r66b-mono r66b-closeA__fig-l">{arg.stat.label}</span>
-          <div className="r66b-closeA__fig-v">
-            <span>{arg.stat.value}</span>
-            {arg.stat.unit ? <em className="r66b-mono">{arg.stat.unit}</em> : null}
-          </div>
-          <div className="r66b-closeA__meta-row">
-            <span className="r66b-mono r66b-closeA__meta-l">DEALER</span>
-            <span className="r66b-closeA__meta-v">HQ Aviation · Denham</span>
-          </div>
-          <div className="r66b-closeA__meta-row">
-            <span className="r66b-mono r66b-closeA__meta-l">FACTORY</span>
-            <span className="r66b-closeA__meta-v">Robinson · Torrance, CA</span>
-          </div>
-        </div>
-      </div>
-      <style>{`
-        .r66b-closeA {
-          background: #1a1a1a;
-          color: #faf9f6;
-          padding: clamp(5rem, 9vw, 8rem) 0;
-        }
-        .r66b-closeA__container {
-          max-width: 1360px;
-          margin: 0 auto;
-          padding: 0 clamp(1.25rem, 4vw, 2.5rem);
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: clamp(2.5rem, 5vw, 4rem);
-          align-items: center;
-        }
-        @media (min-width: 960px) {
-          .r66b-closeA__container { grid-template-columns: 1.2fr 1fr; }
-        }
-        .r66b-closeA__meta {
-          display: flex;
-          gap: 1.25rem;
-          margin-bottom: 1.5rem;
-          font-size: 0.7rem;
-        }
-        .r66b-closeA__idx  { color: rgba(250,249,246,0.55); }
-        .r66b-closeA__code { color: #a67b3f; }
-        .r66b-closeA__h {
-          font-size: clamp(2rem, 4.5vw, 3.3rem);
-          line-height: 1.08;
-          letter-spacing: -0.015em;
-          margin: 0 0 1.5rem;
-          font-weight: 300;
-          max-width: 22ch;
-        }
-        .r66b-closeA__p {
-          font-size: 1.0625rem;
-          line-height: 1.75;
-          color: rgba(250,249,246,0.78);
-          max-width: 52ch;
-          margin: 0;
-        }
-        .r66b-closeA__fig {
-          padding: clamp(1.75rem, 3vw, 2.5rem);
-          border: 1px solid rgba(250,249,246,0.15);
-        }
-        .r66b-closeA__fig-l {
-          display: block;
-          font-size: 0.72rem;
-          color: #a67b3f;
-          margin-bottom: 1.25rem;
-        }
-        .r66b-closeA__fig-v {
-          display: flex;
-          align-items: baseline;
-          gap: 0.5rem;
-          margin-bottom: 1.5rem;
-        }
-        .r66b-closeA__fig-v span {
-          font-size: clamp(2.8rem, 6vw, 4rem);
-          font-weight: 500;
-          color: #faf9f6;
-          letter-spacing: -0.02em;
-          line-height: 1;
-        }
-        .r66b-closeA__fig-v em {
-          font-style: normal;
-          font-size: 0.9rem;
-          color: rgba(250,249,246,0.55);
-        }
-        .r66b-closeA__meta-row {
-          display: grid;
-          grid-template-columns: 100px 1fr;
-          padding: 0.9rem 0;
-          border-bottom: 1px solid rgba(250,249,246,0.12);
-          align-items: baseline;
-        }
-        .r66b-closeA__meta-row:first-of-type {
-          border-top: 1px solid rgba(250,249,246,0.12);
-          margin-top: 1.25rem;
-        }
-        .r66b-closeA__meta-l {
-          font-size: 0.7rem;
-          color: rgba(250,249,246,0.5);
-        }
-        .r66b-closeA__meta-v {
-          font-size: 0.95rem;
-          color: #faf9f6;
-          font-weight: 500;
-        }
-      `}</style>
-    </section>
-  );
-}
-
-// ===========================================================================
 // Composition — "Chaptered Flow": opener → argued body → ladder → closer.
 // ===========================================================================
 export default function R66Case() {
@@ -1177,7 +1050,6 @@ export default function R66Case() {
       <ExplainerSplit argId={8} index={4} side="left" />
       <RangeMap        argId={9} index={5} />
       <SeamPaperStat   argId={1} index={6} />
-      <ClosingArgument argId={4} index={7} />
     </>
   );
 }

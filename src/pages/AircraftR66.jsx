@@ -4616,7 +4616,6 @@ const R66Styles = () => (
     .r66-final-stack > .r66b-exp,
     .r66-final-stack > .r66b-seamP,
     .r66-final-stack > .r66b-range,
-    .r66-final-stack > .r66b-closeA,
     .r66-final-stack > .r66-gallery {
       position: sticky;
       top: var(--r66-stack-stick-top, 0);
@@ -4636,7 +4635,6 @@ const R66Styles = () => (
     .r66-final-stack > .r66b-exp::after,
     .r66-final-stack > .r66b-seamP::after,
     .r66-final-stack > .r66b-range::after,
-    .r66-final-stack > .r66b-closeA::after,
     .r66-final-stack > .r66-gallery::after,
     .r66-final-stack > .r66-cta::after {
       content: '';
@@ -5517,7 +5515,6 @@ const R66_STACK_SECTIONS = [
   { selector: '.r66b-exp',     palette: 'light' },
   { selector: '.r66b-seamP',   palette: 'light' },
   { selector: '.r66b-range',   palette: 'light' },
-  { selector: '.r66b-closeA',  palette: 'dark'  },
   { selector: '.r66-gallery',  palette: 'light' },
   { selector: '.r66-cta',      palette: 'dark'  },
 ];
