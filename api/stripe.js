@@ -1074,7 +1074,13 @@ async function recordBooking(paymentIntentId) {
     voucherMessage: voucherMessage || null,
   };
 
-  if (type === 'london-tour') {
+  if (type === 'misc') {
+    const { itemId, itemName, qty, apparelSize } = pi.metadata || {};
+    bookingData.itemId = itemId || '';
+    bookingData.itemName = itemName || '';
+    bookingData.qty = Number(qty) || 1;
+    if (apparelSize) bookingData.apparelSize = apparelSize;
+  } else if (type === 'london-tour') {
     const { experience, timeOfDay, quantity } = pi.metadata || {};
     bookingData.experience = experience || '';
     bookingData.timeOfDay = timeOfDay || '';
@@ -1109,6 +1115,31 @@ async function recordBooking(paymentIntentId) {
     await ref.update(dataWithoutStatus);
   } else {
     await ref.set({ ...bookingData, status: 'new' });
+  }
+
+  // Mirror handleWebhook: also write misc orders to misc_marketplace
+  // so the admin view picks them up even when the webhook can't reach this server.
+  if (type === 'misc') {
+    const { itemId, itemName, qty, apparelSize, shippingLine1, shippingLine2, shippingCity, shippingPostcode } = pi.metadata || {};
+    const marketRef = admin.firestore().collection('misc_marketplace').doc(pi.id);
+    const existingMarket = await marketRef.get();
+    if (!existingMarket.exists) {
+      await marketRef.set({
+        type: 'order',
+        status: 'new',
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        ref: pi.id,
+        amount: pi.amount,
+        itemId: itemId || '',
+        itemName: itemName || '',
+        qty: Number(qty),
+        customerName: customerName || '',
+        customerEmail: customerEmail || '',
+        customerPhone: customerPhone || '',
+        ...(apparelSize ? { apparelSize } : {}),
+        ...(shippingLine1 ? { shippingLine1, shippingLine2: shippingLine2 || '', shippingCity, shippingPostcode } : {}),
+      });
+    }
   }
 
   return bookingData;

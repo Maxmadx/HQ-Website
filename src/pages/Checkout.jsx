@@ -311,6 +311,11 @@ function MiscCheckoutForm({ itemId, itemName, qty, price, requiresShipping, appa
     if (result.error) {
       setError(result.error.message);
     } else if (result.paymentIntent.status === 'succeeded') {
+      fetch('/api/record-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentIntentId: result.paymentIntent.id }),
+      }).catch(() => {}); // fire-and-forget — webhook is the canonical fallback
       navigate(
         `/booking-confirmed?ref=${result.paymentIntent.id}` +
         `&type=misc` +
