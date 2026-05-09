@@ -2175,7 +2175,7 @@ function Experimentation() {
   const videoLinesInView = useInView(videoLinesRef, { once: true, amount: 0.5, margin: "0px 0px -200px 0px" });
   const aboutVideoRef = useRef(null);
   const aboutVideoElRef = useRef(null);
-  const aboutVideoNearby = useInView(aboutVideoRef, { once: true, margin: "0px 0px 600px 0px" });
+  const aboutVideoNearby = useInView(aboutVideoRef, { once: true, margin: "0px" });
   const aboutVideoVisible = useInView(aboutVideoRef, { amount: 0.15 });
   const aboutVideoElVisible = useInView(aboutVideoElRef, { amount: 0.3 });
   const ytPlayerRef = useRef(null);
@@ -3141,7 +3141,7 @@ function Experimentation() {
 
   // Reset manual close when nav unsticks (user scrolled back above nav's natural position)
   useEffect(() => {
-    if (!navIsStuck) setNavManuallyClosed(false);
+    if (!navIsStuck) startTransition(() => setNavManuallyClosed(false));
   }, [navIsStuck]);
 
   // Keep --catch-top in sync with actual header + nav height (used by all sticky elements)
