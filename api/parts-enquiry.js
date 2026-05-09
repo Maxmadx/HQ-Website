@@ -5,8 +5,11 @@ import admin from './firebase-admin.js';
 
 const router = express.Router();
 
-const VALID_CONDITIONS = ['new', 'overhauled', 'exchange', 'repaired', 'any'];
+// Keep legacy values accepted so old listings (overhauled/exchange/repaired)
+// still submit cleanly. New listings use only 'new' / 'used'.
+const VALID_CONDITIONS = ['new', 'used', 'overhauled', 'exchange', 'repaired', 'any'];
 const VALID_STATUSES = ['open', 'responded', 'closed'];
+const VALID_KINDS = ['enquire', 'request'];
 
 // 5 requests per 10 minutes per IP, mirroring /api/leads.
 const enquiryLimiter = rateLimit({
@@ -42,7 +45,8 @@ async function sendOpsEmail(enquiry) {
     auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
   });
   const to = process.env.PARTS_ENQUIRY_EMAIL || process.env.EMAIL_FROM;
-  const subject = `[Parts Enquiry] ${enquiry.partNumber} — ${enquiry.condition || 'any'} × ${enquiry.qty || 1}`;
+  const subjectTag = enquiry.kind === 'request' ? '[Parts Sourcing Request]' : '[Parts Enquiry]';
+  const subject = `${subjectTag} ${enquiry.partNumber} — ${enquiry.condition || 'any'} × ${enquiry.qty || 1}`;
   const text = [
     `Part Number: ${enquiry.partNumber}`,
     `Condition: ${enquiry.condition || 'any'}`,
@@ -70,7 +74,7 @@ async function sendOpsEmail(enquiry) {
 // POST /api/parts-enquiry — public, rate-limited
 router.post('/', enquiryLimiter, async (req, res) => {
   try {
-    const { partNumber, partListingId, condition, qty, name, email, phone, tail, notes } = req.body || {};
+    const { partNumber, partListingId, condition, qty, name, email, phone, tail, notes, kind } = req.body || {};
     if (!partNumber || !name || !email) {
       return res.status(400).json({ error: 'partNumber, name, and email are required' });
     }
@@ -80,6 +84,9 @@ router.post('/', enquiryLimiter, async (req, res) => {
     }
     if (condition !== undefined && condition !== null && !VALID_CONDITIONS.includes(condition)) {
       return res.status(400).json({ error: 'Invalid condition' });
+    }
+    if (kind !== undefined && kind !== null && !VALID_KINDS.includes(kind)) {
+      return res.status(400).json({ error: 'Invalid kind' });
     }
 
     const db = admin.firestore();
@@ -93,6 +100,7 @@ router.post('/', enquiryLimiter, async (req, res) => {
       phone: String(phone || '').slice(0, 50),
       tail: String(tail || '').slice(0, 20),
       notes: String(notes || '').slice(0, 5000),
+      kind: kind || 'enquire',
       status: 'open',
       adminNotes: '',
       createdAt: admin.firestore.FieldValue.serverTimestamp(),

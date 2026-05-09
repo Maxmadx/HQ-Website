@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { useCollection } from '../../hooks/useFirestore';
@@ -6,10 +6,19 @@ import { CATEGORIES, CONDITIONS, STATUSES } from '../../lib/partsSchema';
 
 export default function AdminParts() {
   const { docs: parts, loading } = useCollection('parts');
-  const [filterStatus, setFilterStatus] = useState('all');
+  // Default to 'active' — admins almost always want to see live stock first.
+  // 'sold' (and the rest) are shown only via explicit pill click.
+  const [filterStatus, setFilterStatus] = useState('active');
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterCondition, setFilterCondition] = useState('all');
   const [search, setSearch] = useState('');
+
+  const statusCounts = useMemo(() => {
+    const counts = { all: parts.length };
+    STATUSES.forEach((s) => { counts[s] = 0; });
+    parts.forEach((p) => { if (counts[p.status] !== undefined) counts[p.status] += 1; });
+    return counts;
+  }, [parts]);
 
   const filtered = parts.filter((p) => {
     if (filterStatus !== 'all' && p.status !== filterStatus) return false;
@@ -29,6 +38,26 @@ export default function AdminParts() {
         <Link to="/admin/parts/new" style={{ padding: '0.5rem 1rem', background: '#111827', color: '#fff', borderRadius: '6px', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600 }}>+ New Listing</Link>
       </div>
 
+      {/* Status pill row — primary segmentation. 'Active' is current stock;
+          'Sold' is the historical/sourcing pool exposed to customers via the
+          Previously-Sourced section on /parts. */}
+      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.85rem' }}>
+        {['all', ...STATUSES].map((s) => {
+          const isActive = filterStatus === s;
+          const label = s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1);
+          return (
+            <button
+              key={s}
+              onClick={() => setFilterStatus(s)}
+              style={{ padding: '0.4rem 0.85rem', border: '1px solid', borderColor: isActive ? '#111827' : '#d1d5db', background: isActive ? '#111827' : '#fff', color: isActive ? '#fff' : '#374151', borderRadius: '999px', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+            >
+              {label}
+              <span style={{ fontSize: '0.7rem', opacity: 0.7, fontWeight: 500 }}>{statusCounts[s] ?? 0}</span>
+            </button>
+          );
+        })}
+      </div>
+
       <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
         <input
           type="search"
@@ -44,10 +73,6 @@ export default function AdminParts() {
         <select value={filterCondition} onChange={(e) => setFilterCondition(e.target.value)} style={{ padding: '0.5rem 0.75rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem' }}>
           <option value="all">All conditions</option>
           {CONDITIONS.map((c) => <option key={c} value={c}>{c}</option>)}
-        </select>
-        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} style={{ padding: '0.5rem 0.75rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.875rem' }}>
-          <option value="all">All statuses</option>
-          {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
       </div>
 
