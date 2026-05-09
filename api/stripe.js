@@ -458,9 +458,26 @@ async function createLondonTourPaymentIntent({ experience, timeOfDay, quantity, 
 /**
  * Sends a booking confirmation email to the customer.
  */
-async function sendConfirmationEmail({ customerName, customerEmail, aircraft, duration, amount, bookingRef, addons, fulfilment, shippingAddress, referralCode = '' }) {
+async function sendConfirmationEmail({ customerName, customerEmail, aircraft, duration, amount, bookingRef, addons, fulfilment, shippingAddress, referralCode = '', flightAmountPence = 0 }) {
   const priceFormatted = `£${(amount / 100).toFixed(2)}`;
   const aircraftName = AIRCRAFT_NAMES[aircraft] || aircraft;
+  const fmtPence = (p) => `£${(Number(p) / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const upgradeBlock = (aircraft === 'r22')
+    ? `
+    <div style="margin: 32px 0; padding: 24px; background: #faf9f6; border-radius: 12px; border: 1px solid #e8e8e8;">
+      <h2 style="margin: 0 0 12px; font-size: 18px; font-family: 'Playfair Display', Georgia, serif; color: #0A0A0A;">Bring 2 extra friends — upgrade to R44</h2>
+      <p style="margin: 0 0 16px; color: #444; line-height: 1.5; font-family: Inter, -apple-system, Arial, sans-serif; font-size: 14px;">
+        You can swap your R22 for an R44 and bring 2 extra passengers. You only pay the price difference.<br>
+        R44 30 min: ${fmtPence(30500)} (you'd pay ${fmtPence(30500 - flightAmountPence)})<br>
+        R44 60 min: ${fmtPence(60500)} (you'd pay ${fmtPence(60500 - flightAmountPence)})
+      </p>
+      <a href="${process.env.SITE_URL || 'https://hqaviation.co.uk'}/upgrade?ref=${escapeHtml(bookingRef || '')}"
+         style="display: inline-block; padding: 12px 20px; background: #1a1a1a; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 600; font-family: Inter, -apple-system, Arial, sans-serif; font-size: 14px;">
+        Upgrade to R44
+      </a>
+    </div>
+  `
+    : '';
 
   await getTransporter().sendMail({
     from: process.env.EMAIL_FROM,
@@ -576,6 +593,7 @@ async function sendConfirmationEmail({ customerName, customerEmail, aircraft, du
     }</p>
   `
   : ''}
+            ${upgradeBlock}
             ${referralCode ? `
             <!-- Referral CTA -->
             <div style="margin: 32px 0; padding: 24px; background: #faf9f6; border-radius: 12px; border: 1px solid #e8e8e8;">
@@ -1110,6 +1128,7 @@ async function handleWebhook(req) {
           fulfilment: webhookFulfilment,
           shippingAddress: webhookShippingAddress,
           referralCode: pi.metadata.referralCode || '',
+          flightAmountPence: pi.metadata.flightAmountPence || pi.amount,
         });
       }
     } catch (emailErr) {
