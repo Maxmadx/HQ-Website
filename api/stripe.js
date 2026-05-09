@@ -779,6 +779,26 @@ async function sendLondonTourConfirmationEmail({ customerName, customerEmail, ex
 }
 
 /**
+ * Sends an upgrade confirmation email to the customer after their booking has been upgraded.
+ */
+async function sendUpgradeConfirmationEmail({ customerName, customerEmail, newAircraft, newDuration, diffPaidPence, originalPaymentIntentId }) {
+  if (!customerEmail) return;
+  const html = `
+    <p>Hi ${escapeHtml(customerName || 'there')},</p>
+    <p>Your Discovery Flight has been upgraded to a <strong>${escapeHtml(newAircraft.toUpperCase())} ${newDuration}-minute</strong> flight.</p>
+    <p>You paid an additional <strong>£${(diffPaidPence / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> for the upgrade.</p>
+    <p>Booking reference: <code>${escapeHtml(originalPaymentIntentId)}</code></p>
+    <p>The HQ Aviation team will be in touch to confirm your slot.</p>
+  `;
+  return getTransporter().sendMail({
+    from: process.env.EMAIL_FROM,
+    to: customerEmail,
+    subject: 'Your flight has been upgraded',
+    html,
+  });
+}
+
+/**
  * Notifies the HQ team that a referral code has been redeemed and a free item needs fulfilling.
  */
 async function sendReferralRedeemedEmail({ owner, redeemer, freeItem }) {
@@ -829,6 +849,50 @@ async function handleWebhook(req) {
   if (event.type === 'payment_intent.succeeded') {
     const pi = event.data.object;
     const { productType, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage } = pi.metadata;
+
+    // Upgrade path — mutates an existing booking rather than creating a new one
+    if (productType === 'discovery-flight-upgrade') {
+      try {
+        const { originalPaymentIntentId, newAircraft, newDuration } = pi.metadata;
+        if (!originalPaymentIntentId) throw new Error('upgrade PI missing originalPaymentIntentId');
+        const ref = admin.firestore().collection('bookings').doc(originalPaymentIntentId);
+        const snap = await ref.get();
+        if (!snap.exists) throw new Error(`original booking not found: ${originalPaymentIntentId}`);
+        const booking = snap.data();
+        if (booking.upgrade) {
+          // Idempotent — already upgraded
+          return res.json({ received: true });
+        }
+        const newDur = Number(newDuration);
+        const r44Price = await getR44Price(newDur);
+        await ref.update({
+          aircraft: newAircraft || 'r44',
+          duration: newDur,
+          originalAircraft: booking.aircraft,
+          originalDuration: booking.duration,
+          flightAmountPence: r44Price,
+          totalAmountPence: (Number(booking.totalAmountPence) || 0) + (r44Price - (Number(booking.flightAmountPence) || 0)),
+          upgrade: {
+            newAircraft: newAircraft || 'r44',
+            newDuration: newDur,
+            upgradePaymentIntentId: pi.id,
+            upgradedAt: admin.firestore.FieldValue.serverTimestamp(),
+          },
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        await sendUpgradeConfirmationEmail({
+          customerName: booking.customerName,
+          customerEmail: booking.customerEmail,
+          newAircraft: newAircraft || 'r44',
+          newDuration: newDur,
+          diffPaidPence: pi.amount,
+          originalPaymentIntentId,
+        });
+      } catch (upErr) {
+        console.error('[stripe webhook] upgrade processing failed:', upErr.message);
+      }
+      return res.json({ received: true });
+    }
 
     // Persist booking to Firestore
     try {
