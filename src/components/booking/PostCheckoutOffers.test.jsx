@@ -28,13 +28,13 @@ describe('PostCheckoutOffers', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it('returns null when no referralCode', () => {
-    const { container } = render(<PostCheckoutOffers booking={{ ...baseBooking, referralCode: null }} freeReferralItem={freeItem} />);
+  it('returns null when no referralCode and no upgrade eligible', () => {
+    const { container } = render(<PostCheckoutOffers booking={{ ...baseBooking, referralCode: null, upgrade: 'r44' }} freeReferralItem={freeItem} />);
     expect(container).toBeEmptyDOMElement();
   });
 
-  it('returns null when no freeReferralItem flagged', () => {
-    const { container } = render(<PostCheckoutOffers booking={baseBooking} freeReferralItem={null} />);
+  it('returns null when no freeReferralItem flagged and no upgrade eligible', () => {
+    const { container } = render(<PostCheckoutOffers booking={{ ...baseBooking, upgrade: 'r44' }} freeReferralItem={null} />);
     expect(container).toBeEmptyDOMElement();
   });
 

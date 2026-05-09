@@ -91,6 +91,14 @@ export default function BookingConfirmed() {
     return () => { cancelled = true; };
   }, []);
 
+  async function refetchBooking() {
+    if (!ref) return;
+    try {
+      const res = await fetch(`/api/booking/${encodeURIComponent(ref)}`);
+      if (res.ok) setBooking(await res.json());
+    } catch {}
+  }
+
   return (
     <div style={styles.page}>
       <div style={styles.container}>
@@ -150,7 +158,7 @@ export default function BookingConfirmed() {
         </div>
 
         {!isMisc && (
-          <PostCheckoutOffers booking={booking} freeReferralItem={freeReferralItem} />
+          <PostCheckoutOffers booking={booking} freeReferralItem={freeReferralItem} onUpgraded={refetchBooking} />
         )}
 
         <p style={styles.nextStep}>

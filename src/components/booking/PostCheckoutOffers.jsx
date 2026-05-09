@@ -1,17 +1,18 @@
 import ReferralOfferCard from './ReferralOfferCard';
+import UpgradeOfferCard from './UpgradeOfferCard';
 
-export default function PostCheckoutOffers({ booking, freeReferralItem }) {
+export default function PostCheckoutOffers({ booking, freeReferralItem, onUpgraded }) {
   if (!booking) return null;
   if (booking.productType === 'misc') return null;
 
-  // Voucher-only edge case
   const isVoucherOnly = booking.voucher?.active === true
     && (!booking.addons || booking.addons.length === 0)
     && (!booking.flightAmountPence || booking.flightAmountPence === 0);
   if (isVoucherOnly) return null;
 
   const showReferral = !!(booking.referralCode && freeReferralItem);
-  if (!showReferral) return null; // Plan C will add the upgrade card here
+  const showUpgrade = booking.aircraft === 'r22' && !booking.upgrade;
+  if (!showReferral && !showUpgrade) return null;
 
   return (
     <div style={S.wrap}>
@@ -22,6 +23,7 @@ export default function PostCheckoutOffers({ booking, freeReferralItem }) {
           }
         `}</style>
         {showReferral && <ReferralOfferCard booking={booking} freeItem={freeReferralItem} />}
+        {showUpgrade && <UpgradeOfferCard booking={booking} onUpgraded={onUpgraded} />}
       </div>
       <p style={S.note}>These offers are also in your confirmation email — claim later if you'd rather think about it.</p>
     </div>
