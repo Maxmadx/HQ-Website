@@ -95,7 +95,7 @@ export default function Upgrade() {
   }
 
   function handleUpgraded() {
-    navigate(`/booking-confirmed?ref=${encodeURIComponent(booking.paymentIntentId)}&aircraft=r44&duration=${booking.duration}&price=${(booking.totalAmountPence / 100).toFixed(2)}`);
+    navigate(`/booking-confirmed?ref=${encodeURIComponent(booking.paymentIntentId)}`);
   }
 
   return (

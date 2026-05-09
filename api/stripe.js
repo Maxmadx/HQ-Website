@@ -1117,6 +1117,8 @@ async function handleWebhook(req) {
         // Default: discovery-flight (includes legacy intents without productType)
         const { aircraft, duration } = pi.metadata;
         const { addons: webhookParsedAddons, fulfilment: webhookFulfilment, shippingAddress: webhookShippingAddress } = parseAddonsFromMetadata(pi.metadata);
+        const webhookAddonTotal = (webhookParsedAddons || []).reduce((sum, a) => sum + (Number(a.lineTotal) || 0), 0);
+        const flightOnlyAmount = pi.amount - webhookAddonTotal;
         await sendConfirmationEmail({
           customerName,
           customerEmail,
@@ -1128,7 +1130,7 @@ async function handleWebhook(req) {
           fulfilment: webhookFulfilment,
           shippingAddress: webhookShippingAddress,
           referralCode: pi.metadata.referralCode || '',
-          flightAmountPence: pi.metadata.flightAmountPence || pi.amount,
+          flightAmountPence: flightOnlyAmount,
         });
       }
     } catch (emailErr) {

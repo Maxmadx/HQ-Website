@@ -91,7 +91,10 @@ export default function BookingConfirmed() {
     return () => { cancelled = true; };
   }, []);
 
-  async function refetchBooking() {
+  async function refetchBooking(optimistic) {
+    if (optimistic && booking) {
+      setBooking((b) => ({ ...b, aircraft: optimistic.newAircraft, duration: optimistic.newDuration, upgrade: { newAircraft: optimistic.newAircraft, newDuration: optimistic.newDuration, upgradePaymentIntentId: 'pending', upgradedAt: new Date() } }));
+    }
     if (!ref) return;
     try {
       const res = await fetch(`/api/booking/${encodeURIComponent(ref)}`);
@@ -135,18 +138,28 @@ export default function BookingConfirmed() {
             </>
           ) : (
             <>
-              <div style={styles.row}>
-                <span style={styles.label}>Aircraft</span>
-                <span style={styles.value}>{aircraftName}</span>
-              </div>
-              <div style={styles.row}>
-                <span style={styles.label}>Duration</span>
-                <span style={styles.value}>{duration} minutes</span>
-              </div>
-              <div style={styles.row}>
-                <span style={styles.label}>Amount Paid</span>
-                <span style={styles.value}>£{price}</span>
-              </div>
+              {(() => {
+                const displayAircraft = booking?.aircraft || aircraft;
+                const displayAircraftName = AIRCRAFT_NAMES[displayAircraft] || displayAircraft || 'Discovery Flight';
+                const displayDuration = booking?.duration || duration;
+                const displayPrice = booking ? (booking.totalAmountPence / 100).toFixed(2) : price;
+                return (
+                  <>
+                    <div style={styles.row}>
+                      <span style={styles.label}>Aircraft</span>
+                      <span style={styles.value}>{displayAircraftName}</span>
+                    </div>
+                    <div style={styles.row}>
+                      <span style={styles.label}>Duration</span>
+                      <span style={styles.value}>{displayDuration} minutes</span>
+                    </div>
+                    <div style={styles.row}>
+                      <span style={styles.label}>Amount Paid</span>
+                      <span style={styles.value}>£{displayPrice}</span>
+                    </div>
+                  </>
+                );
+              })()}
             </>
           )}
           {ref && (

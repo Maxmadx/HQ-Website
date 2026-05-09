@@ -83,7 +83,7 @@ function UpgradeForm({ booking, onSuccess }) {
     if (result.error) {
       setError(result.error.message);
     } else if (result.paymentIntent?.status === 'succeeded') {
-      onSuccess();
+      onSuccess({ newAircraft: 'r44', newDuration: duration });
     }
   }
 

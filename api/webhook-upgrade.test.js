@@ -151,14 +151,7 @@ describe('handleWebhook — discovery-flight-upgrade', () => {
       },
     };
 
-    // handleWebhook will throw ReferenceError after the update (res is not defined)
-    // because the function calls res.json() which is not passed as a parameter.
-    // The booking update happens before that call, so assertions still hold.
-    try {
-      await handleWebhook(buildReq(event));
-    } catch (_err) {
-      // Swallow the expected ReferenceError from res.json({ received: true })
-    }
+    await handleWebhook(buildReq(event));
 
     const updated = bookingsStore.get('pi_orig');
     expect(updated.aircraft).toBe('r44');
@@ -200,13 +193,7 @@ describe('handleWebhook — discovery-flight-upgrade', () => {
       },
     };
 
-    // When already upgraded, the handler hits `return res.json(...)` (idempotent branch)
-    // before doing any update. This throws ReferenceError — swallow it.
-    try {
-      await handleWebhook(buildReq(event));
-    } catch (_err) {
-      // Swallow the expected ReferenceError from res.json({ received: true })
-    }
+    await handleWebhook(buildReq(event));
 
     const booking = bookingsStore.get('pi_orig');
     // Should be unchanged — no new fields written
