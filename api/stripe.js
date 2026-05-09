@@ -274,6 +274,26 @@ async function getPrice(aircraft, duration) {
 }
 
 /**
+ * Returns the R44 price in pence for the given duration.
+ * Wraps `getPrice` to surface a clearer error for the upgrade path.
+ */
+async function getR44Price(duration) {
+  const dur = Number(duration);
+  if (dur !== 30 && dur !== 60) {
+    const err = new Error(`Invalid upgrade duration: ${duration}`);
+    err.statusCode = 400;
+    throw err;
+  }
+  const price = await getPrice('r44', dur);
+  if (price === null || typeof price !== 'number' || price <= 0) {
+    const err = new Error('R44 price unavailable');
+    err.statusCode = 500;
+    throw err;
+  }
+  return price;
+}
+
+/**
  * Creates a Stripe PaymentIntent with a price read from Firestore.
  * Throws with statusCode 400 if aircraft/duration is invalid.
  */
