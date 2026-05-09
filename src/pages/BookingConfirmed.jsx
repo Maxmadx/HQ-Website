@@ -67,8 +67,8 @@ export default function BookingConfirmed() {
     if (!ref) return;
     let cancelled = false;
     let attempt = 0;
-    const MAX_ATTEMPTS = 6;
-    const RETRY_DELAY = 500;
+    const MAX_ATTEMPTS = 12;
+    const RETRY_DELAY = 700;
 
     async function fetchOnce() {
       try {
