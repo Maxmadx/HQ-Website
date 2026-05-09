@@ -1153,7 +1153,15 @@ async function recordBooking(paymentIntentId) {
     throw err;
   }
 
-  const pi = await getStripe().paymentIntents.retrieve(paymentIntentId);
+  // Stripe occasionally reports 'processing' for a few hundred ms after the
+  // client SDK reports succeeded. Retry briefly to bridge this race.
+  let pi = await getStripe().paymentIntents.retrieve(paymentIntentId);
+  const RETRY_DELAY_MS = 400;
+  const MAX_RETRIES = 4; // ~1.6s total
+  for (let attempt = 0; attempt < MAX_RETRIES && pi.status === 'processing'; attempt++) {
+    await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+    pi = await getStripe().paymentIntents.retrieve(paymentIntentId);
+  }
 
   if (pi.status !== 'succeeded') {
     const err = new Error(`Payment intent ${paymentIntentId} has not succeeded (status: ${pi.status})`);

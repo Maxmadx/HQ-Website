@@ -66,14 +66,36 @@ export default function BookingConfirmed() {
   useEffect(() => {
     if (!ref) return;
     let cancelled = false;
-    (async () => {
+    let attempt = 0;
+    const MAX_ATTEMPTS = 6;
+    const RETRY_DELAY = 500;
+
+    async function fetchOnce() {
       try {
         const res = await fetch(`/api/booking/${encodeURIComponent(ref)}`);
-        if (!res.ok) return;
-        const data = await res.json();
-        if (!cancelled) setBooking(data);
-      } catch {}
+        if (res.ok) {
+          const data = await res.json();
+          if (!cancelled) setBooking(data);
+          return true; // success
+        }
+        if (res.status === 404) {
+          return false; // retry
+        }
+        return true; // other errors — give up (server-down etc)
+      } catch {
+        return true; // network error — give up
+      }
+    }
+
+    (async () => {
+      while (!cancelled && attempt < MAX_ATTEMPTS) {
+        const done = await fetchOnce();
+        if (done) return;
+        attempt++;
+        await new Promise((r) => setTimeout(r, RETRY_DELAY));
+      }
     })();
+
     return () => { cancelled = true; };
   }, [ref]);
 
