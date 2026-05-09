@@ -1249,4 +1249,71 @@ async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmai
   return paymentIntent;
 }
 
-module.exports = { getPrice, applyDiscountPence, priceAddons, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking, recordPurchaseEvent };
+/**
+ * Creates a Stripe PaymentIntent for the price difference between an
+ * R22 booking and a desired R44 duration. Add-ons and voucher are NOT
+ * recharged — only the flight portion changes.
+ *
+ * @param {Object} args
+ * @param {string} args.originalPaymentIntentId  Existing R22 booking PI ID.
+ * @param {30|60}  args.newDuration              Target R44 duration.
+ * @returns {Promise<{ clientSecret: string, diffPence: number, newDuration: number }>}
+ */
+async function createUpgradePaymentIntent({ originalPaymentIntentId, newDuration }) {
+  if (!originalPaymentIntentId || typeof originalPaymentIntentId !== 'string') {
+    const err = new Error('originalPaymentIntentId required');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const bookingRef = admin.firestore().collection('bookings').doc(originalPaymentIntentId);
+  const snap = await bookingRef.get();
+  if (!snap.exists) {
+    const err = new Error('Booking not found');
+    err.statusCode = 404;
+    throw err;
+  }
+  const booking = snap.data();
+
+  if (booking.aircraft !== 'r22') {
+    const err = new Error("This booking isn't eligible for an R44 upgrade");
+    err.statusCode = 400;
+    throw err;
+  }
+  if (booking.upgrade) {
+    const err = new Error('This booking has already been upgraded');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const r44Price = await getR44Price(newDuration);
+  const flightPaid = Number(booking.flightAmountPence) || 0;
+  const diffPence = r44Price - flightPaid;
+  if (diffPence <= 0) {
+    const err = new Error('Selected duration is not an upgrade');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const paymentIntent = await getStripe().paymentIntents.create({
+    amount: diffPence,
+    currency: 'gbp',
+    metadata: {
+      productType: 'discovery-flight-upgrade',
+      originalPaymentIntentId,
+      newAircraft: 'r44',
+      newDuration: String(newDuration),
+      customerName: String(booking.customerName || '').slice(0, 500),
+      customerEmail: String(booking.customerEmail || '').slice(0, 500),
+      customerPhone: String(booking.customerPhone || '').slice(0, 500),
+    },
+  });
+
+  return {
+    clientSecret: paymentIntent.client_secret,
+    diffPence,
+    newDuration: Number(newDuration),
+  };
+}
+
+module.exports = { getPrice, applyDiscountPence, priceAddons, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, createUpgradePaymentIntent, getR44Price, handleWebhook, recordBooking, recordPurchaseEvent };
