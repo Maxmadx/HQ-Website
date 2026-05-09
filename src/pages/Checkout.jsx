@@ -39,7 +39,7 @@ function CheckoutForm({
   aircraft, duration, price,
   wantsVoucher, setWantsVoucher, voucherLocation, setVoucherLocation, voucherMessage, setVoucherMessage,
   addons, addonsState, addonsTotalPence,
-  prefillEmail, cartId,
+  prefillEmail, cartId, referredByCode,
 }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -97,6 +97,7 @@ function CheckoutForm({
             ? addonsState.shippingAddress
             : null,
           cartId: cartId || '',
+          ...(referredByCode ? { referredByCode } : {}),
         }),
       });
       const data = await res.json();
@@ -310,6 +311,11 @@ function MiscCheckoutForm({ itemId, itemName, qty, price, requiresShipping, appa
     if (result.error) {
       setError(result.error.message);
     } else if (result.paymentIntent.status === 'succeeded') {
+      fetch('/api/record-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentIntentId: result.paymentIntent.id }),
+      }).catch(() => {}); // fire-and-forget — webhook is the canonical fallback
       navigate(
         `/booking-confirmed?ref=${result.paymentIntent.id}` +
         `&type=misc` +
@@ -456,6 +462,14 @@ function InlineEmailStep({ defaultEmail = '', onContinue }) {
 export default function Checkout() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  const [referredByCode] = useState(() => {
+    // First try URL param; fall back to sessionStorage written by DiscoveryFlight
+    const raw = searchParams.get('ref') ||
+      (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('referredByCode') || '' : '');
+    const validated = /^[A-Za-z0-9]{8}$/.test(raw.trim()) ? raw.trim().toUpperCase() : '';
+    return validated;
+  });
 
   const type = searchParams.get('type');
   const isMisc = type === 'misc';
@@ -744,6 +758,7 @@ export default function Checkout() {
                     addonsTotalPence={addonsTotalPence}
                     prefillEmail={email}
                     cartId={cartId}
+                    referredByCode={referredByCode}
                   />
                 )}
               </Elements>

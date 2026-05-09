@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation, useNavigationType } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigationType } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import Seo from './components/seo/Seo';
 import { buildOrganization, buildWebSite, buildLocalBusiness } from './components/seo/jsonLd';
@@ -266,7 +266,8 @@ function App() {
         <Route path="/admin/comparables/:id" element={<AdminRoute><AdminComparableEdit /></AdminRoute>} />
         <Route path="/admin/misc" element={<AdminRoute><AdminMiscItems /></AdminRoute>} />
         <Route path="/admin/misc/:id" element={<AdminRoute><AdminMiscItemEdit /></AdminRoute>} />
-        <Route path="/admin/misc-marketplace" element={<AdminRoute><AdminMiscMarketplace /></AdminRoute>} />
+        <Route path="/admin/misc/orders" element={<AdminRoute><AdminMiscMarketplace /></AdminRoute>} />
+        <Route path="/admin/misc-marketplace" element={<Navigate to="/admin/misc/orders" replace />} />
         <Route path="/admin/parts" element={<AdminRoute><AdminParts /></AdminRoute>} />
         <Route path="/admin/parts/enquiries" element={<AdminRoute><AdminPartsEnquiries /></AdminRoute>} />
         <Route path="/admin/parts/:id" element={<AdminRoute><AdminPartEdit /></AdminRoute>} />

@@ -10,7 +10,7 @@ const NAV_ITEMS = [
   { to: '/admin/listings', icon: '✈️', label: 'Listings' },
   { to: '/admin/comparables', icon: '🚁', label: 'Aircraft Specs' },
   { to: '/admin/misc', icon: '🛒', label: 'Misc Items' },
-  { to: '/admin/misc-marketplace', icon: '🛍️', label: 'Marketplace' },
+  { to: '/admin/misc/orders', icon: '🛍️', label: 'Misc Orders' },
   { to: '/admin/parts', icon: '🔩', label: 'Parts' },
   { to: '/admin/parts/enquiries', icon: '📩', label: 'Parts Enquiries' },
   { to: '/admin/images', icon: '🖼️', label: 'Images' },
@@ -121,7 +121,7 @@ export default function AdminLayout({ children }) {
                   {newBookingCount > 99 ? '99+' : newBookingCount}
                 </span>
               )}
-              {item.to === '/admin/misc-marketplace' && newMarketplaceCount > 0 && (
+              {item.to === '/admin/misc/orders' && newMarketplaceCount > 0 && (
                 <span style={{
                   background: '#ef4444', color: '#fff', borderRadius: '10px',
                   fontSize: '0.65rem', fontWeight: 700, padding: '1px 6px',
