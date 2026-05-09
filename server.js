@@ -20,7 +20,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const compression = require('compression');
-const { createPaymentIntent, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking } = require('./api/stripe');
+const { createPaymentIntent, createLondonTourPaymentIntent, createMiscPaymentIntent, createUpgradePaymentIntent, handleWebhook, recordBooking } = require('./api/stripe');
 const { getBooking } = require('./api/booking');
 const leadsRouter = require('./api/leads');
 const stripeDiscoveryRouter = require('./api/stripe-discovery');
@@ -259,6 +259,18 @@ app.post('/api/create-misc-payment-intent', express.json(), async (req, res) => 
   } catch (err) {
     const status = err.statusCode || 500;
     res.status(status).json({ error: err.message });
+  }
+});
+
+// POST /api/create-upgrade-payment-intent
+app.post('/api/create-upgrade-payment-intent', express.json(), async (req, res) => {
+  try {
+    const { originalPaymentIntentId, newDuration } = req.body || {};
+    const out = await createUpgradePaymentIntent({ originalPaymentIntentId, newDuration: Number(newDuration) });
+    res.json(out);
+  } catch (err) {
+    const status = err.statusCode || 500;
+    res.status(status).json({ error: err.message || 'Internal error' });
   }
 });
 
