@@ -861,7 +861,7 @@ async function handleWebhook(req) {
         const booking = snap.data();
         if (booking.upgrade) {
           // Idempotent — already upgraded
-          return res.json({ received: true });
+          return;
         }
         const newDur = Number(newDuration);
         const r44Price = await getR44Price(newDur);
@@ -891,7 +891,7 @@ async function handleWebhook(req) {
       } catch (upErr) {
         console.error('[stripe webhook] upgrade processing failed:', upErr.message);
       }
-      return res.json({ received: true });
+      return;
     }
 
     // Persist booking to Firestore
