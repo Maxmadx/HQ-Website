@@ -45,13 +45,14 @@ function renderAt(search) {
 }
 
 describe('BookingConfirmed', () => {
-  it('shows "Confirming Booking" + spinner during Phase 1 for R22 bookings', async () => {
+  it('shows "Confirming Booking" + spinner while record-booking is in flight', async () => {
     fetchSpy.mockImplementation((url) => {
       if (typeof url === 'string' && url.includes('/api/booking/')) {
         return Promise.resolve({ ok: true, json: () => Promise.resolve({ productType: 'discovery-flight', aircraft: 'r22', duration: 30, flightAmountPence: 18000, paymentIntentId: 'pi_x' }) });
       }
       if (typeof url === 'string' && url.includes('/api/record-booking')) {
-        return Promise.resolve({ ok: true, json: () => Promise.resolve({ ok: true }) });
+        // Never resolves — keeps the component in 'confirming' phase.
+        return new Promise(() => {});
       }
       return Promise.resolve({ ok: false, status: 404 });
     });
@@ -62,7 +63,7 @@ describe('BookingConfirmed', () => {
     expect(screen.getByLabelText(/Confirming booking/i)).toBeInTheDocument();
   });
 
-  it('flips to Phase 2 after the 4s floor + record-booking success', async () => {
+  it('flips to confirmed phase once record-booking succeeds and shows the View Booking Summary button', async () => {
     fetchSpy.mockImplementation((url) => {
       if (typeof url === 'string' && url.includes('/api/booking/')) {
         return Promise.resolve({ ok: true, json: () => Promise.resolve({ productType: 'discovery-flight', aircraft: 'r22', duration: 30, flightAmountPence: 18000, paymentIntentId: 'pi_x' }) });
@@ -74,15 +75,9 @@ describe('BookingConfirmed', () => {
     });
 
     renderAt('?ref=pi_x&aircraft=r22&duration=30&price=180&name=Test');
-    await waitFor(() => screen.getByText(/Confirming Booking/i));
-
-    // Advance the timer past the 4-second floor
-    await act(async () => {
-      vi.advanceTimersByTime(4500);
-    });
-
     await waitFor(() => screen.getByText(/^Booking Confirmed$/i));
     expect(screen.queryByText(/Confirming Booking/i)).toBeNull();
+    expect(screen.getByText(/View Booking Summary/i)).toBeInTheDocument();
   });
 
   it('renders BigUpgradeCard during Phase 1 for an R22 booker', async () => {
@@ -97,7 +92,7 @@ describe('BookingConfirmed', () => {
     });
 
     renderAt('?ref=pi_x&aircraft=r22&duration=30&price=180&name=Test');
-    await waitFor(() => screen.getByText(/UPGRADE TO THE R44/i));
+    await waitFor(() => screen.getByText(/Upgrade to Robinson R44/i));
     expect(screen.getByText(/You at the controls\./i)).toBeInTheDocument();
   });
 
@@ -112,6 +107,6 @@ describe('BookingConfirmed', () => {
     renderAt('?ref=pi_misc&type=misc&itemName=Cap');
     await waitFor(() => screen.getByText(/Purchase Confirmed/i));
     expect(screen.queryByText(/Confirming Booking/i)).toBeNull();
-    expect(screen.queryByText(/UPGRADE TO THE R44/i)).toBeNull();
+    expect(screen.queryByText(/Upgrade to Robinson R44/i)).toBeNull();
   });
 });

@@ -25,7 +25,14 @@ export default function BookingConfirmed() {
   const isMisc = type === 'misc';
 
   const navigate = useNavigate();
-  const [phase, setPhase] = useState(isMisc ? 'confirmed' : 'confirming');
+  // Phases:
+  //   'confirming' — spinner + 'Confirming Booking', record-booking in flight
+  //   'confirmed'  — ✓ + 'Booking Confirmed' + 'View Booking Summary' button.
+  //                  Hero upgrade card still visible. User is in control.
+  //   'expanded'   — user clicked the button. Summary card grows in, upgrade
+  //                  pill morphs hero→compact, post-checkout offers appear.
+  // Misc bookings skip both intermediate states (no record-booking, no upgrade).
+  const [phase, setPhase] = useState(isMisc ? 'expanded' : 'confirming');
 
   const [booking, setBooking] = useState(null);
   const [freeReferralItem, setFreeReferralItem] = useState(null);
@@ -123,10 +130,9 @@ export default function BookingConfirmed() {
     if (!ref) return;            // no PI to record
     let cancelled = false;
 
-    const FOUR_SECONDS = 4000;
     const NETWORK_TIMEOUT = 15000;
 
-    const recordPromise = (async () => {
+    (async () => {
       try {
         const res = await Promise.race([
           fetch('/api/record-booking', {
@@ -140,9 +146,9 @@ export default function BookingConfirmed() {
           const data = await res.json().catch(() => ({}));
           throw new Error(data.error || `record-booking failed (${res.status})`);
         }
-        return true;
+        if (!cancelled) setPhase('confirmed');
       } catch (err) {
-        if (cancelled) return false;
+        if (cancelled) return;
         const errMsg = err.message || 'Unknown error';
         // Send the user to the trial-lessons landing page with the error in
         // the URL — they can re-pick aircraft + duration without risking a
@@ -150,19 +156,8 @@ export default function BookingConfirmed() {
         const params = new URLSearchParams();
         params.set('error', errMsg);
         navigate(`/training/trial-lessons?${params.toString()}`, { replace: true });
-        return false;
       }
     })();
-
-    const timerPromise = new Promise((resolve) => setTimeout(resolve, FOUR_SECONDS));
-
-    Promise.all([recordPromise, timerPromise]).then(([recordOk]) => {
-      if (!cancelled && recordOk) {
-        // UpgradePill handles its own hero→compact morph via CSS transitions
-        // on a single mounted element — no intermediate phase needed.
-        setPhase('confirmed');
-      }
-    });
 
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -179,7 +174,16 @@ export default function BookingConfirmed() {
     } catch {}
   }
 
-  const confirmedVisible = phase === 'confirmed';
+  // confirmedVisible drives the spinner→✓ and heading-text swap (true for
+  // both 'confirmed' and 'expanded'). isExpanded gates the summary card,
+  // PostCheckoutOffers, return link, and the pill's hero→compact morph.
+  const confirmedVisible = phase !== 'confirming';
+  const isExpanded = phase === 'expanded';
+  const showSummaryButton = phase === 'confirmed';
+
+  function handleViewSummary() {
+    setPhase('expanded');
+  }
 
   return (
     <div style={styles.page}>
@@ -208,37 +212,51 @@ export default function BookingConfirmed() {
             : 'Confirming Booking'}
         </h1>
 
-        {/* Divider between heading and the upgrade pill — only visible during Phase 1.
-            Fades out as Phase 2 reveals the subtitle + summary card below. */}
+        {/* 'View Booking Summary' button — appears in 'confirmed' phase, sits
+            where the old thank-you subtitle was. Clicking it advances to
+            'expanded': summary card grows in, upgrade pill morphs hero→compact. */}
+        <div
+          style={{
+            maxHeight: showSummaryButton ? '90px' : '0px',
+            opacity: showSummaryButton ? 1 : 0,
+            overflow: 'hidden',
+            transition: 'max-height 1500ms ease, opacity 800ms ease',
+          }}
+        >
+          <button
+            type="button"
+            onClick={handleViewSummary}
+            style={styles.viewSummaryBtn}
+          >
+            View Booking Summary&nbsp;&nbsp;↓
+          </button>
+        </div>
+
+        {/* Divider — visible during 'confirming' AND 'confirmed' as the
+            separator between the heading area and the hero upgrade card.
+            Collapses on 'expanded' so the summary card can take its place. */}
         <hr
           style={{
             border: 'none',
             borderTop: '1px solid #e0ddd6',
-            margin: confirmedVisible ? '0' : '0 0 32px',
-            maxHeight: confirmedVisible ? '0px' : '1px',
-            opacity: confirmedVisible ? 0 : 1,
+            margin: isExpanded ? '0' : '24px 0 32px',
+            maxHeight: isExpanded ? '0px' : '1px',
+            opacity: isExpanded ? 0 : 1,
             transition: 'opacity 700ms ease, max-height 1500ms ease, margin 1500ms ease',
           }}
         />
 
-        {/* Subtitle + Summary card — grows in above the pill on Phase 2.
+        {/* Summary card — grows in when the user clicks 'View Booking Summary'.
             max-height + opacity transition so the pill below shifts down
             gradually rather than snapping. */}
         <div
           style={{
-            maxHeight: confirmedVisible ? '900px' : '0px',
-            opacity: confirmedVisible ? 1 : 0,
+            maxHeight: isExpanded ? '900px' : '0px',
+            opacity: isExpanded ? 1 : 0,
             overflow: 'hidden',
             transition: 'max-height 1500ms ease, opacity 800ms ease 400ms',
           }}
         >
-          <p style={styles.subheading}>
-            {booking?.customerName ? `Thank you, ${booking.customerName}.` : 'Thank you.'}{' '}
-            {isMisc
-              ? 'Your order has been placed. The HQ team will be in touch shortly.'
-              : 'Your Discovery Flight has been booked.'}
-          </p>
-
           {/* Summary card */}
           <div style={styles.card}>
             <h2 style={styles.cardHeading}>Booking Summary</h2>
@@ -301,12 +319,12 @@ export default function BookingConfirmed() {
           <UpgradePill
             booking={booking}
             onUpgraded={refetchBooking}
-            mode={confirmedVisible ? 'compact' : 'hero'}
+            mode={isExpanded ? 'compact' : 'hero'}
           />
         )}
 
-        {/* Post-checkout offers + outro — Phase 2 only. */}
-        {confirmedVisible && (
+        {/* Post-checkout offers + outro — only after user clicks View Booking Summary. */}
+        {isExpanded && (
           <div style={{ animation: 'bc-fade-in 480ms ease both' }}>
             {!isMisc && (
               <PostCheckoutOffers booking={booking} freeReferralItem={freeReferralItem} />
@@ -424,6 +442,21 @@ const styles = {
     fontSize: '13px',
     color: '#aaa',
     margin: '0 0 32px',
+  },
+  viewSummaryBtn: {
+    display: 'inline-block',
+    padding: '12px 24px',
+    margin: '0 0 32px',
+    background: '#fff',
+    color: '#1a1a1a',
+    border: '1px solid #1a1a1a',
+    borderRadius: '8px',
+    fontFamily: "'Space Grotesk', Arial, sans-serif",
+    fontSize: '14px',
+    fontWeight: 600,
+    letterSpacing: '0.02em',
+    cursor: 'pointer',
+    transition: 'background 200ms ease, color 200ms ease',
   },
   homeLink: {
     display: 'inline-block',
