@@ -31,9 +31,18 @@ function renderHead({ title, description, ogImage, canonicalUrl }) {
 }
 
 function factory({ indexHtmlPath, getMetaForStaticPath, getMetaForDynamicPath }) {
-  const TEMPLATE = fs.readFileSync(indexHtmlPath, 'utf8');
+  // Fail-soft: in the Cloud Run + Firebase Hosting architecture, Express never
+  // serves the SPA (Hosting does), so index.html isn't in the container. Skip
+  // initialisation if the template can't be read — middleware becomes a no-op.
+  let TEMPLATE = null;
+  try {
+    TEMPLATE = fs.readFileSync(indexHtmlPath, 'utf8');
+  } catch (err) {
+    console.warn(`[seo] meta-injection disabled: ${indexHtmlPath} not readable (${err.code || err.message}). This is expected on Cloud Run where Hosting serves the SPA.`);
+  }
 
   return async function seoMetaInjection(req, res, next) {
+    if (!TEMPLATE) return next();
     if (req.method !== 'GET') return next();
     if (req.path.startsWith('/api') || req.path.startsWith('/admin') || req.path.includes('.')) {
       return next();
