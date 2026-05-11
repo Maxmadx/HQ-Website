@@ -62,13 +62,18 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
     <>
       <div
         style={{
-          // Entry-animation wrapper. On first frame: collapsed + invisible.
-          // On next frame: opens to full height + opacity. The pill unfurls
-          // downward from where the divider above sits.
+          // Entry-animation wrapper. On first frame: collapsed + above its
+          // final position + invisible. On next frame: opens to full height,
+          // descends to translateY(0) with a slight overshoot easing (lands
+          // like it's falling under gravity), and fades in.
           maxHeight: appearing ? '0px' : '800px',
           opacity: appearing ? 0 : 1,
+          transform: appearing ? 'translateY(-60px)' : 'translateY(0)',
           overflow: 'hidden',
-          transition: 'max-height 1500ms ease, opacity 1000ms ease 200ms',
+          transition:
+            'max-height 1500ms ease, ' +
+            'opacity 1000ms ease 200ms, ' +
+            'transform 1100ms cubic-bezier(0.34, 1.56, 0.64, 1) 100ms',
         }}
       >
       <div
