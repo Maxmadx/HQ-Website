@@ -25,6 +25,7 @@ import { useAircraftSpecs } from '../hooks/useAircraftSpecs';
 import { SECTION_MAP } from '../lib/imageSections';
 import Seo from '../components/seo/Seo';
 import { buildProduct, buildBreadcrumbList } from '../components/seo/jsonLd';
+import Image from '../components/Image';
 
 // Import styles
 import '../assets/css/main.css';
@@ -617,7 +618,7 @@ function R44Hero() {
         className="r44-hero__bg"
         style={{ y: imageY }}
       >
-        <img src={pageImages['r44-hero']?.[0]?.url || '/assets/images/new-aircraft/r44/raven-ii-front-alpha.png'} alt="Robinson R44 Raven II" width={1920} height={1080} />
+        <Image src={pageImages['r44-hero']?.[0]?.url || '/assets/images/new-aircraft/r44/raven-ii-front-alpha.png'} alt="Robinson R44 Raven II" width={1920} height={1080} priority sizes="100vw" />
       </motion.div>
 
       <div className="r44-hero__overlay" />

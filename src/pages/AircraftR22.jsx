@@ -17,6 +17,7 @@ import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { SECTION_MAP } from '../lib/imageSections';
 import Seo from '../components/seo/Seo';
 import { buildProduct, buildBreadcrumbList } from '../components/seo/jsonLd';
+import Image from '../components/Image';
 
 // Import styles
 import '../assets/css/main.css';
@@ -2158,11 +2159,13 @@ function R22Hero() {
         transition={{ duration: 1.5 }}
         style={{ scale: heroScale, y: heroY }}
       >
-        <img
+        <Image
           src="/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png"
           alt="Robinson R22 Helicopter"
           width={1920}
           height={1080}
+          priority
+          sizes="100vw"
         />
       </motion.div>
       <div className="r22-hero__overlay" />
