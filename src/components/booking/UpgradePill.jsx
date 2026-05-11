@@ -152,11 +152,8 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
           <p style={{ fontSize: '1.05rem', color: '#444', margin: '0 0 4px', lineHeight: 1.5, fontWeight: 400 }}>
             You at the controls.
           </p>
-          <p style={{ fontSize: '1.05rem', color: '#444', margin: '0 0 4px', lineHeight: 1.5, fontWeight: 400 }}>
+          <p style={{ fontSize: '1.05rem', color: '#444', margin: '0 0 22px', lineHeight: 1.5, fontWeight: 400 }}>
             Two mates in the back.
-          </p>
-          <p style={{ fontSize: '1.15rem', color: '#1a1a1a', margin: '18px 0 22px', fontWeight: 700 }}>
-            {fmtGbpNoZeros(diffPence)} to upgrade
           </p>
           <div
             style={{
@@ -171,7 +168,7 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
               transition: 'background 280ms ease',
             }}
           >
-            Upgrade now →
+            Upgrade for {fmtGbpNoZeros(diffPence)} →
           </div>
         </div>
 
