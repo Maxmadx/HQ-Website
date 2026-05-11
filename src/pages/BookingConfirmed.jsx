@@ -208,6 +208,19 @@ export default function BookingConfirmed() {
             : 'Confirming Booking'}
         </h1>
 
+        {/* Divider between heading and the upgrade pill — only visible during Phase 1.
+            Fades out as Phase 2 reveals the subtitle + summary card below. */}
+        <hr
+          style={{
+            border: 'none',
+            borderTop: '1px solid #e0ddd6',
+            margin: confirmedVisible ? '0' : '0 0 32px',
+            maxHeight: confirmedVisible ? '0px' : '1px',
+            opacity: confirmedVisible ? 0 : 1,
+            transition: 'opacity 700ms ease, max-height 1500ms ease, margin 1500ms ease',
+          }}
+        />
+
         {/* Subtitle + Summary card — grows in above the pill on Phase 2.
             max-height + opacity transition so the pill below shifts down
             gradually rather than snapping. */}
@@ -216,7 +229,7 @@ export default function BookingConfirmed() {
             maxHeight: confirmedVisible ? '900px' : '0px',
             opacity: confirmedVisible ? 1 : 0,
             overflow: 'hidden',
-            transition: 'max-height 900ms ease, opacity 500ms ease 200ms',
+            transition: 'max-height 1500ms ease, opacity 800ms ease 400ms',
           }}
         >
           <p style={styles.subheading}>

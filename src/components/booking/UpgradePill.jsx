@@ -60,8 +60,8 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
           textAlign: 'left',
           outline: 'none',
           transition:
-            'background 900ms ease, border-color 900ms ease, border-radius 900ms ease, ' +
-            'box-shadow 900ms ease, margin-bottom 900ms ease, color 700ms ease',
+            'background 1500ms ease, border-color 1500ms ease, border-radius 1500ms ease, ' +
+            'box-shadow 1500ms ease, margin-bottom 1500ms ease, color 1100ms ease',
         }}
       >
         {/* R44 photo — collapses to 0 height in compact mode */}
@@ -71,7 +71,7 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
             height: isHero ? '240px' : '0px',
             background: '#f5f5f5',
             overflow: 'hidden',
-            transition: 'height 900ms ease',
+            transition: 'height 1500ms ease',
           }}
         >
           <img
@@ -83,7 +83,7 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
               objectFit: 'contain',
               objectPosition: 'center',
               opacity: isHero ? 1 : 0,
-              transition: 'opacity 600ms ease',
+              transition: 'opacity 1000ms ease',
             }}
           />
         </div>
@@ -97,7 +97,7 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
             padding: isHero ? '24px 28px' : '0 16px',
             overflow: 'hidden',
             transition:
-              'max-height 900ms ease, opacity 520ms ease, padding 900ms ease',
+              'max-height 1500ms ease, opacity 850ms ease, padding 1500ms ease',
           }}
         >
           <h2
@@ -150,7 +150,7 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
             padding: isHero ? '0 16px' : '14px 16px',
             overflow: 'hidden',
             transition:
-              'max-height 900ms ease, opacity 600ms ease ' + (isHero ? '0ms' : '400ms') + ', padding 900ms ease',
+              'max-height 1500ms ease, opacity 1000ms ease ' + (isHero ? '0ms' : '700ms') + ', padding 1500ms ease',
             fontSize: '14px',
             lineHeight: 1.4,
           }}
