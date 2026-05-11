@@ -124,9 +124,8 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
           </h2>
         </div>
 
-        {/* Two R22s superimposed — back one slightly offset and faded.
-            opacity 0.55 on the back image creates a "shadow / behind"
-            effect so the viewer reads two distinct helicopters. */}
+        {/* Two R22s — back one offset behind the front. Both fully opaque
+            (no transparency); overlap reads as two distinct helicopters. */}
         <div
           style={{
             position: 'relative',
@@ -149,7 +148,7 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
               height: '240px',
               objectFit: 'contain',
               objectPosition: 'center',
-              opacity: isHero && middleOpen ? 0.55 : 0,
+              opacity: isHero && middleOpen ? 1 : 0,
               transition: 'opacity 500ms ease-out',
               transform: 'translateY(10px)',
             }}
