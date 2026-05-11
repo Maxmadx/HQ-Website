@@ -8,6 +8,8 @@ node_modules
 # React app (served by Firebase Hosting, not Cloud Run)
 dist
 src
+!src/lib
+!src/lib/**
 public
 index.html
 vite.config.js
