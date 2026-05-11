@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { trackEvent } from '../lib/analytics';
 import PostCheckoutOffers from '../components/booking/PostCheckoutOffers';
 import UpgradeOfferCard from '../components/booking/UpgradeOfferCard';
+import BigUpgradeCard from '../components/booking/BigUpgradeCard';
 
 const AIRCRAFT_NAMES = {
   r22: 'Robinson R22',
@@ -61,6 +62,9 @@ export default function BookingConfirmed() {
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const navigate = useNavigate();
+  const [phase, setPhase] = useState(isMisc ? 'confirmed' : 'confirming');
+
   const [booking, setBooking] = useState(null);
   const [freeReferralItem, setFreeReferralItem] = useState(null);
 
@@ -113,6 +117,52 @@ export default function BookingConfirmed() {
     })();
     return () => { cancelled = true; };
   }, []);
+
+  useEffect(() => {
+    if (isMisc) return;          // misc skips the phase machine
+    if (!ref) return;            // no PI to record
+    let cancelled = false;
+
+    const FOUR_SECONDS = 4000;
+    const NETWORK_TIMEOUT = 15000;
+
+    const recordPromise = (async () => {
+      try {
+        const res = await Promise.race([
+          fetch('/api/record-booking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ paymentIntentId: ref }),
+          }),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Network error — please try again')), NETWORK_TIMEOUT)),
+        ]);
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || `record-booking failed (${res.status})`);
+        }
+        return true;
+      } catch (err) {
+        if (cancelled) return false;
+        const errMsg = err.message || 'Unknown error';
+        const params = new URLSearchParams();
+        params.set('aircraft', aircraft || '');
+        params.set('duration', duration || '');
+        params.set('price', price || '');
+        params.set('error', errMsg);
+        navigate(`/checkout?${params.toString()}`, { replace: true });
+        return false;
+      }
+    })();
+
+    const timerPromise = new Promise((resolve) => setTimeout(resolve, FOUR_SECONDS));
+
+    Promise.all([recordPromise, timerPromise]).then(([recordOk]) => {
+      if (!cancelled && recordOk) setPhase('confirmed');
+    });
+
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ref, isMisc]);
 
   async function refetchBooking(optimistic) {
     if (optimistic && booking) {
