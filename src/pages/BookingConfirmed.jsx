@@ -252,6 +252,18 @@ export default function BookingConfirmed() {
 
         </div>{/* /centerColumn — heading area */}
 
+        {/* Section heading above the offers — collapses with the cards on expand. */}
+        <div
+          style={{
+            maxHeight: isExpanded ? '0px' : '80px',
+            opacity: isExpanded ? 0 : 1,
+            overflow: 'hidden',
+            transition: 'max-height 1500ms ease, opacity 700ms ease',
+          }}
+        >
+          <h2 style={styles.offersHeading}>Make it even better.</h2>
+        </div>
+
         {/* Cards row — UpgradePill + InviteFriendCard side-by-side on desktop,
             stack on mobile (flex-wrap when ≤ ~992px). */}
         <div style={styles.cardsRow}>
@@ -483,6 +495,14 @@ const styles = {
     fontSize: '13px',
     color: '#aaa',
     margin: '0 0 32px',
+  },
+  offersHeading: {
+    fontSize: '1.3rem',
+    fontWeight: 700,
+    color: '#1a1a1a',
+    margin: '0 0 28px',
+    textAlign: 'center',
+    letterSpacing: '-0.01em',
   },
   viewSummaryBtn: {
     display: 'inline-block',

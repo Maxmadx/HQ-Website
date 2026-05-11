@@ -120,7 +120,7 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
               letterSpacing: '0.01em',
             }}
           >
-            Invite a friend up too.
+            Know someone who'd love this?
           </h2>
         </div>
 
@@ -184,10 +184,10 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
           }}
         >
           <p style={{ fontSize: '1.05rem', color: '#444', margin: '0 0 4px', lineHeight: 1.5, fontWeight: 400 }}>
-            Share your link — they book a Discovery Flight.
+            Share your link.
           </p>
           <p style={{ fontSize: '1.05rem', color: '#444', margin: 0, lineHeight: 1.5, fontWeight: 400 }}>
-            Your free HQ {freeItem.name?.toLowerCase() || 'gift'} is waiting at HQ.
+            When they book, you'll both have some gifts waiting for you at HQ.
           </p>
         </div>
 
