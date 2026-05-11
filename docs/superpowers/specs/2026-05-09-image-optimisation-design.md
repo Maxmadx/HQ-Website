@@ -249,24 +249,25 @@ Anything else → `400 Bad Request`.
 
 The allowlist is explicitly hard-coded (not user-input-driven) to prevent SSRF + DoS abuse — without it, a stranger could use your server to transform arbitrary internet images at your CPU expense.
 
-### Cache layout
+### Cache layout (Cloud Run-compatible)
 
-```
-.image-cache/
-  <sha1(src|w|fmt)>.avif
-  <sha1(src|w|fmt)>.webp
-  <sha1(src|w|fmt)>.jpg
-  <sha1(src|w|fmt)>.png
+In-memory LRU map (no persistent disk available on Cloud Run):
+
+```js
+const cache = new Map(); // key → { buffer, contentType, expiresAt }
+const MAX_BYTES = 100 * 1024 * 1024;  // 100 MB per container instance
 ```
 
-`.image-cache/` is gitignored.
+Cache lives in each container instance's memory. Across cold starts, cache resets — variants are re-transformed for the first request after a new container starts. Within a warm instance, identical requests served from memory in <1 ms.
+
+For long-term shared cache across instances: optionally write to Cloud Storage via `@google-cloud/storage` (still free at HQ's volume; slightly slower than memory but persistent). Defer until Layer 2 traffic justifies the added complexity.
 
 ### Cache eviction
 
-A janitor runs at server start and once per hour:
-- Reads total cache size (sum of file sizes)
-- If > `IMAGE_CACHE_MAX_BYTES` (default 2 GB): delete oldest-accessed entries (by `atime`) until under 1.5 GB
-- Logs evictions for visibility
+LRU eviction in the in-memory Map:
+- On each `set()`, compute current byte size (sum of buffer lengths)
+- If exceeds `MAX_BYTES` (default 100 MB): delete oldest entries (Map iteration order is insertion order) until under 80 MB
+- TTL: 1 hour per entry (variants are content-addressed; could theoretically be cached forever, but bounding TTL prevents stale-content edge cases)
 
 ### Response headers
 
@@ -559,7 +560,8 @@ Without this phase, the work is "done" but the value is unproven. Half-day, non-
 
 | Prereq | Verification | Blocker if fails? |
 |---|---|---|
-| Sharp installs and runs on the production host | D0a — one-line spike | **Yes — Layer 2 dies; reconsider scope** |
+| Sharp installs and runs on the production host | D0a + Task 3 of Cloud Run deployment plan — local Docker build with sharp succeeds | **Yes — Layer 2 dies; reconsider scope** |
+| Cloud Run service deployed and reachable via Hosting rewrite | Cloud Run deployment plan Task 7 complete | **Yes — Layer 2 has nowhere to live** |
 | No source filename in `public/assets/images/` collides with the variant pattern (impossible with separate `optimised/` dir but worth checking the source inventory) | D0b — `find` audit | No (mirror dir eliminates collision) but worth confirming source hygiene |
 | Allowlist origins match real CMS upload patterns | D0c — grep audit of `src/` and `api/` | Yes — Layer 2 will 400 valid CMS images otherwise |
 | Disk is writable on production host | D0a — same spike, write test file to `.image-cache/` | Yes for Layer 2; if read-only host, switch cache to memory or skip Layer 2 |
@@ -581,6 +583,8 @@ Without this phase, the work is "done" but the value is unproven. Half-day, non-
 - **LQIP only available for build-time (Layer 1) variants.** CMS images via Layer 2 don't get a placeholder — they render with a blank box until loaded. Acceptable trade-off; could add LQIP to Layer 2 in a future enhancement.
 - **Variants don't exist in dev mode** — `<Image>` component falls back to plain `<img>` in dev. Optimisation visible only in production / `vite preview` after a build.
 - **Single Express instance assumption** — disk cache is local. Horizontally scaled instances each have their own cache. Acceptable for current scale; switch to shared cache (Redis / Firestore-backed) if scaling out.
+- **Cache is per-instance, not shared.** Cloud Run scales horizontally; each instance has its own in-memory cache. A 10-instance fleet has 10 independent caches. Fine for low traffic; if shared cache becomes important, migrate to Cloud Storage.
+- **Cache resets on cold start.** When all instances scale to zero and a new request arrives, the cache starts empty. Combined with uptimerobot keep-warm, this is rare (typically once per overnight idle window).
 
 ---
 
