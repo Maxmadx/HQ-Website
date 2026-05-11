@@ -296,6 +296,11 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
   }
 });
 
+// Cloud Run / uptimerobot health probe — cheap, no auth, no I/O.
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // ============================================
 // LEADS API ROUTES
 // ============================================
