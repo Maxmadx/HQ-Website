@@ -7,6 +7,7 @@
     "start": "NODE_ENV=production node server.js",
     "dev": "concurrently \"vite\" \"node server.js\" --names \"vite,api\" --prefix-colors \"cyan,yellow\"",
     "dev:vite": "vite",
+    "prebuild": "node scripts/optimize-images.js",
     "build": "vite build",
     "preview": "vite preview",
     "static": "node server.js",
@@ -61,6 +62,7 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.1",
+    "sharp": "^0.34.5",
     "supertest": "^7.2.2",
     "vite": "^8.0.1",
     "vitest": "^4.1.3"
