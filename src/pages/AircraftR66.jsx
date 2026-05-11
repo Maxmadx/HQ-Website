@@ -25,6 +25,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { usePageImages } from '../hooks/usePageImages';
+import { useAircraftSpecRows } from '../hooks/useAircraftSpecs';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { SECTION_MAP } from '../lib/imageSections';
 import Seo from '../components/seo/Seo';
@@ -218,15 +219,20 @@ const r66AuxConfigs = {
   aux43: { range: '550 nm',  fuelCapacity: '116.3 gal', endurance: '5+ hrs' },
 };
 
-function buildR66Specs(auxKey) {
+function buildR66Specs(auxKey, baseRows) {
   const aux = r66AuxConfigs[auxKey] ?? r66AuxConfigs.none;
-  return [
-    ...r66SpecsStatic.slice(0, 4),
-    { label: 'Range',         value: aux.range,         icon: 'fa-route' },
-    ...r66SpecsStatic.slice(4),
-    { label: 'Fuel Capacity', value: aux.fuelCapacity,  icon: 'fa-gas-pump' },
-    { label: 'Endurance',     value: aux.endurance,     icon: 'fa-clock' },
-  ];
+  // Override the three aux-affected labels (Range, Fuel Capacity, Endurance)
+  // on whatever base rows came in (admin-managed if available, static otherwise).
+  // Any row whose label doesn't match an aux field is passed through unchanged.
+  const overrides = {
+    'Range':         { value: aux.range,         icon: 'fa-route' },
+    'Fuel Capacity': { value: aux.fuelCapacity,  icon: 'fa-gas-pump' },
+    'Endurance':     { value: aux.endurance,     icon: 'fa-clock' },
+  };
+  return baseRows.map((row) => {
+    const o = overrides[row.label];
+    return o ? { ...row, ...o } : row;
+  });
 }
 
 const historyTimeline = [
@@ -492,81 +498,13 @@ function R66Hero() {
   });
 
   useEffect(() => {
-    const iframe = videoRef.current;
-    if (!iframe) return;
-    const send = (func, args = []) => {
-      try {
-        iframe.contentWindow?.postMessage(
-          JSON.stringify({ event: 'command', func, args }),
-          '*'
-        );
-      } catch (e) { /* ignore */ }
-    };
-    const subscribeToStateChanges = () => {
-      try {
-        iframe.contentWindow?.postMessage(
-          JSON.stringify({ event: 'listening', id: 'r66-hero-video', channel: 'widget' }),
-          '*'
-        );
-        iframe.contentWindow?.postMessage(
-          JSON.stringify({ event: 'command', func: 'addEventListener', args: ['onStateChange'] }),
-          '*'
-        );
-      } catch (e) { /* ignore */ }
-    };
-    const sendPlaybackRate = () => send('setPlaybackRate', [2]);
-    const handleMessage = (e) => {
-      if (typeof e.data !== 'string') return;
-      if (!e.origin.includes('youtube')) return;
-      try {
-        const data = JSON.parse(e.data);
-        // state 1 = playing — reveal the video only once it's actually playing
-        if (data?.event === 'onStateChange' && data?.info === 1) {
-          setVideoReady(true);
-        }
-        // Also trigger on any infoDelivery that reports playerState === 1
-        if (data?.event === 'infoDelivery' && data?.info?.playerState === 1) {
-          setVideoReady(true);
-        }
-      } catch (e) { /* ignore non-JSON messages */ }
-    };
-    window.addEventListener('message', handleMessage);
-    // YouTube iframe needs a moment after load; retry a few times to catch ready state.
-    const timers = [600, 1400, 2600, 4500].map((ms) => setTimeout(() => {
-      subscribeToStateChanges();
-      sendPlaybackRate();
-    }, ms));
-    iframe.addEventListener('load', () => {
-      subscribeToStateChanges();
-      sendPlaybackRate();
-    });
-    return () => {
-      timers.forEach(clearTimeout);
-      window.removeEventListener('message', handleMessage);
-    };
-  }, []);
-
-  // Suppress the OS/browser Now Playing overlay (skip-back / pause / skip-forward
-  // controls) that the YouTube iframe's Media Session would otherwise surface on
-  // macOS Safari/Chrome. Clearing metadata + nulling action handlers from the
-  // parent document prevents the system from rendering controls for this tab.
-  useEffect(() => {
-    if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) return;
-    const ms = navigator.mediaSession;
-    const actions = [
-      'play', 'pause', 'stop', 'seekbackward', 'seekforward',
-      'seekto', 'previoustrack', 'nexttrack',
-    ];
-    const clear = () => {
-      try { ms.metadata = null; } catch { /* no-op */ }
-      try { ms.playbackState = 'none'; } catch { /* no-op */ }
-      actions.forEach((a) => {
-        try { ms.setActionHandler(a, null); } catch { /* no-op */ }
-      });
-    };
-    clear();
-    const interval = setInterval(clear, 750);
-    return () => clearInterval(interval);
+    const v = videoRef.current;
+    if (!v) return;
+    try { v.playbackRate = 2; } catch { /* no-op */ }
+    const onPlaying = () => setVideoReady(true);
+    v.addEventListener('playing', onPlaying);
+    if (!v.paused && v.readyState >= 3) setVideoReady(true);
+    return () => v.removeEventListener('playing', onPlaying);
   }, []);
 
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
@@ -588,14 +526,19 @@ function R66Hero() {
           width={2500}
           height={3750}
         />
-        <iframe
+        <video
           ref={videoRef}
           className={`r66-hero__video${videoReady ? ' r66-hero__video--ready' : ''}`}
-          src="https://www.youtube-nocookie.com/embed/rmklfP_SF3o?autoplay=1&mute=1&loop=1&playlist=rmklfP_SF3o&controls=0&modestbranding=1&playsinline=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&enablejsapi=1&start=1&fs=0"
-          title="R66 in flight"
-          frameBorder="0"
-          allow="autoplay"
-          allowFullScreen={false}
+          src="/assets/videos/r66-hero.mp4"
+          poster={pageImages['r66-hero']?.[0]?.url || '/assets/images/new-aircraft/r66/rhc-r66-nxg-riviera-center-spotlight-vertical-format-14184-2.jpg'}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          disablePictureInPicture
+          disableRemotePlayback
+          controlsList="nodownload nofullscreen noremoteplayback"
           aria-hidden="true"
           tabIndex={-1}
         />
@@ -966,7 +909,8 @@ function R66Specifications() {
   const isExtendedRange = auxKey !== 'none';
   const setAux23Enabled = (on) => setAuxKey(on ? 'aux23' : 'none');
   const setAux43Enabled = (on) => setAuxKey(on ? 'aux43' : 'none');
-  const r66Specs = buildR66Specs(auxKey);
+  const baseRows = useAircraftSpecRows('r66');
+  const r66Specs = buildR66Specs(auxKey, baseRows.length ? baseRows : r66SpecsStatic);
 
   return (
     <section className="r66-specs">
@@ -2164,19 +2108,26 @@ const R66Styles = () => (
 
     .r66-hero__video {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(1.8);
-      width: 100vw;
-      height: 56.25vw;
-      min-height: 100vh;
-      min-width: 177.78vh;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
       pointer-events: none;
       border: 0;
       z-index: 1;
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.6s ease;
+      /* Belt-and-braces: keep iOS Safari from showing PiP / AirPlay icons */
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .r66-hero__video::-webkit-media-controls,
+    .r66-hero__video::-webkit-media-controls-panel,
+    .r66-hero__video::-webkit-media-controls-play-button,
+    .r66-hero__video::-webkit-media-controls-start-playback-button {
+      display: none !important;
+      -webkit-appearance: none;
     }
 
     .r66-hero__video--ready {
@@ -2677,7 +2628,7 @@ const R66Styles = () => (
       position: relative;
       z-index: 50;
       padding: 5rem 2rem;
-      background: linear-gradient(to right, #282828 50%, #1c1c1c 50%);
+      background: linear-gradient(to right, #000 50%, #1c1c1c 50%);
       color: #fff;
     }
 
@@ -4685,7 +4636,6 @@ const R66Styles = () => (
     .r66-final-stack > .r66b-exp,
     .r66-final-stack > .r66b-seamP,
     .r66-final-stack > .r66b-range,
-    .r66-final-stack > .r66b-closeA,
     .r66-final-stack > .r66-gallery {
       position: sticky;
       top: var(--r66-stack-stick-top, 0);
@@ -4705,7 +4655,6 @@ const R66Styles = () => (
     .r66-final-stack > .r66b-exp::after,
     .r66-final-stack > .r66b-seamP::after,
     .r66-final-stack > .r66b-range::after,
-    .r66-final-stack > .r66b-closeA::after,
     .r66-final-stack > .r66-gallery::after,
     .r66-final-stack > .r66-cta::after {
       content: '';
@@ -5586,7 +5535,6 @@ const R66_STACK_SECTIONS = [
   { selector: '.r66b-exp',     palette: 'light' },
   { selector: '.r66b-seamP',   palette: 'light' },
   { selector: '.r66b-range',   palette: 'light' },
-  { selector: '.r66b-closeA',  palette: 'dark'  },
   { selector: '.r66-gallery',  palette: 'light' },
   { selector: '.r66-cta',      palette: 'dark'  },
 ];

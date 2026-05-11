@@ -7,7 +7,6 @@ import DiscoveryAddons from '../components/checkout/DiscoveryAddons';
 import { computeAddonsTotal, computeLineTotal } from '../lib/discoveryAddons';
 import { useDiscoveryAddons } from '../hooks/useDiscoveryAddons';
 import { trackEvent, getSessionId } from '../lib/analytics';
-import EmailFirstStep from './Checkout/EmailFirstStep';
 import ExitIntentModal from '../components/Checkout/ExitIntentModal';
 import useExitIntent from '../components/Checkout/useExitIntent';
 import useTabReturn from '../components/Checkout/useTabReturn';
@@ -40,7 +39,7 @@ function CheckoutForm({
   aircraft, duration, price,
   wantsVoucher, setWantsVoucher, voucherLocation, setVoucherLocation, voucherMessage, setVoucherMessage,
   addons, addonsState, addonsTotalPence,
-  prefillEmail, cartId,
+  prefillEmail, cartId, referredByCode,
 }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -98,6 +97,7 @@ function CheckoutForm({
             ? addonsState.shippingAddress
             : null,
           cartId: cartId || '',
+          ...(referredByCode ? { referredByCode } : {}),
         }),
       });
       const data = await res.json();
@@ -255,7 +255,7 @@ function CheckoutForm({
 }
 
 // ─── Misc Payment Form ───────────────────────────────────────────────────────
-function MiscCheckoutForm({ itemId, itemName, qty, price, requiresShipping }) {
+function MiscCheckoutForm({ itemId, itemName, qty, price, requiresShipping, apparelSize }) {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -287,6 +287,7 @@ function MiscCheckoutForm({ itemId, itemName, qty, price, requiresShipping }) {
           customerEmail: email,
           customerPhone: phone,
           ...(requiresShipping ? { shippingAddress } : {}),
+          ...(apparelSize ? { size: apparelSize } : {}),
         }),
       });
       const data = await res.json();
@@ -310,11 +311,17 @@ function MiscCheckoutForm({ itemId, itemName, qty, price, requiresShipping }) {
     if (result.error) {
       setError(result.error.message);
     } else if (result.paymentIntent.status === 'succeeded') {
+      fetch('/api/record-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentIntentId: result.paymentIntent.id }),
+      }).catch(() => {}); // fire-and-forget — webhook is the canonical fallback
       navigate(
         `/booking-confirmed?ref=${result.paymentIntent.id}` +
         `&type=misc` +
         `&itemName=${encodeURIComponent(itemName)}` +
-        `&name=${encodeURIComponent(name)}`
+        `&name=${encodeURIComponent(name)}` +
+        (apparelSize ? `&size=${encodeURIComponent(apparelSize)}` : '')
       );
     }
   };
@@ -383,10 +390,86 @@ function MiscCheckoutForm({ itemId, itemName, qty, price, requiresShipping }) {
   );
 }
 
+// ─── Inline Email Step ───────────────────────────────────────────────────────
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function InlineEmailStep({ defaultEmail = '', onContinue }) {
+  const [email, setEmail] = useState(defaultEmail || '');
+  const [company, setCompany] = useState(''); // honeypot
+  const [submitting, setSubmitting] = useState(false);
+  const valid = EMAIL_RE.test(email.trim());
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!valid || submitting) return;
+    if (company) return; // bot — silently no-op
+    setSubmitting(true);
+    try {
+      await onContinue(email.trim());
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <p style={{ fontSize: '14px', color: '#666', margin: '0 0 4px', lineHeight: 1.5 }}>
+        Where shall we send your booking confirmation?
+      </p>
+
+      <div style={styles.fieldGroup}>
+        <label htmlFor="emf-email" style={styles.label}>Email Address</label>
+        <input
+          id="emf-email"
+          style={styles.input}
+          type="email"
+          autoComplete="email"
+          autoFocus
+          placeholder="you@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <span style={{ fontSize: '12px', color: '#999', marginTop: '2px' }}>
+          We'll only use this to send your booking. You can unsubscribe any time.
+        </span>
+      </div>
+
+      {/* Honeypot — hidden from real users, bots will fill it */}
+      <input
+        type="text"
+        name="company"
+        value={company}
+        onChange={(e) => setCompany(e.target.value)}
+        tabIndex={-1}
+        autoComplete="off"
+        style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }}
+        aria-hidden="true"
+      />
+
+      <button
+        type="submit"
+        disabled={!valid || submitting}
+        style={(!valid || submitting) ? { ...styles.btn, ...styles.btnDisabled } : styles.btn}
+      >
+        {submitting ? 'Continuing…' : 'Continue'}
+      </button>
+    </form>
+  );
+}
+
 // ─── Page ────────────────────────────────────────────────────────────────────
 export default function Checkout() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  const [referredByCode] = useState(() => {
+    // First try URL param; fall back to sessionStorage written by DiscoveryFlight
+    const raw = searchParams.get('ref') ||
+      (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('referredByCode') || '' : '');
+    const validated = /^[A-Za-z0-9]{8}$/.test(raw.trim()) ? raw.trim().toUpperCase() : '';
+    return validated;
+  });
 
   const type = searchParams.get('type');
   const isMisc = type === 'misc';
@@ -396,6 +479,7 @@ export default function Checkout() {
   const itemName = searchParams.get('itemName');
   const qty = searchParams.get('qty') || '1';
   const requiresShipping = searchParams.get('requiresShipping') === '1';
+  const apparelSize = searchParams.get('size') || '';
 
   // Flight params (existing)
   const aircraft = searchParams.get('aircraft');
@@ -514,14 +598,12 @@ export default function Checkout() {
     );
   }
 
-  // Wait for token lookup to settle before deciding whether to show EmailFirstStep
+  // Wait for token lookup to settle before deciding what to show
   if (!resumeChecked) {
     return null;
   }
 
-  if (!isMisc && !email) {
-    return <EmailFirstStep onContinue={handleEmailContinue} />;
-  }
+  const needsEmail = !isMisc && !email;
 
   return (
     <>
@@ -570,7 +652,7 @@ export default function Checkout() {
           {isMisc ? 'Complete Your Purchase' : 'Complete Your Booking'}
         </h1>
         <p style={styles.subheading} className="co-page-subheading">
-          {isMisc ? 'Pay securely. The HQ team will be in touch about your order.' : "Pay now. We'll call you to schedule your flight."}
+          {isMisc ? 'Pay securely. The HQ team will be in touch about your order.' : "For a million years we dreamed of flight. Now it's one step away."}
         </p>
 
         <div className="co-layout">
@@ -584,13 +666,19 @@ export default function Checkout() {
                   <span style={styles.summaryLabel}>Item</span>
                   <span style={styles.summaryValue}>{itemName}</span>
                 </div>
+                {apparelSize && (
+                  <div style={styles.summaryRow}>
+                    <span style={styles.summaryLabel}>Size</span>
+                    <span style={styles.summaryValue}>{apparelSize}</span>
+                  </div>
+                )}
                 {Number(qty) > 1 && (
                   <div style={styles.summaryRow}>
                     <span style={styles.summaryLabel}>Quantity</span>
                     <span style={styles.summaryValue}>{qty}</span>
                   </div>
                 )}
-                <div style={{ ...styles.summaryRow, borderTop: '1px solid #e8e8e8', paddingTop: '16px', marginTop: '8px' }}>
+                <div style={{ ...styles.summaryRow, borderTop: '1px solid #e8e8e8', padding: '16px 0', marginTop: '8px' }}>
                   <span style={{ ...styles.summaryLabel, fontWeight: 700, color: '#1a1a1a' }}>Total</span>
                   <span style={{ ...styles.summaryValue, fontWeight: 700, fontSize: '1.25rem' }}>
                     £{fmt(Number(price) * Number(qty))}
@@ -610,30 +698,34 @@ export default function Checkout() {
                   <span style={styles.summaryLabel}>Experience</span>
                   <span style={styles.summaryValue}>{duration} Minute Discovery Flight</span>
                 </div>
-                {wantsVoucher && (
+                {!needsEmail && wantsVoucher && (
                   <div style={styles.summaryRow}>
                     <span style={styles.summaryLabel}>Physical voucher</span>
                     <span style={{ ...styles.summaryValue, color: '#2d7a4f', fontSize: '13px' }}>Included</span>
                   </div>
                 )}
-                {/* DF Add-ons (shown after voucher line) */}
-                <DiscoveryAddons
-                  value={addonsState}
-                  onChange={setAddonsState}
-                  voucherActive={wantsVoucher}
-                />
+                {!needsEmail && (
+                  <>
+                    {/* DF Add-ons (shown after voucher line) */}
+                    <DiscoveryAddons
+                      value={addonsState}
+                      onChange={setAddonsState}
+                      voucherActive={wantsVoucher}
+                    />
 
-                {basketAddons.length > 0 && basketAddons.map((a) => (
-                  <div key={a.itemId} style={styles.summaryRow}>
-                    <span style={styles.summaryLabel}>{a.name} × {a.qty}{a.discountPct > 0 ? ` (${a.discountPct}% off)` : ''}</span>
-                    <span style={styles.summaryValue}>£{fmt(a.lineTotal / 100)}</span>
-                  </div>
-                ))}
+                    {basketAddons.length > 0 && basketAddons.map((a) => (
+                      <div key={a.itemId} style={styles.summaryRow}>
+                        <span style={styles.summaryLabel}>{a.name} × {a.qty}{a.discountPct > 0 ? ` (${a.discountPct}% off)` : ''}</span>
+                        <span style={styles.summaryValue}>£{fmt(a.lineTotal / 100)}</span>
+                      </div>
+                    ))}
 
-                <div style={{ ...styles.summaryRow, borderTop: '1px solid #e8e8e8', paddingTop: '16px', marginTop: '8px' }}>
-                  <span style={{ ...styles.summaryLabel, fontWeight: 700, color: '#1a1a1a' }}>Total</span>
-                  <span style={{ ...styles.summaryValue, fontWeight: 700, fontSize: '1.25rem' }}>£{fmt(grandTotalPounds)}</span>
-                </div>
+                    <div style={{ ...styles.summaryRow, borderTop: '1px solid #e8e8e8', padding: '16px 0', marginTop: '8px' }}>
+                      <span style={{ ...styles.summaryLabel, fontWeight: 700, color: '#1a1a1a' }}>Total</span>
+                      <span style={{ ...styles.summaryValue, fontWeight: 700, fontSize: '1.25rem' }}>£{fmt(grandTotalPounds)}</span>
+                    </div>
+                  </>
+                )}
                 <p style={styles.summaryNote}>
                   After payment, a member of the HQ Aviation team will contact you to arrange a date and time.
                 </p>
@@ -644,28 +736,33 @@ export default function Checkout() {
           {/* Payment Form */}
           <div style={styles.formPanel} className="co-form">
             <h2 style={styles.formHeading}>Your Details &amp; Payment</h2>
-            <Elements stripe={stripePromise}>
-              {isMisc ? (
-                <MiscCheckoutForm itemId={itemId} itemName={itemName} qty={qty} price={price} requiresShipping={requiresShipping} />
-              ) : (
-                <CheckoutForm
-                  aircraft={aircraft}
-                  duration={duration}
-                  price={price}
-                  wantsVoucher={wantsVoucher}
-                  setWantsVoucher={setWantsVoucher}
-                  voucherLocation={voucherLocation}
-                  setVoucherLocation={setVoucherLocation}
-                  voucherMessage={voucherMessage}
-                  setVoucherMessage={setVoucherMessage}
-                  addons={basketAddons}
-                  addonsState={addonsState}
-                  addonsTotalPence={addonsTotalPence}
-                  prefillEmail={email}
-                  cartId={cartId}
-                />
-              )}
-            </Elements>
+            {needsEmail ? (
+              <InlineEmailStep onContinue={handleEmailContinue} />
+            ) : (
+              <Elements stripe={stripePromise}>
+                {isMisc ? (
+                  <MiscCheckoutForm itemId={itemId} itemName={itemName} qty={qty} price={price} requiresShipping={requiresShipping} apparelSize={apparelSize} />
+                ) : (
+                  <CheckoutForm
+                    aircraft={aircraft}
+                    duration={duration}
+                    price={price}
+                    wantsVoucher={wantsVoucher}
+                    setWantsVoucher={setWantsVoucher}
+                    voucherLocation={voucherLocation}
+                    setVoucherLocation={setVoucherLocation}
+                    voucherMessage={voucherMessage}
+                    setVoucherMessage={setVoucherMessage}
+                    addons={basketAddons}
+                    addonsState={addonsState}
+                    addonsTotalPence={addonsTotalPence}
+                    prefillEmail={email}
+                    cartId={cartId}
+                    referredByCode={referredByCode}
+                  />
+                )}
+              </Elements>
+            )}
           </div>
 
         </div>
@@ -748,7 +845,7 @@ const styles = {
     fontSize: '12px',
     color: '#999',
     lineHeight: 1.6,
-    marginTop: '20px',
+    marginTop: 0,
     paddingTop: '16px',
     borderTop: '1px solid #f0f0f0',
   },

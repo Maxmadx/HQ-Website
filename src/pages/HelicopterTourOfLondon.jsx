@@ -29,6 +29,9 @@ import '../assets/css/components.css';
 import FooterMinimal from '../components/FooterMinimal';
 import LondonTourTicket from '../components/LondonTourTicket';
 import HqMenuPanel from '../components/HqMenuPanel';
+import Seo from '../components/seo/Seo';
+import { buildProduct, buildTouristTrip, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { SITE_URL } from '../lib/seoDefaults';
 
 /**
  * PAGE HEADER COMPONENT
@@ -332,6 +335,42 @@ function HelicopterTourOfLondon() {
 
   return (
     <div className="ltour">
+      <Seo
+        title="Helicopter Tour of London — 30 Minutes Over the City"
+        description="Take a 30-minute aerial tour over central London by Robinson R44 from Denham Aerodrome. London Eye, Tower Bridge, Canary Wharf — see the city as a pilot does."
+        ogImage="/assets/images/gallery/london-tour/above-westminster.jpg"
+        ogType="product"
+        jsonLd={[
+          buildProduct({
+            name: 'Helicopter Tour of London',
+            description: 'A 30-minute aerial tour over central London by Robinson R44 from Denham Aerodrome.',
+            image: '/assets/images/gallery/london-tour/above-westminster.jpg',
+            brand: 'HQ Aviation',
+            url: `${SITE_URL}/helicopter-tour-of-london`,
+            offers: {
+              price: '395',
+              priceCurrency: 'GBP',
+              availability: 'https://schema.org/InStock',
+              valueAddedTaxIncluded: false,
+            },
+          }),
+          buildTouristTrip({
+            name: 'Helicopter Tour of London',
+            description: 'A 30-minute aerial tour over central London by Robinson R44 from Denham Aerodrome.',
+            image: '/assets/images/gallery/london-tour/above-westminster.jpg',
+            url: `${SITE_URL}/helicopter-tour-of-london`,
+            offers: {
+              price: '395',
+              priceCurrency: 'GBP',
+              availability: 'https://schema.org/InStock',
+            },
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Helicopter Tour of London', path: '/helicopter-tour-of-london' },
+          ]),
+        ]}
+      />
       <TourHeader />
 
       {/* ========== HERO SECTION ========== */}

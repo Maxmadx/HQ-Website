@@ -23,6 +23,9 @@ import '../assets/css/components.css';
 // Import FooterMinimal component
 import FooterMinimal from '../components/FooterMinimal';
 import HqMenuPanel from '../components/HqMenuPanel';
+import Seo from '../components/seo/Seo';
+import { buildService, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { SITE_URL, AREA_SERVED } from '../lib/seoDefaults';
 import WallOfCoolGr11 from '../components/WallOfCoolGr11';
 
 /**
@@ -301,6 +304,23 @@ export default function SelfFlyHire() {
 
   return (
     <div className="sfh2-page">
+      <Seo
+        title="Helicopter Self-Fly Hire — Denham, London"
+        description="Self-fly hire of Robinson R22, R44, R66 helicopters from Denham, 30 min from London. Qualified pilots only — current ratings required."
+        jsonLd={[
+          buildService({
+            name: 'Self-Fly Hire',
+            serviceType: 'Helicopter self-fly rental',
+            description: 'Helicopter self-fly hire of Robinson R22, R44, and R66 aircraft from Denham Aerodrome for qualified pilots.',
+            url: `${SITE_URL}/self-fly-hire`,
+            areaServed: AREA_SERVED,
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Self-Fly Hire', path: '/self-fly-hire' },
+          ]),
+        ]}
+      />
       <SelfFlyHireHeader />
 
       {/* ── Hero ───────────────────────────────────────────────── */}

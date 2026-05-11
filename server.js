@@ -21,6 +21,7 @@ const path = require('path');
 const fs = require('fs');
 const compression = require('compression');
 const { createPaymentIntent, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking } = require('./api/stripe');
+const { getBooking } = require('./api/booking');
 const leadsRouter = require('./api/leads');
 const stripeDiscoveryRouter = require('./api/stripe-discovery');
 const analyticsRouter = require('./api/analytics-api');
@@ -28,6 +29,10 @@ const cartsRouter = require('./api/carts');
 const pressClickRouter = require('./api/press-click');
 const sitemapRouter = require('./api/sitemap');
 const gscRouter = require('./api/gsc-api');
+const SEO_REDIRECTS = require('./api/seoRedirects');
+const seoMetaInjection = require('./api/seoMetaInjection');
+const { getMetaForPath } = require('./src/lib/getMetaForPath');
+
 // parts-enquiry is ESM; eagerly start the import so it resolves before first request.
 // Track import errors so we can return 500 to clients instead of hanging.
 let partsEnquiryRouter = null;
@@ -41,6 +46,36 @@ const partsEnquiryReady = import('./api/parts-enquiry.js')
 
 const app = express();
 app.set('trust proxy', 1); // Read real IP from X-Forwarded-For (required for req.ip behind proxies)
+
+// Canonicalisation: HTTPS, non-www, no trailing slash. 301 to canonical
+// form when the request URL doesn't match. Skipped in dev (NODE_ENV !==
+// 'production') to avoid breaking localhost.
+app.use((req, res, next) => {
+  if (process.env.NODE_ENV !== 'production') return next();
+
+  const proto = req.get('x-forwarded-proto') || req.protocol;
+  const host = req.get('host') || '';
+  const wantsHttps = proto !== 'https';
+  const wantsNoWww = host.startsWith('www.');
+  const path = req.path === '/' ? '/' : req.path.replace(/\/$/, '');
+  const wantsNoTrailingSlash = path !== req.path;
+
+  if (!wantsHttps && !wantsNoWww && !wantsNoTrailingSlash) return next();
+
+  const finalHost = wantsNoWww ? host.slice(4) : host;
+  const search = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+  return res.redirect(301, `https://${finalHost}${path}${search}`);
+});
+
+app.use((req, res, next) => {
+  const target = SEO_REDIRECTS[req.path];
+  if (target) {
+    const search = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+    return res.redirect(301, `${target}${search}`);
+  }
+  next();
+});
+
 const PORT = process.env.PORT || 7500;
 const publicDir = path.join(__dirname, 'public');
 const pagesDir = path.join(publicDir, 'pages');
@@ -69,6 +104,74 @@ if (process.env.NODE_ENV !== 'production') {
     next();
   });
 }
+
+// ============================================
+// SEO META INJECTION (server-side rendering of <title>, meta description,
+// canonical, Open Graph, Twitter card). Mounted BEFORE static-file serving
+// so it runs for clean HTML routes; the middleware itself skips paths
+// containing a `.` (assets) or starting with /api or /admin.
+//
+// indexHtmlPath: prefer dist/index.html (production-built artefact with
+// the <!--SSR_HEAD--> sentinel); fall back to source index.html so the
+// server still boots when `npm run build` hasn't been run yet.
+// ============================================
+const seoIndexHtmlPath = (() => {
+  const built = path.join(__dirname, 'dist', 'index.html');
+  const source = path.join(__dirname, 'index.html');
+  return fs.existsSync(built) ? built : source;
+})();
+
+app.use(seoMetaInjection({
+  indexHtmlPath: seoIndexHtmlPath,
+  getMetaForStaticPath: getMetaForPath,
+  getMetaForDynamicPath: async (reqPath) => {
+    const admin = require('./api/firebase-admin');
+    const db = admin.firestore();
+
+    const blogMatch = reqPath.match(/^\/blog\/([^/]+)$/);
+    if (blogMatch) {
+      const doc = await db.collection('blogs').doc(blogMatch[1]).get();
+      if (!doc.exists) return null;
+      const d = doc.data();
+      return {
+        title: d.title || 'Blog Post',
+        description: d.excerpt || d.description || '',
+        ogImage: d.coverImage || '/og-default.jpg',
+        canonicalUrl: `https://hqaviation.com/blog/${doc.id}`,
+      };
+    }
+
+    const listingMatch = reqPath.match(/^\/sales\/pre-owned\/([^/]+)$/);
+    if (listingMatch) {
+      const doc = await db.collection('listings').doc(listingMatch[1]).get();
+      if (!doc.exists) return null;
+      const d = doc.data();
+      return {
+        title: `${d.year} ${d.make} ${d.model}`.trim() || 'Pre-owned Helicopter',
+        description: d.shortDescription || d.description || '',
+        ogImage: d.images?.[0] || '/og-default.jpg',
+        canonicalUrl: `https://hqaviation.com/sales/pre-owned/${doc.id}`,
+      };
+    }
+
+    const miscMatch = reqPath.match(/^\/misc\/([^/]+)$/);
+    if (miscMatch) {
+      const doc = await db.collection('misc_items').doc(miscMatch[1]).get();
+      if (!doc.exists) return null;
+      const d = doc.data();
+      // Real Firestore shape: images is an array of objects {url, alt, isPrimary}
+      const primaryImage = d.images?.find?.((i) => i.isPrimary)?.url || d.images?.[0]?.url || '/og-default.jpg';
+      return {
+        title: d.name || 'Store Item',
+        description: d.description || '',
+        ogImage: primaryImage,
+        canonicalUrl: `https://hqaviation.com/misc/${doc.id}`,
+      };
+    }
+
+    return null;
+  },
+}));
 
 // Static assets - NO CACHING for development
 app.use('/assets', express.static(path.join(publicDir, 'assets'), {
@@ -140,7 +243,7 @@ function fileExists(filePath) {
 // Creates a Stripe PaymentIntent using server-side validated price.
 // Uses express.json() middleware inline so it doesn't affect the webhook route.
 app.post('/api/create-payment-intent', express.json(), async (req, res) => {
-  const { aircraft, duration, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage, addons, fulfilment, shippingAddress, cartId } = req.body || {};
+  const { aircraft, duration, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage, addons, fulfilment, shippingAddress, cartId, referredByCode } = req.body || {};
 
   // Validate presence
   if (!aircraft || !duration || !customerName || !customerEmail || !customerPhone) {
@@ -175,6 +278,7 @@ app.post('/api/create-payment-intent', express.json(), async (req, res) => {
       fulfilment,
       shippingAddress,
       cartId: cartId || '',
+      referredByCode,
     });
     res.json({ clientSecret: paymentIntent.client_secret });
   } catch (err) {
@@ -228,7 +332,7 @@ app.post('/api/create-london-tour-payment-intent', express.json(), async (req, r
 // POST /api/create-misc-payment-intent
 // Creates a Stripe PaymentIntent for a misc item purchase. Price validated server-side.
 app.post('/api/create-misc-payment-intent', express.json(), async (req, res) => {
-  const { itemId, qty, customerName, customerEmail, customerPhone, shippingAddress } = req.body || {};
+  const { itemId, qty, customerName, customerEmail, customerPhone, shippingAddress, size } = req.body || {};
 
   if (!itemId || !customerName || !customerEmail || !customerPhone) {
     return res.status(400).json({ error: 'Missing required fields' });
@@ -251,6 +355,7 @@ app.post('/api/create-misc-payment-intent', express.json(), async (req, res) => 
       customerEmail,
       customerPhone: sanitisedPhone,
       shippingAddress,
+      size,
     });
     res.json({ clientSecret: paymentIntent.client_secret });
   } catch (err) {
@@ -274,6 +379,11 @@ app.post('/api/record-booking', express.json(), async (req, res) => {
   }
 });
 
+// GET /api/booking/:paymentIntentId
+// Returns the booking record for /booking-confirmed and /upgrade pages.
+// PI ID is the access token — no auth header needed.
+app.get('/api/booking/:paymentIntentId', getBooking);
+
 // POST /api/webhook
 // Receives Stripe webhook events. MUST use express.raw() — Stripe requires
 // the raw body buffer to verify the webhook signature. Do NOT use express.json() here.
@@ -286,6 +396,11 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
     // Return a static message — never expose internal error details to Stripe callers.
     res.status(400).json({ error: 'Webhook processing failed' });
   }
+});
+
+// Cloud Run / uptimerobot health probe — cheap, no auth, no I/O.
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 // ============================================

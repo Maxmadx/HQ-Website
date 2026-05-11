@@ -10,6 +10,7 @@ import {
   buildCourse,
   buildService,
   buildItemList,
+  buildTouristTrip,
 } from './jsonLd';
 
 describe('buildOrganization', () => {
@@ -226,5 +227,32 @@ describe('buildItemList', () => {
     expect(list.itemListElement).toHaveLength(3);
     expect(list.itemListElement[0].position).toBe(1);
     expect(list.itemListElement[2].url).toBe('https://hqaviation.com/aircraft/r66');
+  });
+});
+
+describe('buildTouristTrip', () => {
+  it('builds a TouristTrip with name, description, image, and offer', () => {
+    const t = buildTouristTrip({
+      name: 'Helicopter Tour of London',
+      description: 'A 30-minute aerial tour over central London by Robinson R44.',
+      image: '/assets/images/london-tour.jpg',
+      url: 'https://hqaviation.com/helicopter-tour-of-london',
+      offers: { price: '395', priceCurrency: 'GBP', availability: 'https://schema.org/InStock' },
+    });
+    expect(t['@type']).toBe('TouristTrip');
+    expect(t.name).toBe('Helicopter Tour of London');
+    expect(t.image).toContain('/assets/images/london-tour.jpg');
+    expect(t.offers.price).toBe('395');
+    expect(t.offers.priceCurrency).toBe('GBP');
+  });
+
+  it('omits offers when not provided', () => {
+    const t = buildTouristTrip({
+      name: 'Tour',
+      description: 'desc',
+      image: '/x.jpg',
+      url: 'https://hqaviation.com/x',
+    });
+    expect(t.offers).toBeUndefined();
   });
 });

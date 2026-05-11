@@ -1,6 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import { trackEvent } from '../lib/analytics';
+import PostCheckoutOffers from '../components/booking/PostCheckoutOffers';
 
 const AIRCRAFT_NAMES = {
   r22: 'Robinson R22',
@@ -18,6 +21,7 @@ export default function BookingConfirmed() {
   const name = searchParams.get('name');
   const type = searchParams.get('type');
   const itemName = searchParams.get('itemName');
+  const apparelSize = searchParams.get('size') || '';
   const isMisc = type === 'misc';
 
   const aircraftName = AIRCRAFT_NAMES[aircraft] || aircraft || 'Discovery Flight';
@@ -56,6 +60,37 @@ export default function BookingConfirmed() {
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const [booking, setBooking] = useState(null);
+  const [freeReferralItem, setFreeReferralItem] = useState(null);
+
+  useEffect(() => {
+    if (!ref) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/api/booking/${encodeURIComponent(ref)}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled) setBooking(data);
+      } catch {}
+    })();
+    return () => { cancelled = true; };
+  }, [ref]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const q = query(collection(db, 'misc_items'), where('freeReferralOffer', '==', true));
+        const snap = await getDocs(q);
+        if (snap.empty) return;
+        const d = snap.docs[0];
+        if (!cancelled) setFreeReferralItem({ id: d.id, ...d.data() });
+      } catch {}
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
   return (
     <div style={styles.page}>
       <div style={styles.container}>
@@ -76,12 +111,20 @@ export default function BookingConfirmed() {
           <h2 style={styles.cardHeading}>Booking Summary</h2>
 
           {isMisc ? (
-            itemName && (
-              <div style={styles.row}>
-                <span style={styles.label}>Item</span>
-                <span style={styles.value}>{itemName}</span>
-              </div>
-            )
+            <>
+              {itemName && (
+                <div style={styles.row}>
+                  <span style={styles.label}>Item</span>
+                  <span style={styles.value}>{itemName}</span>
+                </div>
+              )}
+              {apparelSize && (
+                <div style={styles.row}>
+                  <span style={styles.label}>Size</span>
+                  <span style={styles.value}>{apparelSize}</span>
+                </div>
+              )}
+            </>
           ) : (
             <>
               <div style={styles.row}>
@@ -105,6 +148,10 @@ export default function BookingConfirmed() {
             </div>
           )}
         </div>
+
+        {!isMisc && (
+          <PostCheckoutOffers booking={booking} freeReferralItem={freeReferralItem} />
+        )}
 
         <p style={styles.nextStep}>
           {isMisc

@@ -162,6 +162,90 @@ function escapeHtml(str) {
     .replace(/'/g, '&#x27;');
 }
 
+const REFERRAL_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function makeCode() {
+  let out = '';
+  for (let i = 0; i < 8; i++) out += REFERRAL_ALPHABET[Math.floor(Math.random() * REFERRAL_ALPHABET.length)];
+  return out;
+}
+
+/**
+ * Generates a unique referral code, retrying up to `maxRetries` times on collision.
+ * Throws if a unique code can't be obtained.
+ */
+async function generateUniqueReferralCode(maxRetries = 5) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const code = makeCode();
+    const ref = admin.firestore().collection('referral_codes').doc(code);
+    const snap = await ref.get();
+    if (!snap.exists) return code;
+  }
+  const err = new Error('Failed to generate unique referral code after retries');
+  err.statusCode = 500;
+  throw err;
+}
+
+/**
+ * Returns a snapshot of the misc item currently flagged as the
+ * free-referral reward, or null if none is flagged.
+ */
+async function getFreeReferralItemSnapshot() {
+  const snap = await admin.firestore()
+    .collection('misc_items')
+    .where('freeReferralOffer', '==', true)
+    .limit(1)
+    .get();
+  if (snap.empty) return null;
+  const doc = snap.docs[0];
+  const d = doc.data();
+  return {
+    id: doc.id,
+    name: String(d.name || ''),
+    priceDisplay: String(d.priceDisplay || ''),
+  };
+}
+
+/**
+ * Validates a `referredByCode` against constraints:
+ *   - exists in `referral_codes`
+ *   - owner's email is not the same as this customer's
+ *   - owner's PI is not refunded (Stripe lookup)
+ * Returns the owner record if valid; null otherwise. Never throws — invalid
+ * codes are silently dropped per spec (the booking still proceeds).
+ */
+async function validateReferredByCode(code, customerEmail) {
+  if (!code || typeof code !== 'string') return null;
+  const normalized = code.trim().toUpperCase();
+  if (!/^[A-Z0-9]{8}$/.test(normalized)) return null;
+  try {
+    const doc = await admin.firestore().collection('referral_codes').doc(normalized).get();
+    if (!doc.exists) return null;
+    const data = doc.data();
+    if (!data.ownerPaymentIntentId) return null;
+    if (data.ownerEmail && customerEmail && String(data.ownerEmail).toLowerCase() === String(customerEmail).toLowerCase()) {
+      return null; // self-referral
+    }
+    // Check the owner's PI isn't refunded
+    try {
+      const ownerPi = await getStripe().paymentIntents.retrieve(data.ownerPaymentIntentId);
+      if (ownerPi.status !== 'succeeded' && ownerPi.status !== 'processing') return null;
+      // also skip if any charge on the PI has been refunded
+      const chargeId = ownerPi.latest_charge;
+      if (chargeId) {
+        const charge = await getStripe().charges.retrieve(chargeId);
+        if (charge.refunded || charge.amount_refunded > 0) return null;
+      }
+    } catch (stripeErr) {
+      console.warn('[referral] owner PI lookup failed:', stripeErr.message);
+      return null;
+    }
+    return { code: normalized, ...data };
+  } catch (err) {
+    console.warn('[referral] validateReferredByCode failed:', err.message);
+    return null;
+  }
+}
+
 /**
  * Looks up the price in pence from Firestore (admin SDK — bypasses security rules).
  * Falls back to PRICE_FALLBACK if Firestore is unreachable.
@@ -197,7 +281,7 @@ async function createPaymentIntent({
   aircraft, duration, customerName, customerEmail, customerPhone,
   wantsVoucher, voucherLocation, voucherMessage,
   addons = [], fulfilment, shippingAddress,
-  cartId,
+  cartId, referredByCode,
 }) {
   const flightAmount = await getPrice(aircraft, duration);
   if (flightAmount === null) {
@@ -245,6 +329,10 @@ async function createPaymentIntent({
     addonKeyEntries[`addon_${i}`] = JSON.stringify(item);
   });
 
+  const referralCode = await generateUniqueReferralCode();
+  const freeItemSnapshot = await getFreeReferralItemSnapshot();
+  const validatedReferredByCode = await validateReferredByCode(referredByCode, customerEmail);
+
   const paymentIntent = await getStripe().paymentIntents.create({
     amount,
     currency: 'gbp',
@@ -267,8 +355,23 @@ async function createPaymentIntent({
       shippingCity: resolvedAddress ? resolvedAddress.city : '',
       shippingPostcode: resolvedAddress ? resolvedAddress.postcode : '',
       cartId: cartId || '',
+      referralCode,
+      referredByCode: validatedReferredByCode ? validatedReferredByCode.code : '',
     },
   });
+
+  try {
+    await admin.firestore().collection('referral_codes').doc(referralCode).set({
+      code: referralCode,
+      ownerPaymentIntentId: paymentIntent.id,
+      ownerEmail: customerEmail || '',
+      ...(freeItemSnapshot ? { freeItemSnapshot } : {}),
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+  } catch (err) {
+    console.error('[stripe] failed to write referral_codes doc:', err.message);
+    // Non-fatal: the booking proceeds, but the referral system is degraded.
+  }
 
   return paymentIntent;
 }
@@ -335,7 +438,7 @@ async function createLondonTourPaymentIntent({ experience, timeOfDay, quantity, 
 /**
  * Sends a booking confirmation email to the customer.
  */
-async function sendConfirmationEmail({ customerName, customerEmail, aircraft, duration, amount, bookingRef, addons, fulfilment, shippingAddress }) {
+async function sendConfirmationEmail({ customerName, customerEmail, aircraft, duration, amount, bookingRef, addons, fulfilment, shippingAddress, referralCode = '' }) {
   const priceFormatted = `£${(amount / 100).toFixed(2)}`;
   const aircraftName = AIRCRAFT_NAMES[aircraft] || aircraft;
 
@@ -453,6 +556,20 @@ async function sendConfirmationEmail({ customerName, customerEmail, aircraft, du
     }</p>
   `
   : ''}
+            ${referralCode ? `
+            <!-- Referral CTA -->
+            <div style="margin: 32px 0; padding: 24px; background: #faf9f6; border-radius: 12px; border: 1px solid #e8e8e8;">
+              <h2 style="margin: 0 0 12px; font-size: 18px; font-family: 'Playfair Display', Georgia, serif; color: #0A0A0A;">Refer a friend</h2>
+              <p style="margin: 0 0 16px; color: #444; line-height: 1.5; font-family: Inter, -apple-system, Arial, sans-serif; font-size: 14px;">
+                Share this with a friend. When they book a Discovery Flight using your link, you get a free HQ item &mdash; collect it next time you&rsquo;re at HQ.
+              </p>
+              <a href="${process.env.SITE_URL || 'https://hqaviation.co.uk'}/training/trial-lessons?ref=${escapeHtml(referralCode)}"
+                 style="display: inline-block; padding: 12px 20px; background: #1a1a1a; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 600; font-family: Inter, -apple-system, Arial, sans-serif; font-size: 14px;">
+                Share with a friend
+              </a>
+            </div>
+            ` : ''}
+
             <!-- What happens next -->
             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:32px 0 0;background:#FFFFFF;border-left:3px solid #E04A2F;border-radius:0 8px 8px 0;border-top:1px solid #E8E6E1;border-right:1px solid #E8E6E1;border-bottom:1px solid #E8E6E1;">
               <tr>
@@ -642,6 +759,34 @@ async function sendLondonTourConfirmationEmail({ customerName, customerEmail, ex
 }
 
 /**
+ * Notifies the HQ team that a referral code has been redeemed and a free item needs fulfilling.
+ */
+async function sendReferralRedeemedEmail({ owner, redeemer, freeItem }) {
+  if (!process.env.HQ_TEAM_EMAIL) {
+    console.warn('[referral] HQ_TEAM_EMAIL env var not set, skipping notification');
+    return;
+  }
+  const itemLine = freeItem
+    ? `Free item to ship/hand over: <strong>${escapeHtml(freeItem.name)}</strong> (id: ${escapeHtml(freeItem.id)})`
+    : 'Free item: <em>none flagged at the time of original booking</em>';
+  const html = `
+    <p>A referral has been redeemed.</p>
+    <ul>
+      <li><strong>Original booker:</strong> ${escapeHtml(owner.name || '')} &lt;${escapeHtml(owner.email || '')}&gt; (PI: ${escapeHtml(owner.paymentIntentId)})</li>
+      <li><strong>Friend who used the code:</strong> ${escapeHtml(redeemer.name || '')} &lt;${escapeHtml(redeemer.email || '')}&gt; (PI: ${escapeHtml(redeemer.paymentIntentId)})</li>
+      <li>${itemLine}</li>
+    </ul>
+    <p>Pickup is at HQ — no shipping required.</p>
+  `;
+  return getTransporter().sendMail({
+    from: process.env.EMAIL_FROM,
+    to: process.env.HQ_TEAM_EMAIL,
+    subject: 'Referral redeemed — free item to fulfil',
+    html,
+  });
+}
+
+/**
  * Handles an incoming Stripe webhook request.
  * Verifies signature and processes payment_intent.succeeded.
  * req.body MUST be a raw Buffer — use express.raw({ type: 'application/json' }) on this route.
@@ -687,26 +832,44 @@ async function handleWebhook(req) {
         bookingData.timeOfDay = timeOfDay;
         bookingData.quantity = Number(quantity);
       } else if (productType === 'misc') {
-        const { itemId, itemName, qty } = pi.metadata;
+        const { itemId, itemName, qty, apparelSize } = pi.metadata;
         bookingData.itemId = itemId || '';
         bookingData.itemName = itemName || '';
         bookingData.qty = Number(qty) || 1;
+        if (apparelSize) bookingData.apparelSize = apparelSize;
       } else {
-        const { aircraft, aircraftName, duration } = pi.metadata;
+        const { aircraft, aircraftName, duration, referralCode, referredByCode } = pi.metadata;
         bookingData.aircraft = aircraft;
         bookingData.aircraftName = aircraftName || aircraft;
         bookingData.duration = Number(duration);
+        if (referralCode) bookingData.referralCode = referralCode;
+        if (referredByCode) bookingData.referredByCode = referredByCode;
+        bookingData.referralCompleted = false;
+        // Snapshot the free-item at booking write time (in case it was deleted later)
+        try {
+          const codesDoc = referralCode
+            ? await admin.firestore().collection('referral_codes').doc(referralCode).get()
+            : null;
+          if (codesDoc && codesDoc.exists) {
+            const cd = codesDoc.data();
+            if (cd.freeItemSnapshot) bookingData.referralFreeItemSnapshot = cd.freeItemSnapshot;
+          }
+        } catch {}
         const { addons: webhookParsedAddons, fulfilment: webhookFulfilment, shippingAddress: webhookShippingAddress } = parseAddonsFromMetadata(pi.metadata);
         bookingData.addons = webhookParsedAddons;
         bookingData.fulfilment = webhookFulfilment;
         bookingData.shippingAddress = webhookShippingAddress;
+        // flightAmountPence: the PI amount minus the addon line totals (used for upgrade math in Plan C)
+        const addonTotal = webhookParsedAddons.reduce((sum, a) => sum + (Number(a.lineTotal) || 0), 0);
+        bookingData.flightAmountPence = pi.amount - addonTotal;
+        bookingData.totalAmountPence = pi.amount;
       }
 
       await admin.firestore().collection('bookings').doc(pi.id).set(bookingData, { merge: true });
 
       // Also write misc orders to the misc_marketplace collection
       if (productType === 'misc') {
-        const { itemId, itemName, qty, shippingLine1, shippingLine2, shippingCity, shippingPostcode } = pi.metadata;
+        const { itemId, itemName, qty, apparelSize, shippingLine1, shippingLine2, shippingCity, shippingPostcode } = pi.metadata;
         await admin.firestore().collection('misc_marketplace').doc(pi.id).set({
           type: 'order',
           status: 'new',
@@ -719,8 +882,38 @@ async function handleWebhook(req) {
           customerName: customerName || '',
           customerEmail: customerEmail || '',
           customerPhone: customerPhone || '',
+          ...(apparelSize ? { apparelSize } : {}),
           ...(shippingLine1 ? { shippingLine1, shippingLine2: shippingLine2 || '', shippingCity, shippingPostcode } : {}),
         });
+      }
+
+      // Referral redemption: when the friend's PI succeeds, flip the owner's record + email HQ
+      try {
+        const incomingReferredBy = pi.metadata.referredByCode;
+        if (incomingReferredBy && pi.metadata.productType !== 'discovery-flight-upgrade') {
+          const codeDoc = await admin.firestore().collection('referral_codes').doc(incomingReferredBy).get();
+          if (codeDoc.exists) {
+            const cd = codeDoc.data();
+            const ownerBookingRef = admin.firestore().collection('bookings').doc(cd.ownerPaymentIntentId);
+            const ownerSnap = await ownerBookingRef.get();
+            if (ownerSnap.exists && !ownerSnap.data().referralCompleted) {
+              await ownerBookingRef.update({
+                referralCompleted: true,
+                referralCompletedAt: admin.firestore.FieldValue.serverTimestamp(),
+                referralCompletedByPaymentIntentId: pi.id,
+                updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+              });
+              // Notify HQ team
+              await sendReferralRedeemedEmail({
+                owner: { name: ownerSnap.data().customerName, email: ownerSnap.data().customerEmail, paymentIntentId: cd.ownerPaymentIntentId },
+                redeemer: { name: customerName, email: customerEmail, paymentIntentId: pi.id },
+                freeItem: cd.freeItemSnapshot || ownerSnap.data().referralFreeItemSnapshot || null,
+              });
+            }
+          }
+        }
+      } catch (refErr) {
+        console.error('[stripe webhook] referral redemption failed:', refErr.message);
       }
     } catch (dbErr) {
       console.error('[stripe webhook] failed to save booking to Firestore:', dbErr.message);
@@ -832,6 +1025,7 @@ async function handleWebhook(req) {
           addons: webhookParsedAddons,
           fulfilment: webhookFulfilment,
           shippingAddress: webhookShippingAddress,
+          referralCode: pi.metadata.referralCode || '',
         });
       }
     } catch (emailErr) {
@@ -880,16 +1074,25 @@ async function recordBooking(paymentIntentId) {
     voucherMessage: voucherMessage || null,
   };
 
-  if (type === 'london-tour') {
+  if (type === 'misc') {
+    const { itemId, itemName, qty, apparelSize } = pi.metadata || {};
+    bookingData.itemId = itemId || '';
+    bookingData.itemName = itemName || '';
+    bookingData.qty = Number(qty) || 1;
+    if (apparelSize) bookingData.apparelSize = apparelSize;
+  } else if (type === 'london-tour') {
     const { experience, timeOfDay, quantity } = pi.metadata || {};
     bookingData.experience = experience || '';
     bookingData.timeOfDay = timeOfDay || '';
     bookingData.quantity = Number(quantity) || 1;
   } else {
-    const { aircraft, aircraftName, duration } = pi.metadata || {};
+    const { aircraft, aircraftName, duration, referralCode, referredByCode } = pi.metadata || {};
     bookingData.aircraft = aircraft || '';
     bookingData.aircraftName = aircraftName || AIRCRAFT_NAMES[aircraft] || aircraft || '';
     bookingData.duration = Number(duration) || 0;
+    if (referralCode) bookingData.referralCode = referralCode;
+    if (referredByCode) bookingData.referredByCode = referredByCode;
+    bookingData.referralCompleted = false;
   }
 
   const { addons: parsedAddons, fulfilment, shippingAddress } = parseAddonsFromMetadata(pi.metadata);
@@ -897,6 +1100,11 @@ async function recordBooking(paymentIntentId) {
   bookingData.addons = parsedAddons;
   bookingData.fulfilment = fulfilment;
   bookingData.shippingAddress = shippingAddress;
+
+  // flightAmountPence / totalAmountPence — used for upgrade math (Plan C)
+  const addonTotal = (parsedAddons || []).reduce((sum, a) => sum + (Number(a.lineTotal) || 0), 0);
+  bookingData.flightAmountPence = pi.amount - addonTotal;
+  bookingData.totalAmountPence = pi.amount;
 
   const ref = admin.firestore().collection('bookings').doc(pi.id);
   const existing = await ref.get();
@@ -909,6 +1117,31 @@ async function recordBooking(paymentIntentId) {
     await ref.set({ ...bookingData, status: 'new' });
   }
 
+  // Mirror handleWebhook: also write misc orders to misc_marketplace
+  // so the admin view picks them up even when the webhook can't reach this server.
+  if (type === 'misc') {
+    const { itemId, itemName, qty, apparelSize, shippingLine1, shippingLine2, shippingCity, shippingPostcode } = pi.metadata || {};
+    const marketRef = admin.firestore().collection('misc_marketplace').doc(pi.id);
+    const existingMarket = await marketRef.get();
+    if (!existingMarket.exists) {
+      await marketRef.set({
+        type: 'order',
+        status: 'new',
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        ref: pi.id,
+        amount: pi.amount,
+        itemId: itemId || '',
+        itemName: itemName || '',
+        qty: Number(qty),
+        customerName: customerName || '',
+        customerEmail: customerEmail || '',
+        customerPhone: customerPhone || '',
+        ...(apparelSize ? { apparelSize } : {}),
+        ...(shippingLine1 ? { shippingLine1, shippingLine2: shippingLine2 || '', shippingCity, shippingPostcode } : {}),
+      });
+    }
+  }
+
   return bookingData;
 }
 
@@ -916,7 +1149,7 @@ async function recordBooking(paymentIntentId) {
  * Creates a Stripe PaymentIntent for a misc item purchase.
  * Price is read from Firestore server-side — the client-supplied amount is never trusted.
  */
-async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmail, customerPhone, shippingAddress }) {
+async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmail, customerPhone, shippingAddress, size }) {
   const snap = await admin.firestore().collection('misc_items').doc(itemId).get();
   if (!snap.exists) {
     const err = new Error(`Misc item not found: ${itemId}`);
@@ -956,6 +1189,22 @@ async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmai
     }
   }
 
+  let resolvedSize = '';
+  if (item.apparel && Array.isArray(item.sizes) && item.sizes.length > 0) {
+    const s = String(size || '').trim().toUpperCase();
+    if (!s) {
+      const err = new Error('Size is required for this apparel item');
+      err.statusCode = 400;
+      throw err;
+    }
+    if (!item.sizes.includes(s)) {
+      const err = new Error(`Size ${s} is not available for this item`);
+      err.statusCode = 400;
+      throw err;
+    }
+    resolvedSize = s;
+  }
+
   const amount = item.price * qtyNum;
 
   const paymentIntent = await getStripe().paymentIntents.create({
@@ -973,6 +1222,7 @@ async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmai
       shippingLine2: shippingAddress?.line2 || '',
       shippingCity: shippingAddress?.city || '',
       shippingPostcode: shippingAddress?.postcode || '',
+      apparelSize: resolvedSize,
     },
   });
 

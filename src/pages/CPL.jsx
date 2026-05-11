@@ -16,6 +16,7 @@ import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import Seo from '../components/seo/Seo';
 import { buildCourse, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { SITE_URL } from '../lib/seoDefaults';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import '../assets/css/main.css';
@@ -242,14 +243,19 @@ function CPL() {
         description="Commercial helicopter pilot training at Denham, 30 min from London. CAA-approved CPL(H) hour building opportunities. Examiner-rated instructors."
         jsonLd={[
           buildCourse({
-            name: 'CPL(H) Commercial Helicopter Pilot Training',
-            description: 'CAA-approved CPL(H) modular path with hour-building opportunities at Denham. Examiner-rated instructors.',
-            url: '/training/commercial',
+            name: 'Commercial Pilot Licence (CPL-H)',
+            description: 'EASA CPL(H) training in Robinson R44 or R66 from Denham — modular pathway from PPL.',
+            url: `${SITE_URL}/training/commercial`,
+            courseInstance: {
+              '@type': 'CourseInstance',
+              courseMode: 'in-person',
+              location: 'Denham Aerodrome, UK',
+            },
           }),
           buildBreadcrumbList([
             { name: 'Home', path: '/' },
-            { name: 'Training', path: '/training' },
-            { name: 'CPL(H)', path: '/training/commercial' },
+            { name: 'Training', path: '/training/commercial' },
+            { name: 'CPL', path: '/training/commercial' },
           ]),
         ]}
       />

@@ -19,6 +19,9 @@ import '../assets/css/main.css';
 import '../assets/css/components.css';
 import FooterMinimal from '../components/FooterMinimal';
 import HqMenuPanel from '../components/HqMenuPanel';
+import Seo from '../components/seo/Seo';
+import { buildCourse, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { SITE_URL } from '../lib/seoDefaults';
 
 /**
  * ADVANCED TRAINING PAGE HEADER COMPONENT
@@ -234,6 +237,27 @@ function AdvancedTraining() {
 
   return (
     <div className="adv">
+      <Seo
+        title="Advanced Helicopter Training — UK Pilot Skills"
+        description="Advanced post-licence training — confined areas, autorotations, formation flying."
+        jsonLd={[
+          buildCourse({
+            name: 'Advanced Helicopter Training',
+            description: 'Advanced post-licence training — confined areas, autorotations, formation flying.',
+            url: `${SITE_URL}/training/advanced`,
+            courseInstance: {
+              '@type': 'CourseInstance',
+              courseMode: 'in-person',
+              location: 'Denham Aerodrome, UK',
+            },
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Training', path: '/training/advanced' },
+            { name: 'Advanced', path: '/training/advanced' },
+          ]),
+        ]}
+      />
       <AdvancedTrainingHeader />
 
       {/* ========== HERO SECTION ========== */}

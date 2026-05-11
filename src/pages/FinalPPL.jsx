@@ -15,6 +15,7 @@ import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import Seo from '../components/seo/Seo';
 import { buildCourse, buildBreadcrumbList, buildFAQPage } from '../components/seo/jsonLd';
+import { SITE_URL } from '../lib/seoDefaults';
 
 // Import styles for Header/Navigation
 import '../assets/css/main.css';
@@ -24,6 +25,7 @@ import '../assets/css/components.css';
 import FooterMinimal from '../components/FooterMinimal';
 import { arrivalStyles } from '../components/ArrivalSection';
 import HqMenuPanel from '../components/HqMenuPanel';
+import WhyFlyAHelicopter from '../components/WhyFlyAHelicopter';
 
 
 /**
@@ -337,14 +339,19 @@ function FinalPPL() {
         description="Earn your PPL(H) at Denham, 30 min from London. CAA Part-FCL ATO. R22, R44 and R66 fleet. Examiner-rated instructors, competitive rates, transparent costs."
         jsonLd={[
           buildCourse({
-            name: 'PPL(H) Helicopter Pilot Training',
-            description: 'CAA-approved Part-FCL ATO course at Denham, 30 minutes from London. R22, R44 and R66 fleet, examiner-rated instructors.',
-            url: '/training/ppl',
+            name: 'Private Pilot Licence (PPL-H)',
+            description: 'EASA PPL(H) training in Robinson R22 or R44 from Denham — typically 45–55 hours.',
+            url: `${SITE_URL}/training/ppl`,
+            courseInstance: {
+              '@type': 'CourseInstance',
+              courseMode: 'in-person',
+              location: 'Denham Aerodrome, UK',
+            },
           }),
           buildBreadcrumbList([
             { name: 'Home', path: '/' },
-            { name: 'Training', path: '/training' },
-            { name: 'PPL(H)', path: '/training/ppl' },
+            { name: 'Training', path: '/training/ppl' },
+            { name: 'PPL', path: '/training/ppl' },
           ]),
           ...(faqs.length
             ? [buildFAQPage(faqs.map((f) => ({ q: f.question, a: f.answer })))]
@@ -769,6 +776,9 @@ function FinalPPL() {
           </div>
         </div>
       </section>
+
+      {/* ========== WHY FLY A HELICOPTER ========== */}
+      <WhyFlyAHelicopter />
 
       {/* ========== WHERE & FAQ + DISCOVERY (swapped on mobile) ========== */}
       <div className="fppl__faq-discovery-wrap">

@@ -5,6 +5,11 @@ import { useCollection, deleteDocById, useDocument } from '../../hooks/useFirest
 import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { CLASSES, CONFIDENCE, MARKET_STATUS } from '../../lib/comparablesSchema';
+import {
+  AIRCRAFT_SPECS_MODELS,
+  AIRCRAFT_SPECS_LABELS,
+  AIRCRAFT_SPECS_DEFAULTS,
+} from '../../lib/aircraftSpecsDefaults';
 
 const PILL_STYLES = {
   verified:         { bg: '#e8f0e8', fg: '#2a652a' },
@@ -102,9 +107,76 @@ function DefaultsModal({ open, defaults, onClose }) {
   );
 }
 
+function RobinsonSpecModelCard({ modelId }) {
+  const { data, loading } = useDocument('aircraftSpecs', modelId);
+  const fallback = AIRCRAFT_SPECS_DEFAULTS[modelId] ?? { variants: [] };
+  const variants = data?.variants ?? fallback.variants;
+  const variantCount = variants.length;
+  const rowCount = variants.reduce((sum, v) => sum + (v.rows?.length ?? 0), 0);
+  const isCustom = !!data && Array.isArray(data.variants);
+  const r22Pending = modelId === 'r22' && variantCount === 0;
+
+  return (
+    <div style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: '1.1rem', background: '#fff', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+        <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: '#111827' }}>
+          {AIRCRAFT_SPECS_LABELS[modelId]}
+        </h3>
+        <span style={{ fontFamily: 'monospace', fontSize: '0.72rem', color: '#6b7280' }}>{modelId}</span>
+      </div>
+      {r22Pending ? (
+        <p style={{ margin: 0, fontSize: '0.8rem', color: '#9ca3af', lineHeight: 1.5 }}>
+          R22 specs use a typed-field comparison schema. Migration to the rows-based editor coming after R66/R88/R44 land.
+        </p>
+      ) : (
+        <p style={{ margin: 0, fontSize: '0.8rem', color: '#374151' }}>
+          {variantCount === 1 ? '1 variant' : `${variantCount} variants`} · {rowCount} rows
+          {' · '}
+          <span style={{ color: isCustom ? '#059669' : '#9ca3af' }}>
+            {loading ? 'loading…' : isCustom ? 'custom (admin)' : 'using defaults'}
+          </span>
+        </p>
+      )}
+      <Link
+        to={`/admin/aircraft-specs/${modelId}`}
+        style={{
+          alignSelf: 'flex-start',
+          padding: '0.45rem 0.85rem',
+          borderRadius: 6,
+          background: r22Pending ? '#9ca3af' : '#111827',
+          color: '#fff',
+          textDecoration: 'none',
+          fontSize: '0.82rem',
+          fontWeight: 600,
+          pointerEvents: r22Pending ? 'none' : 'auto',
+        }}
+        aria-disabled={r22Pending}
+      >
+        {r22Pending ? 'Coming soon' : 'Edit specs'}
+      </Link>
+    </div>
+  );
+}
+
+function RobinsonSpecsPanel() {
+  return (
+    <div>
+      <p style={{ fontSize: '0.85rem', color: '#6b7280', maxWidth: 720, marginTop: 0 }}>
+        Manages the factory specification rows shown on /aircraft/r22, /aircraft/r44, /aircraft/r66 and /aircraft/r88. Edits push live immediately. Pages fall back to baked-in defaults if the admin doc is empty.
+      </p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
+        {AIRCRAFT_SPECS_MODELS.map((m) => (
+          <RobinsonSpecModelCard key={m} modelId={m} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function AdminComparables() {
   const { docs: comparables, loading } = useCollection('comparables', 'updatedAt');
   const { data: defaults } = useDocument('comparison_defaults', 'global');
+  const [section, setSection] = useState('comparison'); // 'comparison' | 'robinson'
   const [filterClass, setFilterClass] = useState('');
   const [filterSource, setFilterSource] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
@@ -132,13 +204,44 @@ export default function AdminComparables() {
 
   return (
     <AdminLayout>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-        <div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#111827', margin: 0 }}>Comparables</h1>
-          <p style={{ fontSize: '0.78rem', color: '#6b7280', margin: '0.2rem 0 0' }}>
-            Aircraft data shown on /aircraft-comparison · {comparables.length} aircraft
-          </p>
-        </div>
+      <div style={{ marginBottom: '1.25rem' }}>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#111827', margin: 0 }}>Aircraft Specs</h1>
+      </div>
+
+      <div style={{ display: 'flex', gap: '0.4rem', borderBottom: '1px solid #e5e7eb', marginBottom: '1.25rem' }}>
+        {[
+          { id: 'comparison', label: 'Aircraft Comparison' },
+          { id: 'robinson', label: 'Robinson Specifications' },
+        ].map((s) => (
+          <button
+            key={s.id}
+            type="button"
+            onClick={() => setSection(s.id)}
+            style={{
+              padding: '0.6rem 1rem',
+              background: 'transparent',
+              border: 'none',
+              borderBottom: '2px solid ' + (section === s.id ? '#111827' : 'transparent'),
+              color: section === s.id ? '#111827' : '#6b7280',
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              marginBottom: '-1px',
+            }}
+          >
+            {s.label}
+          </button>
+        ))}
+      </div>
+
+      {section === 'robinson' ? (
+        <RobinsonSpecsPanel />
+      ) : (
+      <>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <p style={{ fontSize: '0.85rem', color: '#6b7280', margin: 0 }}>
+          Aircraft data shown on /aircraft-comparison · {comparables.length} aircraft
+        </p>
         <div style={{ display: 'flex', gap: '0.4rem' }}>
           <button onClick={() => setDefaultsOpen(true)} style={{ background: '#fff', border: '1px solid #ccc', color: '#222', padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.875rem', cursor: 'pointer' }}>
             ⚙ Edit defaults
@@ -205,6 +308,8 @@ export default function AdminComparables() {
       )}
 
       <DefaultsModal open={defaultsOpen} defaults={defaults} onClose={() => setDefaultsOpen(false)} />
+      </>
+      )}
     </AdminLayout>
   );
 }

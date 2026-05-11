@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const CONDITIONS = ['new', 'overhauled', 'exchange', 'repaired'];
+export const CONDITIONS = ['new', 'used'];
 export const CATEGORIES = ['rotor', 'engine', 'avionics', 'consumables', 'airframe', 'hardware'];
 export const AIRCRAFT = ['r22', 'r44', 'r66'];
 // 'sold' is added vs misc_items so a unique used unit can be auto-archived

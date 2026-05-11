@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation, useNavigationType } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigationType } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import Seo from './components/seo/Seo';
 import { buildOrganization, buildWebSite, buildLocalBusiness } from './components/seo/jsonLd';
 import Layout from './layouts/Layout';
 import Home from './pages/Home';
+import NotFound from './pages/NotFound';
 import AboutUs from './pages/AboutUs';
 import CaptainQ from './pages/CaptainQ';
 import Training from './pages/Training';
@@ -53,6 +54,7 @@ import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import DiscoveryFlight from './pages/DiscoveryFlight';
 import Experimentation from './pages/Experimentation';
+import ExperimentationHeroSection from './pages/Experimentation-hero-section';
 import AuthorisedServiceCenterCard from './pages/AuthorisedServiceCenterCard';
 import SlidingGalleryVariations from './pages/SlidingGalleryVariations';
 import WallOfCoolVariations from './pages/WallOfCoolVariations';
@@ -85,6 +87,7 @@ import MiscItemDetail from './pages/MiscItemDetail';
 import PartSales from './pages/PartSales';
 import Parts from './pages/Parts';
 import PartDetail from './pages/PartDetail';
+import ImagePicker from './pages/dev/ImagePicker';
 import RHCConfigurator from './pages/RHCConfigurator';
 import AwardVariations from './pages/AwardVariations';
 import MobileSecondSection from './pages/MobileSecondSection';
@@ -122,6 +125,8 @@ import AdminWallOfCool from './pages/admin/AdminWallOfCool';
 import AdminReviews from './pages/admin/AdminReviews';
 import AdminFaqs from './pages/admin/AdminFaqs';
 import AdminWhereWhen from './pages/admin/AdminWhereWhen';
+import AdminAircraftSpecs from './pages/admin/AdminAircraftSpecs';
+import AdminAircraftSpecsEdit from './pages/admin/AdminAircraftSpecsEdit';
 import AdminEditImagesMode from './pages/admin/AdminEditImagesMode';
 import AdminEditTextMode from './pages/admin/AdminEditTextMode';
 import AdminComparables from './pages/admin/AdminComparables';
@@ -175,6 +180,7 @@ function App() {
         <Route path="/flying-variations" element={<FlyingVariations />} />
         <Route path="/final-draft" element={<FinalDraft />} />
         <Route path="/experimentation" element={<Experimentation />} />
+        <Route path="/experimentation-hero-section" element={<ExperimentationHeroSection />} />
         <Route path="/wall-of-cool-variations" element={<WallOfCoolVariations />} />
         <Route path="/wall-of-cool-title-variations" element={<WallOfCoolTitleVariations />} />
         <Route path="/wall-of-cool-center-card-variations" element={<WallOfCoolCenterCardVariations />} />
@@ -222,6 +228,8 @@ function App() {
         <Route path="/misc" element={<Misc />} />
         <Route path="/misc/:id" element={<MiscItemDetail />} />
         <Route path="/parts" element={<Parts />} />
+        <Route path="/parts-2" element={<PartSales />} />
+        {SHOW_DEV_ROUTES && <Route path="/dev/image-picker" element={<ImagePicker />} />}
         <Route path="/parts/enquiry" element={<PartSales />} />
         <Route path="/parts/:id" element={<PartDetail />} />
         <Route path="/maintenance" element={<FinalMaintenance />} />
@@ -259,7 +267,8 @@ function App() {
         <Route path="/admin/comparables/:id" element={<AdminRoute><AdminComparableEdit /></AdminRoute>} />
         <Route path="/admin/misc" element={<AdminRoute><AdminMiscItems /></AdminRoute>} />
         <Route path="/admin/misc/:id" element={<AdminRoute><AdminMiscItemEdit /></AdminRoute>} />
-        <Route path="/admin/misc-marketplace" element={<AdminRoute><AdminMiscMarketplace /></AdminRoute>} />
+        <Route path="/admin/misc/orders" element={<AdminRoute><AdminMiscMarketplace /></AdminRoute>} />
+        <Route path="/admin/misc-marketplace" element={<Navigate to="/admin/misc/orders" replace />} />
         <Route path="/admin/parts" element={<AdminRoute><AdminParts /></AdminRoute>} />
         <Route path="/admin/parts/enquiries" element={<AdminRoute><AdminPartsEnquiries /></AdminRoute>} />
         <Route path="/admin/parts/:id" element={<AdminRoute><AdminPartEdit /></AdminRoute>} />
@@ -273,6 +282,8 @@ function App() {
         <Route path="/admin/reviews" element={<AdminRoute><AdminReviews /></AdminRoute>} />
         <Route path="/admin/faqs" element={<AdminRoute><AdminFaqs /></AdminRoute>} />
         <Route path="/admin/where-when" element={<AdminRoute><AdminWhereWhen /></AdminRoute>} />
+        <Route path="/admin/aircraft-specs" element={<AdminRoute><AdminAircraftSpecs /></AdminRoute>} />
+        <Route path="/admin/aircraft-specs/:model" element={<AdminRoute><AdminAircraftSpecsEdit /></AdminRoute>} />
 
         <Route path="/training/commercial" element={<CPL />} />
         <Route path="/training/advanced" element={<AdvancedTraining />} />
@@ -300,6 +311,8 @@ function App() {
           <Route path="services/maintenance" element={<Maintenance />} />
 
         </Route>
+        {/* Catch-all 404 — must be the last Route */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
       </EditModeProvider>
     </Router>

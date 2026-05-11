@@ -10,7 +10,7 @@
  */
 
 import React, { useRef, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { usePricing } from '../hooks/usePricing';
 import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
@@ -19,7 +19,7 @@ import { useFaqs } from '../hooks/useFaqs';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { arrivalStyles } from '../components/ArrivalSection';
 import Seo from '../components/seo/Seo';
-import { buildCourse, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { buildProduct, buildBreadcrumbList } from '../components/seo/jsonLd';
 import { trackEvent } from '../lib/analytics';
 
 // Import styles
@@ -406,6 +406,15 @@ function ValueProposition() {
   const [openCard, setOpenCard] = useState(null);
   const [carouselIndex, setCarouselIndex] = useState(0);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Persist ?ref= to sessionStorage as belt-and-braces fallback for the checkout URL
+  useEffect(() => {
+    const ref = searchParams.get('ref') || '';
+    if (/^[A-Za-z0-9]{8}$/.test(ref.trim()) && typeof sessionStorage !== 'undefined') {
+      sessionStorage.setItem('referredByCode', ref.trim().toUpperCase());
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 1024px)');
@@ -459,7 +468,8 @@ function ValueProposition() {
         value: price,
         currency: 'gbp',
       });
-      navigate(`/checkout?aircraft=${cardId}&duration=${selectedTime}&price=${price}`);
+      const ref = searchParams.get('ref') || '';
+      navigate(`/checkout?aircraft=${cardId}&duration=${selectedTime}&price=${price}${ref ? `&ref=${encodeURIComponent(ref)}` : ''}`);
     }
   };
 
@@ -1393,16 +1403,21 @@ function DiscoveryFlight() {
         title="Helicopter Experience & Trial Lesson · London"
         description="Take the controls of a Robinson helicopter at Denham — 30 min from London. One-off experience or first flight lesson. R22, R44 or R66. Gift vouchers."
         ogImage="/assets/images/r66helis.jpg"
+        ogType="product"
         jsonLd={[
-          buildCourse({
-            name: 'Helicopter Trial Lesson',
-            description: 'One-off helicopter experience or first flight lesson at Denham, 30 min from London. R22, R44 or R66.',
-            url: '/training/trial-lessons',
-            offers: trialOffers.length ? trialOffers : undefined,
+          buildProduct({
+            name: 'Helicopter Trial Lesson — Discovery Flight',
+            description: 'A first hands-on flight in a Robinson R22, R44, or R66 helicopter. From Denham Aerodrome (30 min from London).',
+            image: '/assets/images/r66helis.jpg',
+            brand: 'HQ Aviation',
+            url: 'https://hqaviation.com/training/trial-lessons',
+            offers: trialOffers.length > 0
+              ? { '@type': 'AggregateOffer', offers: trialOffers, priceCurrency: 'GBP' }
+              : undefined,
           }),
           buildBreadcrumbList([
             { name: 'Home', path: '/' },
-            { name: 'Training', path: '/training' },
+            { name: 'Training', path: '/training/ppl' },
             { name: 'Trial Lessons', path: '/training/trial-lessons' },
           ]),
         ]}

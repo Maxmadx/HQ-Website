@@ -10,7 +10,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "static": "node server.js",
-    "test": "vitest run"
+    "test": "vitest run",
+    "deploy:server": "docker build --platform linux/amd64 -t europe-west2-docker.pkg.dev/hq-website-4abc7/hq-aviation/server:latest . && docker push europe-west2-docker.pkg.dev/hq-website-4abc7/hq-aviation/server:latest && gcloud run deploy hq-aviation-server --image=europe-west2-docker.pkg.dev/hq-website-4abc7/hq-aviation/server:latest --region=europe-west2"
   },
   "repository": {
     "type": "git",
