@@ -5,6 +5,7 @@ import Seo from './components/seo/Seo';
 import { buildOrganization, buildWebSite, buildLocalBusiness } from './components/seo/jsonLd';
 import Layout from './layouts/Layout';
 import Home from './pages/Home';
+import NotFound from './pages/NotFound';
 import AboutUs from './pages/AboutUs';
 import CaptainQ from './pages/CaptainQ';
 import Training from './pages/Training';
@@ -310,6 +311,8 @@ function App() {
           <Route path="services/maintenance" element={<Maintenance />} />
 
         </Route>
+        {/* Catch-all 404 — must be the last Route */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
       </EditModeProvider>
     </Router>

@@ -19,6 +19,9 @@ import '../assets/css/main.css';
 import '../assets/css/components.css';
 import FooterMinimal from '../components/FooterMinimal';
 import HqMenuPanel from '../components/HqMenuPanel';
+import Seo from '../components/seo/Seo';
+import { buildService, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { SITE_URL, AREA_SERVED } from '../lib/seoDefaults';
 
 // ─── Header ──────────────────────────────────────────────────────────────────
 
@@ -214,6 +217,23 @@ function PilotProvisioning() {
 
   return (
     <div className="pp">
+      <Seo
+        title="Helicopter Pilot Provisioning — Contract Crew, UK"
+        description="Qualified helicopter pilot supply and contract crew for owner-operators and yacht operators. UK-wide deployment from Denham."
+        jsonLd={[
+          buildService({
+            name: 'Pilot Provisioning',
+            serviceType: 'Helicopter pilot supply and contract crew',
+            description: 'Helicopter pilot supply and contract crew services for owner-operators and yacht operators.',
+            url: `${SITE_URL}/pilot-provisioning`,
+            areaServed: AREA_SERVED,
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Pilot Provisioning', path: '/pilot-provisioning' },
+          ]),
+        ]}
+      />
       <PilotProvisioningHeader />
 
       {/* ========== HERO ========== */}

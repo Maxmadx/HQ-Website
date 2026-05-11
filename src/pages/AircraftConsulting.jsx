@@ -20,6 +20,9 @@ import '../assets/css/main.css';
 import '../assets/css/components.css';
 import FooterMinimal from '../components/FooterMinimal';
 import HqMenuPanel from '../components/HqMenuPanel';
+import Seo from '../components/seo/Seo';
+import { buildService, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { SITE_URL, AREA_SERVED } from '../lib/seoDefaults';
 import { INITIAL_FORM_STATE, SERVICE_TYPES, getServiceFields, clearConditionalFields } from './aircraftConsultingForm';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -369,6 +372,23 @@ function AircraftConsulting() {
 
   return (
     <div className="ac">
+      <Seo
+        title="Helicopter Pre-Purchase & Acquisition Consulting | UK"
+        description="Independent pre-purchase inspection and aircraft acquisition consulting from Robinson dealer at Denham. UK-wide helicopter buyer support."
+        jsonLd={[
+          buildService({
+            name: 'Aircraft Consulting',
+            serviceType: 'Pre-purchase inspection and aircraft acquisition consulting',
+            description: 'Independent pre-purchase inspection, valuation, and acquisition consulting for helicopter buyers.',
+            url: `${SITE_URL}/aircraft-consulting`,
+            areaServed: AREA_SERVED,
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Aircraft Consulting', path: '/aircraft-consulting' },
+          ]),
+        ]}
+      />
       <AircraftConsultingHeader />
 
       {/* ====================================================================
