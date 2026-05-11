@@ -17,25 +17,31 @@ export default function BookingConfirmed() {
   const [searchParams] = useSearchParams();
 
   const ref = searchParams.get('ref');
-  const aircraft = searchParams.get('aircraft');
-  const duration = searchParams.get('duration');
-  const price = searchParams.get('price');
-  const name = searchParams.get('name');
+  // Misc bookings still carry these URL params from MiscCheckoutForm —
+  // the /api/booking endpoint doesn't whitelist itemName/size yet, and
+  // misc short-circuits the Phase 1 machine, so the URL is the source.
   const type = searchParams.get('type');
   const itemName = searchParams.get('itemName');
   const apparelSize = searchParams.get('size') || '';
   const isMisc = type === 'misc';
 
-  const aircraftName = AIRCRAFT_NAMES[aircraft] || aircraft || 'Discovery Flight';
+  const navigate = useNavigate();
+  const [phase, setPhase] = useState(isMisc ? 'confirmed' : 'confirming');
 
-  // Fire client-side purchase event as a fallback for the Stripe webhook.
-  // The transactionId (ref = payment_intent.id) is the dedup key — if the
-  // webhook also fires server-side, the aggregation layer dedupes via
-  // transactionId at read time. No double-count in dashboard counts.
+  const [booking, setBooking] = useState(null);
+  const [freeReferralItem, setFreeReferralItem] = useState(null);
+  const [purchaseEventFired, setPurchaseEventFired] = useState(false);
+
+  // Fire client-side GA4 purchase event once we have either booking data
+  // (Discovery Flight) or URL params (misc). Idempotent via guard flag —
+  // the Stripe webhook is the canonical source server-side; this is a fallback.
   useEffect(() => {
-    if (!ref) return;
-    const value = parseFloat(price || '0');
-    const itemCategory = isMisc ? 'misc' : 'discovery-flight';
+    if (!ref || purchaseEventFired) return;
+    if (!isMisc && !booking) return; // wait for booking on discovery-flight
+
+    const value = isMisc
+      ? parseFloat(searchParams.get('price') || '0')
+      : (booking.totalAmountPence / 100);
     const items = isMisc
       ? [{
           item_id: itemName || 'misc',
@@ -46,8 +52,8 @@ export default function BookingConfirmed() {
           quantity: 1,
         }]
       : [{
-          item_id: `${aircraft || 'unknown'}-${duration || ''}`,
-          item_name: `${aircraftName} ${duration ? duration + 'min ' : ''}Discovery Flight`,
+          item_id: `${booking.aircraft || 'unknown'}-${booking.duration || ''}`,
+          item_name: `${AIRCRAFT_NAMES[booking.aircraft] || booking.aircraft || 'Discovery Flight'} ${booking.duration ? booking.duration + 'min ' : ''}Discovery Flight`,
           item_category: 'discovery-flight',
           price: value,
           currency: 'gbp',
@@ -58,15 +64,10 @@ export default function BookingConfirmed() {
       value,
       currency: 'gbp',
       items,
-      itemCategory,
+      itemCategory: isMisc ? 'misc' : 'discovery-flight',
     });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const navigate = useNavigate();
-  const [phase, setPhase] = useState(isMisc ? 'confirmed' : 'confirming');
-
-  const [booking, setBooking] = useState(null);
-  const [freeReferralItem, setFreeReferralItem] = useState(null);
+    setPurchaseEventFired(true);
+  }, [ref, isMisc, booking, itemName, purchaseEventFired, searchParams]);
 
   useEffect(() => {
     if (!ref) return;
@@ -144,12 +145,12 @@ export default function BookingConfirmed() {
       } catch (err) {
         if (cancelled) return false;
         const errMsg = err.message || 'Unknown error';
+        // Send the user to the trial-lessons landing page with the error in
+        // the URL — they can re-pick aircraft + duration without risking a
+        // duplicate charge from a stale checkout form.
         const params = new URLSearchParams();
-        params.set('aircraft', aircraft || '');
-        params.set('duration', duration || '');
-        params.set('price', price || '');
         params.set('error', errMsg);
-        navigate(`/checkout?${params.toString()}`, { replace: true });
+        navigate(`/training/trial-lessons?${params.toString()}`, { replace: true });
         return false;
       }
     })();
@@ -236,7 +237,7 @@ export default function BookingConfirmed() {
         {confirmedVisible && (
           <div style={{ animation: 'bc-fade-in 480ms ease both' }}>
             <p style={styles.subheading}>
-              {name ? `Thank you, ${name}.` : 'Thank you.'}{' '}
+              {booking?.customerName ? `Thank you, ${booking.customerName}.` : 'Thank you.'}{' '}
               {isMisc
                 ? 'Your order has been placed. The HQ team will be in touch shortly.'
                 : 'Your Discovery Flight has been booked.'}
@@ -264,10 +265,10 @@ export default function BookingConfirmed() {
               ) : (
                 <>
                   {(() => {
-                    const displayAircraft = booking?.aircraft || aircraft;
-                    const displayAircraftName = AIRCRAFT_NAMES[displayAircraft] || displayAircraft || 'Discovery Flight';
-                    const displayDuration = booking?.duration || duration;
-                    const displayPrice = booking ? (booking.totalAmountPence / 100).toFixed(2) : price;
+                    const displayAircraft = booking?.aircraft || '';
+                    const displayAircraftName = AIRCRAFT_NAMES[displayAircraft] || booking?.aircraftName || 'Discovery Flight';
+                    const displayDuration = booking?.duration || '';
+                    const displayPrice = booking ? (booking.totalAmountPence / 100).toFixed(2) : '—';
                     return (
                       <>
                         <div style={styles.row}>

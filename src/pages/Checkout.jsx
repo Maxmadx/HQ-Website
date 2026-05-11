@@ -122,12 +122,9 @@ function CheckoutForm({
     if (result.error) {
       setError(result.error.message);
     } else if (result.paymentIntent.status === 'succeeded') {
-      // Navigate immediately. /booking-confirmed handles record-booking on mount.
-      navigate(
-        `/booking-confirmed?ref=${result.paymentIntent.id}` +
-        `&aircraft=${aircraft}&duration=${duration}&price=${price}` +
-        `&name=${encodeURIComponent(name)}`
-      );
+      // Navigate immediately. /booking-confirmed fetches the booking record
+      // server-side via the PI id — no need to leak details through the URL.
+      navigate(`/booking-confirmed?ref=${result.paymentIntent.id}`);
     }
   };
 
