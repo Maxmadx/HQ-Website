@@ -228,7 +228,7 @@ export default function BookingConfirmed() {
             onClick={handleViewSummary}
             style={styles.viewSummaryBtn}
           >
-            View Booking Summary&nbsp;&nbsp;↓
+            View Booking Summary&nbsp;&nbsp;→
           </button>
         </div>
 
