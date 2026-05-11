@@ -149,6 +149,9 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
               objectFit: 'contain',
               objectPosition: 'center',
               opacity: isHero && middleOpen ? 1 : 0,
+              // The R22 PNG is red; rotate the hue ~220deg so the back
+              // helicopter reads as blue against the red foreground one.
+              filter: 'hue-rotate(220deg) saturate(1.2)',
               transition: 'opacity 500ms ease-out',
               transform: 'translateY(10px)',
             }}
