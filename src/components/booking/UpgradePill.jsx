@@ -54,11 +54,11 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
     if (!shouldShow) return;
     // Delay slightly past the card's fall/unfurl (~1.1s) so the title +
     // CTA visibly land before the middle begins opening.
-    // The card's fall + opacity fade-in both finish at 1200ms (transform
-    // 1100ms + 100ms delay). Flip middleOpen exactly when the fall ends so
-    // the expansion starts the instant the card stops moving — no overlap,
-    // no gap.
-    const t = setTimeout(() => setMiddleOpen(true), 1200);
+    // Flip middleOpen ~800ms after mount — slightly before the card's
+    // transform fully settles, so the visible expansion lines up with the
+    // user's perceived "landed" moment instead of the formal end of the
+    // bezier curve.
+    const t = setTimeout(() => setMiddleOpen(true), 800);
     return () => clearTimeout(t);
   }, [shouldShow]);
   if (!booking) return null;
@@ -152,7 +152,7 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
             height: isHero && middleOpen ? '240px' : '0px',
             background: '#f5f5f5',
             overflow: 'hidden',
-            transition: 'height 1500ms ease-out',
+            transition: 'height 600ms ease-out',
           }}
         >
           <img
@@ -164,7 +164,7 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
               objectFit: 'contain',
               objectPosition: 'center',
               opacity: isHero && middleOpen ? 1 : 0,
-              transition: 'opacity 1100ms ease',
+              transition: 'opacity 500ms ease-out',
             }}
           />
         </div>
@@ -178,7 +178,7 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
             overflow: 'hidden',
             textAlign: 'center',
             transition:
-              'max-height 1500ms ease-out, opacity 1100ms ease-out, padding 1500ms ease-out',
+              'max-height 600ms ease-out, opacity 500ms ease-out, padding 600ms ease-out',
           }}
         >
           <p style={{ fontSize: '1.05rem', color: '#444', margin: '0 0 4px', lineHeight: 1.5, fontWeight: 400 }}>
