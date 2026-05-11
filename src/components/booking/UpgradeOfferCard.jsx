@@ -158,7 +158,7 @@ function UpgradeForm({ booking, onSuccess, onCancel, embedded }) {
  * compact row is clicked. The standalone `/upgrade` page imports
  * `<UpgradeFormStandalone>` directly instead.
  */
-function UpgradeModal({ booking, open, onClose, onSuccess }) {
+export function UpgradeModal({ booking, open, onClose, onSuccess }) {
   useEffect(() => {
     if (!open) return;
     function onKey(e) { if (e.key === 'Escape') onClose(); }
