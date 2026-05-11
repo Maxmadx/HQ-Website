@@ -169,6 +169,8 @@ function DiscoveryHeader() {
                 className="Header-branding-logo"
                 loading="lazy"
                 decoding="async"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -277,7 +279,7 @@ function DiscoveryHero() {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1.5 }}
       >
-        <img src={pageImages['discovery-hero']?.[0]?.url ?? '/assets/images/gallery/carousel/rotating8.jpg'} alt="" />
+        <img src={pageImages['discovery-hero']?.[0]?.url ?? '/assets/images/gallery/carousel/rotating8.jpg'} alt="" width={2500} height={1667} />
       </motion.div>
       <div className="df-hero__overlay" />
 
@@ -339,7 +341,7 @@ function DiscoveryHero() {
           >
             <div className="df-hero__ticket-main">
               <div className="df-hero__ticket-header">
-                <img src="/assets/images/logos/hq/hq-aviation-logo-black.png" alt="HQ Aviation" className="df-hero__ticket-logo" />
+                <img src="/assets/images/logos/hq/hq-aviation-logo-black.png" alt="HQ Aviation" className="df-hero__ticket-logo" width={405} height={245} />
                 <span className="df-hero__ticket-type">FLIGHT EXPERIENCE</span>
                 <span className="df-hero__ticket-class">DISCOVERY</span>
               </div>
@@ -516,7 +518,7 @@ function ValueProposition() {
                       aria-controls={`acc-body-${aircraft.id}`}
                     >
                       <div className="df-card__acc-thumb">
-                        <img src={aircraft.image} alt={aircraft.name} />
+                        <img src={aircraft.image} alt={aircraft.name} width={1920} height={1080} />
                       </div>
                       <div className="df-card__acc-meta">
                         {aircraft.featured && (
@@ -626,7 +628,7 @@ function ValueProposition() {
                               <span className="df-card__badge">RECOMMENDED</span>
                             )}
                             <div className="df-card__image">
-                              <img src={aircraft.image} alt={aircraft.name} />
+                              <img src={aircraft.image} alt={aircraft.name} width={1920} height={1080} />
                             </div>
                             <div className="df-card__content">
                               <div className="df-card__header">
@@ -846,7 +848,7 @@ function MobileGalleryStrip() {
         <div className="df-gallery__mobile-carousel" ref={trackRef}>
           {[0, 1].map(set => images.map((img, i) => (
             <div className="df-gallery__mobile-carousel-item" key={`${set}-${i}`}>
-              <img src={img.src} alt={img.alt} loading="lazy" draggable="false" />
+              <img src={img.src} alt={img.alt} loading="lazy" draggable="false" width={2500} height={1667} />
             </div>
           )))}
         </div>
@@ -1027,7 +1029,7 @@ function DiscoveryGallery() {
         <div className="df-gallery__mobile-carousel" ref={mobileCarouselRef}>
           {[0, 1].map(set => images.map((img, i) => (
             <div className="df-gallery__mobile-carousel-item" key={`${set}-${i}`}>
-              <img src={img.src} alt={img.alt} loading="lazy" draggable="false" />
+              <img src={img.src} alt={img.alt} loading="lazy" draggable="false" width={2500} height={1667} />
             </div>
           )))}
         </div>
@@ -1209,7 +1211,7 @@ function FinalCTA() {
   return (
     <section className="df-final-cta">
       <div className="df-final-cta__bg">
-        <img src="/assets/images/gallery/carousel/rotating1.jpg" alt="" />
+        <img src="/assets/images/gallery/carousel/rotating1.jpg" alt="" width={2500} height={1667} />
         <div className="df-final-cta__overlay" />
       </div>
 

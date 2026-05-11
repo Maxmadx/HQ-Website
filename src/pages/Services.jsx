@@ -83,11 +83,11 @@ function Services() {
           </p>
           <div className="flex justify-center gap-8">
             <div>
-              <img src="/assets/images/logos/certifications/caa.jpg" alt="UK CAA" style={{ height: '80px' }} />
+              <img src="/assets/images/logos/certifications/caa.jpg" alt="UK CAA" style={{ height: '80px' }} width={500} height={646} />
               <p className="text-sm text-muted mt-4">CAA Approved</p>
             </div>
             <div>
-              <img src="/assets/images/logos/certifications/robinson.jpg" alt="Robinson" style={{ height: '80px' }} />
+              <img src="/assets/images/logos/certifications/robinson.jpg" alt="Robinson" style={{ height: '80px' }} width={720} height={480} />
               <p className="text-sm text-muted mt-4">Robinson Service Centre</p>
             </div>
           </div>

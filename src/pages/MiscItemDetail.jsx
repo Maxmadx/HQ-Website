@@ -379,7 +379,7 @@ export default function MiscItemDetail() {
                   <div className="mid-carousel">
                     {images.map((img, i) => (
                       <div key={i} className={`mid-slide ${i === activeSlide ? 'mid-slide--active' : ''}`}>
-                        <img src={img.url} alt={img.alt || item.name} />
+                        <img src={img.url} alt={img.alt || item.name} width={1500} height={1000} />
                       </div>
                     ))}
                     {images.length > 1 && (
@@ -409,7 +409,7 @@ export default function MiscItemDetail() {
                       onClick={() => setActiveSlide(i)}
                       aria-label={`Image ${i + 1}`}
                     >
-                      <img src={img.url} alt={img.alt || `${item.name} ${i + 1}`} />
+                      <img src={img.url} alt={img.alt || `${item.name} ${i + 1}`} width={1500} height={1000} />
                     </button>
                   ))}
                 </div>

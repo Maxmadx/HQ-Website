@@ -101,6 +101,8 @@ function TrainingFAQ() {
                 alt="HQ Aviation Instructor answering questions"
                 loading="lazy"
                 style={{ borderRadius: 'var(--border-radius-md)', width: '100%' }}
+                width={1500}
+                height={1000}
               />
             </div>
           </div>

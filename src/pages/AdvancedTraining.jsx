@@ -99,6 +99,8 @@ function AdvancedTrainingHeader() {
                 className="Header-branding-logo"
                 loading="lazy"
                 decoding="async"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -370,6 +372,8 @@ function AdvancedTraining() {
                     className="adv-intro__image"
                     loading="lazy"
                     decoding="async"
+                    width={2500}
+                    height={1659}
                   />
                   <span className="adv-intro__caption">Quentin Smith, World Aerobatics Champion</span>
                 </div>
@@ -435,6 +439,8 @@ function AdvancedTraining() {
                     className="adv-instructor__image"
                     loading="lazy"
                     decoding="async"
+                    width={2500}
+                    height={1659}
                   />
                 </div>
               </Reveal>

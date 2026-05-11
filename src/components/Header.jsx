@@ -61,6 +61,8 @@ function Header() {
                 loading="lazy"
                 decoding="async"
                 data-loader="sqs"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav" data-content-field="navigation">

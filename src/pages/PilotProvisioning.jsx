@@ -97,6 +97,8 @@ function PilotProvisioningHeader() {
                 className="Header-branding-logo"
                 loading="lazy"
                 decoding="async"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -326,7 +328,7 @@ function PilotProvisioning() {
               <Reveal key={panel.num} delay={0.05}>
                 <div className={`pp-panel ${i % 2 === 1 ? 'pp-panel--flipped' : ''}`}>
                   <div className="pp-panel__image">
-                    <img src={panel.image} alt={panel.title} />
+                    <img src={panel.image} alt={panel.title} width={2500} height={1667} />
                   </div>
                   <div className="pp-panel__content">
                     <div className="pp-panel__num">{panel.num}</div>

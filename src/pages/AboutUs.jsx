@@ -62,7 +62,7 @@ function AboutUs() {
       {/* ===== HERO ===== */}
       <section className="au__hero" data-cms-section="about-hero">
         <div className="au__hero-bg">
-          <img src={pageImages['about-hero']?.[0]?.url || '/assets/images/facility/busy-hangar.jpg'} alt="" />
+          <img src={pageImages['about-hero']?.[0]?.url || '/assets/images/facility/busy-hangar.jpg'} alt="" width={2500} height={1875} />
           <div className="au__hero-overlay" />
         </div>
         <div className="au__hero-content">
@@ -127,22 +127,22 @@ function AboutUs() {
           <div className="au__story-bg-border" />
           <div className="au__story-gallery" data-cms-section="about-story-gallery">
             <div className="au__story-img au__story-img--wide">
-              <img src={pageImages['about-story-gallery']?.[0]?.url || '/assets/images/facility/hq-aviation-helicopter-hangar.webp'} alt="HQ Aviation Hangar" loading="lazy" />
+              <img src={pageImages['about-story-gallery']?.[0]?.url || '/assets/images/facility/hq-aviation-helicopter-hangar.webp'} alt="HQ Aviation Hangar" loading="lazy" width={750} height={558} />
             </div>
             <div className="au__story-img">
-              <img src={pageImages['about-story-gallery']?.[1]?.url || '/assets/images/facility/hq-0345.jpg'} alt="The clubhouse" loading="lazy" />
+              <img src={pageImages['about-story-gallery']?.[1]?.url || '/assets/images/facility/hq-0345.jpg'} alt="The clubhouse" loading="lazy" width={2500} height={1667} />
             </div>
             <div className="au__story-img">
-              <img src={pageImages['about-story-gallery']?.[2]?.url || '/assets/images/facility/hq-0053.jpg'} alt="Aviation memorabilia" loading="lazy" />
+              <img src={pageImages['about-story-gallery']?.[2]?.url || '/assets/images/facility/hq-0053.jpg'} alt="Aviation memorabilia" loading="lazy" width={2500} height={1667} />
             </div>
             <div className="au__story-img au__story-img--tall">
-              <img src={pageImages['about-story-gallery']?.[3]?.url || '/assets/images/facility/hq-0391.jpg'} alt="Expedition photos" loading="lazy" />
+              <img src={pageImages['about-story-gallery']?.[3]?.url || '/assets/images/facility/hq-0391.jpg'} alt="Expedition photos" loading="lazy" width={2500} height={1667} />
             </div>
             <div className="au__story-img">
-              <img src={pageImages['about-story-gallery']?.[4]?.url || '/assets/images/facility/hq-0354.jpg'} alt="Globe on desk" loading="lazy" />
+              <img src={pageImages['about-story-gallery']?.[4]?.url || '/assets/images/facility/hq-0354.jpg'} alt="Globe on desk" loading="lazy" width={2500} height={1667} />
             </div>
             <div className="au__story-img au__story-img--wide">
-              <img src={pageImages['about-story-gallery']?.[5]?.url || '/assets/images/facility/hq-0300.jpg'} alt="R66 cockpit" loading="lazy" />
+              <img src={pageImages['about-story-gallery']?.[5]?.url || '/assets/images/facility/hq-0300.jpg'} alt="R66 cockpit" loading="lazy" width={2500} height={1667} />
             </div>
           </div>
         </div>
@@ -152,7 +152,7 @@ function AboutUs() {
       {/* ===== CAPTAIN Q — Parallax image break ===== */}
       <section className="au__parallax" data-cms-section="about-captain-q">
         <div className="au__parallax-img">
-          <img src={pageImages['about-captain-q']?.[0]?.url || '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp'} alt="Captain Q on the South Pole expedition" />
+          <img src={pageImages['about-captain-q']?.[0]?.url || '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp'} alt="Captain Q on the South Pole expedition" width={2500} height={1922} />
         </div>
         <h2 className="au__parallax-title">Captain Q</h2>
       </section>
@@ -161,7 +161,7 @@ function AboutUs() {
       <section className="au__captain" ref={captainRef} data-cms-section="about-founder">
         <div className="au__captain-inner">
           <div className={`au__captain-image ${captainInView ? 'au__captain-image--visible' : ''}`}>
-            <img src={pageImages['about-founder']?.[0]?.url ?? '/assets/images/team/world-helicopter-champion-quentin-smith.webp'} alt="Captain Quentin Smith" />
+            <img src={pageImages['about-founder']?.[0]?.url ?? '/assets/images/team/world-helicopter-champion-quentin-smith.webp'} alt="Captain Quentin Smith" width={530} height={686} />
           </div>
           <div className={`au__captain-content ${captainInView ? 'au__captain-content--visible' : ''}`}>
             <span className="au__pretitle">{t('about-founder', 'pre_label')}</span>
@@ -201,7 +201,7 @@ function AboutUs() {
       {/* ===== THE CLUBHOUSE — Parallax Break ===== */}
       <section className="au__parallax au__parallax--club" data-cms-section="about-clubhouse-parallax">
         <div className="au__parallax-img">
-          <img src={pageImages['about-clubhouse-parallax']?.[0]?.url || '/assets/images/facility/hq-0345.jpg'} alt="The HQ Aviation Clubhouse" />
+          <img src={pageImages['about-clubhouse-parallax']?.[0]?.url || '/assets/images/facility/hq-0345.jpg'} alt="The HQ Aviation Clubhouse" width={2500} height={1667} />
         </div>
         <h2 className="au__parallax-title">The Clubhouse</h2>
       </section>
@@ -246,16 +246,16 @@ function AboutUs() {
           </div>
           <div className={`au__clubhouse-gallery ${clubhouseInView ? 'au__clubhouse-gallery--visible' : ''}`} data-cms-section="about-clubhouse-gallery">
             <div className="au__clubhouse-img au__clubhouse-img--main">
-              <img src={pageImages['about-clubhouse-gallery']?.[0]?.url || '/assets/images/facility/hq-0391.jpg'} alt="HQ Aviation interior" loading="lazy" />
+              <img src={pageImages['about-clubhouse-gallery']?.[0]?.url || '/assets/images/facility/hq-0391.jpg'} alt="HQ Aviation interior" loading="lazy" width={2500} height={1667} />
             </div>
             <div className="au__clubhouse-img">
-              <img src={pageImages['about-clubhouse-gallery']?.[1]?.url || '/assets/images/gallery/events/img_2131.jpg'} alt="HQ social events" loading="lazy" />
+              <img src={pageImages['about-clubhouse-gallery']?.[1]?.url || '/assets/images/gallery/events/img_2131.jpg'} alt="HQ social events" loading="lazy" width={2448} height={3264} />
             </div>
             <div className="au__clubhouse-img">
-              <img src={pageImages['about-clubhouse-gallery']?.[2]?.url || '/assets/images/gallery/events/img_1358-copy-281-29.jpg'} alt="Community gathering" loading="lazy" />
+              <img src={pageImages['about-clubhouse-gallery']?.[2]?.url || '/assets/images/gallery/events/img_1358-copy-281-29.jpg'} alt="Community gathering" loading="lazy" width={1213} height={1086} />
             </div>
             <div className="au__clubhouse-img au__clubhouse-img--wide">
-              <img src={pageImages['about-clubhouse-gallery']?.[3]?.url || '/assets/images/facility/hq-0300.jpg'} alt="R66 cockpit detail" loading="lazy" />
+              <img src={pageImages['about-clubhouse-gallery']?.[3]?.url || '/assets/images/facility/hq-0300.jpg'} alt="R66 cockpit detail" loading="lazy" width={2500} height={1667} />
             </div>
           </div>
         </div>
@@ -371,7 +371,7 @@ function AboutUs() {
             ].map((svc, i) => (
               <div key={i} className={`au__svc ${servicesInView ? 'au__svc--visible' : ''}`} style={{ transitionDelay: `${i * 0.1}s` }}>
                 <div className="au__svc-img">
-                  <img src={svc.img} alt={svc.title} loading="lazy" />
+                  <img src={svc.img} alt={svc.title} loading="lazy" width={2500} height={1667} />
                 </div>
                 <div className="au__svc-body">
                   <span className="au__svc-num">{String(i + 1).padStart(2, '0')}</span>
@@ -490,7 +490,7 @@ function AboutUs() {
               return (
                 <>
                   <div className="au__fleet-img">
-                    <img src={pageImages['about-fleet']?.[activeFleet]?.url || a.img} alt={a.model} />
+                    <img src={pageImages['about-fleet']?.[activeFleet]?.url || a.img} alt={a.model} width={2500} height={1667} />
                   </div>
                   <div className="au__fleet-info">
                     <h3 className="au__fleet-model">{a.model}</h3>
@@ -520,7 +520,7 @@ function AboutUs() {
       {/* ===== EXPLORER'S CLUB — Parallax ===== */}
       <section className="au__parallax" data-cms-section="about-explorer-parallax">
         <div className="au__parallax-img">
-          <img src={pageImages['about-explorer-parallax']?.[0]?.url || '/assets/images/expeditions/antartica.jpg'} alt="Helicopter expedition to Antarctica" />
+          <img src={pageImages['about-explorer-parallax']?.[0]?.url || '/assets/images/expeditions/antartica.jpg'} alt="Helicopter expedition to Antarctica" width={2500} height={1657} />
         </div>
         <h2 className="au__parallax-title">The Explorer's Club</h2>
       </section>
@@ -562,7 +562,7 @@ function AboutUs() {
             </Link>
           </div>
           <div className="au__explorer-image" data-cms-section="about-explorer">
-            <img src={pageImages['about-explorer']?.[0]?.url || '/assets/images/expeditions/six-helis-in-North-Pole.jpg'} alt="Fleet of helicopters at the North Pole" loading="lazy" />
+            <img src={pageImages['about-explorer']?.[0]?.url || '/assets/images/expeditions/six-helis-in-North-Pole.jpg'} alt="Fleet of helicopters at the North Pole" loading="lazy" width={2500} height={1667} />
           </div>
         </div>
       </section>
@@ -634,7 +634,7 @@ function AboutUs() {
           <div className="au__certs-logos">
             {(pageImages['about-certs'] ?? SECTION_MAP['about-certs'].images).map((logo, i) => (
               <div key={i} className="au__certs-logo">
-                <img src={logo.url} alt={logo.alt} loading="lazy" />
+                <img src={logo.url} alt={logo.alt} loading="lazy" width={500} height={646} />
               </div>
             ))}
           </div>
@@ -646,7 +646,7 @@ function AboutUs() {
       <section className="au__robinson" ref={robinsonRef} data-cms-section="about-robinson">
         <div className={`au__robinson-inner ${robinsonInView ? 'au__robinson-inner--visible' : ''}`}>
           <div className="au__robinson-badge">
-            <img src={pageImages['about-robinson']?.[0]?.url || '/assets/images/logos/certifications/robinson.jpg'} alt="Robinson Helicopter Company" />
+            <img src={pageImages['about-robinson']?.[0]?.url || '/assets/images/logos/certifications/robinson.jpg'} alt="Robinson Helicopter Company" width={720} height={480} />
           </div>
           <div className="au__robinson-content">
             <span className="au__pretitle">Official Partnership</span>
@@ -679,7 +679,7 @@ function AboutUs() {
       {/* ===== CTA ===== */}
       <section className="au__cta" data-cms-section="about-cta">
         <div className="au__cta-bg">
-          <img src={pageImages['about-cta']?.[0]?.url || '/assets/images/facility/hq-0089.jpg'} alt="" />
+          <img src={pageImages['about-cta']?.[0]?.url || '/assets/images/facility/hq-0089.jpg'} alt="" width={2500} height={1667} />
           <div className="au__cta-overlay" />
         </div>
         <div className="au__cta-content">

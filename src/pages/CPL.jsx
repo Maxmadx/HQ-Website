@@ -100,6 +100,8 @@ function CPLHeader() {
                 className="Header-branding-logo"
                 loading="lazy"
                 decoding="async"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -273,6 +275,8 @@ function CPL() {
           <img
             src={pageImages['cpl-hero']?.[0]?.url || '/assets/images/gallery/carousel/rotating-3.jpg'}
             alt="Commercial helicopter pilot training"
+            width={2500}
+            height={1667}
           />
         </motion.div>
         <div className="cpl-hero__overlay" />
@@ -378,6 +382,8 @@ function CPL() {
               <img
                 src={pageImages['cpl-intro']?.[0]?.url || '/assets/images/gallery/carousel/rotating-3.jpg'}
                 alt="Professional helicopter pilot training at HQ Aviation"
+                width={2500}
+                height={1667}
               />
             </div>
           </Reveal>

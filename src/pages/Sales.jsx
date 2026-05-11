@@ -96,6 +96,8 @@ function SalesHeader() {
                 src="/assets/images/logos/hq/hq-aviation-logo-black.png"
                 alt="HQ Aviation"
                 className="Header-branding-logo"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -1111,7 +1113,7 @@ function Sales() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 1.5 }}
         >
-          <img src={getModelHero(activeModel)} alt="" />
+          <img src={getModelHero(activeModel)} alt="" width={2500} height={1667} />
         </motion.div>
         <div className="sales-hero__overlay" />
 
@@ -1500,7 +1502,7 @@ function Sales() {
                 whileHover={{ scale: 1.02 }}
               >
                 <div className="sales-video__thumbnail">
-                  <img src={video.thumbnail} alt={video.title} />
+                  <img src={video.thumbnail} alt={video.title} width={2500} height={1667} />
                   <div className="sales-video__play">
                     <span>▶</span>
                   </div>
@@ -1523,11 +1525,15 @@ function Sales() {
                 <img
                   src="/assets/images/robinson-assets/logos/rhc-authorized-dealer-logo-logo-yellow-rotor-white-type.svg"
                   alt="Robinson Authorized Dealer"
+                  width={578}
+                  height={288}
                 />
                 <span className="sales-dealer__dot">•</span>
                 <img
                   src="/assets/images/robinson-assets/logos/rhc_authorized-service-center-logo-logo-yellow-rotor-white-type.svg"
                   alt="Robinson Authorized Service Center"
+                  width={578}
+                  height={288}
                 />
               </div>
               <div className="sales-dealer__text">
@@ -1708,6 +1714,8 @@ function Sales() {
                 alt="Hayward Aviation"
                 className="sales-insurance__logo"
                 src="/assets/images/logos/partners/hayward-fleet-insurance-copy.png"
+                width={768}
+                height={391}
               />
               <div className="sales-insurance__content">
                 <h4>Aviation Insurance</h4>
@@ -1744,44 +1752,44 @@ function Sales() {
 
             <div className="sales-gallery__scroll" ref={galleryRef} data-cms-section="sales-gallery">
               <motion.div className="sales-gallery__item sales-gallery__item--tall" whileHover={{ scale: 1.02 }}>
-                <img src={pageImages['sales-gallery']?.[0]?.url || '/assets/images/new-aircraft/r88/rhc-r88-atmospheric-effect-front-view-218022.jpg'} alt="R88" />
+                <img src={pageImages['sales-gallery']?.[0]?.url || '/assets/images/new-aircraft/r88/rhc-r88-atmospheric-effect-front-view-218022.jpg'} alt="R88" width={2500} height={1667} />
                 <span className="sales-gallery__label">R88, The Future</span>
               </motion.div>
               <div className="sales-gallery__stack">
                 <motion.div className="sales-gallery__item sales-gallery__item--small" whileHover={{ scale: 1.02 }}>
-                  <img src={pageImages['sales-gallery']?.[1]?.url || '/assets/images/new-aircraft/r66/rhc-r66-nxg-pv-left-side-wide-view-13611.jpg'} alt="R66" />
+                  <img src={pageImages['sales-gallery']?.[1]?.url || '/assets/images/new-aircraft/r66/rhc-r66-nxg-pv-left-side-wide-view-13611.jpg'} alt="R66" width={2500} height={1667} />
                   <span className="sales-gallery__label">R66 Palo Verde</span>
                 </motion.div>
                 <motion.div className="sales-gallery__item sales-gallery__item--small" whileHover={{ scale: 1.02 }}>
-                  <img src={pageImages['sales-gallery']?.[2]?.url || '/assets/images/new-aircraft/r66/rhc-r66-nxg-riviera-dramatic-overhead-13365.jpg'} alt="R66 Interior" />
+                  <img src={pageImages['sales-gallery']?.[2]?.url || '/assets/images/new-aircraft/r66/rhc-r66-nxg-riviera-dramatic-overhead-13365.jpg'} alt="R66 Interior" width={2500} height={1667} />
                   <span className="sales-gallery__label">R66 Overhead</span>
                 </motion.div>
               </div>
               <motion.div className="sales-gallery__item sales-gallery__item--wide" whileHover={{ scale: 1.02 }}>
-                <img src={pageImages['sales-gallery']?.[3]?.url || '/assets/images/new-aircraft/r88/rhc-r88-left-pilot-seat-full-frame-13570.jpg'} alt="R88 Cockpit" />
+                <img src={pageImages['sales-gallery']?.[3]?.url || '/assets/images/new-aircraft/r88/rhc-r88-left-pilot-seat-full-frame-13570.jpg'} alt="R88 Cockpit" width={2500} height={1667} />
                 <span className="sales-gallery__label">R88 Cockpit</span>
               </motion.div>
               <div className="sales-gallery__stack">
                 <motion.div className="sales-gallery__item sales-gallery__item--small" whileHover={{ scale: 1.02 }}>
-                  <img src={pageImages['sales-gallery']?.[4]?.url || '/assets/images/new-aircraft/r88/rhc-r88-glass-flight-displays-right-side-cyclic-13216.jpg'} alt="Avionics" />
+                  <img src={pageImages['sales-gallery']?.[4]?.url || '/assets/images/new-aircraft/r88/rhc-r88-glass-flight-displays-right-side-cyclic-13216.jpg'} alt="Avionics" width={2500} height={1667} />
                   <span className="sales-gallery__label">Glass Cockpit</span>
                 </motion.div>
                 <motion.div className="sales-gallery__item sales-gallery__item--small" whileHover={{ scale: 1.02 }}>
-                  <img src={pageImages['sales-gallery']?.[5]?.url || '/assets/images/new-aircraft/r66/rhc-r66-nxg-riviera-center-spotlight-vertical-format-14184-2.jpg'} alt="R66 Riviera" />
+                  <img src={pageImages['sales-gallery']?.[5]?.url || '/assets/images/new-aircraft/r66/rhc-r66-nxg-riviera-center-spotlight-vertical-format-14184-2.jpg'} alt="R66 Riviera" width={2500} height={3750} />
                   <span className="sales-gallery__label">R66 Riviera</span>
                 </motion.div>
               </div>
               <motion.div className="sales-gallery__item sales-gallery__item--tall" whileHover={{ scale: 1.02 }}>
-                <img src={pageImages['sales-gallery']?.[6]?.url || '/assets/images/new-aircraft/r44/raven-ii-front-alpha.png'} alt="R44 Raven II" />
+                <img src={pageImages['sales-gallery']?.[6]?.url || '/assets/images/new-aircraft/r44/raven-ii-front-alpha.png'} alt="R44 Raven II" width={1920} height={1080} />
                 <span className="sales-gallery__label">R44 Raven II</span>
               </motion.div>
               <div className="sales-gallery__stack">
                 <motion.div className="sales-gallery__item sales-gallery__item--small" whileHover={{ scale: 1.02 }}>
-                  <img src={pageImages['sales-gallery']?.[7]?.url || '/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png'} alt="R22 Beta II" />
+                  <img src={pageImages['sales-gallery']?.[7]?.url || '/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png'} alt="R22 Beta II" width={1920} height={1080} />
                   <span className="sales-gallery__label">R22 Beta II</span>
                 </motion.div>
                 <motion.div className="sales-gallery__item sales-gallery__item--small" whileHover={{ scale: 1.02 }}>
-                  <img src={pageImages['sales-gallery']?.[8]?.url || '/assets/images/new-aircraft/r88/r88-jellybean-left.png'} alt="R88 Profile" />
+                  <img src={pageImages['sales-gallery']?.[8]?.url || '/assets/images/new-aircraft/r88/r88-jellybean-left.png'} alt="R88 Profile" width={2500} height={1406} />
                   <span className="sales-gallery__label">R88 Profile</span>
                 </motion.div>
               </div>

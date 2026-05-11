@@ -114,6 +114,8 @@ function PPLHeader() {
                 className="Header-branding-logo"
                 loading="lazy"
                 decoding="async"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -370,7 +372,7 @@ function FinalPPL() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 1.5 }}
         >
-          <img src={pageImages['ppl-hero']?.[0]?.url || '/assets/images/gallery/carousel/rotating6.jpg'} alt="" />
+          <img src={pageImages['ppl-hero']?.[0]?.url || '/assets/images/gallery/carousel/rotating6.jpg'} alt="" width={2500} height={1667} />
         </motion.div>
         <div className="fppl-hero__overlay" />
 
@@ -432,7 +434,7 @@ function FinalPPL() {
             >
               <div className="fppl-hero__ticket-main">
                 <div className="fppl-hero__ticket-header">
-                  <img src="/assets/images/logos/hq/hq-aviation-logo-black.png" alt="HQ Aviation" className="fppl-hero__ticket-logo" />
+                  <img src="/assets/images/logos/hq/hq-aviation-logo-black.png" alt="HQ Aviation" className="fppl-hero__ticket-logo" width={405} height={245} />
                   <span className="fppl-hero__ticket-type">BOARDING PASS</span>
                   <span className="fppl-hero__ticket-class">PPL(H)</span>
                 </div>
@@ -500,7 +502,7 @@ function FinalPPL() {
                 <div className="fppl-intro__q-card">
                   <div className="fppl-intro__q-top">
                     <div className="fppl-intro__q-image">
-                      <img src={pageImages['ppl-instructors']?.[0]?.url || '/assets/images/team/quentin-smith-profile-picture.jpg'} alt="Quentin Smith" />
+                      <img src={pageImages['ppl-instructors']?.[0]?.url || '/assets/images/team/quentin-smith-profile-picture.jpg'} alt="Quentin Smith" width={1335} height={2000} />
                     </div>
                     <div className="fppl-intro__q-info">
                       <h3>Quentin Smith</h3>
@@ -529,7 +531,7 @@ function FinalPPL() {
                 <div className="fppl-intro__q-card">
                   <div className="fppl-intro__q-top">
                     <div className="fppl-intro__q-image">
-                      <img src={pageImages['ppl-instructors']?.[1]?.url || '/assets/images/team/mackie-alcantara-profile-picture.jpg'} alt="Mackie Alcantara" />
+                      <img src={pageImages['ppl-instructors']?.[1]?.url || '/assets/images/team/mackie-alcantara-profile-picture.jpg'} alt="Mackie Alcantara" width={707} height={1000} />
                     </div>
                     <div className="fppl-intro__q-info">
                       <h3>Mackie Alcantara</h3>
@@ -692,7 +694,7 @@ function FinalPPL() {
               <section id="discovery" className="fppl-discovery fppl-discovery--compact" data-cms-section="ppl-cta">
                 <div className="fppl-discovery__inner">
                   <div className="fppl-discovery__image">
-                    <img alt="Discovery flight over countryside" src={pageImages['ppl-cta']?.[0]?.url || '/assets/images/gallery/carousel/rotating1.jpg'} style={{ transform: 'none' }} />
+                    <img alt="Discovery flight over countryside" src={pageImages['ppl-cta']?.[0]?.url || '/assets/images/gallery/carousel/rotating1.jpg'} style={{ transform: 'none' }} width={2500} height={1667} />
                     <div className="fppl-discovery__image-overlay"></div>
                     <div className="fppl-discovery__price fppl-discovery__price--image">
                       <span className="fppl-discovery__price-from">From</span>
