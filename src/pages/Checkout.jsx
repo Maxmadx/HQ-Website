@@ -465,8 +465,21 @@ function InlineEmailStep({ defaultEmail = '', onContinue }) {
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 export default function Checkout() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  const [recordBookingError, setRecordBookingError] = useState(() => searchParams.get('error') || '');
+
+  // Strip the error param from the URL once we've captured it so a refresh
+  // doesn't re-show the banner.
+  useEffect(() => {
+    if (searchParams.get('error')) {
+      const next = new URLSearchParams(searchParams);
+      next.delete('error');
+      setSearchParams(next, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [referredByCode] = useState(() => {
     // First try URL param; fall back to sessionStorage written by DiscoveryFlight
@@ -649,6 +662,24 @@ export default function Checkout() {
         }
       `}</style>
       <div style={styles.container}>
+
+        {recordBookingError && (
+          <div role="alert" style={{
+            background: '#fef2f2',
+            color: '#991b1b',
+            border: '1px solid #fecaca',
+            borderRadius: '8px',
+            padding: '14px 18px',
+            marginBottom: '20px',
+            fontSize: '0.95rem',
+            fontFamily: "'Space Grotesk', Arial, sans-serif",
+            maxWidth: '720px',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+          }}>
+            We couldn't confirm your booking: {recordBookingError}. Please try again or contact HQ Aviation.
+          </div>
+        )}
 
         {/* Back link */}
         <Link to={isMisc ? `/misc/${itemId}` : '/training/trial-lessons'} style={styles.back}>← Back</Link>
