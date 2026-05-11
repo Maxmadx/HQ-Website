@@ -192,6 +192,7 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
               padding: '22px 16px',
               background: ctaHover ? '#fff' : '#1a1a1a',
               color: ctaHover ? '#1a1a1a' : '#fff',
+              borderTop: '1px solid #1a1a1a',
               fontWeight: 600,
               fontSize: '1rem',
               textAlign: 'center',
