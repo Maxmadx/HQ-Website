@@ -202,24 +202,33 @@ export default function BookingConfirmed() {
           )}
         </div>
 
-        <h1 style={styles.heading}>
+        <h1 style={{
+          ...styles.heading,
+          marginBottom: confirmedVisible ? '12px' : '40px',
+          animation: 'bc-fade-in 480ms ease both',
+        }}>
           {confirmedVisible
             ? (isMisc ? 'Purchase Confirmed' : 'Booking Confirmed')
             : 'Confirming Booking'}
         </h1>
 
-        {/* Hero R44 pitch — mounted during 'confirming' AND 'fading'; opacity driven by phase */}
+        {/* Hero R44 pitch — mounted during 'confirming' AND 'fading'.
+            During 'fading', the card morphs: max-height collapses, content fades,
+            background/border shift to the compact green row's colours, so the
+            hero visually transforms into the upgrade row before unmounting. */}
         {(phase === 'confirming' || phase === 'fading') && (
           <div
             style={{
               opacity: heroVisible ? 1 : 0,
-              transform: heroVisible ? 'translateY(0)' : 'translateY(-6px)',
-              transition: 'opacity 380ms ease, transform 380ms ease',
+              transform: heroVisible ? 'translateY(0) scale(1)' : 'translateY(0) scale(0.98)',
+              maxHeight: heroVisible ? '700px' : '0px',
+              overflow: 'hidden',
+              transition: 'opacity 380ms ease, transform 380ms ease, max-height 420ms ease',
               animation: heroVisible ? 'bc-fade-in 480ms ease both' : 'none',
-              willChange: 'opacity, transform',
+              willChange: 'opacity, transform, max-height',
             }}
           >
-            <BigUpgradeCard booking={booking} onUpgraded={refetchBooking} />
+            <BigUpgradeCard booking={booking} onUpgraded={refetchBooking} morphing={phase === 'fading'} />
           </div>
         )}
 

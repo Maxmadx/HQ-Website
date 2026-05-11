@@ -15,8 +15,12 @@ const fmtGbpNoZeros = (pence) => {
  * Visible only when the booker is R22 + not yet upgraded + has a positive
  * upgrade diff. Click "Upgrade now" opens the same modal as the compact
  * green row inside the Booking Summary card.
+ *
+ * `morphing` (true during the Phase 1 → Phase 2 transition) shifts the card's
+ * background + border colours to match the compact green upgrade row, so the
+ * hero visually transforms toward the row before it unmounts.
  */
-export default function BigUpgradeCard({ booking, onUpgraded }) {
+export default function BigUpgradeCard({ booking, onUpgraded, morphing = false }) {
   const [modalOpen, setModalOpen] = useState(false);
   if (!booking) return null;
   if (booking.aircraft !== 'r22') return null;
@@ -29,9 +33,13 @@ export default function BigUpgradeCard({ booking, onUpgraded }) {
     : (R44_PRICE_FALLBACK[defaultDur] - flightPaid);
   if (diffPence <= 0) return null;
 
+  const cardStyle = morphing
+    ? { ...S.card, background: '#ecfdf5', borderColor: '#6ee7b7' }
+    : S.card;
+
   return (
     <>
-      <div style={S.card}>
+      <div style={cardStyle}>
         <div style={S.photoFrame}>
           <img
             src="/assets/images/new-aircraft/r44/raven-ii-front-alpha.png"
@@ -73,6 +81,7 @@ const S = {
     marginBottom: '28px',
     fontFamily: "'Space Grotesk', Arial, sans-serif",
     boxShadow: '0 4px 16px rgba(0,0,0,0.05)',
+    transition: 'background 380ms ease, border-color 380ms ease',
   },
   photoFrame: {
     width: '100%',
@@ -94,25 +103,25 @@ const S = {
     textAlign: 'left',
   },
   title: {
-    fontSize: '0.9rem',
+    fontSize: '0.78rem',
     fontFamily: "'Share Tech Mono', monospace",
     textTransform: 'uppercase',
-    letterSpacing: '0.1em',
-    color: '#1a1a1a',
-    margin: '0 0 14px',
+    letterSpacing: '0.12em',
+    color: '#888',
+    margin: '0 0 16px',
     fontWeight: 700,
   },
   pitch: {
-    fontSize: '1.15rem',
-    color: '#1a1a1a',
+    fontSize: '1.05rem',
+    color: '#444',
     margin: '0 0 4px',
-    lineHeight: 1.4,
-    fontWeight: 500,
+    lineHeight: 1.5,
+    fontWeight: 400,
   },
   price: {
-    fontSize: '1.25rem',
+    fontSize: '1.15rem',
     color: '#1a1a1a',
-    margin: '16px 0 20px',
+    margin: '18px 0 22px',
     fontWeight: 700,
   },
   cta: {
