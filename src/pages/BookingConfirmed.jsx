@@ -446,7 +446,7 @@ const styles = {
   viewSummaryBtn: {
     display: 'inline-block',
     padding: '12px 24px',
-    margin: '0 0 32px',
+    margin: 0,
     background: '#fff',
     color: '#1a1a1a',
     border: '1px solid #1a1a1a',
