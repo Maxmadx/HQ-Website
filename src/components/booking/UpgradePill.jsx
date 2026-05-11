@@ -132,6 +132,7 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
             opacity: isHero ? 1 : 0,
             padding: isHero ? '24px 28px' : '0 16px',
             overflow: 'hidden',
+            textAlign: 'center',
             transition:
               'max-height 1500ms ease, opacity 850ms ease, padding 1500ms ease',
           }}
