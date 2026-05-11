@@ -139,7 +139,7 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
         >
           <h2
             style={{
-              fontSize: '0.78rem',
+              fontSize: '1.1rem',
               fontFamily: "'Share Tech Mono', monospace",
               textTransform: 'uppercase',
               letterSpacing: '0.12em',
