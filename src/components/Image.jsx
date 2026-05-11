@@ -1,4 +1,5 @@
 // src/components/Image.jsx
+import { Helmet } from 'react-helmet-async';
 import { buildSrcSet, isLocalPath, isProxyableUrl, variantUrl } from '../lib/imageVariantUrl';
 import { getManifestEntry } from '../lib/optimisedManifest';
 
@@ -56,31 +57,46 @@ export default function Image(props) {
         ? { backgroundImage: `url("${entry.lqip}")`, backgroundSize: 'cover', backgroundPosition: 'center' }
         : undefined;
 
+      const avifSrcSet = buildSrcSet(src, 'avif', widths);
+
       return (
-        <picture>
-          {formats.map((fmt) => (
-            <source
-              key={fmt}
-              type={`image/${fmt === 'jpeg' ? 'jpeg' : fmt}`}
-              srcSet={buildSrcSet(src, fmt, widths)}
+        <>
+          {priority && (
+            <Helmet>
+              <link
+                rel="preload"
+                as="image"
+                imageSrcSet={avifSrcSet}
+                imageSizes={sizes}
+                type="image/avif"
+              />
+            </Helmet>
+          )}
+          <picture>
+            {formats.map((fmt) => (
+              <source
+                key={fmt}
+                type={`image/${fmt === 'jpeg' ? 'jpeg' : fmt}`}
+                srcSet={buildSrcSet(src, fmt, widths)}
+                sizes={sizes}
+              />
+            ))}
+            <img
+              src={variantUrl(src, fallbackWidth, fallbackFormat)}
+              srcSet={buildSrcSet(src, fallbackFormat, widths)}
               sizes={sizes}
+              width={width}
+              height={height}
+              alt={alt}
+              loading={loading ?? (priority ? 'eager' : 'lazy')}
+              decoding={priority ? undefined : 'async'}
+              fetchpriority={priority ? 'high' : undefined}
+              className={className}
+              style={lqipBgStyle}
+              {...rest}
             />
-          ))}
-          <img
-            src={variantUrl(src, fallbackWidth, fallbackFormat)}
-            srcSet={buildSrcSet(src, fallbackFormat, widths)}
-            sizes={sizes}
-            width={width}
-            height={height}
-            alt={alt}
-            loading={loading ?? (priority ? 'eager' : 'lazy')}
-            decoding={priority ? undefined : 'async'}
-            fetchpriority={priority ? 'high' : undefined}
-            className={className}
-            style={lqipBgStyle}
-            {...rest}
-          />
-        </picture>
+          </picture>
+        </>
       );
     }
     // Local source NOT in manifest (e.g. skipped-by-size, or unknown path): render plain <img>

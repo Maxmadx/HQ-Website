@@ -134,3 +134,45 @@ describe('<Image> — production mode', () => {
     expect(img.classList.contains('hero')).toBe(true);
   });
 });
+
+describe('<Image priority>', () => {
+  beforeEach(() => {
+    // Reset preload links between tests (safe DOM method, not innerHTML).
+    // React 19 + react-helmet-async v3 in jsdom renders <link> into the
+    // React tree location (body) rather than hoisting into <head>, so we
+    // clean up across the whole document — same approach Seo.test.jsx uses
+    // for <script> in this stack.
+    document.querySelectorAll('link[rel="preload"][as="image"]').forEach((el) => el.remove());
+  });
+
+  it('emits a <link rel="preload"> when priority is true', async () => {
+    renderInProvider(
+      <Image
+        src="/assets/images/__test__/opaque.jpg"
+        alt="hero"
+        width={2400}
+        height={1600}
+        sizes="100vw"
+        priority
+        __forceProd
+      />
+    );
+    await new Promise(r => setTimeout(r, 50)); // helmet writes async
+    const link = document.querySelector('link[rel="preload"][as="image"]');
+    expect(link).toBeTruthy();
+    expect(link.getAttribute('imagesrcset')).toContain('-400.avif');
+    expect(link.getAttribute('imagesrcset')).toContain('-2400.avif');
+    expect(link.getAttribute('imagesizes')).toBe('100vw');
+    expect(link.getAttribute('type')).toBe('image/avif');
+  });
+
+  it('does NOT emit a preload link when priority is false', async () => {
+    renderInProvider(
+      <Image src="/assets/images/__test__/opaque.jpg" alt="below"
+        width={400} height={300} sizes="100vw" __forceProd />
+    );
+    await new Promise(r => setTimeout(r, 50));
+    const link = document.querySelector('link[rel="preload"][as="image"]');
+    expect(link).toBeNull();
+  });
+});
