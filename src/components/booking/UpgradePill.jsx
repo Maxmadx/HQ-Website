@@ -54,7 +54,11 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
     if (!shouldShow) return;
     // Delay slightly past the card's fall/unfurl (~1.1s) so the title +
     // CTA visibly land before the middle begins opening.
-    const t = setTimeout(() => setMiddleOpen(true), 700);
+    // The card's fall + opacity fade-in both finish at 1200ms (transform
+    // 1100ms + 100ms delay). Flip middleOpen exactly when the fall ends so
+    // the expansion starts the instant the card stops moving — no overlap,
+    // no gap.
+    const t = setTimeout(() => setMiddleOpen(true), 1200);
     return () => clearTimeout(t);
   }, [shouldShow]);
   if (!booking) return null;
@@ -148,7 +152,7 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
             height: isHero && middleOpen ? '240px' : '0px',
             background: '#f5f5f5',
             overflow: 'hidden',
-            transition: 'height 1500ms ease',
+            transition: 'height 1500ms ease-out',
           }}
         >
           <img
@@ -174,7 +178,7 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
             overflow: 'hidden',
             textAlign: 'center',
             transition:
-              'max-height 1500ms ease, opacity 1100ms ease 200ms, padding 1500ms ease',
+              'max-height 1500ms ease-out, opacity 1100ms ease-out, padding 1500ms ease-out',
           }}
         >
           <p style={{ fontSize: '1.05rem', color: '#444', margin: '0 0 4px', lineHeight: 1.5, fontWeight: 400 }}>
