@@ -10,6 +10,7 @@ import {
   generateVariant,
   FORMAT_CONFIG,
   SIZES,
+  generateLqip,
 } from './imageOptimisation';
 
 let tmpDir;
@@ -173,5 +174,20 @@ describe('generateVariant', () => {
     const result = await generateVariant(src, outDir, 800, 'webp');
     const outMeta = await sharp(result.outPath).metadata();
     expect(outMeta.width).toBe(600); // sharp's withoutEnlargement clamped to source width
+  });
+});
+
+describe('generateLqip', () => {
+  it('returns a base64 data URL string', async () => {
+    const src = await makeRealImage('hero.jpg', 1600, 900);
+    const lqip = await generateLqip(src);
+    expect(lqip.startsWith('data:image/avif;base64,')).toBe(true);
+    expect(lqip.length).toBeGreaterThan(50); // base64 of a real image is not empty
+  });
+
+  it('produces output smaller than 1KB for typical inputs', async () => {
+    const src = await makeRealImage('hero.jpg', 2000, 1500);
+    const lqip = await generateLqip(src);
+    expect(lqip.length).toBeLessThan(2048); // generous upper bound
   });
 });

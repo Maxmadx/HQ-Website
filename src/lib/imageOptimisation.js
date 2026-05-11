@@ -92,3 +92,16 @@ export async function generateVariant(srcPath, outDir, width, format) {
   const stat = await fs.stat(outPath);
   return { outPath, sizeBytes: stat.size };
 }
+
+/**
+ * Generate a 16×16 base64-encoded AVIF placeholder for the source.
+ * Returns a data URL string like `data:image/avif;base64,...`.
+ * Used as a CSS background placeholder shown before the real image loads.
+ */
+export async function generateLqip(srcPath) {
+  const buf = await sharp(srcPath)
+    .resize(16, 16, { fit: 'cover' })
+    .avif({ quality: 30, effort: 4 })
+    .toBuffer();
+  return `data:image/avif;base64,${buf.toString('base64')}`;
+}
