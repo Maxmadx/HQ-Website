@@ -59,3 +59,36 @@ export async function classifySource(srcPath) {
     skipReason,
   };
 }
+
+export const SIZES = [400, 800, 1200, 1600, 2400];
+
+export const FORMAT_CONFIG = {
+  avif: { quality: 50, effort: 6 },
+  webp: { quality: 75 },
+  jpeg: { quality: 80, mozjpeg: true, progressive: true },
+  png: { compressionLevel: 9, palette: true },
+};
+
+/**
+ * Generate one variant of `srcPath` at `width` in `format`, writing to
+ * `outDir/<basename>-<width>.<ext>`. Returns { outPath, sizeBytes }.
+ *
+ * sharp's `withoutEnlargement: true` prevents upscaling — if the source
+ * is narrower than the requested width, the output is clamped to source width.
+ */
+export async function generateVariant(srcPath, outDir, width, format) {
+  const ext = format === 'jpeg' ? 'jpg' : format;
+  const basename = path.basename(srcPath, path.extname(srcPath));
+  const outPath = path.join(outDir, `${basename}-${width}.${ext}`);
+
+  await fs.mkdir(outDir, { recursive: true });
+
+  const config = FORMAT_CONFIG[format];
+  if (!config) throw new Error(`Unknown format: ${format}`);
+
+  const pipeline = sharp(srcPath).resize({ width, withoutEnlargement: true });
+  await pipeline[format](config).toFile(outPath);
+
+  const stat = await fs.stat(outPath);
+  return { outPath, sizeBytes: stat.size };
+}

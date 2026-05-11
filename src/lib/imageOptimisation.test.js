@@ -3,7 +3,14 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import sharp from 'sharp';
-import { walkSources, classifySource, SKIP_BELOW_BYTES } from './imageOptimisation';
+import {
+  walkSources,
+  classifySource,
+  SKIP_BELOW_BYTES,
+  generateVariant,
+  FORMAT_CONFIG,
+  SIZES,
+} from './imageOptimisation';
 
 let tmpDir;
 
@@ -129,5 +136,42 @@ describe('classifySource', () => {
     const src = await makeRealImage('r66/large.jpg', 2400, 1600);
     const meta = await classifySource(src);
     expect(meta.skipReason).toBeNull();
+  });
+});
+
+describe('generateVariant', () => {
+  it('generates an AVIF variant at the requested width', async () => {
+    const src = await makeRealImage('r66/hero.jpg', 2000, 1500);
+    const outDir = path.join(tmpDir, 'out');
+    const result = await generateVariant(src, outDir, 800, 'avif');
+    expect(result.outPath).toMatch(/hero-800\.avif$/);
+    const outMeta = await sharp(result.outPath).metadata();
+    expect(outMeta.format).toBe('heif'); // sharp reports avif as heif in metadata
+    expect(outMeta.width).toBe(800);
+  });
+
+  it('generates a WebP variant', async () => {
+    const src = await makeRealImage('r66/hero.jpg', 2000, 1500);
+    const outDir = path.join(tmpDir, 'out');
+    const result = await generateVariant(src, outDir, 400, 'webp');
+    const outMeta = await sharp(result.outPath).metadata();
+    expect(outMeta.format).toBe('webp');
+    expect(outMeta.width).toBe(400);
+  });
+
+  it('preserves alpha when generating PNG variant from transparent source', async () => {
+    const src = await makeRealImage('logo.png', 500, 500, { alpha: true, format: 'png' });
+    const outDir = path.join(tmpDir, 'out');
+    const result = await generateVariant(src, outDir, 400, 'png');
+    const outMeta = await sharp(result.outPath).metadata();
+    expect(outMeta.hasAlpha).toBe(true);
+  });
+
+  it('does not upscale beyond source width', async () => {
+    const src = await makeRealImage('small.jpg', 600, 400); // source narrower than 800
+    const outDir = path.join(tmpDir, 'out');
+    const result = await generateVariant(src, outDir, 800, 'webp');
+    const outMeta = await sharp(result.outPath).metadata();
+    expect(outMeta.width).toBe(600); // sharp's withoutEnlargement clamped to source width
   });
 });
