@@ -122,20 +122,7 @@ function CheckoutForm({
     if (result.error) {
       setError(result.error.message);
     } else if (result.paymentIntent.status === 'succeeded') {
-      // Wait for the booking record to be written before navigating, so the
-      // success page can render the offers cards immediately. Caps at ~5s; if
-      // record-booking is still pending after that we navigate anyway and the
-      // success page's own retry logic takes over.
-      try {
-        await Promise.race([
-          fetch('/api/record-booking', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ paymentIntentId: result.paymentIntent.id }),
-          }),
-          new Promise((resolve) => setTimeout(resolve, 5000)),
-        ]);
-      } catch {}
+      // Navigate immediately. /booking-confirmed handles record-booking on mount.
       navigate(
         `/booking-confirmed?ref=${result.paymentIntent.id}` +
         `&aircraft=${aircraft}&duration=${duration}&price=${price}` +
