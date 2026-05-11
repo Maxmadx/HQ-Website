@@ -148,7 +148,7 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
               fontWeight: 700,
             }}
           >
-            UPGRADE TO THE R44
+            Upgrade to Robinson R44
           </h2>
           <p style={{ fontSize: '1.05rem', color: '#444', margin: '0 0 4px', lineHeight: 1.5, fontWeight: 400 }}>
             You at the controls.
