@@ -11,14 +11,13 @@ import EnquireModal from '../components/parts/EnquireModal';
 
 const CONDITION_LABELS = {
   new: 'New',
-  overhauled: 'Overhauled',
-  exchange: 'Exchange',
-  repaired: 'Repaired',
+  used: 'Used',
 };
 
 export default function PartDetail() {
   const { id } = useParams();
   const { data: part, loading } = useDocument('parts', id);
+  const [enquireOpen, setEnquireOpen] = useState(false);
 
   if (loading) {
     return (
@@ -35,7 +34,6 @@ export default function PartDetail() {
   const primaryImage = (part.images || []).find((i) => i.isPrimary) || part.images?.[0];
   const fullName = `${part.partNumber} ${part.title}`; // e.g. "A102 Tail Rotor Pitch Link"
   const inStock = part.hasQuantity ? part.stock > 0 : true;
-  const [enquireOpen, setEnquireOpen] = useState(false);
 
   const productSchema = buildProduct({
     name: fullName,
@@ -49,12 +47,9 @@ export default function PartDetail() {
       '@type': 'Offer',
       priceCurrency: 'GBP',
       price: (part.priceGbp / 100).toFixed(2),
-      itemCondition: ({
-        new: 'https://schema.org/NewCondition',
-        overhauled: 'https://schema.org/RefurbishedCondition',
-        exchange: 'https://schema.org/RefurbishedCondition',
-        repaired: 'https://schema.org/RefurbishedCondition',
-      })[part.condition] || 'https://schema.org/UsedCondition',
+      itemCondition: part.condition === 'new'
+        ? 'https://schema.org/NewCondition'
+        : 'https://schema.org/UsedCondition',
       availability: inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       seller: { '@type': 'Organization', name: 'HQ Aviation' },
     } : undefined,

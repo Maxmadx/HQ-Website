@@ -1,0 +1,58 @@
+# Source control
+.git
+.gitignore
+
+# Dependencies (will be installed in the container)
+node_modules
+
+# React app (served by Firebase Hosting, not Cloud Run)
+dist
+src
+!src/lib
+!src/lib/**
+public
+index.html
+vite.config.js
+
+# Local dev / test
+.env*
+*.log
+.DS_Store
+coverage
+.vscode
+.idea
+
+# Worktrees and caches
+.worktrees
+.image-cache
+.image-cache-test
+.firebase
+.cache
+
+# Firebase / GCP local
+firebase-debug.log
+.firebaserc
+
+# Documentation (not needed at runtime)
+docs
+README.md
+*.md
+
+# Image source folders (we're not building the image pipeline yet)
+HQ-website-images
+Shyam Maintenance Photos
+R44-Claude
+R88-Robinson
+assets-source
+eyeinthesky-robbie
+discovery-flight-1
+recently-sold-aircraft
+used-aircraft
+r66
+apparel
+blogs
+
+# Test data
+__fixtures__
+*.test.js
+*.test.jsx

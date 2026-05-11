@@ -62,11 +62,11 @@ describe('partSchema', () => {
     expect(() => partSchema.parse(base)).not.toThrow();
   });
   it('accepts a one-off used listing (stock=1, hasQuantity=false)', () => {
-    const used = { ...base, condition: 'overhauled', hasQuantity: false, stock: 1, priceGbp: 920000, priceDisplay: '£9,200.00' };
+    const used = { ...base, condition: 'used', hasQuantity: false, stock: 1, priceGbp: 920000, priceDisplay: '£9,200.00' };
     expect(() => partSchema.parse(used)).not.toThrow();
   });
-  it('accepts an exchange listing with core charge', () => {
-    const exch = { ...base, condition: 'exchange', priceGbp: 850000, coreChargeGbp: 500000, priceDisplay: '£8,500.00' };
+  it('accepts a used listing with optional core charge field', () => {
+    const exch = { ...base, condition: 'used', priceGbp: 850000, coreChargeGbp: 500000, priceDisplay: '£8,500.00' };
     expect(() => partSchema.parse(exch)).not.toThrow();
   });
   it('accepts priceGbp=null (POA) with priceDisplay="POA"', () => {
@@ -99,7 +99,7 @@ describe('partSchema', () => {
     expect(() => partSchema.parse({ ...base, images: [{ alt: 'x', isPrimary: true }] })).toThrow();
   });
   it('exports the canonical enums', () => {
-    expect(CONDITIONS).toEqual(['new', 'overhauled', 'exchange', 'repaired']);
+    expect(CONDITIONS).toEqual(['new', 'used']);
     expect(CATEGORIES).toEqual(['rotor', 'engine', 'avionics', 'consumables', 'airframe', 'hardware']);
     expect(AIRCRAFT).toEqual(['r22', 'r44', 'r66']);
     expect(STATUSES).toEqual(['active', 'sold', 'archived', 'discontinued']);

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs, runTransaction, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { db, storage } from '../../lib/firebase';
@@ -20,6 +20,9 @@ const EMPTY = {
   images: [],
   discoveryAddon: false,
   discoveryAddonDiscountPct: 0,
+  apparel: false,
+  sizes: [],
+  freeReferralOffer: false,
 };
 
 export default function AdminMiscItemEdit() {
@@ -45,6 +48,16 @@ export default function AdminMiscItemEdit() {
 
   function set(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
+  }
+
+  function addSize(raw) {
+    const v = String(raw || '').trim().toUpperCase();
+    if (!v) return;
+    setForm((f) => (f.sizes.includes(v) ? f : { ...f, sizes: [...f.sizes, v] }));
+  }
+
+  function removeSize(idx) {
+    setForm((f) => ({ ...f, sizes: f.sizes.filter((_, i) => i !== idx) }));
   }
 
   async function handleImageUpload(e) {
@@ -94,6 +107,11 @@ export default function AdminMiscItemEdit() {
     setSaving(true);
     setError('');
     try {
+      if (form.apparel && (!Array.isArray(form.sizes) || form.sizes.length === 0)) {
+        setError('Apparel items need at least one size. Add a size or untick "Apparel item".');
+        setSaving(false);
+        return;
+      }
       const priceDisplay = form.priceType === 'fixed' && form.price > 0
         ? `£${(form.price / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
         : 'POA';
@@ -101,15 +119,47 @@ export default function AdminMiscItemEdit() {
       const payload = {
         ...form,
         priceDisplay,
-        ...(form.priceType === 'poa' ? { price: 0, hasQuantity: false, stock: 1, requiresShipping: false } : {}),
+        ...(form.priceType === 'poa' ? { price: 0, hasQuantity: false, stock: 1, requiresShipping: false, apparel: false, sizes: [] } : {}),
         discoveryAddon: isAddon,
         discoveryAddonDiscountPct: isAddon ? Math.max(0, Math.min(100, parseInt(form.discoveryAddonDiscountPct, 10) || 0)) : 0,
+        apparel: form.priceType === 'fixed' ? !!form.apparel : false,
+        sizes: (form.priceType === 'fixed' && form.apparel && Array.isArray(form.sizes)) ? form.sizes : [],
       };
-      if (isNew) {
-        const newId = await createDoc('misc_items', payload);
-        navigate(`/admin/misc/${newId}`);
+      let displacedName = '';
+      if (payload.freeReferralOffer === true) {
+        // Find any other item currently flagged and untick it in the same client-side
+        // transaction as our save. Note: this is a best-effort enforcement at the
+        // application level; admins are trusted not to bypass it via direct writes.
+        const q = query(collection(db, 'misc_items'), where('freeReferralOffer', '==', true));
+        const snap = await getDocs(q);
+        await runTransaction(db, async (tx) => {
+          for (const otherDoc of snap.docs) {
+            if (otherDoc.id !== id) {
+              tx.update(otherDoc.ref, { freeReferralOffer: false });
+              if (!displacedName) displacedName = otherDoc.data().name || otherDoc.id;
+            }
+          }
+          if (isNew) {
+            const newRef = doc(collection(db, 'misc_items'));
+            tx.set(newRef, { ...payload, createdAt: serverTimestamp() });
+            payload.__newId = newRef.id;
+          } else {
+            tx.update(doc(db, 'misc_items', id), payload);
+          }
+        });
+        if (isNew) navigate(`/admin/misc/${payload.__newId}`);
       } else {
-        await updateDocById('misc_items', id, payload);
+        if (isNew) {
+          const newId = await createDoc('misc_items', payload);
+          navigate(`/admin/misc/${newId}`);
+        } else {
+          await updateDocById('misc_items', id, payload);
+        }
+      }
+
+      if (displacedName) {
+        setError(`Replaced previous referral free-item: ${displacedName}`);
+        setTimeout(() => setError(''), 4000);
       }
     } catch (err) {
       setError(err.message);
@@ -283,6 +333,82 @@ export default function AdminMiscItemEdit() {
                   <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>Leave as 0 for no discount.</span>
                 </div>
               )}
+            </div>
+          )}
+
+          {form.priceType === 'fixed' && (
+            <div>
+              <label style={labelStyle}>Apparel</label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: '#374151', marginBottom: '0.5rem' }}>
+                <input
+                  type="checkbox"
+                  checked={form.apparel}
+                  onChange={(e) => set('apparel', e.target.checked)}
+                />
+                Apparel item (size selection on store)
+              </label>
+              {form.apparel && (
+                <div style={{ marginTop: '0.5rem' }}>
+                  <label style={{ ...labelStyle, marginBottom: '0.4rem' }}>Sizes</label>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.5rem' }}>
+                    {form.sizes.map((s, i) => (
+                      <span key={`${s}-${i}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', background: '#e5e7eb', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 600 }}>
+                        {s}
+                        <button
+                          type="button"
+                          onClick={() => removeSize(i)}
+                          aria-label={`Remove size ${s}`}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.9rem', lineHeight: 1, color: '#6b7280', padding: 0 }}
+                        >×</button>
+                      </span>
+                    ))}
+                    {form.sizes.length === 0 && (
+                      <span style={{ fontSize: '0.75rem', color: '#9ca3af', fontStyle: 'italic' }}>No sizes added yet.</span>
+                    )}
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.4rem' }}>
+                    <input
+                      style={{ ...fieldStyle, width: '100px' }}
+                      type="text"
+                      placeholder="e.g. M"
+                      data-testid="size-input"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          addSize(e.currentTarget.value);
+                          e.currentTarget.value = '';
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        const input = e.currentTarget.previousSibling;
+                        addSize(input.value);
+                        input.value = '';
+                      }}
+                      style={{ background: '#e5e7eb', border: 'none', padding: '0 0.75rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}
+                    >Add</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {form.priceType === 'fixed' && (
+            <div>
+              <label style={labelStyle}>Free Referral Offer</label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: '#374151' }}>
+                <input
+                  type="checkbox"
+                  checked={form.freeReferralOffer}
+                  onChange={(e) => set('freeReferralOffer', e.target.checked)}
+                />
+                Show as the free reward for referrals
+              </label>
+              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.4rem' }}>
+                Only one item across the store may be flagged. Saving with this ticked will untick the previous one.
+              </p>
             </div>
           )}
 

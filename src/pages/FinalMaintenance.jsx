@@ -349,46 +349,6 @@ function ScrollProgress() {
 
 function PhilosophySection() {
   const { t } = usePageText('maintenance');
-  const [partsForm, setPartsForm] = useState({ aircraft: '', part: '', urgency: 'standard', email: '' });
-  const [partsSubmitted, setPartsSubmitted] = useState(false);
-  const [partsOpen, setPartsOpen] = useState(false);
-
-  const [partsSubmitting, setPartsSubmitting] = useState(false);
-  const [partsError, setPartsError] = useState(false);
-
-  const handlePartsSubmit = async (e) => {
-    e.preventDefault();
-    if (!partsForm.email || !partsForm.part) return;
-    setPartsSubmitting(true);
-    setPartsError(false);
-    const messageParts = [];
-    if (partsForm.aircraft) messageParts.push(`Aircraft: ${partsForm.aircraft}`);
-    messageParts.push(`Part: ${partsForm.part}`);
-    messageParts.push(`Urgency: ${partsForm.urgency}`);
-    if (partsForm.description) messageParts.push(`Details: ${partsForm.description}`);
-    try {
-      const res = await fetch('/api/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: partsForm.email,
-          email: partsForm.email,
-          subject: 'Parts Enquiry',
-          message: messageParts.join('\n'),
-          source: 'Maintenance: Parts Enquiry',
-        }),
-      });
-      if (res.ok) {
-        setPartsSubmitted(true);
-      } else {
-        setPartsError(true);
-      }
-    } catch {
-      setPartsError(true);
-    } finally {
-      setPartsSubmitting(false);
-    }
-  };
 
   return (
     <section className="maint-philosophy">
@@ -454,102 +414,9 @@ function PhilosophySection() {
             </p>
           </Reveal>
           <Reveal delay={0.3}>
-            <p className="maint-philosophy__parts-quote">
-              Fill in the details and we'll get back to you within 24hrs.
-            </p>
-            <div className="maint-philosophy__parts-form">
-              <button
-                type="button"
-                className="maint-philosophy__parts-form-toggle"
-                onClick={() => setPartsOpen(prev => !prev)}
-              >
-                <span>Parts Enquiry Form</span>
-                <i className={`fas fa-chevron-down maint-philosophy__parts-chevron ${partsOpen ? 'maint-philosophy__parts-chevron--open' : ''}`}></i>
-              </button>
-              <div className={`maint-philosophy__parts-collapse ${partsOpen ? 'maint-philosophy__parts-collapse--open' : ''}`}>
-                <form onSubmit={handlePartsSubmit}>
-                  <div className="maint-philosophy__parts-field">
-                    <label className="maint-philosophy__parts-field-label">Aircraft Type</label>
-                    <div className="maint-philosophy__parts-toggles">
-                      {['R22', 'R44', 'R66'].map(type => (
-                        <button
-                          key={type}
-                          type="button"
-                          className={`maint-philosophy__parts-toggle ${partsForm.aircraft === type ? 'maint-philosophy__parts-toggle--active' : ''}`}
-                          onClick={() => setPartsForm(prev => ({ ...prev, aircraft: type }))}
-                        >
-                          {type}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="maint-philosophy__parts-field">
-                    <label className="maint-philosophy__parts-field-label">Part Needed</label>
-                    <input
-                      type="text"
-                      className="maint-philosophy__parts-input"
-                      placeholder="Part number or description"
-                      value={partsForm.part}
-                      onChange={e => setPartsForm(prev => ({ ...prev, part: e.target.value }))}
-                    />
-                  </div>
-                  <div className="maint-philosophy__parts-field">
-                    <label className="maint-philosophy__parts-field-label">Urgency</label>
-                    <div className="maint-philosophy__parts-toggles">
-                      {[
-                        { value: 'standard', label: 'Standard' },
-                        { value: 'urgent', label: 'Urgent' },
-                        { value: 'aog', label: 'AOG' },
-                      ].map(u => (
-                        <button
-                          key={u.value}
-                          type="button"
-                          className={`maint-philosophy__parts-toggle ${partsForm.urgency === u.value ? 'maint-philosophy__parts-toggle--active' : ''} ${u.value === 'aog' ? 'maint-philosophy__parts-toggle--aog' : ''}`}
-                          onClick={() => setPartsForm(prev => ({ ...prev, urgency: u.value }))}
-                        >
-                          {u.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="maint-philosophy__parts-field">
-                    <label className="maint-philosophy__parts-field-label">Description <span style={{ fontWeight: 400, color: '#bbb' }}>(optional)</span></label>
-                    <textarea
-                      className="maint-philosophy__parts-textarea"
-                      placeholder="Any additional details, e.g. hit my tail rotor, need a new blade..."
-                      value={partsForm.description || ''}
-                      onChange={e => setPartsForm(prev => ({ ...prev, description: e.target.value }))}
-                      rows={3}
-                    />
-                  </div>
-                  <div className="maint-philosophy__parts-field">
-                    <label className="maint-philosophy__parts-field-label">Your Email</label>
-                    <input
-                      type="email"
-                      className="maint-philosophy__parts-input"
-                      placeholder="email@example.com"
-                      value={partsForm.email}
-                      onChange={e => setPartsForm(prev => ({ ...prev, email: e.target.value }))}
-                      required
-                    />
-                  </div>
-                  <div className="maint-philosophy__parts-submit">
-                    {partsSubmitted ? (
-                      <div className="maint-philosophy__parts-success">
-                        <i className="fas fa-check"></i> Enquiry sent. We'll be in touch shortly
-                      </div>
-                    ) : (
-                      <>
-                        <button type="submit" className="maint-btn maint-btn--primary" style={{ width: '100%', justifyContent: 'center', opacity: partsSubmitting ? 0.7 : 1, cursor: partsSubmitting ? 'wait' : 'pointer' }} disabled={partsSubmitting}>
-                          {partsSubmitting ? 'Sending…' : <> Send Parts Enquiry <i className="fas fa-arrow-right" style={{ fontSize: '0.65rem' }}></i></>}
-                        </button>
-                        {partsError && <p style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#c0392b', textAlign: 'center' }}>Something went wrong. Please try again.</p>}
-                      </>
-                    )}
-                  </div>
-                </form>
-              </div>
-            </div>
+            <Link to="/parts" className="maint-btn maint-btn--primary" style={{ justifyContent: 'center' }}>
+              Browse Parts Catalogue <i className="fas fa-arrow-right" style={{ fontSize: '0.65rem' }}></i>
+            </Link>
           </Reveal>
           <Reveal delay={0.4}>
             <a href="tel:+441234567890" className="maint-philosophy__parts-phone">
@@ -2104,6 +1971,7 @@ const styles = `
   padding-bottom: 0.15rem;
   transition: border-color 0.3s ease;
   align-self: flex-start;
+  margin-top: 1.5rem;
 }
 .maint-philosophy__parts-phone:hover {
   border-color: #1a1a1a;

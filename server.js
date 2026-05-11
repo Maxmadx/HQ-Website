@@ -21,6 +21,7 @@ const path = require('path');
 const fs = require('fs');
 const compression = require('compression');
 const { createPaymentIntent, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking } = require('./api/stripe');
+const { getBooking } = require('./api/booking');
 const leadsRouter = require('./api/leads');
 const stripeDiscoveryRouter = require('./api/stripe-discovery');
 const analyticsRouter = require('./api/analytics-api');
@@ -140,7 +141,7 @@ function fileExists(filePath) {
 // Creates a Stripe PaymentIntent using server-side validated price.
 // Uses express.json() middleware inline so it doesn't affect the webhook route.
 app.post('/api/create-payment-intent', express.json(), async (req, res) => {
-  const { aircraft, duration, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage, addons, fulfilment, shippingAddress, cartId } = req.body || {};
+  const { aircraft, duration, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage, addons, fulfilment, shippingAddress, cartId, referredByCode } = req.body || {};
 
   // Validate presence
   if (!aircraft || !duration || !customerName || !customerEmail || !customerPhone) {
@@ -175,6 +176,7 @@ app.post('/api/create-payment-intent', express.json(), async (req, res) => {
       fulfilment,
       shippingAddress,
       cartId: cartId || '',
+      referredByCode,
     });
     res.json({ clientSecret: paymentIntent.client_secret });
   } catch (err) {
@@ -228,7 +230,7 @@ app.post('/api/create-london-tour-payment-intent', express.json(), async (req, r
 // POST /api/create-misc-payment-intent
 // Creates a Stripe PaymentIntent for a misc item purchase. Price validated server-side.
 app.post('/api/create-misc-payment-intent', express.json(), async (req, res) => {
-  const { itemId, qty, customerName, customerEmail, customerPhone, shippingAddress } = req.body || {};
+  const { itemId, qty, customerName, customerEmail, customerPhone, shippingAddress, size } = req.body || {};
 
   if (!itemId || !customerName || !customerEmail || !customerPhone) {
     return res.status(400).json({ error: 'Missing required fields' });
@@ -251,6 +253,7 @@ app.post('/api/create-misc-payment-intent', express.json(), async (req, res) => 
       customerEmail,
       customerPhone: sanitisedPhone,
       shippingAddress,
+      size,
     });
     res.json({ clientSecret: paymentIntent.client_secret });
   } catch (err) {
@@ -274,6 +277,11 @@ app.post('/api/record-booking', express.json(), async (req, res) => {
   }
 });
 
+// GET /api/booking/:paymentIntentId
+// Returns the booking record for /booking-confirmed and /upgrade pages.
+// PI ID is the access token — no auth header needed.
+app.get('/api/booking/:paymentIntentId', getBooking);
+
 // POST /api/webhook
 // Receives Stripe webhook events. MUST use express.raw() — Stripe requires
 // the raw body buffer to verify the webhook signature. Do NOT use express.json() here.
@@ -286,6 +294,11 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
     // Return a static message — never expose internal error details to Stripe callers.
     res.status(400).json({ error: 'Webhook processing failed' });
   }
+});
+
+// Cloud Run / uptimerobot health probe — cheap, no auth, no I/O.
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 // ============================================
