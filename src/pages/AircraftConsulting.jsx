@@ -365,24 +365,6 @@ function AircraftConsulting() {
     { id: 'expert',  label: 'Independent expert work' },
   ];
 
-  const independencePoints = [
-    {
-      num: '01',
-      title: "What you can't see, we can",
-      desc: "Every aircraft we look at — to buy, to manage, to value, or to defend — is read through a working hangar floor and 500+ transactions of memory. Photos, seller demos, broker write-ups, and OEM brochures don't catch what we catch. For Robinsons specifically, factory authorisation means we know the type at the level the people who built it do.",
-    },
-    {
-      num: '02',
-      title: 'What good actually looks like',
-      desc: "Thirty-five years across the Robinson fleet means we know what 500-hour wear looks like, what 1,500-hour wear looks like, what's normal for a 2010 R44, and what's drifting. That context is what a first-time buyer or single-aircraft owner doesn't have — and what makes the difference between an opinion and an answer.",
-    },
-    {
-      num: '03',
-      title: 'A clear position, not a hedged one',
-      desc: "Every engagement ends with something concrete — a number, a verdict, or a position you can act on. We get hired to make calls, not to write neutral surveys you have to interpret yourself. That's true of a pre-purchase report, a TCO model, a cover review, or an expert opinion in a dispute.",
-    },
-  ];
-
   // ── Render ─────────────────────────────────────────────────────────────────
 
   const visibleConditionalFields = getServiceFields(formData.serviceType);
@@ -501,64 +483,6 @@ function AircraftConsulting() {
       </section>
 
       {/* ====================================================================
-          INTRO — 2-col editorial
-      ==================================================================== */}
-      <section className="ac-intro" data-cms-section="ac-intro">
-        <div className="ac-intro__container">
-          <div className="ac-intro__left">
-            <Reveal>
-              <span className="ac-pre-text">Expertise Before Commitment</span>
-              <h2 className="ac-intro__heading">Independent.&nbsp;Thorough.&nbsp;Honest.</h2>
-              <p className="ac-intro__body">
-                Buyers shortlisting their first helicopter. Owners running one or several. Lawyers,
-                insurers, and lenders who need an independent expert on a matter where opinions
-                cost real money. HQ Aviation consults across the helicopter ownership lifecycle —
-                with Robinson factory authorisation backing the work where type-specific depth
-                changes the answer.
-              </p>
-              <p className="ac-intro__body">
-                The same hangar floor, logbook library, and maintenance experience that informs
-                every Robinson service-centre engagement is what backs every consulting opinion
-                we write — for any helicopter, not just the ones we are authorised to certify.
-                Brought to bear on your aircraft, your budget, your policy, your plan, or your
-                dispute.
-              </p>
-            </Reveal>
-            <Reveal delay={0.2}>
-              <div className="ac-intro__stats">
-                <div className="ac-intro__stat">
-                  <span className="ac-intro__stat-num">500+</span>
-                  <span className="ac-intro__stat-label">Aircraft Assessed</span>
-                </div>
-                <div className="ac-intro__stat-divider" />
-                <div className="ac-intro__stat">
-                  <span className="ac-intro__stat-num">35+</span>
-                  <span className="ac-intro__stat-label">Years</span>
-                </div>
-                <div className="ac-intro__stat-divider" />
-                <div className="ac-intro__stat">
-                  <span className="ac-intro__stat-num">Factory</span>
-                  <span className="ac-intro__stat-label">Authorised</span>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-
-          <Reveal delay={0.15} direction="left">
-            <div className="ac-intro__right">
-              <div className="ac-intro__image-wrap">
-                <img
-                  src={pageImages['ac-intro']?.[0]?.url || '/assets/images/facility/hq-0153.jpg'}
-                  alt="HQ Aviation facility — Factory Authorised Service Centre"
-                />
-                <div className="ac-intro__caption">Factory Authorised Service Centre</div>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ====================================================================
           SERVICES — 3 groups, 8 cards total
       ==================================================================== */}
       <section className="ac-services">
@@ -572,6 +496,7 @@ function AircraftConsulting() {
 
           {SERVICE_GROUPS.map((group) => {
             const groupServices = services.filter(s => s.group === group.id);
+            const expandedService = groupServices.find(s => s.enquiry === expandedServiceSlug);
             return (
               <div key={group.id} className="ac-services__group">
                 <Reveal>
@@ -594,80 +519,58 @@ function AircraftConsulting() {
                         aria-expanded={expandedServiceSlug === service.enquiry}
                       >
                         <div className="ac-service-card__top">
-                          <span className="ac-service-card__tag">{service.scope}</span>
                           <span className="ac-service-card__num">{service.num}</span>
+                          <h3 className="ac-service-card__title">{service.title}</h3>
+                          <span className="ac-service-card__indicator" aria-hidden="true">
+                            {expandedServiceSlug === service.enquiry ? '−' : '+'}
+                          </span>
                         </div>
-                        <h3 className="ac-service-card__title">{service.title}</h3>
-                        <span className="ac-service-card__indicator" aria-hidden="true">
-                          {expandedServiceSlug === service.enquiry ? '−' : '+'}
-                        </span>
-                        {expandedServiceSlug === service.enquiry && (
-                          <div className="ac-service-card__body">
-                            <p className="ac-service-card__desc">{service.description}</p>
-                            <p className="ac-service-card__includes-label">What's included</p>
-                            <ul className="ac-service-card__includes">
-                              {service.includes.map((item) => (
-                                <li key={item} className="ac-service-card__include-item">
-                                  <span className="ac-service-card__check">✓</span>
-                                  {item}
-                                </li>
-                              ))}
-                            </ul>
-                            <button
-                              type="button"
-                              className="ac-service-card__cta"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleServiceCtaClick(service.enquiry);
-                              }}
-                            >
-                              Enquire about this →
-                            </button>
-                          </div>
-                        )}
                       </div>
                     </Reveal>
                   ))}
                 </div>
+                <AnimatePresence initial={false} mode="wait">
+                  {expandedService && (
+                    <motion.div
+                      key={expandedService.enquiry}
+                      className="ac-service-drawer"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                    >
+                      <div className="ac-service-drawer__inner">
+                        <div className="ac-service-drawer__header">
+                          <span className="ac-service-card__num">{expandedService.num}</span>
+                          <h3 className="ac-service-drawer__title">{expandedService.title}</h3>
+                        </div>
+                        <p className="ac-service-drawer__desc">{expandedService.description}</p>
+                        <p className="ac-service-card__includes-label">What's included</p>
+                        <ul className="ac-service-drawer__includes">
+                          {expandedService.includes.map((item) => (
+                            <li key={item} className="ac-service-card__include-item">
+                              <span className="ac-service-card__check">✓</span>
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                        <button
+                          type="button"
+                          className="ac-service-card__cta"
+                          onClick={() => handleServiceCtaClick(expandedService.enquiry)}
+                        >
+                          Enquire about this →
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             );
           })}
         </div>
       </section>
 
-      {/* ====================================================================
-          WHY INDEPENDENT — Dark authority section
-      ==================================================================== */}
-      <section className="ac-why">
-        <div className="ac-why__container">
-          <Reveal>
-            <div className="ac-section-header ac-section-header--light">
-              <span className="ac-pre-text ac-pre-text--light">Why It Matters</span>
-              <h2 className="ac-section-header__h2 ac-section-header__h2--light">
-                The Independent Advantage
-              </h2>
-              <p className="ac-why__intro-body">
-                Thirty-five years of Robinson experience and 500+ transactions sit behind every
-                engagement on the menu — buying, owning, valuing, defending. The job is the same
-                each time: an accurate, independent read on the aircraft, the cost, the policy,
-                or the dispute, written in a way you can act on.
-              </p>
-            </div>
-          </Reveal>
-
-          <div className="ac-why__grid">
-            {independencePoints.map((point, i) => (
-              <Reveal key={point.num} delay={i * 0.1}>
-                <div className="ac-why__card">
-                  <span className="ac-why__card-num">{point.num}</span>
-                  <h4 className="ac-why__card-title">{point.title}</h4>
-                  <p className="ac-why__card-desc">{point.desc}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ====================================================================
           ENQUIRY FORM — 2-col layout
@@ -1453,30 +1356,22 @@ function AircraftConsulting() {
           outline-offset: 4px;
         }
         .ac-service-card__indicator {
-          position: absolute;
-          top: 1.5rem;
-          right: 1.5rem;
           font-family: 'Share Tech Mono', monospace;
-          font-size: 1.25rem;
+          font-size: 1.1rem;
           font-weight: 400;
           color: #6b6b6b;
           line-height: 1;
           transition: color 0.2s ease;
+          width: 1rem;
+          text-align: center;
         }
         .ac-service-card:hover .ac-service-card__indicator {
           color: #1a1a1a;
         }
         .ac-service-card--expanded {
           background: #ffffff;
-          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-        }
-        .ac-service-card__body {
-          margin-top: 1.25rem;
-          padding-top: 1.25rem;
-          border-top: 1px solid #eeecea;
-        }
-        .ac-service-card__top {
-          padding-right: 2.25rem;
+          border-color: #1a1a1a;
+          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
         }
         .ac-service-card__cta {
           margin-top: 1.5rem;
@@ -1497,21 +1392,46 @@ function AircraftConsulting() {
         }
         .ac-services__grid {
           display: grid;
-          grid-template-columns: repeat(var(--cols, 2), 1fr);
-          gap: 0.75rem;
+          grid-template-columns: repeat(var(--cols, 2), minmax(260px, 1fr));
+          gap: 1.5rem;
           align-items: stretch;
+          max-width: calc(var(--cols, 2) * 340px + (var(--cols, 2) - 1) * 1.5rem);
+          overflow-x: auto;
+          overflow-y: hidden;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: thin;
+          scrollbar-color: #c4c1bb transparent;
+          padding: 1rem 0 2.5rem;
+          margin-top: -1rem;
+        }
+        .ac-services__grid::-webkit-scrollbar {
+          height: 6px;
+        }
+        .ac-services__grid::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .ac-services__grid::-webkit-scrollbar-thumb {
+          background: #c4c1bb;
+          border-radius: 3px;
+        }
+        .ac-services__grid::-webkit-scrollbar-thumb:hover {
+          background: #a8a59f;
         }
         .ac-services__grid > * {
           display: flex;
+          min-width: 260px;
         }
         .ac-service-card {
+          width: 100%;
+          height: 100%;
           background: #ffffff;
           border: 1px solid #e8e6e2;
           border-radius: 12px;
-          padding: 2.5rem;
+          padding: 1.75rem;
           display: flex;
           flex-direction: column;
-          height: 100%;
+          justify-content: center;
+          gap: 1rem;
           transition: box-shadow 0.25s ease, border-color 0.25s ease;
         }
         .ac-service-card:hover {
@@ -1521,24 +1441,21 @@ function AircraftConsulting() {
         .ac-service-card__top {
           display: flex;
           align-items: center;
-          justify-content: space-between;
-          margin-bottom: 1.25rem;
+          justify-content: flex-start;
+          gap: 0.85rem;
         }
-        .ac-service-card__tag {
-          display: inline-block;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.6rem;
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
-          color: #1a1a1a;
-          background: #f0eeea;
-          border-radius: 20px;
-          padding: 0.3rem 0.75rem;
-          border: 1px solid #e4e1db;
+        .ac-service-card__top .ac-service-card__title {
+          flex: 1;
+          min-width: 0;
+        }
+        .ac-service-card__top .ac-service-card__num,
+        .ac-service-card__top .ac-service-card__indicator {
+          flex-shrink: 0;
         }
         .ac-service-card__num {
           font-family: 'Share Tech Mono', monospace;
           font-size: 0.7rem;
+          line-height: 1;
           color: #cccccc;
           letter-spacing: 0.05em;
         }
@@ -1546,7 +1463,7 @@ function AircraftConsulting() {
           font-size: 1.15rem;
           font-weight: 700;
           color: #1a1a1a;
-          margin: 0 0 0.85rem;
+          margin: 0;
           line-height: 1.3;
         }
         .ac-service-card__desc {
@@ -1589,6 +1506,56 @@ function AircraftConsulting() {
           font-weight: 700;
           flex-shrink: 0;
           margin-top: 0.15rem;
+        }
+
+        /* ============================================================
+           SERVICE DRAWER — full-width expansion below grid
+        ============================================================ */
+        .ac-service-drawer {
+          overflow: hidden;
+          margin-top: 1.5rem;
+          background: #ffffff;
+          border: 1px solid #e8e6e2;
+          border-radius: 12px;
+        }
+        .ac-service-drawer__inner {
+          padding: 2rem 2.25rem;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          text-align: left;
+        }
+        .ac-service-drawer__header {
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          align-self: flex-start;
+          gap: 1rem;
+          margin-bottom: 0.75rem;
+          text-align: left;
+        }
+        .ac-service-drawer__title {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #1a1a1a;
+          margin: 0;
+          line-height: 1.25;
+          text-align: left;
+        }
+        .ac-service-drawer__desc {
+          font-size: 0.95rem;
+          line-height: 1.7;
+          color: #555555;
+          margin: 0 0 1.5rem;
+          max-width: 720px;
+        }
+        .ac-service-drawer__includes {
+          list-style: none;
+          padding: 0;
+          margin: 0 0 1.75rem;
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 0 1.5rem;
         }
 
         /* ============================================================
@@ -1913,7 +1880,7 @@ function AircraftConsulting() {
             aspect-ratio: 16 / 9;
           }
           .ac-services__grid {
-            grid-template-columns: 1fr;
+            max-width: 100%;
           }
           .ac-why__grid {
             grid-template-columns: 1fr;
@@ -1989,6 +1956,7 @@ function AircraftConsulting() {
           }
           .ac-services__grid {
             grid-template-columns: 1fr;
+            max-width: 100%;
           }
           .ac-service-card {
             padding: 1.5rem;

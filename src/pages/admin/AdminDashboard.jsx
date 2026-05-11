@@ -60,6 +60,7 @@ export default function AdminDashboard() {
 
   const navCards = [
     { label: 'Listings', link: '/admin/listings', icon: '✈️' },
+    { label: 'Aircraft Specs', link: '/admin/comparables', icon: '🚁' },
     { label: 'Blog Posts', link: '/admin/blog', icon: '📝' },
     { label: 'Leads', link: '/admin/leads', icon: '📬' },
     { label: 'Pricing', link: '/admin/pricing', icon: '💷' },

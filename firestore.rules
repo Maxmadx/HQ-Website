@@ -216,6 +216,12 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Robinson factory spec rows shown on /aircraft/<model> pages — public read, admin write
+    match /aircraftSpecs/{model} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Comparison defaults singleton (fuel prices etc.) — public read, admin write
     match /comparison_defaults/{id} {
       allow read: if true;
@@ -266,6 +272,19 @@ service cloud.firestore {
     match /misc_items/{id} {
       allow read: if true;
       allow write: if isAdmin();
+    }
+
+    // Parts catalogue — public read (only active items shown by client filter), admin write.
+    match /parts/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Parts enquiries — server-only creates (via /api/parts-enquiry), admin read/update/delete.
+    // Public clients must POST to /api/parts-enquiry, never write directly.
+    match /parts_enquiries/{id} {
+      allow read, update, delete: if isAdmin();
+      allow create: if false;
     }
 
     // Bookings — written server-side via Admin SDK on payment success, admin read/update

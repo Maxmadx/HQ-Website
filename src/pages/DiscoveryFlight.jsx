@@ -10,7 +10,7 @@
  */
 
 import React, { useRef, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { usePricing } from '../hooks/usePricing';
 import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
@@ -404,6 +404,15 @@ function ValueProposition() {
   const [openCard, setOpenCard] = useState(null);
   const [carouselIndex, setCarouselIndex] = useState(0);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Persist ?ref= to sessionStorage as belt-and-braces fallback for the checkout URL
+  useEffect(() => {
+    const ref = searchParams.get('ref') || '';
+    if (/^[A-Za-z0-9]{8}$/.test(ref.trim()) && typeof sessionStorage !== 'undefined') {
+      sessionStorage.setItem('referredByCode', ref.trim().toUpperCase());
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 1024px)');
@@ -457,7 +466,8 @@ function ValueProposition() {
         value: price,
         currency: 'gbp',
       });
-      navigate(`/checkout?aircraft=${cardId}&duration=${selectedTime}&price=${price}`);
+      const ref = searchParams.get('ref') || '';
+      navigate(`/checkout?aircraft=${cardId}&duration=${selectedTime}&price=${price}${ref ? `&ref=${encodeURIComponent(ref)}` : ''}`);
     }
   };
 

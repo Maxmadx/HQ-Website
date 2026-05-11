@@ -57,7 +57,9 @@ export default function DiscoveryAddons({ value, onChange, voucherActive = false
 
           return (
             <li key={item.id} style={S.row}>
-              {primary && <img src={primary.url} alt={item.name} style={S.thumb} />}
+              {primary
+                ? <img src={primary.url} alt={item.name} style={S.thumb} />
+                : <div style={S.thumbPlaceholder} aria-hidden="true" />}
               <div style={S.info}>
                 <div style={S.nameRow}>
                   <span style={S.name}>{item.name}</span>
@@ -133,16 +135,17 @@ const S = {
   title: { fontSize: '1rem', fontWeight: 700, margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.05em' },
   intro: { fontSize: '0.85rem', color: '#666', margin: '0 0 12px' },
   list: { listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 },
-  row: { display: 'grid', gridTemplateColumns: '64px 1fr auto', gap: 12, alignItems: 'center' },
-  thumb: { width: 64, height: 64, objectFit: 'cover', borderRadius: 6, border: '1px solid #e8e6e2' },
-  info: { minWidth: 0 },
-  nameRow: { display: 'flex', alignItems: 'center', gap: 8 },
+  row: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12 },
+  thumb: { width: 64, height: 64, objectFit: 'cover', borderRadius: 6, border: '1px solid #e8e6e2', flexShrink: 0 },
+  thumbPlaceholder: { width: 64, height: 64, borderRadius: 6, border: '1px dashed #e8e6e2', background: '#fff', flexShrink: 0 },
+  info: { flex: '1 1 140px', minWidth: 0 },
+  nameRow: { display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
   name: { fontWeight: 600, fontSize: '0.9rem' },
-  pill: { fontSize: '0.6rem', fontWeight: 700, background: '#1a1a1a', color: '#fff', padding: '2px 6px', borderRadius: 3, letterSpacing: '0.05em' },
-  priceRow: { fontSize: '0.85rem', display: 'flex', gap: 8, alignItems: 'baseline' },
+  pill: { fontSize: '0.6rem', fontWeight: 700, background: '#1a1a1a', color: '#fff', padding: '2px 6px', borderRadius: 3, letterSpacing: '0.05em', whiteSpace: 'nowrap' },
+  priceRow: { fontSize: '0.85rem', display: 'flex', gap: 8, alignItems: 'baseline', flexWrap: 'wrap' },
   priceStrike: { color: '#999', textDecoration: 'line-through' },
   priceFinal: { color: '#1a1a1a', fontWeight: 700 },
-  qty: { display: 'inline-flex', alignItems: 'center', gap: 8 },
+  qty: { display: 'inline-flex', alignItems: 'center', gap: 8, flexShrink: 0, marginLeft: 'auto' },
   qtyBtn: { width: 28, height: 28, border: '1px solid #d1d5db', background: '#fff', cursor: 'pointer', borderRadius: 4, fontSize: '1rem' },
   qtyN: { minWidth: 20, textAlign: 'center', fontVariantNumeric: 'tabular-nums' },
   fulfil: { marginTop: 16, paddingTop: 16, borderTop: '1px solid #e8e6e2', display: 'flex', flexDirection: 'column', gap: 8 },

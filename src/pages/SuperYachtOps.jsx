@@ -12,11 +12,10 @@
  */
 
 import React, { useRef, useEffect, useState } from 'react';
-import { useFaqs } from '../hooks/useFaqs';
 import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { Link } from 'react-router-dom';
-import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import '../assets/css/main.css';
 import '../assets/css/components.css';
 import FooterMinimal from '../components/FooterMinimal';
@@ -193,38 +192,11 @@ const services = [
   },
 ];
 
-const tracks = [
-  {
-    num: '01',
-    eyebrow: 'Pilot',
-    title: 'Yacht Deck Operations',
-    lede: 'Helicopter pilots adding yacht-deck competence to their flying — whether owner-pilots already on type, or new pilots working toward operating from a vessel.',
-    bullets: [
-      'Tailored to the pilot — bespoke for those already current, structured for those building toward it',
-      'Deck, confined-area & maritime considerations — the realities of operating from a moving platform',
-      'Aircraft-flexible — Robinson and light turbine types',
-    ],
-  },
-  {
-    num: '02',
-    eyebrow: 'Crew',
-    title: 'Helideck Safety',
-    lede: 'Yacht crew preparing to support helicopter operations on board — marshalling, refuelling, securing, and emergency response.',
-    bullets: [
-      'Role-aligned — covering helideck team responsibilities at sea',
-      'Practical and procedural — drills alongside theory',
-      'Coordinated to recognised standards — aligned with industry-accepted helideck training',
-    ],
-  },
-];
-
 /* ─────────────────────────────────────────────────────────────────────────────
    MAIN COMPONENT
 ───────────────────────────────────────────────────────────────────────────── */
 export default function SuperYachtOps() {
   const heroRef = useRef(null);
-  const [openFaq, setOpenFaq] = useState(null);
-  const [showAllFaqs, setShowAllFaqs] = useState(false);
   const pageImages = usePageImages('superyacht-ops');
   useCmsHighlight();
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
@@ -234,15 +206,6 @@ export default function SuperYachtOps() {
   const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', vessel: '', aircraftType: '', message: '' });
   const [formStatus, setFormStatus] = useState('idle');
-  const { faqs: rawFaqs } = useFaqs('superyacht-ops', { visibleOnly: true });
-  const fallbackFaqs = [
-    { id: 'f1', question: 'What aircraft types does HQ support for yacht operations?', answer: 'HQ specialises in the Robinson range (R44, R66) which are the most common yacht-based helicopters due to their compact size and reliability. We also support AW109, H135, and other light turbine types through our partner network.' },
-    { id: 'f2', question: 'Do you provide pilots for the whole season?', answer: 'Yes, we can provide a dedicated pilot for the duration of your Mediterranean or Caribbean season, or for specific legs. All pilots are fully current on type, insured, and experienced in yacht deck operations.' },
-    { id: 'f3', question: 'How do you handle maintenance when the yacht is overseas?', answer: 'We maintain a schedule for your aircraft and coordinate with approved engineers at facilities near your itinerary. For Robinson aircraft, we work with factory-authorised service centres in key cruising regions.' },
-    { id: 'f4', question: 'Can you help set up a new yacht helicopter programme from scratch?', answer: 'Absolutely. We advise on aircraft selection, deck modifications, crew training, insurance, and operational procedures: everything needed to start operating safely and compliantly.' },
-    { id: 'f5', question: 'Is the service confidential?', answer: 'Completely. All client and vessel information is held in strict confidence. We do not discuss client operations or identities.' },
-  ];
-  const faqs = rawFaqs.length > 0 ? rawFaqs : fallbackFaqs;
 
   const setField = (field) => (e) => setFormData((f) => ({ ...f, [field]: e.target.value }));
 
@@ -337,23 +300,6 @@ export default function SuperYachtOps() {
             transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
           />
 
-          <motion.div
-            className="syo-hero__badge"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.0, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className="syo-hero__badge-item">
-              <span className="syo-hero__badge-strong">Worldwide</span>
-              <span className="syo-hero__badge-weak">Operations</span>
-            </div>
-            <div className="syo-hero__badge-divider" />
-            <div className="syo-hero__badge-item">
-              <span className="syo-hero__badge-strong">Bespoke</span>
-              <span className="syo-hero__badge-weak">Service</span>
-            </div>
-          </motion.div>
-
           <motion.p
             className="syo-hero__sub"
             initial={{ opacity: 0, y: 20 }}
@@ -388,27 +334,6 @@ export default function SuperYachtOps() {
               </p>
             </Reveal>
 
-            <Reveal delay={0.15}>
-              <div className="syo-intro__stats">
-                <div className="syo-intro__stat">
-                  <span className="syo-intro__stat-num">3</span>
-                  <span className="syo-intro__stat-label">Continents</span>
-                  <span className="syo-intro__stat-sub">Active Operations</span>
-                </div>
-                <div className="syo-intro__stat-divider" />
-                <div className="syo-intro__stat">
-                  <span className="syo-intro__stat-num">10+</span>
-                  <span className="syo-intro__stat-label">Years</span>
-                  <span className="syo-intro__stat-sub">Yacht Aviation</span>
-                </div>
-                <div className="syo-intro__stat-divider" />
-                <div className="syo-intro__stat">
-                  <span className="syo-intro__stat-num">24/7</span>
-                  <span className="syo-intro__stat-label">&nbsp;</span>
-                  <span className="syo-intro__stat-sub">Operations Support</span>
-                </div>
-              </div>
-            </Reveal>
           </div>
 
           <Reveal direction="left" delay={0.2}>
@@ -449,56 +374,18 @@ export default function SuperYachtOps() {
       </section>
 
       {/* ===================================================================
-          4. TRAINING — TWO TRACKS
-      =================================================================== */}
-      <section className="syo-tracks">
-        <div className="syo-tracks__inner">
-          <Reveal>
-            <div className="syo-section-header syo-section-header--light">
-              <span className="syo-pre-text syo-pre-text--light">Training</span>
-              <h2 className="syo-section-h2 syo-section-h2--light">Two Tracks</h2>
-              <p className="syo-tracks__intro">
-                Yacht helicopter operations rely on two distinct skill sets — the pilot in the cockpit
-                and the deck team supporting them. We work with both.
-              </p>
-            </div>
-          </Reveal>
-
-          <div className="syo-tracks__grid">
-            {tracks.map((track, i) => (
-              <Reveal key={track.num} delay={i * 0.1}>
-                <div className="syo-tracks__card">
-                  <div className="syo-tracks__card-head">
-                    <span className="syo-tracks__card-num">{track.num}</span>
-                    <span className="syo-tracks__card-eyebrow">{track.eyebrow}</span>
-                  </div>
-                  <h3 className="syo-tracks__card-title">{track.title}</h3>
-                  <p className="syo-tracks__card-lede">{track.lede}</p>
-                  <ul className="syo-tracks__card-list">
-                    {track.bullets.map((b) => (
-                      <li key={b}>{b}</li>
-                    ))}
-                  </ul>
-                  <a href="#enquire" className="syo-tracks__card-cta">Enquire <span aria-hidden="true">→</span></a>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===================================================================
-          5. ENQUIRY FORM
+          4. ENQUIRY FORM
       =================================================================== */}
       <section className="syo-enquiry" id="enquire">
         <div className="syo-enquiry__inner">
           <Reveal>
             <div className="syo-enquiry__left">
-              <span className="syo-pre-text">Start a Conversation</span>
-              <h2 className="syo-enquiry__heading">Get In Touch</h2>
+              <span className="syo-pre-text">Ready to Discuss Your Operation?</span>
+              <h2 className="syo-enquiry__heading">Talk to the Team</h2>
               <p className="syo-enquiry__desc">
-                Every yacht operation is different. Tell us about your vessel, your aircraft, and your
-                season plans, and we'll come back with a clear picture of how we can support you.
+                Every yacht operation is different — whether you're planning a new programme or refining
+                an existing one. Tell us about your vessel, your aircraft, and your season plans, and we'll
+                come back with a clear, confidential picture of how we can support you.
               </p>
             </div>
           </Reveal>
@@ -601,79 +488,6 @@ export default function SuperYachtOps() {
                 </form>
               )}
             </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ===================================================================
-          6. FAQ
-      =================================================================== */}
-      <section className="syo-faq" data-cms-section="faqs-superyacht-ops">
-        <div className="syo-faq__inner">
-          <Reveal>
-            <div className="syo-section-header">
-              <span className="syo-pre-text">Common Questions</span>
-              <h2 className="syo-section-h2">
-                <span style={{ color: '#1a1a1a' }}>Frequently</span>{' '}
-                <span style={{ color: '#4a4a4a' }}>Asked</span>
-              </h2>
-            </div>
-          </Reveal>
-
-          <div className="syo-faq__list">
-            {(showAllFaqs ? faqs : faqs.slice(0, 6)).map((faq, i) => (
-              <Reveal key={faq.id} delay={i * 0.05}>
-                <div
-                  className={`syo-faq__item${openFaq === i ? ' syo-faq__item--open' : ''}`}
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setOpenFaq(openFaq === i ? null : i); }}
-                  aria-expanded={openFaq === i}
-                >
-                  <span className="syo-faq__number">{String(i + 1).padStart(2, '0')}</span>
-                  <div className="syo-faq__content">
-                    <h4 className="syo-faq__question">
-                      {faq.question}
-                      <span className="syo-faq__toggle">{openFaq === i ? '−' : '+'}</span>
-                    </h4>
-                    <AnimatePresence>
-                      {openFaq === i && (
-                        <motion.div
-                          className="syo-faq__answer"
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                          style={{ overflow: 'hidden' }}
-                        >
-                          <p>{faq.answer}</p>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-          {!showAllFaqs && faqs.length > 6 && (
-            <button className="syo-faq__load-more" onClick={() => setShowAllFaqs(true)}>Load More</button>
-          )}
-        </div>
-      </section>
-
-      {/* ===================================================================
-          7. CTA
-      =================================================================== */}
-      <section className="syo-cta">
-        <div className="syo-cta__inner">
-          <Reveal>
-            <span className="syo-pre-text syo-pre-text--light">Ready to Discuss Your Operation?</span>
-            <h2 className="syo-cta__heading">Talk to the Team</h2>
-            <p className="syo-cta__body">
-              Whether you're planning a new programme or looking to improve an existing one, our
-              operations team is ready to help. Reach out for a confidential conversation.
-            </p>
           </Reveal>
         </div>
       </section>
@@ -853,44 +667,6 @@ export default function SuperYachtOps() {
           transform-origin: left;
         }
 
-        .syo-hero__badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 1.25rem;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          padding: 0.75rem 1.25rem;
-          border-radius: 4px;
-          margin-bottom: 2rem;
-          background: rgba(255, 255, 255, 0.05);
-          backdrop-filter: blur(8px);
-        }
-
-        .syo-hero__badge-item {
-          display: flex;
-          flex-direction: column;
-          gap: 0.1rem;
-        }
-
-        .syo-hero__badge-strong {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.75rem;
-          color: #ffffff;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-        }
-
-        .syo-hero__badge-weak {
-          font-size: 0.7rem;
-          color: rgba(255, 255, 255, 0.45);
-          letter-spacing: 0.05em;
-        }
-
-        .syo-hero__badge-divider {
-          width: 1px;
-          height: 32px;
-          background: rgba(255, 255, 255, 0.2);
-        }
-
         .syo-hero__sub {
           max-width: 560px;
           font-size: 1rem;
@@ -931,54 +707,6 @@ export default function SuperYachtOps() {
           margin: 0 0 1.25rem;
         }
 
-        .syo-intro__stats {
-          display: flex;
-          align-items: stretch;
-          gap: 0;
-          margin-top: 2.5rem;
-          border-top: 1px solid #e8e6e2;
-          padding-top: 2rem;
-        }
-
-        .syo-intro__stat {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          gap: 0.2rem;
-          padding: 0 1.5rem;
-        }
-
-        .syo-intro__stat:first-child {
-          padding-left: 0;
-        }
-
-        .syo-intro__stat-num {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 2rem;
-          color: #1a1a1a;
-          line-height: 1;
-        }
-
-        .syo-intro__stat-label {
-          font-size: 0.8rem;
-          font-weight: 600;
-          color: #1a1a1a;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-        }
-
-        .syo-intro__stat-sub {
-          font-size: 0.75rem;
-          color: #999;
-        }
-
-        .syo-intro__stat-divider {
-          width: 1px;
-          background: #e8e6e2;
-          align-self: stretch;
-          flex-shrink: 0;
-        }
-
         .syo-intro__image-wrap {
           position: relative;
         }
@@ -1010,7 +738,7 @@ export default function SuperYachtOps() {
            3. SERVICES GRID
         ================================================================ */
         .syo-services {
-          background: #faf9f6;
+          background: #ffffff;
           padding: 6rem 4rem;
           border-top: 1px solid #e8e6e2;
         }
@@ -1024,13 +752,21 @@ export default function SuperYachtOps() {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           gap: 1.25rem;
+          align-items: stretch;
+        }
+
+        .syo-services__grid > * {
+          height: 100%;
         }
 
         .syo-services__card {
-          background: #ffffff;
+          background: #faf9f6;
           border: 1px solid #e8e6e2;
           border-radius: 8px;
           padding: 1.75rem;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
           transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
@@ -1064,146 +800,10 @@ export default function SuperYachtOps() {
         }
 
         /* ================================================================
-           4. TRAINING — TWO TRACKS
-        ================================================================ */
-        .syo-tracks {
-          background: #1a1a1a;
-          padding: 6rem 4rem;
-        }
-
-        .syo-tracks__inner {
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-
-        .syo-tracks__intro {
-          color: rgba(255, 255, 255, 0.6);
-          font-size: 1rem;
-          line-height: 1.7;
-          margin: 1rem auto 0;
-          max-width: 640px;
-        }
-
-        .syo-tracks__grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 1.5rem;
-          margin-top: 3rem;
-        }
-
-        .syo-tracks__card {
-          background: rgba(255, 255, 255, 0.04);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 8px;
-          padding: 2.25rem 2rem;
-          display: flex;
-          flex-direction: column;
-          transition: background 0.2s ease, border-color 0.2s ease, transform 0.25s ease;
-        }
-
-        .syo-tracks__card:hover {
-          background: rgba(255, 255, 255, 0.07);
-          border-color: rgba(255, 255, 255, 0.18);
-          transform: translateY(-2px);
-        }
-
-        .syo-tracks__card-head {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          margin-bottom: 1.25rem;
-        }
-
-        .syo-tracks__card-num {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.6rem;
-          color: rgba(255, 255, 255, 0.3);
-          letter-spacing: 0.1em;
-        }
-
-        .syo-tracks__card-eyebrow {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.7rem;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: rgba(255, 255, 255, 0.55);
-          padding: 0.25rem 0.6rem;
-          border: 1px solid rgba(255, 255, 255, 0.18);
-          border-radius: 3px;
-        }
-
-        .syo-tracks__card-title {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #ffffff;
-          margin: 0 0 0.85rem;
-          line-height: 1.2;
-        }
-
-        .syo-tracks__card-lede {
-          font-size: 0.95rem;
-          color: rgba(255, 255, 255, 0.65);
-          line-height: 1.65;
-          margin: 0 0 1.5rem;
-        }
-
-        .syo-tracks__card-list {
-          list-style: none;
-          padding: 0;
-          margin: 0 0 1.75rem;
-          display: flex;
-          flex-direction: column;
-          gap: 0.85rem;
-          flex: 1;
-        }
-
-        .syo-tracks__card-list li {
-          font-size: 0.9rem;
-          color: rgba(255, 255, 255, 0.7);
-          line-height: 1.55;
-          padding-left: 1.1rem;
-          position: relative;
-        }
-
-        .syo-tracks__card-list li::before {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 0.6rem;
-          width: 6px;
-          height: 1px;
-          background: rgba(255, 255, 255, 0.4);
-        }
-
-        .syo-tracks__card-cta {
-          align-self: flex-start;
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.72rem;
-          letter-spacing: 0.15em;
-          text-transform: uppercase;
-          color: #ffffff;
-          text-decoration: none;
-          padding: 0.65rem 1.1rem;
-          border: 1px solid rgba(255, 255, 255, 0.3);
-          border-radius: 3px;
-          transition: background 0.2s ease, border-color 0.2s ease;
-        }
-
-        .syo-tracks__card-cta:hover {
-          background: #ffffff;
-          color: #1a1a1a;
-          border-color: #ffffff;
-        }
-
-        .syo-tracks__card-cta span {
-          margin-left: 0.4rem;
-        }
-
-        /* ================================================================
-           5. ENQUIRY FORM
+           4. ENQUIRY FORM
         ================================================================ */
         .syo-enquiry {
-          background: #ffffff;
+          background: #faf9f6;
           padding: 6rem 4rem;
         }
 
@@ -1229,6 +829,13 @@ export default function SuperYachtOps() {
           line-height: 1.75;
           color: #666;
           margin: 0;
+        }
+
+        .syo-enquiry__form {
+          background: #ffffff;
+          border: 1px solid #e8e6e2;
+          border-radius: 8px;
+          padding: 2.25rem;
         }
 
         /* Form fields */
@@ -1261,7 +868,7 @@ export default function SuperYachtOps() {
           font-family: 'Space Grotesk', sans-serif;
           font-size: 0.9rem;
           color: #1a1a1a;
-          background: #fafaf8;
+          background: #faf9f6;
           transition: border-color 0.2s;
           outline: none;
           resize: vertical;
@@ -1292,7 +899,7 @@ export default function SuperYachtOps() {
           padding: 2rem;
           border: 1.5px solid #e8e6e2;
           border-radius: 8px;
-          background: #faf9f6;
+          background: #ffffff;
         }
 
         .syo-enquiry__success-icon {
@@ -1305,122 +912,6 @@ export default function SuperYachtOps() {
           color: #1a1a1a;
           margin: 0;
           line-height: 1.5;
-        }
-
-        /* ================================================================
-           6. FAQ
-        ================================================================ */
-        .syo-faq {
-          background: #faf9f6;
-          padding: 6rem 4rem;
-        }
-
-        .syo-faq__inner {
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-
-        .syo-faq__list {
-          max-width: 800px;
-          margin: 0 auto;
-        }
-
-        .syo-faq__load-more { margin-top: 1.5rem; display: block; width: 100%; padding: 0.9rem 1.5rem; background: transparent; border: 1px solid #1a1a1a; color: #1a1a1a; font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
-        .syo-faq__load-more:hover { background: #1a1a1a; color: #fff; }
-
-        .syo-faq__item {
-          display: flex;
-          gap: 1.5rem;
-          align-items: flex-start;
-          padding: 1.5rem 0;
-          border-bottom: 1px solid #e8e6e2;
-          cursor: pointer;
-          transition: background 0.15s ease;
-        }
-
-        .syo-faq__item:first-child {
-          border-top: 1px solid #e8e6e2;
-        }
-
-        .syo-faq__number {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 0.65rem;
-          color: #bbb;
-          letter-spacing: 0.1em;
-          margin-top: 0.2rem;
-          flex-shrink: 0;
-          width: 1.8rem;
-        }
-
-        .syo-faq__content {
-          flex: 1;
-        }
-
-        .syo-faq__question {
-          font-size: 1rem;
-          font-weight: 600;
-          color: #1a1a1a;
-          margin: 0;
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          gap: 1rem;
-          line-height: 1.4;
-        }
-
-        .syo-faq__toggle {
-          font-size: 1.2rem;
-          font-weight: 300;
-          color: #999;
-          flex-shrink: 0;
-          margin-top: -0.1rem;
-          transition: color 0.2s ease;
-        }
-
-        .syo-faq__item--open .syo-faq__toggle {
-          color: #1a1a1a;
-        }
-
-        .syo-faq__answer {
-          overflow: hidden;
-        }
-
-        .syo-faq__answer p {
-          font-size: 0.95rem;
-          color: #666;
-          line-height: 1.7;
-          margin: 0.75rem 0 0;
-          padding-bottom: 0.25rem;
-        }
-
-        /* ================================================================
-           7. CTA
-        ================================================================ */
-        .syo-cta {
-          background: #1a1a1a;
-          padding: 6rem 4rem;
-        }
-
-        .syo-cta__inner {
-          max-width: 1200px;
-          margin: 0 auto;
-          max-width: 640px;
-        }
-
-        .syo-cta__heading {
-          font-size: clamp(2rem, 4vw, 3rem);
-          font-weight: 700;
-          text-transform: uppercase;
-          color: #ffffff;
-          margin: 0.5rem 0 1.25rem;
-          line-height: 1.1;
-        }
-
-        .syo-cta__body {
-          font-size: 1rem;
-          line-height: 1.75;
-          color: rgba(255, 255, 255, 0.6);
-          margin: 0 0 2rem;
         }
 
         /* ================================================================
@@ -1452,10 +943,6 @@ export default function SuperYachtOps() {
             grid-template-columns: repeat(2, 1fr);
           }
 
-          .syo-tracks {
-            padding: 5rem 3rem;
-          }
-
           .syo-enquiry {
             padding: 5rem 3rem;
           }
@@ -1463,14 +950,6 @@ export default function SuperYachtOps() {
           .syo-enquiry__inner {
             grid-template-columns: 1fr;
             gap: 3rem;
-          }
-
-          .syo-faq {
-            padding: 5rem 3rem;
-          }
-
-          .syo-cta {
-            padding: 5rem 3rem;
           }
         }
 
@@ -1486,26 +965,8 @@ export default function SuperYachtOps() {
             font-size: clamp(2.25rem, 12vw, 3.5rem);
           }
 
-          .syo-hero__badge {
-            flex-wrap: wrap;
-            gap: 0.75rem;
-          }
-
           .syo-intro {
             padding: 4rem 1.5rem;
-          }
-
-          .syo-intro__stats {
-            flex-direction: column;
-            gap: 1.25rem;
-          }
-
-          .syo-intro__stat {
-            padding: 0;
-          }
-
-          .syo-intro__stat-divider {
-            display: none;
           }
 
           .syo-services {
@@ -1516,19 +977,6 @@ export default function SuperYachtOps() {
             grid-template-columns: 1fr;
           }
 
-          .syo-tracks {
-            padding: 4rem 1.5rem;
-          }
-
-          .syo-tracks__grid {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-          }
-
-          .syo-tracks__card {
-            padding: 1.75rem 1.5rem;
-          }
-
           .syo-enquiry {
             padding: 4rem 1.5rem;
           }
@@ -1537,12 +985,8 @@ export default function SuperYachtOps() {
             grid-template-columns: 1fr;
           }
 
-          .syo-faq {
-            padding: 4rem 1.5rem;
-          }
-
-          .syo-cta {
-            padding: 4rem 1.5rem;
+          .syo-enquiry__form {
+            padding: 1.75rem 1.25rem;
           }
 
           .syo-section-header {
@@ -1564,10 +1008,6 @@ export default function SuperYachtOps() {
 
           .syo-services__card {
             padding: 1.25rem;
-          }
-
-          .syo-faq__item {
-            gap: 1rem;
           }
         }
 

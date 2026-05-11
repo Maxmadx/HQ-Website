@@ -8,9 +8,11 @@ const NAV_ITEMS = [
   { to: '/admin', icon: '📊', label: 'Dashboard' },
   { to: '/admin/bookings', icon: '🎟️', label: 'Bookings' },
   { to: '/admin/listings', icon: '✈️', label: 'Listings' },
-  { to: '/admin/comparables', icon: '🚁', label: 'Comparables' },
+  { to: '/admin/comparables', icon: '🚁', label: 'Aircraft Specs' },
   { to: '/admin/misc', icon: '🛒', label: 'Misc Items' },
-  { to: '/admin/misc-marketplace', icon: '🛍️', label: 'Marketplace' },
+  { to: '/admin/misc/orders', icon: '🛍️', label: 'Misc Orders' },
+  { to: '/admin/parts', icon: '🔩', label: 'Parts' },
+  { to: '/admin/parts/enquiries', icon: '📩', label: 'Parts Enquiries' },
   { to: '/admin/images', icon: '🖼️', label: 'Images' },
   { to: '/admin/text', icon: '✍️', label: 'Text' },
   { to: '/admin/blog', icon: '📝', label: 'Blog' },
@@ -28,6 +30,7 @@ export default function AdminLayout({ children }) {
   const [newLeadCount, setNewLeadCount] = useState(0);
   const [newBookingCount, setNewBookingCount] = useState(0);
   const [newMarketplaceCount, setNewMarketplaceCount] = useState(0);
+  const [openPartsEnquiryCount, setOpenPartsEnquiryCount] = useState(0);
 
   useEffect(() => {
     const q = query(collection(db, 'leads'), where('status', '==', 'new'));
@@ -47,6 +50,12 @@ export default function AdminLayout({ children }) {
     return unsub;
   }, []);
 
+  useEffect(() => {
+    const q = query(collection(db, 'parts_enquiries'), where('status', '==', 'open'));
+    const unsub = onSnapshot(q, (snap) => setOpenPartsEnquiryCount(snap.size), () => {});
+    return unsub;
+  }, []);
+
   async function handleSignOut() {
     await signOut(auth);
     navigate('/admin/login');
@@ -54,13 +63,28 @@ export default function AdminLayout({ children }) {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', fontFamily: "'Inter', system-ui, sans-serif", background: '#f9fafb' }}>
+      <style>{`
+        .admin-nav-scroll {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(255,255,255,0.18) transparent;
+        }
+        .admin-nav-scroll::-webkit-scrollbar { width: 6px; }
+        .admin-nav-scroll::-webkit-scrollbar-track { background: transparent; }
+        .admin-nav-scroll::-webkit-scrollbar-thumb {
+          background: rgba(255,255,255,0.18);
+          border-radius: 3px;
+        }
+        .admin-nav-scroll::-webkit-scrollbar-thumb:hover {
+          background: rgba(255,255,255,0.28);
+        }
+      `}</style>
       {/* Sidebar */}
       <aside style={{ width: '220px', flexShrink: 0, background: '#111827', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 10 }}>
         <div style={{ padding: '1.5rem 1.25rem 1rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
           <div style={{ color: '#fff', fontWeight: 700, fontSize: '1rem', letterSpacing: '-0.02em' }}>HQ Aviation</div>
           <div style={{ color: '#9ca3af', fontSize: '0.7rem', marginTop: '2px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Admin Panel</div>
         </div>
-        <nav style={{ flex: 1, padding: '0.75rem 0', overflowY: 'auto' }}>
+        <nav className="admin-nav-scroll" style={{ flex: 1, padding: '0.75rem 0', overflowY: 'auto' }}>
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}
@@ -97,13 +121,22 @@ export default function AdminLayout({ children }) {
                   {newBookingCount > 99 ? '99+' : newBookingCount}
                 </span>
               )}
-              {item.to === '/admin/misc-marketplace' && newMarketplaceCount > 0 && (
+              {item.to === '/admin/misc/orders' && newMarketplaceCount > 0 && (
                 <span style={{
                   background: '#ef4444', color: '#fff', borderRadius: '10px',
                   fontSize: '0.65rem', fontWeight: 700, padding: '1px 6px',
                   minWidth: '18px', textAlign: 'center', lineHeight: '18px',
                 }}>
                   {newMarketplaceCount > 99 ? '99+' : newMarketplaceCount}
+                </span>
+              )}
+              {item.to === '/admin/parts/enquiries' && openPartsEnquiryCount > 0 && (
+                <span style={{
+                  background: '#ef4444', color: '#fff', borderRadius: '10px',
+                  fontSize: '0.65rem', fontWeight: 700, padding: '1px 6px',
+                  minWidth: '18px', textAlign: 'center', lineHeight: '18px',
+                }}>
+                  {openPartsEnquiryCount > 99 ? '99+' : openPartsEnquiryCount}
                 </span>
               )}
             </NavLink>

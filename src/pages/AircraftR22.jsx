@@ -25,8 +25,6 @@ import '../assets/css/components.css';
 // Import FooterMinimal component
 import FooterMinimal from '../components/FooterMinimal';
 import HqMenuPanel from '../components/HqMenuPanel';
-import AircraftPriceBlock from '../components/AircraftPriceBlock';
-import { getSubtypes } from '../config/aircraftCatalog';
 
 // ============================================================================
 // R22 HEADER COMPONENT
@@ -1985,6 +1983,131 @@ function R22Styles() {
         @media (max-width: 600px) {
           .r22-fleet__overlay { left: 1.25rem; right: 1.25rem; bottom: 1.25rem; }
         }
+
+        /* ====================================================================
+           R22 COMPARISON — CTA + Inline Configurator (matches R66 pattern)
+           ==================================================================== */
+        .r22-comparison__cta {
+          display: flex;
+          margin-top: 0;
+        }
+        .r22-comparison__cta-button {
+          display: flex;
+          width: 100%;
+          align-items: center;
+          justify-content: center;
+          gap: 0.65rem;
+          padding: 1.1rem 2rem;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.9rem;
+          font-weight: 500;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          color: #fff;
+          background: #1a1a1a;
+          border: 1px solid rgba(0,0,0,0.07);
+          border-top: none;
+          border-radius: 0 0 4px 4px;
+          cursor: pointer;
+          text-decoration: none;
+          transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+        }
+        .r22-comparison__cta-button:hover {
+          background: #fff;
+          color: #1a1a1a;
+        }
+        .r22-comparison__cta-button i {
+          font-size: 0.75rem;
+          transition: transform 0.2s ease;
+        }
+        .r22-comparison__cta-button:hover i {
+          transform: translateX(3px);
+        }
+        .r22-comparison__configurator {
+          border: 1px solid #e5e4df;
+          border-radius: 12px;
+          overflow: hidden;
+          background: #ffffff;
+          box-shadow: 0 24px 60px -32px rgba(0,0,0,0.25);
+          margin-top: 1.5rem;
+        }
+        .r22-comparison__configurator-meta {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          padding: 0.85rem 1.25rem;
+          border-bottom: 1px solid #e5e4df;
+          background: #faf9f6;
+          flex-wrap: wrap;
+        }
+        .r22-comparison__configurator-back {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.55rem 1rem;
+          font-family: inherit;
+          font-size: 0.8rem;
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: #1a1a1a;
+          background: #ffffff;
+          border: 1px solid #d6d4cc;
+          border-radius: 999px;
+          cursor: pointer;
+          transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+        }
+        .r22-comparison__configurator-back:hover {
+          background: #1a1a1a;
+          border-color: #1a1a1a;
+          color: #faf9f6;
+          transform: translateY(-1px);
+        }
+        .r22-comparison__configurator-active {
+          display: inline-flex;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 0.15rem;
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.7rem;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: #7a7a7a;
+          text-align: right;
+        }
+        .r22-comparison__configurator-active strong {
+          color: #1a1a1a;
+          font-weight: 600;
+        }
+        .r22-comparison__configurator-note {
+          font-size: 0.65rem;
+          color: #a8a39a;
+          letter-spacing: 0.08em;
+        }
+        .r22-comparison__configurator-frame {
+          display: block;
+          width: 100%;
+          height: min(82vh, 820px);
+          min-height: 520px;
+          border: 0;
+          background: #ffffff;
+        }
+        @media (max-width: 768px) {
+          .r22-comparison__configurator-meta {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.6rem;
+          }
+          .r22-comparison__configurator-active {
+            align-items: flex-start;
+            text-align: left;
+          }
+          .r22-comparison__configurator-frame {
+            height: 70vh;
+            min-height: 460px;
+          }
+        }
     `}</style>
   );
 }
@@ -2525,7 +2648,7 @@ function R22CTA() {
   const selected = options.find((o) => o.key === selectedKey) ?? options[0];
 
   return (
-    <section className="r22-cta">
+    <section id="enquire" className="r22-cta">
       <div className="r22-cta__inner">
         <span className="r22-pre-text">Next step</span>
         <h2>Start your R22 journey</h2>
@@ -2596,8 +2719,12 @@ function R22WhyTrainer() {
 // ============================================================================
 // R22 VARIANT COMPARISON
 // ============================================================================
+const R22_CONFIGURATOR_URL =
+  'https://configurator.robinsonheli.com/?helicopter=r22-beta-ii&splash=false';
+
 function R22VariantComparison() {
   const [selectedKeys, setSelectedKeys] = useState(['beta-ii']);
+  const [configuratorActive, setConfiguratorActive] = useState(false);
 
   const toggleKey = (key) => {
     setSelectedKeys((prev) => {
@@ -2631,6 +2758,38 @@ function R22VariantComparison() {
           </div>
         </Reveal>
 
+        {configuratorActive && (
+          <div className="r22-comparison__configurator">
+            <div className="r22-comparison__configurator-meta">
+              <button
+                type="button"
+                className="r22-comparison__configurator-back"
+                onClick={() => setConfiguratorActive(false)}
+                aria-label="Return to variant comparison"
+              >
+                <i className="fas fa-arrow-left" aria-hidden="true" />
+                <span>Back to Comparison</span>
+              </button>
+              <span className="r22-comparison__configurator-active">
+                Configuring <strong>R22 Beta II</strong>
+                <span className="r22-comparison__configurator-note">
+                  Only the current Beta II is in the live configurator
+                </span>
+              </span>
+            </div>
+            <iframe
+              className="r22-comparison__configurator-frame"
+              src={R22_CONFIGURATOR_URL}
+              title="Robinson R22 Beta II Configurator"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allow="fullscreen"
+            />
+          </div>
+        )}
+
+        {!configuratorActive && (
+        <>
         <Reveal delay={0.1}>
           <div className="r22-comparison__picker">
             <div className="r22-comparison__picker-label">
@@ -2718,6 +2877,27 @@ function R22VariantComparison() {
             </div>
           </Reveal>
         )}
+        </>
+        )}
+
+        <div className="r22-comparison__cta">
+          {!configuratorActive ? (
+            <button
+              type="button"
+              className="r22-comparison__cta-button"
+              onClick={() => setConfiguratorActive(true)}
+              aria-label="Launch the Robinson configurator for the R22 Beta II"
+            >
+              Launch Configurator
+              <i className="fas fa-arrow-right" aria-hidden="true"></i>
+            </button>
+          ) : (
+            <a href="#enquire" className="r22-comparison__cta-button">
+              Register Interest
+              <i className="fas fa-arrow-right" aria-hidden="true"></i>
+            </a>
+          )}
+        </div>
 
       </div>
     </section>
@@ -2762,17 +2942,6 @@ function AircraftR22() {
       <R22Styles />
       <R22Header />
       <R22Hero />
-      <section className="r22-price-section">
-        <AircraftPriceBlock modelId="r22" subtypes={getSubtypes('r22')} />
-        <style>{`
-          .r22-price-section {
-            display: flex;
-            justify-content: center;
-            padding: 3rem 1.5rem 0;
-            background: #faf9f6;
-          }
-        `}</style>
-      </section>
       <div className="r22-sticky-stack">
         <R22Highlights />
         <R22Introduction />

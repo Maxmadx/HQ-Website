@@ -14,6 +14,20 @@
     ],
     "rewrites": [
       {
+        "source": "/api/**",
+        "run": {
+          "serviceId": "hq-aviation-server",
+          "region": "europe-west2"
+        }
+      },
+      {
+        "source": "/sitemap.xml",
+        "run": {
+          "serviceId": "hq-aviation-server",
+          "region": "europe-west2"
+        }
+      },
+      {
         "source": "/admin/**",
         "destination": "/admin/index.html"
       },

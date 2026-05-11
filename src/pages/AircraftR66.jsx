@@ -25,6 +25,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { usePageImages } from '../hooks/usePageImages';
+import { useAircraftSpecRows } from '../hooks/useAircraftSpecs';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { SECTION_MAP } from '../lib/imageSections';
 import Seo from '../components/seo/Seo';
@@ -216,15 +217,20 @@ const r66AuxConfigs = {
   aux43: { range: '550 nm',  fuelCapacity: '116.3 gal', endurance: '5+ hrs' },
 };
 
-function buildR66Specs(auxKey) {
+function buildR66Specs(auxKey, baseRows) {
   const aux = r66AuxConfigs[auxKey] ?? r66AuxConfigs.none;
-  return [
-    ...r66SpecsStatic.slice(0, 4),
-    { label: 'Range',         value: aux.range,         icon: 'fa-route' },
-    ...r66SpecsStatic.slice(4),
-    { label: 'Fuel Capacity', value: aux.fuelCapacity,  icon: 'fa-gas-pump' },
-    { label: 'Endurance',     value: aux.endurance,     icon: 'fa-clock' },
-  ];
+  // Override the three aux-affected labels (Range, Fuel Capacity, Endurance)
+  // on whatever base rows came in (admin-managed if available, static otherwise).
+  // Any row whose label doesn't match an aux field is passed through unchanged.
+  const overrides = {
+    'Range':         { value: aux.range,         icon: 'fa-route' },
+    'Fuel Capacity': { value: aux.fuelCapacity,  icon: 'fa-gas-pump' },
+    'Endurance':     { value: aux.endurance,     icon: 'fa-clock' },
+  };
+  return baseRows.map((row) => {
+    const o = overrides[row.label];
+    return o ? { ...row, ...o } : row;
+  });
 }
 
 const historyTimeline = [
@@ -309,6 +315,24 @@ const R66_FAMILY_BROCHURE = 'https://robinsonstrapistorprod.blob.core.windows.ne
 const R66_PALO_VERDE_EOC = 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/r66_nxg_palo_verde_2026_256ac8c7ca.pdf';
 const R66_SOUTHWOOD_EOC  = 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/r66_nxg_southwood_2026_d1df6e9083.pdf';
 const R66_RIVIERA_EOC    = 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/r66_nxg_riviera_2026_108204ceda.pdf';
+
+const R66_CONFIGURATOR_BASE = 'https://configurator.robinsonheli.com/';
+
+// Robinson's live configurator only ships ids for Palo Verde, Southwood, and
+// Riviera. Police & Military Trainer fall back to Palo Verde (the base R66
+// platform those packages are built on); we surface a note in those cases.
+function r66ConfiguratorUrl(variantIndex) {
+  const idMap = [
+    'r66-nx-g-palo-verde',
+    'r66-nx-g-southwood',
+    'r66-nx-g-riviera',
+    'r66-nx-g-palo-verde',
+    'r66-nx-g-palo-verde',
+  ];
+  const id = idMap[variantIndex] || 'r66-nx-g-palo-verde';
+  return `${R66_CONFIGURATOR_BASE}?helicopter=${id}&splash=false`;
+}
+const R66_CONFIGURATOR_FALLBACK_INDEXES = new Set([3, 4]);
 
 const r66Variants = [
   {
@@ -472,81 +496,13 @@ function R66Hero() {
   });
 
   useEffect(() => {
-    const iframe = videoRef.current;
-    if (!iframe) return;
-    const send = (func, args = []) => {
-      try {
-        iframe.contentWindow?.postMessage(
-          JSON.stringify({ event: 'command', func, args }),
-          '*'
-        );
-      } catch (e) { /* ignore */ }
-    };
-    const subscribeToStateChanges = () => {
-      try {
-        iframe.contentWindow?.postMessage(
-          JSON.stringify({ event: 'listening', id: 'r66-hero-video', channel: 'widget' }),
-          '*'
-        );
-        iframe.contentWindow?.postMessage(
-          JSON.stringify({ event: 'command', func: 'addEventListener', args: ['onStateChange'] }),
-          '*'
-        );
-      } catch (e) { /* ignore */ }
-    };
-    const sendPlaybackRate = () => send('setPlaybackRate', [2]);
-    const handleMessage = (e) => {
-      if (typeof e.data !== 'string') return;
-      if (!e.origin.includes('youtube')) return;
-      try {
-        const data = JSON.parse(e.data);
-        // state 1 = playing — reveal the video only once it's actually playing
-        if (data?.event === 'onStateChange' && data?.info === 1) {
-          setVideoReady(true);
-        }
-        // Also trigger on any infoDelivery that reports playerState === 1
-        if (data?.event === 'infoDelivery' && data?.info?.playerState === 1) {
-          setVideoReady(true);
-        }
-      } catch (e) { /* ignore non-JSON messages */ }
-    };
-    window.addEventListener('message', handleMessage);
-    // YouTube iframe needs a moment after load; retry a few times to catch ready state.
-    const timers = [600, 1400, 2600, 4500].map((ms) => setTimeout(() => {
-      subscribeToStateChanges();
-      sendPlaybackRate();
-    }, ms));
-    iframe.addEventListener('load', () => {
-      subscribeToStateChanges();
-      sendPlaybackRate();
-    });
-    return () => {
-      timers.forEach(clearTimeout);
-      window.removeEventListener('message', handleMessage);
-    };
-  }, []);
-
-  // Suppress the OS/browser Now Playing overlay (skip-back / pause / skip-forward
-  // controls) that the YouTube iframe's Media Session would otherwise surface on
-  // macOS Safari/Chrome. Clearing metadata + nulling action handlers from the
-  // parent document prevents the system from rendering controls for this tab.
-  useEffect(() => {
-    if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) return;
-    const ms = navigator.mediaSession;
-    const actions = [
-      'play', 'pause', 'stop', 'seekbackward', 'seekforward',
-      'seekto', 'previoustrack', 'nexttrack',
-    ];
-    const clear = () => {
-      try { ms.metadata = null; } catch { /* no-op */ }
-      try { ms.playbackState = 'none'; } catch { /* no-op */ }
-      actions.forEach((a) => {
-        try { ms.setActionHandler(a, null); } catch { /* no-op */ }
-      });
-    };
-    clear();
-    const interval = setInterval(clear, 750);
-    return () => clearInterval(interval);
+    const v = videoRef.current;
+    if (!v) return;
+    try { v.playbackRate = 2; } catch { /* no-op */ }
+    const onPlaying = () => setVideoReady(true);
+    v.addEventListener('playing', onPlaying);
+    if (!v.paused && v.readyState >= 3) setVideoReady(true);
+    return () => v.removeEventListener('playing', onPlaying);
   }, []);
 
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
@@ -566,14 +522,19 @@ function R66Hero() {
           src={pageImages['r66-hero']?.[0]?.url || '/assets/images/new-aircraft/r66/rhc-r66-nxg-riviera-center-spotlight-vertical-format-14184-2.jpg'}
           alt="Robinson R66 Turbine Helicopter"
         />
-        <iframe
+        <video
           ref={videoRef}
           className={`r66-hero__video${videoReady ? ' r66-hero__video--ready' : ''}`}
-          src="https://www.youtube-nocookie.com/embed/rmklfP_SF3o?autoplay=1&mute=1&loop=1&playlist=rmklfP_SF3o&controls=0&modestbranding=1&playsinline=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&enablejsapi=1&start=1&fs=0"
-          title="R66 in flight"
-          frameBorder="0"
-          allow="autoplay"
-          allowFullScreen={false}
+          src="/assets/videos/r66-hero.mp4"
+          poster={pageImages['r66-hero']?.[0]?.url || '/assets/images/new-aircraft/r66/rhc-r66-nxg-riviera-center-spotlight-vertical-format-14184-2.jpg'}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          disablePictureInPicture
+          disableRemotePlayback
+          controlsList="nodownload nofullscreen noremoteplayback"
           aria-hidden="true"
           tabIndex={-1}
         />
@@ -939,7 +900,8 @@ function R66Specifications() {
   const isExtendedRange = auxKey !== 'none';
   const setAux23Enabled = (on) => setAuxKey(on ? 'aux23' : 'none');
   const setAux43Enabled = (on) => setAuxKey(on ? 'aux43' : 'none');
-  const r66Specs = buildR66Specs(auxKey);
+  const baseRows = useAircraftSpecRows('r66');
+  const r66Specs = buildR66Specs(auxKey, baseRows.length ? baseRows : r66SpecsStatic);
 
   return (
     <section className="r66-specs">
@@ -1312,6 +1274,7 @@ function R66Expedition() {
 // ============================================================================
 function R66Variants() {
   const [activeVariant, setActiveVariant] = useState(0);
+  const [configuratorActive, setConfiguratorActive] = useState(false);
   const sectionRef = useRef(null);
 
   useEffect(() => {
@@ -1373,6 +1336,38 @@ function R66Variants() {
           </div>
         </Reveal>
 
+        {configuratorActive ? (
+          <div className="r66-variants__configurator">
+            <div className="r66-variants__configurator-meta">
+              <button
+                type="button"
+                className="r66-variants__configurator-back"
+                onClick={() => setConfiguratorActive(false)}
+                aria-label="Return to variant selector"
+              >
+                <i className="fas fa-arrow-left" aria-hidden="true" />
+                <span>Back to Variants</span>
+              </button>
+              <span className="r66-variants__configurator-active">
+                Configuring <strong>R66 {r66Variants[activeVariant].name}</strong>
+                {R66_CONFIGURATOR_FALLBACK_INDEXES.has(activeVariant) && (
+                  <span className="r66-variants__configurator-note">
+                    Showing base R66 — {r66Variants[activeVariant].name} package added at order
+                  </span>
+                )}
+              </span>
+            </div>
+            <iframe
+              key={`r66-cfg-${activeVariant}`}
+              className="r66-variants__configurator-frame"
+              src={r66ConfiguratorUrl(activeVariant)}
+              title={`Robinson R66 ${r66Variants[activeVariant].name} Configurator`}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allow="fullscreen"
+            />
+          </div>
+        ) : (
         <LayoutGroup id="r66-variants">
           <div className="r66-variants__card">
             <div className="r66-variants__tabs">
@@ -1481,12 +1476,25 @@ function R66Variants() {
             </div>
           </div>
         </LayoutGroup>
+        )}
 
         <div className="r66-variants__cta">
-          <a href="#enquire" className="r66-variants__cta-button">
-            Register Interest
-            <i className="fas fa-arrow-right" aria-hidden="true"></i>
-          </a>
+          {!configuratorActive ? (
+            <button
+              type="button"
+              className="r66-variants__cta-button"
+              onClick={() => setConfiguratorActive(true)}
+              aria-label={`Launch the Robinson configurator for the R66 ${r66Variants[activeVariant].name}`}
+            >
+              Launch Configurator
+              <i className="fas fa-arrow-right" aria-hidden="true"></i>
+            </button>
+          ) : (
+            <a href="#enquire" className="r66-variants__cta-button">
+              Register Interest
+              <i className="fas fa-arrow-right" aria-hidden="true"></i>
+            </a>
+          )}
         </div>
 
       </div>
@@ -2080,19 +2088,26 @@ const R66Styles = () => (
 
     .r66-hero__video {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(1.8);
-      width: 100vw;
-      height: 56.25vw;
-      min-height: 100vh;
-      min-width: 177.78vh;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
       pointer-events: none;
       border: 0;
       z-index: 1;
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.6s ease;
+      /* Belt-and-braces: keep iOS Safari from showing PiP / AirPlay icons */
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .r66-hero__video::-webkit-media-controls,
+    .r66-hero__video::-webkit-media-controls-panel,
+    .r66-hero__video::-webkit-media-controls-play-button,
+    .r66-hero__video::-webkit-media-controls-start-playback-button {
+      display: none !important;
+      -webkit-appearance: none;
     }
 
     .r66-hero__video--ready {
@@ -2593,7 +2608,7 @@ const R66Styles = () => (
       position: relative;
       z-index: 50;
       padding: 5rem 2rem;
-      background: linear-gradient(to right, #282828 50%, #1c1c1c 50%);
+      background: linear-gradient(to right, #000 50%, #1c1c1c 50%);
       color: #fff;
     }
 
@@ -4601,7 +4616,6 @@ const R66Styles = () => (
     .r66-final-stack > .r66b-exp,
     .r66-final-stack > .r66b-seamP,
     .r66-final-stack > .r66b-range,
-    .r66-final-stack > .r66b-closeA,
     .r66-final-stack > .r66-gallery {
       position: sticky;
       top: var(--r66-stack-stick-top, 0);
@@ -4621,7 +4635,6 @@ const R66Styles = () => (
     .r66-final-stack > .r66b-exp::after,
     .r66-final-stack > .r66b-seamP::after,
     .r66-final-stack > .r66b-range::after,
-    .r66-final-stack > .r66b-closeA::after,
     .r66-final-stack > .r66-gallery::after,
     .r66-final-stack > .r66-cta::after {
       content: '';
@@ -5399,6 +5412,95 @@ const R66Styles = () => (
         padding: 0.75rem 1.5rem;
       }
     }
+
+    /* ====================================================================
+       SECTION: R66 VARIANTS — Inline Configurator
+       Replaces the .r66-variants__card when "Launch Configurator" is clicked.
+       ==================================================================== */
+    .r66-variants__configurator {
+      border: 1px solid #e5e4df;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: 0 24px 60px -32px rgba(0,0,0,0.25);
+    }
+    .r66-variants__configurator-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid #e5e4df;
+      background: #faf9f6;
+      flex-wrap: wrap;
+    }
+    .r66-variants__configurator-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1rem;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      background: #ffffff;
+      border: 1px solid #d6d4cc;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+    }
+    .r66-variants__configurator-back:hover {
+      background: #1a1a1a;
+      border-color: #1a1a1a;
+      color: #faf9f6;
+      transform: translateY(-1px);
+    }
+    .r66-variants__configurator-active {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.15rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #7a7a7a;
+      text-align: right;
+    }
+    .r66-variants__configurator-active strong {
+      color: #1a1a1a;
+      font-weight: 600;
+    }
+    .r66-variants__configurator-note {
+      font-size: 0.65rem;
+      color: #a8a39a;
+      letter-spacing: 0.08em;
+    }
+    .r66-variants__configurator-frame {
+      display: block;
+      width: 100%;
+      height: min(82vh, 820px);
+      min-height: 520px;
+      border: 0;
+      background: #ffffff;
+    }
+    @media (max-width: 768px) {
+      .r66-variants__configurator-meta {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.6rem;
+      }
+      .r66-variants__configurator-active {
+        align-items: flex-start;
+        text-align: left;
+      }
+      .r66-variants__configurator-frame {
+        height: 70vh;
+        min-height: 460px;
+      }
+    }
   `}</style>
 );
 
@@ -5413,7 +5515,6 @@ const R66_STACK_SECTIONS = [
   { selector: '.r66b-exp',     palette: 'light' },
   { selector: '.r66b-seamP',   palette: 'light' },
   { selector: '.r66b-range',   palette: 'light' },
-  { selector: '.r66b-closeA',  palette: 'dark'  },
   { selector: '.r66-gallery',  palette: 'light' },
   { selector: '.r66-cta',      palette: 'dark'  },
 ];

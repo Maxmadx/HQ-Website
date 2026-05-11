@@ -21,6 +21,7 @@ import { Link } from 'react-router-dom';
 import { motion, useInView, useScroll, useTransform, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
+import { useAircraftSpecs } from '../hooks/useAircraftSpecs';
 import { SECTION_MAP } from '../lib/imageSections';
 import Seo from '../components/seo/Seo';
 import { buildProduct, buildBreadcrumbList } from '../components/seo/jsonLd';
@@ -31,8 +32,6 @@ import '../assets/css/components.css';
 
 // Import Footer
 import FooterMinimal from '../components/FooterMinimal';
-import AircraftPriceBlock from '../components/AircraftPriceBlock';
-import { getSubtypes } from '../config/aircraftCatalog';
 import HqMenuPanel from '../components/HqMenuPanel';
 
 // ============================================================================
@@ -482,6 +481,19 @@ const R44_RAVEN_I_EOC  = 'https://robinsonstrapistorprod.blob.core.windows.net/u
 const R44_RAVEN_II_EOC = 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/r44_raven_2_eoc_2026_3a2b4f3c1c.pdf';
 const R44_CADET_EOC    = 'https://robinsonstrapistorprod.blob.core.windows.net/uploads/assets/r44_cadet_eoc_2026_08a1dbe300.pdf';
 
+const R44_CONFIGURATOR_BASE = 'https://configurator.robinsonheli.com/';
+function r44ConfiguratorUrl(variantIndex) {
+  const idMap = [
+    'r44-raven-i',
+    'r44-raven-ii',
+    'r44-cadet',
+    'r44-clipper-ii-popout',
+    'r44-clipper-ii-fixed',
+  ];
+  const id = idMap[variantIndex] || 'r44-raven-ii';
+  return `${R44_CONFIGURATOR_BASE}?helicopter=${id}&splash=false`;
+}
+
 const r44Variants = [
   {
     name: 'Raven I',
@@ -727,12 +739,12 @@ function R44Intro() {
     };
     update();
 
-    // Progressively blur + darken the intro as the specs section rises over it.
-    // progress 0 = specs' top just touches the viewport bottom
-    // progress 1 = specs' top reaches the top of the viewport.
+    // Progressively blur + darken the intro as the next section rises over it.
+    // progress 0 = next section's top just touches the viewport bottom
+    // progress 1 = next section's top reaches the top of the viewport.
     // This mirrors the successful R66 pattern exactly.
     const MAX_BLUR = 10; // px
-    const nextSection = document.querySelector('.r44-specs');
+    const nextSection = document.querySelector('.r44-variants');
 
     const onScroll = () => {
       const el = sectionRef.current;
@@ -825,96 +837,6 @@ function R44Intro() {
 }
 
 // ============================================================================
-// COMPONENT 6: R44Counter - Statistics Bar
-// ============================================================================
-function R44Counter() {
-  const stats = [
-    { value: 6500, suffix: '+', label: 'R44s Built Worldwide' },
-    { value: 27, suffix: '', label: 'Years As World No.1' },
-    { value: 12000, suffix: '+', label: 'Robinson Fleet Delivered' },
-    { value: 33, suffix: '', label: 'Years In Production' },
-  ];
-
-  const counterRef = useRef(null);
-  const [released, setReleased] = useState(false);
-
-  useEffect(() => {
-    // Publish the actual visible-bottom edge of the header bar as --catch-top
-    // so every sticky element on the page sits flush under the real header
-    // (not under extra wrapper padding).
-    const headerInner =
-      document.querySelector('.Header-inner--top') ||
-      document.querySelector('.Header-branding') ||
-      document.querySelector('.Header');
-
-    const measureHeaderBottom = () => {
-      if (!headerInner) return 60;
-      const rect = headerInner.getBoundingClientRect();
-      return Math.max(0, rect.bottom);
-    };
-
-    const publishHeights = () => {
-      const h = counterRef.current?.offsetHeight;
-      if (h) document.documentElement.style.setProperty('--r44-counter-h', `${h}px`);
-      document.documentElement.style.setProperty('--catch-top', `${measureHeaderBottom()}px`);
-    };
-    publishHeights();
-
-    const handoffEl = document.querySelector('.r44-specs__split');
-
-    // Hysteresis: once the counter releases it collapses (max-height: 0)
-    // which reflows the document up — that would otherwise un-trigger the
-    // condition and cause the counter to expand/collapse in a flicker loop.
-    // Using two thresholds (enter when rect.top <= triggerIn, leave only
-    // once rect.top > triggerOut far below) keeps the state stable.
-    const HYSTERESIS = 240; // px gap between enter and exit thresholds
-    const GAP = 5; // px of space to keep above the split before collapsing
-
-    const onScroll = () => {
-      if (!handoffEl) return;
-      const counterH = counterRef.current?.offsetHeight ?? 80;
-      const headerH = measureHeaderBottom();
-      const rect = handoffEl.getBoundingClientRect();
-      const triggerIn = headerH + counterH + GAP;
-      const triggerOut = triggerIn + HYSTERESIS;
-      setReleased((prev) => (prev ? rect.top < triggerOut : rect.top <= triggerIn));
-    };
-    onScroll();
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('scroll', publishHeights, { passive: true }); // header can shrink on scroll
-    window.addEventListener('resize', publishHeights);
-    window.addEventListener('resize', onScroll);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('scroll', publishHeights);
-      window.removeEventListener('resize', publishHeights);
-      window.removeEventListener('resize', onScroll);
-    };
-  }, []);
-
-  return (
-    <section
-      ref={counterRef}
-      className={`r44-counter${released ? ' r44-counter--released' : ''}`}
-    >
-      <div className="r44-counter__container">
-        {stats.map((stat, i) => (
-          <Reveal key={i} delay={i * 0.1}>
-            <div className="r44-counter__item">
-              <span className="r44-counter__value">
-                <AnimatedNumber value={stat.value} suffix={stat.suffix} />
-              </span>
-              <span className="r44-counter__label">{stat.label}</span>
-            </div>
-          </Reveal>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-// ============================================================================
 // COMPONENT 7: R44History - Timeline Section
 // ============================================================================
 function R44History() {
@@ -976,9 +898,25 @@ function R44History() {
 // ============================================================================
 function R44Specs() {
   const [modelIdx, setModelIdx] = useState(1); // default Raven II
-  const model = r44ModelSpecs[modelIdx];
-  const prevModel = () => setModelIdx((i) => (i - 1 + r44ModelSpecs.length) % r44ModelSpecs.length);
-  const nextModel = () => setModelIdx((i) => (i + 1) % r44ModelSpecs.length);
+  const { variants: adminVariants } = useAircraftSpecs('r44');
+  // Merge admin-managed rows + dimensions into the static r44ModelSpecs by key.
+  // Variants in admin override the static defaults; static is the fallback if
+  // a key isn't in admin yet (e.g., a freshly added variant the admin hasn't
+  // touched, or before first save).
+  const variants = r44ModelSpecs.map((staticVariant) => {
+    const adminMatch = adminVariants.find((v) => v.key === staticVariant.key);
+    if (!adminMatch) return staticVariant;
+    return {
+      ...staticVariant,
+      name: adminMatch.name || staticVariant.name,
+      diagram: adminMatch.diagram || staticVariant.diagram,
+      dimensions: adminMatch.dimensions || staticVariant.dimensions,
+      specs: adminMatch.rows?.length ? adminMatch.rows : staticVariant.specs,
+    };
+  });
+  const model = variants[modelIdx] ?? variants[0];
+  const prevModel = () => setModelIdx((i) => (i - 1 + variants.length) % variants.length);
+  const nextModel = () => setModelIdx((i) => (i + 1) % variants.length);
 
   return (
     <section className="r44-specs">
@@ -1110,7 +1048,7 @@ function R44Engine() {
   useEffect(() => {
     // Same "stick at end + rise-over" pattern as R44Intro: pin the engine
     // section when its bottom reaches the viewport bottom so the next section
-    // (R44Variants) can rise up over it.
+    // (R44VariantComparison) can rise up over it.
     const update = () => {
       const el = sectionRef.current;
       if (!el) return;
@@ -1126,7 +1064,7 @@ function R44Engine() {
     // so the engine stays visible for most of the scroll and only ramps
     // sharply at the end (DARK_COMPLETE=0.95, exponent 8).
     const MAX_BLUR = 10;
-    const nextSection = document.querySelector('.r44-variants');
+    const nextSection = document.querySelector('.r44-comparison');
 
     const onScroll = () => {
       const el = sectionRef.current;
@@ -1422,6 +1360,7 @@ function R44VariantComparison() {
 // ============================================================================
 function R44Variants() {
   const [activeVariant, setActiveVariant] = useState(0);
+  const [configuratorActive, setConfiguratorActive] = useState(false);
 
   return (
     <section className="r44-variants">
@@ -1436,6 +1375,33 @@ function R44Variants() {
           </div>
         </Reveal>
 
+        {configuratorActive ? (
+          <div className="r44-variants__configurator">
+            <div className="r44-variants__configurator-meta">
+              <button
+                type="button"
+                className="r44-variants__configurator-back"
+                onClick={() => setConfiguratorActive(false)}
+                aria-label="Return to variant selector"
+              >
+                <i className="fas fa-arrow-left" aria-hidden="true" />
+                <span>Back to Variants</span>
+              </button>
+              <span className="r44-variants__configurator-active">
+                Configuring <strong>R44 {r44Variants[activeVariant].name}</strong>
+              </span>
+            </div>
+            <iframe
+              key={`r44-cfg-${activeVariant}`}
+              className="r44-variants__configurator-frame"
+              src={r44ConfiguratorUrl(activeVariant)}
+              title={`Robinson R44 ${r44Variants[activeVariant].name} Configurator`}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allow="fullscreen"
+            />
+          </div>
+        ) : (
         <LayoutGroup id="r44-variants">
           <div className="r44-variants__card">
             <div className="r44-variants__tabs">
@@ -1542,6 +1508,26 @@ function R44Variants() {
             </div>
           </div>
         </LayoutGroup>
+        )}
+
+        <div className="r44-variants__cta">
+          {!configuratorActive ? (
+            <button
+              type="button"
+              className="r44-variants__cta-button"
+              onClick={() => setConfiguratorActive(true)}
+              aria-label={`Launch the Robinson configurator for the R44 ${r44Variants[activeVariant].name}`}
+            >
+              Launch Configurator
+              <i className="fas fa-arrow-right" aria-hidden="true"></i>
+            </button>
+          ) : (
+            <a href="#enquire" className="r44-variants__cta-button">
+              Register Interest
+              <i className="fas fa-arrow-right" aria-hidden="true"></i>
+            </a>
+          )}
+        </div>
       </div>
     </section>
   );
@@ -1996,14 +1982,10 @@ function AircraftR44() {
       </h1>
       <R44Header />
       <R44Hero />
-      <section style={{ display: 'flex', justifyContent: 'center', padding: '3rem 1.5rem 0', background: '#faf9f6' }}>
-        <AircraftPriceBlock modelId="r44" subtypes={getSubtypes('r44')} />
-      </section>
       <R44Intro />
-      <R44Counter />
+      <R44Variants />
       <R44Specs />
       <R44Engine />
-      <R44Variants />
       <R44VariantComparison />
       <R44ExpeditionsMap />
       <R44Gallery />
@@ -2388,64 +2370,6 @@ function AircraftR44() {
           .r44-intro::before  { display: none; }
         }
 
-        /* ===== COUNTER ===== */
-        .r44-counter {
-          padding: 1.5rem 2rem;
-          background: #1a1a1a;
-          position: sticky;
-          top: var(--catch-top, 90px);
-          z-index: 45;
-          /* For the collapse animation when we reach the stats bar */
-          overflow: hidden;
-          max-height: 200px;
-          transform-origin: top center;
-          transition:
-            max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-            padding-top 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-            padding-bottom 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-            opacity 0.3s ease,
-            transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        /* When we reach the R44 proven stats bar, collapse the counter
-           smoothly rather than letting it vanish abruptly. */
-        .r44-counter--released {
-          max-height: 0;
-          padding-top: 0;
-          padding-bottom: 0;
-          opacity: 0;
-          transform: scaleY(0.6);
-          pointer-events: none;
-        }
-
-        .r44-counter__container {
-          max-width: 1000px;
-          margin: 0 auto;
-          display: flex;
-          justify-content: center;
-          gap: 3rem;
-          flex-wrap: wrap;
-        }
-
-        .r44-counter__item {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-        }
-
-        .r44-counter__value {
-          font-family: 'Share Tech Mono', monospace;
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #fff;
-        }
-
-        .r44-counter__label {
-          font-size: 0.65rem;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          color: rgba(255,255,255,0.5);
-        }
-
         /* ===== HISTORY TIMELINE ===== */
         .r44-timeline {
           padding: 0;
@@ -2727,7 +2651,7 @@ function AircraftR44() {
         .r44-specs {
           position: relative;
           padding: 8rem 2rem 5rem;
-          background: linear-gradient(to right, #282828 50%, #1c1c1c 50%);
+          background: linear-gradient(to right, #000 50%, #1c1c1c 50%);
           color: #fff;
         }
 
@@ -2978,19 +2902,19 @@ function AircraftR44() {
         }
 
         .r44-specs__blueprint-card {
-          background: #fff;
-          border: 1px solid #e8e6e2;
-          border-radius: 8px;
-          padding: 1.5rem;
           flex: 1;
           display: flex;
           align-items: center;
+          border: 1px solid #fff;
+          border-radius: 8px;
+          padding: 1px;
         }
 
         .r44-specs__blueprint {
           width: 100%;
           display: block;
           border-radius: 6px;
+          filter: invert(1);
         }
 
         .r44-specs__overlay-data {
@@ -4682,7 +4606,7 @@ function AircraftR44() {
            ==================================================================== */
         .r44-engine {
           /* Stacking card: pin when the section's bottom reaches the viewport
-             bottom, so the next section (R44Variants) rises up over it.
+             bottom, so the next section (R44VariantComparison) rises up over it.
              --r44-engine-stick-top is set in JS to (viewportH - sectionH). */
           position: sticky;
           top: var(--r44-engine-stick-top, 0);
@@ -4966,6 +4890,116 @@ function AircraftR44() {
             text-align: center;
           }
           .r44-engine__cost-list li { justify-content: center; }
+        }
+
+        /* ====================================================================
+           R44 VARIANTS — CTA + Inline Configurator (matches R66 pattern)
+           ==================================================================== */
+        .r44-variants__cta {
+          display: flex;
+          margin-top: 0;
+        }
+        .r44-variants__cta-button {
+          display: flex;
+          width: 100%;
+          align-items: center;
+          justify-content: center;
+          gap: 0.65rem;
+          padding: 1.1rem 2rem;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 0.9rem;
+          font-weight: 500;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          color: #fff;
+          background: #1a1a1a;
+          border: 1px solid rgba(0,0,0,0.07);
+          border-top: none;
+          border-radius: 0 0 4px 4px;
+          cursor: pointer;
+          text-decoration: none;
+          transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+        }
+        .r44-variants__cta-button:hover {
+          background: #fff;
+          color: #1a1a1a;
+        }
+        .r44-variants__cta-button i {
+          font-size: 0.75rem;
+          transition: transform 0.2s ease;
+        }
+        .r44-variants__cta-button:hover i {
+          transform: translateX(3px);
+        }
+        .r44-variants__configurator {
+          border: 1px solid #e5e4df;
+          border-radius: 12px;
+          overflow: hidden;
+          background: #ffffff;
+          box-shadow: 0 24px 60px -32px rgba(0,0,0,0.25);
+        }
+        .r44-variants__configurator-meta {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          padding: 0.85rem 1.25rem;
+          border-bottom: 1px solid #e5e4df;
+          background: #faf9f6;
+          flex-wrap: wrap;
+        }
+        .r44-variants__configurator-back {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.55rem 1rem;
+          font-family: inherit;
+          font-size: 0.8rem;
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: #1a1a1a;
+          background: #ffffff;
+          border: 1px solid #d6d4cc;
+          border-radius: 999px;
+          cursor: pointer;
+          transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+        }
+        .r44-variants__configurator-back:hover {
+          background: #1a1a1a;
+          border-color: #1a1a1a;
+          color: #faf9f6;
+          transform: translateY(-1px);
+        }
+        .r44-variants__configurator-active {
+          font-family: 'Share Tech Mono', monospace;
+          font-size: 0.7rem;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: #7a7a7a;
+        }
+        .r44-variants__configurator-active strong {
+          color: #1a1a1a;
+          font-weight: 600;
+        }
+        .r44-variants__configurator-frame {
+          display: block;
+          width: 100%;
+          height: min(82vh, 820px);
+          min-height: 520px;
+          border: 0;
+          background: #ffffff;
+        }
+        @media (max-width: 768px) {
+          .r44-variants__configurator-meta {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.6rem;
+          }
+          .r44-variants__configurator-frame {
+            height: 70vh;
+            min-height: 460px;
+          }
         }
       `}</style>
     </div>

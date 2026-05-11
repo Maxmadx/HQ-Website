@@ -394,7 +394,7 @@ export default function ArrivalSection({ children, picker, setPicker }) {
         .fd-pricing__hangarage-item i { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 1px solid #e8e6e2; color: #999; font-size: 0.8rem; flex-shrink: 0; }
         .fd-pricing__tab-intro { font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; color: #777; line-height: 1.65; margin: 0.75rem 0 1rem; padding: 0 1rem; }
         .fd-pricing__enquire { padding: 2rem 0; }
-        .fd-pricing__enquire-text { font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; color: #555; line-height: 1.7; margin-bottom: 1.5rem; max-width: 480px; }
+        .fd-pricing__enquire-text { font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; color: #555; line-height: 1.7; margin: 0 auto 1.5rem; max-width: 480px; text-align: center; }
         @media (max-width: 768px) {
           .fd-pricing-bg { padding: 0 0 2.5rem; }
           .fd-pricing { margin: 0; padding: 0.75rem 1rem; }
