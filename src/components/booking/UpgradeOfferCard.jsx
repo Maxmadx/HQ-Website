@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import {
   Elements,
@@ -9,6 +9,10 @@ import {
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const fmtGbp = (pence) => `£${(Number(pence) / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+const fmtGbpNoZeros = (pence) => {
+  const n = Number(pence) / 100;
+  return Number.isInteger(n) ? `£${n.toLocaleString('en-GB')}` : `£${n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+};
 
 // Local mirror of the price fallbacks so we can compute the diff client-side
 // for live display. Server is source of truth at PI creation; this is purely
@@ -27,7 +31,32 @@ const CARD_FIELD_STYLE = {
   },
 };
 
-function UpgradeForm({ booking, onSuccess }) {
+/**
+ * Compact trigger row designed to sit INSIDE the Booking Summary card.
+ * Default duration matches the original booking. Click opens the modal.
+ */
+export function UpgradeRow({ booking, onClick }) {
+  if (!booking) return null;
+  if (booking.aircraft !== 'r22') return null;
+  if (booking.upgrade) return null;
+
+  const flightPaid = Number(booking.flightAmountPence) || 0;
+  // Default to same-duration upgrade (R22 30 → R44 30; R22 60 → R44 60).
+  const defaultDur = booking.duration === 60 ? 60 : 30;
+  const defaultDiff = R44_PRICE_FALLBACK[defaultDur] - flightPaid;
+  if (defaultDiff <= 0) return null;
+
+  return (
+    <button type="button" onClick={onClick} style={S.row} aria-label="Upgrade to R44">
+      <span style={S.rowText}>
+        Bring 2 extra friends, upgrade to R44 for <strong>{fmtGbpNoZeros(defaultDiff)}</strong>
+      </span>
+      <span style={S.rowArrow} aria-hidden="true">→</span>
+    </button>
+  );
+}
+
+function UpgradeForm({ booking, onSuccess, onCancel, embedded }) {
   const stripe = useStripe();
   const elements = useElements();
   const initialDur = booking.duration === 60 ? 60 : 30;
@@ -43,7 +72,6 @@ function UpgradeForm({ booking, onSuccess }) {
 
   const diffPence = diffByDuration[duration];
   const canUpgrade = diffPence > 0;
-  const r44Price = R44_PRICE_FALLBACK[duration];
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -89,8 +117,12 @@ function UpgradeForm({ booking, onSuccess }) {
 
   return (
     <form onSubmit={handleSubmit} style={S.form}>
-      <h3 style={S.title}>Bring 2 extra friends — upgrade to R44</h3>
-      <p style={S.hint}>This option is also in your confirmation email — no rush deciding now.</p>
+      {!embedded && (
+        <>
+          <h3 style={S.modalTitle}>Upgrade to Robinson R44</h3>
+          <p style={S.modalSub}>Bring 2 extra friends. Pay only the difference.</p>
+        </>
+      )}
 
       <div style={S.durationRow} role="radiogroup" aria-label="Upgrade duration">
         {[30, 60].map((d) => {
@@ -122,12 +154,10 @@ function UpgradeForm({ booking, onSuccess }) {
         })}
       </div>
 
-      <div style={S.math}>
-        <div>R44 {duration} min: <strong>{fmtGbp(r44Price)}</strong></div>
-        <div>− £{(flightPaid / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} already paid</div>
-        <div style={S.mathTotal}>= {fmtGbp(diffPence)} to upgrade</div>
+      <div style={S.summary}>
+        <span>R44 {duration} min upgrade</span>
+        <strong>{fmtGbp(diffPence)}</strong>
       </div>
-      <p style={S.alreadyPaid}>You've already paid {fmtGbp(flightPaid)} for your R22 flight. Today you only pay the difference.</p>
 
       <div style={S.cardField}><CardNumberElement options={CARD_FIELD_STYLE} /></div>
       <div style={S.cardSplit}>
@@ -140,15 +170,57 @@ function UpgradeForm({ booking, onSuccess }) {
       <button type="submit" disabled={!stripe || loading || !canUpgrade} style={S.payBtn}>
         {loading ? 'Processing…' : `Pay ${fmtGbp(diffPence)} to upgrade`}
       </button>
+
+      {onCancel && (
+        <button type="button" onClick={onCancel} style={S.cancelBtn} disabled={loading}>
+          Cancel
+        </button>
+      )}
     </form>
   );
 }
 
-export default function UpgradeOfferCard({ booking, onUpgraded }) {
+/**
+ * Modal that wraps the upgrade form. Used by `<UpgradeOfferCard>` when the
+ * compact row is clicked. The standalone `/upgrade` page imports
+ * `<UpgradeFormStandalone>` directly instead.
+ */
+function UpgradeModal({ booking, open, onClose, onSuccess }) {
+  useEffect(() => {
+    if (!open) return;
+    function onKey(e) { if (e.key === 'Escape') onClose(); }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Upgrade to R44"
+      style={S.modalBackdrop}
+      onClick={onClose}
+    >
+      <div onClick={(e) => e.stopPropagation()} style={S.modalPanel}>
+        <button type="button" onClick={onClose} aria-label="Close" style={S.modalClose}>×</button>
+        <Elements stripe={stripePromise}>
+          <UpgradeForm booking={booking} onSuccess={(p) => { onSuccess(p); onClose(); }} />
+        </Elements>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Standalone version of the upgrade form (no modal chrome). Used by the
+ * `/upgrade` page which renders the form full-screen via the email link.
+ */
+export function UpgradeFormStandalone({ booking, onUpgraded }) {
   if (!booking) return null;
   if (booking.aircraft !== 'r22') return null;
   if (booking.upgrade) return null;
-
   return (
     <div style={S.card}>
       <Elements stripe={stripePromise}>
@@ -158,17 +230,84 @@ export default function UpgradeOfferCard({ booking, onUpgraded }) {
   );
 }
 
+/**
+ * Default export: a row + modal pair. Render this inline (e.g. inside the
+ * Booking Summary card). Click the row → modal opens with the form.
+ */
+export default function UpgradeOfferCard({ booking, onUpgraded }) {
+  const [open, setOpen] = useState(false);
+  if (!booking) return null;
+  if (booking.aircraft !== 'r22') return null;
+  if (booking.upgrade) return null;
+  return (
+    <>
+      <UpgradeRow booking={booking} onClick={() => setOpen(true)} />
+      <UpgradeModal
+        booking={booking}
+        open={open}
+        onClose={() => setOpen(false)}
+        onSuccess={onUpgraded}
+      />
+    </>
+  );
+}
+
 const S = {
+  // Compact trigger row inside the Booking Summary card
+  row: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    padding: '14px 16px',
+    margin: '8px 0',
+    background: '#faf6e9',
+    border: '1px solid #e8d98a',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontFamily: "'Space Grotesk', Arial, sans-serif",
+    fontSize: '14px',
+    color: '#1a1a1a',
+    textAlign: 'left',
+    transition: 'background 0.15s, border-color 0.15s',
+  },
+  rowText: { flex: '1 1 auto', lineHeight: 1.4 },
+  rowArrow: { fontSize: '18px', color: '#7a6a1a', marginLeft: '12px', flexShrink: 0 },
+
+  // Standalone card (used by /upgrade page)
   card: { background: '#fff', borderRadius: '12px', border: '1px solid #e8e8e8', padding: '24px' },
+
+  // Modal
+  modalBackdrop: {
+    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    zIndex: 1000, padding: '16px',
+  },
+  modalPanel: {
+    background: '#fff', borderRadius: '12px', padding: '24px',
+    maxWidth: '480px', width: '100%', maxHeight: 'calc(100vh - 32px)',
+    overflowY: 'auto', position: 'relative',
+    fontFamily: "'Space Grotesk', Arial, sans-serif",
+  },
+  modalClose: {
+    position: 'absolute', top: '12px', right: '16px',
+    background: 'none', border: 'none', fontSize: '1.6rem', cursor: 'pointer', color: '#666',
+    lineHeight: 1,
+  },
+  modalTitle: { fontSize: '1.1rem', fontWeight: 700, margin: '0 0 4px' },
+  modalSub: { fontSize: '0.85rem', color: '#666', margin: '0 0 16px' },
+
+  // Form internals
   form: { display: 'flex', flexDirection: 'column', gap: '14px' },
-  title: { fontSize: '1rem', fontWeight: 700, margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' },
-  hint: { fontSize: '0.8rem', color: '#666', margin: 0, fontStyle: 'italic' },
   durationRow: { display: 'flex', gap: '8px' },
-  math: { fontSize: '0.95rem', color: '#1a1a1a', background: '#faf9f6', borderRadius: '8px', padding: '12px', lineHeight: 1.7 },
-  mathTotal: { fontWeight: 700, fontSize: '1.1rem', marginTop: '4px' },
-  alreadyPaid: { fontSize: '0.85rem', color: '#444', margin: 0 },
+  summary: {
+    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+    padding: '12px 14px', background: '#faf9f6', borderRadius: '8px',
+    fontSize: '0.95rem', color: '#1a1a1a',
+  },
   cardField: { padding: '12px 14px', border: '1px solid #e0e0e0', borderRadius: '8px', background: '#faf9f6' },
   cardSplit: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' },
   error: { color: '#c0392b', fontSize: '0.9rem', padding: '10px 14px', background: '#fdf0ef', borderRadius: '6px', border: '1px solid #f5c6c2' },
   payBtn: { padding: '14px', background: '#1a1a1a', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 600, fontSize: '0.95rem', cursor: 'pointer' },
+  cancelBtn: { padding: '10px', background: 'transparent', color: '#666', border: 'none', cursor: 'pointer', fontSize: '0.85rem' },
 };

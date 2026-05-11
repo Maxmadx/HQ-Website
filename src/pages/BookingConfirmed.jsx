@@ -4,6 +4,7 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { trackEvent } from '../lib/analytics';
 import PostCheckoutOffers from '../components/booking/PostCheckoutOffers';
+import UpgradeOfferCard from '../components/booking/UpgradeOfferCard';
 
 const AIRCRAFT_NAMES = {
   r22: 'Robinson R22',
@@ -184,6 +185,9 @@ export default function BookingConfirmed() {
               })()}
             </>
           )}
+          {!isMisc && booking && (
+            <UpgradeOfferCard booking={booking} onUpgraded={refetchBooking} />
+          )}
           {ref && (
             <div style={{ ...styles.row, borderTop: '1px solid #f0f0f0', marginTop: '12px', paddingTop: '12px' }}>
               <span style={{ ...styles.label, fontSize: '12px', color: '#bbb' }}>Booking Reference</span>
@@ -193,7 +197,7 @@ export default function BookingConfirmed() {
         </div>
 
         {!isMisc && (
-          <PostCheckoutOffers booking={booking} freeReferralItem={freeReferralItem} onUpgraded={refetchBooking} />
+          <PostCheckoutOffers booking={booking} freeReferralItem={freeReferralItem} />
         )}
 
         <p style={styles.nextStep}>

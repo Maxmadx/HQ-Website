@@ -24,22 +24,36 @@ describe('UpgradeOfferCard', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it('renders for an R22 booking with no upgrade', () => {
+  it('renders compact row with auto-calculated diff in title for R22 30min', () => {
     render(<UpgradeOfferCard booking={{ aircraft: 'r22', duration: 30, flightAmountPence: 18000 }} onUpgraded={() => {}} />);
+    // R44 30min (30500) - R22 30min paid (18000) = 12500 pence = £125
+    expect(screen.getByRole('button', { name: /Upgrade to R44/i })).toBeInTheDocument();
+    expect(screen.getByText(/£125/)).toBeInTheDocument();
     expect(screen.getByText(/Bring 2 extra friends/i)).toBeInTheDocument();
+    // Modal not yet open
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('opens modal with duration toggle when row is clicked', () => {
+    render(<UpgradeOfferCard booking={{ aircraft: 'r22', duration: 30, flightAmountPence: 18000 }} onUpgraded={() => {}} />);
+    fireEvent.click(screen.getByRole('button', { name: /Upgrade to R44/i }));
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByRole('radio', { name: /^30 min$/i })).toBeInTheDocument();
     expect(screen.getByRole('radio', { name: /^60 min$/i })).toBeInTheDocument();
   });
 
-  it('disables the 30 min option when the booker paid R22 60 min', () => {
+  it('disables the 30 min option in modal when the booker paid R22 60 min', () => {
     render(<UpgradeOfferCard booking={{ aircraft: 'r22', duration: 60, flightAmountPence: 36000 }} onUpgraded={() => {}} />);
+    fireEvent.click(screen.getByRole('button', { name: /Upgrade to R44/i }));
     expect(screen.getByRole('radio', { name: /^30 min$/i })).toBeDisabled();
     expect(screen.getByRole('radio', { name: /^60 min$/i })).not.toBeDisabled();
   });
 
-  it('shows the correct diff math for R22 30 → R44 60', () => {
+  it('shows the correct diff in modal summary when switching to 60 min', () => {
     render(<UpgradeOfferCard booking={{ aircraft: 'r22', duration: 30, flightAmountPence: 18000 }} onUpgraded={() => {}} />);
+    fireEvent.click(screen.getByRole('button', { name: /Upgrade to R44/i }));
     fireEvent.click(screen.getByRole('radio', { name: /^60 min$/i }));
-    expect(screen.getByText(/= £425\.00 to upgrade/)).toBeInTheDocument();
+    // R44 60min (60500) - R22 30min paid (18000) = 42500 pence = £425.00
+    expect(screen.getByRole('button', { name: /Pay £425\.00 to upgrade/i })).toBeInTheDocument();
   });
 });

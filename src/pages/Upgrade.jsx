@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import FinalDraftHeader from '../components/FinalDraftHeader';
-import UpgradeOfferCard from '../components/booking/UpgradeOfferCard';
+import { UpgradeFormStandalone } from '../components/booking/UpgradeOfferCard';
 
 const fmtGbp = (pence) => `£${(Number(pence) / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 const AIRCRAFT_NAMES = { r22: 'Robinson R22', r44: 'Robinson R44', r66: 'Robinson R66' };
@@ -107,7 +107,7 @@ export default function Upgrade() {
           <p style={S.subheading}>
             Your original booking: {AIRCRAFT_NAMES[booking.aircraft]} {booking.duration} min — {fmtGbp(booking.flightAmountPence)} paid.
           </p>
-          <UpgradeOfferCard booking={booking} onUpgraded={handleUpgraded} />
+          <UpgradeFormStandalone booking={booking} onUpgraded={handleUpgraded} />
         </div>
       </div>
     </>
