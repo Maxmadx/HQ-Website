@@ -131,12 +131,18 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
         <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
           <defs>
             <filter id="r22-red-to-yellow" colorInterpolationFilters="sRGB">
+              {/* Maps red (1,0,0) → mustard ~#DBB524 (0.86, 0.71, 0.14).
+                  Each output channel is a scaled fraction of old_R: enough
+                  R to keep saturation, ~70% G to push toward yellow, ~14%
+                  B to warm it toward gold. Black/dark areas (low R) stay
+                  near-black; some shift in highlights is acceptable as the
+                  R22 PNG has little pure white. */}
               <feColorMatrix
                 type="matrix"
-                values="1 0 0 0 0
-                        1 0 0 0 0
-                        0 0 1 0 0
-                        0 0 0 1 0"
+                values="0.86 0 0 0 0
+                        0.71 0 0 0 0
+                        0.14 0 0 0 0
+                        0    0 0 1 0"
               />
             </filter>
           </defs>
