@@ -105,3 +105,31 @@ export async function generateLqip(srcPath) {
     .toBuffer();
   return `data:image/avif;base64,${buf.toString('base64')}`;
 }
+
+export const MANIFEST_FILENAME = 'optimised-manifest.json';
+
+/**
+ * Read the optimised-manifest.json. Returns { version, sources } even if the
+ * file doesn't exist or is malformed — callers should not have to handle either.
+ */
+export async function readManifest(manifestPath) {
+  try {
+    const text = await fs.readFile(manifestPath, 'utf8');
+    const parsed = JSON.parse(text);
+    if (!parsed.sources) return { version: 1, sources: {} };
+    return parsed;
+  } catch (err) {
+    return { version: 1, sources: {} };
+  }
+}
+
+/**
+ * Write the manifest atomically (write to temp file, then rename).
+ * Atomic write prevents partial writes if the process is killed mid-write.
+ */
+export async function writeManifest(manifestPath, manifest) {
+  await fs.mkdir(path.dirname(manifestPath), { recursive: true });
+  const tmp = `${manifestPath}.tmp`;
+  await fs.writeFile(tmp, JSON.stringify(manifest, null, 2) + '\n');
+  await fs.rename(tmp, manifestPath);
+}

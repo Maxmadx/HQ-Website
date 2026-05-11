@@ -11,6 +11,9 @@ import {
   FORMAT_CONFIG,
   SIZES,
   generateLqip,
+  readManifest,
+  writeManifest,
+  MANIFEST_FILENAME,
 } from './imageOptimisation';
 
 let tmpDir;
@@ -189,5 +192,45 @@ describe('generateLqip', () => {
     const src = await makeRealImage('hero.jpg', 2000, 1500);
     const lqip = await generateLqip(src);
     expect(lqip.length).toBeLessThan(2048); // generous upper bound
+  });
+});
+
+describe('readManifest', () => {
+  it('returns empty shape when file does not exist', async () => {
+    const m = await readManifest(path.join(tmpDir, 'manifest.json'));
+    expect(m).toEqual({ version: 1, sources: {} });
+  });
+
+  it('reads an existing manifest', async () => {
+    const manifestPath = path.join(tmpDir, 'manifest.json');
+    await fs.writeFile(manifestPath, JSON.stringify({
+      version: 1,
+      sources: {
+        'r66/hero.jpg': { sourceMtimeMs: 1234, hasAlpha: false, lqip: 'data:...' },
+      },
+    }));
+    const m = await readManifest(manifestPath);
+    expect(m.sources['r66/hero.jpg'].sourceMtimeMs).toBe(1234);
+  });
+
+  it('returns empty shape on malformed JSON', async () => {
+    const manifestPath = path.join(tmpDir, 'broken.json');
+    await fs.writeFile(manifestPath, '{ this is not valid');
+    const m = await readManifest(manifestPath);
+    expect(m).toEqual({ version: 1, sources: {} });
+  });
+});
+
+describe('writeManifest', () => {
+  it('writes pretty-printed JSON', async () => {
+    const manifestPath = path.join(tmpDir, 'out.json');
+    await writeManifest(manifestPath, {
+      version: 1,
+      sources: { 'a.jpg': { sourceMtimeMs: 1 } },
+    });
+    const text = await fs.readFile(manifestPath, 'utf8');
+    expect(text).toContain('"version": 1');
+    expect(text).toContain('"a.jpg"');
+    expect(text.endsWith('\n')).toBe(true);
   });
 });
