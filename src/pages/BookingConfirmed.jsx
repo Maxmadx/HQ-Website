@@ -157,7 +157,14 @@ export default function BookingConfirmed() {
     const timerPromise = new Promise((resolve) => setTimeout(resolve, FOUR_SECONDS));
 
     Promise.all([recordPromise, timerPromise]).then(([recordOk]) => {
-      if (!cancelled && recordOk) setPhase('confirmed');
+      if (!cancelled && recordOk) {
+        // Trigger fade-out of the hero card; after the CSS transition completes,
+        // unmount it and fade in the confirmed UI.
+        setPhase('fading');
+        setTimeout(() => {
+          if (!cancelled) setPhase('confirmed');
+        }, 450);
+      }
     });
 
     return () => { cancelled = true; };
@@ -175,28 +182,50 @@ export default function BookingConfirmed() {
     } catch {}
   }
 
+  const heroVisible = phase === 'confirming';
+  const confirmedVisible = phase === 'confirmed';
+
   return (
     <div style={styles.page}>
-      <style>{`@keyframes bc-spin { to { transform: rotate(360deg); } }`}</style>
+      <style>{`
+        @keyframes bc-spin { to { transform: rotate(360deg); } }
+        @keyframes bc-fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+      `}</style>
       <div style={styles.container}>
 
-        {/* Success mark — spinner during Phase 1, ✓ during Phase 2 */}
-        {phase === 'confirmed' ? (
-          <div style={styles.checkmark}>✓</div>
-        ) : (
-          <div style={styles.spinner} aria-label="Confirming booking" />
-        )}
+        {/* Success mark — spinner during Phase 1/fading, ✓ during Phase 2 */}
+        <div style={styles.markSlot}>
+          {confirmedVisible ? (
+            <div style={{ ...styles.checkmark, animation: 'bc-fade-in 400ms ease both' }}>✓</div>
+          ) : (
+            <div style={styles.spinner} aria-label="Confirming booking" />
+          )}
+        </div>
 
         <h1 style={styles.heading}>
-          {phase === 'confirming'
-            ? 'Confirming Booking'
-            : (isMisc ? 'Purchase Confirmed' : 'Booking Confirmed')}
+          {confirmedVisible
+            ? (isMisc ? 'Purchase Confirmed' : 'Booking Confirmed')
+            : 'Confirming Booking'}
         </h1>
 
-        {phase === 'confirming' ? (
-          <BigUpgradeCard booking={booking} onUpgraded={refetchBooking} />
-        ) : (
-          <>
+        {/* Hero R44 pitch — mounted during 'confirming' AND 'fading'; opacity driven by phase */}
+        {(phase === 'confirming' || phase === 'fading') && (
+          <div
+            style={{
+              opacity: heroVisible ? 1 : 0,
+              transform: heroVisible ? 'translateY(0)' : 'translateY(-6px)',
+              transition: 'opacity 380ms ease, transform 380ms ease',
+              animation: heroVisible ? 'bc-fade-in 480ms ease both' : 'none',
+              willChange: 'opacity, transform',
+            }}
+          >
+            <BigUpgradeCard booking={booking} onUpgraded={refetchBooking} />
+          </div>
+        )}
+
+        {/* Confirmed UI — fades in via keyframe on mount */}
+        {confirmedVisible && (
+          <div style={{ animation: 'bc-fade-in 480ms ease both' }}>
             <p style={styles.subheading}>
               {name ? `Thank you, ${name}.` : 'Thank you.'}{' '}
               {isMisc
@@ -275,7 +304,7 @@ export default function BookingConfirmed() {
             </p>
 
             <Link to="/" style={styles.homeLink}>Return to HQ Aviation</Link>
-          </>
+          </div>
         )}
 
       </div>
@@ -288,15 +317,22 @@ const styles = {
     minHeight: '100vh',
     background: '#faf9f6',
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
-    padding: '40px 20px',
+    padding: '80px 20px 40px',
     fontFamily: "'Space Grotesk', Arial, sans-serif",
   },
   container: {
     maxWidth: '520px',
     width: '100%',
     textAlign: 'center',
+  },
+  markSlot: {
+    height: '64px',
+    marginBottom: '24px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   checkmark: {
     width: '64px',
@@ -308,7 +344,6 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: '0 auto 24px',
   },
   spinner: {
     width: '64px',
@@ -316,7 +351,6 @@ const styles = {
     borderRadius: '50%',
     border: '4px solid #e5e7eb',
     borderTopColor: '#1a1a1a',
-    margin: '0 auto 24px',
     animation: 'bc-spin 0.9s linear infinite',
   },
   heading: {
