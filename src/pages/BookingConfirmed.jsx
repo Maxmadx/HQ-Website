@@ -5,6 +5,7 @@ import { db } from '../lib/firebase';
 import { trackEvent } from '../lib/analytics';
 import PostCheckoutOffers from '../components/booking/PostCheckoutOffers';
 import UpgradePill from '../components/booking/UpgradePill';
+import InviteFriendCard from '../components/booking/InviteFriendCard';
 
 const AIRCRAFT_NAMES = {
   r22: 'Robinson R22',
@@ -193,6 +194,9 @@ export default function BookingConfirmed() {
       `}</style>
       <div style={styles.container}>
 
+        {/* Centred heading column — narrow, holds spinner/✓, h1, button, divider */}
+        <div style={styles.centerColumn}>
+
         {/* Success mark — spinner during Phase 1/fading, ✓ during Phase 2 */}
         <div style={styles.markSlot}>
           {confirmedVisible ? (
@@ -245,6 +249,34 @@ export default function BookingConfirmed() {
             transition: 'opacity 700ms ease, max-height 1500ms ease, margin 1500ms ease',
           }}
         />
+
+        </div>{/* /centerColumn — heading area */}
+
+        {/* Cards row — UpgradePill + InviteFriendCard side-by-side on desktop,
+            stack on mobile (flex-wrap when ≤ ~992px). */}
+        <div style={styles.cardsRow}>
+          {!isMisc && (
+            <div style={styles.cardsCol}>
+              <UpgradePill
+                booking={booking}
+                onUpgraded={refetchBooking}
+                mode={isExpanded ? 'compact' : 'hero'}
+              />
+            </div>
+          )}
+          {!isMisc && (
+            <div style={styles.cardsCol}>
+              <InviteFriendCard
+                booking={booking}
+                freeItem={freeReferralItem}
+                mode={isExpanded ? 'compact' : 'hero'}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Centred summary/offers/return column */}
+        <div style={styles.centerColumn}>
 
         {/* Summary card — grows in when the user clicks 'View Booking Summary'.
             max-height + opacity transition so the pill below shifts down
@@ -311,18 +343,6 @@ export default function BookingConfirmed() {
           </div>
         </div>
 
-        {/* THE morphing upgrade pill — single mounted component, transitions
-            between hero (Phase 1) and compact (Phase 2) modes via CSS.
-            Sits BELOW the summary card. The same element you saw as the big
-            R44 card IS the green pill you can click later. */}
-        {!isMisc && (
-          <UpgradePill
-            booking={booking}
-            onUpgraded={refetchBooking}
-            mode={isExpanded ? 'compact' : 'hero'}
-          />
-        )}
-
         {/* Post-checkout offers + outro — only after user clicks View Booking Summary. */}
         {isExpanded && (
           <div style={{ animation: 'bc-fade-in 480ms ease both' }}>
@@ -344,6 +364,8 @@ export default function BookingConfirmed() {
           </div>
         )}
 
+        </div>{/* /centerColumn — summary/offers/return */}
+
       </div>
     </div>
   );
@@ -360,9 +382,28 @@ const styles = {
     fontFamily: "'Space Grotesk', Arial, sans-serif",
   },
   container: {
-    maxWidth: '520px',
+    maxWidth: '1080px',
     width: '100%',
     textAlign: 'center',
+  },
+  centerColumn: {
+    maxWidth: '520px',
+    width: '100%',
+    margin: '0 auto',
+  },
+  cardsRow: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: '32px',
+    width: '100%',
+  },
+  cardsCol: {
+    flex: '1 1 480px',
+    minWidth: 0,
+    maxWidth: '520px',
+    display: 'flex',
+    flexDirection: 'column',
   },
   markSlot: {
     height: '64px',

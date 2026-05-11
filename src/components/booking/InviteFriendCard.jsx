@@ -1,0 +1,224 @@
+import { useEffect, useState } from 'react';
+
+const R22_PHOTO = '/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png';
+const SHARE_PATH = '/training/trial-lessons';
+
+/**
+ * Hero-style invite-a-friend card. Sibling to <UpgradePill> — same visual
+ * structure (black title bar / photo / pitches / black CTA) and matching
+ * entry animation (fall + middle expand). Click anywhere copies the
+ * referral link to the clipboard.
+ *
+ * Renders only when the booking has a referralCode AND a free referral
+ * item is configured (same gating as <ReferralOfferCard>). In the expanded
+ * phase (mode='compact') it collapses; the existing ReferralOfferCard in
+ * PostCheckoutOffers takes over the referral CTA below the summary card.
+ */
+export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
+  const [copied, setCopied] = useState(false);
+  const [ctaHover, setCtaHover] = useState(false);
+  const [appearing, setAppearing] = useState(true);
+  const [middleOpen, setMiddleOpen] = useState(false);
+
+  const shouldShow = !!(booking?.referralCode && freeItem);
+
+  useEffect(() => {
+    if (!shouldShow) return;
+    let id2;
+    const id1 = requestAnimationFrame(() => {
+      id2 = requestAnimationFrame(() => setAppearing(false));
+    });
+    return () => {
+      cancelAnimationFrame(id1);
+      if (id2) cancelAnimationFrame(id2);
+    };
+  }, [shouldShow]);
+
+  useEffect(() => {
+    if (!shouldShow) return;
+    const t = setTimeout(() => setMiddleOpen(true), 550);
+    return () => clearTimeout(t);
+  }, [shouldShow]);
+
+  if (!shouldShow) return null;
+
+  const isHero = mode === 'hero';
+  const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}${SHARE_PATH}?ref=${booking.referralCode}`;
+
+  async function handleClick() {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2200);
+    } catch {}
+  }
+
+  function handleKeyDown(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick();
+    }
+  }
+
+  return (
+    <div
+      style={{
+        maxHeight: appearing ? '0px' : '800px',
+        opacity: appearing ? 0 : 1,
+        transform: appearing ? 'translateY(-60px)' : 'translateY(0)',
+        overflow: 'hidden',
+        transition:
+          'max-height 1500ms ease, ' +
+          'opacity 1000ms ease 200ms, ' +
+          'transform 1100ms cubic-bezier(0.34, 1.56, 0.64, 1) 100ms',
+      }}
+    >
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label="Copy referral link"
+        onClick={handleClick}
+        onKeyDown={handleKeyDown}
+        style={{
+          width: '100%',
+          marginBottom: isHero ? '28px' : '20px',
+          background: isHero ? '#fff' : '#ecfdf5',
+          border: isHero ? '1px solid #e8e8e8' : '1px solid #6ee7b7',
+          borderRadius: isHero ? '12px' : '8px',
+          boxShadow: isHero ? '0 4px 16px rgba(0,0,0,0.05)' : 'none',
+          overflow: 'hidden',
+          cursor: 'pointer',
+          fontFamily: "'Space Grotesk', Arial, sans-serif",
+          color: isHero ? '#1a1a1a' : '#065f46',
+          textAlign: 'left',
+          outline: 'none',
+          transition:
+            'background 1500ms ease, border-color 1500ms ease, border-radius 1500ms ease, ' +
+            'box-shadow 1500ms ease, margin-bottom 1500ms ease, color 1100ms ease',
+        }}
+      >
+        {/* Title — full-width black bar */}
+        <div
+          style={{
+            maxHeight: isHero ? '100px' : '0px',
+            opacity: isHero ? 1 : 0,
+            padding: isHero ? '22px 28px' : '0 16px',
+            background: '#1a1a1a',
+            overflow: 'hidden',
+            textAlign: 'center',
+            transition:
+              'max-height 1500ms ease, opacity 850ms ease, padding 1500ms ease',
+          }}
+        >
+          <h2
+            style={{
+              fontSize: '1.15rem',
+              fontFamily: "'Space Grotesk', Arial, sans-serif",
+              color: '#fff',
+              margin: 0,
+              fontWeight: 700,
+              letterSpacing: '0.01em',
+            }}
+          >
+            Invite a friend up too.
+          </h2>
+        </div>
+
+        {/* Two R22s superimposed — back one slightly offset and faded.
+            opacity 0.55 on the back image creates a "shadow / behind"
+            effect so the viewer reads two distinct helicopters. */}
+        <div
+          style={{
+            position: 'relative',
+            width: '100%',
+            height: isHero && middleOpen ? '240px' : '0px',
+            background: '#f5f5f5',
+            overflow: 'hidden',
+            transition: 'height 600ms ease-out',
+          }}
+        >
+          <img
+            src={R22_PHOTO}
+            alt=""
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: '8%',
+              width: '70%',
+              height: '240px',
+              objectFit: 'contain',
+              objectPosition: 'center',
+              opacity: isHero && middleOpen ? 0.55 : 0,
+              transition: 'opacity 500ms ease-out',
+              transform: 'translateY(10px)',
+            }}
+          />
+          <img
+            src={R22_PHOTO}
+            alt="Two Robinson R22s — fly one and bring a friend in theirs"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: '22%',
+              width: '70%',
+              height: '240px',
+              objectFit: 'contain',
+              objectPosition: 'center',
+              opacity: isHero && middleOpen ? 1 : 0,
+              transition: 'opacity 500ms ease-out',
+            }}
+          />
+        </div>
+
+        {/* Pitches */}
+        <div
+          style={{
+            maxHeight: isHero && middleOpen ? '180px' : '0px',
+            opacity: isHero && middleOpen ? 1 : 0,
+            padding: isHero && middleOpen ? '24px 28px 28px' : '0 28px',
+            overflow: 'hidden',
+            textAlign: 'center',
+            transition:
+              'max-height 600ms ease-out, opacity 500ms ease-out, padding 600ms ease-out',
+          }}
+        >
+          <p style={{ fontSize: '1.05rem', color: '#444', margin: '0 0 4px', lineHeight: 1.5, fontWeight: 400 }}>
+            Share your link — they book a Discovery Flight.
+          </p>
+          <p style={{ fontSize: '1.05rem', color: '#444', margin: 0, lineHeight: 1.5, fontWeight: 400 }}>
+            Your free HQ {freeItem.name?.toLowerCase() || 'gift'} is waiting at HQ.
+          </p>
+        </div>
+
+        {/* CTA — full-width black bar at bottom */}
+        <div
+          style={{
+            maxHeight: isHero ? '80px' : '0px',
+            opacity: isHero ? 1 : 0,
+            overflow: 'hidden',
+            transition: 'max-height 1500ms ease, opacity 850ms ease',
+          }}
+        >
+          <div
+            onMouseEnter={() => setCtaHover(true)}
+            onMouseLeave={() => setCtaHover(false)}
+            style={{
+              width: '100%',
+              padding: '22px 16px',
+              background: ctaHover ? '#fff' : '#1a1a1a',
+              color: ctaHover ? '#1a1a1a' : '#fff',
+              borderTop: '1px solid #d4d4d4',
+              fontWeight: 600,
+              fontSize: '1rem',
+              textAlign: 'center',
+              transition: 'background 200ms ease, color 200ms ease',
+            }}
+          >
+            {copied ? '✓ Link copied' : 'Copy referral link →'}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
