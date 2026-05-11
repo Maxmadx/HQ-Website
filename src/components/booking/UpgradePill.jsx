@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { UpgradeModal } from './UpgradeOfferCard';
 
 const R44_PRICE_FALLBACK = { 30: 30500, 60: 60500 };
@@ -25,6 +25,14 @@ const fmtGbpNoZeros = (pence) => {
  */
 export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
   const [modalOpen, setModalOpen] = useState(false);
+  // Entry animation: outer wrapper starts collapsed (max-height 0 + opacity 0)
+  // and opens on the next frame after mount, so the pill unfurls from behind
+  // the divider above it — same animation system as the collapse, in reverse.
+  const [appearing, setAppearing] = useState(true);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setAppearing(false));
+    return () => cancelAnimationFrame(id);
+  }, []);
   if (!booking) return null;
   if (booking.aircraft !== 'r22') return null;
   if (booking.upgrade) return null;
@@ -40,6 +48,17 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
 
   return (
     <>
+      <div
+        style={{
+          // Entry-animation wrapper. On first frame: collapsed + invisible.
+          // On next frame: opens to full height + opacity. The pill unfurls
+          // downward from where the divider above sits.
+          maxHeight: appearing ? '0px' : '800px',
+          opacity: appearing ? 0 : 1,
+          overflow: 'hidden',
+          transition: 'max-height 1500ms ease, opacity 1000ms ease 200ms',
+        }}
+      >
       <div
         role="button"
         tabIndex={0}
@@ -160,6 +179,7 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
           </span>
           <span aria-hidden="true" style={{ fontSize: '18px', color: '#047857', marginLeft: '12px', flexShrink: 0 }}>→</span>
         </div>
+      </div>
       </div>
 
       <UpgradeModal
