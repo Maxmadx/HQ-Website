@@ -16,6 +16,7 @@ import {
   MANIFEST_FILENAME,
   collectOrphans,
   processOneSource,
+  optimizeImages,
 } from './imageOptimisation';
 
 let tmpDir;
@@ -352,5 +353,49 @@ describe('processOneSource', () => {
     const result = await processOneSource(src, sourceDir, optDir, manifest);
     expect(result.cached).toBe(true);
     expect(result.variants).toEqual([]); // nothing regenerated
+  });
+});
+
+describe('optimizeImages', () => {
+  it('processes a directory of sources end-to-end', { timeout: 120000 }, async () => {
+    await makeRealImage('src/r66/hero.jpg', 2000, 1500);
+    await makeRealImage('src/logos/transparent.png', 800, 800, { alpha: true, format: 'png' });
+    await makeRealImage('src/logos/tiny.png', 100, 100, { format: 'png' }); // skip-by-size
+
+    const sourceDir = path.join(tmpDir, 'src');
+    const optDir = path.join(tmpDir, 'opt');
+
+    const summary = await optimizeImages(sourceDir, optDir);
+
+    expect(summary.processed).toBeGreaterThanOrEqual(2);
+    expect(summary.skipped).toBeGreaterThanOrEqual(1);
+    expect(summary.totalVariants).toBeGreaterThan(0);
+
+    // Manifest written
+    const manifestPath = path.join(optDir, MANIFEST_FILENAME);
+    const m = await readManifest(manifestPath);
+    expect(Object.keys(m.sources)).toContain('r66/hero.jpg');
+    expect(Object.keys(m.sources)).toContain('logos/transparent.png');
+    expect(Object.keys(m.sources)).toContain('logos/tiny.png');
+    expect(m.sources['logos/tiny.png'].skipped).toBe(true);
+  });
+
+  it('removes orphan variants after rerun with sources deleted', { timeout: 120000 }, async () => {
+    await makeRealImage('src/a.jpg', 1000, 1000);
+    const sourceDir = path.join(tmpDir, 'src');
+    const optDir = path.join(tmpDir, 'opt');
+
+    await optimizeImages(sourceDir, optDir);
+    // confirm variants exist
+    const aVariants = await fs.readdir(optDir);
+    expect(aVariants.some(f => f.startsWith('a-'))).toBe(true);
+
+    // delete source, rerun
+    await fs.rm(path.join(sourceDir, 'a.jpg'));
+    await optimizeImages(sourceDir, optDir);
+
+    // confirm variants gone
+    const after = await fs.readdir(optDir);
+    expect(after.some(f => f.startsWith('a-'))).toBe(false);
   });
 });

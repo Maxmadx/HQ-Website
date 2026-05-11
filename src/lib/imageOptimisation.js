@@ -249,3 +249,46 @@ export async function processOneSource(srcPath, sourceDir, optimisedDir, manifes
 
   return { skipped: false, cached: false, variants, lqip, manifestEntry };
 }
+
+/**
+ * Walk `sourceDir`, regenerate variants in `optimisedDir`, write the manifest,
+ * and garbage-collect orphans. Returns a summary of work done.
+ */
+export async function optimizeImages(sourceDir, optimisedDir, { skipDirs = ['optimised'] } = {}) {
+  await fs.mkdir(optimisedDir, { recursive: true });
+
+  const manifestPath = path.join(optimisedDir, MANIFEST_FILENAME);
+  const manifest = await readManifest(manifestPath);
+
+  const sources = await walkSources(sourceDir, { skipDirs });
+
+  let processed = 0;
+  let cached = 0;
+  let skipped = 0;
+  let totalVariants = 0;
+  const newSources = {};
+
+  for (const srcPath of sources) {
+    const relPath = path.relative(sourceDir, srcPath);
+    try {
+      const result = await processOneSource(srcPath, sourceDir, optimisedDir, manifest);
+      newSources[relPath] = result.manifestEntry;
+      if (result.cached) cached++;
+      else if (result.skipped) skipped++;
+      else { processed++; totalVariants += result.variants.length; }
+    } catch (err) {
+      console.error(`[optimize-images] ${relPath} failed: ${err.message}`);
+    }
+  }
+
+  const newManifest = {
+    version: 1,
+    generatedAt: new Date().toISOString(),
+    sources: newSources,
+  };
+  await writeManifest(manifestPath, newManifest);
+
+  const removed = await collectOrphans(optimisedDir, sourceDir);
+
+  return { processed, cached, skipped, totalVariants, removed: removed.length };
+}
