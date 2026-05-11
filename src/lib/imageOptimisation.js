@@ -133,3 +133,52 @@ export async function writeManifest(manifestPath, manifest) {
   await fs.writeFile(tmp, JSON.stringify(manifest, null, 2) + '\n');
   await fs.rename(tmp, manifestPath);
 }
+
+const VARIANT_NAME_RE = /^(.+)-(\d+|lqip)\.(avif|webp|jpg|jpeg|png|txt)$/i;
+
+/**
+ * Walk `optimisedDir`, identify variant files whose corresponding source
+ * (in `sourceDir`) no longer exists, delete them, and return their paths.
+ * Preserves the manifest and any non-variant files.
+ */
+export async function collectOrphans(optimisedDir, sourceDir) {
+  const removed = [];
+
+  async function walk(dir) {
+    let entries;
+    try {
+      entries = await fs.readdir(dir, { withFileTypes: true });
+    } catch (err) {
+      if (err.code === 'ENOENT') return;
+      throw err;
+    }
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        await walk(full);
+        continue;
+      }
+      if (entry.name === MANIFEST_FILENAME || entry.name === '.gitkeep') continue;
+      if (!entry.isFile()) continue;
+
+      const match = entry.name.match(VARIANT_NAME_RE);
+      if (!match) continue;
+      const [, basename] = match;
+      const relDir = path.relative(optimisedDir, dir);
+
+      // Look for a matching source — try each plausible source extension.
+      let sourceExists = false;
+      for (const ext of ['.jpg', '.jpeg', '.png', '.webp']) {
+        const candidate = path.join(sourceDir, relDir, `${basename}${ext}`);
+        try { await fs.stat(candidate); sourceExists = true; break; } catch { /* try next */ }
+      }
+      if (!sourceExists) {
+        await fs.unlink(full);
+        removed.push(full);
+      }
+    }
+  }
+
+  await walk(optimisedDir);
+  return removed;
+}

@@ -14,6 +14,7 @@ import {
   readManifest,
   writeManifest,
   MANIFEST_FILENAME,
+  collectOrphans,
 } from './imageOptimisation';
 
 let tmpDir;
@@ -232,5 +233,53 @@ describe('writeManifest', () => {
     expect(text).toContain('"version": 1');
     expect(text).toContain('"a.jpg"');
     expect(text.endsWith('\n')).toBe(true);
+  });
+});
+
+describe('collectOrphans', () => {
+  it('removes variant files whose source no longer exists', async () => {
+    const sourceDir = path.join(tmpDir, 'src');
+    const optDir = path.join(tmpDir, 'opt');
+    await fs.mkdir(sourceDir, { recursive: true });
+    await fs.mkdir(path.join(optDir, 'r66'), { recursive: true });
+
+    // create orphan variant — no source
+    await fs.writeFile(path.join(optDir, 'r66', 'ghost-400.webp'), 'fake');
+    await fs.writeFile(path.join(optDir, 'r66', 'ghost-lqip.txt'), 'fake');
+
+    // create kept variant — source exists
+    await makeRealImage('src/r66/hero.jpg', 800, 600);
+    await fs.writeFile(path.join(optDir, 'r66', 'hero-400.webp'), 'fake');
+
+    const removed = await collectOrphans(optDir, sourceDir);
+    const removedRel = removed.map(p => path.relative(optDir, p)).sort();
+    expect(removedRel).toEqual([
+      'r66/ghost-400.webp',
+      'r66/ghost-lqip.txt',
+    ]);
+
+    // confirm files deleted from disk
+    await expect(fs.stat(path.join(optDir, 'r66', 'ghost-400.webp'))).rejects.toThrow();
+    // confirm kept variant remains
+    await expect(fs.stat(path.join(optDir, 'r66', 'hero-400.webp'))).resolves.toBeTruthy();
+  });
+
+  it('returns empty array when no orphans exist', async () => {
+    const sourceDir = path.join(tmpDir, 'src');
+    const optDir = path.join(tmpDir, 'opt');
+    await fs.mkdir(sourceDir, { recursive: true });
+    await fs.mkdir(optDir, { recursive: true });
+    const removed = await collectOrphans(optDir, sourceDir);
+    expect(removed).toEqual([]);
+  });
+
+  it('preserves the manifest file', async () => {
+    const sourceDir = path.join(tmpDir, 'src');
+    const optDir = path.join(tmpDir, 'opt');
+    await fs.mkdir(sourceDir, { recursive: true });
+    await fs.mkdir(optDir, { recursive: true });
+    await fs.writeFile(path.join(optDir, 'optimised-manifest.json'), '{}');
+    await collectOrphans(optDir, sourceDir);
+    await expect(fs.stat(path.join(optDir, 'optimised-manifest.json'))).resolves.toBeTruthy();
   });
 });
