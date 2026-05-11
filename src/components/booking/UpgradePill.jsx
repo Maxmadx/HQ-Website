@@ -25,6 +25,7 @@ const fmtGbpNoZeros = (pence) => {
  */
 export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [ctaHover, setCtaHover] = useState(false);
   // Entry animation: outer wrapper renders collapsed (max-height 0 + opacity 0)
   // on the first paint AFTER the wrapper enters the DOM, then opens on the
   // next frame. Gated on `shouldShow` because the parent mounts UpgradePill
@@ -184,15 +185,17 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
           }}
         >
           <div
+            onMouseEnter={() => setCtaHover(true)}
+            onMouseLeave={() => setCtaHover(false)}
             style={{
               width: '100%',
               padding: '22px 16px',
-              background: '#1a1a1a',
-              color: '#fff',
+              background: ctaHover ? '#fff' : '#1a1a1a',
+              color: ctaHover ? '#1a1a1a' : '#fff',
               fontWeight: 600,
               fontSize: '1rem',
               textAlign: 'center',
-              transition: 'background 280ms ease',
+              transition: 'background 200ms ease, color 200ms ease',
             }}
           >
             Upgrade for {fmtGbpNoZeros(diffPence)} →
