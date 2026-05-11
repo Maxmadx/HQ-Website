@@ -120,7 +120,7 @@ function UpgradeForm({ booking, onSuccess, onCancel, embedded }) {
       {!embedded && (
         <>
           <h3 style={S.modalTitle}>Upgrade to Robinson R44</h3>
-          <p style={S.modalSub}>Bring 2 extra friends. Pay only the difference.</p>
+          <p style={S.modalSub}>You at the controls with two mates in the back.</p>
         </>
       )}
 
