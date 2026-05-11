@@ -53,9 +53,9 @@ describe('Upgrade page', () => {
     await waitFor(() => screen.getByText(/Not eligible/i));
   });
 
-  it('renders UpgradeOfferCard for valid R22 booking', async () => {
+  it('renders the upgrade form for valid R22 booking', async () => {
     fetchSpy.mockResolvedValue({ ok: true, json: () => ({ aircraft: 'r22', duration: 30, flightAmountPence: 18000, paymentIntentId: 'pi_x' }) });
     renderAt('?ref=pi_x');
-    await waitFor(() => screen.getByText(/Bring 2 extra friends/i));
+    await waitFor(() => screen.getByText(/Upgrade to Robinson R44/i));
   });
 });
