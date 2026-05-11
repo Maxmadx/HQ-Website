@@ -54,11 +54,10 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
     if (!shouldShow) return;
     // Delay slightly past the card's fall/unfurl (~1.1s) so the title +
     // CTA visibly land before the middle begins opening.
-    // Flip middleOpen ~800ms after mount — slightly before the card's
-    // transform fully settles, so the visible expansion lines up with the
-    // user's perceived "landed" moment instead of the formal end of the
-    // bezier curve.
-    const t = setTimeout(() => setMiddleOpen(true), 800);
+    // Flip middleOpen ~350ms after mount — the wrapper's max-height crosses
+    // the title+CTA content height very early (~200ms), so by 350ms the
+    // sandwich is visibly on screen and the middle can begin opening.
+    const t = setTimeout(() => setMiddleOpen(true), 350);
     return () => clearTimeout(t);
   }, [shouldShow]);
   if (!booking) return null;
