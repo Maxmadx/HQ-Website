@@ -35,6 +35,7 @@ import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import Seo from '../components/seo/Seo';
 import { buildService, buildBreadcrumbList } from '../components/seo/jsonLd';
+import Image from '../components/Image';
 import FooterMinimal from '../components/FooterMinimal';
 import FacilityGallery from '../components/Maintenance/FacilityGallery';
 import PartsEnquiry from '../components/Maintenance/PartsEnquiry';
@@ -265,7 +266,7 @@ function HeroSection() {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1.5 }}
       >
-        <img src={pageImages['maintenance-hero']?.[0]?.url || '/assets/images/facility/hq-0056.jpg'} alt="Helicopter maintenance" width={2500} height={1667} />
+        <Image src={pageImages['maintenance-hero']?.[0]?.url || '/assets/images/facility/hq-0056.jpg'} alt="Helicopter maintenance" width={2500} height={1667} priority sizes="100vw" />
       </motion.div>
       <div className="maint-hero__overlay" />
       <div className="maint-hero__blueprint-grid" />
