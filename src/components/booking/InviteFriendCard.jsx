@@ -210,9 +210,6 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
               'max-height 600ms ease-out, opacity 500ms ease-out, padding 600ms ease-out',
           }}
         >
-          <p style={{ fontSize: '1.05rem', color: '#444', margin: '0 0 4px', lineHeight: 1.5, fontWeight: 400 }}>
-            Share your link.
-          </p>
           <p style={{ fontSize: '1.05rem', color: '#444', margin: 0, lineHeight: 1.5, fontWeight: 400 }}>
             When they book, you'll both have some gifts waiting for you at HQ.
           </p>
