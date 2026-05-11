@@ -124,17 +124,18 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
           </h2>
         </div>
 
-        {/* SVG color-swap filter — swaps the red and blue channels of the
-            back helicopter so only the red bodywork becomes blue. Blacks,
-            greys, whites, and shadows (where R == B) stay unchanged. */}
+        {/* SVG colour-swap filter — copies the R channel into G so red
+            bodywork (high R, low G) becomes yellow (high R, high G).
+            Pixels where R is already low (blacks, dark shadows) and pixels
+            where all channels are equal (greys, whites) stay unchanged. */}
         <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
           <defs>
-            <filter id="r22-red-to-blue" colorInterpolationFilters="sRGB">
+            <filter id="r22-red-to-yellow" colorInterpolationFilters="sRGB">
               <feColorMatrix
                 type="matrix"
-                values="0 0 1 0 0
-                        0 1 0 0 0
+                values="1 0 0 0 0
                         1 0 0 0 0
+                        0 0 1 0 0
                         0 0 0 1 0"
               />
             </filter>
@@ -166,9 +167,10 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
               objectFit: 'contain',
               objectPosition: 'center',
               opacity: isHero && middleOpen ? 1 : 0,
-              // Channel-swap (R ↔ B) so only the red bodywork becomes blue.
-              // Greys, blacks, and shadows where R == B stay unchanged.
-              filter: 'url(#r22-red-to-blue)',
+              // Copy R → G so the red bodywork becomes yellow. Greys,
+              // blacks, and white-ish pixels (where R is already balanced
+              // with the other channels) are unchanged.
+              filter: 'url(#r22-red-to-yellow)',
               transition: 'opacity 500ms ease-out',
               transform: 'translateY(10px)',
             }}
