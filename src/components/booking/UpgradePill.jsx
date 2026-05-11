@@ -100,6 +100,33 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
             'box-shadow 1500ms ease, margin-bottom 1500ms ease, color 1100ms ease',
         }}
       >
+        {/* Title above the photo — collapses with the rest of hero on compact */}
+        <div
+          style={{
+            maxHeight: isHero ? '100px' : '0px',
+            opacity: isHero ? 1 : 0,
+            padding: isHero ? '24px 28px 16px' : '0 16px',
+            overflow: 'hidden',
+            textAlign: 'center',
+            transition:
+              'max-height 1500ms ease, opacity 850ms ease, padding 1500ms ease',
+          }}
+        >
+          <h2
+            style={{
+              fontSize: '1.1rem',
+              fontFamily: "'Share Tech Mono', monospace",
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              color: '#888',
+              margin: 0,
+              fontWeight: 700,
+            }}
+          >
+            Upgrade to Robinson R44
+          </h2>
+        </div>
+
         {/* R44 photo — collapses to 0 height in compact mode */}
         <div
           style={{
@@ -124,32 +151,19 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
           />
         </div>
 
-        {/* Hero body — title, pitch lines, price, CTA pill.
+        {/* Hero body — pitch lines + CTA pill (title moved above the photo).
             Collapses (max-height + opacity) when transitioning to compact. */}
         <div
           style={{
-            maxHeight: isHero ? '360px' : '0px',
+            maxHeight: isHero ? '300px' : '0px',
             opacity: isHero ? 1 : 0,
-            padding: isHero ? '24px 28px' : '0 16px',
+            padding: isHero ? '20px 28px 24px' : '0 16px',
             overflow: 'hidden',
             textAlign: 'center',
             transition:
               'max-height 1500ms ease, opacity 850ms ease, padding 1500ms ease',
           }}
         >
-          <h2
-            style={{
-              fontSize: '1.1rem',
-              fontFamily: "'Share Tech Mono', monospace",
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-              color: '#888',
-              margin: '0 0 16px',
-              fontWeight: 700,
-            }}
-          >
-            Upgrade to Robinson R44
-          </h2>
           <p style={{ fontSize: '1.05rem', color: '#444', margin: '0 0 4px', lineHeight: 1.5, fontWeight: 400 }}>
             You at the controls.
           </p>

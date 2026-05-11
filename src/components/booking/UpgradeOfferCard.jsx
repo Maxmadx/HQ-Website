@@ -122,6 +122,7 @@ function UpgradeForm({ booking, onSuccess, onCancel, embedded }) {
     <form onSubmit={handleSubmit} style={S.form}>
       {!embedded && (
         <>
+          <h3 style={S.modalTitle}>Upgrade to Robinson R44</h3>
           <div style={S.modalPhotoFrame}>
             <img
               src="/assets/images/new-aircraft/r44/raven-ii-front-alpha.png"
@@ -129,7 +130,6 @@ function UpgradeForm({ booking, onSuccess, onCancel, embedded }) {
               style={S.modalPhoto}
             />
           </div>
-          <h3 style={S.modalTitle}>Upgrade to Robinson R44</h3>
           <p style={S.modalSub}>You at the controls with two mates in the back.</p>
         </>
       )}
@@ -291,7 +291,7 @@ const S = {
     objectFit: 'contain',
     objectPosition: 'center',
   },
-  modalTitle: { fontSize: '1.1rem', fontWeight: 700, margin: '0 0 4px' },
+  modalTitle: { fontSize: '1.1rem', fontWeight: 700, margin: '0 0 16px', textAlign: 'center' },
   modalSub: { fontSize: '0.85rem', color: '#666', margin: '0 0 16px' },
 
   // Form internals
