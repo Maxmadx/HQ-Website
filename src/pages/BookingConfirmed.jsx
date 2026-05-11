@@ -208,11 +208,82 @@ export default function BookingConfirmed() {
             : 'Confirming Booking'}
         </h1>
 
-        {/* THE morphing upgrade pill — single component, one DOM slot, transitions
-            between hero (Phase 1) and compact (Phase 2) modes via CSS. Photo
-            collapses, hero copy fades + collapses, compact copy emerges, outer
-            container shifts bg/border/radius/shadow. The same element you saw
-            as the big R44 card IS the green pill you can click later. */}
+        {/* Subtitle + Summary card — grows in above the pill on Phase 2.
+            max-height + opacity transition so the pill below shifts down
+            gradually rather than snapping. */}
+        <div
+          style={{
+            maxHeight: confirmedVisible ? '900px' : '0px',
+            opacity: confirmedVisible ? 1 : 0,
+            overflow: 'hidden',
+            transition: 'max-height 900ms ease, opacity 500ms ease 200ms',
+          }}
+        >
+          <p style={styles.subheading}>
+            {booking?.customerName ? `Thank you, ${booking.customerName}.` : 'Thank you.'}{' '}
+            {isMisc
+              ? 'Your order has been placed. The HQ team will be in touch shortly.'
+              : 'Your Discovery Flight has been booked.'}
+          </p>
+
+          {/* Summary card */}
+          <div style={styles.card}>
+            <h2 style={styles.cardHeading}>Booking Summary</h2>
+
+            {isMisc ? (
+              <>
+                {itemName && (
+                  <div style={styles.row}>
+                    <span style={styles.label}>Item</span>
+                    <span style={styles.value}>{itemName}</span>
+                  </div>
+                )}
+                {apparelSize && (
+                  <div style={styles.row}>
+                    <span style={styles.label}>Size</span>
+                    <span style={styles.value}>{apparelSize}</span>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                {(() => {
+                  const displayAircraft = booking?.aircraft || '';
+                  const displayAircraftName = AIRCRAFT_NAMES[displayAircraft] || booking?.aircraftName || 'Discovery Flight';
+                  const displayDuration = booking?.duration || '';
+                  const displayPrice = booking ? (booking.totalAmountPence / 100).toFixed(2) : '—';
+                  return (
+                    <>
+                      <div style={styles.row}>
+                        <span style={styles.label}>Aircraft</span>
+                        <span style={styles.value}>{displayAircraftName}</span>
+                      </div>
+                      <div style={styles.row}>
+                        <span style={styles.label}>Duration</span>
+                        <span style={styles.value}>{displayDuration} minutes</span>
+                      </div>
+                      <div style={styles.row}>
+                        <span style={styles.label}>Amount Paid</span>
+                        <span style={styles.value}>£{displayPrice}</span>
+                      </div>
+                    </>
+                  );
+                })()}
+              </>
+            )}
+            {ref && (
+              <div style={{ ...styles.row, borderTop: '1px solid #f0f0f0', marginTop: '12px', paddingTop: '12px' }}>
+                <span style={{ ...styles.label, fontSize: '12px', color: '#bbb' }}>Booking Reference</span>
+                <span style={{ ...styles.value, fontSize: '12px', color: '#bbb', fontFamily: "'Share Tech Mono', monospace" }}>{ref}</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* THE morphing upgrade pill — single mounted component, transitions
+            between hero (Phase 1) and compact (Phase 2) modes via CSS.
+            Sits BELOW the summary card. The same element you saw as the big
+            R44 card IS the green pill you can click later. */}
         {!isMisc && (
           <UpgradePill
             booking={booking}
@@ -221,69 +292,9 @@ export default function BookingConfirmed() {
           />
         )}
 
-        {/* Confirmed UI — subtitle + summary card + offers. Fades in via keyframe. */}
+        {/* Post-checkout offers + outro — Phase 2 only. */}
         {confirmedVisible && (
           <div style={{ animation: 'bc-fade-in 480ms ease both' }}>
-            <p style={styles.subheading}>
-              {booking?.customerName ? `Thank you, ${booking.customerName}.` : 'Thank you.'}{' '}
-              {isMisc
-                ? 'Your order has been placed. The HQ team will be in touch shortly.'
-                : 'Your Discovery Flight has been booked.'}
-            </p>
-
-            {/* Summary card */}
-            <div style={styles.card}>
-              <h2 style={styles.cardHeading}>Booking Summary</h2>
-
-              {isMisc ? (
-                <>
-                  {itemName && (
-                    <div style={styles.row}>
-                      <span style={styles.label}>Item</span>
-                      <span style={styles.value}>{itemName}</span>
-                    </div>
-                  )}
-                  {apparelSize && (
-                    <div style={styles.row}>
-                      <span style={styles.label}>Size</span>
-                      <span style={styles.value}>{apparelSize}</span>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <>
-                  {(() => {
-                    const displayAircraft = booking?.aircraft || '';
-                    const displayAircraftName = AIRCRAFT_NAMES[displayAircraft] || booking?.aircraftName || 'Discovery Flight';
-                    const displayDuration = booking?.duration || '';
-                    const displayPrice = booking ? (booking.totalAmountPence / 100).toFixed(2) : '—';
-                    return (
-                      <>
-                        <div style={styles.row}>
-                          <span style={styles.label}>Aircraft</span>
-                          <span style={styles.value}>{displayAircraftName}</span>
-                        </div>
-                        <div style={styles.row}>
-                          <span style={styles.label}>Duration</span>
-                          <span style={styles.value}>{displayDuration} minutes</span>
-                        </div>
-                        <div style={styles.row}>
-                          <span style={styles.label}>Amount Paid</span>
-                          <span style={styles.value}>£{displayPrice}</span>
-                        </div>
-                      </>
-                    );
-                  })()}
-                </>
-              )}
-              {ref && (
-                <div style={{ ...styles.row, borderTop: '1px solid #f0f0f0', marginTop: '12px', paddingTop: '12px' }}>
-                  <span style={{ ...styles.label, fontSize: '12px', color: '#bbb' }}>Booking Reference</span>
-                  <span style={{ ...styles.value, fontSize: '12px', color: '#bbb', fontFamily: "'Share Tech Mono', monospace" }}>{ref}</span>
-                </div>
-              )}
-            </div>
-
             {!isMisc && (
               <PostCheckoutOffers booking={booking} freeReferralItem={freeReferralItem} />
             )}
