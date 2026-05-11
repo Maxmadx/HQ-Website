@@ -4,8 +4,7 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { trackEvent } from '../lib/analytics';
 import PostCheckoutOffers from '../components/booking/PostCheckoutOffers';
-import UpgradeOfferCard from '../components/booking/UpgradeOfferCard';
-import BigUpgradeCard from '../components/booking/BigUpgradeCard';
+import UpgradePill from '../components/booking/UpgradePill';
 
 const AIRCRAFT_NAMES = {
   r22: 'Robinson R22',
@@ -159,12 +158,9 @@ export default function BookingConfirmed() {
 
     Promise.all([recordPromise, timerPromise]).then(([recordOk]) => {
       if (!cancelled && recordOk) {
-        // Trigger fade-out of the hero card; after the CSS transition completes,
-        // unmount it and fade in the confirmed UI.
-        setPhase('fading');
-        setTimeout(() => {
-          if (!cancelled) setPhase('confirmed');
-        }, 450);
+        // UpgradePill handles its own hero→compact morph via CSS transitions
+        // on a single mounted element — no intermediate phase needed.
+        setPhase('confirmed');
       }
     });
 
@@ -183,7 +179,6 @@ export default function BookingConfirmed() {
     } catch {}
   }
 
-  const heroVisible = phase === 'confirming';
   const confirmedVisible = phase === 'confirmed';
 
   return (
@@ -213,27 +208,20 @@ export default function BookingConfirmed() {
             : 'Confirming Booking'}
         </h1>
 
-        {/* Hero R44 pitch — mounted during 'confirming' AND 'fading'.
-            During 'fading', the card morphs: max-height collapses, content fades,
-            background/border shift to the compact green row's colours, so the
-            hero visually transforms into the upgrade row before unmounting. */}
-        {(phase === 'confirming' || phase === 'fading') && (
-          <div
-            style={{
-              opacity: heroVisible ? 1 : 0,
-              transform: heroVisible ? 'translateY(0) scale(1)' : 'translateY(0) scale(0.98)',
-              maxHeight: heroVisible ? '700px' : '0px',
-              overflow: 'hidden',
-              transition: 'opacity 380ms ease, transform 380ms ease, max-height 420ms ease',
-              animation: heroVisible ? 'bc-fade-in 480ms ease both' : 'none',
-              willChange: 'opacity, transform, max-height',
-            }}
-          >
-            <BigUpgradeCard booking={booking} onUpgraded={refetchBooking} morphing={phase === 'fading'} />
-          </div>
+        {/* THE morphing upgrade pill — single component, one DOM slot, transitions
+            between hero (Phase 1) and compact (Phase 2) modes via CSS. Photo
+            collapses, hero copy fades + collapses, compact copy emerges, outer
+            container shifts bg/border/radius/shadow. The same element you saw
+            as the big R44 card IS the green pill you can click later. */}
+        {!isMisc && (
+          <UpgradePill
+            booking={booking}
+            onUpgraded={refetchBooking}
+            mode={confirmedVisible ? 'compact' : 'hero'}
+          />
         )}
 
-        {/* Confirmed UI — fades in via keyframe on mount */}
+        {/* Confirmed UI — subtitle + summary card + offers. Fades in via keyframe. */}
         {confirmedVisible && (
           <div style={{ animation: 'bc-fade-in 480ms ease both' }}>
             <p style={styles.subheading}>
@@ -287,9 +275,6 @@ export default function BookingConfirmed() {
                     );
                   })()}
                 </>
-              )}
-              {!isMisc && booking && (
-                <UpgradeOfferCard booking={booking} onUpgraded={refetchBooking} />
               )}
               {ref && (
                 <div style={{ ...styles.row, borderTop: '1px solid #f0f0f0', marginTop: '12px', paddingTop: '12px' }}>
