@@ -35,6 +35,10 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
   // Double-RAF guarantees one paint commits the closed state before we flip.
   const shouldShow = !!booking && booking.aircraft === 'r22' && !booking.upgrade;
   const [appearing, setAppearing] = useState(true);
+  // Middle (photo + pitches) starts collapsed, expands slowly after the card
+  // has landed. Result: title bar + CTA appear first as a thin sandwich,
+  // then the helicopter + pitches unfold between them over ~3s.
+  const [middleOpen, setMiddleOpen] = useState(false);
   useEffect(() => {
     if (!shouldShow) return;
     let id2;
@@ -45,6 +49,13 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
       cancelAnimationFrame(id1);
       if (id2) cancelAnimationFrame(id2);
     };
+  }, [shouldShow]);
+  useEffect(() => {
+    if (!shouldShow) return;
+    // Delay slightly past the card's fall/unfurl (~1.1s) so the title +
+    // CTA visibly land before the middle begins opening.
+    const t = setTimeout(() => setMiddleOpen(true), 1200);
+    return () => clearTimeout(t);
   }, [shouldShow]);
   if (!booking) return null;
   if (booking.aircraft !== 'r22') return null;
@@ -129,14 +140,15 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
           </h2>
         </div>
 
-        {/* R44 photo — collapses to 0 height in compact mode */}
+        {/* R44 photo — opens with the rest of the middle. Slow transition
+            (~3s) for entry; reuses the same property to collapse on compact. */}
         <div
           style={{
             width: '100%',
-            height: isHero ? '240px' : '0px',
+            height: isHero && middleOpen ? '240px' : '0px',
             background: '#f5f5f5',
             overflow: 'hidden',
-            transition: 'height 1500ms ease',
+            transition: 'height 3000ms ease',
           }}
         >
           <img
@@ -147,22 +159,22 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
               height: '240px',
               objectFit: 'contain',
               objectPosition: 'center',
-              opacity: isHero ? 1 : 0,
-              transition: 'opacity 1000ms ease',
+              opacity: isHero && middleOpen ? 1 : 0,
+              transition: 'opacity 2200ms ease',
             }}
           />
         </div>
 
-        {/* Pitches — white middle band */}
+        {/* Pitches — white middle band, opens with the photo */}
         <div
           style={{
-            maxHeight: isHero ? '180px' : '0px',
-            opacity: isHero ? 1 : 0,
-            padding: isHero ? '24px 28px 28px' : '0 16px',
+            maxHeight: isHero && middleOpen ? '180px' : '0px',
+            opacity: isHero && middleOpen ? 1 : 0,
+            padding: isHero && middleOpen ? '24px 28px 28px' : '0 28px',
             overflow: 'hidden',
             textAlign: 'center',
             transition:
-              'max-height 1500ms ease, opacity 850ms ease, padding 1500ms ease',
+              'max-height 3000ms ease, opacity 2200ms ease 400ms, padding 3000ms ease',
           }}
         >
           <p style={{ fontSize: '1.05rem', color: '#444', margin: '0 0 4px', lineHeight: 1.5, fontWeight: 400 }}>
