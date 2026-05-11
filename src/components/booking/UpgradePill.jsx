@@ -25,14 +25,26 @@ const fmtGbpNoZeros = (pence) => {
  */
 export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
   const [modalOpen, setModalOpen] = useState(false);
-  // Entry animation: outer wrapper starts collapsed (max-height 0 + opacity 0)
-  // and opens on the next frame after mount, so the pill unfurls from behind
-  // the divider above it — same animation system as the collapse, in reverse.
+  // Entry animation: outer wrapper renders collapsed (max-height 0 + opacity 0)
+  // on the first paint AFTER the wrapper enters the DOM, then opens on the
+  // next frame. Gated on `shouldShow` because the parent mounts UpgradePill
+  // with booking=null during the initial /api/booking fetch — if we flipped
+  // `appearing` on plain mount, RAF would fire while the early-return is
+  // still returning null and the wrapper would later render already-open.
+  // Double-RAF guarantees one paint commits the closed state before we flip.
+  const shouldShow = !!booking && booking.aircraft === 'r22' && !booking.upgrade;
   const [appearing, setAppearing] = useState(true);
   useEffect(() => {
-    const id = requestAnimationFrame(() => setAppearing(false));
-    return () => cancelAnimationFrame(id);
-  }, []);
+    if (!shouldShow) return;
+    let id2;
+    const id1 = requestAnimationFrame(() => {
+      id2 = requestAnimationFrame(() => setAppearing(false));
+    });
+    return () => {
+      cancelAnimationFrame(id1);
+      if (id2) cancelAnimationFrame(id2);
+    };
+  }, [shouldShow]);
   if (!booking) return null;
   if (booking.aircraft !== 'r22') return null;
   if (booking.upgrade) return null;
