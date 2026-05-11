@@ -177,7 +177,8 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
               // with the other channels) are unchanged.
               filter: 'url(#r22-red-to-yellow)',
               transition: 'opacity 500ms ease-out',
-              transform: 'translateY(10px)',
+              // Flip horizontally so the yellow heli faces the red one.
+              transform: 'translateY(10px) scaleX(-1)',
             }}
           />
           <img
