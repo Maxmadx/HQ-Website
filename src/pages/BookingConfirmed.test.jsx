@@ -92,8 +92,8 @@ describe('BookingConfirmed', () => {
     });
 
     renderAt('?ref=pi_x&aircraft=r22&duration=30&price=180&name=Test');
-    await waitFor(() => screen.getByText(/Upgrade to Robinson R44/i));
-    expect(screen.getByText(/You at the controls\./i)).toBeInTheDocument();
+    await waitFor(() => screen.getByText(/Bring two friends along for the ride/i));
+    expect(screen.getByText(/Upgrade to the R44/i)).toBeInTheDocument();
   });
 
   it('misc bookings skip the phases entirely and render Booking Summary immediately', async () => {
@@ -107,6 +107,6 @@ describe('BookingConfirmed', () => {
     renderAt('?ref=pi_misc&type=misc&itemName=Cap');
     await waitFor(() => screen.getByText(/Purchase Confirmed/i));
     expect(screen.queryByText(/Confirming Booking/i)).toBeNull();
-    expect(screen.queryByText(/Upgrade to Robinson R44/i)).toBeNull();
+    expect(screen.queryByText(/Bring two friends along for the ride/i)).toBeNull();
   });
 });

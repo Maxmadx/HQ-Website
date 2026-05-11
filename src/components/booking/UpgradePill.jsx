@@ -127,16 +127,15 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
         >
           <h2
             style={{
-              fontSize: '1.1rem',
-              fontFamily: "'Share Tech Mono', monospace",
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
+              fontSize: '1.15rem',
+              fontFamily: "'Space Grotesk', Arial, sans-serif",
               color: '#fff',
               margin: 0,
               fontWeight: 700,
+              letterSpacing: '0.01em',
             }}
           >
-            Upgrade to Robinson R44
+            Bring two friends along for the ride.
           </h2>
         </div>
 
@@ -178,7 +177,7 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
           }}
         >
           <p style={{ fontSize: '1.05rem', color: '#444', margin: '0 0 4px', lineHeight: 1.5, fontWeight: 400 }}>
-            You at the controls.
+            Upgrade to the R44 — you at the controls.
           </p>
           <p style={{ fontSize: '1.05rem', color: '#444', margin: 0, lineHeight: 1.5, fontWeight: 400 }}>
             Two mates in the back.
