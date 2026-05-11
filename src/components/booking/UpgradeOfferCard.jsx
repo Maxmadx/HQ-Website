@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import {
   Elements,
@@ -59,18 +59,13 @@ export function UpgradeRow({ booking, onClick }) {
 function UpgradeForm({ booking, onSuccess, onCancel, embedded }) {
   const stripe = useStripe();
   const elements = useElements();
-  const initialDur = booking.duration === 60 ? 60 : 30;
-  const [duration, setDuration] = useState(initialDur);
+  // Duration is locked to whatever the booker originally chose — no toggle.
+  const duration = booking.duration === 60 ? 60 : 30;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const flightPaid = Number(booking.flightAmountPence) || 0;
-  const diffByDuration = useMemo(() => ({
-    30: R44_PRICE_FALLBACK[30] - flightPaid,
-    60: R44_PRICE_FALLBACK[60] - flightPaid,
-  }), [flightPaid]);
-
-  const diffPence = diffByDuration[duration];
+  const diffPence = R44_PRICE_FALLBACK[duration] - flightPaid;
   const canUpgrade = diffPence > 0;
 
   async function handleSubmit(e) {
@@ -123,36 +118,6 @@ function UpgradeForm({ booking, onSuccess, onCancel, embedded }) {
           <p style={S.modalSub}>You at the controls with two mates in the back.</p>
         </>
       )}
-
-      <div style={S.durationRow} role="radiogroup" aria-label="Upgrade duration">
-        {[30, 60].map((d) => {
-          const active = duration === d;
-          const disabled = diffByDuration[d] <= 0;
-          return (
-            <button
-              key={d}
-              type="button"
-              role="radio"
-              aria-checked={active}
-              disabled={disabled}
-              onClick={() => setDuration(d)}
-              style={{
-                flex: '1 1 auto',
-                padding: '12px',
-                border: active ? '2px solid #1a1a1a' : '1px solid #d1d5db',
-                background: active ? '#1a1a1a' : '#fff',
-                color: active ? '#fff' : '#1a1a1a',
-                borderRadius: '8px',
-                fontWeight: 600,
-                cursor: disabled ? 'not-allowed' : 'pointer',
-                opacity: disabled ? 0.5 : 1,
-              }}
-            >
-              {d} min
-            </button>
-          );
-        })}
-      </div>
 
       <div style={S.summary}>
         <span>R44 {duration} min upgrade</span>
@@ -299,7 +264,6 @@ const S = {
 
   // Form internals
   form: { display: 'flex', flexDirection: 'column', gap: '14px' },
-  durationRow: { display: 'flex', gap: '8px' },
   summary: {
     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
     padding: '12px 14px', background: '#faf9f6', borderRadius: '8px',
