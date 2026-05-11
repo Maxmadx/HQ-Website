@@ -28,13 +28,6 @@
         }
       },
       {
-        "source": "/robots.txt",
-        "run": {
-          "serviceId": "hq-aviation-server",
-          "region": "europe-west2"
-        }
-      },
-      {
         "source": "/admin/**",
         "destination": "/admin/index.html"
       },
