@@ -177,90 +177,106 @@ export default function BookingConfirmed() {
 
   return (
     <div style={styles.page}>
+      <style>{`@keyframes bc-spin { to { transform: rotate(360deg); } }`}</style>
       <div style={styles.container}>
 
-        {/* Success mark */}
-        <div style={styles.checkmark}>✓</div>
-
-        <h1 style={styles.heading}>{isMisc ? 'Purchase Confirmed' : 'Booking Confirmed'}</h1>
-        <p style={styles.subheading}>
-          {name ? `Thank you, ${name}.` : 'Thank you.'}{' '}
-          {isMisc
-            ? 'Your order has been placed. The HQ team will be in touch shortly.'
-            : 'Your Discovery Flight has been booked.'}
-        </p>
-
-        {/* Summary card */}
-        <div style={styles.card}>
-          <h2 style={styles.cardHeading}>Booking Summary</h2>
-
-          {isMisc ? (
-            <>
-              {itemName && (
-                <div style={styles.row}>
-                  <span style={styles.label}>Item</span>
-                  <span style={styles.value}>{itemName}</span>
-                </div>
-              )}
-              {apparelSize && (
-                <div style={styles.row}>
-                  <span style={styles.label}>Size</span>
-                  <span style={styles.value}>{apparelSize}</span>
-                </div>
-              )}
-            </>
-          ) : (
-            <>
-              {(() => {
-                const displayAircraft = booking?.aircraft || aircraft;
-                const displayAircraftName = AIRCRAFT_NAMES[displayAircraft] || displayAircraft || 'Discovery Flight';
-                const displayDuration = booking?.duration || duration;
-                const displayPrice = booking ? (booking.totalAmountPence / 100).toFixed(2) : price;
-                return (
-                  <>
-                    <div style={styles.row}>
-                      <span style={styles.label}>Aircraft</span>
-                      <span style={styles.value}>{displayAircraftName}</span>
-                    </div>
-                    <div style={styles.row}>
-                      <span style={styles.label}>Duration</span>
-                      <span style={styles.value}>{displayDuration} minutes</span>
-                    </div>
-                    <div style={styles.row}>
-                      <span style={styles.label}>Amount Paid</span>
-                      <span style={styles.value}>£{displayPrice}</span>
-                    </div>
-                  </>
-                );
-              })()}
-            </>
-          )}
-          {!isMisc && booking && (
-            <UpgradeOfferCard booking={booking} onUpgraded={refetchBooking} />
-          )}
-          {ref && (
-            <div style={{ ...styles.row, borderTop: '1px solid #f0f0f0', marginTop: '12px', paddingTop: '12px' }}>
-              <span style={{ ...styles.label, fontSize: '12px', color: '#bbb' }}>Booking Reference</span>
-              <span style={{ ...styles.value, fontSize: '12px', color: '#bbb', fontFamily: "'Share Tech Mono', monospace" }}>{ref}</span>
-            </div>
-          )}
-        </div>
-
-        {!isMisc && (
-          <PostCheckoutOffers booking={booking} freeReferralItem={freeReferralItem} />
+        {/* Success mark — spinner during Phase 1, ✓ during Phase 2 */}
+        {phase === 'confirmed' ? (
+          <div style={styles.checkmark}>✓</div>
+        ) : (
+          <div style={styles.spinner} aria-label="Confirming booking" />
         )}
 
-        <p style={styles.nextStep}>
-          {isMisc
-            ? 'The HQ Aviation team will be in touch about your order.'
-            : 'A member of the HQ Aviation team will be in touch shortly to arrange a date and time for your flight.'}
-        </p>
+        <h1 style={styles.heading}>
+          {phase === 'confirming'
+            ? 'Confirming Booking'
+            : (isMisc ? 'Purchase Confirmed' : 'Booking Confirmed')}
+        </h1>
 
-        <p style={styles.emailNote}>
-          A confirmation email will be sent to your inbox shortly.
-        </p>
+        {phase === 'confirming' ? (
+          <BigUpgradeCard booking={booking} onUpgraded={refetchBooking} />
+        ) : (
+          <>
+            <p style={styles.subheading}>
+              {name ? `Thank you, ${name}.` : 'Thank you.'}{' '}
+              {isMisc
+                ? 'Your order has been placed. The HQ team will be in touch shortly.'
+                : 'Your Discovery Flight has been booked.'}
+            </p>
 
-        <Link to="/" style={styles.homeLink}>Return to HQ Aviation</Link>
+            {/* Summary card */}
+            <div style={styles.card}>
+              <h2 style={styles.cardHeading}>Booking Summary</h2>
+
+              {isMisc ? (
+                <>
+                  {itemName && (
+                    <div style={styles.row}>
+                      <span style={styles.label}>Item</span>
+                      <span style={styles.value}>{itemName}</span>
+                    </div>
+                  )}
+                  {apparelSize && (
+                    <div style={styles.row}>
+                      <span style={styles.label}>Size</span>
+                      <span style={styles.value}>{apparelSize}</span>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  {(() => {
+                    const displayAircraft = booking?.aircraft || aircraft;
+                    const displayAircraftName = AIRCRAFT_NAMES[displayAircraft] || displayAircraft || 'Discovery Flight';
+                    const displayDuration = booking?.duration || duration;
+                    const displayPrice = booking ? (booking.totalAmountPence / 100).toFixed(2) : price;
+                    return (
+                      <>
+                        <div style={styles.row}>
+                          <span style={styles.label}>Aircraft</span>
+                          <span style={styles.value}>{displayAircraftName}</span>
+                        </div>
+                        <div style={styles.row}>
+                          <span style={styles.label}>Duration</span>
+                          <span style={styles.value}>{displayDuration} minutes</span>
+                        </div>
+                        <div style={styles.row}>
+                          <span style={styles.label}>Amount Paid</span>
+                          <span style={styles.value}>£{displayPrice}</span>
+                        </div>
+                      </>
+                    );
+                  })()}
+                </>
+              )}
+              {!isMisc && booking && (
+                <UpgradeOfferCard booking={booking} onUpgraded={refetchBooking} />
+              )}
+              {ref && (
+                <div style={{ ...styles.row, borderTop: '1px solid #f0f0f0', marginTop: '12px', paddingTop: '12px' }}>
+                  <span style={{ ...styles.label, fontSize: '12px', color: '#bbb' }}>Booking Reference</span>
+                  <span style={{ ...styles.value, fontSize: '12px', color: '#bbb', fontFamily: "'Share Tech Mono', monospace" }}>{ref}</span>
+                </div>
+              )}
+            </div>
+
+            {!isMisc && (
+              <PostCheckoutOffers booking={booking} freeReferralItem={freeReferralItem} />
+            )}
+
+            <p style={styles.nextStep}>
+              {isMisc
+                ? 'The HQ Aviation team will be in touch about your order.'
+                : 'A member of the HQ Aviation team will be in touch shortly to arrange a date and time for your flight.'}
+            </p>
+
+            <p style={styles.emailNote}>
+              A confirmation email will be sent to your inbox shortly.
+            </p>
+
+            <Link to="/" style={styles.homeLink}>Return to HQ Aviation</Link>
+          </>
+        )}
 
       </div>
     </div>
@@ -293,6 +309,15 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     margin: '0 auto 24px',
+  },
+  spinner: {
+    width: '64px',
+    height: '64px',
+    borderRadius: '50%',
+    border: '4px solid #e5e7eb',
+    borderTopColor: '#1a1a1a',
+    margin: '0 auto 24px',
+    animation: 'bc-spin 0.9s linear infinite',
   },
   heading: {
     fontSize: '2rem',
