@@ -239,7 +239,7 @@ export default function BookingConfirmed() {
           style={{
             border: 'none',
             borderTop: '1px solid #e0ddd6',
-            margin: isExpanded ? '0' : '24px 0 32px',
+            margin: isExpanded ? '0' : '32px 0',
             maxHeight: isExpanded ? '0px' : '1px',
             opacity: isExpanded ? 0 : 1,
             transition: 'opacity 700ms ease, max-height 1500ms ease, margin 1500ms ease',
