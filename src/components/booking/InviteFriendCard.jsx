@@ -124,6 +124,23 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
           </h2>
         </div>
 
+        {/* SVG color-swap filter — swaps the red and blue channels of the
+            back helicopter so only the red bodywork becomes blue. Blacks,
+            greys, whites, and shadows (where R == B) stay unchanged. */}
+        <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
+          <defs>
+            <filter id="r22-red-to-blue" colorInterpolationFilters="sRGB">
+              <feColorMatrix
+                type="matrix"
+                values="0 0 1 0 0
+                        0 1 0 0 0
+                        1 0 0 0 0
+                        0 0 0 1 0"
+              />
+            </filter>
+          </defs>
+        </svg>
+
         {/* Two R22s — back one offset behind the front. Both fully opaque
             (no transparency); overlap reads as two distinct helicopters. */}
         <div
@@ -149,9 +166,9 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
               objectFit: 'contain',
               objectPosition: 'center',
               opacity: isHero && middleOpen ? 1 : 0,
-              // The R22 PNG is red; rotate the hue ~220deg so the back
-              // helicopter reads as blue against the red foreground one.
-              filter: 'hue-rotate(220deg) saturate(1.2)',
+              // Channel-swap (R ↔ B) so only the red bodywork becomes blue.
+              // Greys, blacks, and shadows where R == B stay unchanged.
+              filter: 'url(#r22-red-to-blue)',
               transition: 'opacity 500ms ease-out',
               transform: 'translateY(10px)',
             }}
