@@ -43,7 +43,11 @@ export function UpgradeRow({ booking, onClick }) {
   const flightPaid = Number(booking.flightAmountPence) || 0;
   // Default to same-duration upgrade (R22 30 → R44 30; R22 60 → R44 60).
   const defaultDur = booking.duration === 60 ? 60 : 30;
-  const defaultDiff = R44_PRICE_FALLBACK[defaultDur] - flightPaid;
+  // Server-computed diff (honours admin override). Falls back to local calc
+  // for resilience if the API didn't include it.
+  const defaultDiff = (typeof booking.upgradeDiffPence === 'number' && booking.upgradeDiffPence > 0)
+    ? booking.upgradeDiffPence
+    : (R44_PRICE_FALLBACK[defaultDur] - flightPaid);
   if (defaultDiff <= 0) return null;
 
   return (
@@ -65,7 +69,11 @@ function UpgradeForm({ booking, onSuccess, onCancel, embedded }) {
   const [error, setError] = useState('');
 
   const flightPaid = Number(booking.flightAmountPence) || 0;
-  const diffPence = R44_PRICE_FALLBACK[duration] - flightPaid;
+  // Honour server-computed override when present (admin may have set a
+  // promotional fixed upgrade price). Falls back to local auto-calc.
+  const diffPence = (typeof booking.upgradeDiffPence === 'number' && booking.upgradeDiffPence > 0)
+    ? booking.upgradeDiffPence
+    : (R44_PRICE_FALLBACK[duration] - flightPaid);
   const canUpgrade = diffPence > 0;
 
   async function handleSubmit(e) {
@@ -226,18 +234,18 @@ const S = {
     width: '100%',
     padding: '14px 16px',
     margin: '8px 0',
-    background: '#faf6e9',
-    border: '1px solid #e8d98a',
+    background: '#ecfdf5',
+    border: '1px solid #6ee7b7',
     borderRadius: '8px',
     cursor: 'pointer',
     fontFamily: "'Space Grotesk', Arial, sans-serif",
     fontSize: '14px',
-    color: '#1a1a1a',
+    color: '#065f46',
     textAlign: 'left',
     transition: 'background 0.15s, border-color 0.15s',
   },
   rowText: { flex: '1 1 auto', lineHeight: 1.4 },
-  rowArrow: { fontSize: '18px', color: '#7a6a1a', marginLeft: '12px', flexShrink: 0 },
+  rowArrow: { fontSize: '18px', color: '#047857', marginLeft: '12px', flexShrink: 0 },
 
   // Standalone card (used by /upgrade page)
   card: { background: '#fff', borderRadius: '12px', border: '1px solid #e8e8e8', padding: '24px' },

@@ -274,6 +274,40 @@ async function getPrice(aircraft, duration) {
 }
 
 /**
+ * Returns the upgrade diff in pence for R22 → R44 at the given duration.
+ *
+ * Pricing modes (admin-controlled via the `pricing/upgrade_r22_to_r44_<dur>min`
+ * Firestore doc):
+ *   - If the doc exists with `price > 0` (in pence), that price IS the
+ *     amount charged for the upgrade (fixed override — e.g. £100 promotional).
+ *   - Otherwise: auto-calculate as (R44 price for `duration`) - `flightAmountPence`.
+ *
+ * Returns null if neither path yields a positive diff.
+ */
+async function getUpgradeDiffPence(duration, flightAmountPence) {
+  const dur = Number(duration);
+  if (dur !== 30 && dur !== 60) return null;
+
+  // 1. Admin override
+  try {
+    const docId = `upgrade_r22_to_r44_${dur}min`;
+    const snap = await admin.firestore().collection('pricing').doc(docId).get();
+    if (snap.exists) {
+      const price = snap.data().price;
+      if (typeof price === 'number' && price > 0) return price;
+    }
+  } catch (err) {
+    console.warn('[stripe] upgrade override lookup failed:', err.message);
+  }
+
+  // 2. Auto: R44 price minus what was already paid for the flight portion
+  const r44Price = await getPrice('r44', dur);
+  if (!r44Price) return null;
+  const diff = r44Price - (Number(flightAmountPence) || 0);
+  return diff > 0 ? diff : null;
+}
+
+/**
  * Returns the R44 price in pence for the given duration.
  * Wraps `getPrice` to surface a clearer error for the upgrade path.
  */
@@ -1379,10 +1413,11 @@ async function createUpgradePaymentIntent({ originalPaymentIntentId, newDuration
     throw err;
   }
 
-  const r44Price = await getR44Price(newDuration);
   const flightPaid = Number(booking.flightAmountPence) || 0;
-  const diffPence = r44Price - flightPaid;
-  if (diffPence <= 0) {
+  // Admin can set a fixed override at pricing/upgrade_r22_to_r44_<dur>min.
+  // Otherwise this returns R44_price - flightPaid (auto).
+  const diffPence = await getUpgradeDiffPence(newDuration, flightPaid);
+  if (!diffPence || diffPence <= 0) {
     const err = new Error('Selected duration is not an upgrade');
     err.statusCode = 400;
     throw err;
@@ -1409,4 +1444,4 @@ async function createUpgradePaymentIntent({ originalPaymentIntentId, newDuration
   };
 }
 
-module.exports = { getPrice, applyDiscountPence, priceAddons, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, createUpgradePaymentIntent, getR44Price, handleWebhook, recordBooking, recordPurchaseEvent };
+module.exports = { getPrice, applyDiscountPence, priceAddons, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, createUpgradePaymentIntent, getR44Price, getUpgradeDiffPence, handleWebhook, recordBooking, recordPurchaseEvent };
