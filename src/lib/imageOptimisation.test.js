@@ -15,6 +15,7 @@ import {
   writeManifest,
   MANIFEST_FILENAME,
   collectOrphans,
+  processOneSource,
 } from './imageOptimisation';
 
 let tmpDir;
@@ -281,5 +282,75 @@ describe('collectOrphans', () => {
     await fs.writeFile(path.join(optDir, 'optimised-manifest.json'), '{}');
     await collectOrphans(optDir, sourceDir);
     await expect(fs.stat(path.join(optDir, 'optimised-manifest.json'))).resolves.toBeTruthy();
+  });
+});
+
+describe('processOneSource', () => {
+  it('generates AVIF + WebP + JPEG variants for opaque source + LQIP + manifest entry', { timeout: 60000 }, async () => {
+    // Source >= 2400px wide so all 5 SIZES generate (no withoutEnlargement skip)
+    const src = await makeRealImage('src/r66/hero.jpg', 2400, 1800);
+    const sourceDir = path.join(tmpDir, 'src');
+    const optDir = path.join(tmpDir, 'opt');
+
+    const result = await processOneSource(src, sourceDir, optDir, { version: 1, sources: {} });
+    expect(result.skipped).toBe(false);
+    expect(result.variants.length).toBe(SIZES.length * 3); // 5 widths × 3 formats
+    expect(result.lqip).toMatch(/^data:image\/avif;base64,/);
+
+    // Files exist on disk
+    for (const v of result.variants) {
+      await expect(fs.stat(v.outPath)).resolves.toBeTruthy();
+    }
+
+    // Manifest entry written
+    expect(result.manifestEntry.hasAlpha).toBe(false);
+    expect(result.manifestEntry.lqip).toBe(result.lqip);
+  });
+
+  it('emits PNG instead of JPEG variants when source has alpha', { timeout: 60000 }, async () => {
+    const src = await makeRealImage('src/logos/transparent.png', 800, 800, { alpha: true, format: 'png' });
+    const sourceDir = path.join(tmpDir, 'src');
+    const optDir = path.join(tmpDir, 'opt');
+
+    const result = await processOneSource(src, sourceDir, optDir, { version: 1, sources: {} });
+    expect(result.skipped).toBe(false);
+    const formats = new Set(result.variants.map(v => v.format));
+    expect(formats.has('png')).toBe(true);
+    expect(formats.has('jpeg')).toBe(false);
+    expect(formats.has('avif')).toBe(true);
+    expect(formats.has('webp')).toBe(true);
+  });
+
+  it('copies skip-by-size sources unchanged into the optimised tree', async () => {
+    // 100×100 PNG will be well under 50KB
+    const src = await makeRealImage('src/logos/small.png', 100, 100, { format: 'png' });
+    const sourceDir = path.join(tmpDir, 'src');
+    const optDir = path.join(tmpDir, 'opt');
+
+    const result = await processOneSource(src, sourceDir, optDir, { version: 1, sources: {} });
+    expect(result.skipped).toBe(true);
+    expect(result.skipReason).toBe('below-size-threshold');
+    // Copy exists at mirrored path
+    const copyPath = path.join(optDir, 'logos', 'small.png');
+    const original = await fs.readFile(src);
+    const copy = await fs.readFile(copyPath);
+    expect(Buffer.compare(original, copy)).toBe(0);
+  });
+
+  it('skips work when source mtime matches the manifest entry (incremental build)', async () => {
+    const src = await makeRealImage('src/r66/hero.jpg', 2000, 1500);
+    const sourceDir = path.join(tmpDir, 'src');
+    const optDir = path.join(tmpDir, 'opt');
+    const stat = await fs.stat(src);
+
+    const manifest = {
+      version: 1,
+      sources: {
+        'r66/hero.jpg': { sourceMtimeMs: stat.mtimeMs, hasAlpha: false, variants: [], lqip: '...' },
+      },
+    };
+    const result = await processOneSource(src, sourceDir, optDir, manifest);
+    expect(result.cached).toBe(true);
+    expect(result.variants).toEqual([]); // nothing regenerated
   });
 });

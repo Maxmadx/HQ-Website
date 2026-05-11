@@ -182,3 +182,70 @@ export async function collectOrphans(optimisedDir, sourceDir) {
   await walk(optimisedDir);
   return removed;
 }
+
+/**
+ * Process one source image: classify, decide formats, generate variants + LQIP,
+ * and produce a manifest entry. Returns { skipped, cached, variants, lqip, manifestEntry }.
+ *
+ * Incremental: if the manifest already has an entry for this source with a
+ * matching mtime, skip all work and return cached=true.
+ */
+export async function processOneSource(srcPath, sourceDir, optimisedDir, manifest) {
+  const relPath = path.relative(sourceDir, srcPath);
+
+  const classification = await classifySource(srcPath);
+  const existingEntry = manifest.sources?.[relPath];
+
+  if (existingEntry && existingEntry.sourceMtimeMs === classification.mtimeMs) {
+    return { skipped: false, cached: true, variants: [], lqip: existingEntry.lqip ?? null, manifestEntry: existingEntry };
+  }
+
+  const outDir = path.join(optimisedDir, path.dirname(relPath));
+  await fs.mkdir(outDir, { recursive: true });
+
+  if (classification.skipReason === 'below-size-threshold') {
+    // Copy unchanged
+    const dest = path.join(optimisedDir, relPath);
+    await fs.copyFile(srcPath, dest);
+    const manifestEntry = {
+      sourceMtimeMs: classification.mtimeMs,
+      sourceSizeBytes: classification.sizeBytes,
+      hasAlpha: classification.hasAlpha,
+      width: classification.width,
+      height: classification.height,
+      skipped: true,
+      skipReason: classification.skipReason,
+    };
+    return { skipped: true, cached: false, skipReason: classification.skipReason, variants: [], lqip: null, manifestEntry };
+  }
+
+  const fallbackFormat = classification.hasAlpha ? 'png' : 'jpeg';
+  const formats = ['avif', 'webp', fallbackFormat];
+
+  const variants = [];
+  for (const width of SIZES) {
+    for (const format of formats) {
+      // sharp.withoutEnlargement clamps to source width, so if width > source.width
+      // we'll get a duplicate of the largest width. Avoid by checking up front:
+      if (width > classification.width && width !== SIZES[0]) continue;
+      const result = await generateVariant(srcPath, outDir, width, format);
+      variants.push({ width, format, outPath: result.outPath, sizeBytes: result.sizeBytes });
+    }
+  }
+
+  const lqip = await generateLqip(srcPath);
+
+  const manifestEntry = {
+    sourceMtimeMs: classification.mtimeMs,
+    sourceSizeBytes: classification.sizeBytes,
+    hasAlpha: classification.hasAlpha,
+    width: classification.width,
+    height: classification.height,
+    skipped: false,
+    variantWidths: [...new Set(variants.map(v => v.width))],
+    variantFormats: formats,
+    lqip,
+  };
+
+  return { skipped: false, cached: false, variants, lqip, manifestEntry };
+}
