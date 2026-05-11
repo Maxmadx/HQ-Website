@@ -166,7 +166,7 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
             style={{
               position: 'absolute',
               top: 0,
-              left: '2%',
+              left: '-2%',
               width: '66%',
               height: '240px',
               objectFit: 'contain',
@@ -187,7 +187,7 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
             style={{
               position: 'absolute',
               top: 0,
-              left: '32%',
+              left: '36%',
               width: '66%',
               height: '240px',
               objectFit: 'contain',
