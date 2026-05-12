@@ -9,6 +9,7 @@
 import { useRef, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import BlogLayout from '../blog/components/BlogLayout';
+import Image from '../components/Image';
 
 // ─────────────────────────────────────────────
 // SafeHtml - renders inline HTML safely via DOMPurify + DOM ref
@@ -159,12 +160,13 @@ function BlockRenderer({ block }) {
       };
       return (
         <figure style={{ margin: '1.5rem 0', overflow: 'hidden' }}>
-          <img
+          <Image
             src={block.url}
             alt={block.alt || ''}
             style={{ ...(imgStyles[block.placement] || imgStyles.full), borderRadius: '6px', objectFit: 'cover' }}
             width={1500}
             height={1000}
+            sizes="(max-width: 768px) 100vw, 75vw"
           />
           {block.caption && (
             <figcaption style={{ textAlign: 'center', fontSize: '0.8rem', color: '#666', marginTop: '0.5rem', fontStyle: 'italic', clear: 'both' }}>

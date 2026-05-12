@@ -4705,7 +4705,7 @@ function Experimentation() {
                 return (
                 <div className="rb-stats__strip-card" key={i} onClick={() => setRebuildDetailOpen(i)} style={{ cursor: 'pointer' }}>
                   <div className="rb-stats__strip-gallery">
-                    <img src={images[imgIdx]} alt={rb.model} />
+                    <Image src={images[imgIdx]} alt={rb.model} width={800} height={600} sizes="(max-width: 768px) 90vw, 25vw" />
                     {images.length > 1 && (
                       <>
                         <button
@@ -4776,7 +4776,7 @@ function Experimentation() {
                 {/* Left — Image gallery */}
                 <div className="rb-showcase__gallery">
                   <div className="rb-showcase__hero-img" onClick={() => setRebuildLightbox({ src: rb.img, alt: rb.model })}>
-                    <img src={rb.img} alt={rb.model} />
+                    <Image src={rb.img} alt={rb.model} width={1600} height={1200} sizes="(max-width: 768px) 100vw, 60vw" />
                     <div className="rb-showcase__img-overlay">
                       <i className="fas fa-search-plus"></i>
                     </div>
@@ -4788,7 +4788,7 @@ function Experimentation() {
                         className="rb-showcase__thumb"
                         onClick={() => setRebuildLightbox({ src, alt: `${rb.model} — ${i + 1}` })}
                       >
-                        <img src={src} alt="" />
+                        <Image src={src} alt="" width={200} height={150} sizes="200px" />
                       </button>
                     ))}
                   </div>
