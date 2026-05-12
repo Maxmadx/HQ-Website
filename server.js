@@ -6,6 +6,8 @@
 
 require('dotenv').config();
 
+const { assertProductionStripeKey } = require('./api/lib/bootGuards.js');
+
 // In production, fail fast if required env vars are missing
 if (process.env.NODE_ENV === 'production') {
   const REQUIRED_ENV = ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'SMTP_HOST', 'SMTP_USER', 'SMTP_PASS', 'EMAIL_FROM', 'FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY', 'SITE_URL'];
@@ -14,6 +16,13 @@ if (process.env.NODE_ENV === 'production') {
     console.error(`Missing required environment variables: ${missing.join(', ')}`);
     process.exit(1);
   }
+}
+
+try {
+  assertProductionStripeKey(process.env);
+} catch (err) {
+  console.error(err.message);
+  process.exit(1);
 }
 
 const express = require('express');
