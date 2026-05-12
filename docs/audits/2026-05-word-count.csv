@@ -1,0 +1,37 @@
+path,file,wordCount,isThin
+/,src/pages/Experimentation.jsx,5207,FALSE
+/about-us,src/pages/AboutUs.jsx,1649,FALSE
+/about-us/captain-q,(unmapped),,?
+/about-us/team,(unmapped),,?
+/contact,(unmapped),,?
+/sales/new,src/pages/Sales.jsx,2202,FALSE
+/sales/pre-owned,src/pages/UsedSales.jsx,265,TRUE
+/sales/rebuilds,(unmapped),,?
+/aircraft/r22,src/pages/AircraftR22.jsx,1276,FALSE
+/aircraft/r44,src/pages/AircraftR44.jsx,2300,FALSE
+/aircraft/r66,src/pages/AircraftR66.jsx,1791,FALSE
+/aircraft/r88,src/pages/AircraftR88.jsx,1300,FALSE
+/aircraft/h500,(unmapped),,?
+/training/ppl,src/pages/FinalPPL.jsx,593,FALSE
+/training/commercial,(unmapped),,?
+/training/type-rating,src/pages/TypeRating.jsx,569,FALSE
+/training/night-rating,src/pages/NightRating.jsx,654,FALSE
+/training/trial-lessons,(unmapped),,?
+/training/advanced,(unmapped),,?
+/maintenance,src/pages/FinalMaintenance.jsx,1667,FALSE
+/expeditions,src/pages/FinalExpeditions.jsx,1541,FALSE
+/helicopter-tour-of-london,src/pages/HelicopterTourOfLondon.jsx,373,FALSE
+/superyacht-ops,src/pages/SuperYachtOps.jsx,436,FALSE
+/pilot-provisioning,src/pages/PilotProvisioning.jsx,489,FALSE
+/aircraft-consulting,src/pages/AircraftConsulting.jsx,1065,FALSE
+/parts,src/pages/Parts.jsx,178,TRUE
+/self-fly-hire,src/pages/SelfFlyHire.jsx,816,FALSE
+/fleet,src/pages/Fleet.jsx,789,FALSE
+/store,src/pages/Misc.jsx,86,TRUE
+/blog,src/pages/Blog.jsx,23,TRUE
+/testimonials,src/pages/Testimonials.jsx,286,TRUE
+Audited 31 routes. 5 flagged thin (<300 words). 8 unmapped (need PATH_TO_FILE entry).
+(node:29482) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/maximussmith/Downloads/HQ-Website-main/src/lib/seoRoutes.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/maximussmith/Downloads/HQ-Website-main/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

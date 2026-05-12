@@ -1,0 +1,37 @@
+path,title,description,titleLen,descLen,isGeneric
+/,"HQ Aviation — UK Robinson Helicopter Dealer, Training & Expeditions","UK's premier Robinson Helicopter dealer. Flight training, sales, maintenance and worldwide expeditions from Denham — 30 min from London.",67,136,FALSE
+/about-us,About HQ Aviation — UK Robinson Dealer at Denham,"HQ Aviation — UK's premier Robinson Helicopter dealer at Denham Aerodrome. Sales, training, maintenance, expeditions.",48,117,FALSE
+/about-us/captain-q,Captain Quentin Q Smith · Founder & Pilot,"Founder Quentin 'Q' Smith — 55+ years' helicopter flying, twice Aerobatic World Champion, and the first pilot to fly to both poles.",41,131,FALSE
+/about-us/team,Meet the Team · Instructors & Engineers,"Meet the HQ Aviation team — experienced helicopter flight instructors, CAA Part-145 engineers, and operations staff at Denham Aerodrome.",39,136,FALSE
+/contact,Contact · Denham Aerodrome UB9 5DF,"Visit HQ Aviation at Denham Aerodrome (UB9 5DF), 30 min from central London via M40 J1. Ops +44 1895 833373. Maintenance +44 1895 832833. Open seven days a week.",34,161,FALSE
+/sales/new,New Robinson Helicopters for Sale · UK,"Order a new Robinson R22, R44 Raven II, R44 Cadet or R66 Turbine from HQ Aviation at Denham — a Robinson authorised dealer with in-house CAA Part-145 maintenance.",38,162,FALSE
+/sales/pre-owned,Used Robinson Helicopters for Sale · UK,"Used Robinson R22, R44 and R66 helicopters for sale — inspected, maintained and certified by HQ Aviation's CAA Part-145 service centre at Denham.",39,145,FALSE
+/sales/rebuilds,Robinson Rebuilds · 12-Year Overhauls UK,"Full Robinson R22 and R44 12-year rebuilds at HQ Aviation, Denham. CAA Part-145 approved overhauls returning helicopters to as-new condition.",40,141,FALSE
+/aircraft/r22,Robinson R22 — New & Pre-Owned Helicopter Sales | UK,New Robinson R22 sales from authorised UK dealer at Denham. The classic two-seat training helicopter — popular for PPL training and time-building.,52,146,FALSE
+/aircraft/r44,Robinson R44 — New & Pre-Owned Helicopter Sales | UK,"New Robinson R44 Raven I, II and Cadet from authorised UK dealer at Denham. The world's best-selling four-seat helicopter — comfort, range, and proven reliability.",52,163,FALSE
+/aircraft/r66,Robinson R66 Turbine — New & Pre-Owned Helicopter Sales | UK,"New Robinson R66 Turbine from authorised UK dealer at Denham. Five seats, turbine power, and the premium choice for executive transport.",60,136,FALSE
+/aircraft/r88,Robinson R88 — Twin-Engine Helicopter | UK Dealer,"Robinson R88 — the new twin-engine helicopter from Robinson. UK dealer information at HQ Aviation, Denham.",49,106,FALSE
+/aircraft/h500,Hughes/Schweizer 300 (H500) — Reference,The Hughes/Schweizer 300 (H500) — a piston-engine helicopter with a long history. Reference page; HQ Aviation does not sell new H500 aircraft.,39,142,FALSE
+/training/ppl,Helicopter PPL — Private Pilot Licence Training London,EASA PPL(H) training in Robinson R22 or R44 from Denham — 30 min from London. From your first flight to qualified pilot in 45–55 hours.,54,135,FALSE
+/training/commercial,Helicopter CPL — Commercial Pilot Licence Training UK,EASA CPL(H) training in Robinson R44 or R66 from Denham — modular pathway from PPL.,53,83,FALSE
+/training/type-rating,Helicopter Type Rating Training — UK Robinson Dealer,"Type rating training on Robinson R22, R44, R66 from Denham. Single-engine helicopter type ratings for new pilots.",52,113,FALSE
+/training/night-rating,Helicopter Night Rating — UK Helicopter Training,Night flying rating in Robinson R44 or R66 from Denham — 5h dual instruction.,48,77,FALSE
+/training/trial-lessons,Helicopter Trial Lesson — Discovery Flight from Denham,"Take the controls of a Robinson helicopter at Denham Aerodrome — 30 min from London. R22, R44 or R66. Gift vouchers available.",54,126,FALSE
+/training/advanced,Advanced Helicopter Training — UK Pilot Skills,"Advanced post-licence training — confined areas, autorotations, formation flying.",46,81,FALSE
+/maintenance,Helicopter Maintenance — Robinson Authorised Service Centre,"Authorised Robinson service centre at Denham. R22, R44, R66 maintenance, overhauls, ARC, repairs. UK CAA Part 145 approved.",59,123,FALSE
+/expeditions,Helicopter Expeditions — Worldwide Adventures,"Worldwide helicopter expedition support — Arctic, Africa, Asia. Robinson and Bell aircraft. Custom multi-day adventures.",45,120,FALSE
+/helicopter-tour-of-london,Helicopter Tour of London — 30 Minutes Over the City,"Take a 30-minute aerial tour over central London by Robinson R44 from Denham Aerodrome. London Eye, Tower Bridge, Canary Wharf.",52,127,FALSE
+/superyacht-ops,Superyacht Helicopter Operations — UK Support,"Helicopter operations support for superyachts — flight crew, deck-landing, refuelling, route planning.",45,102,FALSE
+/pilot-provisioning,"Helicopter Pilot Provisioning — Contract Crew, UK",Qualified helicopter pilot supply and contract crew for owner-operators and yacht operators.,49,92,FALSE
+/aircraft-consulting,Helicopter Pre-Purchase & Acquisition Consulting | UK,Independent pre-purchase inspection and aircraft acquisition consulting from Robinson dealer at Denham.,53,103,FALSE
+/parts,Robinson Helicopter Parts — Authorised Dealer,"Genuine Robinson Helicopter parts — authorised distributor at Denham. R22, R44, R66 spares and components.",45,106,FALSE
+/self-fly-hire,"Helicopter Self-Fly Hire — Denham, London","Self-fly hire of Robinson R22, R44, R66 helicopters from Denham, 30 min from London.",41,84,FALSE
+/fleet,Our Fleet · 30+ Robinson Helicopters,"HQ Aviation operates 30+ Robinson R22, R44 and R66 helicopters from Denham for training, self-fly hire and charter — one of the UK's largest fleets.",36,148,FALSE
+/store,Aviation Apparel & Merchandise Store,"Branded HQ Aviation apparel, watches and aviation merchandise. T-shirts, jackets and gifts for pilots, students and helicopter enthusiasts.",36,139,FALSE
+/blog,HQ Aviation Blog — Helicopter Flying & Aviation Insights,"Articles on helicopter flying, training, ownership, and aviation life from the HQ Aviation team.",56,96,FALSE
+/testimonials,Testimonials · Customer Reviews & Stories,"Reviews and stories from HQ Aviation customers — discovery flight students, PPL graduates, helicopter owners, and maintenance clients.",41,134,FALSE
+Audited 31 routes. 0 flagged as generic / missing meta.
+(node:29476) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/maximussmith/Downloads/HQ-Website-main/src/lib/seoRoutes.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/maximussmith/Downloads/HQ-Website-main/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
