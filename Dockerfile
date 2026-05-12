@@ -3,6 +3,9 @@ FROM node:20-slim AS builder
 
 WORKDIR /app
 
+ARG GIT_REV=unknown
+ENV GIT_REV=$GIT_REV
+
 # Install build deps for sharp's native binaries
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential python3 && \
@@ -24,6 +27,9 @@ COPY scripts/ ./scripts/
 FROM node:20-slim AS runtime
 
 WORKDIR /app
+
+ARG GIT_REV=unknown
+ENV GIT_REV=$GIT_REV
 
 # Runtime deps for sharp
 RUN apt-get update && apt-get install -y --no-install-recommends \

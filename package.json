@@ -7,11 +7,11 @@
     "start": "NODE_ENV=production node server.js",
     "dev": "concurrently \"vite\" \"node server.js\" --names \"vite,api\" --prefix-colors \"cyan,yellow\"",
     "dev:vite": "vite",
-    "build": "vite build",
+    "build": "GIT_REV=$(git rev-parse --short HEAD 2>/dev/null || echo unknown) vite build",
     "preview": "vite preview",
     "static": "node server.js",
     "test": "vitest run",
-    "deploy:server": "docker build --platform linux/amd64 -t europe-west2-docker.pkg.dev/hq-website-4abc7/hq-aviation/server:latest . && docker push europe-west2-docker.pkg.dev/hq-website-4abc7/hq-aviation/server:latest && gcloud run deploy hq-aviation-server --image=europe-west2-docker.pkg.dev/hq-website-4abc7/hq-aviation/server:latest --region=europe-west2"
+    "deploy:server": "GIT_REV=$(git rev-parse --short HEAD) && docker build --build-arg GIT_REV=$GIT_REV --platform linux/amd64 -t europe-west2-docker.pkg.dev/hq-website-4abc7/hq-aviation/server:$GIT_REV -t europe-west2-docker.pkg.dev/hq-website-4abc7/hq-aviation/server:latest . && docker push --all-tags europe-west2-docker.pkg.dev/hq-website-4abc7/hq-aviation/server && gcloud run deploy hq-aviation-server --image=europe-west2-docker.pkg.dev/hq-website-4abc7/hq-aviation/server:$GIT_REV --region=europe-west2 --set-env-vars=GIT_REV=$GIT_REV"
   },
   "repository": {
     "type": "git",
