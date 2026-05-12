@@ -16,6 +16,7 @@ import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import Seo from '../components/seo/Seo';
 import { buildCourse, buildBreadcrumbList, buildFAQPage } from '../components/seo/jsonLd';
 import { SITE_URL } from '../lib/seoDefaults';
+import Image from '../components/Image';
 
 // Import styles for Header/Navigation
 import '../assets/css/main.css';
@@ -372,7 +373,7 @@ function FinalPPL() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 1.5 }}
         >
-          <img src={pageImages['ppl-hero']?.[0]?.url || '/assets/images/gallery/carousel/rotating6.jpg'} alt="" width={2500} height={1667} />
+          <Image src={pageImages['ppl-hero']?.[0]?.url || '/assets/images/gallery/carousel/rotating6.jpg'} alt="" width={2500} height={1667} priority sizes="100vw" />
         </motion.div>
         <div className="fppl-hero__overlay" />
 

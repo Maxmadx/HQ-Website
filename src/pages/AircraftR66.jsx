@@ -30,6 +30,7 @@ import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { SECTION_MAP } from '../lib/imageSections';
 import Seo from '../components/seo/Seo';
 import { buildProduct, buildBreadcrumbList } from '../components/seo/jsonLd';
+import Image from '../components/Image';
 
 // Import styles
 import '../assets/css/main.css';
@@ -520,11 +521,13 @@ function R66Hero() {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1.5 }}
       >
-        <img
+        <Image
           src={pageImages['r66-hero']?.[0]?.url || '/assets/images/new-aircraft/r66/rhc-r66-nxg-riviera-center-spotlight-vertical-format-14184-2.jpg'}
           alt="Robinson R66 Turbine Helicopter"
           width={2500}
           height={3750}
+          priority
+          sizes="100vw"
         />
         <video
           ref={videoRef}
