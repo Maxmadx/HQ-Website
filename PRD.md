@@ -63,6 +63,9 @@ Built April 2026. Live admin surfaces under `/admin/*`, role-gated by a Firebase
 
 - FAQ management (`api/admin-faqs.js`)
 - Comparables (used-aircraft listings) with image upload to Firebase Storage — client-side Firestore; no dedicated server-side admin API file
+- **Image-editing mode** (`/admin/images`) — visual editor for all site pages; switches image content slots across every page section with a per-page tab bar.
+- **Text-editing mode** (`/admin/text`) — inline copy editor for all managed text fields across the site; saves to the Firestore `site_text` collection.
+- **Used-aircraft listings** (`/admin/listings`) — CRUD for the used-aircraft inventory (separate from comparables); supports image upload and a per-listing edit view at `/admin/listings/:id`.
 - Self-fly hire events (`api/admin-sfh-events.js`)
 - Self-fly hire partners (`api/admin-sfh-partners.js`)
 - Bookings overview
