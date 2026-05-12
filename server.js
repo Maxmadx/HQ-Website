@@ -609,7 +609,7 @@ if (process.env.GSC_SYNC_AUTO === 'true') {
 // START SERVER
 // ============================================
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log('\n🚀 HQ Aviation Server');
   console.log('━'.repeat(50));
   console.log(`   URL: http://localhost:${PORT}`);
@@ -624,7 +624,22 @@ app.listen(PORT, () => {
 });
 
 // Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('\n\n🛑 Server shutting down gracefully...');
-  process.exit(0);
-});
+function shutdown(signal) {
+  console.log(`${signal} received — starting graceful shutdown`);
+  server.close((err) => {
+    if (err) {
+      console.error('Error during graceful shutdown:', err);
+      process.exit(1);
+    }
+    console.log('All connections drained — exiting');
+    process.exit(0);
+  });
+  // Hard exit after 30s in case something blocks server.close
+  setTimeout(() => {
+    console.error('Graceful shutdown timed out — forcing exit');
+    process.exit(1);
+  }, 30_000).unref();
+}
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
