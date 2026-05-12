@@ -12,6 +12,11 @@ function displayAmount(pence) {
   return '£' + (pence / 100).toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 }
 
+const AIRCRAFT_NAMES = { r22: 'Robinson R22', r44: 'Robinson R44', r66: 'Robinson R66' };
+function aircraftName(code, fallback) {
+  return AIRCRAFT_NAMES[code] || fallback || code || '—';
+}
+
 function formatDate(ts) {
   if (!ts) return '—';
   const d = ts.toDate ? ts.toDate() : new Date(ts);
@@ -101,11 +106,18 @@ export default function AdminBookings() {
                     {typeLabel}
                   </span>
 
+                  {/* Upgraded pill */}
+                  {b.upgrade && (
+                    <span style={{ fontSize: '0.65rem', fontWeight: 700, background: '#ecfdf5', color: '#065f46', padding: '2px 7px', borderRadius: 99, textTransform: 'uppercase', letterSpacing: '0.06em', whiteSpace: 'nowrap', border: '1px solid #6ee7b7' }}>
+                      Upgraded
+                    </span>
+                  )}
+
                   {/* Customer name */}
                   <span style={{ fontWeight: 600, fontSize: '0.9rem', color: '#111827', flex: 1 }}>{b.customerName}</span>
 
-                  {/* Amount */}
-                  <span style={{ fontWeight: 700, fontSize: '0.9rem', color: '#111827', whiteSpace: 'nowrap' }}>{displayAmount(b.amount)}</span>
+                  {/* Amount — totalAmountPence (includes upgrade) preferred over original amount */}
+                  <span style={{ fontWeight: 700, fontSize: '0.9rem', color: '#111827', whiteSpace: 'nowrap' }}>{displayAmount(b.totalAmountPence ?? b.amount)}</span>
 
                   {/* Date */}
                   <span style={{ fontSize: '0.75rem', color: '#9ca3af', whiteSpace: 'nowrap' }}>{formatDate(b.createdAt)}</span>
@@ -129,6 +141,34 @@ export default function AdminBookings() {
                     </div>
 
                     <BookingDetails booking={b} />
+
+                    {b.upgrade && (
+                      <div style={{ marginTop: '0.75rem', background: '#ecfdf5', border: '1px solid #6ee7b7', borderRadius: '6px', padding: '0.75rem' }}>
+                        <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#065f46', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.4rem' }}>
+                          Upgraded
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+                          <div>
+                            <div style={{ fontSize: '0.65rem', color: '#047857', fontWeight: 600, marginBottom: '2px' }}>Originally Booked</div>
+                            <div style={{ fontSize: '0.8rem', color: '#064e3b', fontWeight: 600 }}>
+                              {aircraftName(b.originalAircraft)} · {b.originalDuration ?? '—'} min
+                            </div>
+                          </div>
+                          <div>
+                            <div style={{ fontSize: '0.65rem', color: '#047857', fontWeight: 600, marginBottom: '2px' }}>Upgrade Paid</div>
+                            <div style={{ fontSize: '0.8rem', color: '#064e3b', fontWeight: 600 }}>
+                              {displayAmount((b.totalAmountPence ?? b.amount) - (b.amount ?? 0))}
+                            </div>
+                          </div>
+                          <div>
+                            <div style={{ fontSize: '0.65rem', color: '#047857', fontWeight: 600, marginBottom: '2px' }}>Upgraded At</div>
+                            <div style={{ fontSize: '0.8rem', color: '#064e3b', fontWeight: 600 }}>
+                              {formatDate(b.upgrade.upgradedAt)}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     {b.wantsVoucher && (
                       <div style={{ marginTop: '0.75rem', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '6px', padding: '0.75rem' }}>
