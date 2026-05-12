@@ -42,7 +42,7 @@ flowchart LR
 
 2. **Cart upsert** — `src/pages/Checkout.jsx` calls `upsertCart` (`src/lib/cart.js`) which writes to `POST /api/carts` (`server.js:424`). This persists the session-level cart for recovery purposes. The misc checkout path skips this step (`src/pages/Checkout.jsx:497`).
 
-3. **Email-first gate** — When no email is in the cart the checkout renders `src/pages/Checkout/EmailFirstStep.jsx` which collects the email and upserts the cart again, enabling recovery emails even if the user abandons before paying (`src/pages/Checkout.jsx:606`).
+3. **Email collection** — The discovery-flight checkout form renders an inline email input (`src/pages/Checkout.jsx:153-162`). The collected email is included in the `upsertCart` payload so that a cart recovery email can be sent even if the user abandons before completing payment.
 
 4. **Create PaymentIntent** — `src/pages/Checkout.jsx:82` posts to `POST /api/create-payment-intent` (`server.js:245`).
    - Server validates `aircraft` (r22/r44/r66), `duration` (30 or 60), `customerName`, `customerEmail`, `customerPhone` (`server.js:249-265`).
@@ -60,7 +60,7 @@ flowchart LR
 
 7. **Navigate to confirmation** — SPA navigates to `/booking-confirmed?ref={pi.id}&aircraft=...&duration=...` (`src/pages/Checkout.jsx:130-134`).
 
-8. **Confirmation page** — `src/pages/BookingConfirmed.jsx` fires a client-side `purchase` analytics event (`src/pages/BookingConfirmed.jsx:54`), then fetches `GET /api/booking/{pi.id}` to display the booking summary (`src/pages/BookingConfirmed.jsx:71`). Referral code is shown if present (`src/pages/BookingConfirmed.jsx:80`).
+8. **Confirmation page** — `src/pages/BookingConfirmed.jsx` fires a client-side `purchase` analytics event (`src/pages/BookingConfirmed.jsx:54`), then fetches `GET /api/booking/{pi.id}` to display the booking summary (`src/pages/BookingConfirmed.jsx:71`). For non-misc bookings, renders `<PostCheckoutOffers>` (`src/pages/BookingConfirmed.jsx:153`) which conditionally displays a referral CTA or upgrade offer based on the booking data.
 
 9. **Stripe webhook** — Stripe delivers `payment_intent.succeeded` to `POST /api/webhook` (see Flow 9). The webhook handler writes the canonical `bookings` document and sends the confirmation email (`api/stripe.js:1000-1033`).
 
@@ -232,6 +232,10 @@ This flow is identical to Flow 3 (Misc marketplace purchase) with one additional
 - Size not provided → `MiscCheckoutForm` passes an empty `size`; server returns HTTP 400 `Size is required for this apparel item` (`api/stripe.js:1195-1198`).
 - Invalid size value → HTTP 400 `Size {s} is not available` (`api/stripe.js:1200-1203`).
 
+**Observability**
+
+Same as Flow 3 (Misc marketplace purchase). The webhook handler does not differentiate apparel from non-apparel misc items in its logging; apparel size choices appear as `metadata.apparelSize` on the PaymentIntent and persist in the Firestore doc under `misc_marketplace/{id}`. Post-Phase-1, Sentry release tagging applies uniformly.
+
 ---
 
 ## 5. Parts enquiry
@@ -349,7 +353,7 @@ This flow is identical to Flow 3 (Misc marketplace purchase) with one additional
    - `completed` or `expired` + age ≥ 90 days → `prune` (delete) (`api/lib/cartRecoveryActions.js:58-61`).
    - `abandoned` + contactable + no `1h` email sent → `send_1h` (`api/lib/cartRecoveryActions.js:80-84`).
    - `abandoned` + contactable + `1h` sent + ≥ 24 h since last email → `send_24h` (`api/lib/cartRecoveryActions.js:86-92`).
-   - Send actions capped at 50 per tick (`api/lib/cartRecoveryActions.js:5`).
+   - Send actions capped at 50 per tick (`api/lib/cartRecoveryActions.js:10`).
 
 4. **Quiet hours** — `api/cart-recovery-runner.js:31` checks `isQuietHourLondon(now)`; if quiet, send actions are deferred (`api/cart-recovery-runner.js:52-55`).
 
