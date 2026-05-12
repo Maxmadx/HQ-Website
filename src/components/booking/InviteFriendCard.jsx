@@ -242,6 +242,30 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
             {copied ? '✓ Link copied' : 'Copy referral link →'}
           </div>
         </div>
+
+        {/* Compact body — single line + arrow. Emerges as the hero collapses
+            so the card has a visible compact pill (parallel to the upgrade
+            pill's compact pill on the left). */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            maxHeight: isHero ? '0px' : '60px',
+            opacity: isHero ? 0 : 1,
+            padding: isHero ? '0 16px' : '14px 16px',
+            overflow: 'hidden',
+            transition:
+              'max-height 1500ms ease, opacity 1000ms ease ' + (isHero ? '0ms' : '700ms') + ', padding 1500ms ease',
+            fontSize: '14px',
+            lineHeight: 1.4,
+          }}
+        >
+          <span style={{ flex: '1 1 auto' }}>
+            {copied ? '✓ Referral link copied' : 'Invite a friend — gifts waiting at HQ'}
+          </span>
+          <span aria-hidden="true" style={{ fontSize: '18px', color: '#047857', marginLeft: '12px', flexShrink: 0 }}>→</span>
+        </div>
       </div>
     </div>
   );
