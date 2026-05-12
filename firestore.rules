@@ -309,5 +309,12 @@ service cloud.firestore {
     match /gsc_daily/{docId} {
       allow read, write: if false;
     }
+
+    // SEO per-page meta overrides (spec 15). Read by Seo.jsx on any
+    // page load (publicly visible content anyway), write by admins only.
+    match /seo_overrides/{path} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
   }
 }
