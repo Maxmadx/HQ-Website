@@ -2,8 +2,7 @@
 
 > Locked-in choices that the site-hardening roadmap (§4 Phase 0 → §7 Phase 3)
 > depends on. Each row: chosen option, alternatives considered, why we chose,
-> who decided, when. If a decision changes, edit in place and add a
-> "Revised YYYY-MM-DD: …" line — don't replace history.
+> who decided, when. If a decision changes, edit the relevant section's prose in place AND append a one-line entry to the "Revisions" section at the bottom of this doc: "Revised YYYY-MM-DD: §N — what changed, why." Don't delete the old prose silently — strikethrough or rephrase, and let the Revisions log carry the audit trail.
 >
 > Updated 2026-05-12.
 
@@ -69,7 +68,7 @@ Any hit must be resolved (file moved to `public/assets/` or reference updated) b
 
 ## 5. Node target
 
-**Chosen:** `package.json` `"engines": { "node": ">=20.0.0" }`. Dockerfile pinned to `node:20-slim` (already in use per audit).
+**Chosen:** Set `package.json` `"engines": { "node": ">=20.0.0" }`. Dockerfile already pinned to `node:20-slim` per audit. The `package.json:29` value currently still reads `>=14.0.0`; bumping it is a Phase 1 task (spec §5 item 15).
 
 **Alternatives considered:**
 - **Node 22** — too new for some transitive deps; revisit in late 2026.
@@ -86,12 +85,12 @@ Any hit must be resolved (file moved to `public/assets/` or reference updated) b
 ```
 Content-Security-Policy:
   default-src 'self';
-  script-src 'self' https://js.stripe.com https://www.googletagmanager.com;
+  script-src 'self' https://js.stripe.com;
   connect-src 'self' https://api.stripe.com https://*.googleapis.com https://*.firebaseio.com https://o*.ingest.sentry.io;
   frame-src 'self' https://js.stripe.com https://hooks.stripe.com;
   img-src 'self' data: https:;
-  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-  font-src 'self' https://fonts.gstatic.com data:;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
+  font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:;
   object-src 'none';
   base-uri 'self';
   form-action 'self';
@@ -101,17 +100,19 @@ Content-Security-Policy:
 
 **HSTS:** `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`.
 
+**Reporting endpoint:** During the report-only week, set `Content-Security-Policy-Report-Only` with a `report-uri` that points to Sentry's CSP ingest endpoint (Sentry exposes one per project at `https://o<org-id>.ingest.sentry.io/api/<project-id>/security/?sentry_key=<public-key>`). The exact URL is provisioned as part of Phase 1's Sentry setup; without it, the report-only header produces no actionable output.
+
 **Alternatives considered:**
-- **`'unsafe-inline'` in `script-src`** — rejected for production; only allowed in `style-src` because the React bundle inlines emotion-style critical CSS.
+- **`'unsafe-inline'` in `script-src`** — rejected for production. It is allowed in `style-src` because several components embed inline `<style>` blocks containing `@import` directives; refactoring those to external stylesheets is a Phase 3 health task, after which the `'unsafe-inline'` allowance can be dropped.
 - **Nonce-based CSP** — overkill at current scale; revisit if the script-src list grows.
 
-**Why:** `'self'` baseline blocks the long tail of injected-script attacks. Stripe / Firebase / Sentry are the only required third-party origins, all explicitly listed. Google Fonts is the one remaining external font origin.
+**Why:** `'self'` baseline blocks the long tail of injected-script attacks. Stripe, Firebase, and Sentry are the only required third-party script/connect origins. Google Fonts and the Cloudflare CDN that serves Font Awesome (via `index.html`) are the remaining external style/font origins. A future Phase-3 task may self-host Font Awesome to drop the `cdnjs.cloudflare.com` allowance.
 
 **Decided:** Max Smith, 2026-05-12.
 
 ## 7. Release tagging
 
-**Chosen:** Inject `process.env.GIT_REV = git rev-parse --short HEAD` at Docker build time (Dockerfile `ARG GIT_REV` + `ENV`). Server reads it on boot; Sentry uses it as the `release` field; logs prefix every line with it.
+**Chosen:** Inject `process.env.GIT_REV = git rev-parse --short HEAD` at Docker build time. Dockerfile declares `ARG GIT_REV` then `ENV GIT_REV=$GIT_REV`. The `deploy:server` script must pass `--build-arg GIT_REV=$(git rev-parse --short HEAD)` to `docker build` — without it the `ARG` resolves to empty and the container ships with no release tag. Server reads `process.env.GIT_REV` on boot; Sentry uses it as the `release` field; logs prefix every line with it.
 
 **Why:** Without release tags, every bug is "happened sometime". With tags, error reports point to a 6-character commit SHA.
 
