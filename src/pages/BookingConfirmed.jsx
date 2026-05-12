@@ -195,7 +195,7 @@ export default function BookingConfirmed() {
       <div style={styles.container}>
 
         {/* Centred heading column — narrow, holds spinner/✓, h1, button, divider */}
-        <div style={styles.centerColumn}>
+        <div style={{ ...styles.centerColumn, order: 1 }}>
 
         {/* Success mark — spinner during Phase 1/fading, ✓ during Phase 2 */}
         <div style={styles.markSlot}>
@@ -259,6 +259,7 @@ export default function BookingConfirmed() {
             opacity: isExpanded ? 0 : 1,
             overflow: 'hidden',
             transition: 'max-height 1500ms ease, opacity 700ms ease',
+            order: 2,
           }}
         >
           <h2 style={styles.offersHeading}>Make it even better.</h2>
@@ -275,6 +276,10 @@ export default function BookingConfirmed() {
             gap: isExpanded ? '8px' : '32px',
             margin: isExpanded ? '0 auto 28px' : '0 auto',
             transition: 'max-width 1500ms ease, gap 1500ms ease, margin 1500ms ease',
+            // In expanded, pills sit BELOW the summary card; in confirming
+            // they sit above (where the heading expects them). The DOM order
+            // is unchanged so the hero→compact morph animation is preserved.
+            order: isExpanded ? 4 : 3,
           }}
         >
           {!isMisc && (
@@ -297,8 +302,10 @@ export default function BookingConfirmed() {
           )}
         </div>
 
-        {/* Centred summary/offers/return column */}
-        <div style={styles.centerColumn}>
+        {/* Centred summary column. In expanded phase its order is 3, so it
+            sits ABOVE the cards row (order 4). In confirming phase order
+            is 4 but it's collapsed (max-height 0) so position is irrelevant. */}
+        <div style={{ ...styles.centerColumn, order: isExpanded ? 3 : 4 }}>
 
         {/* Summary card — grows in when the user clicks 'View Booking Summary'.
             max-height + opacity transition so the pill below shifts down
@@ -365,6 +372,12 @@ export default function BookingConfirmed() {
           </div>
         </div>
 
+        </div>{/* /centerColumn — summary */}
+
+        {/* Centred offers/return column — order 5 (always last). Only renders
+            content in expanded phase. */}
+        <div style={{ ...styles.centerColumn, order: 5 }}>
+
         {/* Post-checkout offers + outro — only after user clicks View Booking Summary. */}
         {isExpanded && (
           <div style={{ animation: 'bc-fade-in 480ms ease both' }}>
@@ -386,7 +399,7 @@ export default function BookingConfirmed() {
           </div>
         )}
 
-        </div>{/* /centerColumn — summary/offers/return */}
+        </div>{/* /centerColumn — offers/return */}
 
       </div>
     </div>
@@ -407,6 +420,8 @@ const styles = {
     maxWidth: '1080px',
     width: '100%',
     textAlign: 'center',
+    display: 'flex',
+    flexDirection: 'column',
   },
   centerColumn: {
     maxWidth: '520px',
