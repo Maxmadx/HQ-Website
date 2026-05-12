@@ -97,6 +97,7 @@ export const CANONICAL_REDIRECTS = {
   '/aircraft-sales/new/r88': '/aircraft/r88',
   '/final-ppl': '/training/ppl',
   '/type-rating': '/training/type-rating',
+  '/home': '/',
 };
 
 /**

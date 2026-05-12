@@ -110,7 +110,7 @@ function FinalDraftHeader() {
           <div data-nc-container="top-left"></div>
           <div data-nc-container="top-center">
             <Link to="/" className="Header-branding" data-nc-element="branding">
-              <img src="/assets/images/logos/hq/hq-aviation-logo-black.png" alt="HQ Aviation" className="Header-branding-logo" loading="lazy" decoding="async" />
+              <img src="/assets/images/logos/hq/hq-aviation-logo-black.png" alt="HQ Aviation" className="Header-branding-logo" loading="lazy" decoding="async" width={405} height={245} />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
               <div className="Header-nav-inner">
@@ -176,7 +176,7 @@ function ImageCarousel({ images, model }) {
       <div className="usv-carousel">
         <div className="usv-carousel__slides">
           <div className="usv-carousel__slide usv-carousel__slide--active">
-            <img src="/assets/images/used-aircraft/r44/r44-raven-ii-grrob.jpg" alt={model} loading="lazy" />
+            <img src="/assets/images/used-aircraft/r44/r44-raven-ii-grrob.jpg" alt={model} loading="lazy" width={1024} height={678} />
           </div>
         </div>
       </div>
@@ -192,7 +192,7 @@ function ImageCarousel({ images, model }) {
       <div className="usv-carousel__slides">
         {images.map((img, i) => (
           <div key={i} className={`usv-carousel__slide ${i === currentIndex ? 'usv-carousel__slide--active' : ''}`}>
-            <img src={img.url} alt={img.alt || model} loading="lazy" />
+            <img src={img.url} alt={img.alt || model} loading="lazy" width={1024} height={678} />
           </div>
         ))}
       </div>
@@ -436,7 +436,7 @@ function UsedSales() {
       <FinalDraftHeader />
       <section className="usv__hero-split">
         <div className="usv__hero-image">
-          <img src="/assets/images/facility/main-sales-pic.jpg" alt="Pre-Owned Helicopters" />
+          <img src="/assets/images/facility/main-sales-pic.jpg" alt="Pre-Owned Helicopters" width={2500} height={1667} />
         </div>
         <div className="usv__hero-text">
           <div className="usv__grid-lines" />

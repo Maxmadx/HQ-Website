@@ -29,6 +29,9 @@ import '../assets/css/components.css';
 import FooterMinimal from '../components/FooterMinimal';
 import LondonTourTicket from '../components/LondonTourTicket';
 import HqMenuPanel from '../components/HqMenuPanel';
+import Seo from '../components/seo/Seo';
+import { buildProduct, buildTouristTrip, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { SITE_URL } from '../lib/seoDefaults';
 
 /**
  * PAGE HEADER COMPONENT
@@ -106,6 +109,8 @@ function TourHeader() {
                 className="Header-branding-logo"
                 loading="lazy"
                 decoding="async"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -330,6 +335,42 @@ function HelicopterTourOfLondon() {
 
   return (
     <div className="ltour">
+      <Seo
+        title="Helicopter Tour of London — 30 Minutes Over the City"
+        description="Take a 30-minute aerial tour over central London by Robinson R44 from Denham Aerodrome. London Eye, Tower Bridge, Canary Wharf — see the city as a pilot does."
+        ogImage="/assets/images/gallery/london-tour/above-westminster.jpg"
+        ogType="product"
+        jsonLd={[
+          buildProduct({
+            name: 'Helicopter Tour of London',
+            description: 'A 30-minute aerial tour over central London by Robinson R44 from Denham Aerodrome.',
+            image: '/assets/images/gallery/london-tour/above-westminster.jpg',
+            brand: 'HQ Aviation',
+            url: `${SITE_URL}/helicopter-tour-of-london`,
+            offers: {
+              price: '395',
+              priceCurrency: 'GBP',
+              availability: 'https://schema.org/InStock',
+              valueAddedTaxIncluded: false,
+            },
+          }),
+          buildTouristTrip({
+            name: 'Helicopter Tour of London',
+            description: 'A 30-minute aerial tour over central London by Robinson R44 from Denham Aerodrome.',
+            image: '/assets/images/gallery/london-tour/above-westminster.jpg',
+            url: `${SITE_URL}/helicopter-tour-of-london`,
+            offers: {
+              price: '395',
+              priceCurrency: 'GBP',
+              availability: 'https://schema.org/InStock',
+            },
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Helicopter Tour of London', path: '/helicopter-tour-of-london' },
+          ]),
+        ]}
+      />
       <TourHeader />
 
       {/* ========== HERO SECTION ========== */}
@@ -340,7 +381,7 @@ function HelicopterTourOfLondon() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 1.5 }}
         >
-          <img src={pageImages['helicopter-tour-hero']?.[0]?.url || '/assets/images/gallery/flying/flying-.jpg'} alt="London aerial view" />
+          <img src={pageImages['helicopter-tour-hero']?.[0]?.url || '/assets/images/gallery/flying/flying-.jpg'} alt="London aerial view" width={2500} height={1667} />
         </motion.div>
         <div className="ltour-hero__overlay" />
 
@@ -507,7 +548,7 @@ function HelicopterTourOfLondon() {
               transition={{ delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
               viewport={{ once: true }}
             >
-              <img src={pageImages['helicopter-tour-gallery']?.[i]?.url || img.src} alt={pageImages['helicopter-tour-gallery']?.[i]?.alt || img.alt} />
+              <img src={pageImages['helicopter-tour-gallery']?.[i]?.url || img.src} alt={pageImages['helicopter-tour-gallery']?.[i]?.alt || img.alt} width={2500} height={1667} />
               <span className="ltour-gallery__caption">{img.caption}</span>
             </motion.div>
           ))}

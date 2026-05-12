@@ -28,6 +28,9 @@ import '../assets/css/components.css';
 
 import FooterMinimal from '../components/FooterMinimal';
 import HqMenuPanel from '../components/HqMenuPanel';
+import Seo from '../components/seo/Seo';
+import { buildService, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { SITE_URL, AREA_SERVED } from '../lib/seoDefaults';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HEADER COMPONENT
@@ -99,6 +102,8 @@ function LeasebackHeader() {
                 src="/assets/images/logos/hq/hq-aviation-logo-black.png"
                 alt="HQ Aviation"
                 className="Header-branding-logo"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -171,7 +176,7 @@ function LeasebackHero({ pageImages }) {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
       >
-        <img src={heroImage} alt="HQ Aviation Leaseback Program" />
+        <img src={heroImage} alt="HQ Aviation Leaseback Program" width={2500} height={1620} />
       </motion.div>
       <div className="lb-hero__overlay" />
 
@@ -411,7 +416,7 @@ function LeasebackEligibleAircraft({ pageImages }) {
               <Reveal key={card.href} delay={0.1 + i * 0.1}>
                 <Link to={card.href} className="lb-aircraft__card">
                   <div className="lb-aircraft__img-wrap">
-                    <img src={imgUrl} alt={imgAlt} className="lb-aircraft__img" />
+                    <img src={imgUrl} alt={imgAlt} className="lb-aircraft__img" width={1500} height={1000} />
                   </div>
                   <div className="lb-aircraft__body">
                     <span className="lb-pre-text">{card.eyebrow}</span>
@@ -806,6 +811,23 @@ export default function Leaseback() {
 
   return (
     <div className="lb-page">
+      <Seo
+        title="Helicopter Leaseback — UK Aircraft Owner Programme"
+        description="Earn revenue from your helicopter through HQ Aviation's leaseback programme. Robinson R44 / R66 placements at Denham, UK."
+        jsonLd={[
+          buildService({
+            name: 'Helicopter Leaseback',
+            serviceType: 'Aircraft leaseback program',
+            description: 'Aircraft leaseback programme for helicopter owners — Robinson R44 and R66 placements at Denham.',
+            url: `${SITE_URL}/leaseback`,
+            areaServed: AREA_SERVED,
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Leaseback', path: '/leaseback' },
+          ]),
+        ]}
+      />
       <LeasebackStyles />
       <LeasebackHeader />
       <main>

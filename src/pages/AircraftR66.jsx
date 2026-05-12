@@ -113,6 +113,8 @@ function R66Header() {
                 alt="HQ Aviation"
                 className="Header-branding-logo"
                 loading="lazy"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -521,6 +523,8 @@ function R66Hero() {
         <img
           src={pageImages['r66-hero']?.[0]?.url || '/assets/images/new-aircraft/r66/rhc-r66-nxg-riviera-center-spotlight-vertical-format-14184-2.jpg'}
           alt="Robinson R66 Turbine Helicopter"
+          width={2500}
+          height={3750}
         />
         <video
           ref={videoRef}
@@ -683,6 +687,8 @@ function R66Highlights() {
               src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-front-v4.png"
               alt="Robinson R66 front-quarter view in Palo Verde blue livery"
               loading="lazy"
+              width={2500}
+              height={1406}
             />
           </div>
         </Reveal>
@@ -833,6 +839,9 @@ function R66Introduction() {
               <img
                 src="/assets/images/facility/r66-lineup.png"
                 alt="HQ Aviation R66 fleet lineup"
+                width={1920}
+                height={1080}
+                loading="lazy"
               />
             </div>
           </Reveal>
@@ -925,6 +934,9 @@ function R66Specifications() {
                     src="/assets/images/new-aircraft/r66/r66bluprint.jpg"
                     alt="R66 Blueprint"
                     className="r66-specs__blueprint"
+                    width={1024}
+                    height={595}
+                    loading="lazy"
                   />
                 </div>
                 <div className="r66-specs__overlay-data">
@@ -1060,6 +1072,9 @@ function R66NXGCockpit() {
                 <img
                   src="/assets/images/new-aircraft/r66/rhc-r66-nxg-riviera-all-glass-cockpit-13338.jpg"
                   alt="R66 NXG Glass Cockpit"
+                  width={2500}
+                  height={1667}
+                  loading="lazy"
                 />
                 <div className="r66-nxg__image-badge">
                   <span className="r66-nxg__image-badge-label">GARMIN</span>
@@ -1107,6 +1122,9 @@ function R66Fleet() {
             <img
               src="/assets/images/facility/r66-lineup.png"
               alt="HQ Aviation R66 fleet lineup"
+              width={1920}
+              height={1080}
+              loading="lazy"
             />
             <div className="r66-fleet__caption">
               <span className="r66-fleet__caption-label">HQ Aviation</span>
@@ -1227,7 +1245,7 @@ function R66Expedition() {
             </button>
 
             <div className="r66-expedition__image" key={slide.image}>
-              <img src={slide.image} alt={slide.alt} />
+              <img src={slide.image} alt={slide.alt} width={1500} height={1000} loading="lazy" />
             </div>
 
             <button
@@ -1385,7 +1403,7 @@ function R66Variants() {
                       layoutId={`r66-variant-img-${i}`}
                       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
                     >
-                      <img src={variant.image} alt="" loading="lazy" />
+                      <img src={variant.image} alt="" loading="lazy" width={1920} height={1080} />
                     </motion.span>
                   )}
                   <motion.span
@@ -1420,6 +1438,8 @@ function R66Variants() {
                   <img
                     src={r66Variants[activeVariant].image}
                     alt={`${r66Variants[activeVariant].name} configuration`}
+                    width={1920}
+                    height={1080}
                   />
                 </motion.span>
                 <div className="r66-variants__use-case-tags">
@@ -1623,7 +1643,7 @@ function R66Gallery() {
                     whileHover={{ scale: 1.02 }}
                     onClick={() => setSelectedImage(image)}
                   >
-                    <img src={image.src} alt={image.alt} />
+                    <img src={image.src} alt={image.alt} width={1500} height={1000} loading="lazy" />
                     <div className="r66-gallery__overlay">
                       <i className="fas fa-expand"></i>
                     </div>
@@ -1678,7 +1698,7 @@ function R66Gallery() {
               animate={{ scale: 1 }}
               exit={{ scale: 0.9 }}
             >
-              <img src={selectedImage.src} alt={selectedImage.alt} />
+              <img src={selectedImage.src} alt={selectedImage.alt} width={1920} height={1280} />
               <button
                 className="r66-gallery__lightbox-close"
                 onClick={() => setSelectedImage(null)}

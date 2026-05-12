@@ -102,6 +102,8 @@ function TypeRatingHeader() {
                 className="Header-branding-logo"
                 loading="lazy"
                 decoding="async"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -201,7 +203,7 @@ function AircraftCard({ aircraft, isActive, onClick, onEnquire }) {
           transition={{ duration: 0.2 }}
         >
           <div className="tr-aircraft-card__image">
-            <img src={aircraft.image} alt={aircraft.model} />
+            <img src={aircraft.image} alt={aircraft.model} width={1500} height={1000} />
             <div className="tr-aircraft-card__overlay">
               <span className="tr-aircraft-card__select">Select Type</span>
             </div>
@@ -511,7 +513,7 @@ function TypeRating() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 1.5 }}
         >
-          <img src={pageImages['type-rating-hero']?.[0]?.url || '/assets/images/gallery/carousel/rotating8.jpg'} alt="Helicopter cockpit" />
+          <img src={pageImages['type-rating-hero']?.[0]?.url || '/assets/images/gallery/carousel/rotating8.jpg'} alt="Helicopter cockpit" width={2500} height={1667} />
         </motion.div>
         <div className="tr-hero__overlay" />
 
@@ -611,7 +613,7 @@ function TypeRating() {
           </Reveal>
           <Reveal delay={0.2}>
             <div className="tr-intro__image">
-              <img src={pageImages['type-rating-intro']?.[0]?.url || '/assets/images/gallery/carousel/rotating6.jpg'} alt="Helicopter in flight" />
+              <img src={pageImages['type-rating-intro']?.[0]?.url || '/assets/images/gallery/carousel/rotating6.jpg'} alt="Helicopter in flight" width={2500} height={1667} />
               <div className="tr-intro__image-caption">
                 <span className="tr-intro__image-caption-num">6</span>
                 <span>Aircraft types available</span>

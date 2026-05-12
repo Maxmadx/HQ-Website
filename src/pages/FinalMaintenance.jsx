@@ -183,6 +183,8 @@ function MaintenanceHeader() {
                 alt="HQ Aviation"
                 className="Header-branding-logo"
                 loading="lazy"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -216,7 +218,7 @@ function ParallaxSection({ image, number, label, largeText }) {
   return (
     <section ref={ref} className="maint-parallax">
       <motion.div className="maint-parallax__bg" style={{ y }}>
-        <img src={image} alt="" />
+        <img src={image} alt="" width={2500} height={1667} />
       </motion.div>
       <div className="maint-parallax__overlay" />
 
@@ -263,7 +265,7 @@ function HeroSection() {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1.5 }}
       >
-        <img src={pageImages['maintenance-hero']?.[0]?.url || '/assets/images/facility/hq-0056.jpg'} alt="Helicopter maintenance" />
+        <img src={pageImages['maintenance-hero']?.[0]?.url || '/assets/images/facility/hq-0056.jpg'} alt="Helicopter maintenance" width={2500} height={1667} />
       </motion.div>
       <div className="maint-hero__overlay" />
       <div className="maint-hero__blueprint-grid" />
@@ -640,7 +642,7 @@ function RebuildsSection() {
                   return (
                     <div key={i} className="maint-rb__card" onClick={() => setRebuildDetailOpen(i)} style={{ cursor: 'pointer' }}>
                       <div className="maint-rb__card-gallery">
-                        <img src={images[imgIdx]} alt={rb.model} />
+                        <img src={images[imgIdx]} alt={rb.model} width={1920} height={1080} />
                         {images.length > 1 && (
                           <>
                             <button
@@ -696,13 +698,13 @@ function RebuildsSection() {
                 <div className="maint-rb__showcase-content">
                   <div className="maint-rb__showcase-gallery">
                     <div className="maint-rb__showcase-hero" onClick={() => setRebuildLightbox({ src: rb.img, alt: rb.model })}>
-                      <img src={rb.img} alt={rb.model} />
+                      <img src={rb.img} alt={rb.model} width={1920} height={1080} />
                       <div className="maint-rb__showcase-overlay"><i className="fas fa-search-plus"></i></div>
                     </div>
                     <div className="maint-rb__showcase-thumbs">
                       {rb.gallery.map((src, ti) => (
                         <button key={ti} className="maint-rb__showcase-thumb" onClick={() => setRebuildLightbox({ src, alt: `${rb.model} ${ti + 1}` })}>
-                          <img src={src} alt="" />
+                          <img src={src} alt="" width={1920} height={1080} />
                         </button>
                       ))}
                     </div>
@@ -734,7 +736,7 @@ function RebuildsSection() {
               </div>
               {rebuildLightbox && (
                 <div className="maint-rb__lightbox" onClick={() => setRebuildLightbox(null)}>
-                  <img src={rebuildLightbox.src} alt={rebuildLightbox.alt} className="maint-rb__lightbox-img" />
+                  <img src={rebuildLightbox.src} alt={rebuildLightbox.alt} className="maint-rb__lightbox-img" width={1920} height={1080} />
                 </div>
               )}
             </div>
@@ -915,7 +917,7 @@ function CertificationBadges() {
             {certs.map((cert, i) => (
               <div key={i} className="maint-certs__card">
                 <div className="maint-certs__logo">
-                  <img src={pageImages['maintenance-cert-logo']?.[i]?.url || cert.logo} alt={cert.name} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                  <img src={pageImages['maintenance-cert-logo']?.[i]?.url || cert.logo} alt={cert.name} width={200} height={200} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
                   <div className="maint-certs__logo-fallback" style={{ display: 'none' }}>
                     <i className="fas fa-certificate"></i>
                   </div>
@@ -1083,7 +1085,7 @@ function FacilityShowcase() {
                 className="maint-facility__item"
                 whileHover={{ scale: 1.02 }}
               >
-                <img src={f.img} alt={f.title} />
+                <img src={f.img} alt={f.title} width={2500} height={1667} />
                 <div className="maint-facility__overlay">
                   <h4>{f.title}</h4>
                   <p>{f.desc}</p>
@@ -5188,7 +5190,7 @@ function TurnaroundTimes() {
           <div className="maint-turnaround__certs">
             {certs.map((cert) => (
               <div key={cert.title} className="maint-turnaround__cert">
-                <img src={cert.logo} alt={cert.title} />
+                <img src={cert.logo} alt={cert.title} width={160} height={90} />
                 <div className="maint-turnaround__cert-text">
                   <h4>{cert.title}</h4>
                   <p>{cert.desc}</p>
@@ -5387,7 +5389,7 @@ function SupportedAircraft() {
             <Reveal key={a.model} delay={i * 0.1}>
               <div className="maint-supported__card">
                 <div className="maint-supported__image">
-                  <img src={pageImages['maintenance-aircraft']?.[i]?.url || a.image} alt={a.model} />
+                  <img src={pageImages['maintenance-aircraft']?.[i]?.url || a.image} alt={a.model} width={1600} height={1000} />
                 </div>
                 <div className="maint-supported__model">{a.model}</div>
                 <div className="maint-supported__notes">{a.notes}</div>

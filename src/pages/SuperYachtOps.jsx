@@ -20,6 +20,9 @@ import '../assets/css/main.css';
 import '../assets/css/components.css';
 import FooterMinimal from '../components/FooterMinimal';
 import HqMenuPanel from '../components/HqMenuPanel';
+import Seo from '../components/seo/Seo';
+import { buildService, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { SITE_URL, AREA_SERVED } from '../lib/seoDefaults';
 
 /* ─────────────────────────────────────────────────────────────────────────────
    HEADER COMPONENT
@@ -96,6 +99,8 @@ function SuperYachtOpsHeader() {
                 className="Header-branding-logo"
                 loading="lazy"
                 decoding="async"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -229,6 +234,23 @@ export default function SuperYachtOps() {
 
   return (
     <div className="syo">
+      <Seo
+        title="Superyacht Helicopter Operations — UK Support"
+        description="Helicopter operations support for superyachts — flight crew, deck-landing, refuelling, and route planning from HQ Aviation, Denham."
+        jsonLd={[
+          buildService({
+            name: 'Superyacht Helicopter Operations',
+            serviceType: 'Helicopter operations support for superyachts',
+            description: 'Helicopter operations support for superyachts — flight crew, deck-landing, refuelling, and route planning.',
+            url: `${SITE_URL}/superyacht-ops`,
+            areaServed: AREA_SERVED,
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Superyacht Operations', path: '/superyacht-ops' },
+          ]),
+        ]}
+      />
       <SuperYachtOpsHeader />
 
       {/* ===================================================================
@@ -319,7 +341,7 @@ export default function SuperYachtOps() {
           <Reveal direction="left" delay={0.2}>
             <div className="syo-intro__right">
               <div className="syo-intro__image-wrap">
-                <img src={introImage} alt="HQ superyacht helicopter operations" className="syo-intro__image" />
+                <img src={introImage} alt="HQ superyacht helicopter operations" className="syo-intro__image" width={2500} height={1875} />
                 <div className="syo-intro__caption">Global Operations Network</div>
               </div>
             </div>

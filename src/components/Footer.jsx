@@ -14,6 +14,8 @@ function Footer() {
                 alt="HQ Aviation"
                 className="hq-footer__logo"
                 loading="lazy"
+                width={405}
+                height={245}
               />
             </Link>
             <p className="hq-footer__tagline">
@@ -44,10 +46,10 @@ function Footer() {
             {/* Certifications */}
             <div className="hq-footer__certs">
               <div className="hq-footer__cert">
-                <img src="/assets/images/logos/certifications/caa.jpg" alt="UK CAA" className="hq-footer__cert-img" loading="lazy" />
+                <img src="/assets/images/logos/certifications/caa.jpg" alt="UK CAA" className="hq-footer__cert-img" loading="lazy" width={500} height={646} />
               </div>
               <div className="hq-footer__cert">
-                <img src="/assets/images/logos/certifications/robinson.jpg" alt="Robinson Approved" className="hq-footer__cert-img" loading="lazy" />
+                <img src="/assets/images/logos/certifications/robinson.jpg" alt="Robinson Approved" className="hq-footer__cert-img" loading="lazy" width={720} height={480} />
               </div>
             </div>
           </div>

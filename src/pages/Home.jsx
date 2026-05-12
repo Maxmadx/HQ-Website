@@ -98,6 +98,8 @@ function Home() {
                   loading={index === 0 ? 'eager' : 'lazy'}
                   data-image={image.url}
                   data-type="image"
+                  width={1920}
+                  height={1080}
                 />
               </div>
             ))}
@@ -160,6 +162,8 @@ function Home() {
                           src={image.url}
                           alt={image.alt}
                           loading="lazy"
+                          width={1920}
+                          height={1080}
                         />
                         <div className="color-overlay"></div>
                       </div>
@@ -317,7 +321,7 @@ function Home() {
                           }`}
                         >
                           <h3>{slide.title}</h3>
-                          <img src={slide.image} alt={slide.title} className="hq-slide-img" />
+                          <img src={slide.image} alt={slide.title} className="hq-slide-img" width={1600} height={1000} loading="lazy" />
                           <p>{slide.description}</p>
                           <Link to={slide.link} className="hq-btn">{slide.cta}</Link>
                         </div>
@@ -390,6 +394,9 @@ function Home() {
                     <img
                       src="/assets/images/logos/certifications/robinson.jpg"
                       alt="Robinson Helicopter Service Centre"
+                      width={720}
+                      height={480}
+                      loading="lazy"
                     />
                   </div>
 
@@ -436,7 +443,7 @@ function Home() {
                             }`}
                           >
                             <h3>{slide.title}</h3>
-                            <img src={slide.image} alt={slide.title} className="hq-slide-img" />
+                            <img src={slide.image} alt={slide.title} className="hq-slide-img" width={1600} height={1000} loading="lazy" />
                             <p>{slide.description}</p>
                             <Link to={slide.link} className="hq-btn">{slide.cta}</Link>
                           </div>
@@ -525,6 +532,9 @@ function Home() {
                     <img
                       src="/assets/images/logos/certifications/robinson.jpg"
                       alt="Robinson Helicopter Company - 2025 Authorized Dealer"
+                      width={720}
+                      height={480}
+                      loading="lazy"
                     />
                   </div>
 
@@ -571,7 +581,7 @@ function Home() {
                             }`}
                           >
                             <h3>{slide.title}</h3>
-                            <img src={slide.image} alt={slide.title} className="hq-slide-img" />
+                            <img src={slide.image} alt={slide.title} className="hq-slide-img" width={1600} height={1000} loading="lazy" />
                             <p>{slide.description}</p>
                             <Link to={slide.link} className="hq-btn">{slide.cta}</Link>
                           </div>

@@ -19,6 +19,9 @@ import '../assets/css/main.css';
 import '../assets/css/components.css';
 import FooterMinimal from '../components/FooterMinimal';
 import HqMenuPanel from '../components/HqMenuPanel';
+import Seo from '../components/seo/Seo';
+import { buildService, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { SITE_URL, AREA_SERVED } from '../lib/seoDefaults';
 
 // ─── Header ──────────────────────────────────────────────────────────────────
 
@@ -94,6 +97,8 @@ function PilotProvisioningHeader() {
                 className="Header-branding-logo"
                 loading="lazy"
                 decoding="async"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -214,6 +219,23 @@ function PilotProvisioning() {
 
   return (
     <div className="pp">
+      <Seo
+        title="Helicopter Pilot Provisioning — Contract Crew, UK"
+        description="Qualified helicopter pilot supply and contract crew for owner-operators and yacht operators. UK-wide deployment from Denham."
+        jsonLd={[
+          buildService({
+            name: 'Pilot Provisioning',
+            serviceType: 'Helicopter pilot supply and contract crew',
+            description: 'Helicopter pilot supply and contract crew services for owner-operators and yacht operators.',
+            url: `${SITE_URL}/pilot-provisioning`,
+            areaServed: AREA_SERVED,
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Pilot Provisioning', path: '/pilot-provisioning' },
+          ]),
+        ]}
+      />
       <PilotProvisioningHeader />
 
       {/* ========== HERO ========== */}
@@ -306,7 +328,7 @@ function PilotProvisioning() {
               <Reveal key={panel.num} delay={0.05}>
                 <div className={`pp-panel ${i % 2 === 1 ? 'pp-panel--flipped' : ''}`}>
                   <div className="pp-panel__image">
-                    <img src={panel.image} alt={panel.title} />
+                    <img src={panel.image} alt={panel.title} width={2500} height={1667} />
                   </div>
                   <div className="pp-panel__content">
                     <div className="pp-panel__num">{panel.num}</div>

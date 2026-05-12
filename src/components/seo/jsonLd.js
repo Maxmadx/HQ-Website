@@ -189,3 +189,21 @@ export function buildItemList({ name, items }) {
     })),
   };
 }
+
+export function buildTouristTrip({ name, description, image, url, offers }) {
+  const trip = {
+    '@context': 'https://schema.org',
+    '@type': 'TouristTrip',
+    name,
+    description,
+    image: absoluteUrl(image),
+    url,
+  };
+  if (offers) {
+    trip.offers = {
+      '@type': 'Offer',
+      ...offers,
+    };
+  }
+  return trip;
+}

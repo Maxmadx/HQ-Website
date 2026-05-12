@@ -19,6 +19,9 @@ import '../assets/css/main.css';
 import '../assets/css/components.css';
 import FooterMinimal from '../components/FooterMinimal';
 import HqMenuPanel from '../components/HqMenuPanel';
+import Seo from '../components/seo/Seo';
+import { buildCourse, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { SITE_URL } from '../lib/seoDefaults';
 
 /**
  * ADVANCED TRAINING PAGE HEADER COMPONENT
@@ -96,6 +99,8 @@ function AdvancedTrainingHeader() {
                 className="Header-branding-logo"
                 loading="lazy"
                 decoding="async"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -232,6 +237,27 @@ function AdvancedTraining() {
 
   return (
     <div className="adv">
+      <Seo
+        title="Advanced Helicopter Training — UK Pilot Skills"
+        description="Advanced post-licence training — confined areas, autorotations, formation flying."
+        jsonLd={[
+          buildCourse({
+            name: 'Advanced Helicopter Training',
+            description: 'Advanced post-licence training — confined areas, autorotations, formation flying.',
+            url: `${SITE_URL}/training/advanced`,
+            courseInstance: {
+              '@type': 'CourseInstance',
+              courseMode: 'in-person',
+              location: 'Denham Aerodrome, UK',
+            },
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Training', path: '/training/advanced' },
+            { name: 'Advanced', path: '/training/advanced' },
+          ]),
+        ]}
+      />
       <AdvancedTrainingHeader />
 
       {/* ========== HERO SECTION ========== */}
@@ -346,6 +372,8 @@ function AdvancedTraining() {
                     className="adv-intro__image"
                     loading="lazy"
                     decoding="async"
+                    width={2500}
+                    height={1659}
                   />
                   <span className="adv-intro__caption">Quentin Smith, World Aerobatics Champion</span>
                 </div>
@@ -411,6 +439,8 @@ function AdvancedTraining() {
                     className="adv-instructor__image"
                     loading="lazy"
                     decoding="async"
+                    width={2500}
+                    height={1659}
                   />
                 </div>
               </Reveal>

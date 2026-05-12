@@ -4,6 +4,9 @@ import { doc, getDoc } from 'firebase/firestore';
 import FinalDraftHeader from '../components/FinalDraftHeader';
 import FooterMinimal from '../components/FooterMinimal';
 import { db } from '../lib/firebase';
+import Seo from '../components/seo/Seo';
+import { buildProduct, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { SITE_URL } from '../lib/seoDefaults';
 
 const CSS = `
   .mid-page {
@@ -327,8 +330,40 @@ export default function MiscItemDetail() {
   const isApparel = !!(item.apparel && Array.isArray(item.sizes) && item.sizes.length > 0);
   const buyDisabled = isApparel && !selectedSize;
 
+  const primaryImage = images.find((i) => i.isPrimary)?.url || images[0]?.url;
+  const productJsonLd = buildProduct({
+    name: item.name,
+    description: item.description,
+    image: primaryImage,
+    brand: 'HQ Aviation',
+    url: `${SITE_URL}/misc/${item.id}`,
+    offers: isFixed && item.price != null ? {
+      '@type': 'Offer',
+      price: (item.price / 100).toFixed(2),
+      priceCurrency: 'GBP',
+      availability: stock > 0
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+      url: `${SITE_URL}/misc/${item.id}`,
+    } : undefined,
+  });
+
   return (
     <>
+      <Seo
+        title={`${item.name} — HQ Store`}
+        description={item.description || 'HQ Aviation store item'}
+        ogImage={primaryImage}
+        ogType="product"
+        jsonLd={[
+          productJsonLd,
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Store', path: '/misc' },
+            { name: item.name, path: `/misc/${item.id}` },
+          ]),
+        ].filter(Boolean)}
+      />
       <style>{CSS}</style>
       <div className="mid-page">
         <FinalDraftHeader />
@@ -344,7 +379,7 @@ export default function MiscItemDetail() {
                   <div className="mid-carousel">
                     {images.map((img, i) => (
                       <div key={i} className={`mid-slide ${i === activeSlide ? 'mid-slide--active' : ''}`}>
-                        <img src={img.url} alt={img.alt || item.name} />
+                        <img src={img.url} alt={img.alt || item.name} width={1500} height={1000} />
                       </div>
                     ))}
                     {images.length > 1 && (
@@ -374,7 +409,7 @@ export default function MiscItemDetail() {
                       onClick={() => setActiveSlide(i)}
                       aria-label={`Image ${i + 1}`}
                     >
-                      <img src={img.url} alt={img.alt || `${item.name} ${i + 1}`} />
+                      <img src={img.url} alt={img.alt || `${item.name} ${i + 1}`} width={1500} height={1000} />
                     </button>
                   ))}
                 </div>

@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { useCollection } from '../hooks/useFirestore';
 import FinalDraftHeader from '../components/FinalDraftHeader';
 import FooterMinimal from '../components/FooterMinimal';
+import Seo from '../components/seo/Seo';
+import { buildItemList, buildBreadcrumbList } from '../components/seo/jsonLd';
 
 const CSS = `
   *, *::before, *::after { box-sizing: border-box; }
@@ -232,8 +234,24 @@ export default function Misc() {
   const categories = ['All', ...new Set(items.map((i) => i.category).filter(Boolean).sort())];
   const filtered = activeCategory === 'All' ? items : items.filter((i) => i.category === activeCategory);
 
+  const itemListJsonLd = items.length > 0 ? buildItemList({
+    name: 'HQ Store',
+    items: items.map((it) => ({ name: it.name, url: `/misc/${it.id}` })),
+  }) : null;
+
   return (
     <>
+      <Seo
+        title="HQ Store — Aviation Apparel & Merchandise"
+        description="Branded aviation apparel and merchandise from HQ Aviation. T-shirts, jackets, watches, and more."
+        jsonLd={[
+          itemListJsonLd,
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Store', path: '/misc' },
+          ]),
+        ].filter(Boolean)}
+      />
       <style>{CSS}</style>
       <FinalDraftHeader />
       <main>
@@ -279,7 +297,7 @@ export default function Misc() {
                         <div key={item.id} className="misc-card">
                           <div className="misc-card__image">
                             {primary ? (
-                              <img src={primary.url} alt={primary.alt || item.name} />
+                              <img src={primary.url} alt={primary.alt || item.name} width={1500} height={1000} />
                             ) : (
                               <div className="misc-card__image-placeholder">
                                 <i className="fas fa-box"></i>

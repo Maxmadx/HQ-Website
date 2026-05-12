@@ -34,6 +34,8 @@ import { useFaqs } from '../hooks/useFaqs';
 import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import Seo from '../components/seo/Seo';
+import { buildService, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { SITE_URL, AREA_SERVED } from '../lib/seoDefaults';
 
 /**
  * EXPEDITIONS PAGE HEADER COMPONENT
@@ -111,6 +113,8 @@ function ExpeditionsHeader() {
                 className="Header-branding-logo"
                 loading="lazy"
                 decoding="async"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -515,6 +519,8 @@ function HighlightReel() {
               <img
                 src={pageImages['expeditions-highlight']?.[0]?.url || '/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp'}
                 alt="Expedition Highlights"
+                width={2500}
+                height={1667}
               />
               <div className="fexp-highlight__overlay">
                 <button
@@ -565,7 +571,7 @@ function VideoShowcase() {
           <div className="fexp-video__player">
             {!isPlaying ? (
               <div className="fexp-video__thumbnail">
-                <img src={featuredVideo.thumbnail} alt={featuredVideo.title} />
+                <img src={featuredVideo.thumbnail} alt={featuredVideo.title} width={2500} height={1667} />
                 <div className="fexp-video__overlay" />
                 <button className="fexp-video__play" onClick={() => setIsPlaying(true)}>
                   <span>▶</span>
@@ -686,7 +692,7 @@ function FleetSection({ pageImages = {} }) {
             <Reveal key={i} delay={i * 0.15}>
               <div className="fexp-fleet__card">
                 <div className="fexp-fleet__image">
-                  <img src={pageImages['expeditions-fleet']?.[i]?.url || heli.image} alt={heli.model} />
+                  <img src={pageImages['expeditions-fleet']?.[i]?.url || heli.image} alt={heli.model} width={2500} height={1667} />
                 </div>
                 <div className="fexp-fleet__info">
                   <h3>{heli.model}</h3>
@@ -1133,7 +1139,7 @@ function SplitSection({ section }) {
         animate={isInView ? { opacity: 1, x: 0 } : {}}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       >
-        <img src={section.image} alt={section.title} />
+        <img src={section.image} alt={section.title} width={2500} height={1667} />
       </motion.div>
       <motion.div
         className="fexp-split__content"
@@ -1566,6 +1572,19 @@ function FinalExpeditions() {
       <Seo
         title="Worldwide Helicopter Expeditions"
         description="Multi-day long-range helicopter expeditions led by HQ Aviation pilots. Cross-Channel, cross-continent, bespoke routes, itinerary, fuel and customs handled."
+        jsonLd={[
+          buildService({
+            name: 'Helicopter Expeditions',
+            serviceType: 'Worldwide helicopter expedition support',
+            description: 'Worldwide helicopter expedition support — Arctic, Africa, Asia. Robinson and Bell aircraft. Custom multi-day adventures.',
+            url: `${SITE_URL}/expeditions`,
+            areaServed: AREA_SERVED,
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Expeditions', path: '/expeditions' },
+          ]),
+        ]}
       />
       <h1 style={{ position: 'absolute', left: '-10000px', width: '1px', height: '1px', overflow: 'hidden' }}>
         Worldwide Helicopter Expeditions — Led by HQ Aviation Pilots, United Kingdom UK
@@ -1580,7 +1599,7 @@ function FinalExpeditions() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 1.5 }}
         >
-          <img src={pageImages['expeditions-hero']?.[0]?.url || '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp'} alt="" />
+          <img src={pageImages['expeditions-hero']?.[0]?.url || '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp'} alt="" width={2500} height={1922} />
         </motion.div>
         <div className="fexp-hero__overlay" />
 
@@ -1641,7 +1660,7 @@ function FinalExpeditions() {
             >
               <div className="fexp-hero__passport-main">
                 <div className="fexp-hero__passport-header">
-                  <img src="/assets/images/logos/hq/hq-aviation-logo-black.png" alt="HQ Aviation" className="fexp-hero__passport-logo" />
+                  <img src="/assets/images/logos/hq/hq-aviation-logo-black.png" alt="HQ Aviation" className="fexp-hero__passport-logo" width={405} height={245} />
                   <span className="fexp-hero__passport-type">EXPEDITION PASS</span>
                   <span className="fexp-hero__passport-class">WORLDWIDE</span>
                 </div>

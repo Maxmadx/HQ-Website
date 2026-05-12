@@ -21,6 +21,9 @@ import '../assets/css/components.css';
 // Import FooterMinimal component
 import FooterMinimal from '../components/FooterMinimal';
 import HqMenuPanel from '../components/HqMenuPanel';
+import Seo from '../components/seo/Seo';
+import { buildCourse, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { SITE_URL } from '../lib/seoDefaults';
 
 /**
  * NIGHT RATING PAGE HEADER COMPONENT
@@ -99,6 +102,8 @@ function NightRatingHeader() {
                 className="Header-branding-logo"
                 loading="lazy"
                 decoding="async"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -279,6 +284,27 @@ function NightRating() {
 
   return (
     <div className="nr">
+      <Seo
+        title="Helicopter Night Rating — UK Helicopter Training"
+        description="Night flying rating in Robinson R44 or R66 from Denham — 5h dual instruction."
+        jsonLd={[
+          buildCourse({
+            name: 'Night Rating (Helicopter)',
+            description: 'Night flying rating in Robinson R44 or R66 from Denham — 5h dual instruction.',
+            url: `${SITE_URL}/training/night-rating`,
+            courseInstance: {
+              '@type': 'CourseInstance',
+              courseMode: 'in-person',
+              location: 'Denham Aerodrome, UK',
+            },
+          }),
+          buildBreadcrumbList([
+            { name: 'Home', path: '/' },
+            { name: 'Training', path: '/training/night-rating' },
+            { name: 'Night Rating', path: '/training/night-rating' },
+          ]),
+        ]}
+      />
       <NightRatingHeader />
 
       {/* ========== HERO SECTION — Dark Starfield ========== */}

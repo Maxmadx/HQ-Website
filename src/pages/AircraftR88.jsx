@@ -106,6 +106,8 @@ function R88Header() {
                 alt="HQ Aviation"
                 className="Header-branding-logo"
                 loading="lazy"
+                width={405}
+                height={245}
               />
             </Link>
             <nav className="Header-nav Header-nav--secondary" data-nc-element="secondary-nav">
@@ -454,6 +456,8 @@ function R88Highlights() {
               src="/assets/images/new-aircraft/r88/r88-jellybean-left.png"
               alt="Robinson R88 front-quarter exterior view"
               loading="lazy"
+              width={2500}
+              height={1406}
             />
           </div>
         </Reveal>
@@ -772,6 +776,8 @@ function R88Engine() {
                 src="/assets/images/logos/partners/safran-logo.png"
                 alt="Safran"
                 loading="lazy"
+                width={3840}
+                height={834}
               />
             </Reveal>
           </div>
@@ -967,6 +973,8 @@ function R88Avionics() {
                   src="/assets/images/new-aircraft/r88/rhc-r88-wide-view-instrument-panel-13175.jpg"
                   alt=""
                   loading="lazy"
+                  width={2500}
+                  height={1666}
                 />
               </div>
               {/* Second cockpit image — sits in the same absolute slot as
@@ -979,6 +987,8 @@ function R88Avionics() {
                   src="/assets/images/new-aircraft/r88/rhc-r88-glass-flight-displays-right-side-cyclic-13216.jpg"
                   alt=""
                   loading="lazy"
+                  width={2500}
+                  height={1667}
                 />
               </div>
               <div className="r88-avionics__features">
@@ -1086,7 +1096,7 @@ function R88Gallery() {
             transition={{ duration: 0.3 }}
             onClick={() => setLightboxIdx(item.origIdx)}
           >
-            <img src={item.src} alt={item.alt} loading="lazy" />
+            <img src={item.src} alt={item.alt} loading="lazy" width={1500} height={1000} />
             <div className="r88-gallery__overlay">
               <span className="r88-gallery__label">{item.label}</span>
             </div>
@@ -1378,6 +1388,8 @@ function R88Reconfigurable() {
                 src="/assets/images/new-aircraft/r88/reconfigurable-mobile.gif"
                 alt="R88 cabin reconfiguring between seating layouts"
                 loading="lazy"
+                width={360}
+                height={844}
               />
               <div className="r88-reconfigurable__visual-badge">
                 <span className="r88-reconfigurable__visual-badge-label">TOOL-FREE</span>

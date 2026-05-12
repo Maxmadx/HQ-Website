@@ -89,6 +89,8 @@ function Training() {
                 alt="Helicopter Flight Training at HQ Aviation"
                 loading="lazy"
                 style={{ borderRadius: 'var(--border-radius-md)', width: '100%' }}
+                width={1500}
+                height={1000}
               />
             </div>
           </div>
@@ -129,6 +131,8 @@ function Training() {
                 alt="Trial Helicopter Lesson"
                 loading="lazy"
                 style={{ borderRadius: 'var(--border-radius-md)', width: '100%' }}
+                width={1500}
+                height={1000}
               />
             </div>
             <div>
