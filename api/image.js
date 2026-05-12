@@ -3,6 +3,7 @@
 
 const express = require('express');
 const crypto = require('crypto');
+const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
 const { createCache } = require('./imageCache');
 const { validateSrc, validateWidth, validateFormat } = require('./imageValidation');
 const { fetchSource } = require('./imageFetch');
@@ -17,9 +18,18 @@ function cacheKey(src, width, format) {
   return crypto.createHash('sha1').update(`${src}|${width}|${format}`).digest('hex');
 }
 
+const imageLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => ipKeyGenerator(req),
+  handler: (_req, res) => res.status(429).json({ error: 'Too many requests' }),
+});
+
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', imageLimiter, async (req, res) => {
   const { src, w, fmt } = req.query;
 
   const srcCheck = validateSrc(src);
