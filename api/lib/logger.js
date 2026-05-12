@@ -11,7 +11,3 @@ const logger = pino({
 });
 
 module.exports = logger;
-module.exports.default = logger;
-module.exports.child = function child(bindings) {
-  return logger.child(bindings);
-};
