@@ -173,6 +173,9 @@ function ParallaxSection({ image, alt, children, className = '', waves = false, 
           alt={alt}
           className="parallax-section__image"
           style={{ y }}
+          width={1920}
+          height={1080}
+          loading="lazy"
         />
       </div>
       <div className="parallax-section__overlay"></div>

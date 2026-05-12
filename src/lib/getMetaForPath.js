@@ -164,9 +164,54 @@ const STATIC_META = {
     description: "HQ Aviation — UK's premier Robinson Helicopter dealer at Denham Aerodrome. Sales, training, maintenance, expeditions.",
     ogImage: '/og-default.jpg',
   },
+  '/about-us/captain-q': {
+    title: 'Captain Quentin Q Smith · Founder & Pilot',
+    description: "Founder Quentin 'Q' Smith — 55+ years' helicopter flying, twice Aerobatic World Champion, and the first pilot to fly to both poles.",
+    ogImage: '/og-default.jpg',
+  },
+  '/about-us/team': {
+    title: 'Meet the Team · Instructors & Engineers',
+    description: 'Meet the HQ Aviation team — experienced helicopter flight instructors, CAA Part-145 engineers, and operations staff at Denham Aerodrome.',
+    ogImage: '/og-default.jpg',
+  },
+  '/contact': {
+    title: 'Contact · Denham Aerodrome UB9 5DF',
+    description: 'Visit HQ Aviation at Denham Aerodrome (UB9 5DF), 30 min from central London via M40 J1. Ops +44 1895 833373. Maintenance +44 1895 832833. Open seven days a week.',
+    ogImage: '/og-default.jpg',
+  },
+  '/sales/new': {
+    title: 'New Robinson Helicopters for Sale · UK',
+    description: 'Order a new Robinson R22, R44 Raven II, R44 Cadet or R66 Turbine from HQ Aviation at Denham — a Robinson authorised dealer with in-house CAA Part-145 maintenance.',
+    ogImage: '/og-default.jpg',
+  },
+  '/sales/pre-owned': {
+    title: 'Used Robinson Helicopters for Sale · UK',
+    description: "Used Robinson R22, R44 and R66 helicopters for sale — inspected, maintained and certified by HQ Aviation's CAA Part-145 service centre at Denham.",
+    ogImage: '/og-default.jpg',
+  },
+  '/sales/rebuilds': {
+    title: 'Robinson Rebuilds · 12-Year Overhauls UK',
+    description: 'Full Robinson R22 and R44 12-year rebuilds at HQ Aviation, Denham. CAA Part-145 approved overhauls returning helicopters to as-new condition.',
+    ogImage: '/og-default.jpg',
+  },
+  '/fleet': {
+    title: 'Our Fleet · 30+ Robinson Helicopters',
+    description: "HQ Aviation operates 30+ Robinson R22, R44 and R66 helicopters from Denham for training, self-fly hire and charter — one of the UK's largest fleets.",
+    ogImage: '/og-default.jpg',
+  },
+  '/store': {
+    title: 'Aviation Apparel & Merchandise Store',
+    description: 'Branded HQ Aviation apparel, watches and aviation merchandise. T-shirts, jackets and gifts for pilots, students and helicopter enthusiasts.',
+    ogImage: '/og-default.jpg',
+  },
   '/blog': {
     title: 'HQ Aviation Blog — Helicopter Flying & Aviation Insights',
     description: 'Articles on helicopter flying, training, ownership, and aviation life from the HQ Aviation team.',
+    ogImage: '/og-default.jpg',
+  },
+  '/testimonials': {
+    title: 'Testimonials · Customer Reviews & Stories',
+    description: 'Reviews and stories from HQ Aviation customers — discovery flight students, PPL graduates, helicopter owners, and maintenance clients.',
     ogImage: '/og-default.jpg',
   },
 };
