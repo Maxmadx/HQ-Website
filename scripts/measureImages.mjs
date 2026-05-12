@@ -11,7 +11,7 @@
 
 import { execFile, spawn } from 'node:child_process';
 import { promisify } from 'node:util';
-import { readFile, writeFile, copyFile, unlink } from 'node:fs/promises';
+import { readFile, writeFile, copyFile, unlink, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -119,6 +119,7 @@ async function main() {
   }
 
   const out = { runsPerPage: RUNS_PER_PAGE, timestamp: new Date().toISOString(), before, after };
+  await mkdir(REPORT_DIR, { recursive: true });
   await writeFile(RAW_REPORT, JSON.stringify(out, null, 2), 'utf8');
   console.log(`\n  ✓ raw results → ${path.relative(ROOT, RAW_REPORT)}`);
 }
