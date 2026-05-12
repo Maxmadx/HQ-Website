@@ -20,7 +20,9 @@ function assertProductionStripeKey(env) {
   if (!env.STRIPE_WEBHOOK_SECRET || !env.STRIPE_WEBHOOK_SECRET.startsWith('whsec_')) {
     throw new Error(
       'FATAL: NODE_ENV=production but STRIPE_WEBHOOK_SECRET does not have ' +
-      'the expected whsec_ prefix. Refusing to start.'
+      'the expected whsec_ prefix. Refusing to start — webhook signature ' +
+      'verification would fail, allowing forged payment events to be ' +
+      'accepted as legitimate.'
     );
   }
 }
