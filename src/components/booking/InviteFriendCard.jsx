@@ -167,6 +167,8 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
             src={R22_PHOTO}
             alt=""
             aria-hidden="true"
+            width={320}
+            height={240}
             style={{
               position: 'absolute',
               top: 0,
@@ -188,6 +190,8 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
           <img
             src={R22_PHOTO}
             alt="Two Robinson R22s — fly one and bring a friend in theirs"
+            width={320}
+            height={240}
             style={{
               position: 'absolute',
               top: 0,

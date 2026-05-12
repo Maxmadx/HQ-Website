@@ -152,6 +152,8 @@ function UpgradeForm({ booking, onSuccess, onCancel, embedded }) {
             <img
               src="/assets/images/new-aircraft/r44/raven-ii-front-alpha.png"
               alt="Robinson R44"
+              width={320}
+              height={160}
               style={S.modalPhoto}
             />
           </div>

@@ -34,7 +34,7 @@ export default function ProductInfoModal({ open, item, onClose }) {
         </div>
         {primary && (
           <div style={{ marginBottom: '16px', textAlign: 'center' }}>
-            <img src={primary.url} alt={primary.alt || item.name} style={{ maxWidth: '100%', maxHeight: '320px', objectFit: 'contain', borderRadius: '8px' }} />
+            <img src={primary.url} alt={primary.alt || item.name} width={480} height={320} style={{ maxWidth: '100%', maxHeight: '320px', objectFit: 'contain', borderRadius: '8px' }} />
             {images.length > 1 && (
               <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginTop: '8px' }}>
                 {images.map((img, i) => (
@@ -44,7 +44,7 @@ export default function ProductInfoModal({ open, item, onClose }) {
                     aria-label={`Image ${i + 1}`}
                     style={{ width: '40px', height: '40px', padding: 0, border: i === activeImg ? '2px solid #1a1a1a' : '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer', background: 'transparent' }}
                   >
-                    <img src={img.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '2px' }} />
+                    <img src={img.url} alt="" width={40} height={40} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '2px' }} />
                   </button>
                 ))}
               </div>

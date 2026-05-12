@@ -153,6 +153,8 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
           <img
             src="/assets/images/new-aircraft/r44/raven-ii-front-alpha.png"
             alt="Robinson R44"
+            width={320}
+            height={240}
             style={{
               width: '100%',
               height: '240px',
