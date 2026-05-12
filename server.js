@@ -8,6 +8,8 @@ require('dotenv').config();
 
 const logger = require('./api/lib/logger.js');
 const { assertProductionStripeKey } = require('./api/lib/bootGuards.js');
+const { initSentry, Sentry } = require('./api/lib/sentry.js');
+initSentry();
 
 // In production, fail fast if required env vars are missing
 if (process.env.NODE_ENV === 'production') {
@@ -112,6 +114,16 @@ app.use(helmet({
 }));
 
 // CSP report-only — per docs/infra-decisions.md §6 template
+// Derive Sentry CSP report-uri from SENTRY_DSN if set.
+const sentryDsn = process.env.SENTRY_DSN || '';
+let cspReportUri = null;
+if (sentryDsn) {
+  const m = sentryDsn.match(/^https:\/\/([^@]+)@(o\d+\.ingest\.sentry\.io)\/(\d+)/);
+  if (m) {
+    cspReportUri = `https://${m[2]}/api/${m[3]}/security/?sentry_key=${m[1]}`;
+  }
+}
+
 const cspDirectives = {
   'default-src': ["'self'"],
   'script-src': ["'self'", 'https://js.stripe.com'],
@@ -141,6 +153,7 @@ const cspDirectives = {
   'form-action': ["'self'"],
   'frame-ancestors': ["'self'"],
   'upgrade-insecure-requests': [],
+  ...(cspReportUri && { 'report-uri': [cspReportUri] }),
 };
 
 function cspHeaderValue(directives) {
@@ -604,6 +617,9 @@ app.get('*', async (req, res) => {
 // ============================================
 // ERROR HANDLING
 // ============================================
+
+// Sentry v10.x error handler — must be AFTER all routes, BEFORE custom error handlers
+Sentry.setupExpressErrorHandler(app);
 
 /**
  * 404 handler
