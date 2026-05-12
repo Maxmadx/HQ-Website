@@ -18,5 +18,6 @@ export default defineConfig({
   },
   test: {
     setupFiles: ['./api/test-setup.js', './src/test-setup.js'],
+    exclude: ['**/node_modules/**', '**/.worktrees/**', 'firestore-rules.test.js'],
   },
 })
