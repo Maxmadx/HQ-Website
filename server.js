@@ -124,6 +124,7 @@ const seoIndexHtmlPath = (() => {
 
 app.use(seoMetaInjection({
   indexHtmlPath: seoIndexHtmlPath,
+  serve404OnUnknownPath: process.env.NODE_ENV === 'production',
   getMetaForStaticPath: getMetaForPath,
   getMetaForDynamicPath: async (reqPath) => {
     const admin = require('./api/firebase-admin');

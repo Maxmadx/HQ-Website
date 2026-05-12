@@ -5,14 +5,14 @@
 # Dependencies (will be installed in the container)
 node_modules
 
-# React app (served by Firebase Hosting, not Cloud Run)
-dist
+# React app source — Cloud Run only needs the built dist + src/lib
 src
 !src/lib
 !src/lib/**
 public
-index.html
 vite.config.js
+# NOTE: dist/ + index.html are now INCLUDED (spec 18). server.js needs
+# dist/index.html for SSR meta injection + SPA catch-all (soft 404).
 
 # Local dev / test
 .env*
