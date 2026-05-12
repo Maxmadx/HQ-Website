@@ -181,6 +181,10 @@ export default function BookingConfirmed() {
   const confirmedVisible = phase !== 'confirming';
   const isExpanded = phase === 'expanded';
   const showSummaryButton = phase === 'confirmed';
+  // Once the booking has been upgraded the page should be a clean
+  // summary — collapse the divider and the 'Make it even better.'
+  // section heading along with the offer pills.
+  const hideOffersChrome = isExpanded || !!booking?.upgrade;
 
   function handleViewSummary() {
     setPhase('expanded');
@@ -243,20 +247,21 @@ export default function BookingConfirmed() {
           style={{
             border: 'none',
             borderTop: '1px solid #e0ddd6',
-            margin: isExpanded ? '0' : '32px 0',
-            maxHeight: isExpanded ? '0px' : '1px',
-            opacity: isExpanded ? 0 : 1,
+            margin: hideOffersChrome ? '0' : '32px 0',
+            maxHeight: hideOffersChrome ? '0px' : '1px',
+            opacity: hideOffersChrome ? 0 : 1,
             transition: 'opacity 700ms ease, max-height 1500ms ease, margin 1500ms ease',
           }}
         />
 
         </div>{/* /centerColumn — heading area */}
 
-        {/* Section heading above the offers — collapses with the cards on expand. */}
+        {/* Section heading above the offers — collapses with the cards on
+            expand AND once the booking has been upgraded. */}
         <div
           style={{
-            maxHeight: isExpanded ? '0px' : '80px',
-            opacity: isExpanded ? 0 : 1,
+            maxHeight: hideOffersChrome ? '0px' : '80px',
+            opacity: hideOffersChrome ? 0 : 1,
             overflow: 'hidden',
             transition: 'max-height 1500ms ease, opacity 700ms ease',
             order: 2,
