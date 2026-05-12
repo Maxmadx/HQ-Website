@@ -27,7 +27,7 @@ const FounderSpotlight = () => {
       <section className="cq-spot" ref={ref}>
         <div className="cq-spot__inner">
           <div className={`cq-spot__image ${inView ? 'cq-spot__image--visible' : ''}`}>
-            <img src="/assets/images/team/world-helicopter-champion-quentin-smith.webp" alt="Captain Quentin Smith" />
+            <img src="/assets/images/team/world-helicopter-champion-quentin-smith.webp" alt="Captain Quentin Smith" width={1200} height={1500} loading="lazy" />
           </div>
 
           <div className={`cq-spot__content ${inView ? 'cq-spot__content--visible' : ''}`}>

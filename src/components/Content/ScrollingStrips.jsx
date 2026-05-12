@@ -132,7 +132,7 @@ const ScrollingStrips = ({ sticky = true, wrapperRef = null }) => {
       <motion.div className="scrolling-strips__row" style={{ x: xLeft }}>
         {[...images, ...images].map((img, i) => (
           <div key={i} className="scrolling-strips__image">
-            <img src={img} alt="" />
+            <img src={img} alt="" width={400} height={300} loading="lazy" />
           </div>
         ))}
       </motion.div>
@@ -151,7 +151,7 @@ const ScrollingStrips = ({ sticky = true, wrapperRef = null }) => {
       <motion.div className="scrolling-strips__row" style={{ x: xRight }}>
         {[...images.slice(3), ...images.slice(0, 3), ...images].map((img, i) => (
           <div key={i} className="scrolling-strips__image">
-            <img src={img} alt="" />
+            <img src={img} alt="" width={400} height={300} loading="lazy" />
           </div>
         ))}
       </motion.div>
