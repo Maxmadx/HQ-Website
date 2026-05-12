@@ -680,7 +680,7 @@ function UsedAircraftDetail() {
                     className={`uad-slide ${i === currentSlide ? 'uad-slide--active' : ''}`}
                     onClick={() => setLightboxOpen(true)}
                   >
-                    <img src={img.url} alt={img.alt || `${aircraft.model} - ${i + 1}`} width={2500} height={1667} />
+                    <Image src={img.url} alt={img.alt || `${aircraft.model} - ${i + 1}`} width={2500} height={1667} sizes="(max-width: 768px) 100vw, 60vw" priority={i === 0} />
                   </div>
                 ))}
 
@@ -707,7 +707,7 @@ function UsedAircraftDetail() {
               <div className="uad-thumbs">
                 {images.map((img, i) => (
                   <div key={i} className={`uad-thumb ${i === currentSlide ? 'uad-thumb--active' : ''}`} onClick={() => goToSlide(i)}>
-                    <img src={img.url} alt={img.alt || ''} width={2500} height={1667} />
+                    <Image src={img.url} alt={img.alt || ''} width={120} height={80} sizes="120px" />
                   </div>
                 ))}
               </div>
@@ -875,7 +875,7 @@ function UsedAircraftDetail() {
               </button>
             </>
           )}
-          <img src={images[currentSlide]?.url} alt={images[currentSlide]?.alt || aircraft.model} onClick={(e) => e.stopPropagation()} width={2500} height={1667} />
+          <Image src={images[currentSlide]?.url} alt={images[currentSlide]?.alt || aircraft.model} onClick={(e) => e.stopPropagation()} width={2500} height={1667} sizes="100vw" />
         </div>
       )}
     </div>

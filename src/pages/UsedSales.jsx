@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import { useCollection } from '../hooks/useFirestore';
 import AircraftAlertSignup from '../components/AircraftAlertSignup';
+import Image from '../components/Image';
 
 import '../assets/css/main.css';
 import '../assets/css/components.css';
@@ -176,7 +177,7 @@ function ImageCarousel({ images, model }) {
       <div className="usv-carousel">
         <div className="usv-carousel__slides">
           <div className="usv-carousel__slide usv-carousel__slide--active">
-            <img src="/assets/images/used-aircraft/r44/r44-raven-ii-grrob.jpg" alt={model} loading="lazy" width={1024} height={678} />
+            <Image src="/assets/images/used-aircraft/r44/r44-raven-ii-grrob.jpg" alt={model} width={1024} height={678} sizes="(max-width: 768px) 100vw, 50vw" />
           </div>
         </div>
       </div>
@@ -192,7 +193,7 @@ function ImageCarousel({ images, model }) {
       <div className="usv-carousel__slides">
         {images.map((img, i) => (
           <div key={i} className={`usv-carousel__slide ${i === currentIndex ? 'usv-carousel__slide--active' : ''}`}>
-            <img src={img.url} alt={img.alt || model} loading="lazy" width={1024} height={678} />
+            <Image src={img.url} alt={img.alt || model} width={1024} height={678} sizes="(max-width: 768px) 100vw, 50vw" />
           </div>
         ))}
       </div>
@@ -436,7 +437,7 @@ function UsedSales() {
       <FinalDraftHeader />
       <section className="usv__hero-split">
         <div className="usv__hero-image">
-          <img src="/assets/images/facility/main-sales-pic.jpg" alt="Pre-Owned Helicopters" width={2500} height={1667} />
+          <Image src="/assets/images/facility/main-sales-pic.jpg" alt="Pre-Owned Helicopters" width={2500} height={1667} sizes="100vw" priority />
         </div>
         <div className="usv__hero-text">
           <div className="usv__grid-lines" />
