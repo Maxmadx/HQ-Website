@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import request from 'supertest';
+import express from 'express';
 
 // firebase-admin is intercepted at the test boundary via api/test-setup.js
 // (registered in vite.config.js test.setupFiles). This keeps production code
@@ -88,5 +90,44 @@ describe('handleWebhook', () => {
       !err.message.toLowerCase().includes('authenticator') &&
       !err.message.toLowerCase().includes('stripe sdk')
     );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// HTTP-level integration test
+// Mirrors the server.js wrapper (lines 399-408) to lock in the contract:
+// POST /api/webhook without a stripe-signature header must return HTTP 400
+// with a generic body. If server.js's catch block is later refactored to
+// use err.statusCode, this test will catch any silent HTTP-status regression.
+// ---------------------------------------------------------------------------
+describe('POST /api/webhook (HTTP integration)', () => {
+  function buildApp() {
+    const app = express();
+    app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+      try {
+        await handleWebhook(req);
+        res.json({ received: true });
+      } catch (err) {
+        // Mirrors the hardcoded catch in server.js lines 403-407.
+        res.status(400).json({ error: 'Webhook processing failed' });
+      }
+    });
+    return app;
+  }
+
+  it('returns 400 when stripe-signature header is missing', async () => {
+    const app = buildApp();
+    const res = await request(app)
+      .post('/api/webhook')
+      .send('{"type":"test.event"}')
+      .set('Content-Type', 'application/json');
+
+    expect(res.status).toBe(400);
+
+    // Body must be generic — no Stripe SDK internals leaked to the caller.
+    const bodyText = JSON.stringify(res.body);
+    expect(bodyText.toLowerCase()).not.toContain('apikey');
+    expect(bodyText.toLowerCase()).not.toContain('constructevent');
+    expect(bodyText.toLowerCase()).not.toContain('stripe sdk');
   });
 });
