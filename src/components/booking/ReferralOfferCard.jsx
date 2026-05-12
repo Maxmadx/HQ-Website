@@ -44,7 +44,7 @@ export default function ReferralOfferCard({ booking, freeItem }) {
           aria-label={`View details of ${freeItem.name}`}
         >
           {primaryImage ? (
-            <img src={primaryImage.url} alt={freeItem.name} style={S.thumb} />
+            <img src={primaryImage.url} alt={freeItem.name} width={64} height={64} style={S.thumb} />
           ) : (
             <div style={S.thumbPlaceholder} aria-hidden="true" />
           )}
