@@ -215,7 +215,7 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
           }}
         >
           <p style={{ fontSize: '1.05rem', color: '#444', margin: '0 0 4px', lineHeight: 1.5, fontWeight: 400 }}>
-            Invite a wingman with you along on the experience.
+            Bring a friend along with you on this experience.
           </p>
           <p style={{ fontSize: '1.05rem', color: '#444', margin: 0, lineHeight: 1.5, fontWeight: 400 }}>
             Have gifts waiting for you at HQ.
