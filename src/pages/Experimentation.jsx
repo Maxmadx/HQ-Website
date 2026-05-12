@@ -503,18 +503,18 @@ const EditorialStrips = ({ wrapperRef = null, row1Images = EDITORIAL_IMAGES_ROW1
       {/* Desktop: full image row */}
       <motion.div className="editorial-strips__img-row editorial-strips__img-row--desktop" style={{ x: xR }}>
         {row1Images.map((src, i) => (
-          <div key={i} className="editorial-strips__img"><img src={src} alt="" loading="lazy" /></div>
+          <div key={i} className="editorial-strips__img"><Image src={src} alt="" width={800} height={600} sizes="(max-width: 768px) 50vw, 30vw" /></div>
         ))}
       </motion.div>
       {/* Mobile: 2 shorter image rows */}
       <motion.div className="editorial-strips__img-row editorial-strips__img-row--mobile" style={{ x: xR }}>
         {row1Images.slice(0, 5).map((src, i) => (
-          <div key={i} className="editorial-strips__img"><img src={src} alt="" loading="lazy" /></div>
+          <div key={i} className="editorial-strips__img"><Image src={src} alt="" width={800} height={600} sizes="(max-width: 768px) 50vw, 30vw" /></div>
         ))}
       </motion.div>
       <motion.div className="editorial-strips__img-row editorial-strips__img-row--mobile" style={{ x: xR1b }}>
         {row1Images.slice(5, 10).map((src, i) => (
-          <div key={i} className="editorial-strips__img"><img src={src} alt="" loading="lazy" /></div>
+          <div key={i} className="editorial-strips__img"><Image src={src} alt="" width={800} height={600} sizes="(max-width: 768px) 50vw, 30vw" /></div>
         ))}
       </motion.div>
       <motion.div className="editorial-strips__dest-row" style={{ x: xM }}>
@@ -528,18 +528,18 @@ const EditorialStrips = ({ wrapperRef = null, row1Images = EDITORIAL_IMAGES_ROW1
       {/* Desktop: full image row */}
       <motion.div className="editorial-strips__img-row editorial-strips__img-row--desktop" style={{ x: xR2 }} data-cms-section="home-editorial-strip-2">
         {row2Images.map((src, i) => (
-          <div key={i} className="editorial-strips__img"><img src={src} alt="" loading="lazy" /></div>
+          <div key={i} className="editorial-strips__img"><Image src={src} alt="" width={800} height={600} sizes="(max-width: 768px) 50vw, 30vw" /></div>
         ))}
       </motion.div>
       {/* Mobile: 2 shorter image rows */}
       <motion.div className="editorial-strips__img-row editorial-strips__img-row--mobile" style={{ x: xR2 }}>
         {row2Images.slice(0, 5).map((src, i) => (
-          <div key={i} className="editorial-strips__img"><img src={src} alt="" loading="lazy" /></div>
+          <div key={i} className="editorial-strips__img"><Image src={src} alt="" width={800} height={600} sizes="(max-width: 768px) 50vw, 30vw" /></div>
         ))}
       </motion.div>
       <motion.div className="editorial-strips__img-row editorial-strips__img-row--mobile" style={{ x: xR2b }}>
         {row2Images.slice(5, 10).map((src, i) => (
-          <div key={i} className="editorial-strips__img"><img src={src} alt="" loading="lazy" /></div>
+          <div key={i} className="editorial-strips__img"><Image src={src} alt="" width={800} height={600} sizes="(max-width: 768px) 50vw, 30vw" /></div>
         ))}
       </motion.div>
     </section>
