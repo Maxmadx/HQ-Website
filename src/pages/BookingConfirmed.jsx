@@ -273,8 +273,8 @@ export default function BookingConfirmed() {
             ...styles.cardsRow,
             maxWidth: isExpanded ? '520px' : '1080px',
             gap: isExpanded ? '8px' : '32px',
-            margin: '0 auto',
-            transition: 'max-width 1500ms ease, gap 1500ms ease',
+            margin: isExpanded ? '0 auto 28px' : '0 auto',
+            transition: 'max-width 1500ms ease, gap 1500ms ease, margin 1500ms ease',
           }}
         >
           {!isMisc && (
