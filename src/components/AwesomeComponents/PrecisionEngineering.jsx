@@ -58,7 +58,7 @@ export const PrecisionEngineering = () => (
       </div>
 
       <div className="precision-eng__hero">
-        <img src={imgs.r66} alt="" />
+        <img src={imgs.r66} alt="" width={1200} height={800} loading="lazy" />
         <div className="precision-eng__model">R66 Turbine</div>
       </div>
 

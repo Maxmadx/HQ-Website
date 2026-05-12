@@ -22,7 +22,7 @@ const ModelSpotlight = ({ showNote = true }) => {
   return (
     <>
       <section style={{ position: 'relative', minHeight: '550px', background: 'linear-gradient(135deg, #faf9f6 0%, #f0efe8 100%)', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
-        <img src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-left-v4.png" alt="Robinson R66" style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', width: '55%', opacity: 0.95 }} />
+        <img src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-left-v4.png" alt="Robinson R66" width={1200} height={800} loading="lazy" style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', width: '55%', opacity: 0.95 }} />
         <div style={{ position: 'relative', zIndex: 2, padding: '4rem', maxWidth: '550px' }}>
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.2em', color: 'var(--hq-accent)', display: 'block', marginBottom: '1rem' }}>NEW AIRCRAFT</span>
           <h1 style={{ fontSize: 'clamp(3rem, 6vw, 5rem)', fontWeight: 700, textTransform: 'uppercase', lineHeight: 0.9, margin: '0 0 0.5rem', color: 'var(--hq-primary)' }}>Robinson R66</h1>
