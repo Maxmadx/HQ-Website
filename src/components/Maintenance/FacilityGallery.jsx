@@ -53,7 +53,7 @@ const FacilityGallery = ({ carouselOnly = false }) => {
                   viewport={{ once: true }}
                 >
                   <div className="fgal__img">
-                    <img src={pageImages['maintenance-facility-gallery']?.[i]?.url || img.src} alt={img.alt} />
+                    <img src={pageImages['maintenance-facility-gallery']?.[i]?.url || img.src} alt={img.alt} width={800} height={600} loading="lazy" />
                   </div>
                   <span>{img.alt}</span>
                 </motion.div>
@@ -69,7 +69,7 @@ const FacilityGallery = ({ carouselOnly = false }) => {
           <div className="fgal__carousel-slides">
             {[...carouselImages, ...carouselImages].map((src, i) => (
               <div key={i} className="fgal__carousel-slide">
-                <img src={src} alt="" />
+                <img src={src} alt="" width={400} height={300} loading="lazy" />
               </div>
             ))}
           </div>
@@ -82,7 +82,7 @@ const FacilityGallery = ({ carouselOnly = false }) => {
           <div className="fgal__carousel-slides fgal__carousel-slides--reverse">
             {[...carouselImages.slice().reverse(), ...carouselImages.slice().reverse()].map((src, i) => (
               <div key={i} className="fgal__carousel-slide">
-                <img src={src} alt="" />
+                <img src={src} alt="" width={400} height={300} loading="lazy" />
               </div>
             ))}
           </div>

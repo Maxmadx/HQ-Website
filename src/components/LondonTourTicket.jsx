@@ -758,6 +758,8 @@ function LondonTourTicket() {
                 <img
                   src="/assets/images/new-aircraft/r66/blue-r66-palo-verde-front-v4.png"
                   alt="R66 Turbine Helicopter"
+                  width={1200}
+                  height={800}
                   loading="lazy"
                 />
               </picture>
