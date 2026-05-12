@@ -96,7 +96,7 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setModalOpen(true); } }}
         style={{
           width: '100%',
-          marginBottom: isHero ? '28px' : '20px',
+          marginBottom: isHero ? '28px' : '0px',
           background: isHero ? '#fff' : '#ecfdf5',
           border: isHero ? '1px solid #e8e8e8' : '1px solid #6ee7b7',
           borderRadius: isHero ? '12px' : '8px',

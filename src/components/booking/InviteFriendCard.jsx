@@ -85,7 +85,7 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
         onKeyDown={handleKeyDown}
         style={{
           width: '100%',
-          marginBottom: isHero ? '28px' : '20px',
+          marginBottom: isHero ? '28px' : '0px',
           background: isHero ? '#fff' : '#ecfdf5',
           border: isHero ? '1px solid #e8e8e8' : '1px solid #6ee7b7',
           borderRadius: isHero ? '12px' : '8px',
@@ -266,7 +266,7 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
           }}
         >
           <span style={{ flex: '1 1 auto' }}>
-            {copied ? '✓ Referral link copied' : 'Invite a friend — gifts waiting at HQ'}
+            {copied ? '✓ Referral link copied' : 'Invite a friend. Gifts waiting at HQ.'}
           </span>
           <span aria-hidden="true" style={{ fontSize: '18px', color: '#047857', marginLeft: '12px', flexShrink: 0 }}>→</span>
         </div>
