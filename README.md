@@ -11,7 +11,7 @@ Production site for HQ Aviation — Robinson helicopter sales (R22 / R44 / R66 /
 - **Mail:** Nodemailer over SMTP for transactional email (booking confirmations, cart recovery, lead notifications).
 - **Background:** `node-cron` jobs for cart-recovery sweeps and GSC sync.
 
-For a deeper architectural view, see [`PRD.md`](PRD.md). For locked-in infra choices, see [`docs/infra-decisions.md`](docs/infra-decisions.md). For step-by-step traces of each customer & admin flow, see [`docs/user-flows.md`](docs/user-flows.md).
+For a deeper architectural view, see [`PRD.md`](PRD.md). For locked-in infra choices, see [`docs/infra-decisions.md`](docs/infra-decisions.md). For step-by-step traces of each customer & admin flow, see [`docs/user-flows.md`](docs/user-flows.md) (created in Phase 0 Task 6 — may not yet exist on older branches).
 
 ## Getting started
 
@@ -32,7 +32,7 @@ npm install
 npm run dev
 ```
 
-Starts Vite on its default port and the Express API server on port `7500` concurrently. The React app proxies `/api/*` to the Express server.
+Starts Vite on its default port and the Express API server on port `7500` concurrently. Vite's dev server proxies `/api/*` requests to `http://localhost:7500` (configured in `vite.config.js`), so the React app can call `/api/...` without CORS or absolute URLs.
 
 To run only the API (e.g. when testing webhooks against a tunnel):
 
@@ -84,20 +84,22 @@ Required vars (server boot will fail if any are missing in `NODE_ENV=production`
 - `STRIPE_SECRET_KEY` — must start with `sk_live_` in production.
 - `STRIPE_WEBHOOK_SECRET` — used to verify webhook signatures.
 - `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY` — admin SDK service account.
-- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` — transactional email.
+- `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS`, `EMAIL_FROM` — transactional email credentials and sender address (required).
+- `SMTP_PORT` — optional, defaults to `587`.
+- `SITE_URL` — canonical site origin used in emails, sitemap, and meta injection (e.g. `https://hqaviation.co.uk`).
 - `PORT` — defaults to `7500`.
 
 The full canonical list (with descriptions) lives in `.env.example`. `VITE_*` prefixed vars are the only ones exposed to the client bundle.
 
 ## Repository layout
 
-```
+```text
 src/                    React SPA (App.jsx + pages/ + components/ + hooks/ + lib/)
 api/                    Server-side route handlers, validation, email templates
 api/lib/                Shared server helpers (analytics, cart, schemas, canonical URL)
 server.js               Express entry point — middleware, route mounts, graceful shutdown
 public/                 Static assets served verbatim under /
-scripts/                Build, seed, backfill, and operational utilities
+scripts/                Build, seed, backfill, and operational utilities (e.g. `seed-*.js`, `backfill-*.js`)
 firestore.rules         Firestore security rules
 firestore.indexes.json  Firestore composite indexes
 firebase.json           Firebase Hosting + rewrite config
@@ -107,7 +109,7 @@ docs/                   Architecture + SEO + plans + specs + flows
 
 ## Status
 
-The site is in active development. The current improvement roadmap lives in [`docs/superpowers/specs/2026-05-12-site-hardening-roadmap-design.md`](docs/superpowers/specs/2026-05-12-site-hardening-roadmap-design.md). Phase 0 (this doc rewrite is part of it) is the first phase.
+The site is in active development. The current improvement roadmap lives in [`docs/superpowers/specs/2026-05-12-site-hardening-roadmap-design.md`](docs/superpowers/specs/2026-05-12-site-hardening-roadmap-design.md). The roadmap is multi-phase; see the spec for current status.
 
 ## Licence
 
