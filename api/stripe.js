@@ -1165,10 +1165,13 @@ async function applyUpgradeFromPi(pi) {
   }
   const newDur = Number(newDuration);
   const r44Price = await getR44Price(newDur);
+  const newAircraftCode = newAircraft || 'r44';
   await ref.update({
-    aircraft: newAircraft || 'r44',
+    aircraft: newAircraftCode,
+    aircraftName: AIRCRAFT_NAMES[newAircraftCode] || newAircraftCode,
     duration: newDur,
     originalAircraft: booking.aircraft,
+    originalAircraftName: booking.aircraftName || null,
     originalDuration: booking.duration,
     flightAmountPence: r44Price,
     totalAmountPence: (Number(booking.totalAmountPence) || 0) + (r44Price - (Number(booking.flightAmountPence) || 0)),
