@@ -799,6 +799,11 @@ async function handleWebhook(req) {
   }
 
   const sig = req.headers['stripe-signature'];
+  if (!sig) {
+    const err = new Error('missing signature');
+    err.statusCode = 400;
+    throw err;
+  }
 
   const event = getStripe().webhooks.constructEvent(
     req.body,

@@ -4,7 +4,7 @@ import { describe, it, expect } from 'vitest';
 // (registered in vite.config.js test.setupFiles). This keeps production code
 // free of any test-specific guards.
 
-import { getPrice, applyDiscountPence, priceAddons } from './stripe.js';
+import { getPrice, applyDiscountPence, priceAddons, handleWebhook } from './stripe.js';
 
 describe('getPrice', () => {
   it('returns correct price in pence for r22 30 min', async () => {
@@ -69,4 +69,24 @@ describe('priceAddons', () => {
   // through createPaymentIntent below; pure unit testing of those branches
   // is out of scope here because they require a Firestore mock that
   // mirrors the production admin SDK shape used in stripe.js.
+});
+
+describe('handleWebhook', () => {
+  it('returns 400 when stripe-signature header is missing', async () => {
+    const req = {
+      body: Buffer.from('{"type":"test.event"}'),
+      headers: {},
+    };
+    await expect(handleWebhook(req)).rejects.toMatchObject({
+      statusCode: 400,
+    });
+    // Ensure the thrown message doesn't leak Stripe SDK internals or recon details
+    // (e.g. constructEvent error text, API key errors, SDK stack details)
+    await expect(handleWebhook(req)).rejects.toSatisfy((err) =>
+      !err.message.toLowerCase().includes('constructevent') &&
+      !err.message.toLowerCase().includes('apikey') &&
+      !err.message.toLowerCase().includes('authenticator') &&
+      !err.message.toLowerCase().includes('stripe sdk')
+    );
+  });
 });
