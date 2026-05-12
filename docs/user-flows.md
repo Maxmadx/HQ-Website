@@ -406,6 +406,8 @@ Same as Flow 3 (Misc marketplace purchase). The webhook handler does not differe
 
 **Trigger** — admin navigates to `/admin/login` (`src/App.jsx:260`) and submits email + password.
 
+**Steps**
+
 ### Authentication
 
 1. **Login form** — `src/pages/admin/AdminLogin.jsx:19` calls `signInWithEmailAndPassword(auth, email, password)` (Firebase Auth SDK).
@@ -513,6 +515,7 @@ Same as Flow 3 (Misc marketplace purchase). The webhook handler does not differe
 - `STRIPE_WEBHOOK_SECRET` mismatch → `constructEvent` throws; 400 returned to Stripe; Stripe retries.
 - Firestore write failure → logged; Stripe gets 200 (not 400) to prevent retries for partial successes once the booking is confirmed. Exception: the top-level `handleWebhook` wraps the entire handler in a try/catch at `server.js:391-398`; any uncaught throw returns 400 and triggers a Stripe retry.
 - Email failure → caught and logged internally; does not cause the webhook to return 400 (`api/stripe.js:1031`).
+- **Duplicate webhook delivery (theoretical race)** — `recordPurchaseEvent` uses a non-atomic check-then-write pattern (`api/stripe.js:44-54`); Stripe's retry behavior is mitigated by the idempotency check, but a true concurrent re-delivery under high load could double-record. The code comments flag this and propose Firestore transactions as the fix; out of scope for the current site volume.
 
 **Observability**
 
