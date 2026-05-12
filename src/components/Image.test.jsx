@@ -84,10 +84,10 @@ describe('<Image> — production mode', () => {
     expect(img.getAttribute('src')).toMatch(/\.png$/);
   });
 
-  it('falls back to plain <img> for proxyable but uncached URLs (no manifest entry)', () => {
+  it('emits <picture> with srcset pointing at /api/image for Firebase Storage URLs', () => {
     renderInProvider(
       <Image
-        src="https://firebasestorage.googleapis.com/some/path.jpg"
+        src="https://firebasestorage.googleapis.com/v0/b/x/o/y.jpg"
         alt="cms"
         width={800}
         height={600}
@@ -95,9 +95,34 @@ describe('<Image> — production mode', () => {
         __forceProd
       />
     );
-    const img = screen.getByAltText('cms');
-    expect(img.tagName).toBe('IMG');
-    expect(img.closest('picture')).toBeNull();
+    const picture = screen.getByAltText('cms').closest('picture');
+    expect(picture).toBeTruthy();
+    const sources = picture.querySelectorAll('source');
+    const allSrcSet = Array.from(sources).map(s => s.getAttribute('srcset')).join(' ');
+    expect(allSrcSet).toContain('/api/image?src=');
+    expect(allSrcSet).toContain('&w=400');
+    expect(allSrcSet).toContain('&w=2400');
+    expect(allSrcSet).toContain('&fmt=avif');
+    expect(allSrcSet).toContain('&fmt=webp');
+  });
+
+  it('emits <picture> with srcset pointing at /api/image for hqaviation.com URLs', () => {
+    renderInProvider(
+      <Image
+        src="https://hqaviation.com/uploads/heli.jpg"
+        alt="hq-img"
+        width={800}
+        height={600}
+        sizes="100vw"
+        __forceProd
+      />
+    );
+    const picture = screen.getByAltText('hq-img').closest('picture');
+    expect(picture).toBeTruthy();
+    const img = screen.getByAltText('hq-img');
+    expect(img.getAttribute('src')).toContain('/api/image?src=');
+    expect(img.getAttribute('src')).toContain('&w=1200');
+    expect(img.getAttribute('src')).toContain('&fmt=jpeg');
   });
 
   it('falls back to plain <img> for external URLs', () => {
