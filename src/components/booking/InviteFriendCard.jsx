@@ -22,9 +22,9 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
 
   // Only need a referralCode — the copy no longer mentions the specific
   // gift by name, so freeItem isn't required for this hero card to render.
-  // (The existing <ReferralOfferCard> in PostCheckoutOffers still gates on
-  // freeItem because it displays the item's image and price.)
-  const shouldShow = !!booking?.referralCode;
+  // Also hides once the booking has been upgraded so the post-upgrade
+  // summary stands alone with no lingering offer pills.
+  const shouldShow = !!booking?.referralCode && !booking?.upgrade;
 
   useEffect(() => {
     if (!shouldShow) return;

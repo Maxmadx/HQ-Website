@@ -268,21 +268,23 @@ export default function BookingConfirmed() {
         {/* Cards row — UpgradePill + InviteFriendCard side-by-side on desktop,
             stack on mobile (flex-wrap when ≤ ~992px). In 'expanded' phase
             narrows to 520px to match the booking-summary card width; the
-            two compact pills wrap onto separate rows at full 520px each. */}
-        <div
-          style={{
-            ...styles.cardsRow,
-            maxWidth: isExpanded ? '520px' : '1080px',
-            gap: isExpanded ? '8px' : '32px',
-            margin: isExpanded ? '0 auto 28px' : '0 auto',
-            transition: 'max-width 1500ms ease, gap 1500ms ease, margin 1500ms ease',
-            // In expanded, pills sit BELOW the summary card; in confirming
-            // they sit above (where the heading expects them). The DOM order
-            // is unchanged so the hero→compact morph animation is preserved.
-            order: isExpanded ? 4 : 3,
-          }}
-        >
-          {!isMisc && (
+            two compact pills wrap onto separate rows at full 520px each.
+            Removed entirely once the booking has been upgraded — both pills
+            return null and the row would just leave empty margin space. */}
+        {!isMisc && !booking?.upgrade && (
+          <div
+            style={{
+              ...styles.cardsRow,
+              maxWidth: isExpanded ? '520px' : '1080px',
+              gap: isExpanded ? '8px' : '32px',
+              margin: isExpanded ? '0 auto 28px' : '0 auto',
+              transition: 'max-width 1500ms ease, gap 1500ms ease, margin 1500ms ease',
+              // In expanded, pills sit BELOW the summary card; in confirming
+              // they sit above (where the heading expects them). The DOM order
+              // is unchanged so the hero→compact morph animation is preserved.
+              order: isExpanded ? 4 : 3,
+            }}
+          >
             <div style={styles.cardsCol}>
               <UpgradePill
                 booking={booking}
@@ -290,8 +292,6 @@ export default function BookingConfirmed() {
                 mode={isExpanded ? 'compact' : 'hero'}
               />
             </div>
-          )}
-          {!isMisc && (
             <div style={styles.cardsCol}>
               <InviteFriendCard
                 booking={booking}
@@ -299,8 +299,8 @@ export default function BookingConfirmed() {
                 mode={isExpanded ? 'compact' : 'hero'}
               />
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Centred summary column. In expanded phase its order is 3, so it
             sits ABOVE the cards row (order 4). In confirming phase order
