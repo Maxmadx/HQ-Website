@@ -838,13 +838,19 @@ export default function Checkout() {
           </div>
 
           {/* Payment Form — morphs to dark "Save your booking?" panel
-              when exit-intent fires while still on the email step. */}
+              when exit-intent fires while still on the email step.
+              Position is bumped above the page-wide dim overlay (rendered
+              further down) so the form reads as the focused element. */}
           <div
             style={{
               ...styles.formPanel,
               background: showExitModal ? '#0f172a' : '#fff',
               borderColor: showExitModal ? '#1e293b' : '#e8e8e8',
-              transition: 'background 450ms ease, border-color 450ms ease',
+              position: 'relative',
+              zIndex: showExitModal ? 10000 : 'auto',
+              boxShadow: showExitModal ? '0 20px 60px rgba(0,0,0,0.5)' : 'none',
+              transition:
+                'background 450ms ease, border-color 450ms ease, box-shadow 450ms ease',
             }}
             className="co-form"
           >
@@ -901,6 +907,22 @@ export default function Checkout() {
         </div>
       </div>
     </div>
+      {/* Dim overlay during exit-intent — page-wide backdrop sitting between
+          the rest of the page and the dark form panel (which is raised to
+          z-index 10000). Pointer-events disabled so the form below stays
+          interactive; 'No thanks' is the only dismiss path. */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0, 0, 0, 0.6)',
+          opacity: showExitModal ? 1 : 0,
+          pointerEvents: 'none',
+          zIndex: 9999,
+          transition: 'opacity 450ms ease',
+        }}
+      />
     </>
   );
 }
