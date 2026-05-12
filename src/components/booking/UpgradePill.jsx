@@ -177,7 +177,7 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
           }}
         >
           <p style={{ fontSize: '1.05rem', color: '#444', margin: '0 0 4px', lineHeight: 1.5, fontWeight: 400 }}>
-            Upgrade to the R44. With you at the controls.
+            Upgrade to the R44.
           </p>
           <p style={{ fontSize: '1.05rem', color: '#444', margin: 0, lineHeight: 1.5, fontWeight: 400 }}>
             Two mates in the back.
