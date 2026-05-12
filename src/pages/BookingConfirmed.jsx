@@ -265,8 +265,17 @@ export default function BookingConfirmed() {
         </div>
 
         {/* Cards row — UpgradePill + InviteFriendCard side-by-side on desktop,
-            stack on mobile (flex-wrap when ≤ ~992px). */}
-        <div style={styles.cardsRow}>
+            stack on mobile (flex-wrap when ≤ ~992px). In 'expanded' phase
+            narrows to 520px to match the booking-summary card width; the
+            two compact pills wrap onto separate rows at full 520px each. */}
+        <div
+          style={{
+            ...styles.cardsRow,
+            maxWidth: isExpanded ? '520px' : '1080px',
+            margin: '0 auto',
+            transition: 'max-width 1500ms ease',
+          }}
+        >
           {!isMisc && (
             <div style={styles.cardsCol}>
               <UpgradePill
