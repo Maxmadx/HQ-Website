@@ -236,7 +236,7 @@ export default function Misc() {
 
   const itemListJsonLd = items.length > 0 ? buildItemList({
     name: 'HQ Store',
-    items: items.map((it) => ({ name: it.name, url: `/misc/${it.id}` })),
+    items: items.map((it) => ({ name: it.name, url: `/store/${it.id}` })),
   }) : null;
 
   return (
@@ -248,7 +248,7 @@ export default function Misc() {
           itemListJsonLd,
           buildBreadcrumbList([
             { name: 'Home', path: '/' },
-            { name: 'Store', path: '/misc' },
+            { name: 'Store', path: '/store' },
           ]),
         ].filter(Boolean)}
       />
@@ -316,7 +316,7 @@ export default function Misc() {
                               </span>
                               <span className="misc-card__price">{item.priceDisplay || 'POA'}</span>
                             </div>
-                            <Link to={`/misc/${item.id}`} className="misc-card__enquire">View Details</Link>
+                            <Link to={`/store/${item.id}`} className="misc-card__enquire">View Details</Link>
                           </div>
                         </div>
                       );

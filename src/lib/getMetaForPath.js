@@ -45,7 +45,7 @@ const PUBLIC_ROUTE_PATHS = new Set([
   '/parts',
   '/self-fly-hire',
   '/fleet',
-  '/misc',
+  '/store',
   '/blog',
   '/testimonials',
 ]);
@@ -180,7 +180,7 @@ const DEFAULT_META = {
 function getMetaForPath(path) {
   // Only static routes. Dynamic patterns (with :param or matching dynamic
   // patterns like /blog/:id) must be resolved by the middleware via Firestore.
-  if (path.includes(':') || /^\/(blog|sales\/pre-owned|misc)\/[^/]+$/.test(path)) {
+  if (path.includes(':') || /^\/(blog|sales\/pre-owned|store)\/[^/]+$/.test(path)) {
     return null;
   }
   if (!PUBLIC_ROUTE_PATHS.has(path)) {

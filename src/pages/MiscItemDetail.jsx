@@ -316,8 +316,8 @@ export default function MiscItemDetail() {
         <FinalDraftHeader />
         <div className="mid-not-found">
           <p style={{ color: '#888', marginBottom: '16px' }}>Item not found.</p>
-          <Link to="/misc" style={{ color: '#1a1a1a', fontFamily: "'Share Tech Mono', monospace", fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-            ← Back to Miscellaneous
+          <Link to="/store" style={{ color: '#1a1a1a', fontFamily: "'Share Tech Mono', monospace", fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            ← Back to Store
           </Link>
         </div>
         <FooterMinimal />
@@ -336,7 +336,7 @@ export default function MiscItemDetail() {
     description: item.description,
     image: primaryImage,
     brand: 'HQ Aviation',
-    url: `${SITE_URL}/misc/${item.id}`,
+    url: `${SITE_URL}/store/${item.id}`,
     offers: isFixed && item.price != null ? {
       '@type': 'Offer',
       price: (item.price / 100).toFixed(2),
@@ -344,7 +344,7 @@ export default function MiscItemDetail() {
       availability: stock > 0
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
-      url: `${SITE_URL}/misc/${item.id}`,
+      url: `${SITE_URL}/store/${item.id}`,
     } : undefined,
   });
 
@@ -359,8 +359,8 @@ export default function MiscItemDetail() {
           productJsonLd,
           buildBreadcrumbList([
             { name: 'Home', path: '/' },
-            { name: 'Store', path: '/misc' },
-            { name: item.name, path: `/misc/${item.id}` },
+            { name: 'Store', path: '/store' },
+            { name: item.name, path: `/store/${item.id}` },
           ]),
         ].filter(Boolean)}
       />
@@ -371,7 +371,7 @@ export default function MiscItemDetail() {
 
           {/* ── LEFT: Gallery ── */}
           <div className="mid-left">
-            <Link to="/misc" className="mid-back">← Back to Miscellaneous</Link>
+            <Link to="/store" className="mid-back">← Back to Store</Link>
 
             <div className="mid-image-section">
               <div className="mid-main-image">
