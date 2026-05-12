@@ -35,6 +35,7 @@ import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import Seo from '../components/seo/Seo';
 import { buildService, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { AREA_SERVED } from '../lib/seoDefaults';
 import Image from '../components/Image';
 import FooterMinimal from '../components/FooterMinimal';
 import FacilityGallery from '../components/Maintenance/FacilityGallery';
@@ -5725,7 +5726,7 @@ function FinalMaintenance() {
             serviceType: 'Helicopter Maintenance',
             description: 'Robinson and Rolls-Royce RR300 authorised service center at Denham. CAA Part-145 maintenance for R22, R44, R66. Parts sales, overhauls, AOG response.',
             url: '/maintenance',
-            areaServed: 'United Kingdom',
+            areaServed: AREA_SERVED,
           }),
           buildBreadcrumbList([
             { name: 'Home', path: '/' },
