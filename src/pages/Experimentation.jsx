@@ -43,6 +43,7 @@ import FooterMinimal from '../components/FooterMinimal';
 // Combined Location + Testimonials
 import ArrivalSection from '../components/ArrivalSection';
 import WallOfCoolGr11 from '../components/WallOfCoolGr11';
+import Image from '../components/Image';
 
 // Union Jack component - black and white version
 const UnionJack = ({ size = 20, className = '', id = '' }) => (
@@ -4502,7 +4503,7 @@ function Experimentation() {
         <div className="fd-sales__grid fd-sales__grid--desktop" data-cms-section="home-sales-aircraft">
           {newAircraftCards.map((ac) => (
             <Link key={ac.name} to={ac.href} className="fd-sales__card">
-              <div className="fd-sales__card-image"><img src={ac.img} alt={ac.alt} /></div>
+              <div className="fd-sales__card-image"><Image src={ac.img} alt={ac.alt} width={800} height={600} sizes="(max-width: 768px) 90vw, 25vw" /></div>
               <div className="fd-sales__card-info">
                 <h3>{ac.name}</h3>
                 <span className="fd-sales__card-tagline">{ac.tagline}</span>
@@ -4530,7 +4531,7 @@ function Experimentation() {
               >
                 {salesCards.map((ac) => (
                   <Link key={ac.name} to={ac.href} className="fd-sales__card fd-sales__carousel-card">
-                    <div className="fd-sales__card-image"><img src={ac.img} alt={ac.alt} /></div>
+                    <div className="fd-sales__card-image"><Image src={ac.img} alt={ac.alt} width={800} height={600} sizes="(max-width: 768px) 90vw, 25vw" /></div>
                     <div className="fd-sales__card-info">
                       <h3>{ac.name}</h3>
                       <span className="fd-sales__card-tagline">{ac.tagline}</span>
