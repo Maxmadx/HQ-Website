@@ -55,9 +55,7 @@ Aircraft sales themselves do **not** go through Stripe (six- to seven-figure off
 - **General contact form** — `/api/leads` → Firestore `leads/` + email to ops.
 - **Parts enquiry** — `/api/parts-enquiry` with structured fields (part number, aircraft type, urgency).
 - **Press / media clicks** — `/api/press-click` for funnel analytics.
-- **Newsletter / blog signup** — no dedicated API endpoint; the SPA writes directly to Firestore using the client SDK.
-
-> **TODO (Phase 0 Task 6):** verify the newsletter signup mechanism during user-flows tracing and revise this line if the SPA-direct-write assumption is wrong.
+- **Newsletter / blog signup** — not implemented as of 2026-05-12; some pages have UI placeholders but there is no submit handler or backing endpoint. Tracked as a future feature.
 
 ## 6. Admin panel scope
 
@@ -78,7 +76,6 @@ Built April 2026. Live admin surfaces under `/admin/*`, role-gated by a Firebase
 - **Analytics** (`/admin/analytics`) — internal funnel and traffic dashboard.
 - **Reviews** (`/admin/reviews`) — moderate and publish customer reviews.
 - **Pricing** (`/admin/pricing`) — update discovery flight and training pricing displayed across the site.
-- **Where/when settings** (`/admin/where-when`) — see Self-fly hire events and partners above (shared surface).
 - **Aircraft specs** (`/admin/aircraft-specs`) — edit per-model spec data displayed on aircraft pages; per-model edit at `/admin/aircraft-specs/:model`.
 
 Detailed flow traces in `docs/user-flows.md` (created in Phase 0 Task 6; may not yet exist on older branches).
@@ -90,7 +87,7 @@ These are the bars Phase 1–3 of the roadmap must clear.
 | Area | Bar |
 |---|---|
 | Performance | Lighthouse mobile Performance ≥ 90 on `/`, `/training/trial-lessons`, `/aircraft/r66` |
-| Accessibility | Modal + form a11y baseline (focus trap, aria-modal, ESC) on every dialog; `jest-axe` runs on every modal/form test and produces zero serious/critical violations; Lighthouse mobile Accessibility ≥ 95 on `/`, `/discovery-flights`, `/aircraft/r66` |
+| Accessibility | Modal + form a11y baseline (focus trap, aria-modal, ESC) on every dialog; `axe-core` runs on every modal/form test and produces zero serious/critical violations; Lighthouse mobile Accessibility ≥ 95 on `/`, `/training/trial-lessons`, `/aircraft/r66` |
 | SEO | Every public route has title, description, canonical, og:image, and where applicable structured data (Product, LocalBusiness, BreadcrumbList) |
 | Security | helmet + CSP enforced; Firestore rules with field-level validation; rate limits on all payment endpoints; explicit deny on server-only collections |
 | Reliability | Webhook failures surface in Sentry within 60 s; graceful shutdown drains in-flight requests on Cloud Run revision swap |

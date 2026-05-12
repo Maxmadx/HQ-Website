@@ -8,7 +8,7 @@
 
 ## 1. Error reporting
 
-**Chosen:** Sentry (`@sentry/node` v10.52.0 for Express, `@sentry/react` v10.52.0 for the SPA), free tier to start; upgrade to Team plan if monthly events exceed the free quota.
+**Chosen:** Sentry (`@sentry/node` v10.x for Express, `@sentry/react` v10.x for the SPA), free tier to start; upgrade to Team plan if monthly events exceed the free quota.
 
 **Alternatives considered:**
 - **GCP Cloud Error Reporting** — free, auto-aggregates Cloud Run stdout errors. Rejected: weak DX, no sourcemap upload story for the React bundle, no React-component-error capture.

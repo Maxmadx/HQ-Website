@@ -313,7 +313,7 @@ Same as Flow 3 (Misc marketplace purchase). The webhook handler does not differe
 
 5. **Response** — Returns `{ id: ref.id }`. Each form page handles its own success UI.
 
-6. **Admin management** — Admins can update lead status (new/contacted/qualified/closed) and notes via `PATCH /api/leads/:id` (`api/leads.js:63`). Admin view at `/admin/leads` (`src/App.jsx:280`).
+6. **Admin management** — Admins can update lead status (new/contacted/qualified/closed) and notes via `PATCH /api/leads/:id` (`api/leads.js:63`). Admin view at `/admin/leads` (`src/App.jsx:279`).
 
 **Data touched**
 
@@ -430,8 +430,8 @@ Same as Flow 3 (Misc marketplace purchase). The webhook handler does not differe
 
 | Admin route | API route | File |
 |---|---|---|
-| `/admin/sfh-partners` | `POST/PATCH/DELETE /api/admin/sfh-partners` | `api/admin-sfh-partners.js` |
-| `/admin/sfh-events` | `POST/PATCH/DELETE /api/admin/sfh-events` | `api/admin-sfh-events.js` |
+| `/admin/where-when` | `POST/PATCH/DELETE /api/admin/sfh-partners` | `api/admin-sfh-partners.js` |
+| `/admin/where-when` | `POST/PATCH/DELETE /api/admin/sfh-events` | `api/admin-sfh-events.js` |
 | `/admin/bookings` | Reads Firestore `bookings` directly | `src/pages/admin/AdminBookings.jsx` |
 | `/admin/leads` | `PATCH /api/leads/:id` for status/notes | `api/leads.js:63` |
 | `/admin/misc` | CRUD on `misc_items` | `src/pages/admin/AdminMiscItems.jsx` |
@@ -582,3 +582,5 @@ Captured here so the doc is honest about what *isn't* live.
 - **Referral redemption (customer-facing)** — the referral mechanism is backend-complete (referral code in confirmation email, `validateReferredByCode` on PI creation, `sendReferralRedeemedEmail` to HQ team), but there is no customer-facing redemption dashboard or status page. Tracked as a post-Phase-1 feature.
 
 - **Self-fly hire booking** — `src/pages/SelfFlyHire.jsx` exists at `/self-fly-hire` (`src/App.jsx:227`), but the page embeds an inline form posting to `/api/leads`. No dedicated payment or availability flow exists.
+
+- **Newsletter signup** — UI placeholder only; no submit handler or backing endpoint exists in `src/` or `api/`.
