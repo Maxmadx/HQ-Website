@@ -5079,7 +5079,7 @@ function Experimentation() {
                 {miscItems.slice(0, 4).map((item) => {
                   const primary = item.images?.find((i) => i.isPrimary) || item.images?.[0];
                   return (
-                    <Link key={item.id} to="/misc" className="fd-sales__card">
+                    <Link key={item.id} to={`/store/${item.id}`} className="fd-sales__card">
                       <div className="fd-sales__card-image">
                         {primary ? (
                           <img src={primary.url} alt={primary.alt || item.name} />
@@ -5115,7 +5115,7 @@ function Experimentation() {
             )}
 
             <div className="fd-sales__actions">
-              <Link to="/misc" className="fd-sales__btn fd-sales__btn--primary">
+              <Link to="/store" className="fd-sales__btn fd-sales__btn--primary">
                 Browse All HQ Store Items
               </Link>
             </div>
