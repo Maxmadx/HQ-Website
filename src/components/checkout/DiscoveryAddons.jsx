@@ -58,7 +58,7 @@ export default function DiscoveryAddons({ value, onChange, voucherActive = false
           return (
             <li key={item.id} style={S.row}>
               {primary
-                ? <img src={primary.url} alt={item.name} style={S.thumb} />
+                ? <img src={primary.url} alt={item.name} width={80} height={80} loading="lazy" style={S.thumb} />
                 : <div style={S.thumbPlaceholder} aria-hidden="true" />}
               <div style={S.info}>
                 <div style={S.nameRow}>

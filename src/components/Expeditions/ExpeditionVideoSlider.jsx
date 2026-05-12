@@ -234,6 +234,9 @@ function ExpeditionVideoSlider({ videos = defaultVideos, title }) {
                   src={thumbId ? `https://img.youtube.com/vi/${thumbId}/mqdefault.jpg` : ''}
                   alt={video.title}
                   className="exp-video-slider__thumb-img"
+                  width={320}
+                  height={180}
+                  loading="lazy"
                 />
                 <span className="exp-video-slider__thumb-title">{video.title}</span>
               </motion.div>

@@ -50,7 +50,7 @@ const R88Announcement = ({ showNote = true }) => {
               <a href="#" className="hq-btn hq-btn--accent">Register Interest</a>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <img src="/assets/images/new-aircraft/r88/r88-jellybean-left.png" alt="Robinson R88" style={{ maxWidth: '100%', filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))' }} />
+              <img src="/assets/images/new-aircraft/r88/r88-jellybean-left.png" alt="Robinson R88" width={1200} height={800} loading="lazy" style={{ maxWidth: '100%', filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))' }} />
             </div>
           </div>
         </div>
