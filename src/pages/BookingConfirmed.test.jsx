@@ -92,7 +92,7 @@ describe('BookingConfirmed', () => {
     });
 
     renderAt('?ref=pi_x&aircraft=r22&duration=30&price=180&name=Test');
-    await waitFor(() => screen.getByText(/Bring two friends along for the ride/i));
+    await waitFor(() => screen.getByText(/Bring Passengers/i));
     expect(screen.getByText(/Upgrade to the R44/i)).toBeInTheDocument();
   });
 
@@ -107,6 +107,6 @@ describe('BookingConfirmed', () => {
     renderAt('?ref=pi_misc&type=misc&itemName=Cap');
     await waitFor(() => screen.getByText(/Purchase Confirmed/i));
     expect(screen.queryByText(/Confirming Booking/i)).toBeNull();
-    expect(screen.queryByText(/Bring two friends along for the ride/i)).toBeNull();
+    expect(screen.queryByText(/Bring Passengers/i)).toBeNull();
   });
 });

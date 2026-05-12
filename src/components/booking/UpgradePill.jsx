@@ -135,7 +135,7 @@ export default function UpgradePill({ booking, onUpgraded, mode = 'compact' }) {
               letterSpacing: '0.01em',
             }}
           >
-            Bring two friends along for the ride.
+            Bring Passengers
           </h2>
         </div>
 
