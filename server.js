@@ -41,6 +41,7 @@ const gscRouter = require('./api/gsc-api');
 const SEO_REDIRECTS = require('./api/seoRedirects');
 const seoMetaInjection = require('./api/seoMetaInjection');
 const { getMetaForPath } = require('./src/lib/getMetaForPath');
+const { paymentLimiter } = require('./api/payment-rate-limit');
 
 // parts-enquiry is ESM; eagerly start the import so it resolves before first request.
 // Track import errors so we can return 500 to clients instead of hanging.
@@ -251,7 +252,7 @@ function fileExists(filePath) {
 // POST /api/create-payment-intent
 // Creates a Stripe PaymentIntent using server-side validated price.
 // Uses express.json() middleware inline so it doesn't affect the webhook route.
-app.post('/api/create-payment-intent', express.json(), async (req, res) => {
+app.post('/api/create-payment-intent', paymentLimiter, express.json(), async (req, res) => {
   const { aircraft, duration, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage, addons, fulfilment, shippingAddress, cartId, referredByCode } = req.body || {};
 
   // Validate presence
@@ -297,7 +298,7 @@ app.post('/api/create-payment-intent', express.json(), async (req, res) => {
 });
 
 // POST /api/create-london-tour-payment-intent
-app.post('/api/create-london-tour-payment-intent', express.json(), async (req, res) => {
+app.post('/api/create-london-tour-payment-intent', paymentLimiter, express.json(), async (req, res) => {
   const { experience, timeOfDay, quantity, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage } = req.body || {};
 
   if (!experience || !timeOfDay || !customerName || !customerEmail || !customerPhone) {
@@ -340,7 +341,7 @@ app.post('/api/create-london-tour-payment-intent', express.json(), async (req, r
 
 // POST /api/create-misc-payment-intent
 // Creates a Stripe PaymentIntent for a misc item purchase. Price validated server-side.
-app.post('/api/create-misc-payment-intent', express.json(), async (req, res) => {
+app.post('/api/create-misc-payment-intent', paymentLimiter, express.json(), async (req, res) => {
   const { itemId, qty, customerName, customerEmail, customerPhone, shippingAddress, size } = req.body || {};
 
   if (!itemId || !customerName || !customerEmail || !customerPhone) {
