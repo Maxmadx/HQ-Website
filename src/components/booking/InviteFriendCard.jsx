@@ -124,7 +124,7 @@ export default function InviteFriendCard({ booking, freeItem, mode = 'hero' }) {
               letterSpacing: '0.01em',
             }}
           >
-            Know someone who'd love this?
+            Invite a Wingman
           </h2>
         </div>
 
