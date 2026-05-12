@@ -9,13 +9,13 @@
 Plans being implemented or queued for implementation.
 
 - [`2026-05-12-phase-0-decide-and-document.md`](2026-05-12-phase-0-decide-and-document.md) — **in-flight** — this plan
-- [`2026-05-12-image-optimisation-d3.md`](2026-05-12-image-optimisation-d3.md) — **in-flight** — runtime `/api/image` endpoint for CMS images; branch `feat/image-pipeline-d3`
-- [`2026-05-12-image-optimisation-d4.md`](2026-05-12-image-optimisation-d4.md) — **in-flight** — Lighthouse before/after measurement of D1–D3 wins; branch `feat/image-pipeline-d4`
-- [`2026-05-11-image-optimisation-d1.md`](2026-05-11-image-optimisation-d1.md) — **in-flight** — build-time image pipeline; branch `feat/image-pipeline-d1` unmerged
-- [`2026-05-11-image-optimisation-d2.md`](2026-05-11-image-optimisation-d2.md) — **in-flight** — `<Image>` component + canonical-page rollout; branch `feat/image-pipeline-d2` unmerged
-- [`2026-05-08-C-r22-r44-upgrade.md`](2026-05-08-C-r22-r44-upgrade.md) — **in-flight** — R22 → R44 in-session upgrade offer; branch `feat/plan-c-r22-r44-upgrade` unmerged
+- [`2026-05-11-image-optimisation-d1.md`](2026-05-11-image-optimisation-d1.md) — **in-flight** — build-time image pipeline; branch `feat/image-pipeline-d1`
+- [`2026-05-11-image-optimisation-d2.md`](2026-05-11-image-optimisation-d2.md) — **in-flight** — `<Image>` component + page rollout; branch `feat/image-pipeline-d2`
+- [`2026-05-08-C-r22-r44-upgrade.md`](2026-05-08-C-r22-r44-upgrade.md) — **in-flight** — R22→R44 in-session upgrade; branch `feat/plan-c-r22-r44-upgrade`
 - [`2026-04-08-03-content-cms.md`](2026-04-08-03-content-cms.md) — **in-flight** — CMS for blog, pages, and press links; 33 open tasks
 - [`2026-04-08-04-lead-management.md`](2026-04-08-04-lead-management.md) — **in-flight** — lead capture and admin CRM; 21 open tasks
+
+> Plans drafted locally but not yet committed (e.g. on contributor working trees) are excluded from this index. Add an entry here once the plan file lands on a tracked branch.
 
 ## Shipped
 
