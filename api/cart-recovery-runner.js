@@ -1,6 +1,7 @@
 'use strict';
 
 const admin = require('./firebase-admin');
+const logger = require('./lib/logger.js');
 const { computeRecoveryActions } = require('./lib/cartRecoveryActions');
 const { sendCartRecoveryEmail } = require('./lib/cartRecoverySend');
 const { isQuietHourLondon } = require('./lib/quietHours');
@@ -23,7 +24,7 @@ async function runRecoveryTick(now = new Date()) {
     tick.scanned = carts.length;
   } catch (err) {
     tick.errors.push(`fetch: ${err.message}`);
-    console.error('[cart-recovery] fetch failed:', err.message);
+    logger.error({ err }, '[cart-recovery] fetch failed');
     return tick;
   }
 
@@ -59,11 +60,11 @@ async function runRecoveryTick(now = new Date()) {
       }
     } catch (err) {
       tick.errors.push(`${cartId}/${action}: ${err.message}`);
-      console.error(`[cart-recovery] ${cartId} ${action} failed:`, err.message);
+      logger.error({ err, cartId, action }, '[cart-recovery] action failed');
     }
   }
 
-  console.log(`[cart-recovery] tick`, JSON.stringify(tick));
+  logger.info(tick, '[cart-recovery] tick');
   return tick;
 }
 

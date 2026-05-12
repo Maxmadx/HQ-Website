@@ -6,6 +6,7 @@
 
 require('dotenv').config();
 
+const logger = require('./api/lib/logger.js');
 const { assertProductionStripeKey } = require('./api/lib/bootGuards.js');
 
 // In production, fail fast if required env vars are missing
@@ -13,7 +14,7 @@ if (process.env.NODE_ENV === 'production') {
   const REQUIRED_ENV = ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'SMTP_HOST', 'SMTP_USER', 'SMTP_PASS', 'EMAIL_FROM', 'FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY', 'SITE_URL'];
   const missing = REQUIRED_ENV.filter(k => !process.env[k]);
   if (missing.length) {
-    console.error(`Missing required environment variables: ${missing.join(', ')}`);
+    logger.error({ missing }, `Missing required environment variables: ${missing.join(', ')}`);
     process.exit(1);
   }
 }
@@ -21,7 +22,7 @@ if (process.env.NODE_ENV === 'production') {
 try {
   assertProductionStripeKey(process.env);
 } catch (err) {
-  console.error(err.message);
+  logger.error({ err }, err.message);
   process.exit(1);
 }
 
@@ -52,7 +53,7 @@ const partsEnquiryReady = import('./api/parts-enquiry.js')
   .then((m) => { partsEnquiryRouter = m.default; })
   .catch((err) => {
     partsEnquiryImportError = err;
-    console.error('[parts-enquiry] failed to load module:', err.message);
+    logger.error({ err }, '[parts-enquiry] failed to load module');
   });
 
 const app = express();
@@ -158,7 +159,7 @@ app.use((req, res, next) => {
 // Request logging (development only)
 if (process.env.NODE_ENV !== 'production') {
   app.use((req, res, next) => {
-    console.log(`${req.method} ${req.url}`);
+    logger.debug({ method: req.method, url: req.url }, `${req.method} ${req.url}`);
     next();
   });
 }
@@ -266,7 +267,7 @@ app.get('/admin/*', (req, res) => {
 function serveHtmlFile(filePath, res) {
   fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
-      console.error(`Error reading ${filePath}:`, err.message);
+      logger.error({ filePath, err }, `Error reading ${filePath}`);
       return res.status(404).send('<!DOCTYPE html><html><head><title>404</title></head><body><h1>Page Not Found</h1></body></html>');
     }
 
@@ -450,7 +451,7 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
     await handleWebhook(req);
     res.json({ received: true });
   } catch (err) {
-    console.error('Webhook error:', err.message);
+    logger.error({ err }, 'Webhook error');
     // Return a static message — never expose internal error details to Stripe callers.
     res.status(400).json({ error: 'Webhook processing failed' });
   }
@@ -615,7 +616,7 @@ app.use((req, res) => {
  * Global error handler
  */
 app.use((err, req, res, next) => {
-  console.error('Server error:', err);
+  logger.error({ err }, 'Server error');
   res.status(500).send('<!DOCTYPE html><html><head><title>Error</title></head><body><h1>Internal Server Error</h1></body></html>');
 });
 
@@ -626,14 +627,14 @@ if (process.env.CART_RECOVERY_AUTO === 'true') {
   const cron = require('node-cron');
   const { runRecoveryTick } = require('./api/cart-recovery-runner');
 
-  console.log('[cart-recovery] auto mode ENABLED — scheduling every 15 minutes');
+  logger.info('[cart-recovery] auto mode ENABLED — scheduling every 15 minutes');
   cron.schedule('*/15 * * * *', () => {
     runRecoveryTick(new Date()).catch((err) => {
-      console.error('[cart-recovery] tick threw:', err.message);
+      logger.error({ err }, '[cart-recovery] tick threw');
     });
   });
 } else {
-  console.log('[cart-recovery] auto mode DISABLED (set CART_RECOVERY_AUTO=true to enable)');
+  logger.info('[cart-recovery] auto mode DISABLED (set CART_RECOVERY_AUTO=true to enable)');
 }
 
 // ============================================
@@ -643,14 +644,14 @@ if (process.env.GSC_SYNC_AUTO === 'true') {
   const cron = require('node-cron');
   const { runGscSync } = require('./api/gsc-sync');
 
-  console.log('[gsc-sync] auto mode ENABLED — scheduling daily at 03:00 Europe/London');
+  logger.info('[gsc-sync] auto mode ENABLED — scheduling daily at 03:00 Europe/London');
   cron.schedule('0 3 * * *', () => {
     runGscSync({}).catch((err) => {
-      console.error('[gsc-sync] tick threw:', err.message);
+      logger.error({ err }, '[gsc-sync] tick threw');
     });
   }, { timezone: 'Europe/London' });
 } else {
-  console.log('[gsc-sync] auto mode DISABLED (set GSC_SYNC_AUTO=true to enable)');
+  logger.info('[gsc-sync] auto mode DISABLED (set GSC_SYNC_AUTO=true to enable)');
 }
 
 // ============================================
@@ -658,33 +659,23 @@ if (process.env.GSC_SYNC_AUTO === 'true') {
 // ============================================
 
 const server = app.listen(PORT, () => {
-  console.log('\n🚀 HQ Aviation Server');
-  console.log('━'.repeat(50));
-  console.log(`   URL: http://localhost:${PORT}`);
-  console.log(`   Dir: ${publicDir}`);
-  console.log(`   Env: ${process.env.NODE_ENV || 'development'}`);
-  console.log('━'.repeat(50));
-  console.log('✅ Compression enabled');
-  console.log('✅ Security headers active');
-  console.log('✅ Static caching active');
-  console.log('✅ Legacy redirects active');
-  console.log('\nPress Ctrl+C to stop.\n');
+  logger.info({ port: PORT, dir: publicDir, env: process.env.NODE_ENV || 'development' }, 'HQ Aviation Server listening');
 });
 
 // Graceful shutdown
 function shutdown(signal) {
-  console.log(`${signal} received — starting graceful shutdown`);
+  logger.info({ signal }, `${signal} received — starting graceful shutdown`);
   server.close((err) => {
     if (err) {
-      console.error('Error during graceful shutdown:', err);
+      logger.error({ err }, 'Error during graceful shutdown');
       process.exit(1);
     }
-    console.log('All connections drained — exiting');
+    logger.info('All connections drained — exiting');
     process.exit(0);
   });
   // Hard exit after 30s in case something blocks server.close
   setTimeout(() => {
-    console.error('Graceful shutdown timed out — forcing exit');
+    logger.error('Graceful shutdown timed out — forcing exit');
     process.exit(1);
   }, 30_000).unref();
 }
