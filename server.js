@@ -29,6 +29,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const compression = require('compression');
+const helmet = require('helmet');
 const { createPaymentIntent, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking } = require('./api/stripe');
 const { getBooking } = require('./api/booking');
 const leadsRouter = require('./api/leads');
@@ -97,13 +98,60 @@ const pagesDir = path.join(publicDir, 'pages');
 // Enable gzip compression for all responses
 app.use(compression());
 
-// Security headers
+// helmet provides X-Content-Type-Options, X-Frame-Options, Strict-Transport-Security,
+// Referrer-Policy, X-Permitted-Cross-Domain-Policies, X-DNS-Prefetch-Control, etc.
+// CSP is mounted manually below in Report-Only mode (per docs/infra-decisions.md §6).
+app.use(helmet({
+  contentSecurityPolicy: false, // mounted manually below in report-only mode
+  hsts: {
+    maxAge: 31536000, // 1 year
+    includeSubDomains: true,
+    preload: true,
+  },
+}));
+
+// CSP report-only — per docs/infra-decisions.md §6 template
+const cspDirectives = {
+  'default-src': ["'self'"],
+  'script-src': ["'self'", 'https://js.stripe.com'],
+  'connect-src': [
+    "'self'",
+    'https://api.stripe.com',
+    'https://*.googleapis.com',
+    'https://*.firebaseio.com',
+    'https://o*.ingest.sentry.io',
+  ],
+  'frame-src': ["'self'", 'https://js.stripe.com', 'https://hooks.stripe.com'],
+  'img-src': ["'self'", 'data:', 'https:'],
+  'style-src': [
+    "'self'",
+    "'unsafe-inline'",
+    'https://fonts.googleapis.com',
+    'https://cdnjs.cloudflare.com',
+  ],
+  'font-src': [
+    "'self'",
+    'https://fonts.gstatic.com',
+    'https://cdnjs.cloudflare.com',
+    'data:',
+  ],
+  'object-src': ["'none'"],
+  'base-uri': ["'self'"],
+  'form-action': ["'self'"],
+  'frame-ancestors': ["'self'"],
+  'upgrade-insecure-requests': [],
+};
+
+function cspHeaderValue(directives) {
+  return Object.entries(directives)
+    .map(([key, values]) =>
+      values.length === 0 ? key : `${key} ${values.join(' ')}`
+    )
+    .join('; ');
+}
+
 app.use((req, res, next) => {
-  res.set({
-    'X-Content-Type-Options': 'nosniff',
-    'X-Frame-Options': 'SAMEORIGIN',
-    'X-XSS-Protection': '1; mode=block'
-  });
+  res.setHeader('Content-Security-Policy-Report-Only', cspHeaderValue(cspDirectives));
   next();
 });
 
