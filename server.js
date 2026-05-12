@@ -126,13 +126,16 @@ if (sentryDsn) {
 
 const cspDirectives = {
   'default-src': ["'self'"],
-  'script-src': ["'self'", 'https://js.stripe.com'],
+  'script-src': ["'self'", 'https://js.stripe.com', 'https://www.googletagmanager.com'],
   'connect-src': [
     "'self'",
     'https://api.stripe.com',
     'https://*.googleapis.com',
     'https://*.firebaseio.com',
     'https://o*.ingest.sentry.io',
+    'https://www.google-analytics.com',
+    'https://*.analytics.google.com',
+    'https://www.googletagmanager.com',
   ],
   'frame-src': ["'self'", 'https://js.stripe.com', 'https://hooks.stripe.com'],
   'img-src': ["'self'", 'data:', 'https:'],
