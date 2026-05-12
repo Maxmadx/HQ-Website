@@ -110,11 +110,28 @@ function UpgradeForm({ booking, onSuccess, onCancel, embedded }) {
         },
       },
     });
-    setLoading(false);
     if (result.error) {
+      setLoading(false);
       setError(result.error.message);
-    } else if (result.paymentIntent?.status === 'succeeded') {
+      return;
+    }
+    if (result.paymentIntent?.status === 'succeeded') {
+      // Tell the server to apply the upgrade to the booking right away —
+      // don't wait for the Stripe webhook. Endpoint is idempotent, so if
+      // the webhook beats us to it, the second write is a no-op.
+      try {
+        await fetch('/api/record-upgrade', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ upgradePaymentIntentId: result.paymentIntent.id }),
+        });
+      } catch {
+        // Network/server error — swallow. The webhook is the safety net.
+      }
+      setLoading(false);
       onSuccess({ newAircraft: 'r44', newDuration: duration });
+    } else {
+      setLoading(false);
     }
   }
 

@@ -905,41 +905,7 @@ async function handleWebhook(req) {
     // Upgrade path — mutates an existing booking rather than creating a new one
     if (productType === 'discovery-flight-upgrade') {
       try {
-        const { originalPaymentIntentId, newAircraft, newDuration } = pi.metadata;
-        if (!originalPaymentIntentId) throw new Error('upgrade PI missing originalPaymentIntentId');
-        const ref = admin.firestore().collection('bookings').doc(originalPaymentIntentId);
-        const snap = await ref.get();
-        if (!snap.exists) throw new Error(`original booking not found: ${originalPaymentIntentId}`);
-        const booking = snap.data();
-        if (booking.upgrade) {
-          // Idempotent — already upgraded
-          return;
-        }
-        const newDur = Number(newDuration);
-        const r44Price = await getR44Price(newDur);
-        await ref.update({
-          aircraft: newAircraft || 'r44',
-          duration: newDur,
-          originalAircraft: booking.aircraft,
-          originalDuration: booking.duration,
-          flightAmountPence: r44Price,
-          totalAmountPence: (Number(booking.totalAmountPence) || 0) + (r44Price - (Number(booking.flightAmountPence) || 0)),
-          upgrade: {
-            newAircraft: newAircraft || 'r44',
-            newDuration: newDur,
-            upgradePaymentIntentId: pi.id,
-            upgradedAt: admin.firestore.FieldValue.serverTimestamp(),
-          },
-          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-        });
-        await sendUpgradeConfirmationEmail({
-          customerName: booking.customerName,
-          customerEmail: booking.customerEmail,
-          newAircraft: newAircraft || 'r44',
-          newDuration: newDur,
-          diffPaidPence: pi.amount,
-          originalPaymentIntentId,
-        });
+        await applyUpgradeFromPi(pi);
       } catch (upErr) {
         console.error('[stripe webhook] upgrade processing failed:', upErr.message);
       }
@@ -1180,6 +1146,89 @@ async function handleWebhook(req) {
  * Idempotent — safe to call from both the client confirmation page AND the webhook.
  * Does not overwrite an existing booking's status field.
  */
+/**
+ * Apply an upgrade to an existing booking based on a `discovery-flight-upgrade`
+ * Stripe PaymentIntent. Idempotent — if the booking already has an `upgrade`
+ * field set, returns { alreadyApplied: true } without re-writing. Called by
+ * both the Stripe webhook and the client-driven /api/record-upgrade endpoint
+ * so we don't depend on webhook delivery.
+ */
+async function applyUpgradeFromPi(pi) {
+  const { originalPaymentIntentId, newAircraft, newDuration } = pi.metadata || {};
+  if (!originalPaymentIntentId) throw new Error('upgrade PI missing originalPaymentIntentId');
+  const ref = admin.firestore().collection('bookings').doc(originalPaymentIntentId);
+  const snap = await ref.get();
+  if (!snap.exists) throw new Error(`original booking not found: ${originalPaymentIntentId}`);
+  const booking = snap.data();
+  if (booking.upgrade) {
+    return { alreadyApplied: true, bookingId: originalPaymentIntentId };
+  }
+  const newDur = Number(newDuration);
+  const r44Price = await getR44Price(newDur);
+  await ref.update({
+    aircraft: newAircraft || 'r44',
+    duration: newDur,
+    originalAircraft: booking.aircraft,
+    originalDuration: booking.duration,
+    flightAmountPence: r44Price,
+    totalAmountPence: (Number(booking.totalAmountPence) || 0) + (r44Price - (Number(booking.flightAmountPence) || 0)),
+    upgrade: {
+      newAircraft: newAircraft || 'r44',
+      newDuration: newDur,
+      upgradePaymentIntentId: pi.id,
+      upgradedAt: admin.firestore.FieldValue.serverTimestamp(),
+    },
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+  try {
+    await sendUpgradeConfirmationEmail({
+      customerName: booking.customerName,
+      customerEmail: booking.customerEmail,
+      newAircraft: newAircraft || 'r44',
+      newDuration: newDur,
+      diffPaidPence: pi.amount,
+      originalPaymentIntentId,
+    });
+  } catch (emailErr) {
+    // Don't fail the upgrade write if the email send fails.
+    console.error('[applyUpgradeFromPi] email send failed:', emailErr.message);
+  }
+  return { alreadyApplied: false, bookingId: originalPaymentIntentId };
+}
+
+/**
+ * Client-driven upgrade recorder. Verifies the upgrade PaymentIntent with
+ * Stripe (retrying briefly while the PI is still 'processing'), then applies
+ * the upgrade to the booking doc. Safe to call multiple times — applyUpgradeFromPi
+ * is idempotent. Used by /api/record-upgrade so the admin sees the upgrade
+ * even if the Stripe webhook never delivers.
+ */
+async function recordUpgrade(upgradePaymentIntentId) {
+  if (!upgradePaymentIntentId) {
+    const err = new Error('upgradePaymentIntentId is required');
+    err.statusCode = 400;
+    throw err;
+  }
+  let pi = await getStripe().paymentIntents.retrieve(upgradePaymentIntentId);
+  const RETRY_DELAY_MS = 400;
+  const MAX_RETRIES = 4; // ~1.6s total — same bridge as recordBooking
+  for (let attempt = 0; attempt < MAX_RETRIES && pi.status === 'processing'; attempt++) {
+    await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+    pi = await getStripe().paymentIntents.retrieve(upgradePaymentIntentId);
+  }
+  if (pi.status !== 'succeeded') {
+    const err = new Error(`Upgrade PaymentIntent ${upgradePaymentIntentId} has not succeeded (status: ${pi.status})`);
+    err.statusCode = 400;
+    throw err;
+  }
+  if ((pi.metadata || {}).productType !== 'discovery-flight-upgrade') {
+    const err = new Error(`PaymentIntent ${upgradePaymentIntentId} is not an upgrade PI`);
+    err.statusCode = 400;
+    throw err;
+  }
+  return await applyUpgradeFromPi(pi);
+}
+
 async function recordBooking(paymentIntentId) {
   if (!paymentIntentId) {
     const err = new Error('paymentIntentId is required');
@@ -1444,4 +1493,4 @@ async function createUpgradePaymentIntent({ originalPaymentIntentId, newDuration
   };
 }
 
-module.exports = { getPrice, applyDiscountPence, priceAddons, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, createUpgradePaymentIntent, getR44Price, getUpgradeDiffPence, handleWebhook, recordBooking, recordPurchaseEvent };
+module.exports = { getPrice, applyDiscountPence, priceAddons, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, createUpgradePaymentIntent, getR44Price, getUpgradeDiffPence, handleWebhook, recordBooking, recordUpgrade, recordPurchaseEvent };
