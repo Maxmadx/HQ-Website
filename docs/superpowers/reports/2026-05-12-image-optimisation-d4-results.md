@@ -89,3 +89,43 @@ node scripts/measureImages.mjs
 ```
 
 Takes ~25 min wall-clock. Writes raw results to `docs/superpowers/reports/2026-05-12-image-optimisation-d4-raw.json` and restores the manifest on exit (even on error).
+
+---
+
+## Post-D5 wiring (added 2026-05-12)
+
+D4 flagged the home page as the highest-leverage gap — 38 images / 16,390 KB unchanged because `<Image>` wasn't wired into it. **D5 closes that gap in 5 commits** on top of this PR. Re-measured the home page only (other 4 pages unchanged by D5) with the same 3-run median methodology:
+
+| Metric | D4 baseline | Post-D5 | Delta |
+|---|---:|---:|---:|
+| LCP | 2,706 ms | 2,611 ms | **−3.5%** |
+| CLS | 0.000 | 0.000 | no change |
+| Image bytes | 16,390 KB | **7,308 KB** | **−55.4%** ✓ |
+| Total bytes | 18,701 KB | **9,527 KB** | **−49.1%** ✓ |
+| Image count | 38 | 73 | +35 (picture/source preloads — expected) |
+
+**Home page image weight has been more than halved.** Total page weight nearly halved. LCP modest because the page was already reasonably fast on synthetic; the bigger win for real users is bandwidth (mobile data), not the LCP component that Lighthouse `simulate` models.
+
+### D5 commits (all on `feat/image-pipeline-d4`)
+
+| Commit | Scope | Lighthouse delta on home |
+|---|---|---:|
+| `61c3f3d` v1 | New Aircraft sales cards (desktop grid + mobile carousel) | −1,780 KB |
+| `d466a68` v2 | SFH map fleet rows + SFH v15 mobile + ZigzagTrainingItem + clubhouse gallery + map-of-hq | additional −2,299 KB |
+| `8b405d7` v3 | Editorial strips (6 render points) | neutral (lazy below-fold, real-user win only) |
+| `126b81b` v4 | ExpeditionBarcode destination thumbs + lightbox gallery | additional −2,411 KB (biggest single win) |
+| `66a0ebb` v5 | Training hscroll + specialist cards | additional −2,592 KB |
+
+### Remaining home-page work (out of scope for this PR)
+
+Top offenders still loading at original size (post-D5):
+
+| File | Size | Where |
+|---|---:|---|
+| `r44blueprint.jpg` | 976 KB | Fleet modal gallery arrays (lines 3219-3271) — modals only, but Lighthouse pre-fetches |
+| `r22-london-mobile-hq.jpg` | 728 KB | `src/lib/imageSections.js` CMS data — needs tracing to consumer |
+| `blue-r66-palo-verde-left-v4.png` | 625 KB | Fleet modal gallery |
+| `maintenance-.jpg` | 609 KB | `cmsParallaxMaintenance` — likely CSS background, needs different treatment |
+| Firebase Storage `misc_items` URL | 539 KB | D3 territory — needs `/api/image` deployed |
+
+These are reasonable D6 follow-ups but each has diminishing returns vs the −55% banked here.
