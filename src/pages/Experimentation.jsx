@@ -4093,7 +4093,7 @@ function Experimentation() {
                 <div className="fd-zigzag__hscroll-inner" ref={hscrollInnerRef}>
                 {hscrollSlides.map((slide, i) => (
                   <div key={i} className="fd-zigzag__card">
-                    <div className="fd-zigzag__card-image"><img src={slide.image} alt={slide.title} /></div>
+                    <div className="fd-zigzag__card-image"><Image src={slide.image} alt={slide.title} width={1200} height={800} sizes="(max-width: 768px) 100vw, 50vw" /></div>
                     <div className="fd-zigzag__card-body">
                       <div className="fd-zigzag__card-header">
                         <span className="fd-zigzag__card-num">{String(zigzagSlides.length + i + 1).padStart(2, '0')}</span>
@@ -4118,7 +4118,7 @@ function Experimentation() {
                   { num: String(zigzagSlides.length + hscrollSlides.length + 4).padStart(2, '0'), tag: 'Advisory', title: 'Aircraft Consulting', description: 'Pre-purchase inspections, ownership advice, fleet planning, and bespoke acquisition services for private and corporate clients.', duration: 'Bespoke', link: '/aircraft-consulting', cta: 'Enquire', image: cmsTrainingSpecialist[3]?.url ?? '/assets/images/facility/hq-0354.jpg' },
                 ].map((item, i) => (
                   <div key={`serv-${i}`} className="fd-zigzag__card" data-cms-section={i === 0 ? 'home-training-specialist' : undefined}>
-                    <div className="fd-zigzag__card-image"><img src={item.image} alt={item.title} /></div>
+                    <div className="fd-zigzag__card-image"><Image src={item.image} alt={item.title} width={1200} height={800} sizes="(max-width: 768px) 100vw, 50vw" /></div>
                     <div className="fd-zigzag__card-body">
                       <div className="fd-zigzag__card-header">
                         <span className="fd-zigzag__card-num">{item.num}</span>
