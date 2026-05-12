@@ -119,14 +119,22 @@ function UpgradeForm({ booking, onSuccess, onCancel, embedded }) {
       // Tell the server to apply the upgrade to the booking right away —
       // don't wait for the Stripe webhook. Endpoint is idempotent, so if
       // the webhook beats us to it, the second write is a no-op.
+      // Errors are logged but don't block the success path: Stripe already
+      // took the money, and the webhook is the safety net. If you see this
+      // log fire, check that the server has the /api/record-upgrade route
+      // mounted (added in commit 148a7a7) and was restarted.
       try {
-        await fetch('/api/record-upgrade', {
+        const res = await fetch('/api/record-upgrade', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ upgradePaymentIntentId: result.paymentIntent.id }),
         });
-      } catch {
-        // Network/server error — swallow. The webhook is the safety net.
+        if (!res.ok) {
+          const body = await res.text().catch(() => '');
+          console.error('[upgrade] /api/record-upgrade returned', res.status, body);
+        }
+      } catch (recErr) {
+        console.error('[upgrade] /api/record-upgrade fetch failed:', recErr?.message);
       }
       setLoading(false);
       onSuccess({ newAircraft: 'r44', newDuration: duration });
