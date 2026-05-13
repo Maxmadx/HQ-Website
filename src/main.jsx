@@ -2,10 +2,12 @@ import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { initSentry, Sentry } from './lib/sentry.js'
 import { initGA } from './lib/ga.js'
+import { initClarity } from './lib/clarity.js'
 import App from './App.jsx'
 
 initSentry();
 initGA();
+initClarity();
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
