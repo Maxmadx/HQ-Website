@@ -1,114 +1,120 @@
 # HQ Aviation Website — Product Requirements Document
 
-**Date:** 2026-02-04
-**Status:** Draft
-**Version:** 1.0
+**Date:** 2026-05-12
+**Status:** Live
+**Version:** 2.0 (supersedes the 2026-02-04 v1.0 written pre-React-migration)
 
 ---
 
-## 1. Project Overview
+## 1. What this site is
 
-HQ Aviation is a Robinson helicopter dealership, pilot training school, and maintenance facility based near London, UK. The website is the primary online presence for the business — it needs to showcase the aircraft fleet, sell helicopters, market training and experience flights, and allow visitors to purchase apparel.
+HQ Aviation is a Robinson helicopter dealership, pilot training school, parts supplier, and maintenance facility based near London, UK. This site is the primary online presence: it showcases the fleet, accepts deposits and bookings for discovery flights and PPL training, sells apparel and miscellaneous merchandise, captures sales enquiries on used aircraft and parts, runs a blog, and gives the business owner (Quentin Smith) and his team an admin panel to manage all of it without a developer in the loop.
 
-The site was originally built on Squarespace and has been exported into a self-hosted static site, served locally via a Node.js / Express.js server (`server.js`, port 7500). All content, assets, and routing currently live in this exported codebase. There is no database; everything is file-based.
+The site replaces a Squarespace export. As of 2026-05-12 the migration to a React 19 SPA + Express backend on Google Cloud Run is ~70% complete (pre-production hardening, performance, accessibility, and codebase health remain). The remaining work is captured in the roadmap at `docs/superpowers/specs/2026-05-12-site-hardening-roadmap-design.md`.
 
----
+## 2. Who uses this site
 
-## 2. Who Uses This Site
+- **Prospective helicopter buyers** — research R22, R44, R66, R88; compare specs; view recently-sold aircraft; ultimately make contact for a quote. The buy flow is offline (high-ticket negotiation) but the site captures the enquiry.
+- **Aspiring pilots** — discovery flights (low-friction first purchase, ~£200-£500), PPL(H) training, self-fly hire. Discovery flight is the canonical entry point.
+- **Returning customers** — apparel, parts, news, gallery.
+- **Wedding / corporate charter clients** — book London tours and bespoke flights.
+- **Business owner (Quentin Smith) and team** — admin panel for FAQs, comparables, SFH events and partners, bookings, leads, blog posts.
 
-- **Prospective buyers** looking at Robinson R44, R66, and R88 helicopters (new, used, recently sold).
-- **Aspiring pilots** researching discovery flights, PPL(H) training, and self-fly hire.
-- **Existing customers** returning for news, gallery, or to purchase apparel.
-- **The business owner (Quentin Smith)** who needs the site to accurately represent HQ Aviation and be maintainable going forward.
+## 3. Site surface (live, 2026-05-12)
 
----
+Public routes are defined in `src/App.jsx`. Major groupings:
 
-## 3. Site Structure (Current State)
-
-The site has 53 HTML pages organised into six logical groups, reflected in the navigation:
-
-| Section | Key Pages |
+| Section | Pages |
 |---|---|
-| About | Home, About Us, Meet the Team, Quentin Smith |
-| Aircraft Fleet | R44 (+ variants), R66 (+ variants), R88 (+ variants) |
-| Aircraft Sales | Compare, New Aircraft, Used Aircraft, Recently Sold |
-| Services | Discovery Flights, Flying, Training FAQ, Hangarage, Tours, Expeditions |
-| Gallery & Media | Gallery, News, Images of Q, Miscellaneous |
-| Shop & Support | Apparel, Store, Contact |
+| **Home & about** | `/`, `/home`, `/about-us`, `/about-us/captain-q` |
+| **Aircraft fleet** | `/aircraft/r22`, `/aircraft/r44`, `/aircraft/r66`, `/aircraft/r88`, `/aircraft/h500`, `/fleet`, `/rhc-configurator` |
+| **Aircraft sales** | `/aircraft-comparison`, `/sales/new`, `/sales/pre-owned`, `/sales/pre-owned/:id`, `/sales/rebuilds` |
+| **Training** | `/training/ppl`, `/training/trial-lessons`, `/training/type-rating`, `/training/night-rating`, `/training/commercial`, `/training/advanced`, `/training/faq`, `/self-fly-hire` |
+| **Maintenance & ops** | `/maintenance`, `/superyacht-ops`, `/pilot-provisioning`, `/aircraft-consulting`, `/leaseback` |
+| **Experiences** | `/expeditions`, `/helicopter-tour-of-london` |
+| **Commerce** | `/parts`, `/parts/enquiry`, `/parts/:id`, `/misc`, `/misc/:id` |
+| **Content** | `/blog`, `/blog/:postId`, `/testimonials` |
+| **Conversion** | `/booking-confirmed`, `/london-tour-checkout`, `/london-tour-confirmed`, `/checkout` |
+| **Admin** | `/admin/*` — role-gated via Firebase custom claims |
 
-**Root pages:** `public/index.html` (home), `public/store.html` (shop).
-**All other pages:** `public/pages/*.html`, served via clean URLs (e.g. `/r66`, `/about-us`).
-**Assets:** CSS, JS, and images live in `public/assets/`.
+Dev-only picker / variation pages live in `src/pages/` but are gated by `import.meta.env.DEV` and don't ship to production routes.
 
----
+## 4. Revenue flows (live)
 
-## 4. Technical Setup
+Each handled by a Stripe PaymentIntent created server-side, with metadata copied into Firestore on successful webhook ingestion.
 
-| Component | Detail |
+- **Discovery flight booking** — `/api/create-payment-intent` → Stripe → `webhook` → `recordBooking` to Firestore `bookings/` + confirmation email + post-checkout upsell pill.
+- **London tour booking** — `/api/create-london-tour-payment-intent` → same shape.
+- **Apparel & misc** — `/api/create-misc-payment-intent` with line items + sizes; writes to `misc_marketplace/`.
+- **Cart recovery** — `node-cron` sweep catches abandoned carts after a quiet-hours-respecting delay; sends one recovery email per cart with an unsubscribe token.
+
+Aircraft sales themselves do **not** go through Stripe (six- to seven-figure offline transactions). The site captures the lead via enquiry forms and hands off to Quentin.
+
+## 5. Lead-capture flows (live)
+
+- **General contact form** — `/api/leads` → Firestore `leads/` + email to ops.
+- **Parts enquiry** — `/api/parts-enquiry` with structured fields (part number, aircraft type, urgency).
+- **Press / media clicks** — `/api/press-click` for funnel analytics.
+- **Newsletter / blog signup** — not implemented as of 2026-05-12; some pages have UI placeholders but there is no submit handler or backing endpoint. Tracked as a future feature.
+
+## 6. Admin panel scope
+
+Built April 2026. Live admin surfaces under `/admin/*`, role-gated by a Firebase custom claim `role: admin`. Subsurfaces:
+
+- **FAQ management** (`/admin/faqs`) — CRUD for FAQ entries surfaced on training/sales/etc pages; backed by `api/admin-faqs.js`.
+- **Comparables** (`/admin/comparables`) — used-aircraft listings with image upload; writes directly via the Firestore client SDK (no server-side API).
+- **Image-editing mode** (`/admin/images`) — visual editor for all site pages; switches image content slots across every page section with a per-page tab bar.
+- **Text-editing mode** (`/admin/text`) — inline copy editor for all managed text fields across the site; saves to the Firestore `site_text` collection.
+- **Used-aircraft listings** (`/admin/listings`) — CRUD for the used-aircraft inventory (separate from comparables); supports image upload and a per-listing edit view at `/admin/listings/:id`.
+- **Self-fly hire events and partners** (`/admin/where-when`) — single surface managing both SFH destination partners and event partners; backed by `api/admin-sfh-events.js` and `api/admin-sfh-partners.js`.
+- **Bookings overview** (`/admin/bookings`) — read/filter view of all discovery flight and London tour bookings written to Firestore by the payment webhook.
+- **Misc-marketplace orders** (`/admin/misc/orders`) — order management for apparel and miscellaneous merchandise; backed by `api/misc-marketplace.js`.
+- **Wall-of-cool moderation** (`/admin/wall-of-cool`) — approve/reject user-submitted gallery entries; backed by `api/wall-of-cool.js`.
+- **Blog post CRUD** (`/admin/blog`) — create, edit, and delete blog posts; per-post edit view at `/admin/blog/:id`.
+- **Parts catalogue and enquiries** (`/admin/parts`) — manage parts listings and review incoming enquiries; per-part edit at `/admin/parts/:id`; enquiries at `/admin/parts/enquiries`.
+- **Leads overview** (`/admin/leads`) — view and filter all contact-form and sales-enquiry leads written to Firestore.
+- **Analytics** (`/admin/analytics`) — internal funnel and traffic dashboard.
+- **Reviews** (`/admin/reviews`) — moderate and publish customer reviews.
+- **Pricing** (`/admin/pricing`) — update discovery flight and training pricing displayed across the site.
+- **Aircraft specs** (`/admin/aircraft-specs`) — edit per-model spec data displayed on aircraft pages; per-model edit at `/admin/aircraft-specs/:model`.
+
+Detailed flow traces in `docs/user-flows.md` (created in Phase 0 Task 6; may not yet exist on older branches).
+
+## 7. Non-functional requirements
+
+These are the bars Phase 1–3 of the roadmap must clear.
+
+| Area | Bar |
 |---|---|
-| Server | Express.js (`server.js`), port 7500 |
-| Routing | Clean URLs — `/r66` resolves to `public/pages/r66.html`. Legacy folder paths (e.g. `/r66/file.html`) 301-redirect to `/file`. |
-| Navigation | Custom hamburger menu defined in `nav-new.html`. Injected into every page at request time by the server. Uses CSS variables for theming (`--nav-bg`, `--nav-accent`, etc.). |
-| Styles & Scripts | Exported Squarespace bundles (minified). Custom site styles in `assets/css/site.css`. |
-| Commerce | Squarespace commerce stack is present in the HTML/JS but points back to Squarespace APIs — not functional locally without the original Squarespace backend. |
-| Fonts | Typekit and Google Fonts (Playfair Display) load from external CDNs. |
+| Performance | Lighthouse mobile Performance ≥ 90 on `/`, `/training/trial-lessons`, `/aircraft/r66` |
+| Accessibility | Modal + form a11y baseline (focus trap, aria-modal, ESC) on every dialog; `axe-core` runs on every modal/form test and produces zero serious/critical violations; Lighthouse mobile Accessibility ≥ 95 on `/`, `/training/trial-lessons`, `/aircraft/r66` |
+| SEO | Every public route has title, description, canonical, og:image, and where applicable structured data (Product, LocalBusiness, BreadcrumbList) |
+| Security | helmet + CSP enforced; Firestore rules with field-level validation; rate limits on all payment endpoints; explicit deny on server-only collections |
+| Reliability | Webhook failures surface in Sentry within 60 s; graceful shutdown drains in-flight requests on Cloud Run revision swap |
+| Observability | Structured JSON logs tagged with release SHA; every payment endpoint logged with `requestId` and latency |
+| Test coverage | CI gates merges on `npm test`; ≥ 80% line coverage on `api/**` enforced by `vitest --coverage`; component + page + Firestore-rules test scaffolding present (coverage targets for `src/**` set in Phase 3) |
+| Repo health | Fresh-clone size < 50 MB; no source file > 2 000 LoC outside `dist/` |
 
----
+## 8. Out of scope (this roadmap)
 
-## 5. Core Requirements
+Tracked separately, not in the hardening roadmap:
 
-These are the baseline things the site must do:
+- R22 → R44 upgrade upsell — stranded on `feat/plan-c-r22-r44-upgrade` (100 unmerged commits, last commit 2026-05-12). Merge-or-kill decision required before Phase 2 starts.
+- Aircraft Sales enquiry / quote CTA — the read-only listings need a captured-lead funnel. Needs its own brainstorming cycle.
+- Analytics-funnel rebuild — five archived plans (Apr 29 – May 1) were abandoned; if revisited, start from a fresh spec.
+- Full TypeScript migration — see `docs/infra-decisions.md` §3.
 
-1. **All 53 pages load and render correctly** at `localhost:7500`. Navigation links resolve. Images and stylesheets load.
-2. **Navigation works on every page.** The hamburger menu must open, display all six sections, and link to the correct destinations. It must close on link tap, overlay click, or ESC key.
-3. **Clean URLs work.** Visiting `/r66` serves the R66 page. Visiting `/r66.html` also works (or redirects cleanly). Legacy nested paths redirect correctly.
-4. **Mobile-responsive.** The site must be usable on phones and tablets. The navigation hamburger must appear and function on small screens.
-5. **Images load.** All 260+ product, team, and editorial images must resolve from their paths in the HTML.
-6. **Contact form is reachable.** The `/contact` page must be accessible (form submission backend is a separate concern).
-7. **Apparel / Store pages are accessible.** The pages must load; actual checkout flow is out of scope until a backend decision is made.
+## 9. How to run
 
----
+See `README.md`.
 
-## 6. Content Priorities
+## 10. Decision history
 
-The business sells and rents helicopters. The page hierarchy should reflect that:
-
-- The **home page** is the entry point — it must load fast and orient visitors to the main offerings.
-- **Aircraft detail pages** (R44, R66, R88 and their sub-variants) are the highest-value content. They need accurate images and specs.
-- **Discovery Flights** is likely the lowest-friction conversion — someone books a flight before buying a helicopter. That page should be prominent and easy to find.
-- **Contact** needs to be reachable from anywhere on the site.
-
----
-
-## 7. Known Issues to Address (identified from the code)
-
-These are things that exist in the current codebase and will need attention:
-
-- **Page titles say "HQ Aviation (Copy)."** All `<title>` and OG meta tags carry this "(Copy)" suffix from the Squarespace clone. Needs to be cleaned to "HQ Aviation."
-- **Canonical URLs point to Squarespace.** Every page has `<link rel="canonical">` pointing to `ellipse-crimson-z3jz.squarespace.com`. These need updating once a real domain is decided.
-- **Favicon loads from Squarespace CDN.** It will break if that CDN link expires. A local favicon should be served instead.
-- **Two navigation systems exist in `index.html`.** The home page has both an older `.nav-toggle` / `.site-nav-menu` block and the newer `.hq-nav-*` system. The old one should be removed.
-- **Desktop navigation is hidden.** The `.hq-nav-menu` styles set `display: none` for screens above 768px. There is no visible navigation on desktop at all — only the hamburger exists, and it is also hidden at that breakpoint. Desktop nav needs a solution.
-- **Duplicate asset folders at root level.** `css/`, `js/`, and `images/` folders exist at the project root alongside `public/assets/`. These appear to be leftover copies from before the restructure and can likely be removed.
-- **Test and diagnostic pages are publicly served.** Pages like `nav-test.html`, `diagnostic.html`, and `test-nav-standalone.html` are reachable in the browser. They should not be in production.
-- **Store currency defaults to USD** in the Squarespace context config, but `selectedCurrency` is GBP. If commerce is re-enabled, this needs to be consistent.
-
----
-
-## 8. Out of Scope (for now)
-
-- Live e-commerce / payment processing (requires backend decisions).
-- Blog/CMS functionality (Squarespace-specific, not functional in static export).
-- SEO / deployment to a production domain (depends on hosting decisions).
-- Performance optimisation or asset bundling.
-
----
-
-## 9. How to Run (for reference)
-
-```bash
-cd /path/to/Squarespace
-npm install
-npm start
-# Site is at http://localhost:7500
-```
+- **2026-02-04** — v1.0 PRD written when the site was a static Squarespace export served from Express.
+- **2026-04** — admin panel built (see `docs/superpowers/plans/2026-04-08-admin-panel-master.md` and child plans).
+- **2026-04** — React 19 migration in flight; pages progressively re-implemented as `.jsx` components.
+- **2026-04** — Stripe checkout live for discovery flights.
+- **2026-05** — image-optimisation pipeline D0–D3 shipped; D4 measurement queued.
+- **2026-05-11** — Cloud Run deployment with Firebase Hosting rewrites for `/api/**`, `/sitemap.xml`, `/robots.txt`.
+- **2026-05-12** — site-hardening roadmap drafted; v2.0 PRD (this doc).
+- **2026-05-12** — §3 routes table corrected to match `src/App.jsx` (template routes `/r22`, `/discovery-flights`, `/hangarage`, `/tours`, `/apparel`, `/store`, `/gallery`, `/news`, `/wall-of-cool`, `/contact` do not exist; replaced with actual paths).
