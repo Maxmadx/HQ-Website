@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require('express');
+const logger = require('./lib/logger.js');
 // firebase-admin is lazy-loaded inside the request handler so the test
 // suite can require this module without env vars / firebase init.
 
@@ -73,7 +74,7 @@ async function fetchDynamicEntries(db) {
       const lastmod = data.updatedAt?.toDate ? data.updatedAt.toDate().toISOString().slice(0, 10) : undefined;
       entries.push({ path: `/sales/pre-owned/${doc.id}`, lastmod, changefreq: 'weekly', priority: 0.8 });
     }
-  } catch (e) { console.error('[sitemap] listings fetch failed:', e.message); }
+  } catch (e) { logger.error({ err: e }, '[sitemap] listings fetch failed'); }
 
   try {
     const blogs = await db.collection('blogs').where('published', '==', true).get();
@@ -82,7 +83,7 @@ async function fetchDynamicEntries(db) {
       const lastmod = data.updatedAt?.toDate ? data.updatedAt.toDate().toISOString().slice(0, 10) : undefined;
       entries.push({ path: `/blog/${doc.id}`, lastmod, changefreq: 'monthly', priority: 0.6 });
     }
-  } catch (e) { console.error('[sitemap] blogs fetch failed:', e.message); }
+  } catch (e) { logger.error({ err: e }, '[sitemap] blogs fetch failed'); }
 
   try {
     const misc = await db.collection('misc_items').where('status', '==', 'active').get();
@@ -91,7 +92,7 @@ async function fetchDynamicEntries(db) {
       const lastmod = data.updatedAt?.toDate ? data.updatedAt.toDate().toISOString().slice(0, 10) : undefined;
       entries.push({ path: `/misc/${doc.id}`, lastmod, changefreq: 'weekly', priority: 0.5 });
     }
-  } catch (e) { console.error('[sitemap] misc fetch failed:', e.message); }
+  } catch (e) { logger.error({ err: e }, '[sitemap] misc fetch failed'); }
 
   try {
     const parts = await db.collection('parts').where('status', '==', 'active').get();
@@ -100,7 +101,7 @@ async function fetchDynamicEntries(db) {
       const lastmod = data.updatedAt?.toDate ? data.updatedAt.toDate().toISOString().slice(0, 10) : undefined;
       entries.push({ path: `/parts/${doc.id}`, lastmod, changefreq: 'weekly', priority: 0.7 });
     }
-  } catch (e) { console.error('[sitemap] parts fetch failed:', e.message); }
+  } catch (e) { logger.error({ err: e }, '[sitemap] parts fetch failed'); }
 
   return entries;
 }
@@ -128,7 +129,7 @@ router.get('/sitemap.xml', async (req, res) => {
     res.set('Cache-Control', 'public, max-age=3600');
     res.send(cache.xml);
   } catch (err) {
-    console.error('[sitemap] failed:', err);
+    logger.error({ err }, '[sitemap] failed');
     res.status(500).send('<?xml version="1.0"?><error>sitemap generation failed</error>');
   }
 });

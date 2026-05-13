@@ -3,6 +3,7 @@
 const express = require('express');
 const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
 const admin = require('./firebase-admin');
+const logger = require('./lib/logger.js');
 
 const router = express.Router();
 
@@ -135,7 +136,7 @@ router.post('/', analyticsLimiter, async (req, res) => {
 
     return res.json({ ok: true });
   } catch (err) {
-    console.error('Analytics ingest error:', err);
+    logger.error({ err }, 'Analytics ingest error');
     return res.status(500).json({ error: 'Failed to record event' });
   }
 });

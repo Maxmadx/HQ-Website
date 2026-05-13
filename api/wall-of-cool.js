@@ -2,6 +2,7 @@
 
 const express = require('express');
 const admin = require('./firebase-admin');
+const logger = require('./lib/logger.js');
 
 const router = express.Router();
 
@@ -48,7 +49,7 @@ router.post('/', async (req, res) => {
     const ref = await admin.firestore().collection('wall_of_cool').add(data);
     return res.json({ id: ref.id });
   } catch (err) {
-    console.error('Wall of Cool submission error:', err);
+    logger.error({ err }, 'Wall of Cool submission error');
     return res.status(500).json({ error: 'Failed to record submission' });
   }
 });
@@ -87,7 +88,7 @@ router.post('/admin', requireAdmin, async (req, res) => {
     });
     return res.json({ id: ref.id });
   } catch (err) {
-    console.error('Wall of Cool admin upload error:', err);
+    logger.error({ err }, 'Wall of Cool admin upload error');
     return res.status(500).json({ error: 'Failed to create entry' });
   }
 });
@@ -116,7 +117,7 @@ router.patch('/reorder', requireAdmin, async (req, res) => {
     await batch.commit();
     return res.json({ ok: true });
   } catch (err) {
-    console.error('Wall of Cool reorder error:', err);
+    logger.error({ err }, 'Wall of Cool reorder error');
     return res.status(500).json({ error: 'Failed to reorder' });
   }
 });
@@ -139,7 +140,7 @@ router.patch('/:id', requireAdmin, async (req, res) => {
     await admin.firestore().collection('wall_of_cool').doc(req.params.id).update(update);
     return res.json({ ok: true });
   } catch (err) {
-    console.error('Wall of Cool update error:', err);
+    logger.error({ err }, 'Wall of Cool update error');
     return res.status(500).json({ error: 'Failed to update' });
   }
 });

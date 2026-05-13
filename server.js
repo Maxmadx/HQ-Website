@@ -6,20 +6,33 @@
 
 require('dotenv').config();
 
+const logger = require('./api/lib/logger.js');
+const { assertProductionStripeKey } = require('./api/lib/bootGuards.js');
+const { initSentry, Sentry } = require('./api/lib/sentry.js');
+initSentry();
+
 // In production, fail fast if required env vars are missing
 if (process.env.NODE_ENV === 'production') {
   const REQUIRED_ENV = ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'SMTP_HOST', 'SMTP_USER', 'SMTP_PASS', 'EMAIL_FROM', 'FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY', 'SITE_URL'];
   const missing = REQUIRED_ENV.filter(k => !process.env[k]);
   if (missing.length) {
-    console.error(`Missing required environment variables: ${missing.join(', ')}`);
+    logger.error({ missing }, `Missing required environment variables: ${missing.join(', ')}`);
     process.exit(1);
   }
+}
+
+try {
+  assertProductionStripeKey(process.env);
+} catch (err) {
+  logger.error({ err }, err.message);
+  process.exit(1);
 }
 
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const compression = require('compression');
+const helmet = require('helmet');
 const { createPaymentIntent, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking } = require('./api/stripe');
 const { getBooking } = require('./api/booking');
 const imageRouter = require('./api/image');
@@ -33,6 +46,7 @@ const gscRouter = require('./api/gsc-api');
 const SEO_REDIRECTS = require('./api/seoRedirects');
 const seoMetaInjection = require('./api/seoMetaInjection');
 const { getMetaForPath } = require('./src/lib/getMetaForPath');
+const { paymentLimiter } = require('./api/payment-rate-limit');
 
 // parts-enquiry is ESM; eagerly start the import so it resolves before first request.
 // Track import errors so we can return 500 to clients instead of hanging.
@@ -42,7 +56,7 @@ const partsEnquiryReady = import('./api/parts-enquiry.js')
   .then((m) => { partsEnquiryRouter = m.default; })
   .catch((err) => {
     partsEnquiryImportError = err;
-    console.error('[parts-enquiry] failed to load module:', err.message);
+    logger.error({ err }, '[parts-enquiry] failed to load module');
   });
 
 const app = express();
@@ -88,20 +102,81 @@ const pagesDir = path.join(publicDir, 'pages');
 // Enable gzip compression for all responses
 app.use(compression());
 
-// Security headers
+// helmet provides X-Content-Type-Options, X-Frame-Options, Strict-Transport-Security,
+// Referrer-Policy, X-Permitted-Cross-Domain-Policies, X-DNS-Prefetch-Control, etc.
+// CSP is mounted manually below in Report-Only mode (per docs/infra-decisions.md §6).
+app.use(helmet({
+  contentSecurityPolicy: false, // mounted manually below in report-only mode
+  hsts: {
+    maxAge: 31536000, // 1 year
+    includeSubDomains: true,
+    preload: true,
+  },
+}));
+
+// CSP report-only — per docs/infra-decisions.md §6 template
+// Derive Sentry CSP report-uri from SENTRY_DSN if set.
+const sentryDsn = process.env.SENTRY_DSN || '';
+let cspReportUri = null;
+if (sentryDsn) {
+  const m = sentryDsn.match(/^https:\/\/([^@]+)@(o\d+\.ingest\.sentry\.io)\/(\d+)/);
+  if (m) {
+    cspReportUri = `https://${m[2]}/api/${m[3]}/security/?sentry_key=${m[1]}`;
+  }
+}
+
+const cspDirectives = {
+  'default-src': ["'self'"],
+  'script-src': ["'self'", 'https://js.stripe.com', 'https://www.googletagmanager.com'],
+  'connect-src': [
+    "'self'",
+    'https://api.stripe.com',
+    'https://*.googleapis.com',
+    'https://*.firebaseio.com',
+    'https://o*.ingest.sentry.io',
+    'https://www.google-analytics.com',
+    'https://*.analytics.google.com',
+    'https://www.googletagmanager.com',
+  ],
+  'frame-src': ["'self'", 'https://js.stripe.com', 'https://hooks.stripe.com'],
+  'img-src': ["'self'", 'data:', 'https:'],
+  'style-src': [
+    "'self'",
+    "'unsafe-inline'",
+    'https://fonts.googleapis.com',
+    'https://cdnjs.cloudflare.com',
+  ],
+  'font-src': [
+    "'self'",
+    'https://fonts.gstatic.com',
+    'https://cdnjs.cloudflare.com',
+    'data:',
+  ],
+  'object-src': ["'none'"],
+  'base-uri': ["'self'"],
+  'form-action': ["'self'"],
+  'frame-ancestors': ["'self'"],
+  'upgrade-insecure-requests': [],
+  ...(cspReportUri && { 'report-uri': [cspReportUri] }),
+};
+
+function cspHeaderValue(directives) {
+  return Object.entries(directives)
+    .map(([key, values]) =>
+      values.length === 0 ? key : `${key} ${values.join(' ')}`
+    )
+    .join('; ');
+}
+
 app.use((req, res, next) => {
-  res.set({
-    'X-Content-Type-Options': 'nosniff',
-    'X-Frame-Options': 'SAMEORIGIN',
-    'X-XSS-Protection': '1; mode=block'
-  });
+  res.setHeader('Content-Security-Policy-Report-Only', cspHeaderValue(cspDirectives));
   next();
 });
 
 // Request logging (development only)
 if (process.env.NODE_ENV !== 'production') {
   app.use((req, res, next) => {
-    console.log(`${req.method} ${req.url}`);
+    logger.debug({ method: req.method, url: req.url }, `${req.method} ${req.url}`);
     next();
   });
 }
@@ -210,7 +285,7 @@ app.get('/admin/*', (req, res) => {
 function serveHtmlFile(filePath, res) {
   fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
-      console.error(`Error reading ${filePath}:`, err.message);
+      logger.error({ filePath, err }, `Error reading ${filePath}`);
       return res.status(404).send('<!DOCTYPE html><html><head><title>404</title></head><body><h1>Page Not Found</h1></body></html>');
     }
 
@@ -244,7 +319,7 @@ function fileExists(filePath) {
 // POST /api/create-payment-intent
 // Creates a Stripe PaymentIntent using server-side validated price.
 // Uses express.json() middleware inline so it doesn't affect the webhook route.
-app.post('/api/create-payment-intent', express.json(), async (req, res) => {
+app.post('/api/create-payment-intent', paymentLimiter, express.json(), async (req, res) => {
   const { aircraft, duration, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage, addons, fulfilment, shippingAddress, cartId, referredByCode } = req.body || {};
 
   // Validate presence
@@ -290,7 +365,7 @@ app.post('/api/create-payment-intent', express.json(), async (req, res) => {
 });
 
 // POST /api/create-london-tour-payment-intent
-app.post('/api/create-london-tour-payment-intent', express.json(), async (req, res) => {
+app.post('/api/create-london-tour-payment-intent', paymentLimiter, express.json(), async (req, res) => {
   const { experience, timeOfDay, quantity, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage } = req.body || {};
 
   if (!experience || !timeOfDay || !customerName || !customerEmail || !customerPhone) {
@@ -333,7 +408,7 @@ app.post('/api/create-london-tour-payment-intent', express.json(), async (req, r
 
 // POST /api/create-misc-payment-intent
 // Creates a Stripe PaymentIntent for a misc item purchase. Price validated server-side.
-app.post('/api/create-misc-payment-intent', express.json(), async (req, res) => {
+app.post('/api/create-misc-payment-intent', paymentLimiter, express.json(), async (req, res) => {
   const { itemId, qty, customerName, customerEmail, customerPhone, shippingAddress, size } = req.body || {};
 
   if (!itemId || !customerName || !customerEmail || !customerPhone) {
@@ -394,7 +469,7 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
     await handleWebhook(req);
     res.json({ received: true });
   } catch (err) {
-    console.error('Webhook error:', err.message);
+    logger.error({ err }, 'Webhook error');
     // Return a static message — never expose internal error details to Stripe callers.
     res.status(400).json({ error: 'Webhook processing failed' });
   }
@@ -553,6 +628,9 @@ app.get('*', async (req, res) => {
 // ERROR HANDLING
 // ============================================
 
+// Sentry v10.x error handler — must be AFTER all routes, BEFORE custom error handlers
+Sentry.setupExpressErrorHandler(app);
+
 /**
  * 404 handler
  */
@@ -564,7 +642,7 @@ app.use((req, res) => {
  * Global error handler
  */
 app.use((err, req, res, next) => {
-  console.error('Server error:', err);
+  logger.error({ err }, 'Server error');
   res.status(500).send('<!DOCTYPE html><html><head><title>Error</title></head><body><h1>Internal Server Error</h1></body></html>');
 });
 
@@ -575,14 +653,14 @@ if (process.env.CART_RECOVERY_AUTO === 'true') {
   const cron = require('node-cron');
   const { runRecoveryTick } = require('./api/cart-recovery-runner');
 
-  console.log('[cart-recovery] auto mode ENABLED — scheduling every 15 minutes');
+  logger.info('[cart-recovery] auto mode ENABLED — scheduling every 15 minutes');
   cron.schedule('*/15 * * * *', () => {
     runRecoveryTick(new Date()).catch((err) => {
-      console.error('[cart-recovery] tick threw:', err.message);
+      logger.error({ err }, '[cart-recovery] tick threw');
     });
   });
 } else {
-  console.log('[cart-recovery] auto mode DISABLED (set CART_RECOVERY_AUTO=true to enable)');
+  logger.info('[cart-recovery] auto mode DISABLED (set CART_RECOVERY_AUTO=true to enable)');
 }
 
 // ============================================
@@ -592,36 +670,41 @@ if (process.env.GSC_SYNC_AUTO === 'true') {
   const cron = require('node-cron');
   const { runGscSync } = require('./api/gsc-sync');
 
-  console.log('[gsc-sync] auto mode ENABLED — scheduling daily at 03:00 Europe/London');
+  logger.info('[gsc-sync] auto mode ENABLED — scheduling daily at 03:00 Europe/London');
   cron.schedule('0 3 * * *', () => {
     runGscSync({}).catch((err) => {
-      console.error('[gsc-sync] tick threw:', err.message);
+      logger.error({ err }, '[gsc-sync] tick threw');
     });
   }, { timezone: 'Europe/London' });
 } else {
-  console.log('[gsc-sync] auto mode DISABLED (set GSC_SYNC_AUTO=true to enable)');
+  logger.info('[gsc-sync] auto mode DISABLED (set GSC_SYNC_AUTO=true to enable)');
 }
 
 // ============================================
 // START SERVER
 // ============================================
 
-app.listen(PORT, () => {
-  console.log('\n🚀 HQ Aviation Server');
-  console.log('━'.repeat(50));
-  console.log(`   URL: http://localhost:${PORT}`);
-  console.log(`   Dir: ${publicDir}`);
-  console.log(`   Env: ${process.env.NODE_ENV || 'development'}`);
-  console.log('━'.repeat(50));
-  console.log('✅ Compression enabled');
-  console.log('✅ Security headers active');
-  console.log('✅ Static caching active');
-  console.log('✅ Legacy redirects active');
-  console.log('\nPress Ctrl+C to stop.\n');
+const server = app.listen(PORT, () => {
+  logger.info({ port: PORT, dir: publicDir, env: process.env.NODE_ENV || 'development' }, 'HQ Aviation Server listening');
 });
 
 // Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('\n\n🛑 Server shutting down gracefully...');
-  process.exit(0);
-});
+function shutdown(signal) {
+  logger.info({ signal }, `${signal} received — starting graceful shutdown`);
+  server.close((err) => {
+    if (err) {
+      logger.error({ err }, 'Error during graceful shutdown');
+      process.exit(1);
+    }
+    logger.info('All connections drained — exiting');
+    process.exit(0);
+  });
+  // Hard exit after 30s in case something blocks server.close
+  setTimeout(() => {
+    logger.error('Graceful shutdown timed out — forcing exit');
+    process.exit(1);
+  }, 30_000).unref();
+}
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
