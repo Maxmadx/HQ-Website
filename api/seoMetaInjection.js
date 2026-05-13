@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const cache = require('./seoMetaCache');
+const logger = require('./lib/logger.js');
 
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({
@@ -38,7 +39,7 @@ function factory({ indexHtmlPath, getMetaForStaticPath, getMetaForDynamicPath })
   try {
     TEMPLATE = fs.readFileSync(indexHtmlPath, 'utf8');
   } catch (err) {
-    console.warn(`[seo] meta-injection disabled: ${indexHtmlPath} not readable (${err.code || err.message}). This is expected on Cloud Run where Hosting serves the SPA.`);
+    logger.warn({ indexHtmlPath, err }, `[seo] meta-injection disabled: ${indexHtmlPath} not readable (${err.code || err.message}). This is expected on Cloud Run where Hosting serves the SPA.`);
   }
 
   return async function seoMetaInjection(req, res, next) {
@@ -53,7 +54,7 @@ function factory({ indexHtmlPath, getMetaForStaticPath, getMetaForDynamicPath })
       meta = getMetaForStaticPath(req.path);
       if (!meta) {
         try { meta = await getMetaForDynamicPath(req.path); }
-        catch (e) { console.error('[seo] dynamic meta failed:', e.message); meta = null; }
+        catch (e) { logger.error({ err: e }, '[seo] dynamic meta failed'); meta = null; }
       }
       if (meta) cache.set(req.path, meta);
     }

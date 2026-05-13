@@ -46,7 +46,11 @@ service cloud.firestore {
 
     // Enquiries - public create, viewer+ read, editor+ write
     match /enquiries/{enquiryId} {
-      allow create: if true;
+      allow create: if request.resource.data.keys().hasOnly(['email', 'name', 'message', 'createdAt', 'metadata', 'phone', 'subject', 'source'])
+        && request.resource.data.email is string
+        && request.resource.data.email.size() <= 200
+        && request.resource.data.name is string
+        && request.resource.data.name.size() <= 200;
       allow read: if isViewer();
       allow update: if isEditor();
       allow delete: if isAdmin();
@@ -315,6 +319,12 @@ service cloud.firestore {
     match /seo_overrides/{path} {
       allow read: if true;
       allow write: if isAdmin();
+    }
+
+    // Referral codes — server-only via Admin SDK (api/stripe.js).
+    // Clients must never read or write referral_codes directly.
+    match /referral_codes/{id} {
+      allow read, write: if false;
     }
   }
 }

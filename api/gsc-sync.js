@@ -1,6 +1,7 @@
 'use strict';
 
 const admin = require('./firebase-admin');
+const logger = require('./lib/logger.js');
 const { gscQuery } = require('./lib/gscClient');
 const { gscRowToDocId, gscRowToDoc } = require('./lib/gscTransforms');
 
@@ -31,7 +32,7 @@ async function runGscSync({ days = DEFAULT_DAYS, siteUrl = process.env.GSC_SITE_
   if (!siteUrl) {
     log.errors.push('GSC_SITE_URL not configured');
     log.durationMs = Date.now() - startedAt;
-    console.error('[gsc-sync]', JSON.stringify(log));
+    logger.error(log, '[gsc-sync] completed with errors');
     return log;
   }
 
@@ -85,7 +86,7 @@ async function runGscSync({ days = DEFAULT_DAYS, siteUrl = process.env.GSC_SITE_
   }
 
   log.durationMs = Date.now() - startedAt;
-  console.log('[gsc-sync]', JSON.stringify(log));
+  logger.info(log, '[gsc-sync] completed');
   return log;
 }
 
