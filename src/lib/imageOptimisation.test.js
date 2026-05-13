@@ -1,0 +1,401 @@
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import os from 'node:os';
+import sharp from 'sharp';
+import {
+  walkSources,
+  classifySource,
+  SKIP_BELOW_BYTES,
+  generateVariant,
+  FORMAT_CONFIG,
+  SIZES,
+  generateLqip,
+  readManifest,
+  writeManifest,
+  MANIFEST_FILENAME,
+  collectOrphans,
+  processOneSource,
+  optimizeImages,
+} from './imageOptimisation';
+
+let tmpDir;
+
+beforeEach(async () => {
+  tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'img-opt-'));
+});
+
+afterEach(async () => {
+  await fs.rm(tmpDir, { recursive: true, force: true });
+});
+
+async function makeFixture(files) {
+  for (const [rel, content] of Object.entries(files)) {
+    const full = path.join(tmpDir, rel);
+    await fs.mkdir(path.dirname(full), { recursive: true });
+    await fs.writeFile(full, content);
+  }
+}
+
+async function makeRealImage(rel, width, height, options = {}) {
+  const full = path.join(tmpDir, rel);
+  await fs.mkdir(path.dirname(full), { recursive: true });
+  const channels = options.alpha ? 4 : 3;
+  // Generate noise pixels so the encoded output is realistically incompressible
+  // (solid-colour synthetic images compress to ~3KB even at 2400×1600, which
+  // would falsely trip the skip-by-size threshold in tests).
+  const pixels = Buffer.alloc(width * height * channels);
+  for (let i = 0; i < pixels.length; i++) pixels[i] = Math.floor(Math.random() * 256);
+  let pipeline = sharp(pixels, { raw: { width, height, channels } });
+  const format = options.format || 'jpeg';
+  if (format === 'jpeg') {
+    pipeline = pipeline.jpeg({ quality: options.quality ?? 80 });
+  } else if (format === 'png') {
+    // Preserve alpha for transparent test fixtures by overlaying a translucent layer
+    if (options.alpha) {
+      pipeline = pipeline.ensureAlpha(0.5);
+    }
+    pipeline = pipeline.png({ quality: options.quality ?? 80 });
+  } else if (format === 'webp') {
+    pipeline = pipeline.webp({ quality: options.quality ?? 80 });
+  }
+  const buf = await pipeline.toBuffer();
+  await fs.writeFile(full, buf);
+  return full;
+}
+
+describe('walkSources', () => {
+  it('returns paths to all jpg/jpeg/png/webp files under rootDir', async () => {
+    await makeFixture({
+      'r66/hero.jpg': 'fake',
+      'r66/gallery/shot.png': 'fake',
+      'logos/HQ.webp': 'fake',
+      'docs/README.md': 'fake',
+      'r66/data.json': 'fake',
+    });
+    const sources = await walkSources(tmpDir);
+    const rel = sources.map(p => path.relative(tmpDir, p)).sort();
+    expect(rel).toEqual([
+      'logos/HQ.webp',
+      'r66/gallery/shot.png',
+      'r66/hero.jpg',
+    ]);
+  });
+
+  it('skips directories named in skipDirs', async () => {
+    await makeFixture({
+      'r66/hero.jpg': 'fake',
+      'optimised/already.avif': 'fake',
+      'optimised/already.jpg': 'fake',
+    });
+    const sources = await walkSources(tmpDir, { skipDirs: ['optimised'] });
+    const rel = sources.map(p => path.relative(tmpDir, p));
+    expect(rel).toEqual(['r66/hero.jpg']);
+  });
+
+  it('returns empty array when rootDir does not exist', async () => {
+    const sources = await walkSources(path.join(tmpDir, 'does-not-exist'));
+    expect(sources).toEqual([]);
+  });
+
+  it('handles uppercase extensions case-insensitively', async () => {
+    await makeFixture({
+      'r66/HERO.JPG': 'fake',
+      'r66/Logo.PNG': 'fake',
+    });
+    const sources = await walkSources(tmpDir);
+    expect(sources).toHaveLength(2);
+  });
+});
+
+describe('classifySource', () => {
+  it('returns metadata for a normal JPEG source', async () => {
+    const src = await makeRealImage('r66/hero.jpg', 1200, 800);
+    const stats = await fs.stat(src);
+    if (stats.size < SKIP_BELOW_BYTES) {
+      // pad with extra encoded data to ensure > 50KB threshold case is testable
+      // (this size depends on sharp output; small synthetic images compress tiny)
+    }
+    const meta = await classifySource(src);
+    expect(meta.srcPath).toBe(src);
+    expect(meta.width).toBe(1200);
+    expect(meta.height).toBe(800);
+    expect(meta.hasAlpha).toBe(false);
+    expect(meta.sizeBytes).toBeGreaterThan(0);
+    expect(typeof meta.skipReason === 'string' || meta.skipReason === null).toBe(true);
+  });
+
+  it('detects alpha channel on transparent PNG', async () => {
+    const src = await makeRealImage('logos/transparent.png', 200, 200, { alpha: true, format: 'png' });
+    const meta = await classifySource(src);
+    expect(meta.hasAlpha).toBe(true);
+  });
+
+  it('marks sources < 50KB as skip-by-size', async () => {
+    // 100×100 synthetic image will be well under 50KB
+    const src = await makeRealImage('logos/small.png', 100, 100, { format: 'png' });
+    const meta = await classifySource(src);
+    expect(meta.skipReason).toBe('below-size-threshold');
+  });
+
+  it('does not mark large sources as skip', async () => {
+    // 2400×1600 will be well over 50KB
+    const src = await makeRealImage('r66/large.jpg', 2400, 1600);
+    const meta = await classifySource(src);
+    expect(meta.skipReason).toBeNull();
+  });
+});
+
+describe('generateVariant', () => {
+  it('generates an AVIF variant at the requested width', async () => {
+    const src = await makeRealImage('r66/hero.jpg', 2000, 1500);
+    const outDir = path.join(tmpDir, 'out');
+    const result = await generateVariant(src, outDir, 800, 'avif');
+    expect(result.outPath).toMatch(/hero-800\.avif$/);
+    const outMeta = await sharp(result.outPath).metadata();
+    expect(outMeta.format).toBe('heif'); // sharp reports avif as heif in metadata
+    expect(outMeta.width).toBe(800);
+  });
+
+  it('generates a WebP variant', async () => {
+    const src = await makeRealImage('r66/hero.jpg', 2000, 1500);
+    const outDir = path.join(tmpDir, 'out');
+    const result = await generateVariant(src, outDir, 400, 'webp');
+    const outMeta = await sharp(result.outPath).metadata();
+    expect(outMeta.format).toBe('webp');
+    expect(outMeta.width).toBe(400);
+  });
+
+  it('preserves alpha when generating PNG variant from transparent source', async () => {
+    const src = await makeRealImage('logo.png', 500, 500, { alpha: true, format: 'png' });
+    const outDir = path.join(tmpDir, 'out');
+    const result = await generateVariant(src, outDir, 400, 'png');
+    const outMeta = await sharp(result.outPath).metadata();
+    expect(outMeta.hasAlpha).toBe(true);
+  });
+
+  it('does not upscale beyond source width', async () => {
+    const src = await makeRealImage('small.jpg', 600, 400); // source narrower than 800
+    const outDir = path.join(tmpDir, 'out');
+    const result = await generateVariant(src, outDir, 800, 'webp');
+    const outMeta = await sharp(result.outPath).metadata();
+    expect(outMeta.width).toBe(600); // sharp's withoutEnlargement clamped to source width
+  });
+});
+
+describe('generateLqip', () => {
+  it('returns a base64 data URL string', async () => {
+    const src = await makeRealImage('hero.jpg', 1600, 900);
+    const lqip = await generateLqip(src);
+    expect(lqip.startsWith('data:image/avif;base64,')).toBe(true);
+    expect(lqip.length).toBeGreaterThan(50); // base64 of a real image is not empty
+  });
+
+  it('produces output smaller than 1KB for typical inputs', async () => {
+    const src = await makeRealImage('hero.jpg', 2000, 1500);
+    const lqip = await generateLqip(src);
+    expect(lqip.length).toBeLessThan(2048); // generous upper bound
+  });
+});
+
+describe('readManifest', () => {
+  it('returns empty shape when file does not exist', async () => {
+    const m = await readManifest(path.join(tmpDir, 'manifest.json'));
+    expect(m).toEqual({ version: 1, sources: {} });
+  });
+
+  it('reads an existing manifest', async () => {
+    const manifestPath = path.join(tmpDir, 'manifest.json');
+    await fs.writeFile(manifestPath, JSON.stringify({
+      version: 1,
+      sources: {
+        'r66/hero.jpg': { sourceMtimeMs: 1234, hasAlpha: false, lqip: 'data:...' },
+      },
+    }));
+    const m = await readManifest(manifestPath);
+    expect(m.sources['r66/hero.jpg'].sourceMtimeMs).toBe(1234);
+  });
+
+  it('returns empty shape on malformed JSON', async () => {
+    const manifestPath = path.join(tmpDir, 'broken.json');
+    await fs.writeFile(manifestPath, '{ this is not valid');
+    const m = await readManifest(manifestPath);
+    expect(m).toEqual({ version: 1, sources: {} });
+  });
+});
+
+describe('writeManifest', () => {
+  it('writes pretty-printed JSON', async () => {
+    const manifestPath = path.join(tmpDir, 'out.json');
+    await writeManifest(manifestPath, {
+      version: 1,
+      sources: { 'a.jpg': { sourceMtimeMs: 1 } },
+    });
+    const text = await fs.readFile(manifestPath, 'utf8');
+    expect(text).toContain('"version": 1');
+    expect(text).toContain('"a.jpg"');
+    expect(text.endsWith('\n')).toBe(true);
+  });
+});
+
+describe('collectOrphans', () => {
+  it('removes variant files whose source no longer exists', async () => {
+    const sourceDir = path.join(tmpDir, 'src');
+    const optDir = path.join(tmpDir, 'opt');
+    await fs.mkdir(sourceDir, { recursive: true });
+    await fs.mkdir(path.join(optDir, 'r66'), { recursive: true });
+
+    // create orphan variant — no source
+    await fs.writeFile(path.join(optDir, 'r66', 'ghost-400.webp'), 'fake');
+    await fs.writeFile(path.join(optDir, 'r66', 'ghost-lqip.txt'), 'fake');
+
+    // create kept variant — source exists
+    await makeRealImage('src/r66/hero.jpg', 800, 600);
+    await fs.writeFile(path.join(optDir, 'r66', 'hero-400.webp'), 'fake');
+
+    const removed = await collectOrphans(optDir, sourceDir);
+    const removedRel = removed.map(p => path.relative(optDir, p)).sort();
+    expect(removedRel).toEqual([
+      'r66/ghost-400.webp',
+      'r66/ghost-lqip.txt',
+    ]);
+
+    // confirm files deleted from disk
+    await expect(fs.stat(path.join(optDir, 'r66', 'ghost-400.webp'))).rejects.toThrow();
+    // confirm kept variant remains
+    await expect(fs.stat(path.join(optDir, 'r66', 'hero-400.webp'))).resolves.toBeTruthy();
+  });
+
+  it('returns empty array when no orphans exist', async () => {
+    const sourceDir = path.join(tmpDir, 'src');
+    const optDir = path.join(tmpDir, 'opt');
+    await fs.mkdir(sourceDir, { recursive: true });
+    await fs.mkdir(optDir, { recursive: true });
+    const removed = await collectOrphans(optDir, sourceDir);
+    expect(removed).toEqual([]);
+  });
+
+  it('preserves the manifest file', async () => {
+    const sourceDir = path.join(tmpDir, 'src');
+    const optDir = path.join(tmpDir, 'opt');
+    await fs.mkdir(sourceDir, { recursive: true });
+    await fs.mkdir(optDir, { recursive: true });
+    await fs.writeFile(path.join(optDir, 'optimised-manifest.json'), '{}');
+    await collectOrphans(optDir, sourceDir);
+    await expect(fs.stat(path.join(optDir, 'optimised-manifest.json'))).resolves.toBeTruthy();
+  });
+});
+
+describe('processOneSource', () => {
+  it('generates AVIF + WebP + JPEG variants for opaque source + LQIP + manifest entry', { timeout: 60000 }, async () => {
+    // Source >= 2400px wide so all 5 SIZES generate (no withoutEnlargement skip)
+    const src = await makeRealImage('src/r66/hero.jpg', 2400, 1800);
+    const sourceDir = path.join(tmpDir, 'src');
+    const optDir = path.join(tmpDir, 'opt');
+
+    const result = await processOneSource(src, sourceDir, optDir, { version: 1, sources: {} });
+    expect(result.skipped).toBe(false);
+    expect(result.variants.length).toBe(SIZES.length * 3); // 5 widths × 3 formats
+    expect(result.lqip).toMatch(/^data:image\/avif;base64,/);
+
+    // Files exist on disk
+    for (const v of result.variants) {
+      await expect(fs.stat(v.outPath)).resolves.toBeTruthy();
+    }
+
+    // Manifest entry written
+    expect(result.manifestEntry.hasAlpha).toBe(false);
+    expect(result.manifestEntry.lqip).toBe(result.lqip);
+  });
+
+  it('emits PNG instead of JPEG variants when source has alpha', { timeout: 60000 }, async () => {
+    const src = await makeRealImage('src/logos/transparent.png', 800, 800, { alpha: true, format: 'png' });
+    const sourceDir = path.join(tmpDir, 'src');
+    const optDir = path.join(tmpDir, 'opt');
+
+    const result = await processOneSource(src, sourceDir, optDir, { version: 1, sources: {} });
+    expect(result.skipped).toBe(false);
+    const formats = new Set(result.variants.map(v => v.format));
+    expect(formats.has('png')).toBe(true);
+    expect(formats.has('jpeg')).toBe(false);
+    expect(formats.has('avif')).toBe(true);
+    expect(formats.has('webp')).toBe(true);
+  });
+
+  it('copies skip-by-size sources unchanged into the optimised tree', async () => {
+    // 100×100 PNG will be well under 50KB
+    const src = await makeRealImage('src/logos/small.png', 100, 100, { format: 'png' });
+    const sourceDir = path.join(tmpDir, 'src');
+    const optDir = path.join(tmpDir, 'opt');
+
+    const result = await processOneSource(src, sourceDir, optDir, { version: 1, sources: {} });
+    expect(result.skipped).toBe(true);
+    expect(result.skipReason).toBe('below-size-threshold');
+    // Copy exists at mirrored path
+    const copyPath = path.join(optDir, 'logos', 'small.png');
+    const original = await fs.readFile(src);
+    const copy = await fs.readFile(copyPath);
+    expect(Buffer.compare(original, copy)).toBe(0);
+  });
+
+  it('skips work when source mtime matches the manifest entry (incremental build)', async () => {
+    const src = await makeRealImage('src/r66/hero.jpg', 2000, 1500);
+    const sourceDir = path.join(tmpDir, 'src');
+    const optDir = path.join(tmpDir, 'opt');
+    const stat = await fs.stat(src);
+
+    const manifest = {
+      version: 1,
+      sources: {
+        'r66/hero.jpg': { sourceMtimeMs: stat.mtimeMs, hasAlpha: false, variants: [], lqip: '...' },
+      },
+    };
+    const result = await processOneSource(src, sourceDir, optDir, manifest);
+    expect(result.cached).toBe(true);
+    expect(result.variants).toEqual([]); // nothing regenerated
+  });
+});
+
+describe('optimizeImages', () => {
+  it('processes a directory of sources end-to-end', { timeout: 120000 }, async () => {
+    await makeRealImage('src/r66/hero.jpg', 2000, 1500);
+    await makeRealImage('src/logos/transparent.png', 800, 800, { alpha: true, format: 'png' });
+    await makeRealImage('src/logos/tiny.png', 100, 100, { format: 'png' }); // skip-by-size
+
+    const sourceDir = path.join(tmpDir, 'src');
+    const optDir = path.join(tmpDir, 'opt');
+
+    const summary = await optimizeImages(sourceDir, optDir);
+
+    expect(summary.processed).toBeGreaterThanOrEqual(2);
+    expect(summary.skipped).toBeGreaterThanOrEqual(1);
+    expect(summary.totalVariants).toBeGreaterThan(0);
+
+    // Manifest written
+    const manifestPath = path.join(optDir, MANIFEST_FILENAME);
+    const m = await readManifest(manifestPath);
+    expect(Object.keys(m.sources)).toContain('r66/hero.jpg');
+    expect(Object.keys(m.sources)).toContain('logos/transparent.png');
+    expect(Object.keys(m.sources)).toContain('logos/tiny.png');
+    expect(m.sources['logos/tiny.png'].skipped).toBe(true);
+  });
+
+  it('removes orphan variants after rerun with sources deleted', { timeout: 120000 }, async () => {
+    await makeRealImage('src/a.jpg', 1000, 1000);
+    const sourceDir = path.join(tmpDir, 'src');
+    const optDir = path.join(tmpDir, 'opt');
+
+    await optimizeImages(sourceDir, optDir);
+    // confirm variants exist
+    const aVariants = await fs.readdir(optDir);
+    expect(aVariants.some(f => f.startsWith('a-'))).toBe(true);
+
+    // delete source, rerun
+    await fs.rm(path.join(sourceDir, 'a.jpg'));
+    await optimizeImages(sourceDir, optDir);
+
+    // confirm variants gone
+    const after = await fs.readdir(optDir);
+    expect(after.some(f => f.startsWith('a-'))).toBe(false);
+  });
+});

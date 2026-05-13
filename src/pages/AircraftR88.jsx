@@ -26,6 +26,7 @@ import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import { SECTION_MAP } from '../lib/imageSections';
 import Seo from '../components/seo/Seo';
 import { buildProduct, buildBreadcrumbList } from '../components/seo/jsonLd';
+import Image from '../components/Image';
 
 // Import styles
 import '../assets/css/main.css';
@@ -452,12 +453,13 @@ function R88Highlights() {
         </Reveal>
         <Reveal delay={0.1} direction="right">
           <div className="r88-highlights__image">
-            <img
+            <Image
               src="/assets/images/new-aircraft/r88/r88-jellybean-left.png"
               alt="Robinson R88 front-quarter exterior view"
-              loading="lazy"
               width={2500}
               height={1406}
+              priority
+              sizes="100vw"
             />
           </div>
         </Reveal>

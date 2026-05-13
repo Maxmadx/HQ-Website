@@ -15,7 +15,10 @@ const ROOT = path.resolve(__dirname, '../..');
 // - Admin pages (rendered behind auth, noindex'd, lower CLS priority)
 // - Orphan files (PPL/Expeditions/HeroSectionFinal — superseded by Final* counterparts)
 // - Component long tail (single-offender components, addressable in a follow-up)
-const EXCLUDED = /(Variations|Picker|Test|Wireframes|ComponentShowcase|Experimentation|FinalDraft|MobileSecondSection|HeroVariations|HeroPathPicker|JourneyPicker|ParallaxPicker|ScrollPathTest|VideoSliderPicker|TestimonialsPicker|OwnershipPicker|PPLPicker|ArrowPicker|CarouselPicker|AccordionVariations|AwardVariations|R66BenefitsVariations|ExpeditionPhilosophyVariations|ExpeditionPhilosophyJVariations|FlyingVariations|WallOfCool[A-Z]|AuthorisedServiceCenterCard|FacilityGalleryPicker|UsedSales2|\/PPL\.jsx$|\/Expeditions\.jsx$|HeroSectionFinal|\/pages\/admin\/|\/components\/admin\/|ScrollingStrips|TeamPreview|ExpeditionBarcode|BeforeAfter|FacilityGallery\.jsx|R66Case|PrecisionEngineering|FounderSpotlight|ExpeditionDepartureBoard|ExpeditionVideoSlider|InteractiveFleetExplorer|ModelSpotlight|R88Announcement|ImageSlot|OwnershipBenefits|LondonTourTicket|FacilityServicesCarousel|DiscoveryAddons)/;
+// Image.jsx is the canonical <Image> wrapper that enforces width/height on every
+// real <img> it renders; the scanner produces false positives for the literal
+// "<img>" appearing in code comments and test descriptions inside that file.
+const EXCLUDED = /(Variations|Picker|Test|Wireframes|ComponentShowcase|Experimentation|FinalDraft|MobileSecondSection|HeroVariations|HeroPathPicker|JourneyPicker|ParallaxPicker|ScrollPathTest|VideoSliderPicker|TestimonialsPicker|OwnershipPicker|PPLPicker|ArrowPicker|CarouselPicker|AccordionVariations|AwardVariations|R66BenefitsVariations|ExpeditionPhilosophyVariations|ExpeditionPhilosophyJVariations|FlyingVariations|WallOfCool[A-Z]|AuthorisedServiceCenterCard|FacilityGalleryPicker|UsedSales2|\/PPL\.jsx$|\/Expeditions\.jsx$|HeroSectionFinal|\/pages\/admin\/|\/components\/admin\/|\/components\/Image\.(test\.)?jsx$)/;
 
 // JSX-aware tag scanner: walks character-by-character, tracking JSX `{...}`
 // brace depth and string-literal context, so arrow functions like

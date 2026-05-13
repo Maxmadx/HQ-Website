@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigationType } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigationType, useParams } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import Seo from './components/seo/Seo';
 import { buildOrganization, buildWebSite, buildLocalBusiness } from './components/seo/jsonLd';
@@ -133,10 +133,25 @@ import AdminEditTextMode from './pages/admin/AdminEditTextMode';
 import AdminComparables from './pages/admin/AdminComparables';
 import AdminComparableEdit from './pages/admin/AdminComparableEdit';
 import PageTracker from './components/PageTracker';
+import { trackPageView } from './lib/ga.js';
 
 // Import styles
 import './assets/css/main.css';
 import './assets/css/components.css';
+
+function RouteTracker() {
+  const location = useLocation();
+  useEffect(() => {
+    trackPageView(location.pathname + location.search);
+  }, [location.pathname, location.search]);
+  return null;
+}
+
+// Backward-compat: /misc/:id -> /store/:id
+function MiscItemDetailRedirect() {
+  const { id } = useParams();
+  return <Navigate to={`/store/${id}`} replace />;
+}
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -163,6 +178,7 @@ function App() {
       <EditModeProvider>
       <ScrollToTop />
       <PageTracker />
+      <RouteTracker />
       <Routes>
         {/* Dev/test/picker routes — hard-gated behind import.meta.env.DEV */}
         {SHOW_DEV_ROUTES && (<>
@@ -227,8 +243,11 @@ function App() {
         {SHOW_DEV_ROUTES && <Route path="/sales/pre-owned-variations" element={<UsedSalesVariations />} />}
         <Route path="/sales/pre-owned/:id" element={<UsedAircraftDetail />} />
         <Route path="/self-fly-hire" element={<SelfFlyHire />} />
-        <Route path="/misc" element={<Misc />} />
-        <Route path="/misc/:id" element={<MiscItemDetail />} />
+        <Route path="/store" element={<Misc />} />
+        <Route path="/store/:id" element={<MiscItemDetail />} />
+        {/* Backward-compat redirects: old /misc paths -> /store */}
+        <Route path="/misc" element={<Navigate to="/store" replace />} />
+        <Route path="/misc/:id" element={<MiscItemDetailRedirect />} />
         <Route path="/parts" element={<Parts />} />
         <Route path="/parts-2" element={<PartSales />} />
         {SHOW_DEV_ROUTES && <Route path="/dev/image-picker" element={<ImagePicker />} />}

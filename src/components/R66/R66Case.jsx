@@ -248,6 +248,9 @@ function OpenerSticky() {
           <img
             src="/assets/images/new-aircraft/r66/rhc-r66-nxg-riviera-center-spotlight-vertical-format-14184-2.jpg"
             alt=""
+            width={800}
+            height={1200}
+            loading="lazy"
             onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }}
           />
         </div>
@@ -357,7 +360,7 @@ function ExplainerSplit({ argId, index, side = 'right', statHero = false }) {
           ) : null}
         </div>
         <div className="r66b-exp__img">
-          <img src={src} alt="" onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />
+          <img src={src} alt="" width={1200} height={800} loading="lazy" onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />
         </div>
       </div>
       <style>{`
@@ -472,6 +475,9 @@ function SeamDark({ argId, index }) {
           <img
             src="/assets/images/new-aircraft/r66/rhc-r66-nxg-pv-left-side-and-engine-logo-med-cu-13776.jpg"
             alt=""
+            width={1600}
+            height={900}
+            loading="lazy"
             onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }}
           />
         </div>

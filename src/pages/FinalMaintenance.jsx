@@ -35,6 +35,8 @@ import { usePageImages } from '../hooks/usePageImages';
 import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import Seo from '../components/seo/Seo';
 import { buildService, buildBreadcrumbList } from '../components/seo/jsonLd';
+import { AREA_SERVED } from '../lib/seoDefaults';
+import Image from '../components/Image';
 import FooterMinimal from '../components/FooterMinimal';
 import FacilityGallery from '../components/Maintenance/FacilityGallery';
 import PartsEnquiry from '../components/Maintenance/PartsEnquiry';
@@ -265,7 +267,7 @@ function HeroSection() {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1.5 }}
       >
-        <img src={pageImages['maintenance-hero']?.[0]?.url || '/assets/images/facility/hq-0056.jpg'} alt="Helicopter maintenance" width={2500} height={1667} />
+        <Image src={pageImages['maintenance-hero']?.[0]?.url || '/assets/images/facility/hq-0056.jpg'} alt="Helicopter maintenance" width={2500} height={1667} priority sizes="100vw" />
       </motion.div>
       <div className="maint-hero__overlay" />
       <div className="maint-hero__blueprint-grid" />
@@ -5724,7 +5726,7 @@ function FinalMaintenance() {
             serviceType: 'Helicopter Maintenance',
             description: 'Robinson and Rolls-Royce RR300 authorised service center at Denham. CAA Part-145 maintenance for R22, R44, R66. Parts sales, overhauls, AOG response.',
             url: '/maintenance',
-            areaServed: 'United Kingdom',
+            areaServed: AREA_SERVED,
           }),
           buildBreadcrumbList([
             { name: 'Home', path: '/' },

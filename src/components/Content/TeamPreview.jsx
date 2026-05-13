@@ -31,14 +31,14 @@ const TeamPreview = ({ showNote = true }) => {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem' }}>
             <div style={{ textAlign: 'center' }}>
               <div style={{ width: '120px', height: '120px', borderRadius: '50%', overflow: 'hidden', margin: '0 auto 1rem', border: '3px solid #fff', boxShadow: 'var(--shadow-light)' }}>
-                <img src="/assets/images/team/quentin-smith-world-record-holder-helicopter-aerobatics.webp" alt="Quentin Smith" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src="/assets/images/team/quentin-smith-world-record-holder-helicopter-aerobatics.webp" alt="Quentin Smith" width={120} height={120} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <h3 style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '0.25rem' }}>Quentin Smith</h3>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.1em', color: 'var(--hq-subtle)' }}>FOUNDER & MD</span>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ width: '120px', height: '120px', borderRadius: '50%', overflow: 'hidden', margin: '0 auto 1rem', border: '3px solid #fff', boxShadow: 'var(--shadow-light)' }}>
-                <img src="/assets/images/team/british-helicopter-team.webp" alt="Mackie Alcantara" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src="/assets/images/team/british-helicopter-team.webp" alt="Mackie Alcantara" width={120} height={120} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <h3 style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '0.25rem' }}>Mackie Alcantara</h3>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.1em', color: 'var(--hq-subtle)' }}>CHIEF INSTRUCTOR</span>

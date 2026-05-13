@@ -36,6 +36,7 @@ import { useCmsHighlight } from '../hooks/useCmsHighlight';
 import Seo from '../components/seo/Seo';
 import { buildService, buildBreadcrumbList } from '../components/seo/jsonLd';
 import { SITE_URL, AREA_SERVED } from '../lib/seoDefaults';
+import Image from '../components/Image';
 
 /**
  * EXPEDITIONS PAGE HEADER COMPONENT
@@ -1599,7 +1600,7 @@ function FinalExpeditions() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 1.5 }}
         >
-          <img src={pageImages['expeditions-hero']?.[0]?.url || '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp'} alt="" width={2500} height={1922} />
+          <Image src={pageImages['expeditions-hero']?.[0]?.url || '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp'} alt="" width={2500} height={1922} priority sizes="100vw" />
         </motion.div>
         <div className="fexp-hero__overlay" />
 

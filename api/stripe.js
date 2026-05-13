@@ -3,6 +3,7 @@
 const Stripe = require('stripe');
 const { getTransporter } = require('./lib/mailer');
 const admin = require('./firebase-admin');
+const logger = require('./lib/logger.js');
 
 const MAX_ADDON_QTY = 10;
 
@@ -24,7 +25,7 @@ function parseAddonsFromMetadata(metadata = {}) {
       const item = JSON.parse(raw);
       if (item && typeof item === 'object') addons.push(item);
     } catch (err) {
-      console.error(`[stripe] failed to parse addon_${i}:`, err.message);
+      logger.error({ err, i }, `[stripe] failed to parse addon_${i}`);
     }
   }
   const fulfilment = (metadata.fulfilment || '').toLowerCase() || null;
@@ -69,7 +70,7 @@ async function recordPurchaseEvent({ paymentIntentId, value, currency, items, it
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
     });
   } catch (err) {
-    console.error('[stripe webhook] failed to record purchase event:', err.message);
+    logger.error({ err }, '[stripe webhook] failed to record purchase event');
   }
 }
 
@@ -236,12 +237,12 @@ async function validateReferredByCode(code, customerEmail) {
         if (charge.refunded || charge.amount_refunded > 0) return null;
       }
     } catch (stripeErr) {
-      console.warn('[referral] owner PI lookup failed:', stripeErr.message);
+      logger.warn({ err: stripeErr }, '[referral] owner PI lookup failed');
       return null;
     }
     return { code: normalized, ...data };
   } catch (err) {
-    console.warn('[referral] validateReferredByCode failed:', err.message);
+    logger.warn({ err }, '[referral] validateReferredByCode failed');
     return null;
   }
 }
@@ -266,7 +267,7 @@ async function getPrice(aircraft, duration) {
       if (typeof price === 'number' && price > 0) return price;
     }
   } catch (err) {
-    console.warn('[stripe] Firestore price lookup failed, using fallback:', err.message);
+    logger.warn({ err }, '[stripe] Firestore price lookup failed, using fallback');
   }
 
   // Fallback — ensures charges always succeed even if Firestore is down
@@ -423,7 +424,7 @@ async function createPaymentIntent({
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
   } catch (err) {
-    console.error('[stripe] failed to write referral_codes doc:', err.message);
+    logger.error({ err }, '[stripe] failed to write referral_codes doc');
     // Non-fatal: the booking proceeds, but the referral system is degraded.
   }
 
@@ -452,7 +453,7 @@ async function getLondonTourPrice(experience, timeOfDay, quantity) {
       if (typeof price === 'number' && price > 0) basePrice = price;
     }
   } catch (err) {
-    console.warn('[stripe] London tour Firestore price lookup failed, using fallback:', err.message);
+    logger.warn({ err }, '[stripe] London tour Firestore price lookup failed, using fallback');
   }
 
   return experience === 'shared' ? basePrice * qty : basePrice;
@@ -855,7 +856,7 @@ async function sendUpgradeConfirmationEmail({ customerName, customerEmail, newAi
  */
 async function sendReferralRedeemedEmail({ owner, redeemer, freeItem }) {
   if (!process.env.HQ_TEAM_EMAIL) {
-    console.warn('[referral] HQ_TEAM_EMAIL env var not set, skipping notification');
+    logger.warn('[referral] HQ_TEAM_EMAIL env var not set, skipping notification');
     return;
   }
   const itemLine = freeItem
@@ -891,6 +892,11 @@ async function handleWebhook(req) {
   }
 
   const sig = req.headers['stripe-signature'];
+  if (!sig) {
+    const err = new Error('missing signature');
+    err.statusCode = 400;
+    throw err;
+  }
 
   const event = getStripe().webhooks.constructEvent(
     req.body,
@@ -1015,10 +1021,10 @@ async function handleWebhook(req) {
           }
         }
       } catch (refErr) {
-        console.error('[stripe webhook] referral redemption failed:', refErr.message);
+        logger.error({ err: refErr }, '[stripe webhook] referral redemption failed');
       }
     } catch (dbErr) {
-      console.error('[stripe webhook] failed to save booking to Firestore:', dbErr.message);
+      logger.error({ err: dbErr }, '[stripe webhook] failed to save booking to Firestore');
     }
 
     // Record GA4-canonical purchase event for funnel analytics
@@ -1075,7 +1081,7 @@ async function handleWebhook(req) {
       }).catch((err) => {
         // Belt-and-suspenders: helper has internal try/catch but never let an unexpected
         // throw bubble up to Stripe — that would trigger a webhook retry on a successful payment.
-        console.error('[stripe webhook] recordPurchaseEvent unexpected throw:', err.message);
+        logger.error({ err }, '[stripe webhook] recordPurchaseEvent unexpected throw');
       });
     }
 
@@ -1095,7 +1101,7 @@ async function handleWebhook(req) {
         }
       }
     } catch (cartErr) {
-      console.error('[stripe webhook] cart promotion failed:', cartErr.message);
+      logger.error({ err: cartErr }, '[stripe webhook] cart promotion failed');
     }
 
     // Send confirmation email
@@ -1134,10 +1140,10 @@ async function handleWebhook(req) {
         });
       }
     } catch (emailErr) {
-      console.error('[stripe webhook] confirmation email failed:', emailErr.message);
+      logger.error({ err: emailErr }, '[stripe webhook] confirmation email failed');
     }
   } else {
-    console.log(`[stripe webhook] unhandled event type: ${event.type}`);
+    logger.info({ eventType: event.type }, '[stripe webhook] unhandled event type');
   }
 }
 

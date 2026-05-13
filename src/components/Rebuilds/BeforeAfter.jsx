@@ -78,7 +78,7 @@ export default function BeforeAfter({ pageImages = {} }) {
         <div className="rb__beforeafter-item">
           <div className="rb__beforeafter-before">
             <div className="rb__beforeafter-img">
-              <img src={beforeSrc} alt={`${steps[rebuildStep].label} (before)`} />
+              <img src={beforeSrc} alt={`${steps[rebuildStep].label} (before)`} width={800} height={600} loading="lazy" />
             </div>
             <span>BEFORE</span>
             <p>{steps[rebuildStep].beforeDesc}</p>
@@ -86,7 +86,7 @@ export default function BeforeAfter({ pageImages = {} }) {
           <div className="rb__beforeafter-arrow">&rarr;</div>
           <div className="rb__beforeafter-after">
             <div className="rb__beforeafter-img">
-              <img src={afterSrc} alt={`${steps[rebuildStep].label} (after)`} />
+              <img src={afterSrc} alt={`${steps[rebuildStep].label} (after)`} width={800} height={600} loading="lazy" />
             </div>
             <span>AFTER</span>
             <p>{steps[rebuildStep].afterDesc}</p>

@@ -10,4 +10,5 @@ module.exports = {
   '/final-ppl': '/training/ppl',
   '/type-rating': '/training/type-rating',
   '/home': '/',
+  '/misc': '/store',
 };

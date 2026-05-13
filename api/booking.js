@@ -1,5 +1,6 @@
 const admin = require('firebase-admin');
 const { getUpgradeDiffPence } = require('./stripe');
+const logger = require('./lib/logger.js');
 
 /**
  * Returns the booking record for `/booking-confirmed` and `/upgrade` to render
@@ -52,7 +53,7 @@ async function getBooking(req, res) {
     };
     res.json(safe);
   } catch (err) {
-    console.error('[api/booking] error:', err.message);
+    logger.error({ err }, '[api/booking] error');
     res.status(500).json({ error: 'Internal error' });
   }
 }

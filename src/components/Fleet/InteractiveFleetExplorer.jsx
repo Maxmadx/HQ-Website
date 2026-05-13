@@ -74,7 +74,7 @@ const InteractiveFleetExplorer = ({ showNote = true }) => {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', alignItems: 'center' }}>
             <div style={{ textAlign: 'center' }}>
-              <img src={current.image} alt={current.name} style={{ maxWidth: '100%', height: 'auto' }} />
+              <img src={current.image} alt={current.name} width={1200} height={800} loading="lazy" style={{ maxWidth: '100%', height: 'auto' }} />
             </div>
             <div>
               <h3 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '0.5rem' }}>{current.name}</h3>

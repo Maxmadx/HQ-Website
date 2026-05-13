@@ -18,6 +18,7 @@ import { useFx } from '../hooks/useFx';
 import { useAircraftPricing } from '../hooks/useAircraftPricing';
 import Seo from '../components/seo/Seo';
 import { buildItemList, buildBreadcrumbList } from '../components/seo/jsonLd';
+import Image from '../components/Image';
 
 // Import styles
 import '../assets/css/main.css';
@@ -1113,7 +1114,7 @@ function Sales() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 1.5 }}
         >
-          <img src={getModelHero(activeModel)} alt="" width={2500} height={1667} />
+          <Image src={getModelHero(activeModel)} alt="" width={2500} height={1667} priority sizes="100vw" />
         </motion.div>
         <div className="sales-hero__overlay" />
 

@@ -1,0 +1,494 @@
+{
+  "runsPerPage": 3,
+  "timestamp": "2026-05-12T03:06:39.689Z",
+  "before": {
+    "label": "before (manifest emptied → original images)",
+    "pages": [
+      {
+        "path": "/",
+        "label": "home",
+        "url": "http://localhost:8788/",
+        "runs": 3,
+        "samples": [
+          {
+            "lcpMs": 2669.275025,
+            "cls": 0.000025,
+            "tbtMs": 9,
+            "speedIndexMs": 1606.1166000000003,
+            "interactiveMs": 2743.2997225,
+            "totalBytes": 19017808,
+            "imageBytes": 16783260,
+            "imageCount": 38
+          },
+          {
+            "lcpMs": 2815.6716499999998,
+            "cls": 0.000025,
+            "tbtMs": 72,
+            "speedIndexMs": 1605.5137999999997,
+            "interactiveMs": 2874.969385,
+            "totalBytes": 19016632,
+            "imageBytes": 16783265,
+            "imageCount": 38
+          },
+          {
+            "lcpMs": 2778.3953999999994,
+            "cls": 0.000025,
+            "tbtMs": 73,
+            "speedIndexMs": 1562.8305,
+            "interactiveMs": 2837.0193899999995,
+            "totalBytes": 19105077,
+            "imageBytes": 16783264,
+            "imageCount": 38
+          }
+        ],
+        "median": {
+          "lcpMs": 2778,
+          "cls": 0,
+          "tbtMs": 72,
+          "speedIndexMs": 1606,
+          "interactiveMs": 2837,
+          "totalBytes": 19017808,
+          "imageBytes": 16783264,
+          "imageCount": 38
+        }
+      },
+      {
+        "path": "/aircraft-sales/new/r22",
+        "label": "r22",
+        "url": "http://localhost:8788/aircraft-sales/new/r22",
+        "runs": 3,
+        "samples": [
+          {
+            "lcpMs": 2925.6807,
+            "cls": 0.001002,
+            "tbtMs": 0,
+            "speedIndexMs": 1401.997452537196,
+            "interactiveMs": 2973.61363,
+            "totalBytes": 3951571,
+            "imageBytes": 1689839,
+            "imageCount": 6
+          },
+          {
+            "lcpMs": 2825.8611,
+            "cls": 0.001001,
+            "tbtMs": 0,
+            "speedIndexMs": 1323.6698000000001,
+            "interactiveMs": 2871.8797300000006,
+            "totalBytes": 3983925,
+            "imageBytes": 1689839,
+            "imageCount": 6
+          },
+          {
+            "lcpMs": 2407.75875,
+            "cls": 0.001003,
+            "tbtMs": 0,
+            "speedIndexMs": 1405.08495,
+            "interactiveMs": 2451.775745,
+            "totalBytes": 3951284,
+            "imageBytes": 1689839,
+            "imageCount": 6
+          }
+        ],
+        "median": {
+          "lcpMs": 2826,
+          "cls": 0.001,
+          "tbtMs": 0,
+          "speedIndexMs": 1402,
+          "interactiveMs": 2872,
+          "totalBytes": 3951571,
+          "imageBytes": 1689839,
+          "imageCount": 6
+        }
+      },
+      {
+        "path": "/aircraft-sales/new/r44",
+        "label": "r44",
+        "url": "http://localhost:8788/aircraft-sales/new/r44",
+        "runs": 3,
+        "samples": [
+          {
+            "lcpMs": 2630.0225499999997,
+            "cls": 0.003379,
+            "tbtMs": 0,
+            "speedIndexMs": 1446.5142,
+            "interactiveMs": 2700.057725,
+            "totalBytes": 5505331,
+            "imageBytes": 3299327,
+            "imageCount": 6
+          },
+          {
+            "lcpMs": 2763.7497000000003,
+            "cls": 0.003379,
+            "tbtMs": 0,
+            "speedIndexMs": 1482.3519000000001,
+            "interactiveMs": 2831.7757100000003,
+            "totalBytes": 5592564,
+            "imageBytes": 3299327,
+            "imageCount": 6
+          },
+          {
+            "lcpMs": 2626.8297249999996,
+            "cls": 0.003379,
+            "tbtMs": 0,
+            "speedIndexMs": 1444.4243999999999,
+            "interactiveMs": 2696.8567624999996,
+            "totalBytes": 5592613,
+            "imageBytes": 3299327,
+            "imageCount": 6
+          }
+        ],
+        "median": {
+          "lcpMs": 2630,
+          "cls": 0.0034,
+          "tbtMs": 0,
+          "speedIndexMs": 1447,
+          "interactiveMs": 2700,
+          "totalBytes": 5592564,
+          "imageBytes": 3299327,
+          "imageCount": 6
+        }
+      },
+      {
+        "path": "/aircraft-sales/used",
+        "label": "used-sales",
+        "url": "http://localhost:8788/aircraft-sales/used",
+        "runs": 3,
+        "samples": [
+          {
+            "lcpMs": 1363.1272000000004,
+            "cls": 0.000139,
+            "tbtMs": 0,
+            "speedIndexMs": 1322.2182000000003,
+            "interactiveMs": 1363.1272000000004,
+            "totalBytes": 2036779,
+            "imageBytes": 0,
+            "imageCount": 0
+          },
+          {
+            "lcpMs": 1363.55635,
+            "cls": 0.000139,
+            "tbtMs": 0,
+            "speedIndexMs": 1322.51735,
+            "interactiveMs": 1363.5563500000003,
+            "totalBytes": 2132626,
+            "imageBytes": 0,
+            "imageCount": 0
+          },
+          {
+            "lcpMs": 1363.8883,
+            "cls": 0.000139,
+            "tbtMs": 0,
+            "speedIndexMs": 1322.7343,
+            "interactiveMs": 1363.8883,
+            "totalBytes": 2101464,
+            "imageBytes": 0,
+            "imageCount": 0
+          }
+        ],
+        "median": {
+          "lcpMs": 1364,
+          "cls": 0.0001,
+          "tbtMs": 0,
+          "speedIndexMs": 1323,
+          "interactiveMs": 1364,
+          "totalBytes": 2101464,
+          "imageBytes": 0,
+          "imageCount": 0
+        }
+      },
+      {
+        "path": "/final/ppl",
+        "label": "ppl",
+        "url": "http://localhost:8788/final/ppl",
+        "runs": 3,
+        "samples": [
+          {
+            "lcpMs": 1363.10335,
+            "cls": 0.000139,
+            "tbtMs": 0,
+            "speedIndexMs": 1322.2153500000002,
+            "interactiveMs": 1363.1033500000003,
+            "totalBytes": 2158898,
+            "imageBytes": 0,
+            "imageCount": 0
+          },
+          {
+            "lcpMs": 1362.92425,
+            "cls": 0.000139,
+            "tbtMs": 0,
+            "speedIndexMs": 1322.08725,
+            "interactiveMs": 1362.92425,
+            "totalBytes": 2127591,
+            "imageBytes": 0,
+            "imageCount": 0
+          },
+          {
+            "lcpMs": 1364.0065000000002,
+            "cls": 0.000139,
+            "tbtMs": 0,
+            "speedIndexMs": 1322.8305000000003,
+            "interactiveMs": 1364.0065000000002,
+            "totalBytes": 2127648,
+            "imageBytes": 0,
+            "imageCount": 0
+          }
+        ],
+        "median": {
+          "lcpMs": 1363,
+          "cls": 0.0001,
+          "tbtMs": 0,
+          "speedIndexMs": 1322,
+          "interactiveMs": 1363,
+          "totalBytes": 2127648,
+          "imageBytes": 0,
+          "imageCount": 0
+        }
+      }
+    ]
+  },
+  "after": {
+    "label": "after (manifest populated → AVIF/WebP/responsive)",
+    "pages": [
+      {
+        "path": "/",
+        "label": "home",
+        "url": "http://localhost:8788/",
+        "runs": 3,
+        "samples": [
+          {
+            "lcpMs": 2730.836,
+            "cls": 0.000025,
+            "tbtMs": 28,
+            "speedIndexMs": 1607.1339999999998,
+            "interactiveMs": 2802.8630000000003,
+            "totalBytes": 19174753,
+            "imageBytes": 16783311,
+            "imageCount": 38
+          },
+          {
+            "lcpMs": 2706.0213750000003,
+            "cls": 0.000025,
+            "tbtMs": 73,
+            "speedIndexMs": 1643.9407500000002,
+            "interactiveMs": 2780.0505125000004,
+            "totalBytes": 19150221,
+            "imageBytes": 16783335,
+            "imageCount": 38
+          },
+          {
+            "lcpMs": 2663.57285,
+            "cls": 0.000025,
+            "tbtMs": 73,
+            "speedIndexMs": 1602.3023999999998,
+            "interactiveMs": 2737.602265,
+            "totalBytes": 19056255,
+            "imageBytes": 16783312,
+            "imageCount": 38
+          }
+        ],
+        "median": {
+          "lcpMs": 2706,
+          "cls": 0,
+          "tbtMs": 73,
+          "speedIndexMs": 1607,
+          "interactiveMs": 2780,
+          "totalBytes": 19150221,
+          "imageBytes": 16783312,
+          "imageCount": 38
+        }
+      },
+      {
+        "path": "/aircraft-sales/new/r22",
+        "label": "r22",
+        "url": "http://localhost:8788/aircraft-sales/new/r22",
+        "runs": 3,
+        "samples": [
+          {
+            "lcpMs": 2426.6326249999997,
+            "cls": 0.001002,
+            "tbtMs": 0,
+            "speedIndexMs": 1405.54975,
+            "interactiveMs": 2471.4912624999997,
+            "totalBytes": 3552226,
+            "imageBytes": 1218963,
+            "imageCount": 7
+          },
+          {
+            "lcpMs": 1914.9704999999997,
+            "cls": 0.001002,
+            "tbtMs": 0,
+            "speedIndexMs": 1404.6838,
+            "interactiveMs": 1953.5836099999997,
+            "totalBytes": 3557758,
+            "imageBytes": 1218963,
+            "imageCount": 7
+          },
+          {
+            "lcpMs": 1917.4453749999998,
+            "cls": 0.001003,
+            "tbtMs": 0,
+            "speedIndexMs": 1485.70935,
+            "interactiveMs": 1956.1614774999998,
+            "totalBytes": 3546188,
+            "imageBytes": 1218963,
+            "imageCount": 7
+          }
+        ],
+        "median": {
+          "lcpMs": 1917,
+          "cls": 0.001,
+          "tbtMs": 0,
+          "speedIndexMs": 1406,
+          "interactiveMs": 1956,
+          "totalBytes": 3552226,
+          "imageBytes": 1218963,
+          "imageCount": 7
+        }
+      },
+      {
+        "path": "/aircraft-sales/new/r44",
+        "label": "r44",
+        "url": "http://localhost:8788/aircraft-sales/new/r44",
+        "runs": 3,
+        "samples": [
+          {
+            "lcpMs": 1999.802025,
+            "cls": 0.003379,
+            "tbtMs": 0,
+            "speedIndexMs": 1487.2528499999999,
+            "interactiveMs": 2046.3197925000002,
+            "totalBytes": 5034229,
+            "imageBytes": 2789137,
+            "imageCount": 7
+          },
+          {
+            "lcpMs": 2156.2434999999996,
+            "cls": 0.003379,
+            "tbtMs": 0,
+            "speedIndexMs": 1483.839,
+            "interactiveMs": 2202.8107499999996,
+            "totalBytes": 5034419,
+            "imageBytes": 2789137,
+            "imageCount": 7
+          },
+          {
+            "lcpMs": 1992.9421499999994,
+            "cls": 0.003379,
+            "tbtMs": 0,
+            "speedIndexMs": 1482.6771,
+            "interactiveMs": 2039.4590549999996,
+            "totalBytes": 5034303,
+            "imageBytes": 2789137,
+            "imageCount": 7
+          }
+        ],
+        "median": {
+          "lcpMs": 2000,
+          "cls": 0.0034,
+          "tbtMs": 0,
+          "speedIndexMs": 1484,
+          "interactiveMs": 2046,
+          "totalBytes": 5034303,
+          "imageBytes": 2789137,
+          "imageCount": 7
+        }
+      },
+      {
+        "path": "/aircraft-sales/used",
+        "label": "used-sales",
+        "url": "http://localhost:8788/aircraft-sales/used",
+        "runs": 3,
+        "samples": [
+          {
+            "lcpMs": 1403.3059999999998,
+            "cls": 0.000139,
+            "tbtMs": 0,
+            "speedIndexMs": 1362.3629999999998,
+            "interactiveMs": 1403.3059999999998,
+            "totalBytes": 2173994,
+            "imageBytes": 0,
+            "imageCount": 0
+          },
+          {
+            "lcpMs": 1403.1095,
+            "cls": 0.000139,
+            "tbtMs": 0,
+            "speedIndexMs": 1362.2365,
+            "interactiveMs": 1403.1095,
+            "totalBytes": 2142062,
+            "imageBytes": 0,
+            "imageCount": 0
+          },
+          {
+            "lcpMs": 1403.111,
+            "cls": 0.000139,
+            "tbtMs": 0,
+            "speedIndexMs": 1362.239,
+            "interactiveMs": 1403.1110000000003,
+            "totalBytes": 2172465,
+            "imageBytes": 0,
+            "imageCount": 0
+          }
+        ],
+        "median": {
+          "lcpMs": 1403,
+          "cls": 0.0001,
+          "tbtMs": 0,
+          "speedIndexMs": 1362,
+          "interactiveMs": 1403,
+          "totalBytes": 2172465,
+          "imageBytes": 0,
+          "imageCount": 0
+        }
+      },
+      {
+        "path": "/final/ppl",
+        "label": "ppl",
+        "url": "http://localhost:8788/final/ppl",
+        "runs": 3,
+        "samples": [
+          {
+            "lcpMs": 1402.9609999999998,
+            "cls": 0.000139,
+            "tbtMs": 0,
+            "speedIndexMs": 1362.1239999999998,
+            "interactiveMs": 1402.9609999999998,
+            "totalBytes": 2142092,
+            "imageBytes": 0,
+            "imageCount": 0
+          },
+          {
+            "lcpMs": 1443.4998,
+            "cls": 0.000139,
+            "tbtMs": 0,
+            "speedIndexMs": 1402.4758000000002,
+            "interactiveMs": 1443.4998,
+            "totalBytes": 2135991,
+            "imageBytes": 0,
+            "imageCount": 0
+          },
+          {
+            "lcpMs": 1363.21525,
+            "cls": 0.000139,
+            "tbtMs": 0,
+            "speedIndexMs": 1322.28125,
+            "interactiveMs": 1363.21525,
+            "totalBytes": 2135405,
+            "imageBytes": 0,
+            "imageCount": 0
+          }
+        ],
+        "median": {
+          "lcpMs": 1403,
+          "cls": 0.0001,
+          "tbtMs": 0,
+          "speedIndexMs": 1362,
+          "interactiveMs": 1403,
+          "totalBytes": 2135991,
+          "imageBytes": 0,
+          "imageCount": 0
+        }
+      }
+    ]
+  }
+}

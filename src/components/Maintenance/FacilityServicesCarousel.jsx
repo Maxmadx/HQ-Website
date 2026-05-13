@@ -45,7 +45,7 @@ const renderSlides = (items) =>
   items.map((item, i) => (
     <div key={i} className="fsc__slide">
       {item.type === 'image' ? (
-        <img src={item.src} alt="" />
+        <img src={item.src} alt="" width={800} height={600} loading="lazy" />
       ) : (
         <div className="fsc__card">
           <i className={`fas ${item.data.icon}`} />

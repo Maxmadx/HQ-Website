@@ -2,6 +2,7 @@
 
 const express = require('express');
 const admin = require('./firebase-admin');
+const logger = require('./lib/logger.js');
 
 const router = express.Router();
 
@@ -41,7 +42,7 @@ router.get('/daily', requireAdmin, async (req, res) => {
     const rows = snap.docs.map((d) => d.data());
     return res.json({ rows, sinceDate: since });
   } catch (err) {
-    console.error('[gsc-api] daily error:', err.message);
+    logger.error({ err }, '[gsc-api] daily error');
     return res.status(500).json({ error: 'Failed to load GSC data' });
   }
 });
