@@ -7,8 +7,13 @@
     "start": "NODE_ENV=production node server.js",
     "dev": "concurrently \"vite\" \"node --watch server.js\" --names \"vite,api\" --prefix-colors \"cyan,yellow\"",
     "dev:vite": "vite",
+<<<<<<< Updated upstream
     "prebuild": "node scripts/optimize-images.js",
     "build": "GIT_REV=$(git rev-parse --short HEAD 2>/dev/null || echo unknown) vite build",
+=======
+    "build": "GIT_REV=$(git rev-parse --short HEAD 2>/dev/null || echo unknown) vite build && node scripts/prerender.mjs",
+    "prerender": "node scripts/prerender.mjs",
+>>>>>>> Stashed changes
     "preview": "vite preview",
     "static": "node server.js",
     "test": "vitest run",
