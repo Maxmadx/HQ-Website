@@ -35,6 +35,7 @@ const compression = require('compression');
 const helmet = require('helmet');
 const { createPaymentIntent, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking } = require('./api/stripe');
 const { getBooking } = require('./api/booking');
+const imageRouter = require('./api/image');
 const leadsRouter = require('./api/leads');
 const stripeDiscoveryRouter = require('./api/stripe-discovery');
 const analyticsRouter = require('./api/analytics-api');
@@ -477,6 +478,11 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// ============================================
+// IMAGE OPTIMISATION ROUTES
+// ============================================
+app.use('/api/image', imageRouter);
 
 // ============================================
 // LEADS API ROUTES

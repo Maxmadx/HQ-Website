@@ -35,7 +35,7 @@ export const PUBLIC_ROUTES = [
   { path: '/parts', changefreq: 'monthly', priority: 0.6, pageType: 'service' },
   { path: '/self-fly-hire', changefreq: 'monthly', priority: 0.7, pageType: 'service' },
   { path: '/fleet', changefreq: 'monthly', priority: 0.7, pageType: 'service' },
-  { path: '/misc', changefreq: 'weekly', priority: 0.6, pageType: 'sales-index' },
+  { path: '/store', changefreq: 'weekly', priority: 0.6, pageType: 'sales-index' },
   { path: '/blog', changefreq: 'weekly', priority: 0.8, pageType: 'blog-index' },
   { path: '/testimonials', changefreq: 'monthly', priority: 0.5, pageType: 'about' },
 ];
@@ -62,7 +62,7 @@ export const DYNAMIC_ROUTE_TEMPLATES = [
     priority: 0.6,
   },
   {
-    pattern: '/misc/:id',
+    pattern: '/store/:id',
     collection: 'misc_items',
     filter: { field: 'status', op: '==', value: 'active' },
     pageType: 'misc-item',
@@ -98,6 +98,7 @@ export const CANONICAL_REDIRECTS = {
   '/final-ppl': '/training/ppl',
   '/type-rating': '/training/type-rating',
   '/home': '/',
+  '/misc': '/store',
 };
 
 /**

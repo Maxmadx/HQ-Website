@@ -43,6 +43,7 @@ import FooterMinimal from '../components/FooterMinimal';
 // Combined Location + Testimonials
 import ArrivalSection from '../components/ArrivalSection';
 import WallOfCoolGr11 from '../components/WallOfCoolGr11';
+import Image from '../components/Image';
 
 // Union Jack component - black and white version
 const UnionJack = ({ size = 20, className = '', id = '' }) => (
@@ -172,6 +173,9 @@ function ParallaxSection({ image, alt, children, className = '', waves = false, 
           alt={alt}
           className="parallax-section__image"
           style={{ y }}
+          width={1920}
+          height={1080}
+          loading="lazy"
         />
       </div>
       <div className="parallax-section__overlay"></div>
@@ -502,18 +506,18 @@ const EditorialStrips = ({ wrapperRef = null, row1Images = EDITORIAL_IMAGES_ROW1
       {/* Desktop: full image row */}
       <motion.div className="editorial-strips__img-row editorial-strips__img-row--desktop" style={{ x: xR }}>
         {row1Images.map((src, i) => (
-          <div key={i} className="editorial-strips__img"><img src={src} alt="" loading="lazy" /></div>
+          <div key={i} className="editorial-strips__img"><Image src={src} alt="" width={800} height={600} sizes="(max-width: 768px) 50vw, 30vw" /></div>
         ))}
       </motion.div>
       {/* Mobile: 2 shorter image rows */}
       <motion.div className="editorial-strips__img-row editorial-strips__img-row--mobile" style={{ x: xR }}>
         {row1Images.slice(0, 5).map((src, i) => (
-          <div key={i} className="editorial-strips__img"><img src={src} alt="" loading="lazy" /></div>
+          <div key={i} className="editorial-strips__img"><Image src={src} alt="" width={800} height={600} sizes="(max-width: 768px) 50vw, 30vw" /></div>
         ))}
       </motion.div>
       <motion.div className="editorial-strips__img-row editorial-strips__img-row--mobile" style={{ x: xR1b }}>
         {row1Images.slice(5, 10).map((src, i) => (
-          <div key={i} className="editorial-strips__img"><img src={src} alt="" loading="lazy" /></div>
+          <div key={i} className="editorial-strips__img"><Image src={src} alt="" width={800} height={600} sizes="(max-width: 768px) 50vw, 30vw" /></div>
         ))}
       </motion.div>
       <motion.div className="editorial-strips__dest-row" style={{ x: xM }}>
@@ -527,18 +531,18 @@ const EditorialStrips = ({ wrapperRef = null, row1Images = EDITORIAL_IMAGES_ROW1
       {/* Desktop: full image row */}
       <motion.div className="editorial-strips__img-row editorial-strips__img-row--desktop" style={{ x: xR2 }} data-cms-section="home-editorial-strip-2">
         {row2Images.map((src, i) => (
-          <div key={i} className="editorial-strips__img"><img src={src} alt="" loading="lazy" /></div>
+          <div key={i} className="editorial-strips__img"><Image src={src} alt="" width={800} height={600} sizes="(max-width: 768px) 50vw, 30vw" /></div>
         ))}
       </motion.div>
       {/* Mobile: 2 shorter image rows */}
       <motion.div className="editorial-strips__img-row editorial-strips__img-row--mobile" style={{ x: xR2 }}>
         {row2Images.slice(0, 5).map((src, i) => (
-          <div key={i} className="editorial-strips__img"><img src={src} alt="" loading="lazy" /></div>
+          <div key={i} className="editorial-strips__img"><Image src={src} alt="" width={800} height={600} sizes="(max-width: 768px) 50vw, 30vw" /></div>
         ))}
       </motion.div>
       <motion.div className="editorial-strips__img-row editorial-strips__img-row--mobile" style={{ x: xR2b }}>
         {row2Images.slice(5, 10).map((src, i) => (
-          <div key={i} className="editorial-strips__img"><img src={src} alt="" loading="lazy" /></div>
+          <div key={i} className="editorial-strips__img"><Image src={src} alt="" width={800} height={600} sizes="(max-width: 768px) 50vw, 30vw" /></div>
         ))}
       </motion.div>
     </section>
@@ -1307,7 +1311,7 @@ const SelfFlyHireSection = () => {
               <div style={{ paddingTop: '1rem' }}>
                 {sfhFleetCms.map(f => (
                   <div key={f.model} className={`sfh-map__fleet-row ${activeAircraft === f.model ? 'sfh-map__fleet-row--active' : ''}`} onMouseEnter={() => { isHoveringFleet.current = true; setSelectedAircraft(f.model); }} onMouseLeave={() => { isHoveringFleet.current = false; }} onClick={() => setSelectedAircraft(f.model)}>
-                    <img src={f.img} alt={f.model} />
+                    <Image src={f.img} alt={f.model} width={120} height={90} sizes="120px" />
                     <div>
                       <div className="sfh-map__fleet-model">{f.model}</div>
                       <div className="sfh-map__fleet-info">{f.seats} · {sfhAircraftRanges[f.model].cruise}</div>
@@ -1383,7 +1387,7 @@ const SelfFlyHireSection = () => {
                 >
                   {sfhFleetCms.map((ac, i) => (
                     <div key={ac.model} className={`sfh-v15-mobile__aircraft-center ${v15AircraftIdx === i ? 'sfh-v15-mobile__aircraft-center--active' : ''}`}>
-                      <img src={ac.img} alt={ac.model} className="sfh-v15-mobile__aircraft-img" />
+                      <Image src={ac.img} alt={ac.model} width={800} height={600} sizes="(max-width: 768px) 90vw, 50vw" className="sfh-v15-mobile__aircraft-img" />
                       <div className="sfh-v15-mobile__aircraft-info">
                         <span className="sfh-v15-mobile__aircraft-model">{ac.model}</span>
                         <span className="sfh-v15-mobile__aircraft-detail">{ac.seats} · {sfhAircraftRanges[ac.model].cruise}</span>
@@ -1422,7 +1426,7 @@ function ZigzagTrainingItem({ slide, index, isEven }) {
       className={`fd-zigzag__item ${isEven ? 'fd-zigzag__item--left' : 'fd-zigzag__item--right'}`}
     >
       <div className="fd-zigzag__item-image">
-        <img src={slide.image} alt={slide.title} />
+        <Image src={slide.image} alt={slide.title} width={1200} height={800} sizes="(max-width: 768px) 100vw, 50vw" />
         <span className="fd-zigzag__item-num">{String(index + 1).padStart(2, '0')}</span>
       </div>
       <div className="fd-zigzag__item-content">
@@ -4092,7 +4096,7 @@ function Experimentation() {
                 <div className="fd-zigzag__hscroll-inner" ref={hscrollInnerRef}>
                 {hscrollSlides.map((slide, i) => (
                   <div key={i} className="fd-zigzag__card">
-                    <div className="fd-zigzag__card-image"><img src={slide.image} alt={slide.title} /></div>
+                    <div className="fd-zigzag__card-image"><Image src={slide.image} alt={slide.title} width={1200} height={800} sizes="(max-width: 768px) 100vw, 50vw" /></div>
                     <div className="fd-zigzag__card-body">
                       <div className="fd-zigzag__card-header">
                         <span className="fd-zigzag__card-num">{String(zigzagSlides.length + i + 1).padStart(2, '0')}</span>
@@ -4117,7 +4121,7 @@ function Experimentation() {
                   { num: String(zigzagSlides.length + hscrollSlides.length + 4).padStart(2, '0'), tag: 'Advisory', title: 'Aircraft Consulting', description: 'Pre-purchase inspections, ownership advice, fleet planning, and bespoke acquisition services for private and corporate clients.', duration: 'Bespoke', link: '/aircraft-consulting', cta: 'Enquire', image: cmsTrainingSpecialist[3]?.url ?? '/assets/images/facility/hq-0354.jpg' },
                 ].map((item, i) => (
                   <div key={`serv-${i}`} className="fd-zigzag__card" data-cms-section={i === 0 ? 'home-training-specialist' : undefined}>
-                    <div className="fd-zigzag__card-image"><img src={item.image} alt={item.title} /></div>
+                    <div className="fd-zigzag__card-image"><Image src={item.image} alt={item.title} width={1200} height={800} sizes="(max-width: 768px) 100vw, 50vw" /></div>
                     <div className="fd-zigzag__card-body">
                       <div className="fd-zigzag__card-header">
                         <span className="fd-zigzag__card-num">{item.num}</span>
@@ -4205,7 +4209,7 @@ function Experimentation() {
                 <div className="clubhouse__map-card">
                   <div className="clubhouse__map-card-top">
                     <div className="clubhouse__map">
-                      <img src="/assets/images/maps/map-of-hq.png" alt="Map of HQ Aviation at Denham Aerodrome" loading="lazy" />
+                      <Image src="/assets/images/maps/map-of-hq.png" alt="Map of HQ Aviation at Denham Aerodrome" width={1200} height={900} sizes="(max-width: 768px) 100vw, 50vw" />
                     </div>
                   </div>
                   <div className="clubhouse__map-card-bottom">
@@ -4227,29 +4231,29 @@ function Experimentation() {
           <div className="clubhouse__gallery" data-cms-section="home-clubhouse-gallery">
             {/* Wide hero shot */}
             <div className="clubhouse__img clubhouse__img--wide">
-              <img src={cmsClubhouseGallery[0]?.url ?? '/assets/images/facility/hq-0345.jpg'} alt={cmsClubhouseGallery[0]?.alt ?? 'The clubhouse lounge'} loading="lazy" />
+              <Image src={cmsClubhouseGallery[0]?.url ?? '/assets/images/facility/hq-0345.jpg'} alt={cmsClubhouseGallery[0]?.alt ?? 'The clubhouse lounge'} width={1600} height={900} sizes="(max-width: 768px) 100vw, 60vw" />
             </div>
             {/* Two squares side by side */}
             <div className="clubhouse__img">
-              <img src={cmsClubhouseGallery[1]?.url ?? '/assets/images/facility/hq-0354.jpg'} alt={cmsClubhouseGallery[1]?.alt ?? 'Globe on the clubhouse desk'} loading="lazy" />
+              <Image src={cmsClubhouseGallery[1]?.url ?? '/assets/images/facility/hq-0354.jpg'} alt={cmsClubhouseGallery[1]?.alt ?? 'Globe on the clubhouse desk'} width={800} height={800} sizes="(max-width: 768px) 50vw, 30vw" />
             </div>
             <div className="clubhouse__img">
-              <img src={cmsClubhouseGallery[2]?.url ?? '/assets/images/facility/hq-0053.jpg'} alt={cmsClubhouseGallery[2]?.alt ?? 'Helmet light and framed photos'} loading="lazy" />
+              <Image src={cmsClubhouseGallery[2]?.url ?? '/assets/images/facility/hq-0053.jpg'} alt={cmsClubhouseGallery[2]?.alt ?? 'Helmet light and framed photos'} width={800} height={800} sizes="(max-width: 768px) 50vw, 30vw" />
             </div>
             {/* Tall portrait left + square right */}
             <div className="clubhouse__img clubhouse__img--tall">
-              <img src={cmsClubhouseGallery[3]?.url ?? '/assets/images/facility/hq-0391.jpg'} alt={cmsClubhouseGallery[3]?.alt ?? 'Captain Q expedition photo on the wall'} loading="lazy" />
+              <Image src={cmsClubhouseGallery[3]?.url ?? '/assets/images/facility/hq-0391.jpg'} alt={cmsClubhouseGallery[3]?.alt ?? 'Captain Q expedition photo on the wall'} width={800} height={1200} sizes="(max-width: 768px) 50vw, 30vw" />
             </div>
             <div className="clubhouse__img">
-              <img src={cmsClubhouseGallery[4]?.url ?? '/assets/images/facility/hq-0477.jpg'} alt={cmsClubhouseGallery[4]?.alt ?? 'Helicopter compass instrument'} loading="lazy" />
+              <Image src={cmsClubhouseGallery[4]?.url ?? '/assets/images/facility/hq-0477.jpg'} alt={cmsClubhouseGallery[4]?.alt ?? 'Helicopter compass instrument'} width={800} height={800} sizes="(max-width: 768px) 50vw, 30vw" />
             </div>
             {/* Wide cinematic */}
             <div className="clubhouse__img clubhouse__img--wide">
-              <img src={cmsClubhouseGallery[5]?.url ?? '/assets/images/facility/hq-0300.jpg'} alt={cmsClubhouseGallery[5]?.alt ?? 'R66 Turbine cockpit instruments'} loading="lazy" />
+              <Image src={cmsClubhouseGallery[5]?.url ?? '/assets/images/facility/hq-0300.jpg'} alt={cmsClubhouseGallery[5]?.alt ?? 'R66 Turbine cockpit instruments'} width={1600} height={900} sizes="(max-width: 768px) 100vw, 60vw" />
             </div>
             {/* Two squares */}
             <div className="clubhouse__img">
-              <img src={cmsClubhouseGallery[6]?.url ?? '/assets/images/facility/hq-0388.jpg'} alt={cmsClubhouseGallery[6]?.alt ?? "Air Pilot's Manual on vintage trunk"} loading="lazy" />
+              <Image src={cmsClubhouseGallery[6]?.url ?? '/assets/images/facility/hq-0388.jpg'} alt={cmsClubhouseGallery[6]?.alt ?? "Air Pilot's Manual on vintage trunk"} width={800} height={800} sizes="(max-width: 768px) 50vw, 30vw" />
             </div>
             <div className="clubhouse__img">
               <img src={cmsClubhouseGallery[7]?.url ?? '/assets/images/facility/hq-0696.jpg'} alt={cmsClubhouseGallery[7]?.alt ?? 'Captain Q flying'} loading="lazy" />
@@ -4502,7 +4506,7 @@ function Experimentation() {
         <div className="fd-sales__grid fd-sales__grid--desktop" data-cms-section="home-sales-aircraft">
           {newAircraftCards.map((ac) => (
             <Link key={ac.name} to={ac.href} className="fd-sales__card">
-              <div className="fd-sales__card-image"><img src={ac.img} alt={ac.alt} /></div>
+              <div className="fd-sales__card-image"><Image src={ac.img} alt={ac.alt} width={800} height={600} sizes="(max-width: 768px) 90vw, 25vw" /></div>
               <div className="fd-sales__card-info">
                 <h3>{ac.name}</h3>
                 <span className="fd-sales__card-tagline">{ac.tagline}</span>
@@ -4530,7 +4534,7 @@ function Experimentation() {
               >
                 {salesCards.map((ac) => (
                   <Link key={ac.name} to={ac.href} className="fd-sales__card fd-sales__carousel-card">
-                    <div className="fd-sales__card-image"><img src={ac.img} alt={ac.alt} /></div>
+                    <div className="fd-sales__card-image"><Image src={ac.img} alt={ac.alt} width={800} height={600} sizes="(max-width: 768px) 90vw, 25vw" /></div>
                     <div className="fd-sales__card-info">
                       <h3>{ac.name}</h3>
                       <span className="fd-sales__card-tagline">{ac.tagline}</span>
@@ -4704,7 +4708,7 @@ function Experimentation() {
                 return (
                 <div className="rb-stats__strip-card" key={i} onClick={() => setRebuildDetailOpen(i)} style={{ cursor: 'pointer' }}>
                   <div className="rb-stats__strip-gallery">
-                    <img src={images[imgIdx]} alt={rb.model} />
+                    <Image src={images[imgIdx]} alt={rb.model} width={800} height={600} sizes="(max-width: 768px) 90vw, 25vw" />
                     {images.length > 1 && (
                       <>
                         <button
@@ -4775,7 +4779,7 @@ function Experimentation() {
                 {/* Left — Image gallery */}
                 <div className="rb-showcase__gallery">
                   <div className="rb-showcase__hero-img" onClick={() => setRebuildLightbox({ src: rb.img, alt: rb.model })}>
-                    <img src={rb.img} alt={rb.model} />
+                    <Image src={rb.img} alt={rb.model} width={1600} height={1200} sizes="(max-width: 768px) 100vw, 60vw" />
                     <div className="rb-showcase__img-overlay">
                       <i className="fas fa-search-plus"></i>
                     </div>
@@ -4787,7 +4791,7 @@ function Experimentation() {
                         className="rb-showcase__thumb"
                         onClick={() => setRebuildLightbox({ src, alt: `${rb.model} — ${i + 1}` })}
                       >
-                        <img src={src} alt="" />
+                        <Image src={src} alt="" width={200} height={150} sizes="200px" />
                       </button>
                     ))}
                   </div>
@@ -5078,7 +5082,7 @@ function Experimentation() {
                 {miscItems.slice(0, 4).map((item) => {
                   const primary = item.images?.find((i) => i.isPrimary) || item.images?.[0];
                   return (
-                    <Link key={item.id} to="/misc" className="fd-sales__card">
+                    <Link key={item.id} to={`/store/${item.id}`} className="fd-sales__card">
                       <div className="fd-sales__card-image">
                         {primary ? (
                           <img src={primary.url} alt={primary.alt || item.name} />
@@ -5114,7 +5118,7 @@ function Experimentation() {
             )}
 
             <div className="fd-sales__actions">
-              <Link to="/misc" className="fd-sales__btn fd-sales__btn--primary">
+              <Link to="/store" className="fd-sales__btn fd-sales__btn--primary">
                 Browse All HQ Store Items
               </Link>
             </div>

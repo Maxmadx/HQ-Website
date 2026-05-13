@@ -1,0 +1,294 @@
+// src/lib/imageOptimisation.js
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import sharp from 'sharp';
+
+export const SOURCE_EXTS = new Set(['.jpg', '.jpeg', '.png', '.webp']);
+export const SKIP_BELOW_BYTES = 50 * 1024;
+
+/**
+ * Recursively walk `rootDir` and return absolute paths to all source image files.
+ * Skips directories whose basename matches any entry in `skipDirs`.
+ */
+export async function walkSources(rootDir, { skipDirs = [] } = {}) {
+  const skip = new Set(skipDirs);
+  const results = [];
+
+  async function walk(dir) {
+    let entries;
+    try {
+      entries = await fs.readdir(dir, { withFileTypes: true });
+    } catch (err) {
+      if (err.code === 'ENOENT') return;
+      throw err;
+    }
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (skip.has(entry.name)) continue;
+        await walk(full);
+      } else if (entry.isFile()) {
+        const ext = path.extname(entry.name).toLowerCase();
+        if (SOURCE_EXTS.has(ext)) results.push(full);
+      }
+    }
+  }
+
+  await walk(rootDir);
+  return results;
+}
+
+/**
+ * Inspect a source image and decide whether it should be optimised.
+ * Returns: { srcPath, sizeBytes, mtimeMs, width, height, hasAlpha, format, skipReason }
+ * skipReason is null if the source should be processed normally,
+ * or a string explaining why it should be skipped (copied unchanged).
+ */
+export async function classifySource(srcPath) {
+  const stat = await fs.stat(srcPath);
+  const meta = await sharp(srcPath).metadata();
+  const skipReason = stat.size < SKIP_BELOW_BYTES ? 'below-size-threshold' : null;
+  return {
+    srcPath,
+    sizeBytes: stat.size,
+    mtimeMs: stat.mtimeMs,
+    width: meta.width,
+    height: meta.height,
+    hasAlpha: !!meta.hasAlpha,
+    format: meta.format,
+    skipReason,
+  };
+}
+
+export const SIZES = [400, 800, 1200, 1600, 2400];
+
+export const FORMAT_CONFIG = {
+  avif: { quality: 50, effort: 6 },
+  webp: { quality: 75 },
+  jpeg: { quality: 80, mozjpeg: true, progressive: true },
+  png: { compressionLevel: 9, palette: true },
+};
+
+/**
+ * Generate one variant of `srcPath` at `width` in `format`, writing to
+ * `outDir/<basename>-<width>.<ext>`. Returns { outPath, sizeBytes }.
+ *
+ * sharp's `withoutEnlargement: true` prevents upscaling — if the source
+ * is narrower than the requested width, the output is clamped to source width.
+ */
+export async function generateVariant(srcPath, outDir, width, format) {
+  const ext = format === 'jpeg' ? 'jpg' : format;
+  const basename = path.basename(srcPath, path.extname(srcPath));
+  const outPath = path.join(outDir, `${basename}-${width}.${ext}`);
+
+  await fs.mkdir(outDir, { recursive: true });
+
+  const config = FORMAT_CONFIG[format];
+  if (!config) throw new Error(`Unknown format: ${format}`);
+
+  const pipeline = sharp(srcPath).resize({ width, withoutEnlargement: true });
+  await pipeline[format](config).toFile(outPath);
+
+  const stat = await fs.stat(outPath);
+  return { outPath, sizeBytes: stat.size };
+}
+
+/**
+ * Generate a 16×16 base64-encoded AVIF placeholder for the source.
+ * Returns a data URL string like `data:image/avif;base64,...`.
+ * Used as a CSS background placeholder shown before the real image loads.
+ */
+export async function generateLqip(srcPath) {
+  const buf = await sharp(srcPath)
+    .resize(16, 16, { fit: 'cover' })
+    .avif({ quality: 30, effort: 4 })
+    .toBuffer();
+  return `data:image/avif;base64,${buf.toString('base64')}`;
+}
+
+export const MANIFEST_FILENAME = 'optimised-manifest.json';
+
+/**
+ * Read the optimised-manifest.json. Returns { version, sources } even if the
+ * file doesn't exist or is malformed — callers should not have to handle either.
+ */
+export async function readManifest(manifestPath) {
+  try {
+    const text = await fs.readFile(manifestPath, 'utf8');
+    const parsed = JSON.parse(text);
+    if (!parsed.sources) return { version: 1, sources: {} };
+    return parsed;
+  } catch (err) {
+    return { version: 1, sources: {} };
+  }
+}
+
+/**
+ * Write the manifest atomically (write to temp file, then rename).
+ * Atomic write prevents partial writes if the process is killed mid-write.
+ */
+export async function writeManifest(manifestPath, manifest) {
+  await fs.mkdir(path.dirname(manifestPath), { recursive: true });
+  const tmp = `${manifestPath}.tmp`;
+  await fs.writeFile(tmp, JSON.stringify(manifest, null, 2) + '\n');
+  await fs.rename(tmp, manifestPath);
+}
+
+const VARIANT_NAME_RE = /^(.+)-(\d+|lqip)\.(avif|webp|jpg|jpeg|png|txt)$/i;
+
+/**
+ * Walk `optimisedDir`, identify variant files whose corresponding source
+ * (in `sourceDir`) no longer exists, delete them, and return their paths.
+ * Preserves the manifest and any non-variant files.
+ */
+export async function collectOrphans(optimisedDir, sourceDir) {
+  const removed = [];
+
+  async function walk(dir) {
+    let entries;
+    try {
+      entries = await fs.readdir(dir, { withFileTypes: true });
+    } catch (err) {
+      if (err.code === 'ENOENT') return;
+      throw err;
+    }
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        await walk(full);
+        continue;
+      }
+      if (entry.name === MANIFEST_FILENAME || entry.name === '.gitkeep') continue;
+      if (!entry.isFile()) continue;
+
+      const match = entry.name.match(VARIANT_NAME_RE);
+      if (!match) continue;
+      const [, basename] = match;
+      const relDir = path.relative(optimisedDir, dir);
+
+      // Look for a matching source — try each plausible source extension.
+      let sourceExists = false;
+      for (const ext of ['.jpg', '.jpeg', '.png', '.webp']) {
+        const candidate = path.join(sourceDir, relDir, `${basename}${ext}`);
+        try { await fs.stat(candidate); sourceExists = true; break; } catch { /* try next */ }
+      }
+      if (!sourceExists) {
+        await fs.unlink(full);
+        removed.push(full);
+      }
+    }
+  }
+
+  await walk(optimisedDir);
+  return removed;
+}
+
+/**
+ * Process one source image: classify, decide formats, generate variants + LQIP,
+ * and produce a manifest entry. Returns { skipped, cached, variants, lqip, manifestEntry }.
+ *
+ * Incremental: if the manifest already has an entry for this source with a
+ * matching mtime, skip all work and return cached=true.
+ */
+export async function processOneSource(srcPath, sourceDir, optimisedDir, manifest) {
+  const relPath = path.relative(sourceDir, srcPath);
+
+  const classification = await classifySource(srcPath);
+  const existingEntry = manifest.sources?.[relPath];
+
+  if (existingEntry && existingEntry.sourceMtimeMs === classification.mtimeMs) {
+    return { skipped: false, cached: true, variants: [], lqip: existingEntry.lqip ?? null, manifestEntry: existingEntry };
+  }
+
+  const outDir = path.join(optimisedDir, path.dirname(relPath));
+  await fs.mkdir(outDir, { recursive: true });
+
+  if (classification.skipReason === 'below-size-threshold') {
+    // Copy unchanged
+    const dest = path.join(optimisedDir, relPath);
+    await fs.copyFile(srcPath, dest);
+    const manifestEntry = {
+      sourceMtimeMs: classification.mtimeMs,
+      sourceSizeBytes: classification.sizeBytes,
+      hasAlpha: classification.hasAlpha,
+      width: classification.width,
+      height: classification.height,
+      skipped: true,
+      skipReason: classification.skipReason,
+    };
+    return { skipped: true, cached: false, skipReason: classification.skipReason, variants: [], lqip: null, manifestEntry };
+  }
+
+  const fallbackFormat = classification.hasAlpha ? 'png' : 'jpeg';
+  const formats = ['avif', 'webp', fallbackFormat];
+
+  const variants = [];
+  for (const width of SIZES) {
+    for (const format of formats) {
+      // sharp.withoutEnlargement clamps to source width, so if width > source.width
+      // we'll get a duplicate of the largest width. Avoid by checking up front:
+      if (width > classification.width && width !== SIZES[0]) continue;
+      const result = await generateVariant(srcPath, outDir, width, format);
+      variants.push({ width, format, outPath: result.outPath, sizeBytes: result.sizeBytes });
+    }
+  }
+
+  const lqip = await generateLqip(srcPath);
+
+  const manifestEntry = {
+    sourceMtimeMs: classification.mtimeMs,
+    sourceSizeBytes: classification.sizeBytes,
+    hasAlpha: classification.hasAlpha,
+    width: classification.width,
+    height: classification.height,
+    skipped: false,
+    variantWidths: [...new Set(variants.map(v => v.width))],
+    variantFormats: formats,
+    lqip,
+  };
+
+  return { skipped: false, cached: false, variants, lqip, manifestEntry };
+}
+
+/**
+ * Walk `sourceDir`, regenerate variants in `optimisedDir`, write the manifest,
+ * and garbage-collect orphans. Returns a summary of work done.
+ */
+export async function optimizeImages(sourceDir, optimisedDir, { skipDirs = ['optimised'] } = {}) {
+  await fs.mkdir(optimisedDir, { recursive: true });
+
+  const manifestPath = path.join(optimisedDir, MANIFEST_FILENAME);
+  const manifest = await readManifest(manifestPath);
+
+  const sources = await walkSources(sourceDir, { skipDirs });
+
+  let processed = 0;
+  let cached = 0;
+  let skipped = 0;
+  let totalVariants = 0;
+  const newSources = {};
+
+  for (const srcPath of sources) {
+    const relPath = path.relative(sourceDir, srcPath);
+    try {
+      const result = await processOneSource(srcPath, sourceDir, optimisedDir, manifest);
+      newSources[relPath] = result.manifestEntry;
+      if (result.cached) cached++;
+      else if (result.skipped) skipped++;
+      else { processed++; totalVariants += result.variants.length; }
+    } catch (err) {
+      console.error(`[optimize-images] ${relPath} failed: ${err.message}`);
+    }
+  }
+
+  const newManifest = {
+    version: 1,
+    generatedAt: new Date().toISOString(),
+    sources: newSources,
+  };
+  await writeManifest(manifestPath, newManifest);
+
+  const removed = await collectOrphans(optimisedDir, sourceDir);
+
+  return { processed, cached, skipped, totalVariants, removed: removed.length };
+}

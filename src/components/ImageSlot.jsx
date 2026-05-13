@@ -6,7 +6,7 @@ import { useImageSlot } from '../hooks/useImageSlot';
  *
  * Usage: <ImageSlot slotId="home-hero-background" src="/fallback.jpg" alt="Hero" className="..." style={{...}} />
  */
-export default function ImageSlot({ slotId, src, alt: altProp, className, style, ...rest }) {
+export default function ImageSlot({ slotId, src, alt: altProp, className, style, width, height, ...rest }) {
   const { url, alt: slotAlt } = useImageSlot(slotId, src);
   return (
     <img
@@ -15,6 +15,9 @@ export default function ImageSlot({ slotId, src, alt: altProp, className, style,
       className={className}
       style={style}
       data-slot-id={slotId}
+      width={width || 1200}
+      height={height || 800}
+      loading="lazy"
       {...rest}
     />
   );

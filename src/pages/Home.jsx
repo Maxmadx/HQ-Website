@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { usePageImages } from '../hooks/usePageImages';
+import Image from '../components/Image';
 
 function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -91,11 +92,13 @@ function Home() {
                   zIndex: index === currentSlide ? 2 : 1
                 }}
               >
-                <img
+                <Image
                   className="thumb-image loaded"
                   src={image.url}
                   alt={image.alt}
                   loading={index === 0 ? 'eager' : 'lazy'}
+                  priority={index === 0}
+                  sizes="100vw"
                   data-image={image.url}
                   data-type="image"
                   width={1920}

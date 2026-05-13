@@ -584,7 +584,7 @@ export default function Checkout() {
 
   useEffect(() => {
     if (!isValid) {
-      navigate(isMisc ? '/misc' : '/training/trial-lessons', { replace: true });
+      navigate(isMisc ? '/store' : '/training/trial-lessons', { replace: true });
     }
   }, [isValid, navigate, isMisc]);
 
@@ -646,7 +646,7 @@ export default function Checkout() {
       <div style={styles.container}>
 
         {/* Back link */}
-        <Link to={isMisc ? `/misc/${itemId}` : '/training/trial-lessons'} style={styles.back}>← Back</Link>
+        <Link to={isMisc ? `/store/${itemId}` : '/training/trial-lessons'} style={styles.back}>← Back</Link>
 
         <h1 style={styles.heading} className="co-page-heading">
           {isMisc ? 'Complete Your Purchase' : 'Complete Your Booking'}

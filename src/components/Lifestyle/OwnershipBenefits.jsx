@@ -48,7 +48,7 @@ const OwnershipBenefits = ({ showNote = true }) => {
               <a href="#" className="hq-btn hq-btn--primary" style={{ marginTop: '2rem' }}>Explore Ownership Options</a>
             </div>
             <div style={{ borderRadius: '12px', overflow: 'hidden' }}>
-              <img src="/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp" alt="Helicopter ownership lifestyle" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src="/assets/images/expeditions/helicopter-expeditions-quentin-smith.webp" alt="Helicopter ownership lifestyle" width={1600} height={900} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
           </div>
         </div>

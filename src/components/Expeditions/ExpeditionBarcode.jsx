@@ -9,6 +9,7 @@
 import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { usePageImages } from '../../hooks/usePageImages';
+import Image from '../Image';
 
 const defaultDestinations = [
   {
@@ -241,7 +242,7 @@ function ExpeditionBarcode({
                 </div>
                 <div className="exp-barcode__top">
                   <div className="exp-barcode__thumb">
-                    <img src={item.image} alt={item.name} />
+                    <Image src={item.image} alt={item.name} width={800} height={600} sizes="(max-width: 768px) 50vw, 25vw" />
                   </div>
                   <div className="exp-barcode__right">
                     <span className="exp-barcode__dest">{item.name}</span>
@@ -316,7 +317,7 @@ function ExpeditionBarcode({
                       transition={{ delay: idx * 0.1, duration: 0.4 }}
                       onClick={() => setLightboxImage(img)}
                     >
-                      <img src={img} alt={`${selectedDestination.name} - ${idx + 1}`} />
+                      <Image src={img} alt={`${selectedDestination.name} - ${idx + 1}`} width={800} height={600} sizes="(max-width: 768px) 50vw, 25vw" />
                       <div className="exp-barcode__gallery-item-overlay">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                           <circle cx="11" cy="11" r="8"></circle>

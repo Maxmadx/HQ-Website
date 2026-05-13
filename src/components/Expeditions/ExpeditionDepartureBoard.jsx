@@ -41,6 +41,9 @@ function ExpeditionDepartureBoard({
             src="/assets/images/icons/r66-icon-yellow.svg"
             alt=""
             className="exp-board__heli"
+            width={120}
+            height={80}
+            loading="lazy"
           />
           {/* Header */}
           <div className="exp-board__header">

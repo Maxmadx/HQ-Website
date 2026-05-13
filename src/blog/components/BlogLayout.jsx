@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import posts from '../posts.json';
 import FinalDraftHeader from '../../components/FinalDraftHeader';
 import FooterMinimal from '../../components/FooterMinimal';
+import Image from '../../components/Image';
 import '../../assets/css/main.css';
 import '../../assets/css/components.css';
 
@@ -58,7 +59,14 @@ function BlogLayout({
         {/* Hero Section */}
         {heroImage && (
           <div className="blog-post__hero">
-            <img src={heroImage} alt={title} />
+            <Image
+              src={heroImage}
+              alt={title}
+              width={1600}
+              height={1000}
+              priority
+              sizes="(max-width: 768px) 100vw, 60vw"
+            />
             <div className="blog-post__hero-overlay" />
           </div>
         )}

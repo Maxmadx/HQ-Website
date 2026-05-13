@@ -18,6 +18,7 @@ import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { usePageImages } from '../hooks/usePageImages';
 import { SECTION_MAP } from '../lib/imageSections';
+import Image from '../components/Image';
 
 // ─── Images ───
 const IMGS = {
@@ -808,12 +809,13 @@ const HeroSectionFinalTesting = React.memo(({ navHidden, navManuallyShown, navIs
                 {isMobile && src.includes('r22-london-mobile-hq') && (
                   <div className="hsf__img-darken" />
                 )}
-                <img
+                <Image
                   src={src}
                   alt=""
-                  decoding="async"
-                  fetchPriority={i === 0 ? 'high' : 'low'}
-                  loading="eager"
+                  width={1920}
+                  height={1080}
+                  sizes="100vw"
+                  priority={i === 0}
                 />
               </div>
             ))}
