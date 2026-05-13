@@ -118,6 +118,21 @@ Content-Security-Policy:
 
 **Decided:** Max Smith, 2026-05-12.
 
+## 8. Client analytics (Google Analytics 4 + Microsoft Clarity)
+
+**Chosen:** Google Analytics 4 wired directly via gtag.js (no Google Tag Manager). Microsoft Clarity wired alongside for session recording + heatmaps. GA4 Measurement ID and Clarity project ID injected at build time via `VITE_GA_MEASUREMENT_ID` / `VITE_CLARITY_PROJECT_ID`. SPA route changes tracked manually via `<RouteTracker />` inside React Router. GA4 Consent Mode v2 is set to all-granted by default with a `wait_for_update: 500` window.
+
+**Alternatives considered:**
+- **Google Tag Manager container** — flexible (one snippet, manage tags in UI), but adds an indirection layer and another vendor login. Rejected for now; revisit if we add 3+ tracking pixels (FB/LinkedIn/Microsoft).
+- **Plausible / Fathom / self-hosted** — privacy-friendly, no cookie banner needed, but cost money or operations overhead. Rejected: GA4 free tier + Clarity (free) is fine at current scale and pairs natively with Google Ads conversion tracking.
+
+**Why:** GA4 + Google Ads + GSC form a single Google identity stack. Microsoft Clarity adds free session-replay + heatmaps that GA4 alone doesn't provide. Direct script-tag wiring is the simplest path; can layer GTM on later without removing existing tags.
+
+**Outstanding:** Consent banner not yet built. Current behaviour sets `analytics_storage='granted'` by default. Before EU launch, replace the default with `'denied'` and gate the update on user acceptance. Tracked as a Phase 2 follow-up.
+
+**Decided:** Max Smith, 2026-05-12.
+
+
 ## Revisions
 
 _None yet._

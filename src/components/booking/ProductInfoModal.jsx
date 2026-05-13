@@ -35,6 +35,7 @@ export default function ProductInfoModal({ open, item, onClose }) {
         {primary && (
           <div style={{ marginBottom: '16px', textAlign: 'center' }}>
             <img src={primary.url} alt={primary.alt || item.name} width={800} height={600} style={{ maxWidth: '100%', maxHeight: '320px', objectFit: 'contain', borderRadius: '8px' }} />
+
             {images.length > 1 && (
               <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginTop: '8px' }}>
                 {images.map((img, i) => (
