@@ -3,6 +3,7 @@
 const { Router } = require('express');
 const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
 const admin = require('./firebase-admin');
+const logger = require('./lib/logger.js');
 
 const router = Router();
 
@@ -37,7 +38,7 @@ router.post('/', pressClickLimiter, async (req, res) => {
     });
     return res.json({ ok: true });
   } catch (err) {
-    console.error('press-click error:', err);
+    logger.error({ err }, 'press-click error');
     return res.status(500).json({ error: 'Failed to record click' });
   }
 });

@@ -4,6 +4,7 @@ const express = require('express');
 const crypto = require('crypto');
 const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
 const admin = require('./firebase-admin');
+const logger = require('./lib/logger.js');
 const { CartUpsertSchema } = require('./lib/cartValidation');
 const { repriceCart } = require('./lib/cartPricing');
 const { sendCartRecoveryEmail } = require('./lib/cartRecoverySend');
@@ -152,7 +153,7 @@ router.post('/', cartLimiter, async (req, res) => {
     if (err.statusCode === 400) {
       return res.status(400).json({ error: err.message });
     }
-    console.error('[carts] upsert error:', err.message);
+    logger.error({ err }, '[carts] upsert error');
     return res.status(500).json({ error: 'Failed to upsert cart' });
   }
 });
@@ -190,7 +191,7 @@ router.get('/by-token', async (req, res) => {
         }, { merge: true });
       }
     } catch (clickErr) {
-      console.error('[carts] click-track error:', clickErr.message);
+      logger.error({ err: clickErr }, '[carts] click-track error');
     }
 
     // Return only the rehydration-relevant fields (no PII beyond what's needed)
@@ -205,7 +206,7 @@ router.get('/by-token', async (req, res) => {
       currency: cart.currency || 'gbp',
     });
   } catch (err) {
-    console.error('[carts] by-token error:', err.message);
+    logger.error({ err }, '[carts] by-token error');
     return res.status(500).json({ error: 'Failed to load cart' });
   }
 });
@@ -257,7 +258,7 @@ router.get('/email-pixel', async (req, res) => {
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     }, { merge: true });
   } catch (err) {
-    console.error('[carts] email-pixel error:', err.message);
+    logger.error({ err }, '[carts] email-pixel error');
   }
 });
 
@@ -275,7 +276,7 @@ router.post('/unsubscribe', async (req, res) => {
     await snap.docs[0].ref.set({ noEmail: true, updatedAt: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
     return res.status(200).end();
   } catch (err) {
-    console.error('[carts] unsubscribe POST error:', err.message);
+    logger.error({ err }, '[carts] unsubscribe POST error');
     return res.status(500).end();
   }
 });
@@ -296,7 +297,7 @@ router.get('/unsubscribe', async (req, res) => {
     await snap.docs[0].ref.set({ noEmail: true, updatedAt: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
     return res.send(`<!doctype html><html><body style="font-family:system-ui;max-width:480px;margin:80px auto;padding:24px;text-align:center"><h2>Unsubscribed</h2><p>You won't receive any more booking-recovery emails from HQ Aviation.</p></body></html>`);
   } catch (err) {
-    console.error('[carts] unsubscribe error:', err.message);
+    logger.error({ err }, '[carts] unsubscribe error');
     return res.status(500).send('Something went wrong');
   }
 });
@@ -313,7 +314,7 @@ router.get('/', requireAdmin, async (_req, res) => {
     const carts = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
     return res.json({ carts });
   } catch (err) {
-    console.error('[carts] admin list error:', err.message);
+    logger.error({ err }, '[carts] admin list error');
     return res.status(500).json({ error: 'Failed to list carts' });
   }
 });
@@ -325,7 +326,7 @@ router.post('/:id/send-recovery', requireAdmin, async (req, res) => {
     return res.json({ ok: true });
   } catch (err) {
     if (err.statusCode) return res.status(err.statusCode).json({ error: err.message });
-    console.error('[carts] send-recovery error:', err.message);
+    logger.error({ err }, '[carts] send-recovery error');
     return res.status(500).json({ error: 'Failed to send recovery email' });
   }
 });

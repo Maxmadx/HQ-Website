@@ -132,10 +132,19 @@ import AdminEditTextMode from './pages/admin/AdminEditTextMode';
 import AdminComparables from './pages/admin/AdminComparables';
 import AdminComparableEdit from './pages/admin/AdminComparableEdit';
 import PageTracker from './components/PageTracker';
+import { trackPageView } from './lib/ga.js';
 
 // Import styles
 import './assets/css/main.css';
 import './assets/css/components.css';
+
+function RouteTracker() {
+  const location = useLocation();
+  useEffect(() => {
+    trackPageView(location.pathname + location.search);
+  }, [location.pathname, location.search]);
+  return null;
+}
 
 // Backward-compat: /misc/:id -> /store/:id
 function MiscItemDetailRedirect() {
@@ -168,6 +177,7 @@ function App() {
       <EditModeProvider>
       <ScrollToTop />
       <PageTracker />
+      <RouteTracker />
       <Routes>
         {/* Dev/test/picker routes — hard-gated behind import.meta.env.DEV */}
         {SHOW_DEV_ROUTES && (<>

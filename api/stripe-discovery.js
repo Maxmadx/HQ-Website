@@ -3,6 +3,7 @@
 const express = require('express');
 const Stripe = require('stripe');
 const admin = require('./firebase-admin');
+const logger = require('./lib/logger.js');
 
 const router = express.Router();
 
@@ -46,7 +47,7 @@ router.post('/', async (req, res) => {
 
     return res.json({ url: session.url });
   } catch (err) {
-    console.error('Stripe checkout error:', err);
+    logger.error({ err }, 'Stripe checkout error');
     return res.status(500).json({ error: 'Failed to create checkout session' });
   }
 });

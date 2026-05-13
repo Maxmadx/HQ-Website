@@ -2,6 +2,9 @@ import express from 'express';
 import { rateLimit, ipKeyGenerator } from 'express-rate-limit';
 import nodemailer from 'nodemailer';
 import admin from './firebase-admin.js';
+import { createRequire } from 'module';
+const _require = createRequire(import.meta.url);
+const logger = _require('./lib/logger.js');
 
 const router = express.Router();
 
@@ -109,11 +112,11 @@ router.post('/', enquiryLimiter, async (req, res) => {
     const ref = await db.collection('parts_enquiries').add(doc);
 
     // Best-effort email — don't fail the request if SMTP is down.
-    sendOpsEmail(doc).catch((err) => console.error('[parts-enquiry] email failed:', err.message));
+    sendOpsEmail(doc).catch((err) => logger.error({ err }, '[parts-enquiry] email failed'));
 
     return res.json({ id: ref.id });
   } catch (err) {
-    console.error('Parts enquiry capture error:', err);
+    logger.error({ err }, 'Parts enquiry capture error');
     return res.status(500).json({ error: 'Failed to capture enquiry' });
   }
 });
@@ -131,7 +134,7 @@ router.patch('/:id', requireAdmin, async (req, res) => {
     await admin.firestore().collection('parts_enquiries').doc(req.params.id).update(update);
     return res.json({ ok: true });
   } catch (err) {
-    console.error('Parts enquiry update error:', err);
+    logger.error({ err }, 'Parts enquiry update error');
     return res.status(500).json({ error: 'Failed to update enquiry' });
   }
 });
