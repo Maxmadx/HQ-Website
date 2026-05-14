@@ -228,7 +228,7 @@ export default function ArrivalSection({ children, picker, setPicker }) {
             ))}
           </div>
         </div>
-        <a href="https://www.google.com/maps/place/HQ+Aviation+Ltd/@51.5918637,-0.5143918,17z/data=!4m8!3m7!1s0x48766ed1ec88a2df:0x78f17fa958e197be!8m2!3d51.5918637!4d-0.5118169!9m1!1b1!16s%2Fg%2F1wfcnn43" target="_blank" rel="noopener noreferrer" className="arrival__cta arrival__cta--outline arrival__marquee-cta">Leave a Review <span>→</span></a>
+        <a href="https://g.page/r/Cb6X4Vipf_F4EBM/review" target="_blank" rel="noopener noreferrer" className="arrival__cta arrival__cta--outline arrival__marquee-cta">Leave a Review <span>→</span></a>
       </div>
       <div className="arrival__reviews-mobile">
         <div
@@ -273,7 +273,7 @@ export default function ArrivalSection({ children, picker, setPicker }) {
             reviewTrackRef.current?.children[next]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
           }}><i className="fas fa-chevron-right"></i></button>
         </div>
-        <a href="https://www.google.com/maps/place/HQ+Aviation+Ltd/@51.5918637,-0.5143918,17z/data=!4m8!3m7!1s0x48766ed1ec88a2df:0x78f17fa958e197be!8m2!3d51.5918637!4d-0.5118169!9m1!1b1!16s%2Fg%2F1wfcnn43" target="_blank" rel="noopener noreferrer" className="arrival__cta arrival__cta--outline" style={{ display: 'block', textAlign: 'center', marginTop: '0.75rem' }}>Leave a Review <span>→</span></a>
+        <a href="https://g.page/r/Cb6X4Vipf_F4EBM/review" target="_blank" rel="noopener noreferrer" className="arrival__cta arrival__cta--outline" style={{ display: 'block', textAlign: 'center', marginTop: '0.75rem' }}>Leave a Review <span>→</span></a>
       </div>
       </div>
       {children}
