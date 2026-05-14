@@ -8,6 +8,7 @@ const logger = require('./lib/logger.js');
 const { CartUpsertSchema } = require('./lib/cartValidation');
 const { repriceCart } = require('./lib/cartPricing');
 const { sendCartRecoveryEmail } = require('./lib/cartRecoverySend');
+const { isAdminSettableStatus } = require('./lib/cartAdminLogic');
 
 const router = express.Router();
 
@@ -373,6 +374,34 @@ router.post('/:id/send-recovery', requireAdmin, async (req, res) => {
     if (err.statusCode) return res.status(err.statusCode).json({ error: err.message });
     logger.error({ err }, '[carts] send-recovery error');
     return res.status(500).json({ error: 'Failed to send recovery email' });
+  }
+});
+
+// PATCH /api/carts/:id/status (admin) — manually set a cart's status.
+// Stamps abandonedAt when the cart is moved to 'abandoned' so the dashboard
+// can show "abandoned X ago".
+router.patch('/:id/status', requireAdmin, async (req, res) => {
+  const status = req.body && req.body.status;
+  if (!isAdminSettableStatus(status)) {
+    return res.status(400).json({ error: 'Invalid status' });
+  }
+  try {
+    const ref = admin.firestore().collection('carts').doc(req.params.id);
+    const snap = await ref.get();
+    if (!snap.exists) return res.status(404).json({ error: 'Cart not found' });
+
+    const patch = {
+      status,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    };
+    if (status === 'abandoned') {
+      patch.abandonedAt = admin.firestore.FieldValue.serverTimestamp();
+    }
+    await ref.set(patch, { merge: true });
+    return res.json({ ok: true });
+  } catch (err) {
+    logger.error({ err }, '[carts] status patch error');
+    return res.status(500).json({ error: 'Failed to update status' });
   }
 });
 
