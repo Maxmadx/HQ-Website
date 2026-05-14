@@ -4363,9 +4363,6 @@ function Experimentation() {
         {/* Cinematic Opening */}
         <div className="fd-exped__cinematic" ref={expedCinematicRef}>
           <div className="fd-exped__cinematic-bg">
-            <video autoPlay muted loop playsInline>
-              <source src="/assets/video/expedition-reel.mp4" type="video/mp4" />
-            </video>
             <div className="fd-exped__cinematic-overlay"></div>
           </div>
           {/* Globe SVG underlay */}
