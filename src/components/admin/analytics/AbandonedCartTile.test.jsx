@@ -17,6 +17,7 @@ describe('AbandonedCartTile', () => {
     expect(screen.getAllByText(/Carts/i).length).toBeGreaterThanOrEqual(2);
     expect(screen.getByText('Abandoned')).toBeInTheDocument();          // exact match: stage label
     expect(screen.getByText('Recoverable')).toBeInTheDocument();        // exact match: stage label
+    expect(screen.getByText('Contacted')).toBeInTheDocument();          // exact match: stage label
     expect(screen.getByRole('heading', { name: /abandoned carts/i })).toBeInTheDocument();
   });
 

@@ -85,7 +85,7 @@ export const GLOSSARY = {
   },
   cartsContacted: {
     title: 'Contacted',
-    body: 'Recoverable carts you have manually marked as contacted. If "Recoverable" is high but "Contacted" is low, there are captured emails waiting for you to reach out — use the copy-email button on any row in the table.',
+    body: 'Recoverable carts you have manually marked as contacted. If "Recoverable" is high but "Contacted" is low, there are captured emails waiting for you to reach out.',
   },
   cartsRecovered: {
     title: 'Recovered',
