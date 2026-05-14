@@ -83,11 +83,16 @@ function buildFirestore() {
           },
         }),
         add: async () => ({ id: 'evt_fake' }),
-        where: () => ({
-          limit: () => ({
+        // Chainable where mock: recordPurchaseEvent chains
+        // .where().where().limit().get(); other call sites use a single
+        // .where().limit().get(). Always resolves empty.
+        where: function whereFn() {
+          return {
+            where: whereFn,
+            limit: () => ({ get: async () => ({ empty: true, docs: [] }) }),
             get: async () => ({ empty: true, docs: [] }),
-          }),
-        }),
+          };
+        },
       }),
       FieldValue: { serverTimestamp: () => null },
       Timestamp: { fromMillis: (ms) => ({ seconds: Math.floor(ms / 1000) }) },
