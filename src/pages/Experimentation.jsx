@@ -1230,7 +1230,7 @@ const SelfFlyHireSection = () => {
         <div className="sfh-map__grid" ref={sfhGridRef}>
           <div className="sfh-map__map-box">
           <div className="sfh-map__map-header">
-            <span>Range Map — Denham (EGLD)</span>
+            <span>Range Map: Denham (EGLD)</span>
           </div>
           <div className="sfh-map__map-aircraft-label">Showing range for: <strong>{range.label}</strong> at {range.cruise} cruise</div>
           <div className="sfh-map__map">
@@ -1279,7 +1279,7 @@ const SelfFlyHireSection = () => {
         <div className="sfh-map__journey" ref={sfhJourneyRef}>
           <span className="sfh-map__journey-label">Self-Fly Hire</span>
           <p className="sfh-map__journey-desc">In a helicopter you can land at a significant amount of spots in comparison to even a light airplane due to not needing a runway.</p>
-          <p className="sfh-map__journey-desc">Gardens, pubs, hotels, golf courses, race courses — it opens up a new world of possibilities and is a great tool to have in your arsenal of activities you are able to do.</p>
+          <p className="sfh-map__journey-desc">Gardens, pubs, hotels, golf courses, race courses. It opens up a new world of possibilities and is a great tool to have in your arsenal of activities you are able to do.</p>
 
           <div ref={tlStep1Ref} className="sfh-map__tl-step">
             <span className="sfh-map__tl-num">01</span>
@@ -1404,7 +1404,7 @@ const SelfFlyHireSection = () => {
               </div>
 
               <div className="sfh-v15-mobile__body">
-                <p className="sfh-v15-mobile__desc">Gardens, pubs, hotels, golf courses, race courses — it opens up a new world of possibilities and is a great tool to have in your arsenal of activities you are able to do.</p>
+                <p className="sfh-v15-mobile__desc">Gardens, pubs, hotels, golf courses, race courses. It opens up a new world of possibilities and is a great tool to have in your arsenal of activities you are able to do.</p>
 
                 <div className="sfh-v15-mobile__endless">Endless Destinations...</div>
 
@@ -1601,12 +1601,12 @@ function Experimentation() {
 
   const whyFlyBenefits = [
     { verb: 'Join', noun: 'a Community', desc: 'Connect with fellow pilots, business leaders, and adventurers who share your passion for aviation at exclusive flying events and beyond.' },
-    { verb: 'Enjoy', noun: 'the Journey', desc: "For a pilot, the journey is never just a means of getting somewhere — it is the experience itself. The best memories are made not at the destination, but somewhere above the clouds on the way there." },
+    { verb: 'Enjoy', noun: 'the Journey', desc: "For a pilot, the journey is never just a means of getting somewhere. It is the experience itself. The best memories are made not at the destination, but somewhere above the clouds on the way there." },
     { verb: 'Land', noun: 'Anywhere', desc: 'No runways needed. Land at private estates, yachts, remote locations, and city centres.' },
-    { verb: 'Gain', noun: 'Business Edge', desc: 'Multiple destinations in the same day is now possible, at great distances apart. People to see that are just too far to justify travelling by other methods — it can be done just like that.' },
+    { verb: 'Gain', noun: 'Business Edge', desc: 'Multiple destinations in the same day is now possible, at great distances apart. People to see that are just too far to justify travelling by other methods. It can be done just like that.' },
     { verb: 'Create', noun: 'Family Memories', desc: 'Create unforgettable experiences with loved ones. Weekend trips become extraordinary adventures.' },
     { verb: 'Experience', noun: 'True Freedom', desc: 'Go where you want, when you want. The ultimate expression of personal freedom and independence.' },
-    { verb: 'Arrive', noun: 'Differently', desc: 'Fly directly into exclusive events — race courses, Goodwood festivals, and more. The kind of access that speaks for itself.' },
+    { verb: 'Arrive', noun: 'Differently', desc: 'Fly directly into exclusive events: race courses, Goodwood festivals, and more. The kind of access that speaks for itself.' },
     { verb: 'Achieve', noun: 'Your Dreams', desc: "Join an elite group who have mastered one of aviation's most challenging and rewarding skills." },
     { verb: 'Explore', noun: 'The World', desc: 'From Alpine peaks to Mediterranean coasts, the helicopter opens a world of expedition possibilities.' },
   ];
@@ -2977,7 +2977,7 @@ function Experimentation() {
     {
       title: 'Tours of London',
       image: trainingTabImages[6]?.url ?? '/assets/images/lifestyle/london-battersea-heliport.jpg',
-      description: 'Experience London from above with a breathtaking helicopter tour. Fly over iconic landmarks including the Tower of London, Buckingham Palace, the London Eye, and the Thames — an unforgettable aerial perspective of one of the world\'s greatest cities.',
+      description: 'Experience London from above with a breathtaking helicopter tour. Fly over iconic landmarks including the Tower of London, Buckingham Palace, the London Eye, and the Thames, an unforgettable aerial perspective of one of the world\'s greatest cities.',
       cta: 'Learn More',
       link: '/helicopter-tour-of-london',
       duration: '30 minutes',
@@ -3204,7 +3204,7 @@ function Experimentation() {
   const preownedInventory = listingsError ? [] : allListings.filter(l => l.featured);
 
   const rebuildSteps = [
-    { label: 'Airframe', before: '/assets/images/rebuilds/airframe-before.jpg', after: '/assets/images/rebuilds/airframe-after.jpg', beforeDesc: 'Corrosion, fatigue cracks and fifteen years of wear across the bare airframe.', afterDesc: 'Stripped, inspected, repaired and re-protected — ready for another lifetime.' },
+    { label: 'Airframe', before: '/assets/images/rebuilds/airframe-before.jpg', after: '/assets/images/rebuilds/airframe-after.jpg', beforeDesc: 'Corrosion, fatigue cracks and fifteen years of wear across the bare airframe.', afterDesc: 'Stripped, inspected, repaired and re-protected, ready for another lifetime.' },
     { label: 'Engine', before: '/assets/images/rebuilds/engine-before.jpg', after: '/assets/images/rebuilds/engine-after.jpg', beforeDesc: '2,200 hours. Worn bearings, degraded seals, metal particles in the oil filter.', afterDesc: 'Zero-time overhaul. Factory-new components throughout, test-run and certified.' },
     { label: 'Avionics', before: '/assets/images/rebuilds/avionics-before.jpg', after: '/assets/images/rebuilds/avionics-after.jpg', beforeDesc: 'Original analogue panel. Faded placards, intermittent radios, no GPS.', afterDesc: 'Full glass cockpit. Garmin suite, GPS/NAV/COM, ADS-B, four-axis autopilot.' },
     { label: 'Wiring', before: '/assets/images/rebuilds/wiring-before.jpg', after: '/assets/images/rebuilds/wiring-after.jpg', beforeDesc: 'Brittle insulation, spliced repairs, corroded connectors. An electrician\'s nightmare.', afterDesc: 'Complete rewire. New looms, mil-spec connectors, laser-etched labels throughout.' },
@@ -3215,7 +3215,7 @@ function Experimentation() {
   const rebuildPortfolio = [
     {
       model: 'R44 Raven II', reg: 'G-RROB', year: 2019,
-      scope: 'Full rebuild — zero-time engine, Garmin G500H TXi, custom leather interior, metallic blue livery.',
+      scope: 'Full rebuild: zero-time engine, Garmin G500H TXi, custom leather interior, metallic blue livery.',
       duration: '8 months',
       img: '/assets/images/new-aircraft/r44/raven-ii-front-alpha.png',
       details: 'Complete strip-down and rebuild to zero-time specification. The owner requested a full glass cockpit upgrade with Garmin G500H TXi and GTN 650Xi. Interior finished in hand-stitched navy leather with contrast stitching. Exterior resprayed in a custom metallic blue livery with platinum pinstripe.',
@@ -3228,7 +3228,7 @@ function Experimentation() {
     },
     {
       model: 'R22 Beta II', reg: 'G-BWZZ', year: 2016,
-      scope: 'Training fleet rebuild — new O-360, glass panel, high-vis paint scheme, noise-dampening kit.',
+      scope: 'Training fleet rebuild: new O-360, glass panel, high-vis paint scheme, noise-dampening kit.',
       duration: '5 months',
       img: '/assets/images/new-aircraft/r22/r22-red-volcano-front-alpha-v3.png',
       details: 'Fleet rebuild for a UK flight school. Engine replaced with factory-new Lycoming O-360, paired with a Garmin G5 digital display. High-visibility orange and white paint scheme designed for training operations. Noise-dampening kit fitted throughout for student comfort.',
@@ -3241,7 +3241,7 @@ function Experimentation() {
     },
     {
       model: 'R66 Turbine', reg: 'G-NXG1', year: 2018,
-      scope: 'Owner rebuild — RR300 overhaul, GTN 750Xi, Alcantara interior, ceramic-coated paint.',
+      scope: 'Owner rebuild: RR300 overhaul, GTN 750Xi, Alcantara interior, ceramic-coated paint.',
       duration: '11 months',
       img: '/assets/images/new-aircraft/r66/blue-r66-palo-verde-left-v4.png',
       details: 'Comprehensive owner rebuild of a high-time R66. Rolls-Royce RR300 engine overhauled to zero-time, paired with GTN 750Xi navigator and GI 275 standby. Interior retrimmed in charcoal Alcantara with brushed aluminium accents. Exterior finished with a ceramic-coated charcoal-to-slate gradient paint.',
@@ -3254,7 +3254,7 @@ function Experimentation() {
     },
     {
       model: 'R44 Cadet', reg: 'G-CADB', year: 2020,
-      scope: 'School fleet — zero-time IO-540, digital engine monitor, reinforced skid gear.',
+      scope: 'School fleet: zero-time IO-540, digital engine monitor, reinforced skid gear.',
       duration: '6 months',
       img: '/assets/images/new-aircraft/r44/raven-ii-front-alpha.png',
       details: 'Training-optimised rebuild for a UK ATO. Zero-timed IO-540 with JPI EDM-900 engine monitor. Reinforced skid gear and ground-handling wheels for student operations. Simplified VFR panel with Garmin GI 275 and GTR 225A comm.',
@@ -3267,7 +3267,7 @@ function Experimentation() {
     },
     {
       model: 'R44 Raven II', reg: 'G-HQAV', year: 2015,
-      scope: 'Private owner — full strip, corrosion treatment, bespoke two-tone livery, aux tank fitted.',
+      scope: 'Private owner: full strip, corrosion treatment, bespoke two-tone livery, aux tank fitted.',
       duration: '9 months',
       img: '/assets/images/new-aircraft/r44/r44blueprint.jpg',
       details: 'Full strip-down for a private owner who wanted a touring-spec aircraft. Comprehensive corrosion treatment and NDT inspection of all critical components. Aux fuel tank fitted for extended range. Bespoke two-tone ivory and charcoal livery with gold detailing.',
@@ -3304,7 +3304,7 @@ function Experimentation() {
           name:    tiName,
           email:   tiEmail,
           phone:   tiPhone,
-          subject: tradeinIntent === 'tradein' ? 'Trade-In Enquiry — Towards New Aircraft' : 'Aircraft Sale Enquiry — We Buy Any Robinson',
+          subject: tradeinIntent === 'tradein' ? 'Trade-In Enquiry: Towards New Aircraft' : 'Aircraft Sale Enquiry: We Buy Any Robinson',
           message: body || 'No additional information provided.',
           source:  `tradein-${tradeinIntent}`,
         }),
@@ -3327,7 +3327,7 @@ function Experimentation() {
       let subject = '';
       let body = '';
       if (rebuildIntent === 'own') {
-        subject = 'Rebuild Enquiry — Own Aircraft';
+        subject = 'Rebuild Enquiry: Own Aircraft';
         body = [
           `Aircraft: ${rbAircraftType || 'Not specified'}`,
           `Registration: ${rbReg || 'Not specified'}`,
@@ -3336,14 +3336,14 @@ function Experimentation() {
           rbNotes ? `Notes: ${rbNotes}` : '',
         ].filter(Boolean).join('\n');
       } else if (rebuildIntent === 'source') {
-        subject = 'Rebuild Enquiry — Source an Aircraft';
+        subject = 'Rebuild Enquiry: Source an Aircraft';
         body = [
           `Aircraft type wanted: ${rbSourceType || 'Not specified'}`,
           rbBudget ? `Budget: £${rbBudget}` : '',
           rbNotes  ? `Notes: ${rbNotes}` : '',
         ].filter(Boolean).join('\n');
       } else {
-        subject = 'Rebuild Enquiry — Available Now';
+        subject = 'Rebuild Enquiry: Available Now';
         body = [
           `Preferred type: ${rbPrefType || 'Not specified'}`,
           rbAvailBudget ? `Budget: £${rbAvailBudget}` : '',
@@ -3389,7 +3389,7 @@ function Experimentation() {
           name:    unmannedName,
           email:   unmannedEmail,
           phone:   unmannedPhone,
-          subject: 'Robinson Unmanned — Interest Registration',
+          subject: 'Robinson Unmanned: Interest Registration',
           message: messageParts || 'No additional information provided.',
           source:  'unmanned-interest',
         }),
@@ -3431,7 +3431,7 @@ function Experimentation() {
         description="Robinson authorised dealer and service center at Denham, 30 min from London. R22, R44, R66 sales. Helicopter operator, lessons and PPL flight training."
       />
       <h1 style={{ position: 'absolute', left: '-10000px', width: '1px', height: '1px', overflow: 'hidden' }}>
-        Robinson Helicopter Sales, Training & Maintenance — Just Outside London
+        Robinson Helicopter Sales, Training & Maintenance: Just Outside London
       </h1>
       {/* ===== HERO SECTION (Diagonal Split + Header) ===== */}
       <HeroSectionFinalTesting
@@ -3684,11 +3684,11 @@ function Experimentation() {
                         {[
                           { year: '2019', icon: 'fas fa-award',         text: 'FAI Gold Rotorcraft Medal',          sub: 'Lifetime Achievement',   detail: 'The highest individual honour in international helicopter aviation, awarded for extraordinary contribution to rotorcraft flight.', img: '/assets/images/icons/fai-gold-rotorcraft-award.png' },
                           { year: '2016', icon: 'fas fa-snowflake',      text: 'Solo to All 3 North Poles',          sub: 'World First',             detail: 'First person to fly solo by helicopter to the Arctic, Antarctic, and Magnetic North Pole.',                                       img: '/assets/images/expeditions/south-pole-by-helicopter-quentin-smith.webp' },
-                          { year: '2012', icon: 'fas fa-medal',          text: 'Second World Championship',          sub: 'Backwards Autorotation',  detail: 'Won gold performing a backwards autorotation from 300ft — a maneuver experts declared impossible.',                               img: '/assets/images/team/world-helicopter-champion-quentin-smith.webp' },
+                          { year: '2012', icon: 'fas fa-medal',          text: 'Second World Championship',          sub: 'Backwards Autorotation',  detail: 'Won gold performing a backwards autorotation from 300ft, a maneuver experts declared impossible.',                               img: '/assets/images/team/world-helicopter-champion-quentin-smith.webp' },
                           { year: '2005', icon: 'fas fa-flag',           text: 'First Crew to Both Poles',           sub: 'Guinness World Record',   detail: 'Led the first crew expedition to reach both the geographic North and South Poles by helicopter.',                                 img: '/assets/images/expeditions/six-helis-in-North-Pole.jpg' },
                           { year: '2002', icon: 'fas fa-compass',        text: 'First Piston Heli to North Pole',    sub: 'Guinness World Record',   detail: 'Flew a piston-engined helicopter to the North Pole, setting a Guinness World Record.',                                           img: '/assets/images/expeditions/north-pole.jpg' },
                           { year: '1997', icon: 'fas fa-globe-americas', text: 'First Piston Heli Around the World', sub: 'Now in the Smithsonian',  detail: 'First piston helicopter circumnavigation of the globe. The aircraft now resides in the Smithsonian collection.',                  img: '/assets/images/team/quentin-smith-world-record-holder-helicopter-aerobatics.webp' },
-                          { year: '1994', icon: 'fas fa-trophy',         text: 'World Aerobatics Gold',              sub: 'Moscow, Russia',          detail: 'Beat turbine-powered Russian aircraft flying a humble R22 at the 8th World Helicopter Championship in Tushino, Moscow — awarded the FAI Championship Diploma on 30 August 1994.', img: '/assets/images/legacy/fai-championship-diploma-1994.jpg' },
+                          { year: '1994', icon: 'fas fa-trophy',         text: 'World Aerobatics Gold',              sub: 'Moscow, Russia',          detail: 'Beat turbine-powered Russian aircraft flying a humble R22 at the 8th World Helicopter Championship in Tushino, Moscow, and was awarded the FAI Championship Diploma on 30 August 1994.', img: '/assets/images/legacy/fai-championship-diploma-1994.jpg' },
                         ].map((m, i) => (
                           <div
                             key={i}
@@ -3869,7 +3869,7 @@ function Experimentation() {
                 <h4 className="fd-about__founder-name">Captain Quentin Smith</h4>
 
                 <p className="fd-about__body">
-                  Two-time World Helicopter Aerobatics Champion. In Moscow in 1994, he flew a humble Robinson R22 against Russian pilots in turbine machines — and won. Eighteen years later he took gold again, performing a backwards autorotation from 300 feet that experts had deemed impossible.
+                  Two-time World Helicopter Aerobatics Champion. In Moscow in 1994, he flew a humble Robinson R22 against Russian pilots in turbine machines, and won. Eighteen years later he took gold again, performing a backwards autorotation from 300 feet that experts had deemed impossible.
                 </p>
 
                 <div className="fd-about__pullquote">
@@ -3888,7 +3888,7 @@ function Experimentation() {
                 </div>
 
                 <p className="fd-about__body">
-                  Guinness World Record holder. First piston helicopter circumnavigation of the globe. First to the North Pole. First to the South Pole. Recipient of the FAI Gold Rotorcraft Medal — the highest individual honour in international helicopter aviation.
+                  Guinness World Record holder. First piston helicopter circumnavigation of the globe. First to the North Pole. First to the South Pole. Recipient of the FAI Gold Rotorcraft Medal, the highest individual honour in international helicopter aviation.
                 </p>
               </div>
             </div>
@@ -4167,7 +4167,7 @@ function Experimentation() {
               <div ref={clubPhase1Ref} className="clubhouse__phase" style={{ opacity: 1, pointerEvents: 'auto' }}>
                 <div className="clubhouse__phase-text" ref={phaseText1Ref}>
                 <p className="clubhouse__desc">
-                  More than a flight school — a place to belong. Leather sofas, expedition memorabilia,
+                  More than a flight school, a place to belong. Leather sofas, expedition memorabilia,
                   and the quiet hum of rotors outside.
                 </p>
 
@@ -4199,7 +4199,7 @@ function Experimentation() {
                 <div className="clubhouse__phase-text" ref={phaseText2Ref}>
                 <p className="clubhouse__desc">
                   Located just inside the M25 on the Buckinghamshire / Greater London
-                  border, Denham is uniquely positioned — close enough to the city to be
+                  border, Denham is uniquely positioned, close enough to the city to be
                   practical, far enough to feel like a different world. Rolling countryside, open
                   skies, and one of England's most charming aerodromes. Your helicopter is the
                   gateway to all the destinations the UK has to offer.
@@ -4271,7 +4271,7 @@ function Experimentation() {
           <span className="clubhouse__pretitle">Denham Aerodrome</span>
           <h3 className="clubhouse__title">The Clubhouse</h3>
           <p className="clubhouse__desc">
-            More than a flight school — a place to belong. Leather sofas, expedition memorabilia,
+            More than a flight school, a place to belong. Leather sofas, expedition memorabilia,
             and the quiet hum of rotors outside.
           </p>
 
@@ -4315,7 +4315,7 @@ function Experimentation() {
             <h3 className="clubhouse__title">Escape to the Country</h3>
             <p className="clubhouse__desc">
               Located just inside the M25 on the Buckinghamshire / Greater London
-              border, Denham is uniquely positioned — close enough to the city to be
+              border, Denham is uniquely positioned, close enough to the city to be
               practical, far enough to feel like a different world. Rolling countryside, open
               skies, and one of England's most charming aerodromes. Your helicopter is the
               gateway to all the destinations the UK has to offer.
@@ -4498,7 +4498,7 @@ function Experimentation() {
         </h3>
         <div className={`fd-sales__collapse ${salesExpanded.new ? 'fd-sales__collapse--open' : ''}`}>
         <p className="fd-sales__section-desc">
-          As an authorised Robinson dealer, we supply factory-new R22, R44, R66 and R88 helicopters — configured to your specification, delivered with full warranty and backed by our in-house maintenance team from day one.
+          As an authorised Robinson dealer, we supply factory-new R22, R44, R66 and R88 helicopters, configured to your specification, delivered with full warranty and backed by our in-house maintenance team from day one.
         </p>
         {/* Desktop: grid / Mobile: swipeable carousel */}
         <div className="fd-sales__grid fd-sales__grid--desktop" data-cms-section="home-sales-aircraft">
@@ -4586,7 +4586,7 @@ function Experimentation() {
         <div className={`fd-sales__collapse ${salesExpanded.preowned ? 'fd-sales__collapse--open' : ''}`}>
         <h4 className="fd-sales__why-hq-title">Why HQ?</h4>
         <p className="fd-sales__section-desc" style={{ marginBottom: '1.5rem' }}>
-          Our clients regularly trade, upgrade and renew their fleets — which means we always have access to quality pre-owned aircraft at every stage of life. Many come directly from owners whose maintenance we've managed for years, so we know every hour, every component and every logbook entry. When the right aircraft isn't already on our doorstep, we'll source it — inspecting the airframe, engine and avionics on-site before it ever reaches you.
+          Our clients regularly trade, upgrade and renew their fleets, which means we always have access to quality pre-owned aircraft at every stage of life. Many come directly from owners whose maintenance we've managed for years, so we know every hour, every component and every logbook entry. When the right aircraft isn't already on our doorstep, we'll source it, inspecting the airframe, engine and avionics on-site before it ever reaches you.
         </p>
         <div className="fd-sales__preowned-layout">
         <div className="fd-sales__listings-header">
@@ -4766,7 +4766,7 @@ function Experimentation() {
                   <span className="rb-showcase__counter">{String(rebuildDetailOpen + 1).padStart(2, '0')} / {String(rebuildPortfolio.length).padStart(2, '0')}</span>
                 </div>
                 <div className="rb-showcase__topbar-center">
-                  <span>HQ Aviation — Rebuild Portfolio</span>
+                  <span>HQ Aviation: Rebuild Portfolio</span>
                 </div>
                 <button className="rb-showcase__close" onClick={() => setRebuildDetailOpen(null)}>Close</button>
               </div>
@@ -4787,7 +4787,7 @@ function Experimentation() {
                       <button
                         key={i}
                         className="rb-showcase__thumb"
-                        onClick={() => setRebuildLightbox({ src, alt: `${rb.model} — ${i + 1}` })}
+                        onClick={() => setRebuildLightbox({ src, alt: `${rb.model} ${i + 1}` })}
                       >
                         <Image src={src} alt="" width={200} height={150} sizes="200px" />
                       </button>
@@ -4884,7 +4884,7 @@ function Experimentation() {
         </div>
 
         <p className="fd-sales__section-desc" style={{marginTop: '1.25rem'}}>
-          If you're looking to upgrade your aircraft, or simply want to sell — we'll give you a fair offer on any Robinson and have the experience to make the process straightforward.
+          If you're looking to upgrade your aircraft, or simply want to sell, we'll give you a fair offer on any Robinson and have the experience to make the process straightforward.
         </p>
 
         <div className="fd-sales__rebuild-interest">
@@ -4898,7 +4898,7 @@ function Experimentation() {
               <button className="fd-sales__intent-btn" onClick={() => { setTradeinIntent('sell'); setTradeinFormOpen(true); }}>
                 <span className="fd-sales__intent-icon">£</span>
                 <span className="fd-sales__intent-title">I Just Want to Sell</span>
-                <span className="fd-sales__intent-sub">No purchase required — we buy Robinsons outright. Tell us about your aircraft and we'll respond quickly.</span>
+                <span className="fd-sales__intent-sub">No purchase required. We buy Robinsons outright. Tell us about your aircraft and we'll respond quickly.</span>
               </button>
             </div>
           )}
@@ -4974,7 +4974,7 @@ function Experimentation() {
             <div className="fd-sales__unmanned-success">
               <span className="fd-sales__unmanned-success-icon">✓</span>
               <p className="fd-sales__unmanned-success-title">Enquiry Received</p>
-              <p className="fd-sales__unmanned-success-sub">Thank you — we'll review your aircraft details and be in touch with a valuation shortly.</p>
+              <p className="fd-sales__unmanned-success-sub">Thank you. We'll review your aircraft details and be in touch with a valuation shortly.</p>
             </div>
           )}
         </div>
@@ -4990,7 +4990,7 @@ function Experimentation() {
         </h3>
         <div className={`fd-sales__collapse ${salesExpanded.unmanned ? 'fd-sales__collapse--open' : ''}`}>
             <p className="fd-sales__section-desc">
-              Robinson's unmanned aerial systems — purpose-built for commercial, agricultural, and industrial operations. Engineered with the same reliability and support that defines the Robinson brand.
+              Robinson's unmanned aerial systems, purpose-built for commercial, agricultural, and industrial operations. Engineered with the same reliability and support that defines the Robinson brand.
             </p>
             <div className="fd-sales__unmanned-coming">
               <span className="fd-sales__unmanned-icon"><i className="fas fa-helicopter"></i></span>
@@ -5000,7 +5000,7 @@ function Experimentation() {
                 <button className="fd-sales__intent-btn" onClick={() => setUnmannedFormOpen(true)}>
                   <span className="fd-sales__intent-icon">↗</span>
                   <span className="fd-sales__intent-title">Register Interest</span>
-                  <span className="fd-sales__intent-sub">Be first to know — we'll reach out with early access information, pricing, and availability.</span>
+                  <span className="fd-sales__intent-sub">Be first to know. We'll reach out with early access information, pricing, and availability.</span>
                 </button>
               )}
 
@@ -5052,7 +5052,7 @@ function Experimentation() {
                 <div className="fd-sales__unmanned-success">
                   <span className="fd-sales__unmanned-success-icon">✓</span>
                   <p className="fd-sales__unmanned-success-title">Interest Registered</p>
-                  <p className="fd-sales__unmanned-success-sub">Thank you — we'll be in touch with early access information as Robinson Unmanned becomes available.</p>
+                  <p className="fd-sales__unmanned-success-sub">Thank you. We'll be in touch with early access information as Robinson Unmanned becomes available.</p>
                 </div>
               )}
             </div>
@@ -5072,7 +5072,7 @@ function Experimentation() {
           </h3>
           <div className={`fd-sales__collapse ${salesExpanded.misc ? 'fd-sales__collapse--open' : ''}`}>
             <p className="fd-sales__section-desc">
-              Accessories, apparel, ground equipment, training materials and more — everything beyond the aircraft itself, all available from HQ.
+              Accessories, apparel, ground equipment, training materials and more: everything beyond the aircraft itself, all available from HQ.
             </p>
 
             {!miscLoading && miscItems.length > 0 && (
@@ -5111,7 +5111,7 @@ function Experimentation() {
                 <span className="fd-sales__unmanned-icon">
                   <i className="fas fa-box-open"></i>
                 </span>
-                <p>Stock being added — check back soon or browse the full catalogue.</p>
+                <p>Stock being added. Check back soon or browse the full catalogue.</p>
               </div>
             )}
 
@@ -5152,7 +5152,7 @@ function Experimentation() {
               </div>
               <div className="fd-maint__text-fade" ref={maintTextFadeRef}>
                 <p className="fd-maint__text">
-                  A Robinson Authorised Dealer, Part Distributor and Designated Service Centre for the full Robinson range: R22, R44, and R66 — plus Guimbal Cabri G2 certified.
+                  A Robinson Authorised Dealer, Part Distributor and Designated Service Centre for the full Robinson range: R22, R44, and R66, plus Guimbal Cabri G2 certified.
                 </p>
                 <div className="fd-sales__header-divider"></div>
               </div>
@@ -5166,7 +5166,7 @@ function Experimentation() {
                 { icon: 'fa-search', title: 'Inspections', desc: '50-hour, 100-hour, annual & progressive. Spectrometric oil analysis, compression checks, and full control system review on Robinson & Cabri fleets.' },
                 { icon: 'fa-cogs', title: 'Overhauls & Rebuilds', desc: '12-year and 2,200-hour major overhauls. Complete strip-down, NDT testing, factory-spec rebuild. 40+ Robinsons rebuilt by our chief engineer alone.' },
                 { icon: 'fa-microchip', title: 'Avionics & Upgrades', desc: 'Dedicated avionics workshop. Glass cockpit conversions, GPS/NAV systems, ADS-B, transponder upgrades. Modern situational awareness by qualified specialists.' },
-                { icon: 'fa-exclamation-triangle', title: '24/7 AOG & Parts', desc: 'Aircraft on Ground emergency response across Europe. £500K parts inventory — 1,200+ engine, 800+ airframe, 2,000+ consumables. Same-day dispatch.' },
+                { icon: 'fa-exclamation-triangle', title: '24/7 AOG & Parts', desc: 'Aircraft on Ground emergency response across Europe. £500K parts inventory: 1,200+ engine, 800+ airframe, 2,000+ consumables. Same-day dispatch.' },
                 { icon: 'fa-paint-roller', title: 'Paint & Refurbishment', desc: 'Dedicated in-house paint shop. Complete interior/exterior restoration, corrosion treatment, and custom livery. Factory-new finish from our Denham facility.' },
                 { icon: 'fa-helicopter', title: 'Ownership Services', desc: 'Pre-purchase inspections, aircraft management, leaseback revenue programmes, secure heated hangarage, worldwide ferry flights, and new & used sales.' },
               ].map((s, i) => (
