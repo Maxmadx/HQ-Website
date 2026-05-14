@@ -3,18 +3,26 @@
  * Inputs are arrays of cart docs (already fetched from Firestore by the caller).
  */
 
-// 'checkout_initiated' is deliberately NOT abandoned: the user may still be on
-// the Stripe payment page. The cart-recovery cron transitions those carts to
-// 'abandoned'/'expired' once they genuinely age out, and they get counted then.
+// 'abandoned' and 'expired' are the genuinely-walked-away statuses. 'active'
+// and 'checkout_initiated' carts may still convert, so they are NOT counted
+// as abandoned — but they ARE recoverable if they carry an email (see below).
 function isAbandonedStatus(s) {
   return s === 'abandoned' || s === 'expired';
 }
 
-function isRecoverable(cart) {
+function hasUsableEmail(cart) {
   if (!cart.email) return false;
   if (cart.noEmail) return false;
   if (cart.excludedFromAnalytics) return false;
-  return isAbandonedStatus(cart.status);
+  return true;
+}
+
+// Recoverable = any non-completed cart with a usable email. We surface the
+// email the moment it is captured — we do not wait for a cron to flip the
+// cart to 'abandoned'.
+function isRecoverable(cart) {
+  if (cart.status === 'completed') return false;
+  return hasUsableEmail(cart);
 }
 
 function eventTimeMs(ev) {
@@ -23,7 +31,7 @@ function eventTimeMs(ev) {
 }
 
 export function computeCartFunnel(carts) {
-  let totalCarts = 0, abandoned = 0, recoverable = 0, emailed = 0, recovered = 0;
+  let totalCarts = 0, abandoned = 0, recoverable = 0, contacted = 0, recovered = 0;
   let totalValueP = 0, abandonedValueP = 0, recoverableValueP = 0;
 
   for (const cart of carts) {
@@ -35,20 +43,20 @@ export function computeCartFunnel(carts) {
     if (isAbandonedStatus(cart.status)) {
       abandoned += 1;
       abandonedValueP += cart.totalP || 0;
-
-      if (isRecoverable(cart)) {
-        recoverable += 1;
-        recoverableValueP += cart.totalP || 0;
-        if (cart.recoveryEmailsSent && cart.recoveryEmailsSent.length > 0) emailed += 1;
-      }
     }
 
-    if (cart.status === 'completed' && cart.recoveryEmailsSent && cart.recoveryEmailsSent.length > 0) {
+    if (isRecoverable(cart)) {
+      recoverable += 1;
+      recoverableValueP += cart.totalP || 0;
+      if (cart.contactedAt) contacted += 1;
+    }
+
+    if (cart.status === 'completed' && cart.contactedAt) {
       recovered += 1;
     }
   }
 
-  return { totalCarts, abandoned, recoverable, emailed, recovered, totalValueP, abandonedValueP, recoverableValueP };
+  return { totalCarts, abandoned, recoverable, contacted, recovered, totalValueP, abandonedValueP, recoverableValueP };
 }
 
 export function recoverableCarts(carts) {
