@@ -1422,7 +1422,8 @@ const SelfFlyHireSection = () => {
 
 function ZigzagTrainingItem({ slide, index, isEven }) {
   return (
-    <div
+    <Link
+      to={slide.link}
       className={`fd-zigzag__item ${isEven ? 'fd-zigzag__item--left' : 'fd-zigzag__item--right'}`}
     >
       <div className="fd-zigzag__item-image">
@@ -1433,12 +1434,12 @@ function ZigzagTrainingItem({ slide, index, isEven }) {
         <span className="fd-zigzag__item-tag">{slide.tag} · {slide.duration}</span>
         <h3 className="fd-zigzag__item-title">{slide.title}</h3>
         <p className="fd-zigzag__item-desc">{slide.description}</p>
-        <Link to={slide.link} className="fd-zigzag__card-btn">
+        <span className="fd-zigzag__card-btn">
           <span>{slide.cta}</span>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-        </Link>
+        </span>
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -4096,7 +4097,7 @@ function Experimentation() {
               <div className="fd-zigzag__hscroll" ref={hscrollRef}>
                 <div className="fd-zigzag__hscroll-inner" ref={hscrollInnerRef}>
                 {hscrollSlides.map((slide, i) => (
-                  <div key={i} className="fd-zigzag__card">
+                  <Link key={i} to={slide.link} className="fd-zigzag__card">
                     <div className="fd-zigzag__card-image"><Image src={slide.image} alt={slide.title} width={1200} height={800} sizes="(max-width: 768px) 100vw, 50vw" /></div>
                     <div className="fd-zigzag__card-body">
                       <div className="fd-zigzag__card-header">
@@ -4107,13 +4108,13 @@ function Experimentation() {
                       <p className="fd-zigzag__card-desc">{slide.description}</p>
                       <div className="fd-zigzag__card-footer">
                         <span className="fd-zigzag__card-duration">{slide.duration}</span>
-                        <Link to={slide.link} className="fd-zigzag__card-btn">
+                        <span className="fd-zigzag__card-btn">
                           <span>{slide.cta}</span>
                           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                        </Link>
+                        </span>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
                 {[
                   { num: String(zigzagSlides.length + hscrollSlides.length + 1).padStart(2, '0'), tag: 'Specialist', title: 'SuperYacht Ops & Private Owner Management', description: 'Deck ops, pilot provisioning, maintenance coordination, and worldwide logistics for yacht-based helicopters.', duration: 'Bespoke', link: '/superyacht-ops', cta: 'Enquire', image: cmsTrainingSpecialist[0]?.url ?? '/assets/images/lifestyle/superyacht-ops.jpg' },
@@ -4121,7 +4122,7 @@ function Experimentation() {
                   { num: String(zigzagSlides.length + hscrollSlides.length + 3).padStart(2, '0'), tag: 'Advanced', title: 'Advanced Training', description: 'Autorotations with Captain Q, confined area training, mountain flying, and safety courses.', duration: 'Various', link: '/training/advanced', cta: 'Enquire', image: cmsTrainingSpecialist[2]?.url ?? '/assets/images/gallery/flying/flying-.jpg' },
                   { num: String(zigzagSlides.length + hscrollSlides.length + 4).padStart(2, '0'), tag: 'Advisory', title: 'Aircraft Consulting', description: 'Pre-purchase inspections, ownership advice, fleet planning, and bespoke acquisition services for private and corporate clients.', duration: 'Bespoke', link: '/aircraft-consulting', cta: 'Enquire', image: cmsTrainingSpecialist[3]?.url ?? '/assets/images/facility/hq-0354.jpg' },
                 ].map((item, i) => (
-                  <div key={`serv-${i}`} className="fd-zigzag__card" data-cms-section={i === 0 ? 'home-training-specialist' : undefined}>
+                  <Link key={`serv-${i}`} to={item.link} className="fd-zigzag__card" data-cms-section={i === 0 ? 'home-training-specialist' : undefined}>
                     <div className="fd-zigzag__card-image"><Image src={item.image} alt={item.title} width={1200} height={800} sizes="(max-width: 768px) 100vw, 50vw" /></div>
                     <div className="fd-zigzag__card-body">
                       <div className="fd-zigzag__card-header">
@@ -4132,13 +4133,13 @@ function Experimentation() {
                       <p className="fd-zigzag__card-desc">{item.description}</p>
                       <div className="fd-zigzag__card-footer">
                         <span className="fd-zigzag__card-duration">{item.duration}</span>
-                        <Link to={item.link} className="fd-zigzag__card-btn">
+                        <span className="fd-zigzag__card-btn">
                           <span>{item.cta}</span>
                           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                        </Link>
+                        </span>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
                 </div>
               </div>
@@ -5166,7 +5167,7 @@ function Experimentation() {
                 { icon: 'fa-search', title: 'Inspections', desc: '50-hour, 100-hour, annual & progressive. Spectrometric oil analysis, compression checks, and full control system review on Robinson & Cabri fleets.' },
                 { icon: 'fa-cogs', title: 'Overhauls & Rebuilds', desc: '12-year and 2,200-hour major overhauls. Complete strip-down, NDT testing, factory-spec rebuild. 40+ Robinsons rebuilt by our chief engineer alone.' },
                 { icon: 'fa-microchip', title: 'Avionics & Upgrades', desc: 'Dedicated avionics workshop. Glass cockpit conversions, GPS/NAV systems, ADS-B, transponder upgrades. Modern situational awareness by qualified specialists.' },
-                { icon: 'fa-exclamation-triangle', title: '24/7 AOG & Parts', desc: 'Aircraft on Ground emergency response across Europe. £500K parts inventory: 1,200+ engine, 800+ airframe, 2,000+ consumables. Same-day dispatch.' },
+                { icon: 'fa-exclamation-triangle', title: 'Robinson Parts Supplier', desc: 'We hold an extensive Robinson parts inventory and have a strong relationship with the factory, so we can source the right parts for your aircraft at a good price and get them to you fast.' },
                 { icon: 'fa-paint-roller', title: 'Paint & Refurbishment', desc: 'Dedicated in-house paint shop. Complete interior/exterior restoration, corrosion treatment, and custom livery. Factory-new finish from our Denham facility.' },
                 { icon: 'fa-helicopter', title: 'Ownership Services', desc: 'Pre-purchase inspections, aircraft management, leaseback revenue programmes, secure heated hangarage, worldwide ferry flights, and new & used sales.' },
               ].map((s, i) => (
@@ -7781,7 +7782,14 @@ function Experimentation() {
           border-radius: 8px;
           overflow: hidden;
           margin-bottom: 1.5rem;
+          text-decoration: none; color: inherit;
+          transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
+        .fd-zigzag__item:hover {
+          border-color: rgba(0,0,0,0.3);
+          box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+        .fd-zigzag__item:hover .fd-zigzag__card-btn { color: #555; }
         .fd-zigzag__item:last-child {
           margin-bottom: 0;
         }
@@ -7857,7 +7865,14 @@ function Experimentation() {
           scroll-snap-align: start;
           background: #eae8e4; border: 1px solid rgba(0,0,0,0.12);
           border-radius: 8px; overflow: hidden;
+          display: block; text-decoration: none; color: inherit;
+          transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
+        .fd-zigzag__card:hover {
+          border-color: rgba(0,0,0,0.3);
+          box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+        .fd-zigzag__card:hover .fd-zigzag__card-btn { color: #555; }
         .fd-zigzag__card-image { height: 140px; overflow: hidden; }
         .fd-zigzag__card-image img { width: 100%; height: 100%; object-fit: cover; }
         .fd-zigzag__card-body { padding: 1rem; }
