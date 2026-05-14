@@ -1,11 +1,20 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { GLOSSARY } from './analyticsGlossary';
 
 const FALLBACK = { title: 'No description available', body: 'This metric does not have an explanation registered yet.' };
 
+const TOOLTIP_WIDTH = 320;
+
 export default function InfoTooltip({ topic }) {
   const [open, setOpen] = useState(false);
+  const [alignRight, setAlignRight] = useState(false);
   const wrapperRef = useRef(null);
+
+  useLayoutEffect(() => {
+    if (!open || !wrapperRef.current) return;
+    const { left } = wrapperRef.current.getBoundingClientRect();
+    setAlignRight(left + TOOLTIP_WIDTH > window.innerWidth - 8);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -51,11 +60,12 @@ export default function InfoTooltip({ topic }) {
           role="dialog"
           aria-modal="false"
           style={{
-            position: 'absolute', top: 'calc(100% + 8px)', left: 0,
+            position: 'absolute', top: 'calc(100% + 8px)',
+            ...(alignRight ? { right: 0 } : { left: 0 }),
             background: '#0f172a', color: '#f1f5f9',
             border: '1px solid #334155', borderRadius: 8,
             padding: '14px 16px',
-            width: 320, maxWidth: '90vw',
+            width: TOOLTIP_WIDTH, maxWidth: '90vw',
             boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
             zIndex: 100,
             fontSize: 13, lineHeight: 1.5,
