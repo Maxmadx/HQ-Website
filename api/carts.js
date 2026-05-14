@@ -424,4 +424,15 @@ router.post('/:id/mark-contacted', requireAdmin, async (req, res) => {
   }
 });
 
+// DELETE /api/carts/:id (admin) — hard-delete a cart from the dashboard.
+router.delete('/:id', requireAdmin, async (req, res) => {
+  try {
+    await admin.firestore().collection('carts').doc(req.params.id).delete();
+    return res.json({ ok: true });
+  } catch (err) {
+    logger.error({ err }, '[carts] delete error');
+    return res.status(500).json({ error: 'Failed to delete cart' });
+  }
+});
+
 module.exports = router;
