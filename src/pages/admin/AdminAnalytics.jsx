@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { collection, query, where, orderBy, getDocs, Timestamp } from 'firebase/firestore';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { db, auth } from '../../lib/firebase';
@@ -401,91 +401,115 @@ export default function AdminAnalytics() {
     }
   }
 
-  // ─── Filter out admin IPs and /admin pages ────────────────────────────────
-  const filtered = (excludedIps.length
-    ? events.filter((e) => !excludedIps.includes(e.ip))
-    : events
-  ).filter((e) => !e.page?.startsWith('/admin'));
-
-  const prevFiltered = (excludedIps.length
-    ? prevEvents.filter((e) => !excludedIps.includes(e.ip))
-    : prevEvents
-  ).filter((e) => !e.page?.startsWith('/admin'));
-  const prevPageviews = prevFiltered.filter((e) => e.eventType === 'pageview');
-  const prevUniqueSessions = new Set(prevFiltered.map((e) => e.sessionId)).size;
-  const prevCTAs = prevFiltered.filter((e) => e.eventType === 'cta_click');
-  const prevForms = prevFiltered.filter((e) => e.eventType === 'form_submit');
-
-  // ─── Segment by event type ────────────────────────────────────────────────
-  const pageviews = filtered.filter((e) => e.eventType === 'pageview');
-  const ctaClicks = filtered.filter((e) => e.eventType === 'cta_click');
-  const formSubmits = filtered.filter((e) => e.eventType === 'form_submit');
-  const scrollEvents = filtered.filter((e) => e.eventType === 'scroll_depth');
-  const exitEvents = filtered.filter((e) => e.eventType === 'page_exit');
-
-  // ─── Deduplicate sessions for chart (first pageview per session per day) ──
-  const seenSessions = new Set();
-  const firstPvPerSession = pageviews.filter((e) => {
-    if (seenSessions.has(e.sessionId)) return false;
-    seenSessions.add(e.sessionId);
-    return true;
-  });
+  // Donut palettes — plain constants, also read directly in the render below.
+  const sourceColors = { Direct: C.green, Search: C.blue, Social: C.purple, Referral: C.amber };
+  const deviceColors = ['#2563eb', '#a855f7', '#0891b2', '#16a34a', '#d97706'];
 
   // ─── Aggregations ─────────────────────────────────────────────────────────
-  const uniqueSessions = new Set(filtered.map((e) => e.sessionId)).size;
-  const pvByDay = groupByDay(pageviews, days);
-  const sessByDay = groupByDay(firstPvPerSession, days);
-  const bounce = bounceRate(pageviews);
-  const avgTime = avgTimeOnPage(exitEvents);
-  const avgScroll = avgScrollDepth(scrollEvents);
-  const topPages = topN(countBy(pageviews, 'page'), 7);
-  const sources = trafficSources(pageviews);
-  const { devices, browsers } = parseDevices(pageviews);
-  const topCountries = topN(countBy(filtered.filter((e) => e.country), 'country'), 7);
-  const mapData = (() => {
-    const m = new Map();
-    for (const ev of filtered) {
-      const code = ev.countryCode;
-      if (!code) continue;
-      m.set(code, (m.get(code) || 0) + 1);
-    }
-    return Array.from(m.entries()).map(([countryCode, visits]) => ({ countryCode, visits }));
-  })();
-  const hours = sessionsByHour(pageviews);
-  const scrollByPage = scrollDepthByPage(pageviews, scrollEvents, 4);
-  const journeys = topJourneys(pageviews, 5);
-  const topCTAs = topN(countBy(ctaClicks, 'elementId'), 6);
-  const topForms = topN(countBy(formSubmits, 'page'), 5);
-  const campaigns = topCampaigns(pageviews, 8);
-  const utmSrc = topUtmSources(pageviews, 6);
+  // All derived from the raw event arrays; memoised so unrelated re-renders
+  // (tooltips, hovers) don't recompute the whole dashboard.
+  const agg = useMemo(() => {
+    // Filter out admin IPs and /admin pages
+    const filtered = (excludedIps.length
+      ? events.filter((e) => !excludedIps.includes(e.ip))
+      : events
+    ).filter((e) => !e.page?.startsWith('/admin'));
 
-  // Sparklines (full selected range)
-  const sparkDays = days;
-  const pvSpark = sparklineData(pageviews, sparkDays);
-  const sessSpark = sparklineData(firstPvPerSession, sparkDays);
-  const ctaSpark = sparklineData(ctaClicks, sparkDays);
-  const formSpark = sparklineData(formSubmits, sparkDays);
+    const prevFiltered = (excludedIps.length
+      ? prevEvents.filter((e) => !excludedIps.includes(e.ip))
+      : prevEvents
+    ).filter((e) => !e.page?.startsWith('/admin'));
+    const prevPageviews = prevFiltered.filter((e) => e.eventType === 'pageview');
+    const prevUniqueSessions = new Set(prevFiltered.map((e) => e.sessionId)).size;
+    const prevCTAs = prevFiltered.filter((e) => e.eventType === 'cta_click');
+    const prevForms = prevFiltered.filter((e) => e.eventType === 'form_submit');
 
-  // Top referrer domains (Feature 5)
-  const topReferrers = topReferrerDomains(pageviews, 8);
+    // Segment by event type
+    const pageviews = filtered.filter((e) => e.eventType === 'pageview');
+    const ctaClicks = filtered.filter((e) => e.eventType === 'cta_click');
+    const formSubmits = filtered.filter((e) => e.eventType === 'form_submit');
+    const scrollEvents = filtered.filter((e) => e.eventType === 'scroll_depth');
+    const exitEvents = filtered.filter((e) => e.eventType === 'page_exit');
 
-  // Conversion funnel (Feature 6)
-  const FUNNEL_STEPS = [
-    { label: 'Landed on Site', match: () => true },
-    { label: 'Explored Beyond Home', match: (p) => p !== '/' },
-    { label: 'Viewed Service Page', match: (p) => /discovery|hire|training|course|ground|license|licence|simulator/i.test(p) },
-    { label: 'Reached Booking / Contact', match: (p) => /book|contact|enquir|price|pricing/i.test(p) },
-  ];
-  const funnel = funnelData(pageviews, formSubmits, FUNNEL_STEPS);
+    // Deduplicate sessions for chart (first pageview per session per day)
+    const seenSessions = new Set();
+    const firstPvPerSession = pageviews.filter((e) => {
+      if (seenSessions.has(e.sessionId)) return false;
+      seenSessions.add(e.sessionId);
+      return true;
+    });
 
-  // Per-page avg time on page (Feature 7)
-  const timeByPage = avgTimeByPage(exitEvents, 8);
+    const uniqueSessions = new Set(filtered.map((e) => e.sessionId)).size;
+    const pvByDay = groupByDay(pageviews, days);
+    const sessByDay = groupByDay(firstPvPerSession, days);
+    const bounce = bounceRate(pageviews);
+    const avgTime = avgTimeOnPage(exitEvents);
+    const avgScroll = avgScrollDepth(scrollEvents);
+    const topPages = topN(countBy(pageviews, 'page'), 7);
+    const sources = trafficSources(pageviews);
+    const { devices, browsers } = parseDevices(pageviews);
+    const topCountries = topN(countBy(filtered.filter((e) => e.country), 'country'), 7);
+    const mapData = (() => {
+      const m = new Map();
+      for (const ev of filtered) {
+        const code = ev.countryCode;
+        if (!code) continue;
+        m.set(code, (m.get(code) || 0) + 1);
+      }
+      return Array.from(m.entries()).map(([countryCode, visits]) => ({ countryCode, visits }));
+    })();
+    const hours = sessionsByHour(pageviews);
+    const scrollByPage = scrollDepthByPage(pageviews, scrollEvents, 4);
+    const journeys = topJourneys(pageviews, 5);
+    const topCTAs = topN(countBy(ctaClicks, 'elementId'), 6);
+    const topForms = topN(countBy(formSubmits, 'page'), 5);
+    const campaigns = topCampaigns(pageviews, 8);
+    const utmSrc = topUtmSources(pageviews, 6);
 
-  // Donut segments
-  const sourceColors = { Direct: C.green, Search: C.blue, Social: C.purple, Referral: C.amber };
-  const sourceDonuts = sources.map((s) => ({ color: sourceColors[s.name] || C.muted, pct: s.pct, label: s.name }));
-  const deviceColors = ['#2563eb', '#a855f7', '#0891b2', '#16a34a', '#d97706'];
-  const deviceDonuts = devices.map((d, i) => ({ color: deviceColors[i] || C.muted, pct: d.pct, label: d.name }));
+    // Sparklines (full selected range)
+    const pvSpark = sparklineData(pageviews, days);
+    const sessSpark = sparklineData(firstPvPerSession, days);
+    const ctaSpark = sparklineData(ctaClicks, days);
+    const formSpark = sparklineData(formSubmits, days);
+
+    // Top referrer domains (Feature 5)
+    const topReferrers = topReferrerDomains(pageviews, 8);
+
+    // Conversion funnel (Feature 6)
+    const FUNNEL_STEPS = [
+      { label: 'Landed on Site', match: () => true },
+      { label: 'Explored Beyond Home', match: (p) => p !== '/' },
+      { label: 'Viewed Service Page', match: (p) => /discovery|hire|training|course|ground|license|licence|simulator/i.test(p) },
+      { label: 'Reached Booking / Contact', match: (p) => /book|contact|enquir|price|pricing/i.test(p) },
+    ];
+    const funnel = funnelData(pageviews, formSubmits, FUNNEL_STEPS);
+
+    // Per-page avg time on page (Feature 7)
+    const timeByPage = avgTimeByPage(exitEvents, 8);
+
+    // Donut segments
+    const sourceDonuts = sources.map((s) => ({ color: sourceColors[s.name] || C.muted, pct: s.pct, label: s.name }));
+    const deviceDonuts = devices.map((d, i) => ({ color: deviceColors[i] || C.muted, pct: d.pct, label: d.name }));
+
+    return {
+      filtered, prevPageviews, prevUniqueSessions, prevCTAs, prevForms,
+      pageviews, ctaClicks, formSubmits, scrollEvents, exitEvents, firstPvPerSession,
+      uniqueSessions, pvByDay, sessByDay, bounce, avgTime, avgScroll, topPages,
+      sources, devices, browsers, topCountries, mapData, hours, scrollByPage,
+      journeys, topCTAs, topForms, campaigns, utmSrc, pvSpark, sessSpark, ctaSpark,
+      formSpark, topReferrers, funnel, timeByPage, sourceDonuts, deviceDonuts,
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [events, prevEvents, excludedIps, days]);
+
+  const {
+    filtered, prevPageviews, prevUniqueSessions, prevCTAs, prevForms,
+    pageviews, ctaClicks, formSubmits, scrollEvents, exitEvents, firstPvPerSession,
+    uniqueSessions, pvByDay, sessByDay, bounce, avgTime, avgScroll, topPages,
+    sources, devices, browsers, topCountries, mapData, hours, scrollByPage,
+    journeys, topCTAs, topForms, campaigns, utmSrc, pvSpark, sessSpark, ctaSpark,
+    formSpark, topReferrers, funnel, timeByPage, sourceDonuts, deviceDonuts,
+  } = agg;
 
   // ─── Styles ────────────────────────────────────────────────────────────────
   const grid2 = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 };

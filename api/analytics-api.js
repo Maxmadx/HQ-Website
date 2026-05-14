@@ -4,6 +4,7 @@ const express = require('express');
 const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
 const admin = require('./firebase-admin');
 const logger = require('./lib/logger.js');
+const { truncateIp } = require('./lib/ipTruncate.js');
 
 const router = express.Router();
 
@@ -11,6 +12,10 @@ const ALLOWED_TYPES = [
   'pageview', 'cta_click', 'form_submit', 'image_view', 'scroll_depth', 'page_exit',
   'view_item', 'begin_checkout', 'add_payment_info', 'purchase',
 ];
+
+// Referral codes use a visually-unambiguous alphabet (see src/lib/referralCodes.js);
+// 6–16 chars allows headroom over the current 8-char length without coupling to it.
+const REFERRAL_CODE_RE = /^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6,16}$/;
 
 // Private / loopback IPs (IPv4 + IPv6) — skip geo lookup for these
 const PRIVATE_IP_RE = /^(127\.|::1$|::ffff:127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|fc[0-9a-f]{2}:|fd[0-9a-f]{2}:|fe80:)/i;
@@ -81,7 +86,7 @@ router.get('/config', requireAdmin, (req, res) => {
 router.post('/', analyticsLimiter, async (req, res) => {
   try {
     const {
-      sessionId, page, eventType, elementId, referrer,
+      sessionId, visitorId, page, eventType, elementId, referrer, referralRefCode,
       utmSource, utmMedium, utmCampaign, utmTerm, utmContent,
       items, value, currency, transactionId, itemCategory,
     } = req.body;
@@ -90,8 +95,17 @@ router.post('/', analyticsLimiter, async (req, res) => {
       return res.status(400).json({ error: 'Invalid eventType' });
     }
 
+    // Full IP is used in-memory for geo lookup only; a truncated form is what
+    // gets persisted (GDPR data minimisation).
     const ip = req.ip || null;
     const geo = await geoLookup(ip);
+    const storedIp = truncateIp(ip);
+
+    // Referral code: only persist if it matches the code format (alphabet + length).
+    // Anything else is junk from a hand-edited URL — drop it silently.
+    const safeRefCode = REFERRAL_CODE_RE.test(String(referralRefCode || ''))
+      ? String(referralRefCode)
+      : null;
 
     // Items: accept partial data — cap at 20 entries, drop non-object entries
     // and entries whose stringified form is >500 chars. We do NOT reject the
@@ -112,12 +126,14 @@ router.post('/', analyticsLimiter, async (req, res) => {
 
     await admin.firestore().collection('page_events').add({
       sessionId: String(sessionId || '').slice(0, 64),
+      visitorId: visitorId ? String(visitorId).slice(0, 64) : null,
       page: String(page || '').slice(0, 300),
       eventType,
       elementId: elementId ? String(elementId).slice(0, 100) : null,
       referrer: String(referrer || '').slice(0, 300),
+      referralRefCode: safeRefCode,
       userAgent: String(req.headers['user-agent'] || '').slice(0, 300),
-      ip,
+      ip: storedIp,
       country: geo.country,
       countryCode: geo.countryCode,
       city: geo.city,

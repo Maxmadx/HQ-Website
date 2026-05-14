@@ -14,6 +14,34 @@ export function getSessionId() {
 }
 
 /**
+ * Persistent visitor ID — survives across tabs and sessions (localStorage).
+ * Used to distinguish new vs returning visitors. Returns null when localStorage
+ * is unavailable (e.g. Safari private mode) so a tracking event is never lost.
+ */
+export function getVisitorId() {
+  try {
+    const key = 'hq_visitor_id';
+    let id = localStorage.getItem(key);
+    if (!id) {
+      id = Math.random().toString(36).slice(2) + Date.now().toString(36);
+      localStorage.setItem(key, id);
+    }
+    return id;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Read the `ref` referral code from the current URL (e.g. ?ref=AB3K9XQ7).
+ * Returns null when absent.
+ */
+function getReferralRef() {
+  if (typeof window === 'undefined') return null;
+  return new URLSearchParams(window.location.search).get('ref') || null;
+}
+
+/**
  * Read UTM params from the current URL.
  * Returns an object with utmSource/Medium/Campaign/Term/Content (null when absent).
  */
@@ -47,10 +75,12 @@ export async function trackEvent(eventType, elementId = null, page = null, data 
   try {
     const body = {
       sessionId: getSessionId(),
+      visitorId: getVisitorId(),
       page: page ?? (typeof window !== 'undefined' ? window.location.pathname : ''),
       eventType,
       elementId,
       referrer: typeof document !== 'undefined' ? document.referrer : '',
+      referralRefCode: getReferralRef(),
       ...getUtmParams(),
     };
     if (data) {

@@ -7,6 +7,7 @@ const originalLocation = window.location;
 
 beforeEach(() => {
   sessionStorage.clear();
+  localStorage.clear();
   vi.clearAllMocks();
 });
 
@@ -15,7 +16,7 @@ afterEach(() => {
   Object.defineProperty(window, 'location', { value: originalLocation, writable: true, configurable: true });
 });
 
-import { getSessionId, trackEvent } from './analytics';
+import { getSessionId, getVisitorId, trackEvent } from './analytics';
 
 describe('analytics', () => {
   it('getSessionId returns same id on repeated calls', () => {
@@ -24,6 +25,45 @@ describe('analytics', () => {
     expect(id1).toBe(id2);
     expect(typeof id1).toBe('string');
     expect(id1.length).toBeGreaterThan(0);
+  });
+
+  it('getVisitorId returns same id on repeated calls and persists in localStorage', () => {
+    const id1 = getVisitorId();
+    const id2 = getVisitorId();
+    expect(id1).toBe(id2);
+    expect(typeof id1).toBe('string');
+    expect(localStorage.getItem('hq_visitor_id')).toBe(id1);
+  });
+
+  it('getVisitorId returns null when localStorage throws', () => {
+    const spy = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('localStorage unavailable');
+    });
+    expect(getVisitorId()).toBeNull();
+    spy.mockRestore();
+  });
+
+  it('trackEvent includes visitorId in body', async () => {
+    await trackEvent('pageview');
+    const body = JSON.parse(fetch.mock.calls[0][1].body);
+    expect(body.visitorId).toBe(localStorage.getItem('hq_visitor_id'));
+    expect(typeof body.visitorId).toBe('string');
+  });
+
+  it('trackEvent includes referralRefCode when ?ref is present', async () => {
+    delete window.location;
+    window.location = { pathname: '/training/trial-lessons', search: '?ref=AB3K9XQ7', href: '' };
+    await trackEvent('pageview');
+    const body = JSON.parse(fetch.mock.calls[0][1].body);
+    expect(body.referralRefCode).toBe('AB3K9XQ7');
+  });
+
+  it('trackEvent sends null referralRefCode when ?ref is absent', async () => {
+    delete window.location;
+    window.location = { pathname: '/', search: '', href: '' };
+    await trackEvent('pageview');
+    const body = JSON.parse(fetch.mock.calls[0][1].body);
+    expect(body.referralRefCode).toBeNull();
   });
 
   it('trackEvent calls fetch with correct body', async () => {
