@@ -468,7 +468,10 @@ const HeroSectionFinalTesting = React.memo(({ navHidden, navManuallyShown, navIs
     const urls = [...new Set([...cmsMobileSlides, ...cmsDesktopSlides])].filter(Boolean);
     let cancelled = false;
     urls.forEach((url) => {
-      const img = new Image();
+      // window.Image — the native HTMLImageElement constructor. The bare
+      // `Image` identifier is shadowed by the `import Image from
+      // '../components/Image'` at the top of this file (the React component).
+      const img = new window.Image();
       img.src = url;
       if (img.decode) img.decode().catch(() => {});
       img.onload = () => { if (!cancelled) img.dataset.heroPreload = '1'; };
