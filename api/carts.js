@@ -405,4 +405,22 @@ router.patch('/:id/status', requireAdmin, async (req, res) => {
   }
 });
 
+// POST /api/carts/:id/mark-contacted (admin) — stamp contactedAt so the cart
+// counts toward the "Contacted" funnel stage.
+router.post('/:id/mark-contacted', requireAdmin, async (req, res) => {
+  try {
+    const ref = admin.firestore().collection('carts').doc(req.params.id);
+    const snap = await ref.get();
+    if (!snap.exists) return res.status(404).json({ error: 'Cart not found' });
+    await ref.set({
+      contactedAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+    return res.json({ ok: true });
+  } catch (err) {
+    logger.error({ err }, '[carts] mark-contacted error');
+    return res.status(500).json({ error: 'Failed to mark contacted' });
+  }
+});
+
 module.exports = router;
