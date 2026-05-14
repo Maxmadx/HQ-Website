@@ -16,7 +16,15 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      # Preview deploy is best-effort: only runs when the Firebase service
+      # account secret is configured. Without it, build + test remain the real
+      # CI gate and the workflow still passes. To re-enable PR previews, add a
+      # FIREBASE_SERVICE_ACCOUNT_HQ_WEBSITE_4ABC7 repo secret (Firebase console
+      # > Project settings > Service accounts > Generate new private key).
       - uses: FirebaseExtended/action-hosting-deploy@v0
+        if: ${{ env.FIREBASE_SA != '' }}
+        env:
+          FIREBASE_SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_HQ_WEBSITE_4ABC7 }}
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_HQ_WEBSITE_4ABC7 }}
