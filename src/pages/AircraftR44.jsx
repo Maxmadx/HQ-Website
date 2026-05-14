@@ -1979,7 +1979,7 @@ function AircraftR44() {
         jsonLd={[
           buildProduct({
             name: 'Robinson R44 Raven II',
-            description: 'New Robinson R44 Raven I, Raven II and Cadet — four-seat Lycoming piston helicopters.',
+            description: 'New Robinson R44 Raven I, Raven II and Cadet: four-seat Lycoming piston helicopters.',
             image: '/og-default.jpg',
             brand: 'Robinson Helicopter Company',
             url: '/aircraft/r44',

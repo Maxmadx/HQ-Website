@@ -243,7 +243,7 @@ function AdvancedTraining() {
         jsonLd={[
           buildCourse({
             name: 'Advanced Helicopter Training',
-            description: 'Advanced post-licence training — confined areas, autorotations, formation flying.',
+            description: 'Advanced post-licence training: confined areas, autorotations, formation flying.',
             url: `${SITE_URL}/training/advanced`,
             courseInstance: {
               '@type': 'CourseInstance',

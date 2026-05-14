@@ -1284,12 +1284,12 @@ function DiscoveryFlight() {
   // Google doesn't double-count tax in the SERP price snippet.
   const { p: priceOf } = usePricing();
   const offerCombos = [
-    { key: 'discovery_r22_30min', name: 'Robinson R22 — 30 minute trial lesson' },
-    { key: 'discovery_r22_60min', name: 'Robinson R22 — 60 minute trial lesson' },
-    { key: 'discovery_r44_30min', name: 'Robinson R44 — 30 minute trial lesson' },
-    { key: 'discovery_r44_60min', name: 'Robinson R44 — 60 minute trial lesson' },
-    { key: 'discovery_r66_30min', name: 'Robinson R66 — 30 minute trial lesson' },
-    { key: 'discovery_r66_60min', name: 'Robinson R66 — 60 minute trial lesson' },
+    { key: 'discovery_r22_30min', name: 'Robinson R22, 30 minute trial lesson' },
+    { key: 'discovery_r22_60min', name: 'Robinson R22, 60 minute trial lesson' },
+    { key: 'discovery_r44_30min', name: 'Robinson R44, 30 minute trial lesson' },
+    { key: 'discovery_r44_60min', name: 'Robinson R44, 60 minute trial lesson' },
+    { key: 'discovery_r66_30min', name: 'Robinson R66, 30 minute trial lesson' },
+    { key: 'discovery_r66_60min', name: 'Robinson R66, 60 minute trial lesson' },
   ];
   const trialOffers = offerCombos
     .map((c) => ({ ...c, pence: priceOf(c.key) }))
@@ -1406,7 +1406,7 @@ function DiscoveryFlight() {
         ogType="product"
         jsonLd={[
           buildProduct({
-            name: 'Helicopter Trial Lesson — Discovery Flight',
+            name: 'Helicopter Trial Lesson: Discovery Flight',
             description: 'A first hands-on flight in a Robinson R22, R44, or R66 helicopter. From Denham Aerodrome (30 min from London).',
             image: '/assets/images/r66helis.jpg',
             brand: 'HQ Aviation',

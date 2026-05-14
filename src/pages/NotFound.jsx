@@ -9,7 +9,7 @@ export default function NotFound() {
         description="The page you were looking for doesn't exist. Try one of the popular sections below."
         noindex
       />
-      <h1>404 — Page Not Found</h1>
+      <h1>404: Page Not Found</h1>
       <p>The page you were looking for doesn't exist or has moved.</p>
       <p>Try one of these popular sections:</p>
       <ul>

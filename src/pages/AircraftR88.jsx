@@ -5318,7 +5318,7 @@ function AircraftR88() {
         jsonLd={[
           buildProduct({
             name: 'Robinson R88',
-            description: 'New Robinson R88 — 10-seat utility turbine, Safran Arriel 2W. Pre-certification, UK and Europe delivery interest registration.',
+            description: 'New Robinson R88: 10-seat utility turbine, Safran Arriel 2W. Pre-certification, UK and Europe delivery interest registration.',
             image: '/assets/images/new-aircraft/r88/rhc-r88-wide-view-instrument-panel-13175.jpg',
             brand: 'Robinson Helicopter Company',
             url: '/aircraft/r88',

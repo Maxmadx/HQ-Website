@@ -50,7 +50,7 @@ export default function ReferralOfferCard({ booking, freeItem }) {
     <>
       <div style={S.card}>
         <h3 style={S.title}>Refer a friend</h3>
-        <p style={S.subtitle}>Share with a friend. When they book a Discovery Flight using your link, this is yours — collect at HQ.</p>
+        <p style={S.subtitle}>Share with a friend. When they book a Discovery Flight using your link, this is yours. Collect at HQ.</p>
 
         <button
           type="button"

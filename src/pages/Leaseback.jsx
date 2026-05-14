@@ -818,7 +818,7 @@ export default function Leaseback() {
           buildService({
             name: 'Helicopter Leaseback',
             serviceType: 'Aircraft leaseback program',
-            description: 'Aircraft leaseback programme for helicopter owners — Robinson R44 and R66 placements at Denham.',
+            description: 'Aircraft leaseback programme for helicopter owners: Robinson R44 and R66 placements at Denham.',
             url: `${SITE_URL}/leaseback`,
             areaServed: AREA_SERVED,
           }),

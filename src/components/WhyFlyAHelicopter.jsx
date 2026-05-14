@@ -14,7 +14,7 @@ const benefits = [
   { icon: '👥', title: 'Join a Community', desc: 'Surround yourself with a circle of adventurers, entrepreneurs and high-achievers who pull each other higher', stat: '←', statLabel: 'elite network', category: 'Lifestyle' },
 
   // The Practical Advantage
-  { icon: '🚁', title: 'Vertical Freedom', desc: 'Leave exactly when you want, bypass road gridlock, and turn 4-hour drives into 45-minute flights — landing on your own Property, Events, Restaurants, Golf Courses and Shooting Grounds.', stat: '∞', statLabel: 'landing options', category: 'Practical' },
+  { icon: '🚁', title: 'Vertical Freedom', desc: 'Leave exactly when you want, bypass road gridlock, and turn 4-hour drives into 45-minute flights, landing on your own Property, Events, Restaurants, Golf Courses and Shooting Grounds.', stat: '∞', statLabel: 'landing options', category: 'Practical' },
   { icon: '🏝', title: 'Unmatched Access', desc: 'Reach secluded locations inaccessible by any other vehicle, from private islands to deep wilderness.', stat: '2,000+', statLabel: 'landing sites', category: 'Practical' },
 
   // The Experience & Skill

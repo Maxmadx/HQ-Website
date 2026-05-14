@@ -2937,7 +2937,7 @@ function AircraftR22() {
         jsonLd={[
           buildProduct({
             name: 'Robinson R22 Beta II',
-            description: 'New Robinson R22 Beta II — two-seat Lycoming O-360 trainer, the entry-level Robinson helicopter.',
+            description: 'New Robinson R22 Beta II: two-seat Lycoming O-360 trainer, the entry-level Robinson helicopter.',
             image: '/og-default.jpg',
             brand: 'Robinson Helicopter Company',
             url: '/aircraft/r22',

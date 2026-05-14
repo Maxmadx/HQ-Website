@@ -244,7 +244,7 @@ function CPL() {
         jsonLd={[
           buildCourse({
             name: 'Commercial Pilot Licence (CPL-H)',
-            description: 'EASA CPL(H) training in Robinson R44 or R66 from Denham — modular pathway from PPL.',
+            description: 'EASA CPL(H) training in Robinson R44 or R66 from Denham, a modular pathway from PPL.',
             url: `${SITE_URL}/training/commercial`,
             courseInstance: {
               '@type': 'CourseInstance',

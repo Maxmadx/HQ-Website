@@ -16,7 +16,7 @@ export default function PostCheckoutOffers({ booking, freeReferralItem }) {
   return (
     <div style={S.wrap}>
       <ReferralOfferCard booking={booking} freeItem={freeReferralItem} />
-      <p style={S.note}>This offer is also in your confirmation email — claim later if you'd rather think about it.</p>
+      <p style={S.note}>This offer is also in your confirmation email. Claim it later if you'd rather think about it.</p>
     </div>
   );
 }

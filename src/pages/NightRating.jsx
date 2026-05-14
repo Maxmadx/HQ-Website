@@ -290,7 +290,7 @@ function NightRating() {
         jsonLd={[
           buildCourse({
             name: 'Night Rating (Helicopter)',
-            description: 'Night flying rating in Robinson R44 or R66 from Denham — 5h dual instruction.',
+            description: 'Night flying rating in Robinson R44 or R66 from Denham, 5h dual instruction.',
             url: `${SITE_URL}/training/night-rating`,
             courseInstance: {
               '@type': 'CourseInstance',

@@ -241,7 +241,7 @@ export default function SuperYachtOps() {
           buildService({
             name: 'Superyacht Helicopter Operations',
             serviceType: 'Helicopter operations support for superyachts',
-            description: 'Helicopter operations support for superyachts — flight crew, deck-landing, refuelling, and route planning.',
+            description: 'Helicopter operations support for superyachts: flight crew, deck-landing, refuelling, and route planning.',
             url: `${SITE_URL}/superyacht-ops`,
             areaServed: AREA_SERVED,
           }),

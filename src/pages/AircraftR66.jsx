@@ -5681,7 +5681,7 @@ function AircraftR66() {
         jsonLd={[
           buildProduct({
             name: 'Robinson R66 Turbine',
-            description: 'New Robinson R66 Turbine — five-seat single-engine Rolls-Royce RR300 turboshaft helicopter.',
+            description: 'New Robinson R66 Turbine: five-seat single-engine Rolls-Royce RR300 turboshaft helicopter.',
             image: '/og-default.jpg',
             brand: 'Robinson Helicopter Company',
             url: '/aircraft/r66',

@@ -182,12 +182,12 @@ function AircraftConsulting() {
   const [formStatus, setFormStatus] = useState('idle');
   const { faqs: rawFaqs } = useFaqs('aircraft-consulting', { visibleOnly: true });
   const fallbackFaqs = [
-    { id: 'f1', question: 'Do you inspect aircraft other than Robinson types?', answer: 'Our core expertise is the Robinson range — R22, R44, R66, and R88. We can arrange inspections on other types through our network of type-specialist engineers, but the Robinson range is where our direct expertise sits.' },
+    { id: 'f1', question: 'Do you inspect aircraft other than Robinson types?', answer: 'Our core expertise is the Robinson range: R22, R44, R66, and R88. We can arrange inspections on other types through our network of type-specialist engineers, but the Robinson range is where our direct expertise sits.' },
     { id: 'f2', question: 'How much does a pre-purchase inspection cost?', answer: "Fees depend on the type and location of the aircraft. Contact us with details and we'll provide a fixed fee upfront — no surprises." },
-    { id: 'f3', question: 'Can you negotiate on my behalf?', answer: "Yes — as part of our Acquisition Services offering. We're effective negotiators because we understand the market, the aircraft, and realistic rectification costs." },
+    { id: 'f3', question: 'Can you negotiate on my behalf?', answer: "Yes, as part of our Acquisition Services offering. We're effective negotiators because we understand the market, the aircraft, and realistic rectification costs." },
     { id: 'f4', question: 'What if the inspection finds problems?', answer: 'We document every finding with photographs and reference the applicable maintenance data. For defects, we estimate rectification costs so you can factor them into your offer or walk away with a clear understanding of why.' },
     { id: 'f5', question: 'How quickly can you conduct an inspection?', answer: "Typically within 3–5 working days of the request, subject to the aircraft's location. For time-sensitive transactions, contact us and we'll do our best." },
-    { id: 'f6', question: 'Do you provide ongoing advisory retainers?', answer: 'Yes — for owners who want regular access to our knowledge. Contact us to discuss a structure that suits your needs.' },
+    { id: 'f6', question: 'Do you provide ongoing advisory retainers?', answer: 'Yes, for owners who want regular access to our knowledge. Contact us to discuss a structure that suits your needs.' },
   ];
   const faqs = rawFaqs.length > 0 ? rawFaqs : fallbackFaqs;
 
@@ -234,7 +234,7 @@ function AircraftConsulting() {
       group: 'buying',
       title: 'Pre-Purchase Inspection',
       scope: 'Robinson only',
-      description: "A full airframe, engine, avionics, and logbook inspection of any Robinson helicopter under offer. Factory-authorised verdict in writing — buy, renegotiate, or walk — within 48 hours.",
+      description: "A full airframe, engine, avionics, and logbook inspection of any Robinson helicopter under offer. Factory-authorised verdict in writing (buy, renegotiate, or walk) within 48 hours.",
       includes: [
         'Physical airframe inspection',
         'Engine and systems check',
@@ -299,7 +299,7 @@ function AircraftConsulting() {
       group: 'owning',
       title: 'Operating Cost & TCO',
       scope: 'All helicopters',
-      description: "A defensible total cost of ownership model for a specific aircraft, fleet, or use case. Numbers built from real maintenance bills and live insurance market — not OEM brochures.",
+      description: "A defensible total cost of ownership model for a specific aircraft, fleet, or use case. Numbers built from real maintenance bills and live insurance market, not OEM brochures.",
       includes: [
         'Type-specific fixed and variable costs',
         'One, five, and ten-year projections',
@@ -315,7 +315,7 @@ function AircraftConsulting() {
       group: 'owning',
       title: 'Insurance Advisory',
       scope: 'All helicopters',
-      description: "Independent review of hull and liability cover, broker introductions, and policy comparisons. We read the policy with the aircraft in mind — what's actually flown, where, and by whom — not just what's quoted.",
+      description: "Independent review of hull and liability cover, broker introductions, and policy comparisons. We read the policy with the aircraft in mind (what's actually flown, where, and by whom), not just what's quoted.",
       includes: [
         'Cover review against operating reality',
         'Broker selection and introduction',
@@ -331,7 +331,7 @@ function AircraftConsulting() {
       group: 'owning',
       title: 'Import / Export & Register Transfer',
       scope: 'All helicopters',
-      description: "Cross-border transactions and register transfers handled end-to-end — UK CAA, FAA, IoM, Guernsey — with the documentation, customs, and airworthiness pieces sequenced correctly.",
+      description: "Cross-border transactions and register transfers handled end-to-end (UK CAA, FAA, IoM, Guernsey) with the documentation, customs, and airworthiness pieces sequenced correctly.",
       includes: [
         'Import and export documentation',
         'Customs and duty handling',
@@ -348,7 +348,7 @@ function AircraftConsulting() {
       group: 'expert',
       title: 'Expert Witness & Litigation Support',
       scope: 'All helicopters · Robinson-deep',
-      description: "Independent expert opinion for legal, insurance, and dispute matters. Written reports, expert determination, and court-acceptable testimony — drawn from 35 years on the hangar floor.",
+      description: "Independent expert opinion for legal, insurance, and dispute matters. Written reports, expert determination, and court-acceptable testimony, drawn from 35 years on the hangar floor.",
       includes: [
         'Pre-action expert opinion',
         'Formal CPR Part 35 expert reports',

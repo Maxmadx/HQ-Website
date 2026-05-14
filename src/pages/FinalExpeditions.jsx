@@ -1577,7 +1577,7 @@ function FinalExpeditions() {
           buildService({
             name: 'Helicopter Expeditions',
             serviceType: 'Worldwide helicopter expedition support',
-            description: 'Worldwide helicopter expedition support — Arctic, Africa, Asia. Robinson and Bell aircraft. Custom multi-day adventures.',
+            description: 'Worldwide helicopter expedition support: Arctic, Africa, Asia. Robinson and Bell aircraft. Custom multi-day adventures.',
             url: `${SITE_URL}/expeditions`,
             areaServed: AREA_SERVED,
           }),

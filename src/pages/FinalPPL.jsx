@@ -341,7 +341,7 @@ function FinalPPL() {
         jsonLd={[
           buildCourse({
             name: 'Private Pilot Licence (PPL-H)',
-            description: 'EASA PPL(H) training in Robinson R22 or R44 from Denham — typically 45–55 hours.',
+            description: 'EASA PPL(H) training in Robinson R22 or R44 from Denham, typically 45–55 hours.',
             url: `${SITE_URL}/training/ppl`,
             courseInstance: {
               '@type': 'CourseInstance',
