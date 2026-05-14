@@ -8,12 +8,13 @@
 //                  granted; clarity.js loads its tag.
 //   - On Decline -> setConsent('denied')  => analytics stays cookieless;
 //                  Clarity never loads.
-//   - Scrolling away (> 60px) is treated as an implicit decline. Rather than
-//     pestering the visitor for a click, the banner plays a short auto-decline
-//     animation — Decline expands over Accept, a brief "clicked" pulse, then
-//     the bar slides away — and records 'denied'. Declining on scroll is the
-//     safe direction under PECR: nothing is ever tracked without an explicit
-//     grant, so an implicit decline carries no compliance risk.
+//   - Scrolling away is treated as an implicit decline, *scrubbed by scroll
+//     position*: from SCRUB_START to SCRUB_START + SCRUB_DISTANCE the banner
+//     progressively dismisses — Accept fades while Decline expands over it,
+//     then the bar slides away. It tracks scroll 1:1, so the user controls the
+//     rate and can scroll back up to undo it. Only at full progress is
+//     'denied' actually committed. Declining on scroll is the safe direction
+//     under PECR: nothing is ever tracked without an explicit grant.
 //   - Stored decision persists in localStorage; the user can reopen the
 //     banner via resetConsent() from a footer "Cookie preferences" link.
 //
@@ -25,85 +26,135 @@
 import { useEffect, useRef, useState } from 'react';
 import { getConsent, setConsent, onConsentChange, CONSENT } from '../lib/consent';
 
-const SCROLL_TRIGGER_PX = 60;
-// Auto-decline animation phase durations (ms): merge -> confirm -> leave.
-const PHASE_MS = { merging: 340, confirming: 260, leaving: 380 };
+// Scroll-scrub range: dismissal starts at SCRUB_START px of scroll and is
+// fully committed after a further SCRUB_DISTANCE px.
+const SCRUB_START = 60;
+const SCRUB_DISTANCE = 400;
+// Within 0..1 progress: the Accept->Decline merge plays over the first
+// MERGE_END; the bar slides away over the remainder.
+const MERGE_END = 0.5;
 
 export default function ConsentBanner() {
   const [visible, setVisible] = useState(false);
-  // Auto-decline animation state machine: idle -> merging -> confirming -> leaving.
-  const [phase, setPhase] = useState('idle');
+  const [progress, setProgress] = useState(0);
   const actionsRef = useRef(null);
   const declineRef = useRef(null);
+  const dimsRef = useRef(null);        // { actionsW, declineW } — measured once
+  const committedRef = useRef(false);
 
   // Read consent state on mount. Also subscribe so that if `resetConsent()`
-  // is called from elsewhere (footer link), the banner reappears.
+  // is called from elsewhere (footer link), the banner reappears + resets.
   useEffect(() => {
     setVisible(getConsent() === CONSENT.UNKNOWN);
     const unsubscribe = onConsentChange((state) => {
-      setVisible(state === CONSENT.UNKNOWN);
+      const unknown = state === CONSENT.UNKNOWN;
+      setVisible(unknown);
+      if (unknown) {
+        committedRef.current = false;
+        setProgress(0);
+      }
     });
     return unsubscribe;
   }, []);
 
-  // Scrolling away = implicit decline. Watch for the first meaningful scroll
-  // while the banner is up and undecided, then play the auto-decline sequence.
+  // Scroll-scrubbed implicit decline. Progress tracks scroll position 1:1, so
+  // the user controls the rate and can scroll back up to undo — until it
+  // reaches 1, at which point 'denied' is committed.
   useEffect(() => {
-    if (!visible || phase !== 'idle') return;
-    const onScroll = () => {
-      if (window.scrollY <= SCROLL_TRIGGER_PX) return;
-      window.removeEventListener('scroll', onScroll);
-      // Respect reduced-motion: skip the animation, just record the decision.
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (!visible) return;
+
+    // Reduced motion: no scrub animation — just record the decision once the
+    // user has scrolled past the full dismissal distance.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const onScroll = () => {
+        if (committedRef.current) return;
+        if (window.scrollY > SCRUB_START + SCRUB_DISTANCE) {
+          committedRef.current = true;
+          setConsent(CONSENT.DENIED);
+        }
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+      return () => window.removeEventListener('scroll', onScroll);
+    }
+
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      if (committedRef.current) return;
+      const p = Math.max(
+        0,
+        Math.min((window.scrollY - SCRUB_START) / SCRUB_DISTANCE, 1),
+      );
+      // Measure the actions row + Decline button once, the first time the
+      // dismissal starts, so Decline can expand smoothly to cover the row.
+      if (p > 0 && !dimsRef.current && actionsRef.current && declineRef.current) {
+        dimsRef.current = {
+          actionsW: actionsRef.current.offsetWidth,
+          declineW: declineRef.current.offsetWidth,
+        };
+      }
+      setProgress(p);
+      if (p >= 1) {
+        committedRef.current = true;
         setConsent(CONSENT.DENIED);
-        return;
       }
-      // Freeze the actions row width and capture the Decline button's real
-      // width so it can expand smoothly from its own size to cover the row.
-      const actions = actionsRef.current;
-      const decline = declineRef.current;
-      if (actions && decline) {
-        actions.style.width = `${actions.offsetWidth}px`;
-        actions.style.setProperty('--hq-decline-w', `${decline.offsetWidth}px`);
-      }
-      setPhase('merging');
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [visible, phase]);
-
-  // Advance the auto-decline animation through its phases, then persist.
-  useEffect(() => {
-    if (phase === 'idle') return;
-    const t = setTimeout(() => {
-      if (phase === 'merging') setPhase('confirming');
-      else if (phase === 'confirming') setPhase('leaving');
-      else setConsent(CONSENT.DENIED); // leaving done — persist + unmount
-    }, PHASE_MS[phase]);
-    return () => clearTimeout(t);
-  }, [phase]);
+    update(); // sync initial state (handles a page that loads already scrolled)
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [visible]);
 
   if (!visible) return null;
 
-  const autoDeclining = phase !== 'idle';
+  const dismissing = progress > 0;
+  const dims = dimsRef.current;
+  // Sub-progress (0..1) for each stage of the dismissal.
+  const merge = Math.min(progress / MERGE_END, 1);
+  const leave = Math.max(0, Math.min((progress - MERGE_END) / (1 - MERGE_END), 1));
+
+  const barStyle = dismissing
+    ? { transform: `translateY(${(leave * 100).toFixed(2)}%)` }
+    : undefined;
+  const actionsStyle = dismissing && dims ? { width: `${dims.actionsW}px` } : undefined;
+  const acceptStyle = dismissing ? { opacity: 1 - merge } : undefined;
+  const declineStyle =
+    dismissing && dims
+      ? {
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          bottom: 0,
+          zIndex: 2,
+          width: `${dims.declineW + (dims.actionsW - dims.declineW) * merge}px`,
+        }
+      : undefined;
 
   return (
     <div
       role="dialog"
       aria-labelledby="hq-consent-text"
       aria-describedby="hq-consent-text"
-      className={`hq-consent${autoDeclining ? ` hq-consent--auto hq-consent--${phase}` : ''}`}
+      className="hq-consent"
+      style={barStyle}
     >
       <div className="hq-consent__inner">
         <p id="hq-consent-text" className="hq-consent__text">
           We use analytics cookies to understand how visitors use this site. No marketing,
           no third-party advertising.
         </p>
-        <div className="hq-consent__actions" ref={actionsRef}>
+        <div className="hq-consent__actions" ref={actionsRef} style={actionsStyle}>
           <button
             type="button"
             ref={declineRef}
             className="hq-consent__btn hq-consent__btn--decline"
+            style={declineStyle}
             onClick={() => setConsent(CONSENT.DENIED)}
           >
             Decline
@@ -111,6 +162,7 @@ export default function ConsentBanner() {
           <button
             type="button"
             className="hq-consent__btn hq-consent__btn--accept"
+            style={acceptStyle}
             onClick={() => setConsent(CONSENT.GRANTED)}
           >
             Accept
@@ -133,16 +185,11 @@ export default function ConsentBanner() {
           border-top: 1px solid rgba(250, 249, 246, 0.12);
           box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.25);
           animation: hq-consent-rise 380ms cubic-bezier(0.16, 1, 0.3, 1);
+          will-change: transform;
         }
         @keyframes hq-consent-rise {
           from { opacity: 0; transform: translateY(100%); }
           to   { opacity: 1; transform: translateY(0); }
-        }
-        .hq-consent--leaving {
-          animation: hq-consent-leave 380ms cubic-bezier(0.4, 0, 1, 1) forwards;
-        }
-        @keyframes hq-consent-leave {
-          to { opacity: 0; transform: translateY(100%); }
         }
         .hq-consent__inner {
           max-width: 1100px;
@@ -163,9 +210,6 @@ export default function ConsentBanner() {
           gap: 0.5rem;
           flex-shrink: 0;
           position: relative;
-        }
-        .hq-consent--auto .hq-consent__actions {
-          pointer-events: none;
         }
         .hq-consent__btn {
           font-family: inherit;
@@ -197,39 +241,6 @@ export default function ConsentBanner() {
           outline: 2px solid #faf9f6;
           outline-offset: 2px;
         }
-        /* Auto-decline: Accept fades out as Decline expands over it. */
-        .hq-consent--auto .hq-consent__btn--accept {
-          opacity: 0;
-          transition: opacity 260ms ease-out;
-        }
-        .hq-consent--auto .hq-consent__btn--decline {
-          position: absolute;
-          left: 0;
-          top: 0;
-          bottom: 0;
-          z-index: 2;
-          width: var(--hq-decline-w, 100%);
-        }
-        .hq-consent--merging .hq-consent__btn--decline {
-          animation: hq-decline-cover 340ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        @keyframes hq-decline-cover {
-          to { width: 100%; }
-        }
-        /* Decline stays expanded once merged. */
-        .hq-consent--confirming .hq-consent__btn--decline,
-        .hq-consent--leaving .hq-consent__btn--decline {
-          width: 100%;
-        }
-        /* Brief "clicked" pulse so it's obvious Decline was chosen. */
-        .hq-consent--confirming .hq-consent__btn--decline {
-          animation: hq-decline-press 260ms ease-out forwards;
-        }
-        @keyframes hq-decline-press {
-          0%   { transform: scale(1);    background: transparent; }
-          35%  { transform: scale(0.97); background: rgba(250, 249, 246, 0.16); }
-          100% { transform: scale(1);    background: transparent; }
-        }
         @media (max-width: 520px) {
           .hq-consent {
             padding: 0.6rem 1rem;
@@ -242,12 +253,8 @@ export default function ConsentBanner() {
           }
         }
         @media (prefers-reduced-motion: reduce) {
-          .hq-consent,
-          .hq-consent--leaving,
-          .hq-consent--auto .hq-consent__btn--decline,
-          .hq-consent--auto .hq-consent__btn--accept {
+          .hq-consent {
             animation: none;
-            transition: none;
           }
         }
       `}</style>
