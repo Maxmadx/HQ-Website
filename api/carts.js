@@ -8,7 +8,6 @@ const logger = require('./lib/logger.js');
 const { CartUpsertSchema } = require('./lib/cartValidation');
 const { repriceCart } = require('./lib/cartPricing');
 const { sendCartRecoveryEmail } = require('./lib/cartRecoverySend');
-const { isAdminSettableStatus } = require('./lib/cartAdminLogic');
 
 const router = express.Router();
 
@@ -115,15 +114,17 @@ router.post('/', cartLimiter, async (req, res) => {
     // totals are DISPLAY figures derived from the client payload — the real
     // charge is always repriced at the payment-intent endpoint, never here.
     let category = data.category || null;
+    if (!category && priced.flight) category = 'discovery_flight';
     const products = data.products || [];
     const londonTour = data.londonTour || null;
+    // Callers must send the full cart payload on every upsert — products is
+    // merged via { merge: true }, so a partial upsert omitting it resets it to [].
     let totalP = priced.totalP;
     if (category === 'product') {
       totalP = products.reduce((sum, p) => sum + (p.priceP || 0) * (p.qty || 1), 0);
     } else if (category === 'london_tour' && londonTour) {
       totalP = londonTour.priceP || 0;
     }
-    if (!category && priced.flight) category = 'discovery_flight';
 
     const now = admin.firestore.FieldValue.serverTimestamp();
     const baseFields = {
