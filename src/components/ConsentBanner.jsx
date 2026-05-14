@@ -42,11 +42,9 @@ export default function ConsentBanner() {
       className="hq-consent"
     >
       <div className="hq-consent__inner">
-        <p className="hq-consent__pretitle">Cookies</p>
         <p id="hq-consent-text" className="hq-consent__text">
           We use analytics cookies to understand how visitors use this site. No marketing,
-          no third-party advertising. {' '}
-          <a href="/privacy" className="hq-consent__link">Privacy policy</a>.
+          no third-party advertising.
         </p>
         <div className="hq-consent__actions">
           <button
@@ -94,29 +92,11 @@ export default function ConsentBanner() {
           flex-wrap: wrap;
           gap: 0.5rem 1.25rem;
         }
-        .hq-consent__pretitle {
-          margin: 0;
-          flex-shrink: 0;
-          font-family: 'Share Tech Mono', 'SF Mono', Monaco, monospace;
-          font-size: 0.625rem;
-          letter-spacing: 0.18em;
-          text-transform: uppercase;
-          color: rgba(250, 249, 246, 0.6);
-        }
         .hq-consent__text {
           margin: 0;
           color: #faf9f6;
           flex: 1;
           min-width: 240px;
-        }
-        .hq-consent__link {
-          color: inherit;
-          text-decoration: underline;
-          text-underline-offset: 3px;
-          text-decoration-thickness: 1px;
-        }
-        .hq-consent__link:hover {
-          text-decoration-thickness: 2px;
         }
         .hq-consent__actions {
           display: flex;
