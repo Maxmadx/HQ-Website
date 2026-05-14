@@ -466,13 +466,11 @@ export default function AdminAnalytics() {
 
     const prevPageviews = prevFiltered.filter((e) => e.eventType === 'pageview');
     const prevUniqueSessions = new Set(prevFiltered.map((e) => e.sessionId)).size;
-    const prevCTAs = prevFiltered.filter((e) => e.eventType === 'cta_click');
-    const prevForms = prevFiltered.filter((e) => e.eventType === 'form_submit');
 
-    // Segment by event type
+    // Segment by event type. Note: cta_click / form_submit are not emitted
+    // anywhere in the site yet, so those panels were removed rather than shown
+    // as misleading permanent zeros.
     const pageviews = filtered.filter((e) => e.eventType === 'pageview');
-    const ctaClicks = filtered.filter((e) => e.eventType === 'cta_click');
-    const formSubmits = filtered.filter((e) => e.eventType === 'form_submit');
     const scrollEvents = filtered.filter((e) => e.eventType === 'scroll_depth');
     const exitEvents = filtered.filter((e) => e.eventType === 'page_exit');
 
@@ -506,16 +504,12 @@ export default function AdminAnalytics() {
     const hours = sessionsByHour(pageviews);
     const scrollByPage = scrollDepthByPage(pageviews, scrollEvents, 4);
     const journeys = topJourneys(pageviews, 5);
-    const topCTAs = topN(countBy(ctaClicks, 'elementId'), 6);
-    const topForms = topN(countBy(formSubmits, 'page'), 5);
     const campaigns = topCampaigns(pageviews, 8);
     const utmSrc = topUtmSources(pageviews, 6);
 
     // Sparklines (full selected range)
     const pvSpark = sparklineData(pageviews, days);
     const sessSpark = sparklineData(firstPvPerSession, days);
-    const ctaSpark = sparklineData(ctaClicks, days);
-    const formSpark = sparklineData(formSubmits, days);
 
     // Top referrer domains (Feature 5)
     const topReferrers = topReferrerDomains(pageviews, 8);
@@ -527,7 +521,9 @@ export default function AdminAnalytics() {
       { label: 'Viewed Service Page', match: (p) => /discovery|hire|training|course|ground|license|licence|simulator/i.test(p) },
       { label: 'Reached Booking / Contact', match: (p) => /book|contact|enquir|price|pricing/i.test(p) },
     ];
-    const funnel = funnelData(pageviews, formSubmits, FUNNEL_STEPS);
+    // No form_submit events are emitted yet — funnelData omits the final
+    // "Submitted Form" step when given an empty array.
+    const funnel = funnelData(pageviews, [], FUNNEL_STEPS);
 
     // Per-page avg time on page (Feature 7)
     const timeByPage = avgTimeByPage(exitEvents, 8);
@@ -537,23 +533,23 @@ export default function AdminAnalytics() {
     const deviceDonuts = devices.map((d, i) => ({ color: deviceColors[i] || C.muted, pct: d.pct, label: d.name }));
 
     return {
-      filtered, prevPageviews, prevUniqueSessions, prevCTAs, prevForms,
-      pageviews, ctaClicks, formSubmits, scrollEvents, exitEvents, firstPvPerSession,
+      filtered, prevPageviews, prevUniqueSessions,
+      pageviews, scrollEvents, exitEvents, firstPvPerSession,
       uniqueSessions, pvByDay, sessByDay, bounce, avgTime, avgScroll, topPages,
       sources, devices, browsers, topCountries, mapData, hours, scrollByPage,
-      journeys, topCTAs, topForms, campaigns, utmSrc, pvSpark, sessSpark, ctaSpark,
-      formSpark, topReferrers, funnel, timeByPage, sourceDonuts, deviceDonuts,
+      journeys, campaigns, utmSrc, pvSpark, sessSpark,
+      topReferrers, funnel, timeByPage, sourceDonuts, deviceDonuts,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [events, prevEvents, excludedIps, days, visitorSegment]);
 
   const {
-    filtered, prevPageviews, prevUniqueSessions, prevCTAs, prevForms,
-    pageviews, ctaClicks, formSubmits, scrollEvents, exitEvents, firstPvPerSession,
+    filtered, prevPageviews, prevUniqueSessions,
+    pageviews, scrollEvents, exitEvents, firstPvPerSession,
     uniqueSessions, pvByDay, sessByDay, bounce, avgTime, avgScroll, topPages,
     sources, devices, browsers, topCountries, mapData, hours, scrollByPage,
-    journeys, topCTAs, topForms, campaigns, utmSrc, pvSpark, sessSpark, ctaSpark,
-    formSpark, topReferrers, funnel, timeByPage, sourceDonuts, deviceDonuts,
+    journeys, campaigns, utmSrc, pvSpark, sessSpark,
+    topReferrers, funnel, timeByPage, sourceDonuts, deviceDonuts,
   } = agg;
 
   // ─── CSV export — downloads exactly what's on screen (segment + range) ──────
@@ -571,7 +567,6 @@ export default function AdminAnalytics() {
   // ─── Styles ────────────────────────────────────────────────────────────────
   const grid2 = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 };
   const grid3 = { display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 };
-  const grid4 = { display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 };
   const donutWrap = { display: 'flex', alignItems: 'center', gap: 20, marginTop: 4 };
   const legendItem = { display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, fontSize: '0.76rem' };
 
@@ -727,11 +722,9 @@ export default function AdminAnalytics() {
               {/* Period-over-period change is hidden when a visitor segment is active —
                   the previous period isn't segmented, so the comparison wouldn't be like-for-like. */}
               <SectionLabel>Overview</SectionLabel>
-              <div style={grid4}>
+              <div style={grid2}>
                 <MetricCard label="Page Views" value={pageviews.length.toLocaleString()} sparkData={pvSpark} sparkColor={C.blue} change={visitorSegment === 'all' ? pctChange(pageviews.length, prevPageviews.length) : null} topic="pageViews" />
                 <MetricCard label="Unique Sessions" value={uniqueSessions.toLocaleString()} sparkData={sessSpark} sparkColor={C.purple} change={visitorSegment === 'all' ? pctChange(uniqueSessions, prevUniqueSessions) : null} topic="uniqueSessions" />
-                <MetricCard label="CTA Clicks" value={ctaClicks.length.toLocaleString()} sparkData={ctaSpark} sparkColor={C.cyan} change={visitorSegment === 'all' ? pctChange(ctaClicks.length, prevCTAs.length) : null} />
-                <MetricCard label="Form Submits" value={formSubmits.length.toLocaleString()} sparkData={formSpark} sparkColor={C.emerald} change={visitorSegment === 'all' ? pctChange(formSubmits.length, prevForms.length) : null} />
               </div>
 
               {/* ── Engagement ─────────────────────────────────────────── */}
@@ -946,26 +939,8 @@ export default function AdminAnalytics() {
                 </>
               )}
 
-              {/* ── Interactions ───────────────────────────────────────── */}
-              <SectionLabel>Interactions</SectionLabel>
-              <div style={grid2}>
-                <Card>
-                  <CardTitle>Top CTA Clicks<InfoTooltip topic="topCtaClicks" /></CardTitle>
-                  {topCTAs.length === 0 ? <p style={{ color: C.muted, fontSize: '0.875rem' }}>No data</p> : (
-                    topCTAs.map(([name, count], i) => (
-                      <TRow key={name} rank={i + 1} name={name} count={count} maxCount={topCTAs[0][1]} />
-                    ))
-                  )}
-                </Card>
-                <Card>
-                  <CardTitle>Top Form Submit Pages<InfoTooltip topic="topFormSubmits" /></CardTitle>
-                  {topForms.length === 0 ? <p style={{ color: C.muted, fontSize: '0.875rem' }}>No data</p> : (
-                    topForms.map(([page, count], i) => (
-                      <TRow key={page} rank={i + 1} name={page} count={count} maxCount={topForms[0][1]} />
-                    ))
-                  )}
-                </Card>
-              </div>
+              {/* Interactions section removed — cta_click / form_submit are not
+                  emitted anywhere in the site yet, so those tiles were always zero. */}
 
                 </>
               </div>

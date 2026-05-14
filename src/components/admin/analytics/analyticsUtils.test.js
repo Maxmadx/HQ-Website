@@ -4,7 +4,7 @@ import {
   countBy, topN, groupByDay, bounceRate, avgTimeOnPage, formatDuration,
   avgScrollDepth, scrollDepthByPage, topJourneys, categoriseSource,
   trafficSources, sessionsByHour, sparklineData, topCampaigns,
-  parseDevices, topUtmSources, topReferrerDomains,
+  parseDevices, topUtmSources, topReferrerDomains, funnelData,
 } from './analyticsUtils.js';
 
 // Helper to make a mock event
@@ -298,6 +298,29 @@ describe('topUtmSources', () => {
     const result = topUtmSources(pvs, 5);
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual(['google', 2]);
+  });
+});
+
+describe('funnelData', () => {
+  const steps = [
+    { label: 'Landed', match: () => true },
+    { label: 'Explored', match: (p) => p !== '/' },
+  ];
+
+  it('omits the Submitted Form step when no form_submit events are given', () => {
+    const pvs = [
+      mkEvent({ sessionId: 's1', page: '/' }),
+      mkEvent({ sessionId: 's1', page: '/about' }),
+    ];
+    const result = funnelData(pvs, [], steps);
+    expect(result.map((s) => s.label)).toEqual(['Landed', 'Explored']);
+  });
+
+  it('appends the Submitted Form step when form_submit events exist', () => {
+    const pvs = [mkEvent({ sessionId: 's1', page: '/' })];
+    const forms = [mkEvent({ sessionId: 's1', eventType: 'form_submit' })];
+    const result = funnelData(pvs, forms, steps);
+    expect(result[result.length - 1]).toMatchObject({ label: 'Submitted Form', count: 1 });
   });
 });
 

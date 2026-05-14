@@ -290,7 +290,9 @@ export function topReferrerDomains(pageviews, n = 8) {
 /**
  * Booking conversion funnel for HQ Aviation.
  * steps = [{ label, match: (page: string) => boolean }]
- * The final step (form submit) is taken from formSubmitEvents.
+ * The final "Submitted Form" step is appended only when formSubmitEvents has
+ * data — form_submit isn't emitted anywhere yet, so passing [] omits the step
+ * rather than showing a permanent zero.
  * Returns [{ label, count, pct }] where pct is relative to step 0 (total sessions).
  */
 export function funnelData(pageviews, formSubmitEvents, steps) {
@@ -307,12 +309,14 @@ export function funnelData(pageviews, formSubmitEvents, steps) {
     return { label, count, pct: Math.round((count / top) * 100) };
   });
 
-  const formSessions = new Set(formSubmitEvents.map((e) => e.sessionId)).size;
-  results.push({
-    label: 'Submitted Form',
-    count: formSessions,
-    pct: Math.round((formSessions / top) * 100),
-  });
+  if (formSubmitEvents && formSubmitEvents.length > 0) {
+    const formSessions = new Set(formSubmitEvents.map((e) => e.sessionId)).size;
+    results.push({
+      label: 'Submitted Form',
+      count: formSessions,
+      pct: Math.round((formSessions / top) * 100),
+    });
+  }
 
   return results;
 }
