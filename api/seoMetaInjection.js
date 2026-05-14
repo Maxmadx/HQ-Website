@@ -31,7 +31,7 @@ function renderHead({ title, description, ogImage, canonicalUrl }) {
   return lines.join('\n    ');
 }
 
-function factory({ indexHtmlPath, getMetaForStaticPath, getMetaForDynamicPath }) {
+function factory({ indexHtmlPath, getMetaForStaticPath, getMetaForDynamicPath, serve404OnUnknownPath = false }) {
   // Fail-soft: in the Cloud Run + Firebase Hosting architecture, Express never
   // serves the SPA (Hosting does), so index.html isn't in the container. Skip
   // initialisation if the template can't be read — middleware becomes a no-op.
@@ -58,7 +58,25 @@ function factory({ indexHtmlPath, getMetaForStaticPath, getMetaForDynamicPath })
       }
       if (meta) cache.set(req.path, meta);
     }
-    if (!meta) return next();
+    if (!meta) {
+      // Unknown path on an SPA route. Two options:
+      // (a) serve404OnUnknownPath: return 404 + SPA shell so React renders
+      //     NotFound — fixes Google's "soft 404" detection for SPA architecture
+      // (b) fall through (default — back-compat for setups that have their own
+      //     downstream 404 handler)
+      if (serve404OnUnknownPath) {
+        const fallbackHead = [
+          '<title>Page Not Found | HQ Aviation</title>',
+          '<meta name="description" content="The page you were looking for doesn\'t exist or has moved.">',
+          '<meta name="robots" content="noindex, nofollow">',
+        ].join('\n    ');
+        const html = TEMPLATE.replace('<!--SSR_HEAD-->', fallbackHead);
+        res.status(404);
+        res.set('Content-Type', 'text/html; charset=utf-8');
+        return res.send(html);
+      }
+      return next();
+    }
 
     const head = renderHead(meta);
     const html = TEMPLATE.replace('<!--SSR_HEAD-->', head);

@@ -33,7 +33,10 @@
       },
       {
         "source": "**",
-        "destination": "/index.html"
+        "run": {
+          "serviceId": "hq-aviation-server",
+          "region": "europe-west2"
+        }
       }
     ],
     "headers": [

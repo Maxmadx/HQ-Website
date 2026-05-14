@@ -17,11 +17,17 @@ COPY package.json package-lock.json* ./
 # Install only production dependencies
 RUN npm install --omit=dev --legacy-peer-deps
 
-# Copy server source (NOT the React app — Firebase Hosting serves that separately)
+# Copy server source
 COPY server.js ./
 COPY api/ ./api/
 COPY src/lib/ ./src/lib/
 COPY scripts/ ./scripts/
+
+# Copy built SPA artefacts (dist/) so server.js can SSR-inject meta + serve
+# 404 status with the SPA shell. Hosting still serves static assets via CDN;
+# this dist is only the index.html template + manifest for meta injection.
+# REQUIRES: `npm run build` has been run before docker build.
+COPY dist/ ./dist/
 
 # Final image — slim runtime
 FROM node:20-slim AS runtime

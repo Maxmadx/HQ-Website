@@ -13,7 +13,8 @@
     "static": "node server.js",
     "test": "vitest run",
     "test:rules": "firebase emulators:exec --only firestore 'vitest run firestore-rules.test.js'",
-    "deploy:server": "GIT_REV=$(git rev-parse --short HEAD) && docker build --build-arg GIT_REV=$GIT_REV --platform linux/amd64 -t europe-west2-docker.pkg.dev/hq-website-4abc7/hq-aviation/server:$GIT_REV -t europe-west2-docker.pkg.dev/hq-website-4abc7/hq-aviation/server:latest . && docker push --all-tags europe-west2-docker.pkg.dev/hq-website-4abc7/hq-aviation/server && gcloud run deploy hq-aviation-server --image=europe-west2-docker.pkg.dev/hq-website-4abc7/hq-aviation/server:$GIT_REV --region=europe-west2 --set-env-vars=GIT_REV=$GIT_REV"
+    "deploy:server": "GIT_REV=$(git rev-parse --short HEAD) && docker build --build-arg GIT_REV=$GIT_REV --platform linux/amd64 -t europe-west2-docker.pkg.dev/hq-website-4abc7/hq-aviation/server:$GIT_REV -t europe-west2-docker.pkg.dev/hq-website-4abc7/hq-aviation/server:latest . && docker push --all-tags europe-west2-docker.pkg.dev/hq-website-4abc7/hq-aviation/server && gcloud run deploy hq-aviation-server --image=europe-west2-docker.pkg.dev/hq-website-4abc7/hq-aviation/server:$GIT_REV --region=europe-west2 --set-env-vars=GIT_REV=$GIT_REV",
+    "deploy:all": "npm run build && firebase deploy --only hosting && npm run deploy:server"
   },
   "repository": {
     "type": "git",
