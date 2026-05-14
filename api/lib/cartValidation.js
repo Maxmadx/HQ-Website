@@ -29,6 +29,8 @@ const ProductLineSchema = z.object({
   requiresShipping: z.boolean().optional().default(false),
 }).strict();
 
+// london_tour booking details. priceP is the total for the booking, in pence
+// (unlike ProductLineSchema.priceP, which is per-unit).
 const LondonTourSchema = z.object({
   experience: z.enum(['shared', 'private']),
   timeOfDay: z.enum(['day', 'sunset', 'night']),
