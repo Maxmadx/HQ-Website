@@ -28,6 +28,11 @@ const C = {
   red: '#f87171',
 };
 
+// Visitor-identity (visitorId) and referral instrumentation (referralRefCode,
+// share_referral events) went live on launch day. Metrics that depend on it
+// under-report for any window reaching back before this date.
+const TRACKING_LIVE_SINCE = new Date('2026-05-20').getTime();
+
 // ─── Internal sub-components ───────────────────────────────────────────────────
 
 function SectionLabel({ children }) {
@@ -641,6 +646,20 @@ export default function AdminAnalytics() {
             }}>
               <div style={{ width: 8, height: 8, background: '#22c55e', borderRadius: '50%', boxShadow: '0 0 0 3px rgba(34,197,94,0.2)', flexShrink: 0 }} />
               Filtering {excludedIps.length === 1 ? 'your IP' : `${excludedIps.length} IPs`} — showing real visitor data only
+            </div>
+          )}
+
+          {/* Tracking-coverage notice — auto-hides once the window no longer reaches
+              back before launch day */}
+          {Date.now() - days * 86400 * 1000 < TRACKING_LIVE_SINCE && (
+            <div style={{
+              background: '#1c1407', border: '1px solid #92590e', borderRadius: 8,
+              padding: '8px 16px', marginBottom: 20,
+              display: 'flex', alignItems: 'center', gap: 10,
+              fontSize: '0.78rem', color: '#fbbf24',
+            }}>
+              <div style={{ width: 8, height: 8, background: '#f59e0b', borderRadius: '50%', flexShrink: 0 }} />
+              Visitor identity &amp; referral tracking went live 20 May 2026 — New vs Returning and the Referral Funnel&apos;s Share Clicked / Friend Arrived stages under-report for earlier dates in this range.
             </div>
           )}
 
