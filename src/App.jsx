@@ -98,6 +98,7 @@ import ExpeditionPhilosophyVariations from './pages/ExpeditionPhilosophyVariatio
 import ExpeditionPhilosophyJVariations from './pages/ExpeditionPhilosophyJVariations';
 import Checkout from './pages/Checkout';
 import BookingConfirmed from './pages/BookingConfirmed';
+import Upgrade from './pages/Upgrade';
 import LondonTourCheckout from './pages/LondonTourCheckout';
 import LondonTourConfirmed from './pages/LondonTourConfirmed';
 import AircraftComparison from './pages/AircraftComparison';
@@ -230,6 +231,7 @@ function App() {
         <Route path="/training/trial-lessons" element={<DiscoveryFlight />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/booking-confirmed" element={<BookingConfirmed />} />
+        <Route path="/upgrade" element={<Upgrade />} />
         <Route path="/london-tour-checkout" element={<LondonTourCheckout />} />
         <Route path="/london-tour-confirmed" element={<LondonTourConfirmed />} />
         <Route path="/sales/new" element={<Sales />} />

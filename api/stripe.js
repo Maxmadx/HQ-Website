@@ -275,6 +275,60 @@ async function getPrice(aircraft, duration) {
 }
 
 /**
+ * Returns the upgrade diff in pence for R22 → R44 at the given duration.
+ *
+ * Pricing modes (admin-controlled via the `pricing/upgrade_r22_to_r44_<dur>min`
+ * Firestore doc):
+ *   - If the doc exists with `price > 0` (in pence), that price IS the
+ *     amount charged for the upgrade (fixed override — e.g. £100 promotional).
+ *   - Otherwise: auto-calculate as (R44 price for `duration`) - `flightAmountPence`.
+ *
+ * Returns null if neither path yields a positive diff.
+ */
+async function getUpgradeDiffPence(duration, flightAmountPence) {
+  const dur = Number(duration);
+  if (dur !== 30 && dur !== 60) return null;
+
+  // 1. Admin override
+  try {
+    const docId = `upgrade_r22_to_r44_${dur}min`;
+    const snap = await admin.firestore().collection('pricing').doc(docId).get();
+    if (snap.exists) {
+      const price = snap.data().price;
+      if (typeof price === 'number' && price > 0) return price;
+    }
+  } catch (err) {
+    console.warn('[stripe] upgrade override lookup failed:', err.message);
+  }
+
+  // 2. Auto: R44 price minus what was already paid for the flight portion
+  const r44Price = await getPrice('r44', dur);
+  if (!r44Price) return null;
+  const diff = r44Price - (Number(flightAmountPence) || 0);
+  return diff > 0 ? diff : null;
+}
+
+/**
+ * Returns the R44 price in pence for the given duration.
+ * Wraps `getPrice` to surface a clearer error for the upgrade path.
+ */
+async function getR44Price(duration) {
+  const dur = Number(duration);
+  if (dur !== 30 && dur !== 60) {
+    const err = new Error(`Invalid upgrade duration: ${duration}`);
+    err.statusCode = 400;
+    throw err;
+  }
+  const price = await getPrice('r44', dur);
+  if (price === null || typeof price !== 'number' || price <= 0) {
+    const err = new Error('R44 price unavailable');
+    err.statusCode = 500;
+    throw err;
+  }
+  return price;
+}
+
+/**
  * Creates a Stripe PaymentIntent with a price read from Firestore.
  * Throws with statusCode 400 if aircraft/duration is invalid.
  */
@@ -439,9 +493,26 @@ async function createLondonTourPaymentIntent({ experience, timeOfDay, quantity, 
 /**
  * Sends a booking confirmation email to the customer.
  */
-async function sendConfirmationEmail({ customerName, customerEmail, aircraft, duration, amount, bookingRef, addons, fulfilment, shippingAddress, referralCode = '' }) {
+async function sendConfirmationEmail({ customerName, customerEmail, aircraft, duration, amount, bookingRef, addons, fulfilment, shippingAddress, referralCode = '', flightAmountPence = 0 }) {
   const priceFormatted = `£${(amount / 100).toFixed(2)}`;
   const aircraftName = AIRCRAFT_NAMES[aircraft] || aircraft;
+  const fmtPence = (p) => `£${(Number(p) / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const upgradeBlock = (aircraft === 'r22')
+    ? `
+    <div style="margin: 32px 0; padding: 24px; background: #faf9f6; border-radius: 12px; border: 1px solid #e8e8e8;">
+      <h2 style="margin: 0 0 12px; font-size: 18px; font-family: 'Playfair Display', Georgia, serif; color: #0A0A0A;">Bring 2 extra friends — upgrade to R44</h2>
+      <p style="margin: 0 0 16px; color: #444; line-height: 1.5; font-family: Inter, -apple-system, Arial, sans-serif; font-size: 14px;">
+        You can swap your R22 for an R44 and bring 2 extra passengers. You only pay the price difference.<br>
+        R44 30 min: ${fmtPence(30500)} (you'd pay ${fmtPence(30500 - flightAmountPence)})<br>
+        R44 60 min: ${fmtPence(60500)} (you'd pay ${fmtPence(60500 - flightAmountPence)})
+      </p>
+      <a href="${process.env.SITE_URL || 'https://hqaviation.co.uk'}/upgrade?ref=${escapeHtml(bookingRef || '')}"
+         style="display: inline-block; padding: 12px 20px; background: #1a1a1a; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 600; font-family: Inter, -apple-system, Arial, sans-serif; font-size: 14px;">
+        Upgrade to R44
+      </a>
+    </div>
+  `
+    : '';
 
   await getTransporter().sendMail({
     from: process.env.EMAIL_FROM,
@@ -557,6 +628,7 @@ async function sendConfirmationEmail({ customerName, customerEmail, aircraft, du
     }</p>
   `
   : ''}
+            ${upgradeBlock}
             ${referralCode ? `
             <!-- Referral CTA -->
             <div style="margin: 32px 0; padding: 24px; background: #faf9f6; border-radius: 12px; border: 1px solid #e8e8e8;">
@@ -760,6 +832,26 @@ async function sendLondonTourConfirmationEmail({ customerName, customerEmail, ex
 }
 
 /**
+ * Sends an upgrade confirmation email to the customer after their booking has been upgraded.
+ */
+async function sendUpgradeConfirmationEmail({ customerName, customerEmail, newAircraft, newDuration, diffPaidPence, originalPaymentIntentId }) {
+  if (!customerEmail) return;
+  const html = `
+    <p>Hi ${escapeHtml(customerName || 'there')},</p>
+    <p>Your Discovery Flight has been upgraded to a <strong>${escapeHtml(newAircraft.toUpperCase())} ${newDuration}-minute</strong> flight.</p>
+    <p>You paid an additional <strong>£${(diffPaidPence / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> for the upgrade.</p>
+    <p>Booking reference: <code>${escapeHtml(originalPaymentIntentId)}</code></p>
+    <p>The HQ Aviation team will be in touch to confirm your slot.</p>
+  `;
+  return getTransporter().sendMail({
+    from: process.env.EMAIL_FROM,
+    to: customerEmail,
+    subject: 'Your flight has been upgraded',
+    html,
+  });
+}
+
+/**
  * Notifies the HQ team that a referral code has been redeemed and a free item needs fulfilling.
  */
 async function sendReferralRedeemedEmail({ owner, redeemer, freeItem }) {
@@ -815,6 +907,16 @@ async function handleWebhook(req) {
   if (event.type === 'payment_intent.succeeded') {
     const pi = event.data.object;
     const { productType, customerName, customerEmail, customerPhone, wantsVoucher, voucherLocation, voucherMessage } = pi.metadata;
+
+    // Upgrade path — mutates an existing booking rather than creating a new one
+    if (productType === 'discovery-flight-upgrade') {
+      try {
+        await applyUpgradeFromPi(pi);
+      } catch (upErr) {
+        console.error('[stripe webhook] upgrade processing failed:', upErr.message);
+      }
+      return;
+    }
 
     // Persist booking to Firestore
     try {
@@ -1021,6 +1123,8 @@ async function handleWebhook(req) {
         // Default: discovery-flight (includes legacy intents without productType)
         const { aircraft, duration } = pi.metadata;
         const { addons: webhookParsedAddons, fulfilment: webhookFulfilment, shippingAddress: webhookShippingAddress } = parseAddonsFromMetadata(pi.metadata);
+        const webhookAddonTotal = (webhookParsedAddons || []).reduce((sum, a) => sum + (Number(a.lineTotal) || 0), 0);
+        const flightOnlyAmount = pi.amount - webhookAddonTotal;
         await sendConfirmationEmail({
           customerName,
           customerEmail,
@@ -1032,6 +1136,7 @@ async function handleWebhook(req) {
           fulfilment: webhookFulfilment,
           shippingAddress: webhookShippingAddress,
           referralCode: pi.metadata.referralCode || '',
+          flightAmountPence: flightOnlyAmount,
         });
       }
     } catch (emailErr) {
@@ -1047,6 +1152,92 @@ async function handleWebhook(req) {
  * Idempotent — safe to call from both the client confirmation page AND the webhook.
  * Does not overwrite an existing booking's status field.
  */
+/**
+ * Apply an upgrade to an existing booking based on a `discovery-flight-upgrade`
+ * Stripe PaymentIntent. Idempotent — if the booking already has an `upgrade`
+ * field set, returns { alreadyApplied: true } without re-writing. Called by
+ * both the Stripe webhook and the client-driven /api/record-upgrade endpoint
+ * so we don't depend on webhook delivery.
+ */
+async function applyUpgradeFromPi(pi) {
+  const { originalPaymentIntentId, newAircraft, newDuration } = pi.metadata || {};
+  if (!originalPaymentIntentId) throw new Error('upgrade PI missing originalPaymentIntentId');
+  const ref = admin.firestore().collection('bookings').doc(originalPaymentIntentId);
+  const snap = await ref.get();
+  if (!snap.exists) throw new Error(`original booking not found: ${originalPaymentIntentId}`);
+  const booking = snap.data();
+  if (booking.upgrade) {
+    return { alreadyApplied: true, bookingId: originalPaymentIntentId };
+  }
+  const newDur = Number(newDuration);
+  const r44Price = await getR44Price(newDur);
+  const newAircraftCode = newAircraft || 'r44';
+  await ref.update({
+    aircraft: newAircraftCode,
+    aircraftName: AIRCRAFT_NAMES[newAircraftCode] || newAircraftCode,
+    duration: newDur,
+    originalAircraft: booking.aircraft,
+    originalAircraftName: booking.aircraftName || null,
+    originalDuration: booking.duration,
+    flightAmountPence: r44Price,
+    totalAmountPence: (Number(booking.totalAmountPence) || 0) + (r44Price - (Number(booking.flightAmountPence) || 0)),
+    upgrade: {
+      newAircraft: newAircraft || 'r44',
+      newDuration: newDur,
+      upgradePaymentIntentId: pi.id,
+      upgradedAt: admin.firestore.FieldValue.serverTimestamp(),
+    },
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+  try {
+    await sendUpgradeConfirmationEmail({
+      customerName: booking.customerName,
+      customerEmail: booking.customerEmail,
+      newAircraft: newAircraft || 'r44',
+      newDuration: newDur,
+      diffPaidPence: pi.amount,
+      originalPaymentIntentId,
+    });
+  } catch (emailErr) {
+    // Don't fail the upgrade write if the email send fails.
+    console.error('[applyUpgradeFromPi] email send failed:', emailErr.message);
+  }
+  return { alreadyApplied: false, bookingId: originalPaymentIntentId };
+}
+
+/**
+ * Client-driven upgrade recorder. Verifies the upgrade PaymentIntent with
+ * Stripe (retrying briefly while the PI is still 'processing'), then applies
+ * the upgrade to the booking doc. Safe to call multiple times — applyUpgradeFromPi
+ * is idempotent. Used by /api/record-upgrade so the admin sees the upgrade
+ * even if the Stripe webhook never delivers.
+ */
+async function recordUpgrade(upgradePaymentIntentId) {
+  if (!upgradePaymentIntentId) {
+    const err = new Error('upgradePaymentIntentId is required');
+    err.statusCode = 400;
+    throw err;
+  }
+  let pi = await getStripe().paymentIntents.retrieve(upgradePaymentIntentId);
+  const RETRY_DELAY_MS = 400;
+  const MAX_RETRIES = 4; // ~1.6s total — same bridge as recordBooking
+  for (let attempt = 0; attempt < MAX_RETRIES && pi.status === 'processing'; attempt++) {
+    await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+    pi = await getStripe().paymentIntents.retrieve(upgradePaymentIntentId);
+  }
+  if (pi.status !== 'succeeded') {
+    const err = new Error(`Upgrade PaymentIntent ${upgradePaymentIntentId} has not succeeded (status: ${pi.status})`);
+    err.statusCode = 400;
+    throw err;
+  }
+  if ((pi.metadata || {}).productType !== 'discovery-flight-upgrade') {
+    const err = new Error(`PaymentIntent ${upgradePaymentIntentId} is not an upgrade PI`);
+    err.statusCode = 400;
+    throw err;
+  }
+  return await applyUpgradeFromPi(pi);
+}
+
 async function recordBooking(paymentIntentId) {
   if (!paymentIntentId) {
     const err = new Error('paymentIntentId is required');
@@ -1054,7 +1245,15 @@ async function recordBooking(paymentIntentId) {
     throw err;
   }
 
-  const pi = await getStripe().paymentIntents.retrieve(paymentIntentId);
+  // Stripe occasionally reports 'processing' for a few hundred ms after the
+  // client SDK reports succeeded. Retry briefly to bridge this race.
+  let pi = await getStripe().paymentIntents.retrieve(paymentIntentId);
+  const RETRY_DELAY_MS = 400;
+  const MAX_RETRIES = 4; // ~1.6s total
+  for (let attempt = 0; attempt < MAX_RETRIES && pi.status === 'processing'; attempt++) {
+    await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+    pi = await getStripe().paymentIntents.retrieve(paymentIntentId);
+  }
 
   if (pi.status !== 'succeeded') {
     const err = new Error(`Payment intent ${paymentIntentId} has not succeeded (status: ${pi.status})`);
@@ -1235,4 +1434,72 @@ async function createMiscPaymentIntent({ itemId, qty, customerName, customerEmai
   return paymentIntent;
 }
 
-module.exports = { getPrice, applyDiscountPence, priceAddons, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking, recordPurchaseEvent };
+/**
+ * Creates a Stripe PaymentIntent for the price difference between an
+ * R22 booking and a desired R44 duration. Add-ons and voucher are NOT
+ * recharged — only the flight portion changes.
+ *
+ * @param {Object} args
+ * @param {string} args.originalPaymentIntentId  Existing R22 booking PI ID.
+ * @param {30|60}  args.newDuration              Target R44 duration.
+ * @returns {Promise<{ clientSecret: string, diffPence: number, newDuration: number }>}
+ */
+async function createUpgradePaymentIntent({ originalPaymentIntentId, newDuration }) {
+  if (!originalPaymentIntentId || typeof originalPaymentIntentId !== 'string') {
+    const err = new Error('originalPaymentIntentId required');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const bookingRef = admin.firestore().collection('bookings').doc(originalPaymentIntentId);
+  const snap = await bookingRef.get();
+  if (!snap.exists) {
+    const err = new Error('Booking not found');
+    err.statusCode = 404;
+    throw err;
+  }
+  const booking = snap.data();
+
+  if (booking.aircraft !== 'r22') {
+    const err = new Error("This booking isn't eligible for an R44 upgrade");
+    err.statusCode = 400;
+    throw err;
+  }
+  if (booking.upgrade) {
+    const err = new Error('This booking has already been upgraded');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const flightPaid = Number(booking.flightAmountPence) || 0;
+  // Admin can set a fixed override at pricing/upgrade_r22_to_r44_<dur>min.
+  // Otherwise this returns R44_price - flightPaid (auto).
+  const diffPence = await getUpgradeDiffPence(newDuration, flightPaid);
+  if (!diffPence || diffPence <= 0) {
+    const err = new Error('Selected duration is not an upgrade');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const paymentIntent = await getStripe().paymentIntents.create({
+    amount: diffPence,
+    currency: 'gbp',
+    metadata: {
+      productType: 'discovery-flight-upgrade',
+      originalPaymentIntentId,
+      newAircraft: 'r44',
+      newDuration: String(newDuration),
+      customerName: String(booking.customerName || '').slice(0, 500),
+      customerEmail: String(booking.customerEmail || '').slice(0, 500),
+      customerPhone: String(booking.customerPhone || '').slice(0, 500),
+    },
+  });
+
+  return {
+    clientSecret: paymentIntent.client_secret,
+    diffPence,
+    newDuration: Number(newDuration),
+  };
+}
+
+module.exports = { getPrice, applyDiscountPence, priceAddons, createPaymentIntent, getLondonTourPrice, createLondonTourPaymentIntent, createMiscPaymentIntent, createUpgradePaymentIntent, getR44Price, getUpgradeDiffPence, handleWebhook, recordBooking, recordUpgrade, recordPurchaseEvent };

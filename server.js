@@ -33,7 +33,7 @@ const path = require('path');
 const fs = require('fs');
 const compression = require('compression');
 const helmet = require('helmet');
-const { createPaymentIntent, createLondonTourPaymentIntent, createMiscPaymentIntent, handleWebhook, recordBooking } = require('./api/stripe');
+const { createPaymentIntent, createLondonTourPaymentIntent, createMiscPaymentIntent, createUpgradePaymentIntent, handleWebhook, recordBooking, recordUpgrade } = require('./api/stripe');
 const { getBooking } = require('./api/booking');
 const imageRouter = require('./api/image');
 const leadsRouter = require('./api/leads');
@@ -440,6 +440,18 @@ app.post('/api/create-misc-payment-intent', paymentLimiter, express.json(), asyn
   }
 });
 
+// POST /api/create-upgrade-payment-intent
+app.post('/api/create-upgrade-payment-intent', express.json(), async (req, res) => {
+  try {
+    const { originalPaymentIntentId, newDuration } = req.body || {};
+    const out = await createUpgradePaymentIntent({ originalPaymentIntentId, newDuration: Number(newDuration) });
+    res.json(out);
+  } catch (err) {
+    const status = err.statusCode || 500;
+    res.status(status).json({ error: err.message || 'Internal error' });
+  }
+});
+
 // POST /api/record-booking
 // Called by the client confirmation page right after Stripe payment succeeds.
 // Verifies the payment intent with Stripe and writes the booking to Firestore.
@@ -449,6 +461,23 @@ app.post('/api/record-booking', express.json(), async (req, res) => {
     const { paymentIntentId } = req.body;
     const booking = await recordBooking(paymentIntentId);
     res.json({ ok: true, booking });
+  } catch (err) {
+    const status = err.statusCode || 500;
+    res.status(status).json({ error: err.message });
+  }
+});
+
+// POST /api/record-upgrade
+// Called by the upgrade modal right after Stripe confirms the upgrade payment.
+// Verifies the upgrade PI with Stripe and applies the upgrade to the booking
+// in Firestore. Idempotent — if the webhook already applied it, returns
+// { alreadyApplied: true }. Lets the admin see the upgrade even when the
+// Stripe webhook doesn't deliver.
+app.post('/api/record-upgrade', express.json(), async (req, res) => {
+  try {
+    const { upgradePaymentIntentId } = req.body;
+    const result = await recordUpgrade(upgradePaymentIntentId);
+    res.json({ ok: true, ...result });
   } catch (err) {
     const status = err.statusCode || 500;
     res.status(status).json({ error: err.message });

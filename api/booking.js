@@ -1,4 +1,5 @@
 const admin = require('firebase-admin');
+const { getUpgradeDiffPence } = require('./stripe');
 const logger = require('./lib/logger.js');
 
 /**
@@ -15,6 +16,19 @@ async function getBooking(req, res) {
     const snap = await admin.firestore().collection('bookings').doc(paymentIntentId).get();
     if (!snap.exists) return res.status(404).json({ error: 'Booking not found' });
     const data = snap.data();
+
+    // Compute the upgrade diff server-side (honouring admin override at
+    // pricing/upgrade_r22_to_r44_<dur>min). Only meaningful for R22 bookings
+    // that haven't been upgraded yet.
+    let upgradeDiffPence = null;
+    if (data.aircraft === 'r22' && !data.upgrade) {
+      try {
+        upgradeDiffPence = await getUpgradeDiffPence(data.duration, data.flightAmountPence || 0);
+      } catch (err) {
+        console.warn('[api/booking] upgrade diff calc failed:', err.message);
+      }
+    }
+
     // Whitelist fields we expose
     const safe = {
       paymentIntentId,
@@ -35,6 +49,7 @@ async function getBooking(req, res) {
       upgrade: data.upgrade || null,
       originalAircraft: data.originalAircraft || null,
       originalDuration: data.originalDuration || null,
+      upgradeDiffPence,
     };
     res.json(safe);
   } catch (err) {

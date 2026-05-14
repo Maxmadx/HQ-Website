@@ -7,7 +7,6 @@ import DiscoveryAddons from '../components/checkout/DiscoveryAddons';
 import { computeAddonsTotal, computeLineTotal } from '../lib/discoveryAddons';
 import { useDiscoveryAddons } from '../hooks/useDiscoveryAddons';
 import { trackEvent, getSessionId } from '../lib/analytics';
-import ExitIntentModal from '../components/checkout/ExitIntentModal';
 import useExitIntent from '../components/checkout/useExitIntent';
 import useTabReturn from '../components/checkout/useTabReturn';
 import { upsertCart, getCartId, rehydrateCartByToken } from '../lib/cart';
@@ -122,16 +121,9 @@ function CheckoutForm({
     if (result.error) {
       setError(result.error.message);
     } else if (result.paymentIntent.status === 'succeeded') {
-      fetch('/api/record-booking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ paymentIntentId: result.paymentIntent.id }),
-      }).catch(() => {}); // fire-and-forget — webhook is the fallback
-      navigate(
-        `/booking-confirmed?ref=${result.paymentIntent.id}` +
-        `&aircraft=${aircraft}&duration=${duration}&price=${price}` +
-        `&name=${encodeURIComponent(name)}`
-      );
+      // Navigate immediately. /booking-confirmed fetches the booking record
+      // server-side via the PI id — no need to leak details through the URL.
+      navigate(`/booking-confirmed?ref=${result.paymentIntent.id}`);
     }
   };
 
@@ -311,11 +303,20 @@ function MiscCheckoutForm({ itemId, itemName, qty, price, requiresShipping, appa
     if (result.error) {
       setError(result.error.message);
     } else if (result.paymentIntent.status === 'succeeded') {
-      fetch('/api/record-booking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ paymentIntentId: result.paymentIntent.id }),
-      }).catch(() => {}); // fire-and-forget — webhook is the canonical fallback
+      // Wait for the booking record to be written before navigating, so the
+      // success page can render the offers cards immediately. Caps at ~5s; if
+      // record-booking is still pending after that we navigate anyway and the
+      // success page's own retry logic takes over.
+      try {
+        await Promise.race([
+          fetch('/api/record-booking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ paymentIntentId: result.paymentIntent.id }),
+          }),
+          new Promise((resolve) => setTimeout(resolve, 5000)),
+        ]);
+      } catch {}
       navigate(
         `/booking-confirmed?ref=${result.paymentIntent.id}` +
         `&type=misc` +
@@ -393,7 +394,7 @@ function MiscCheckoutForm({ itemId, itemName, qty, price, requiresShipping, appa
 // ─── Inline Email Step ───────────────────────────────────────────────────────
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function InlineEmailStep({ defaultEmail = '', onContinue }) {
+function InlineEmailStep({ defaultEmail = '', onContinue, exitMode = false, onDismiss }) {
   const [email, setEmail] = useState(defaultEmail || '');
   const [company, setCompany] = useState(''); // honeypot
   const [submitting, setSubmitting] = useState(false);
@@ -411,17 +412,48 @@ function InlineEmailStep({ defaultEmail = '', onContinue }) {
     }
   }
 
+  // Inline styles that morph between cream and dark slate themes when
+  // exit-intent fires. Background/border/text-colour all transition over
+  // ~450ms so the form appears to be the same element changing identity.
+  const descColor = exitMode ? '#94a3b8' : '#666';
+  const labelColor = exitMode ? '#cbd5e1' : undefined;
+  const inputBg = exitMode ? '#0f172a' : '#faf9f6';
+  const inputBorder = exitMode ? '#334155' : '#e0e0e0';
+  const inputColor = exitMode ? '#f1f5f9' : '#1a1a1a';
+  const fineColor = exitMode ? '#64748b' : '#999';
+
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      <p style={{ fontSize: '14px', color: '#666', margin: '0 0 4px', lineHeight: 1.5 }}>
-        Where shall we send your booking confirmation?
+      <p
+        style={{
+          fontSize: '14px',
+          color: descColor,
+          margin: '0 0 4px',
+          lineHeight: 1.5,
+          transition: 'color 450ms ease',
+        }}
+      >
+        {exitMode
+          ? "We'll email you a link so you can come back when you're ready. No commitment."
+          : 'Where shall we send your booking confirmation?'}
       </p>
 
       <div style={styles.fieldGroup}>
-        <label htmlFor="emf-email" style={styles.label}>Email Address</label>
+        <label
+          htmlFor="emf-email"
+          style={{ ...styles.label, ...(labelColor ? { color: labelColor } : null), transition: 'color 450ms ease' }}
+        >
+          Email Address
+        </label>
         <input
           id="emf-email"
-          style={styles.input}
+          style={{
+            ...styles.input,
+            background: inputBg,
+            borderColor: inputBorder,
+            color: inputColor,
+            transition: 'background 450ms ease, border-color 450ms ease, color 450ms ease',
+          }}
           type="email"
           autoComplete="email"
           autoFocus
@@ -430,7 +462,7 @@ function InlineEmailStep({ defaultEmail = '', onContinue }) {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <span style={{ fontSize: '12px', color: '#999', marginTop: '2px' }}>
+        <span style={{ fontSize: '12px', color: fineColor, marginTop: '2px', transition: 'color 450ms ease' }}>
           We'll only use this to send your booking. You can unsubscribe any time.
         </span>
       </div>
@@ -447,21 +479,75 @@ function InlineEmailStep({ defaultEmail = '', onContinue }) {
         aria-hidden="true"
       />
 
-      <button
-        type="submit"
-        disabled={!valid || submitting}
-        style={(!valid || submitting) ? { ...styles.btn, ...styles.btnDisabled } : styles.btn}
-      >
-        {submitting ? 'Continuing…' : 'Continue'}
-      </button>
+      {exitMode ? (
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            type="button"
+            onClick={() => onDismiss && onDismiss()}
+            style={{
+              flex: 1,
+              padding: '14px 16px',
+              fontSize: 14,
+              fontWeight: 600,
+              borderRadius: 8,
+              border: '1px solid #334155',
+              background: 'transparent',
+              color: '#cbd5e1',
+              cursor: 'pointer',
+              transition: 'background 200ms ease',
+            }}
+          >
+            No thanks
+          </button>
+          <button
+            type="submit"
+            disabled={!valid || submitting}
+            style={{
+              flex: 1,
+              padding: '14px 16px',
+              fontSize: 14,
+              fontWeight: 600,
+              borderRadius: 8,
+              border: 'none',
+              background: valid ? '#1a1a1a' : '#334155',
+              color: '#fff',
+              cursor: valid && !submitting ? 'pointer' : 'not-allowed',
+              transition: 'background 200ms ease',
+            }}
+          >
+            {submitting ? 'Saving…' : 'Save & email'}
+          </button>
+        </div>
+      ) : (
+        <button
+          type="submit"
+          disabled={!valid || submitting}
+          style={(!valid || submitting) ? { ...styles.btn, ...styles.btnDisabled } : styles.btn}
+        >
+          {submitting ? 'Continuing…' : 'Continue'}
+        </button>
+      )}
     </form>
   );
 }
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 export default function Checkout() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  const [recordBookingError, setRecordBookingError] = useState(() => searchParams.get('error') || '');
+
+  // Strip the error param from the URL once we've captured it so a refresh
+  // doesn't re-show the banner.
+  useEffect(() => {
+    if (searchParams.get('error')) {
+      const next = new URLSearchParams(searchParams);
+      next.delete('error');
+      setSearchParams(next, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [referredByCode] = useState(() => {
     // First try URL param; fall back to sessionStorage written by DiscoveryFlight
@@ -645,6 +731,24 @@ export default function Checkout() {
       `}</style>
       <div style={styles.container}>
 
+        {recordBookingError && (
+          <div role="alert" style={{
+            background: '#fef2f2',
+            color: '#991b1b',
+            border: '1px solid #fecaca',
+            borderRadius: '8px',
+            padding: '14px 18px',
+            marginBottom: '20px',
+            fontSize: '0.95rem',
+            fontFamily: "'Space Grotesk', Arial, sans-serif",
+            maxWidth: '720px',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+          }}>
+            We couldn't confirm your booking: {recordBookingError}. Please try again or contact HQ Aviation.
+          </div>
+        )}
+
         {/* Back link */}
         <Link to={isMisc ? `/store/${itemId}` : '/training/trial-lessons'} style={styles.back}>← Back</Link>
 
@@ -733,11 +837,46 @@ export default function Checkout() {
             )}
           </div>
 
-          {/* Payment Form */}
-          <div style={styles.formPanel} className="co-form">
-            <h2 style={styles.formHeading}>Your Details &amp; Payment</h2>
+          {/* Payment Form — morphs to dark "Save your booking?" panel
+              when exit-intent fires while still on the email step.
+              Position is bumped above the page-wide dim overlay (rendered
+              further down) so the form reads as the focused element. */}
+          <div
+            style={{
+              ...styles.formPanel,
+              background: showExitModal ? '#0f172a' : '#fff',
+              borderColor: showExitModal ? '#1e293b' : '#e8e8e8',
+              position: 'relative',
+              zIndex: showExitModal ? 10000 : 'auto',
+              boxShadow: showExitModal ? '0 20px 60px rgba(0,0,0,0.5)' : 'none',
+              transition:
+                'background 450ms ease, border-color 450ms ease, box-shadow 450ms ease',
+            }}
+            className="co-form"
+          >
+            <h2
+              style={{
+                ...styles.formHeading,
+                ...(showExitModal
+                  ? {
+                      fontSize: '20px',
+                      fontFamily: "'Space Grotesk', Arial, sans-serif",
+                      textTransform: 'none',
+                      letterSpacing: 'normal',
+                      color: '#fff',
+                    }
+                  : null),
+                transition: 'color 450ms ease, font-size 250ms ease, letter-spacing 250ms ease',
+              }}
+            >
+              {showExitModal ? 'Save your booking?' : 'Your Details & Payment'}
+            </h2>
             {needsEmail ? (
-              <InlineEmailStep onContinue={handleEmailContinue} />
+              <InlineEmailStep
+                onContinue={handleEmailContinue}
+                exitMode={showExitModal}
+                onDismiss={() => setExitDismissed(true)}
+              />
             ) : (
               <Elements stripe={stripePromise}>
                 {isMisc ? (
@@ -768,10 +907,21 @@ export default function Checkout() {
         </div>
       </div>
     </div>
-      <ExitIntentModal
-        open={showExitModal}
-        onSave={(typedEmail) => { setExitDismissed(true); handleEmailContinue(typedEmail); }}
-        onDismiss={() => setExitDismissed(true)}
+      {/* Dim overlay during exit-intent — page-wide backdrop sitting between
+          the rest of the page and the dark form panel (which is raised to
+          z-index 10000). Pointer-events disabled so the form below stays
+          interactive; 'No thanks' is the only dismiss path. */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0, 0, 0, 0.6)',
+          opacity: showExitModal ? 1 : 0,
+          pointerEvents: 'none',
+          zIndex: 9999,
+          transition: 'opacity 450ms ease',
+        }}
       />
     </>
   );
