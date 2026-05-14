@@ -394,7 +394,7 @@ router.patch('/:id/status', requireAdmin, async (req, res) => {
       status,
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
-    if (status === 'abandoned') {
+    if (status === 'abandoned' && !snap.data().abandonedAt) {
       patch.abandonedAt = admin.firestore.FieldValue.serverTimestamp();
     }
     await ref.set(patch, { merge: true });
