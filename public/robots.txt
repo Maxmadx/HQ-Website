@@ -11,47 +11,64 @@ Disallow: /checkout
 Disallow: /booking-confirmed
 Disallow: /london-tour-checkout
 Disallow: /london-tour-confirmed
+Disallow: /upgrade
+
+# Production utility pages (noindex, no SEO value)
+Disallow: /rhc-configurator
 
 # Internal sitemap component (use /sitemap.xml instead)
 Disallow: /sitemap
 Allow: /sitemap.xml
 
-# Defence-in-depth: dev/test routes are stripped from prod build but list here too
+# Defence-in-depth: dev/test routes are stripped from the prod build
+# (import.meta.env.DEV gate in App.jsx) but listed here too. Keep in sync
+# with DEV_ONLY_ROUTES in src/lib/seoRoutes.js.
 Disallow: /hero-test
 Disallow: /hero-section-test
 Disallow: /hero-section-final
 Disallow: /hero-section-final-testing
 Disallow: /testing-hero-section
+Disallow: /award-variations
+Disallow: /mobile-second-section
+Disallow: /wireframes
+Disallow: /accordion-variations
+Disallow: /r66-benefits-variations
+Disallow: /expeditions-philosophy-variations
+Disallow: /expeditions-philosophy-j-variations
+Disallow: /flying-variations
+Disallow: /final-draft
+Disallow: /experimentation
+Disallow: /experimentation-hero-section
+Disallow: /wall-of-cool-variations
+Disallow: /wall-of-cool-title-variations
+Disallow: /wall-of-cool-center-card-variations
+Disallow: /wall-of-cool-center-card-variations-2
+Disallow: /wall-of-cool-center-card-variations-3
+Disallow: /wall-of-cool-center-card-variations-4
+Disallow: /wall-of-cool-compass-card
+Disallow: /wall-of-cool-final-card
+Disallow: /wall-of-cool-final-card-r66
+Disallow: /wall-of-cool-final-card-sky
+Disallow: /wall-of-cool-gradient-variations
+Disallow: /wall-of-cool-gallery-gradient-variations
+Disallow: /authorisedservicecentercard
+Disallow: /scroll-path-test
 Disallow: /carousel-picker
 Disallow: /carousel-picker-v2
 Disallow: /arrow-picker
+Disallow: /components
+Disallow: /hero-path-picker
+Disallow: /parallax-picker
 Disallow: /ownership-picker
 Disallow: /ppl-picker
-Disallow: /journey-picker
-Disallow: /journey-lines-picker
-Disallow: /parallax-picker
-Disallow: /testimonials-picker
-Disallow: /video-slider-picker
-Disallow: /hero-path-picker
-Disallow: /scroll-path-test
-Disallow: /wireframes
-Disallow: /accordion-variations
-Disallow: /award-variations
-Disallow: /sfh-variations
-Disallow: /flying-variations
-Disallow: /about-us-variations
-Disallow: /r66-benefits-variations
-Disallow: /sales/sliding-gallery-variations
-Disallow: /sales/pre-owned-variations
-Disallow: /sales/pre-owned-2
-Disallow: /experimentation
-Disallow: /experimentation-2
-Disallow: /endofmarchversion
-Disallow: /final-draft
-Disallow: /sfhtests
-Disallow: /authorisedservicecentercard
-Disallow: /components
-Disallow: /mobile-second-section
 Disallow: /final-why-fly-a-helicopter
+Disallow: /sales/sliding-gallery-variations
+Disallow: /sales/pre-owned-2
+Disallow: /sales/pre-owned-variations
+Disallow: /dev/image-picker
+Disallow: /journey-lines-picker
+Disallow: /journey-picker
+Disallow: /video-slider-picker
+Disallow: /testimonials-picker
 
 Sitemap: https://hqaviation.com/sitemap.xml

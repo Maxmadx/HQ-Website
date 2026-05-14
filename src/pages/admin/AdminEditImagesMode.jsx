@@ -16,6 +16,7 @@ import { db } from '../../lib/firebase';
 import { SECTION_MAP } from '../../lib/imageSections';
 import { useEditMode } from '../../context/EditModeContext';
 import ImageEditDrawer from '../../components/admin/ImageEditDrawer';
+import Seo from '../../components/seo/Seo';
 import {
   listMediaLibrary,
   uploadToMediaLibrary,
@@ -439,6 +440,7 @@ export default function AdminEditImagesMode() {
 
   return (
     <div style={page}>
+      <Seo noindex />
       {/* Top bar */}
       <div style={topBar}>
         <Link to="/admin" style={backLink}>← Admin panel</Link>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../../lib/firebase';
+import Seo from '../../components/seo/Seo';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ export default function AdminLogin() {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#111827', fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <Seo noindex />
       <div style={{ background: '#fff', borderRadius: '12px', padding: '2.5rem', width: '100%', maxWidth: '380px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
         <div style={{ marginBottom: '2rem' }}>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#111827', margin: 0 }}>HQ Aviation</h1>

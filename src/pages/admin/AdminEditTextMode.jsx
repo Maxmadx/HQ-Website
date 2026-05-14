@@ -20,6 +20,7 @@ import {
   TEXT_SECTION_MAP,
 } from '../../lib/textSections';
 import { usePageText, bustPageCache } from '../../hooks/usePageText';
+import Seo from '../../components/seo/Seo';
 
 // ─── Page tab config ──────────────────────────────────────────────────────────
 const PAGE_IDS = Object.keys(TEXT_PAGE_LABELS);
@@ -126,6 +127,7 @@ export default function AdminEditTextMode() {
 
   return (
     <div style={pageStyle}>
+      <Seo noindex />
       {/* Top bar */}
       <div style={topBar}>
         <Link to="/admin" style={backLink}>← Admin panel</Link>
