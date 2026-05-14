@@ -1,5 +1,10 @@
 import { UAParser } from 'ua-parser-js';
 
+// Page-exit durations above this are treated as backgrounded-tab noise, not
+// reading time, and dropped from time-on-page averages (GA4 uses the same
+// 30-minute inactivity boundary for a session).
+const MAX_DWELL_SECONDS = 1800;
+
 // ─── Core helpers ───────────────────────────────────────────
 
 /** Group an array of objects by a field value and count occurrences */
@@ -57,12 +62,18 @@ export function bounceRate(pageviews) {
   return Math.round((bounced / total) * 100);
 }
 
-/** Mean seconds from page_exit events (elementId holds the seconds as a string) */
+/**
+ * Mean seconds from page_exit events (elementId holds the seconds as a string).
+ * Durations over MAX_DWELL_SECONDS are dropped as backgrounded-tab noise.
+ */
 export function avgTimeOnPage(pageExitEvents) {
-  if (pageExitEvents.length === 0) return 0;
   const toNum = (v) => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
-  const total = pageExitEvents.reduce((sum, e) => sum + toNum(e.elementId), 0);
-  return Math.round(total / pageExitEvents.length);
+  const durations = pageExitEvents
+    .map((e) => toNum(e.elementId))
+    .filter((s) => s <= MAX_DWELL_SECONDS);
+  if (durations.length === 0) return 0;
+  const total = durations.reduce((a, b) => a + b, 0);
+  return Math.round(total / durations.length);
 }
 
 /** Format seconds as "Xm Ys" or "Xs" */
@@ -140,28 +151,37 @@ export function topJourneys(pageviews, n = 5) {
 const SEARCH_DOMAINS = ['google', 'bing', 'yahoo', 'duckduckgo', 'baidu', 'yandex'];
 const SOCIAL_DOMAINS = ['facebook', 'instagram', 'twitter', 'x.com', 't.co', 'linkedin', 'tiktok', 'youtube', 'pinterest'];
 
+// "Direct / Unknown" rather than "Direct": an empty referrer also covers
+// privacy browsers and sites that strip the Referer header — it is not
+// purely people who typed the URL in.
 export function categoriseSource(referrer) {
-  if (!referrer) return 'Direct';
+  if (!referrer) return 'Direct / Unknown';
   try {
     const host = new URL(referrer).hostname.toLowerCase();
     if (SEARCH_DOMAINS.some((d) => host.includes(d))) return 'Search';
     if (SOCIAL_DOMAINS.some((d) => host.includes(d))) return 'Social';
     return 'Referral';
   } catch {
-    return 'Direct';
+    return 'Direct / Unknown';
   }
 }
 
 /**
- * Returns [{ name, count, pct }] for Direct / Search / Social / Referral.
+ * Returns [{ name, count, pct }] for Direct/Unknown / Search / Social / Referral.
+ * Counted per SESSION, not per pageview: in an SPA every pageview carries the
+ * same entry referrer, so per-pageview counting overweights engaged sources.
  */
 export function trafficSources(pageviews) {
-  const counts = {};
+  const sessionReferrer = {};
   for (const e of pageviews) {
-    const cat = categoriseSource(e.referrer);
+    if (!(e.sessionId in sessionReferrer)) sessionReferrer[e.sessionId] = e.referrer;
+  }
+  const counts = {};
+  for (const ref of Object.values(sessionReferrer)) {
+    const cat = categoriseSource(ref);
     counts[cat] = (counts[cat] || 0) + 1;
   }
-  const total = pageviews.length;
+  const total = Object.keys(sessionReferrer).length;
   if (total === 0) return [];
   return Object.entries(counts)
     .map(([name, count]) => ({ name, count, pct: Math.round((count / total) * 100) }))
@@ -203,12 +223,21 @@ export function parseDevices(events) {
 
 // ─── Hourly distribution ─────────────────────────────────────
 
-/** Returns a 24-element array: count of pageviews per UTC hour */
+/** Hour-of-day (0–23) in Europe/London for a Date — handles BST/GMT without DST math */
+function londonHour(date) {
+  const fmt = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/London', hour: 'numeric', hour12: false,
+  });
+  const h = parseInt(fmt.formatToParts(date).find((p) => p.type === 'hour').value, 10);
+  return h === 24 ? 0 : h; // some engines render midnight as "24"
+}
+
+/** Returns a 24-element array: count of pageviews per hour, in Europe/London time */
 export function sessionsByHour(pageviews) {
   const hours = Array(24).fill(0);
   for (const e of pageviews) {
     if (!e.timestamp) continue;
-    hours[toDate(e.timestamp).getUTCHours()]++;
+    hours[londonHour(toDate(e.timestamp))]++;
   }
   return hours;
 }
@@ -236,14 +265,19 @@ export function topUtmSources(pageviews, n = 8) {
 
 /**
  * Top N actual referring domains (excludes search engines, social networks, and empty referrers).
- * Strips www. prefix. Returns [[domain, count], ...].
+ * Strips www. prefix. Counted per SESSION, not per pageview — an SPA repeats the
+ * entry referrer on every pageview. Returns [[domain, count], ...].
  */
 export function topReferrerDomains(pageviews, n = 8) {
-  const domainCounts = {};
+  const sessionReferrer = {};
   for (const e of pageviews) {
-    if (!e.referrer) continue;
+    if (!(e.sessionId in sessionReferrer)) sessionReferrer[e.sessionId] = e.referrer;
+  }
+  const domainCounts = {};
+  for (const referrer of Object.values(sessionReferrer)) {
+    if (!referrer) continue;
     try {
-      const host = new URL(e.referrer).hostname.toLowerCase();
+      const host = new URL(referrer).hostname.toLowerCase();
       if (SEARCH_DOMAINS.some((d) => host.includes(d))) continue;
       if (SOCIAL_DOMAINS.some((d) => host.includes(d))) continue;
       const clean = host.replace(/^www\./, '');
@@ -293,8 +327,10 @@ export function avgTimeByPage(exitEvents, n = 8) {
   const byPage = {};
   for (const e of exitEvents) {
     if (!e.page) continue;
+    const secs = toNum(e.elementId);
+    if (secs > MAX_DWELL_SECONDS) continue; // drop backgrounded-tab noise
     if (!byPage[e.page]) byPage[e.page] = { total: 0, count: 0 };
-    byPage[e.page].total += toNum(e.elementId);
+    byPage[e.page].total += secs;
     byPage[e.page].count += 1;
   }
   return Object.entries(byPage)

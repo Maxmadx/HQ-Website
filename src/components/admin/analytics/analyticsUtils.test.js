@@ -4,7 +4,7 @@ import {
   countBy, topN, groupByDay, bounceRate, avgTimeOnPage, formatDuration,
   avgScrollDepth, scrollDepthByPage, topJourneys, categoriseSource,
   trafficSources, sessionsByHour, sparklineData, topCampaigns,
-  parseDevices, topUtmSources,
+  parseDevices, topUtmSources, topReferrerDomains,
 } from './analyticsUtils.js';
 
 // Helper to make a mock event
@@ -96,6 +96,15 @@ describe('avgTimeOnPage', () => {
   it('returns 0 for empty array', () => {
     expect(avgTimeOnPage([])).toBe(0);
   });
+
+  it('drops backgrounded-tab outliers (> 30 min)', () => {
+    const exits = [
+      mkEvent({ eventType: 'page_exit', elementId: '30' }),
+      mkEvent({ eventType: 'page_exit', elementId: '90' }),
+      mkEvent({ eventType: 'page_exit', elementId: '7200' }), // 2h backgrounded tab — dropped
+    ];
+    expect(avgTimeOnPage(exits)).toBe(60); // mean of 30 & 90 only
+  });
 });
 
 describe('formatDuration', () => {
@@ -168,9 +177,9 @@ describe('topJourneys', () => {
 });
 
 describe('categoriseSource', () => {
-  it('returns Direct for empty referrer', () => {
-    expect(categoriseSource('')).toBe('Direct');
-    expect(categoriseSource(null)).toBe('Direct');
+  it('returns Direct / Unknown for empty referrer', () => {
+    expect(categoriseSource('')).toBe('Direct / Unknown');
+    expect(categoriseSource(null)).toBe('Direct / Unknown');
   });
 
   it('returns Search for Google', () => {
@@ -187,15 +196,28 @@ describe('categoriseSource', () => {
 });
 
 describe('trafficSources', () => {
-  it('groups and totals sources correctly', () => {
+  it('groups and totals sources correctly (per session)', () => {
     const pvs = [
-      mkEvent({ referrer: '' }),
-      mkEvent({ referrer: '' }),
-      mkEvent({ referrer: 'https://google.com' }),
+      mkEvent({ referrer: '', sessionId: 's1' }),
+      mkEvent({ referrer: '', sessionId: 's2' }),
+      mkEvent({ referrer: 'https://google.com', sessionId: 's3' }),
     ];
     const result = trafficSources(pvs);
-    const direct = result.find(s => s.name === 'Direct');
-    expect(direct.pct).toBe(67);
+    const direct = result.find(s => s.name === 'Direct / Unknown');
+    expect(direct.pct).toBe(67); // 2 of 3 sessions
+  });
+
+  it('counts each session once even with many pageviews (SPA entry referrer repeats)', () => {
+    const pvs = [
+      mkEvent({ referrer: 'https://google.com', sessionId: 's1' }),
+      mkEvent({ referrer: 'https://google.com', sessionId: 's1' }),
+      mkEvent({ referrer: 'https://google.com', sessionId: 's1' }),
+      mkEvent({ referrer: '', sessionId: 's2' }),
+    ];
+    const result = trafficSources(pvs);
+    // Per-pageview this would be 75% Search; per-session it is 50/50.
+    expect(result.find(s => s.name === 'Search').pct).toBe(50);
+    expect(result.find(s => s.name === 'Direct / Unknown').pct).toBe(50);
   });
 });
 
@@ -205,10 +227,16 @@ describe('sessionsByHour', () => {
     expect(result).toHaveLength(24);
   });
 
-  it('increments the correct hour (UTC)', () => {
+  it('buckets by Europe/London hour during BST (UTC+1)', () => {
+    // 2026-04-10 is British Summer Time → 12:00 UTC = 13:00 London
     const pvs = [mkEvent({ timestamp: { toDate: () => new Date('2026-04-10T12:00:00Z') } })];
-    const result = sessionsByHour(pvs);
-    expect(result[12]).toBe(1);
+    expect(sessionsByHour(pvs)[13]).toBe(1);
+  });
+
+  it('buckets by Europe/London hour during GMT (winter)', () => {
+    // 2026-01-10 is GMT → 12:00 UTC = 12:00 London
+    const pvs = [mkEvent({ timestamp: { toDate: () => new Date('2026-01-10T12:00:00Z') } })];
+    expect(sessionsByHour(pvs)[12]).toBe(1);
   });
 });
 
@@ -270,5 +298,19 @@ describe('topUtmSources', () => {
     const result = topUtmSources(pvs, 5);
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual(['google', 2]);
+  });
+});
+
+describe('topReferrerDomains', () => {
+  it('counts referring domains once per session, excluding search/social', () => {
+    const pvs = [
+      mkEvent({ referrer: 'https://aviationweek.com/a', sessionId: 's1' }),
+      mkEvent({ referrer: 'https://aviationweek.com/a', sessionId: 's1' }), // same session — counts once
+      mkEvent({ referrer: 'https://www.aviationweek.com/b', sessionId: 's2' }),
+      mkEvent({ referrer: 'https://google.com', sessionId: 's3' }), // search — excluded
+      mkEvent({ referrer: '', sessionId: 's4' }), // direct — excluded
+    ];
+    const result = topReferrerDomains(pvs, 5);
+    expect(result).toEqual([['aviationweek.com', 2]]); // 2 sessions, not 3 pageviews
   });
 });

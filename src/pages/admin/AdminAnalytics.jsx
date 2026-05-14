@@ -433,7 +433,7 @@ export default function AdminAnalytics() {
   }
 
   // Donut palettes — plain constants, also read directly in the render below.
-  const sourceColors = { Direct: C.green, Search: C.blue, Social: C.purple, Referral: C.amber };
+  const sourceColors = { 'Direct / Unknown': C.green, Search: C.blue, Social: C.purple, Referral: C.amber };
   const deviceColors = ['#2563eb', '#a855f7', '#0891b2', '#16a34a', '#d97706'];
 
   // ─── Aggregations ─────────────────────────────────────────────────────────

@@ -3,8 +3,11 @@
  * Inputs are arrays of cart docs (already fetched from Firestore by the caller).
  */
 
+// 'checkout_initiated' is deliberately NOT abandoned: the user may still be on
+// the Stripe payment page. The cart-recovery cron transitions those carts to
+// 'abandoned'/'expired' once they genuinely age out, and they get counted then.
 function isAbandonedStatus(s) {
-  return s === 'abandoned' || s === 'expired' || s === 'checkout_initiated';
+  return s === 'abandoned' || s === 'expired';
 }
 
 function isRecoverable(cart) {

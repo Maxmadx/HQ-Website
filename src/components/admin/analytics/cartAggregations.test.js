@@ -43,6 +43,17 @@ describe('computeCartFunnel', () => {
       totalValueP: 0, abandonedValueP: 0, recoverableValueP: 0,
     });
   });
+
+  it('does NOT count checkout_initiated as abandoned (user may still be paying)', () => {
+    const carts = [
+      { id: 'a', status: 'checkout_initiated', email: 'p@q.r', noEmail: false, totalP: 35000, recoveryEmailsSent: [], excludedFromAnalytics: false },
+      { id: 'b', status: 'abandoned', email: 's@t.u', noEmail: false, totalP: 35000, recoveryEmailsSent: [], excludedFromAnalytics: false },
+    ];
+    const out = computeCartFunnel(carts);
+    expect(out.totalCarts).toBe(2);    // both still counted in the total
+    expect(out.abandoned).toBe(1);     // only the genuinely abandoned one
+    expect(out.recoverable).toBe(1);
+  });
 });
 
 describe('recoverableCarts', () => {
