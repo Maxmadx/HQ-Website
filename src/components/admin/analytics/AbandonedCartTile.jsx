@@ -57,7 +57,7 @@ export default function AbandonedCartTile({ carts = [], onSendRecovery }) {
   return (
     <section style={{ background: '#1a1a1a', borderRadius: 12, padding: 24, color: '#fff' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 20 }}>
-        <h2 style={{ margin: 0, fontSize: 18 }}>Abandoned Carts<InfoTooltip topic="abandonedCarts" /></h2>
+        <h2 style={{ margin: 0, fontSize: 18, color: '#fff' }}>Abandoned Carts<InfoTooltip topic="abandonedCarts" /></h2>
         <span style={{ fontSize: 22, fontWeight: 600, color: '#a855f7' }}>
           {fmtGbp(funnel.recoverableValueP)} <span style={{ fontSize: 14, fontWeight: 400 }}>recoverable</span>
           <InfoTooltip topic="recoverableHeadline" />

@@ -61,7 +61,7 @@ export default function PurchaseFunnel({ events = [], itemCategory = 'discovery-
   return (
     <section style={{ background: '#1a1a1a', borderRadius: 12, padding: 24, color: '#fff' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 12 }}>
-        <h2 style={{ margin: 0, fontSize: 18 }}>Purchase Funnel — Discovery Flight<InfoTooltip topic="purchaseFunnel" /></h2>
+        <h2 style={{ margin: 0, fontSize: 18, color: '#fff' }}>Purchase Funnel — Discovery Flight<InfoTooltip topic="purchaseFunnel" /></h2>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           {dateLabel && <span style={{ opacity: 0.7, fontSize: 13 }}>{dateLabel}</span>}
           <label style={{ fontSize: 13 }}>

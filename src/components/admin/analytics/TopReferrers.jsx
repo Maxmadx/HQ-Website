@@ -21,7 +21,7 @@ export default function TopReferrers({ friendBookings = [], referrers = {}, date
   return (
     <section style={{ background: '#1a1a1a', borderRadius: 12, padding: 24, color: '#fff' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 12 }}>
-        <h2 style={{ margin: 0, fontSize: 18 }}>Top Referrers<InfoTooltip topic="topReferrers" /></h2>
+        <h2 style={{ margin: 0, fontSize: 18, color: '#fff' }}>Top Referrers<InfoTooltip topic="topReferrers" /></h2>
         {dateLabel && <span style={{ opacity: 0.7, fontSize: 13 }}>{dateLabel}</span>}
       </header>
 

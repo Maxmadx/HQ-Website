@@ -41,7 +41,7 @@ export default function SearchKeywords({ rows = [], dateLabel = '' }) {
   return (
     <section style={{ background: '#1a1a1a', borderRadius: 12, padding: 24, color: '#fff' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
-        <h2 style={{ margin: 0, fontSize: 18 }}>Search Keywords (Google)<InfoTooltip topic="searchKeywords" /></h2>
+        <h2 style={{ margin: 0, fontSize: 18, color: '#fff' }}>Search Keywords (Google)<InfoTooltip topic="searchKeywords" /></h2>
         {dateLabel && <span style={{ opacity: 0.7, fontSize: 13 }}>{dateLabel}</span>}
       </header>
 
