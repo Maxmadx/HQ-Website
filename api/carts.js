@@ -412,10 +412,11 @@ router.post('/:id/mark-contacted', requireAdmin, async (req, res) => {
     const ref = admin.firestore().collection('carts').doc(req.params.id);
     const snap = await ref.get();
     if (!snap.exists) return res.status(404).json({ error: 'Cart not found' });
-    await ref.set({
-      contactedAt: admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    }, { merge: true });
+    const patch = { updatedAt: admin.firestore.FieldValue.serverTimestamp() };
+    if (!snap.data().contactedAt) {
+      patch.contactedAt = admin.firestore.FieldValue.serverTimestamp();
+    }
+    await ref.set(patch, { merge: true });
     return res.json({ ok: true });
   } catch (err) {
     logger.error({ err }, '[carts] mark-contacted error');
