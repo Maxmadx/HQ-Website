@@ -780,6 +780,7 @@ function FinalPPL() {
 
       {/* ========== WHY FLY A HELICOPTER ========== */}
       <WhyFlyAHelicopter />
+      <div aria-hidden="true" style={{ height: '6rem', background: '#fff' }} />
 
       {/* ========== WHERE & FAQ + DISCOVERY (swapped on mobile) ========== */}
       <div className="fppl__faq-discovery-wrap">

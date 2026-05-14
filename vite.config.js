@@ -28,6 +28,35 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    // Vendor chunking — group large stable deps into named chunks so they
+    // cache across deploys. Repeat visitors only re-download what changed.
+    // Aim is to drop the single-bundle 985 KB gzip baseline to a 300-400
+    // KB main + reusable vendor chunks. See
+    // docs/superpowers/specs/2026-05-13-cwv-quick-wins.md for the full plan.
+    rollupOptions: {
+      output: {
+        // Rolldown (Vite 8) requires manualChunks as a function.
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return undefined;
+          if (id.includes('/react-router-dom/') || /\/react(?:-dom)?\//.test(id)) {
+            return 'react';
+          }
+          if (id.includes('/framer-motion/')) return 'framer';
+          if (id.includes('/firebase/')) return 'firebase';
+          if (
+            id.includes('/react-simple-maps/') ||
+            id.includes('/d3-scale/') ||
+            id.includes('/world-atlas/')
+          ) {
+            return 'maps';
+          }
+          if (id.includes('/@stripe/')) return 'stripe';
+          return undefined;
+        },
+      },
+    },
+  },
   test: {
     setupFiles: ['./api/test-setup.js', './src/test-setup.js'],
     exclude: [
