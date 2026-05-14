@@ -330,7 +330,7 @@ router.get('/unsubscribe', async (req, res) => {
 router.get('/', requireAdmin, async (_req, res) => {
   try {
     const db = admin.firestore();
-    const [activeSnap, completedSnap] = await Promise.all([
+    const [actionableSnap, completedSnap] = await Promise.all([
       db.collection('carts')
         .where('status', 'in', ['active', 'checkout_initiated', 'abandoned', 'expired'])
         .orderBy('updatedAt', 'desc')
@@ -343,12 +343,13 @@ router.get('/', requireAdmin, async (_req, res) => {
         .get(),
     ]);
     const carts = [
-      ...activeSnap.docs.map((d) => ({ id: d.id, ...d.data() })),
+      ...actionableSnap.docs.map((d) => ({ id: d.id, ...d.data() })),
       ...completedSnap.docs.map((d) => {
         const c = d.data();
         return {
           id: d.id,
-          status: c.status,
+          status: c.status ?? null,
+          updatedAt: c.updatedAt || null,
           category: c.category || null,
           contactedAt: c.contactedAt || null,
           excludedFromAnalytics: c.excludedFromAnalytics || false,
