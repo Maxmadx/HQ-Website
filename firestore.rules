@@ -314,6 +314,13 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // SEO per-page meta overrides (spec 15). Read by Seo.jsx on any
+    // page load (publicly visible content anyway), write by admins only.
+    match /seo_overrides/{path} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Referral codes — server-only via Admin SDK (api/stripe.js).
     // Clients must never read or write referral_codes directly.
     match /referral_codes/{id} {

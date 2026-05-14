@@ -22,6 +22,7 @@ const NAV_ITEMS = [
   { to: '/admin/wall-of-cool', icon: '📸', label: 'Wall of Cool' },
   { to: '/admin/reviews', icon: '⭐', label: 'Reviews' },
   { to: '/admin/faqs', icon: '❓', label: 'FAQs' },
+  { to: '/admin/seo', icon: '🔍', label: 'SEO' },
   { to: '/admin/where-when', icon: '🗓️', label: 'Where & When' },
 ];
 
