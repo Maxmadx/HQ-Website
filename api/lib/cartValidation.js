@@ -19,12 +19,32 @@ const ShippingAddressSchema = z.object({
   postcode: z.string().min(1).max(20),
 }).strict();
 
+// One line item in a store cart. priceP is per-unit, in pence.
+const ProductLineSchema = z.object({
+  itemId: z.string().min(1).max(64),
+  name: z.string().min(1).max(200),
+  qty: z.number().int().min(1).max(50),
+  size: z.string().max(20).optional().nullable(),
+  priceP: z.number().int().min(0).max(100000000),
+  requiresShipping: z.boolean().optional().default(false),
+}).strict();
+
+const LondonTourSchema = z.object({
+  experience: z.enum(['shared', 'private']),
+  timeOfDay: z.enum(['day', 'sunset', 'night']),
+  quantity: z.number().int().min(1).max(4),
+  priceP: z.number().int().min(0).max(100000000),
+}).strict();
+
 // POST /api/carts upsert body
 const CartUpsertSchema = z.object({
   sessionId: z.string().min(8).max(64),
   email: z.string().email().max(254).optional().nullable(),
+  category: z.enum(['discovery_flight', 'product', 'london_tour']).optional().nullable(),
   flight: FlightSchema.optional().nullable(),
   addons: z.array(AddonSchema).max(20).optional().default([]),
+  products: z.array(ProductLineSchema).max(50).optional().default([]),
+  londonTour: LondonTourSchema.optional().nullable(),
   fulfilment: z.enum(['collect', 'delivery']).optional().nullable(),
   shippingAddress: ShippingAddressSchema.optional().nullable(),
   utm: z.object({
@@ -48,4 +68,6 @@ module.exports = {
   CartPatchSchema,
   FlightSchema,
   AddonSchema,
+  ProductLineSchema,
+  LondonTourSchema,
 };
