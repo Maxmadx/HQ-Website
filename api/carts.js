@@ -323,16 +323,39 @@ router.get('/unsubscribe', async (req, res) => {
   }
 });
 
-// GET /api/carts (admin) — list non-completed carts for the dashboard
+// GET /api/carts (admin) — list carts for the dashboard.
+// Two queries: the actionable set (active/checkout_initiated/abandoned/expired)
+// with full docs, plus completed carts trimmed to the fields the funnel needs
+// (so the "Recovered" stage can be computed without shipping booking PII).
 router.get('/', requireAdmin, async (_req, res) => {
   try {
-    const snap = await admin.firestore()
-      .collection('carts')
-      .where('status', 'in', ['active', 'checkout_initiated', 'abandoned'])
-      .orderBy('updatedAt', 'desc')
-      .limit(200)
-      .get();
-    const carts = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    const db = admin.firestore();
+    const [activeSnap, completedSnap] = await Promise.all([
+      db.collection('carts')
+        .where('status', 'in', ['active', 'checkout_initiated', 'abandoned', 'expired'])
+        .orderBy('updatedAt', 'desc')
+        .limit(200)
+        .get(),
+      db.collection('carts')
+        .where('status', '==', 'completed')
+        .orderBy('updatedAt', 'desc')
+        .limit(200)
+        .get(),
+    ]);
+    const carts = [
+      ...activeSnap.docs.map((d) => ({ id: d.id, ...d.data() })),
+      ...completedSnap.docs.map((d) => {
+        const c = d.data();
+        return {
+          id: d.id,
+          status: c.status,
+          category: c.category || null,
+          contactedAt: c.contactedAt || null,
+          excludedFromAnalytics: c.excludedFromAnalytics || false,
+          totalP: c.totalP || 0,
+        };
+      }),
+    ];
     return res.json({ carts });
   } catch (err) {
     logger.error({ err }, '[carts] admin list error');
