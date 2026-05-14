@@ -35,6 +35,7 @@ describe('computeCartFunnel', () => {
     // 1:35k + 2:18k + 3:35k + 4:35k + 5:35k + 6:35k = 193000 (id 7 admin excluded)
     expect(out.totalValueP).toBe(193000);
     expect(out.recoverableValueP).toBe(88000); // 35k + 18k + 35k
+    expect(out.abandonedValueP).toBe(123000); // ids 1,2,3,4 = 35k+18k+35k+35k
   });
 
   it('returns zeros for an empty list', () => {

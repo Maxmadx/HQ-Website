@@ -10,6 +10,9 @@ function isAbandonedStatus(s) {
   return s === 'abandoned' || s === 'expired';
 }
 
+// Called from both computeCartFunnel (where excludedFromAnalytics carts are
+// already skipped by an early `continue`) AND recoverableCarts (where they are
+// NOT pre-filtered) — so the excludedFromAnalytics guard below is load-bearing.
 function hasUsableEmail(cart) {
   if (!cart.email) return false;
   if (cart.noEmail) return false;
@@ -48,10 +51,10 @@ export function computeCartFunnel(carts) {
     if (isRecoverable(cart)) {
       recoverable += 1;
       recoverableValueP += cart.totalP || 0;
-      if (cart.contactedAt) contacted += 1;
+      if (cart.contactedAt != null) contacted += 1;
     }
 
-    if (cart.status === 'completed' && cart.contactedAt) {
+    if (cart.status === 'completed' && cart.contactedAt != null) {
       recovered += 1;
     }
   }
