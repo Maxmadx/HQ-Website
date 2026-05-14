@@ -40,7 +40,7 @@ export default function ConsentBanner() {
   const actionsRef = useRef(null);
   const declineRef = useRef(null);
   const acceptRef = useRef(null);
-  const dimsRef = useRef(null);        // { actionsW, declineW, acceptW } — measured once
+  const dimsRef = useRef(null);        // { actionsW, actionsH, declineW, acceptW } — measured once
   const committedRef = useRef(false);
 
   // Read consent state on mount. Also subscribe so that if `resetConsent()`
@@ -98,6 +98,7 @@ export default function ConsentBanner() {
       ) {
         dimsRef.current = {
           actionsW: actionsRef.current.offsetWidth,
+          actionsH: actionsRef.current.offsetHeight,
           declineW: declineRef.current.offsetWidth,
           acceptW: acceptRef.current.offsetWidth,
         };
@@ -130,7 +131,13 @@ export default function ConsentBanner() {
   const barStyle = dismissing
     ? { transform: `translateY(${(leave * 100).toFixed(2)}%)` }
     : undefined;
-  const actionsStyle = dismissing && dims ? { width: `${dims.actionsW}px` } : undefined;
+  // Freeze the actions box at its natural size: once both buttons are
+  // position:absolute it has no in-flow content, so without this the row
+  // (and the banner) would collapse to zero height.
+  const actionsStyle =
+    dismissing && dims
+      ? { width: `${dims.actionsW}px`, height: `${dims.actionsH}px` }
+      : undefined;
   // Accept stays pinned to the right and fades in place — it must NOT reflow
   // when Decline pops out of the flex flow.
   const acceptStyle =
@@ -144,11 +151,13 @@ export default function ConsentBanner() {
           opacity: 1 - merge,
         }
       : undefined;
-  // Decline expands left-to-right over Accept, then — as the bar slides away
-  // (leave) — fills white with dark text so it reads as the selected choice.
-  // The fill completes by ~70% of the slide so the "selected" state is clearly
-  // visible before the bar is fully gone.
+  // Decline expands left-to-right over Accept (opaque banner-charcoal so it
+  // cleanly covers Accept), then — as the bar slides away (leave) — fills
+  // white with dark text so it reads as the selected choice. The fill
+  // completes by ~70% of the slide so the "selected" state is clearly visible
+  // before the bar is fully gone. Colours interpolate #1a1a1a -> #faf9f6.
   const select = Math.min(leave / 0.7, 1);
+  const lerp = (from, to) => Math.round(from + (to - from) * select);
   const declineStyle =
     dismissing && dims
       ? {
@@ -158,8 +167,8 @@ export default function ConsentBanner() {
           bottom: 0,
           zIndex: 2,
           width: `${dims.declineW + (dims.actionsW - dims.declineW) * merge}px`,
-          background: `rgba(250, 249, 246, ${select})`,
-          color: `rgb(${Math.round(250 + (26 - 250) * select)}, ${Math.round(249 + (26 - 249) * select)}, ${Math.round(246 + (26 - 246) * select)})`,
+          background: `rgb(${lerp(26, 250)}, ${lerp(26, 249)}, ${lerp(26, 246)})`,
+          color: `rgb(${lerp(250, 26)}, ${lerp(249, 26)}, ${lerp(246, 26)})`,
         }
       : undefined;
 
