@@ -6,7 +6,7 @@ const STAGE_COLORS = {
   totalCarts:  '#5b21b6',
   abandoned:   '#7c3aed',
   recoverable: '#a855f7',
-  emailed:     '#c084fc',
+  contacted:   '#c084fc',
   recovered:   '#e9d5ff',
 };
 
@@ -40,7 +40,7 @@ export default function AbandonedCartTile({ carts = [], onSendRecovery }) {
     { key: 'totalCarts',  label: 'Carts',       count: funnel.totalCarts,  topic: 'cartsTotal' },
     { key: 'abandoned',   label: 'Abandoned',   count: funnel.abandoned,   topic: 'cartsAbandoned' },
     { key: 'recoverable', label: 'Recoverable', count: funnel.recoverable, topic: 'cartsRecoverable' },
-    { key: 'emailed',     label: 'Emailed',     count: funnel.emailed,     topic: 'cartsEmailed' },
+    { key: 'contacted',   label: 'Contacted',   count: funnel.contacted,   topic: 'cartsContacted' },
     { key: 'recovered',   label: 'Recovered',   count: funnel.recovered,   topic: 'cartsRecovered' },
   ];
   const maxCount = Math.max(...stages.map((s) => s.count), 1);

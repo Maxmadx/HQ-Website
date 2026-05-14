@@ -83,9 +83,9 @@ export const GLOSSARY = {
     title: 'Recoverable',
     body: 'Abandoned carts where we have an email AND the customer has not unsubscribed. These are the carts you (or the auto-recovery cron) can email a "your booking is saved" message to.',
   },
-  cartsEmailed: {
-    title: 'Emailed',
-    body: 'Recoverable carts where at least one recovery email has been sent (manual or automatic). If "Recoverable" is high but "Emailed" is low, there are abandoned bookings waiting for you to reach out — click Send recovery on any row in the table.',
+  cartsContacted: {
+    title: 'Contacted',
+    body: 'Recoverable carts you have manually marked as contacted. If "Recoverable" is high but "Contacted" is low, there are captured emails waiting for you to reach out — use the copy-email button on any row in the table.',
   },
   cartsRecovered: {
     title: 'Recovered',
