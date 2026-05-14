@@ -97,6 +97,8 @@ export default function AbandonedCartTile({ carts = [], onSendRecovery }) {
             {recoverable.map((cart) => {
               const aircraft = cart.flight ? (AIRCRAFT_NAMES[cart.flight.aircraftId] || cart.flight.aircraftId) : '—';
               const duration = cart.flight && cart.flight.duration ? `${cart.flight.duration}m` : '';
+              // TODO Phase 4: remove the Sent column + Send recovery button — outreach is
+              // fully manual (copy-email), and recoveryEmailsSent is no longer written.
               const sentCount = (cart.recoveryEmailsSent || []).length;
               return (
                 <tr key={cart.id} style={{ borderBottom: '1px solid #2a2a2a' }}>
