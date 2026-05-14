@@ -379,6 +379,11 @@ const HeroSectionFinalTesting = React.memo(({ navHidden, navManuallyShown, navIs
   // handlers, with the scrollY at the time. Console-visible so the user can
   // copy the logs while reproducing a lag spike.
   useEffect(() => {
+    // Dev-only: this diagnostic instrumentation is noisy (logs every longtask,
+    // slow handler and long frame to the console). Keep the code for future
+    // lag-spike debugging, but never run it in production builds.
+    if (!import.meta.env.DEV) return;
+
     const sources = [];
     const tag = (extra = '') => `[hero-perf] @scrollY=${Math.round(window.scrollY)}${extra}`;
 

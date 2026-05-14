@@ -10,10 +10,7 @@ export function useAdmin() {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
-      console.log('[useAdmin] onAuthStateChanged fired, user:', firebaseUser?.email ?? 'null');
-
       if (!firebaseUser) {
-        console.log('[useAdmin] No user — setting isAdmin=false');
         setUser(null);
         setIsAdmin(false);
         setLoading(false);
@@ -21,13 +18,9 @@ export function useAdmin() {
       }
 
       try {
-        console.log('[useAdmin] Fetching token (forceRefresh=true)…');
         const tokenResult = await getIdTokenResult(firebaseUser, true);
-        console.log('[useAdmin] Full claims:', JSON.stringify(tokenResult.claims));
         const role = tokenResult.claims?.role;
-        console.log('[useAdmin] role claim:', role);
         const admin = role === 'admin' || role === 'super_admin';
-        console.log('[useAdmin] isAdmin:', admin);
         setUser(firebaseUser);
         setIsAdmin(admin);
       } catch (err) {
