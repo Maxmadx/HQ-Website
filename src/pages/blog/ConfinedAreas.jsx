@@ -22,7 +22,7 @@ function ConfinedAreas() {
         from virtually anywhere. Unlike fixed-wing aircraft, which require runways,
         helicopters can land in fields, gardens, car parks, and purpose-built helipads
         far from any airfield. This capability transforms the helicopter from a mere
-        aircraft into a genuinely practical transport solution,but it also demands
+        aircraft into a genuinely practical transport solution, but it also demands
         skills and judgment that go well beyond basic airfield operations.
       </p>
 
@@ -41,7 +41,7 @@ function ConfinedAreas() {
       <p>
         The term "confined area" describes any landing site where the surrounding
         terrain or obstacles significantly restrict the helicopter's approach,
-        departure, or manoeuvring options. This is a relative definition,what
+        departure, or manoeuvring options. This is a relative definition, what
         constitutes a confined area for a large twin-engine helicopter might be
         perfectly straightforward for a smaller machine like the Robinson R22 or
         Cabri G2. Context matters enormously.
@@ -69,7 +69,7 @@ function ConfinedAreas() {
       <p>
         We teach our students to think about confinement in degrees rather than
         absolutes. A large, flat field with low hedges offers many approach options
-        and simple escape routes,minimally confined. A hotel helipad surrounded
+        and simple escape routes, minimally confined. A hotel helipad surrounded
         by buildings with a single approach path over a car park represents moderate
         confinement. A forest clearing accessible only via a narrow gap in the
         canopy represents severe confinement. Each level demands proportionally
@@ -104,7 +104,7 @@ function ConfinedAreas() {
         from the air, so we look for poles, pylons, and the characteristic cleared
         corridors that indicate power or telephone lines. Ways in and out means
         identifying not just your preferred approach but also your alternatives.
-        Warnings include anything unusual,vehicles moving in the area, animals
+        Warnings include anything unusual, vehicles moving in the area, animals
         that might startle, or ground conditions that suggest the surface may be
         unsuitable.
       </p>
@@ -131,7 +131,7 @@ function ConfinedAreas() {
       <p>
         The low recce is also when you finalise your approach selection. Based on
         the wind, the obstacle layout, and the escape route requirements, you
-        determine exactly how you will fly the approach,the angle, the speed,
+        determine exactly how you will fly the approach, the angle, the speed,
         the profile, and the go-around plan if needed. By the time you commit to
         the approach, every element should be clear in your mind.
       </p>
@@ -151,7 +151,7 @@ function ConfinedAreas() {
       </p>
 
       <p>
-        <strong>Landowner Permission</strong> is straightforward in principle,you
+        <strong>Landowner Permission</strong> is straightforward in principle, you
         need the landowner's consent to land on private property. In practice, this
         often requires advance coordination. For regular sites such as hotel helipads
         or private estates, Permission to Land (PPR) arrangements are typically
@@ -197,7 +197,7 @@ function ConfinedAreas() {
         margins. However, confined areas often force compromises. If the only safe
         approach path runs across the wind, or even with a tailwind component, this
         must be factored into your planning. A tailwind approach is perfectly safe
-        if anticipated and managed,but it requires earlier deceleration, a
+        if anticipated and managed, but it requires earlier deceleration, a
         shallower apparent approach angle, and greater attention to ground speed
         and overshoot potential.
       </p>
@@ -251,7 +251,7 @@ function ConfinedAreas() {
         and temperature, and confirm you have it available. If you arrive at a hover
         above a site and discover you lack the power to maintain position, your
         options have just become very limited indeed. We teach students to verify
-        their power margin during the approach,if power required is approaching
+        their power margin during the approach, if power required is approaching
         maximum available before you reach the hover, something is wrong with your
         planning or your assessment of the site.
       </p>
@@ -259,7 +259,7 @@ function ConfinedAreas() {
       <p>
         <strong>Ground Effect</strong> provides significant assistance when operating
         close to the surface. Within approximately one rotor diameter of the ground,
-        the helicopter requires substantially less power to hover,typically 10-15%
+        the helicopter requires substantially less power to hover, typically 10-15%
         less than in the OGE condition. This is valuable in confined areas, but it
         must be used wisely. If your approach takes you through an OGE hover at
         altitude (for example, stopping above trees to assess a clearing below),
@@ -327,8 +327,8 @@ function ConfinedAreas() {
       <p>
         <strong>Private Gardens and Estates</strong> present different challenges.
         These sites are often surrounded by mature trees, garden structures, and
-        domestic activity. The landing zone may be precisely defined,a formal
-        lawn, for instance,with minimal tolerance for positioning errors. Wire
+        domestic activity. The landing zone may be precisely defined, a formal
+        lawn, for instance, with minimal tolerance for positioning errors. Wire
         fences, washing lines, and temporary structures are common hazards. Children
         and pets may be present and attracted by the helicopter's arrival.
       </p>
@@ -338,7 +338,7 @@ function ConfinedAreas() {
         maintained facilities with proper markings to informal "we land here sometimes"
         arrangements. For established helipads, published approach and departure
         procedures should be followed. For less formal sites, treat the operation
-        as you would any other confined area,full reconnaissance, careful approach
+        as you would any other confined area, full reconnaissance, careful approach
         planning, and thorough obstacle assessment.
       </p>
 
@@ -354,7 +354,7 @@ function ConfinedAreas() {
       <h2>Building Confidence Through Practice</h2>
 
       <p>
-        Confined area operations cannot be learned solely from reading,they require
+        Confined area operations cannot be learned solely from reading, they require
         practice under proper instruction. At HQ Aviation, we introduce confined
         area techniques progressively, beginning with relatively open sites and
         gradually increasing the complexity as students develop confidence and skill.
@@ -362,11 +362,11 @@ function ConfinedAreas() {
 
       <p>
         The training sequence typically begins with simulated confined areas at
-        the airfield,using cones or markers to define a landing zone with
+        the airfield, using cones or markers to define a landing zone with
         specific approach requirements. This allows students to practice steep
         approaches, precise positioning, and go-around execution without the
         additional complexity of unfamiliar terrain. As skills develop, we move
-        to actual off-airfield sites selected for their training value,sites
+        to actual off-airfield sites selected for their training value, sites
         with genuine obstacles but sufficient margins for learning.
       </p>
 
@@ -383,10 +383,10 @@ function ConfinedAreas() {
         "Confined area work is where helicopter flying really comes into its own.
         There is something deeply satisfying about conducting a proper recce,
         planning a precise approach, and putting the aircraft exactly where it
-        needs to be. It demands all your skills working together,and when you
+        needs to be. It demands all your skills working together, and when you
         get it right, it feels brilliant."
         <br /><br />
-       ,Flight Instructor, HQ Aviation
+       , Flight Instructor, HQ Aviation
       </Callout>
 
       <h2>A Final Word</h2>
@@ -403,7 +403,7 @@ function ConfinedAreas() {
       <p>
         At HQ Aviation, we take great pride in producing pilots who can operate
         confidently and safely in confined areas. It is one of the most demanding
-        aspects of helicopter flying,and one of the most rewarding. If you are
+        aspects of helicopter flying, and one of the most rewarding. If you are
         ready to expand your capabilities beyond the airfield, we would be delighted
         to guide you through the training.
       </p>
@@ -415,12 +415,12 @@ function ConfinedAreas() {
       <KeyPoint
         title="Key Takeaways"
         points={[
-          "Confined areas are defined by obstacles, limited space, and restricted escape routes,context and aircraft type matter",
+          "Confined areas are defined by obstacles, limited space, and restricted escape routes, context and aircraft type matter",
           "Thorough reconnaissance (high and low recce) is the single most important factor in safe confined area operations",
           "Always confirm landowner permission and ensure compliance with ANO low flying and congested area restrictions",
           "Every approach must have a viable go-around option until you consciously commit to land",
-          "Verify power margins before committing,know your OGE hover power requirement for the conditions",
-          "Plan your departure during reconnaissance, not after landing,consider changing wind and weather",
+          "Verify power margins before committing, know your OGE hover power requirement for the conditions",
+          "Plan your departure during reconnaissance, not after landing, consider changing wind and weather",
           "Regular practice under instruction builds the judgment and confidence that makes confined area work safe and satisfying"
         ]}
       />

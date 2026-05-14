@@ -42,24 +42,24 @@ function PreFlightWalkaround() {
       </p>
 
       <p>
-        Aircraft are maintained meticulously,our engineering team at Denham follows rigorous schedules
-        and procedures,but mechanical systems can develop issues between scheduled inspections. A bird
+        Aircraft are maintained meticulously, our engineering team at Denham follows rigorous schedules
+        and procedures, but mechanical systems can develop issues between scheduled inspections. A bird
         strike overnight, a hydraulic leak that began after the last flight, a loose fastener that wasn't
-        quite tight enough,these are the kinds of problems that a thorough walkaround will catch. The
+        quite tight enough, these are the kinds of problems that a thorough walkaround will catch. The
         helicopter cannot tell you what's wrong; you must find it yourself.
       </p>
 
       <Callout variant="warning" title="The Statistics Don't Lie">
         According to aviation safety studies, a significant percentage of helicopter accidents involve
         mechanical failures that could have been detected during pre-flight inspection. Taking shortcuts
-        with your walkaround isn't saving time,it's gambling with your safety and the safety of your
+        with your walkaround isn't saving time, it's gambling with your safety and the safety of your
         passengers.
       </Callout>
 
       <p>
         We've seen students who, in their eagerness to get airborne, rush through the walkaround or
         treat it as a mere formality. This attitude must be corrected immediately. The pilot who conducts
-        a thorough, methodical inspection,every single time, without exception,is the pilot who
+        a thorough, methodical inspection, every single time, without exception, is the pilot who
         enjoys a long flying career. There are no shortcuts in aviation safety.
       </p>
 
@@ -78,12 +78,12 @@ function PreFlightWalkaround() {
       </p>
 
       <ul>
-        <li><strong>Certificate of Airworthiness</strong>,confirming the aircraft is legally permitted to fly</li>
-        <li><strong>Certificate of Registration</strong>,proving the aircraft's registration status</li>
-        <li><strong>Aircraft Technical Log</strong>,reviewing recent maintenance entries and any outstanding defects</li>
-        <li><strong>Flight Manual (POH)</strong>,the Robinson Pilot's Operating Handbook for your specific aircraft type</li>
-        <li><strong>Insurance documentation</strong>,ensuring coverage is current</li>
-        <li><strong>Your own licence and medical certificate</strong>,confirming you're legally permitted to fly</li>
+        <li><strong>Certificate of Airworthiness</strong>, confirming the aircraft is legally permitted to fly</li>
+        <li><strong>Certificate of Registration</strong>, proving the aircraft's registration status</li>
+        <li><strong>Aircraft Technical Log</strong>, reviewing recent maintenance entries and any outstanding defects</li>
+        <li><strong>Flight Manual (POH)</strong>, the Robinson Pilot's Operating Handbook for your specific aircraft type</li>
+        <li><strong>Insurance documentation</strong>, ensuring coverage is current</li>
+        <li><strong>Your own licence and medical certificate</strong>, confirming you're legally permitted to fly</li>
       </ul>
 
       <p>
@@ -142,11 +142,11 @@ function PreFlightWalkaround() {
       </p>
 
       <ul>
-        <li>Fluid leaks,oil, fuel, hydraulic fluid</li>
-        <li>Physical damage,dents, scratches, cracks, missing rivets</li>
-        <li>Security,panels properly fastened, doors secure, cowlings latched</li>
-        <li>Obstructions,blocked vents, debris in intakes, nesting material</li>
-        <li>Corrosion,particularly around battery compartment and exhaust areas</li>
+        <li>Fluid leaks, oil, fuel, hydraulic fluid</li>
+        <li>Physical damage, dents, scratches, cracks, missing rivets</li>
+        <li>Security, panels properly fastened, doors secure, cowlings latched</li>
+        <li>Obstructions, blocked vents, debris in intakes, nesting material</li>
+        <li>Corrosion, particularly around battery compartment and exhaust areas</li>
         <li>Control surface condition and freedom of movement</li>
       </ul>
 
@@ -171,11 +171,11 @@ function PreFlightWalkaround() {
       </p>
 
       <ul>
-        <li><strong>Leading edge</strong>,look for erosion, chips, dents, or any damage from debris or bird strikes</li>
-        <li><strong>Trailing edge</strong>,check for cracks, delamination, or damage</li>
-        <li><strong>Blade skin</strong>,examine for dents, wrinkles, or deformation</li>
-        <li><strong>Tip caps</strong>,verify they're secure and undamaged</li>
-        <li><strong>Blade surface</strong>,check for oil or fluid contamination</li>
+        <li><strong>Leading edge</strong>, look for erosion, chips, dents, or any damage from debris or bird strikes</li>
+        <li><strong>Trailing edge</strong>, check for cracks, delamination, or damage</li>
+        <li><strong>Blade skin</strong>, examine for dents, wrinkles, or deformation</li>
+        <li><strong>Tip caps</strong>, verify they're secure and undamaged</li>
+        <li><strong>Blade surface</strong>, check for oil or fluid contamination</li>
       </ul>
 
       <p>
@@ -189,7 +189,7 @@ function PreFlightWalkaround() {
       <p>
         Droop stops prevent the rotor blades from drooping excessively when at rest and during startup.
         Verify they're in good condition and properly positioned. Check pitch links for security and
-        any signs of damage or excessive wear. These components directly control blade pitch,any
+        any signs of damage or excessive wear. These components directly control blade pitch, any
         failure here would be catastrophic.
       </p>
 
@@ -202,8 +202,8 @@ function PreFlightWalkaround() {
       </p>
 
       <Callout variant="warning" title="The Main Rotor Retention Nut">
-        The main rotor retention nut,sometimes colloquially called the "Jesus nut" because your life
-        depends on it,secures the entire rotor system to the mast. While this component is not
+        The main rotor retention nut, sometimes colloquially called the "Jesus nut" because your life
+        depends on it, secures the entire rotor system to the mast. While this component is not
         serviceable during your walkaround, you should verify it's present, appears secure, and shows
         no signs of damage or corrosion. Any concerns about this critical component require immediate
         engineering attention.
@@ -241,13 +241,13 @@ function PreFlightWalkaround() {
       </p>
 
       <ul>
-        <li><strong>Oil level</strong>,verify it's within acceptable range using the dipstick</li>
-        <li><strong>Oil condition</strong>,check for contamination or unusual colour</li>
-        <li><strong>Hoses and lines</strong>,inspect for cracks, chafing, leaks, or security</li>
-        <li><strong>Belt condition</strong> (where applicable),check for wear, cracks, or proper tension</li>
-        <li><strong>Electrical connections</strong>,verify secure connections, no corrosion</li>
-        <li><strong>Air filter</strong>,check for obstructions or excessive dirt</li>
-        <li><strong>General cleanliness</strong>,unusual residue or staining can indicate leaks</li>
+        <li><strong>Oil level</strong>, verify it's within acceptable range using the dipstick</li>
+        <li><strong>Oil condition</strong>, check for contamination or unusual colour</li>
+        <li><strong>Hoses and lines</strong>, inspect for cracks, chafing, leaks, or security</li>
+        <li><strong>Belt condition</strong> (where applicable), check for wear, cracks, or proper tension</li>
+        <li><strong>Electrical connections</strong>, verify secure connections, no corrosion</li>
+        <li><strong>Air filter</strong>, check for obstructions or excessive dirt</li>
+        <li><strong>General cleanliness</strong>, unusual residue or staining can indicate leaks</li>
       </ul>
 
       <p>
@@ -276,10 +276,10 @@ function PreFlightWalkaround() {
       </p>
 
       <ul>
-        <li>Leading edge damage,nicks, chips, or erosion</li>
-        <li>Trailing edge condition,cracks or delamination</li>
-        <li>Overall blade condition,dents, scratches, or deformation</li>
-        <li>Proper security,blades firmly attached</li>
+        <li>Leading edge damage, nicks, chips, or erosion</li>
+        <li>Trailing edge condition, cracks or delamination</li>
+        <li>Overall blade condition, dents, scratches, or deformation</li>
+        <li>Proper security, blades firmly attached</li>
       </ul>
 
       <p>
@@ -322,11 +322,11 @@ function PreFlightWalkaround() {
       </p>
 
       <ul>
-        <li><strong>Seat security</strong>,verify seats are properly locked in position</li>
-        <li><strong>Harness condition</strong>,check webbing for wear, buckles for function</li>
-        <li><strong>Cleanliness</strong>,remove any loose items that could interfere with controls</li>
-        <li><strong>Control integrity</strong>,visual check of cyclic, collective, and pedal connections</li>
-        <li><strong>Instrument panel</strong>,look for any warning lights or obvious damage</li>
+        <li><strong>Seat security</strong>, verify seats are properly locked in position</li>
+        <li><strong>Harness condition</strong>, check webbing for wear, buckles for function</li>
+        <li><strong>Cleanliness</strong>, remove any loose items that could interfere with controls</li>
+        <li><strong>Control integrity</strong>, visual check of cyclic, collective, and pedal connections</li>
+        <li><strong>Instrument panel</strong>, look for any warning lights or obvious damage</li>
       </ul>
 
       <h3>Control Movement Checks</h3>
@@ -336,9 +336,9 @@ function PreFlightWalkaround() {
       </p>
 
       <ul>
-        <li><strong>Cyclic</strong>,full travel in all directions without binding or obstruction</li>
-        <li><strong>Collective</strong>,full travel up and down, throttle twist grip functioning</li>
-        <li><strong>Pedals</strong>,full travel left and right, return to neutral smoothly</li>
+        <li><strong>Cyclic</strong>, full travel in all directions without binding or obstruction</li>
+        <li><strong>Collective</strong>, full travel up and down, throttle twist grip functioning</li>
+        <li><strong>Pedals</strong>, full travel left and right, return to neutral smoothly</li>
       </ul>
 
       <p>
@@ -363,11 +363,11 @@ function PreFlightWalkaround() {
       </ul>
 
       <Callout variant="quote">
-        "A thorough pre-flight inspection isn't about being paranoid,it's about being professional.
+        "A thorough pre-flight inspection isn't about being paranoid, it's about being professional.
         The few minutes you spend on the ground checking your aircraft are an investment in coming
         home safely."
         <br /><br />
-       ,HQ Aviation Chief Instructor
+       , HQ Aviation Chief Instructor
       </Callout>
 
       <h2>Common Issues to Look For</h2>
@@ -379,14 +379,14 @@ function PreFlightWalkaround() {
       </p>
 
       <ul>
-        <li><strong>Oil leaks around the engine</strong>,small leaks can indicate gasket wear or loose fittings</li>
-        <li><strong>Bird nesting material</strong>,especially in air intakes, cowlings, and the tail cone</li>
-        <li><strong>Exhaust staining patterns</strong>,changes in exhaust residue can indicate engine issues</li>
-        <li><strong>Tyre condition</strong>,cuts, flat spots, or low pressure</li>
-        <li><strong>Battery corrosion</strong>,acid residue around battery compartment</li>
-        <li><strong>Chip detector lights</strong>,review maintenance logs for any recent activations</li>
-        <li><strong>Rotor blade tracking tape</strong>,worn or missing tape should be reported</li>
-        <li><strong>Cracked or crazed windscreen</strong>,can indicate impact damage or UV degradation</li>
+        <li><strong>Oil leaks around the engine</strong>, small leaks can indicate gasket wear or loose fittings</li>
+        <li><strong>Bird nesting material</strong>, especially in air intakes, cowlings, and the tail cone</li>
+        <li><strong>Exhaust staining patterns</strong>, changes in exhaust residue can indicate engine issues</li>
+        <li><strong>Tyre condition</strong>, cuts, flat spots, or low pressure</li>
+        <li><strong>Battery corrosion</strong>, acid residue around battery compartment</li>
+        <li><strong>Chip detector lights</strong>, review maintenance logs for any recent activations</li>
+        <li><strong>Rotor blade tracking tape</strong>, worn or missing tape should be reported</li>
+        <li><strong>Cracked or crazed windscreen</strong>, can indicate impact damage or UV degradation</li>
       </ul>
 
       <IllustrationPlaceholder
@@ -397,7 +397,7 @@ function PreFlightWalkaround() {
       <h2>What to Do If You Find Something Wrong</h2>
 
       <p>
-        Finding a problem during your walkaround is not a failure,it's the system working exactly
+        Finding a problem during your walkaround is not a failure, it's the system working exactly
         as intended. The question is what you do next.
       </p>
 
@@ -421,7 +421,7 @@ function PreFlightWalkaround() {
       <Callout variant="warning" title="Document Everything">
         Any significant findings should be recorded in the aircraft's technical log, even if the
         aircraft is cleared for flight. This creates a maintenance history that helps engineers
-        track developing issues. If you find something, write it down,future pilots and engineers
+        track developing issues. If you find something, write it down, future pilots and engineers
         will thank you.
       </Callout>
 
@@ -429,8 +429,8 @@ function PreFlightWalkaround() {
 
       <p>
         Ultimately, the pilot-in-command has final authority over whether to accept an aircraft for
-        flight. This responsibility cannot be delegated. If something doesn't feel right,even if
-        you can't articulate exactly what,trust your instincts. There's always another day to fly.
+        flight. This responsibility cannot be delegated. If something doesn't feel right, even if
+        you can't articulate exactly what, trust your instincts. There's always another day to fly.
       </p>
 
       <p>
@@ -448,7 +448,7 @@ function PreFlightWalkaround() {
       <p>
         The pre-flight walkaround must become an unbreakable habit. Whether you're flying for the
         first time that day or the fifth, whether you're running late or have all the time in the
-        world, whether it's a beautiful summer morning or a grey February afternoon,the walkaround
+        world, whether it's a beautiful summer morning or a grey February afternoon, the walkaround
         gets done properly, every single time.
       </p>
 
@@ -459,7 +459,7 @@ function PreFlightWalkaround() {
       </p>
 
       <p>
-        As you gain experience, your walkarounds will become faster,not because you're skipping steps,
+        As you gain experience, your walkarounds will become faster, not because you're skipping steps,
         but because you're more efficient at seeing what needs to be seen. An experienced pilot can
         complete a thorough walkaround in significantly less time than a student, while actually being
         more thorough, simply because they know exactly what to look for.
@@ -474,7 +474,7 @@ function PreFlightWalkaround() {
 
       <p>
         The pre-flight walkaround is where safe flying begins. It's a discipline, a responsibility,
-        and ultimately a privilege,the opportunity to satisfy yourself that this remarkable machine
+        and ultimately a privilege, the opportunity to satisfy yourself that this remarkable machine
         is ready to carry you safely through the sky. Take it seriously, do it thoroughly, and never
         let complacency erode your standards.
       </p>
@@ -486,10 +486,10 @@ function PreFlightWalkaround() {
       <KeyPoint
         title="Pre-Flight Walkaround Summary"
         points={[
-          "The walkaround is your last line of defence,never rush or skip steps",
+          "The walkaround is your last line of defence, never rush or skip steps",
           "Complete documentation, weather, and NOTAM checks before approaching the aircraft",
           "Follow a consistent, systematic inspection pattern every time",
-          "Pay special attention to the rotor system,blades, droop stops, and hub components",
+          "Pay special attention to the rotor system, blades, droop stops, and hub components",
           "Check engine compartment thoroughly: oil, hoses, belts, and general condition",
           "Inspect tail rotor system including blades, gearbox, and drive components",
           "Verify cabin security and full, free control movement before start",

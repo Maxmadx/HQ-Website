@@ -21,7 +21,7 @@ function LondonHeliLanes() {
         Flying a helicopter through central London is one of the most exhilarating experiences
         available to any pilot. Passing Tower Bridge at 1,000 feet, watching the Houses of
         Parliament slide beneath you, tracking the silver ribbon of the Thames as the city
-        unfolds in every direction,it's a perspective on our capital that few people ever
+        unfolds in every direction, it's a perspective on our capital that few people ever
         get to enjoy. But this privilege comes with responsibility. London's airspace is among
         the most complex in the world, and navigating it safely requires thorough preparation,
         precise flying, and clear communication.
@@ -29,7 +29,7 @@ function LondonHeliLanes() {
 
       <p>
         At HQ Aviation, we're fortunate to be based at Denham Aerodrome, just 17 nautical miles
-        northwest of central London. This puts us in an ideal position for London transits,close
+        northwest of central London. This puts us in an ideal position for London transits, close
         enough to make them practical, but outside the controlled airspace that would complicate
         our daily training operations. Over the years, we've guided countless students and
         qualified pilots through their first London flights, and we've learned what makes the
@@ -94,7 +94,7 @@ function LondonHeliLanes() {
         Several restricted areas exist around sensitive locations in London. These include
         temporary restrictions that may be NOTAMed around events, as well as permanent
         restricted zones. The area around the Houses of Parliament (Palace of Westminster)
-        and Buckingham Palace warrant particular attention,while the helicopter routes pass
+        and Buckingham Palace warrant particular attention, while the helicopter routes pass
         nearby, pilots must maintain awareness of any temporary restrictions in force.
       </p>
 
@@ -131,23 +131,23 @@ function LondonHeliLanes() {
 
       <ul>
         <li>
-          <strong>Route H4</strong>,The Thames Route. Follows the river from Canary Wharf in
+          <strong>Route H4</strong>, The Thames Route. Follows the river from Canary Wharf in
           the east to Kew/Chiswick in the west (and vice versa). This is the primary central
           London transit route and the focus of this guide.
         </li>
         <li>
-          <strong>Route H3</strong>,Connects Battersea heliport with the H4 route, providing
+          <strong>Route H3</strong>, Connects Battersea heliport with the H4 route, providing
           access for traffic to and from the south.
         </li>
         <li>
-          <strong>Route H10</strong>,A northerly route that can be used to transit around
+          <strong>Route H10</strong>, A northerly route that can be used to transit around
           the northern edge of the Heathrow CTR.
         </li>
       </ul>
 
       <p>
         Each route has designated entry and exit points, reporting points, altitude requirements,
-        and radio procedures. Using these routes correctly is not optional,they represent the
+        and radio procedures. Using these routes correctly is not optional, they represent the
         agreed framework that allows helicopters to operate safely within London's airspace.
       </p>
 
@@ -177,7 +177,7 @@ function LondonHeliLanes() {
       </p>
 
       <p>
-        The key middle section,through central London itself,runs roughly from
+        The key middle section, through central London itself, runs roughly from
         <strong>Vauxhall Bridge</strong> in the west to <strong>Tower Bridge</strong> in the
         east. This is the heart of the scenic route, where the Thames curves past Westminster
         and the City of London.
@@ -191,13 +191,13 @@ function LondonHeliLanes() {
       </p>
 
       <ul>
-        <li><strong>Vauxhall Bridge</strong>,Distinctive green colour, near the MI6 building</li>
-        <li><strong>Westminster Bridge</strong>,Adjacent to the Houses of Parliament</li>
-        <li><strong>Waterloo Bridge</strong>,Wide bridge with good views of the South Bank</li>
-        <li><strong>London Bridge</strong>,Not to be confused with Tower Bridge</li>
-        <li><strong>Tower Bridge</strong>,The iconic bascule bridge, unmistakable</li>
-        <li><strong>Canary Wharf</strong>,The cluster of tall buildings on the Isle of Dogs</li>
-        <li><strong>O2 Arena</strong>,The distinctive dome structure (formerly Millennium Dome)</li>
+        <li><strong>Vauxhall Bridge</strong>, Distinctive green colour, near the MI6 building</li>
+        <li><strong>Westminster Bridge</strong>, Adjacent to the Houses of Parliament</li>
+        <li><strong>Waterloo Bridge</strong>, Wide bridge with good views of the South Bank</li>
+        <li><strong>London Bridge</strong>, Not to be confused with Tower Bridge</li>
+        <li><strong>Tower Bridge</strong>, The iconic bascule bridge, unmistakable</li>
+        <li><strong>Canary Wharf</strong>, The cluster of tall buildings on the Isle of Dogs</li>
+        <li><strong>O2 Arena</strong>, The distinctive dome structure (formerly Millennium Dome)</li>
       </ul>
 
       <Callout variant="tip" title="Landmark Recognition">
@@ -220,14 +220,14 @@ function LondonHeliLanes() {
       <p>
         Maintaining altitude precisely is crucial. You're flying through controlled airspace
         with potentially conflicting traffic above, below, and around you. An altitude bust
-        in this environment is not just embarrassing,it's genuinely dangerous and could
+        in this environment is not just embarrassing, it's genuinely dangerous and could
         result in loss of separation with commercial traffic.
       </p>
 
       <Callout variant="warning" title="Altitude Discipline">
         The LTMA base in central London varies but can be as low as 2,500 feet. Commercial
         traffic on approach to Heathrow passes overhead at relatively low altitudes. Busting
-        your assigned altitude,even by a small margin,could put you in direct conflict
+        your assigned altitude, even by a small margin, could put you in direct conflict
         with jets on approach. Set your altitude bug and monitor it continuously.
       </Callout>
 
@@ -249,16 +249,16 @@ function LondonHeliLanes() {
       </p>
 
       <ul>
-        <li><strong>Heathrow SVFR</strong>,For clearance into the Heathrow CTR (119.900 MHz typical)</li>
-        <li><strong>Thames Radar</strong>,Tactical control within the central London helicopter routes</li>
-        <li><strong>London City Tower</strong>,If transiting through or near the City CTR</li>
-        <li><strong>Farnborough LARS</strong>,Often useful for traffic information when south of London</li>
+        <li><strong>Heathrow SVFR</strong>, For clearance into the Heathrow CTR (119.900 MHz typical)</li>
+        <li><strong>Thames Radar</strong>, Tactical control within the central London helicopter routes</li>
+        <li><strong>London City Tower</strong>, If transiting through or near the City CTR</li>
+        <li><strong>Farnborough LARS</strong>, Often useful for traffic information when south of London</li>
       </ul>
 
       <p>
         The exact frequencies may change, so always verify current frequencies from your
         aerodrome information, AIP, or pre-flight briefing. Write them on your kneeboard
-        before departure,fumbling with frequency lists while hand-flying through busy
+        before departure, fumbling with frequency lists while hand-flying through busy
         airspace is a recipe for problems.
       </p>
 
@@ -285,7 +285,7 @@ function LondonHeliLanes() {
       <p>
         At each reporting point along the route, make a concise position report: "Thames Radar,
         Golf Alpha Bravo Charlie Delta, Tower Bridge, 1,200 feet, westbound." Keep transmissions
-        brief and accurate,the controllers are managing multiple aircraft and appreciate
+        brief and accurate, the controllers are managing multiple aircraft and appreciate
         efficiency.
       </p>
 
@@ -295,11 +295,11 @@ function LondonHeliLanes() {
       />
 
       <Callout variant="quote">
-        "Good radio work in busy airspace isn't about being fast,it's about being clear,
+        "Good radio work in busy airspace isn't about being fast, it's about being clear,
         accurate, and concise. Think before you transmit, say exactly what you need to say,
         and listen carefully to what comes back."
         <br /><br />
-       ,CAA Examiner
+       , CAA Examiner
       </Callout>
 
       <h2>Weather Minima</h2>
@@ -326,8 +326,8 @@ function LondonHeliLanes() {
 
       <p>
         In practice, marginal weather makes London transits significantly more challenging
-        and stressful. The visual workload,maintaining position over the river while
-        identifying landmarks,becomes much harder when visibility is reduced. If conditions
+        and stressful. The visual workload, maintaining position over the river while
+        identifying landmarks, becomes much harder when visibility is reduced. If conditions
         are near minimums, seriously consider whether the flight is necessary.
       </p>
 
@@ -335,7 +335,7 @@ function LondonHeliLanes() {
         London's weather can be deceptive. What looks acceptable from Denham may deteriorate
         significantly over central London, where building-induced effects and pollution can
         reduce visibility. If you have any doubt about conditions, request a weather update
-        from ATC or consider diverting. There's no shame in turning back,and there's
+        from ATC or consider diverting. There's no shame in turning back, and there's
         considerable pride in good judgement.
       </Callout>
 
@@ -343,7 +343,7 @@ function LondonHeliLanes() {
 
       <p>
         Over years of conducting London transits and debriefing pilots afterwards, we've
-        identified several recurring mistakes that trip up pilots,particularly those
+        identified several recurring mistakes that trip up pilots, particularly those
         new to the routes. Awareness of these pitfalls can help you avoid them.
       </p>
 
@@ -413,7 +413,7 @@ function LondonHeliLanes() {
         points={[
           "NOTAMs checked for route restrictions and temporary airspace",
           "Weather verified above SVFR minima with adequate margin",
-          "Route thoroughly briefed,all landmarks and reporting points known",
+          "Route thoroughly briefed, all landmarks and reporting points known",
           "Frequencies written on kneeboard in sequence",
           "Alternate plan prepared if clearance denied or weather deteriorates",
           "Chart current and accessible in cockpit",
@@ -442,7 +442,7 @@ function LondonHeliLanes() {
 
       <p>
         Your first transit is not the time to push weather limits. Wait for a day with
-        excellent visibility,ideally 10 km or more,and a reasonably high cloud base.
+        excellent visibility, ideally 10 km or more, and a reasonably high cloud base.
         Light winds help too, as crosswinds can make tracking the river more challenging.
         A clear winter day often provides the best visibility, though summer mornings
         before the haze builds can work well too.
@@ -474,8 +474,8 @@ function LondonHeliLanes() {
       <h2>The Experience: Flying Over London</h2>
 
       <p>
-        For all the technicalities,the airspace rules, radio procedures, and operational
-        requirements,there's a reason pilots keep coming back to fly London. It's simply
+        For all the technicalities, the airspace rules, radio procedures, and operational
+        requirements, there's a reason pilots keep coming back to fly London. It's simply
         one of the most spectacular flights you can make in the UK.
       </p>
 
@@ -495,8 +495,8 @@ function LondonHeliLanes() {
       </p>
 
       <p>
-        Beyond Tower Bridge, the modern City reveals itself,the Gherkin, the Walkie
-        Talkie, the Cheesegrater,a forest of glass and steel that would have been
+        Beyond Tower Bridge, the modern City reveals itself, the Gherkin, the Walkie
+        Talkie, the Cheesegrater, a forest of glass and steel that would have been
         unimaginable to the pilots who first flew these routes. Then Canary Wharf, once
         derelict docklands, now one of Europe's major financial centres. And finally,
         the O2's distinctive dome marking the eastern extremity of the central section.
@@ -507,21 +507,21 @@ function LondonHeliLanes() {
         a boat I hadn't seen, a perspective I hadn't considered. London from 1,000 feet
         is an endless source of wonder."
         <br /><br />
-       ,HQ Aviation Instructor
+       , HQ Aviation Instructor
       </Callout>
 
       <p>
         This is the privilege of helicopter flight: to see our world from above, to
         navigate through airspace that took decades of planning and coordination to create,
         to be part of a system that safely moves millions of people through the skies
-        each year. Flying London isn't just about the views,it's about participating
+        each year. Flying London isn't just about the views, it's about participating
         in something remarkable.
       </p>
 
       <h2>Final Thoughts</h2>
 
       <p>
-        London's helicopter routes are a gift to general aviation pilots,a carefully
+        London's helicopter routes are a gift to general aviation pilots, a carefully
         engineered system that allows us to transit through one of the world's busiest
         airspace environments while enjoying views that money typically can't buy. Using
         these routes safely requires preparation, discipline, and professionalism, but
@@ -555,12 +555,12 @@ function LondonHeliLanes() {
       <KeyPoint
         title="Key Takeaways"
         points={[
-          "London airspace is complex,understand the CTRs, Class A boundaries, and restricted areas before flight",
+          "London airspace is complex, understand the CTRs, Class A boundaries, and restricted areas before flight",
           "Route H4 follows the Thames and requires specific entry/exit points, reporting points, and assigned altitudes",
-          "Radio procedures are critical,prepare frequencies and calls in advance, report at each mandatory point",
-          "SVFR weather minima apply,don't push limits, especially on your first transits",
-          "Preparation is everything,brief thoroughly, study landmarks, plan contingencies",
-          "From Denham, you're ideally positioned for London transits,take advantage of this amazing opportunity"
+          "Radio procedures are critical, prepare frequencies and calls in advance, report at each mandatory point",
+          "SVFR weather minima apply, don't push limits, especially on your first transits",
+          "Preparation is everything, brief thoroughly, study landmarks, plan contingencies",
+          "From Denham, you're ideally positioned for London transits, take advantage of this amazing opportunity"
         ]}
       />
     </BlogLayout>

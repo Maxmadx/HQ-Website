@@ -21,7 +21,7 @@ function Autorotations() {
         There is a moment in every student pilot's training when their instructor first mentions
         the word "autorotation." For many, it conjures images of emergency landings, engine
         failures, and controlled descents that seem to defy the laws of physics. The natural
-        response is nervousness,perhaps even a touch of fear. We understand that completely.
+        response is nervousness, perhaps even a touch of fear. We understand that completely.
         At HQ Aviation, we have introduced hundreds of students to autorotations, and we want
         to share something important: autorotation is not a desperate emergency procedure. It
         is an elegant application of physics that transforms your helicopter's rotor system
@@ -40,7 +40,7 @@ function Autorotations() {
 
       <p>
         At its simplest, autorotation is a state of flight where the helicopter's rotor blades
-        continue spinning,and producing lift,without power from the engine. When an engine
+        continue spinning, and producing lift, without power from the engine. When an engine
         fails in flight, the rotor does not simply stop. Instead, with the correct pilot inputs,
         the rotor uses the airflow from the helicopter's descent to maintain its rotation. The
         stored kinetic energy in the spinning rotor disc becomes your primary flight control
@@ -51,7 +51,7 @@ function Autorotations() {
         Think of it this way: the engine's job is to spin the rotor, which generates lift.
         In an autorotation, you are using the helicopter's descent through the air to do the
         same job. The rotor becomes a windmill, driven by the airflow rather than the engine.
-        This is not a new concept,autogyros have operated on this principle since the 1920s.
+        This is not a new concept, autogyros have operated on this principle since the 1920s.
         What makes helicopters remarkable is that they can transition into this state from
         powered flight within seconds, giving pilots a reliable option whenever engine power
         is lost.
@@ -60,7 +60,7 @@ function Autorotations() {
       <Callout variant="info" title="The Numbers That Matter">
         In the Robinson R22, a properly executed autorotation allows for a controlled descent
         rate of approximately 1,500 to 1,700 feet per minute. This gives a pilot significant
-        time to select a landing site,from 3,000 feet AGL, you have roughly two minutes to
+        time to select a landing site, from 3,000 feet AGL, you have roughly two minutes to
         assess your options and execute a safe landing. That is considerably more time than
         most people initially imagine.
       </Callout>
@@ -84,7 +84,7 @@ function Autorotations() {
         air starts flowing upward through the rotor disc relative to the aircraft. This
         upward-flowing air changes the angle of attack on the rotor blades. Instead of the
         engine driving the rotor and the rotor pushing air down, the rising air now drives
-        the rotor from below. The energy source has reversed,but the rotor keeps spinning.
+        the rotor from below. The energy source has reversed, but the rotor keeps spinning.
       </p>
 
       <h3>The Three Regions of the Rotor Disc</h3>
@@ -127,7 +127,7 @@ function Autorotations() {
         the correct airspeed and rotor RPM, the driving region will keep the system turning
         indefinitely. It is physics, not luck, that keeps you flying."
         <br /><br />
-       ,Flight Instructor, HQ Aviation
+       , Flight Instructor, HQ Aviation
       </Callout>
 
       <h2>The Entry: Critical First Seconds</h2>
@@ -136,7 +136,7 @@ function Autorotations() {
         The transition from powered flight to autorotation must happen quickly. In the R22,
         you have approximately one to two seconds to initiate the correct response before
         rotor RPM decays to dangerous levels. This is why autorotation entry is practiced
-        until it becomes an automatic response,there is no time for deliberation when
+        until it becomes an automatic response, there is no time for deliberation when
         the engine fails.
       </p>
 
@@ -146,12 +146,12 @@ function Autorotations() {
       </p>
 
       <p>
-        <strong>Collective Down,Immediately.</strong> The instant you recognise an engine
+        <strong>Collective Down, Immediately.</strong> The instant you recognise an engine
         failure (typically through the "needle split" on the dual tachometer or the sudden
         silence), the collective must come down. This reduces the pitch angle of the rotor
         blades, which accomplishes two critical things: it reduces drag on the blades,
         preventing rapid RPM decay, and it allows the airflow reversal to begin. In the R22,
-        we teach students to lower the collective smoothly but quickly,not a violent slam,
+        we teach students to lower the collective smoothly but quickly, not a violent slam,
         but a deliberate, rapid reduction.
       </p>
 
@@ -160,7 +160,7 @@ function Autorotations() {
         should stabilise within the green arc. In the R22, this means maintaining between
         97% and 104% RPM. If RPM is too low, you have insufficient energy stored in the
         rotor; if too high, you risk structural damage. The correct collective position
-        is whatever keeps RPM in the green,and this will vary throughout the descent
+        is whatever keeps RPM in the green, and this will vary throughout the descent
         based on airspeed and altitude.
       </p>
 
@@ -176,7 +176,7 @@ function Autorotations() {
         In the R22, if rotor RPM drops below approximately 80%, recovery becomes extremely
         difficult. The blade tips begin to stall, the driving region shrinks, and the rotor
         may not regain sufficient RPM even with correct inputs. This is why immediate
-        collective reduction is so critical,you are racing against physics, and physics
+        collective reduction is so critical, you are racing against physics, and physics
         does not negotiate.
       </Callout>
 
@@ -184,7 +184,7 @@ function Autorotations() {
 
       <p>
         Once established in a stable autorotation, you have time to think. At 65 knots in
-        the R22, you are descending at roughly 1,600 feet per minute,brisk, certainly,
+        the R22, you are descending at roughly 1,600 feet per minute, brisk, certainly,
         but manageable. Your task during the glide is to maintain the autorotative state
         while selecting and positioning for your landing site.
       </p>
@@ -212,7 +212,7 @@ function Autorotations() {
       <p>
         While maintaining your autorotative state, you must select where to land. The ideal
         site is into the wind, flat, firm, clear of obstacles, and long enough to accommodate
-        any ground run. In practice, you take what you can get,but training teaches you
+        any ground run. In practice, you take what you can get, but training teaches you
         to rapidly assess multiple options and commit to the best available choice.
       </p>
 
@@ -220,7 +220,7 @@ function Autorotations() {
         Wind assessment is crucial. Landing into the wind reduces your groundspeed at touchdown,
         making the flare more effective and the landing gentler. A headwind also extends your
         glide distance over the ground, giving you more options. Conversely, a tailwind steepens
-        your approach and increases touchdown speed,manageable, but less desirable.
+        your approach and increases touchdown speed, manageable, but less desirable.
       </p>
 
       <IllustrationPlaceholder
@@ -229,7 +229,7 @@ function Autorotations() {
       />
 
       <Callout variant="tip" title="The 180-Degree Turn">
-        One technique we teach is the 180-degree autorotation,executing a turn to land back
+        One technique we teach is the 180-degree autorotation, executing a turn to land back
         near your starting point. This is often practiced when the helicopter is positioned
         upwind of a suitable landing area. The key is to begin the turn early, bank moderately
         (30 degrees is typical), and constantly reassess your position relative to the intended
@@ -240,7 +240,7 @@ function Autorotations() {
       <h2>The Flare and Touchdown</h2>
 
       <p>
-        The final phase of autorotation is where all your preparation pays off,or where
+        The final phase of autorotation is where all your preparation pays off, or where
         poor technique becomes apparent. The flare and touchdown sequence converts the
         helicopter's forward speed and the rotor's stored energy into a controlled,
         survivable landing.
@@ -254,7 +254,7 @@ function Autorotations() {
         attitude accomplishes several things simultaneously. First, it rapidly decreases
         forward airspeed, reducing the energy that must be absorbed at touchdown. Second,
         the change in attitude alters the airflow through the rotor disc, typically
-        increasing rotor RPM,storing additional energy for the final cushioning. Third,
+        increasing rotor RPM, storing additional energy for the final cushioning. Third,
         it changes your flight path from a steep descent to a shallower trajectory.
       </p>
 
@@ -270,14 +270,14 @@ function Autorotations() {
 
       <p>
         As the helicopter approaches the ground, you level the attitude with forward cyclic
-        and simultaneously apply collective. This final collective pull,often called the
-        "cushion",uses the stored rotor RPM to generate a brief burst of lift, slowing
+        and simultaneously apply collective. This final collective pull, often called the
+        "cushion", uses the stored rotor RPM to generate a brief burst of lift, slowing
         your descent rate just before touchdown. The rotor RPM will decay rapidly during
         this phase, which is acceptable because you only need it for those final moments.
       </p>
 
       <p>
-        The landing should be firm but controlled,not a crash, but typically harder than
+        The landing should be firm but controlled, not a crash, but typically harder than
         a powered approach. In the R22, you may experience a slight ground run after touchdown,
         which is normal. Keep the cyclic neutral, lower the collective fully, and maintain
         directional control with the pedals until all motion stops.
@@ -291,7 +291,7 @@ function Autorotations() {
       <h2>Practice Autorotations vs Real Emergencies</h2>
 
       <p>
-        Every autorotation you practice at HQ Aviation is a "practice autorotation",meaning
+        Every autorotation you practice at HQ Aviation is a "practice autorotation", meaning
         the instructor recovers the aircraft with power before touchdown. This allows you
         to practice the entry, the glide, the positioning, and the flare thousands of times
         without the risk of ground contact. The instructor typically recovers at 50-100 feet,
@@ -302,7 +302,7 @@ function Autorotations() {
         You might wonder: if we always recover with power, how do we know the training works?
         The answer lies in the fundamental principle that the recovery (the collective
         application at the bottom) uses identical physical principles whether the engine is
-        producing power or not. The difference is merely where the energy comes from,in
+        producing power or not. The difference is merely where the energy comes from, in
         practice, we use engine power; in reality, we would use rotor inertia.
       </p>
 
@@ -317,15 +317,15 @@ function Autorotations() {
         Advanced students and those pursuing commercial licences will practice full autorotations
         to the ground. These are conducted with extreme care, typically on grass surfaces, with
         experienced instructors, and only when student proficiency warrants. The principles are
-        identical to practice autorotations,only the final five feet differ.
+        identical to practice autorotations, only the final five feet differ.
       </Callout>
 
       <h2>Why Regular Practice Builds Confidence</h2>
 
       <p>
         At HQ Aviation, autorotations appear in virtually every training flight after you
-        are introduced to the manoeuvre. This is not because we expect engine failures,in
-        fact, modern helicopter engines are remarkably reliable,but because regular practice
+        are introduced to the manoeuvre. This is not because we expect engine failures, in
+        fact, modern helicopter engines are remarkably reliable, but because regular practice
         serves several crucial purposes.
       </p>
 
@@ -339,14 +339,14 @@ function Autorotations() {
       <p>
         <strong>Confidence replaces fear.</strong> The student who has performed fifty practice
         autorotations views engine failure very differently from one who has done five. The
-        procedure becomes familiar. The sensations,the sudden silence, the windmill sensation,
-        the increased workload,become manageable rather than panic-inducing. You know what
+        procedure becomes familiar. The sensations, the sudden silence, the windmill sensation,
+        the increased workload, become manageable rather than panic-inducing. You know what
         to expect because you have experienced it many times before.
       </p>
 
       <p>
         <strong>Judgment develops through repetition.</strong> Selecting landing sites,
-        judging wind, timing the flare,these require judgment that cannot be taught in a
+        judging wind, timing the flare, these require judgment that cannot be taught in a
         classroom. Only by practicing in varying conditions, from different altitudes, with
         different wind components, do you develop the intuition that makes real-world
         decisions possible.
@@ -359,7 +359,7 @@ function Autorotations() {
         the most skill-intensive things you do in a helicopter, and mastering it feels
         genuinely accomplished."
         <br /><br />
-       ,PPL(H) Student, HQ Aviation
+       , PPL(H) Student, HQ Aviation
       </Callout>
 
       <h2>HQ Aviation's Approach to Autorotation Training</h2>
@@ -367,7 +367,7 @@ function Autorotations() {
       <p>
         We believe that autorotation training should be thorough, progressive, and
         confidence-building. We do not simply demonstrate the manoeuvre and ask you to
-        copy it,we build your understanding and skills systematically so that you
+        copy it, we build your understanding and skills systematically so that you
         genuinely comprehend what you are doing and why.
       </p>
 
@@ -386,7 +386,7 @@ function Autorotations() {
         We want you to know why lowering the collective preserves rotor RPM. We want you
         to understand why 65 knots is optimal in the R22. We want you to feel the relationship
         between airspeed, rotor RPM, and collective position in your hands and your body.
-        This deep understanding is what transforms a procedure into a skill,and a skill
+        This deep understanding is what transforms a procedure into a skill, and a skill
         into confidence.
       </p>
 
@@ -416,7 +416,7 @@ function Autorotations() {
         Understanding this reframes autorotation from something to fear into something to
         respect and master. Every hour you spend practicing autorotations is an hour invested
         in your safety and the safety of your passengers. It is training that will likely
-        never be needed in earnest,but if it is, you will be ready.
+        never be needed in earnest, but if it is, you will be ready.
       </p>
 
       <p>
@@ -433,7 +433,7 @@ function Autorotations() {
       <KeyPoint
         title="Key Takeaways"
         points={[
-          "Autorotation uses airflow from descent to maintain rotor RPM,it is physics, not luck",
+          "Autorotation uses airflow from descent to maintain rotor RPM, it is physics, not luck",
           "The rotor disc has three regions (stall, driving, driven) that enable self-sustaining rotation",
           "Entry must be immediate: collective down, maintain 97-104% RPM, establish 65 knots (R22)",
           "During the glide, continuously manage airspeed and rotor RPM while selecting a landing site",
