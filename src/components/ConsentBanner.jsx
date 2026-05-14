@@ -68,39 +68,37 @@ export default function ConsentBanner() {
       <style>{`
         .hq-consent {
           position: fixed;
-          bottom: 1.25rem;
-          left: 50%;
-          transform: translateX(-50%);
+          bottom: 0;
+          left: 0;
+          right: 0;
           z-index: 99999;
-          max-width: 640px;
-          width: calc(100% - 2rem);
           background: #1a1a1a;
           color: #faf9f6;
-          padding: 1.25rem 1.5rem;
+          padding: 0.6rem 1.25rem;
           font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-          font-size: 0.875rem;
-          line-height: 1.55;
-          border: 1px solid rgba(250, 249, 246, 0.08);
-          border-radius: 2px;
-          box-shadow: 0 12px 48px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.2);
+          font-size: 0.8125rem;
+          line-height: 1.4;
+          border-top: 1px solid rgba(250, 249, 246, 0.12);
+          box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.25);
           animation: hq-consent-rise 380ms cubic-bezier(0.16, 1, 0.3, 1);
         }
         @keyframes hq-consent-rise {
-          from { opacity: 0; transform: translate(-50%, 16px); }
-          to   { opacity: 1; transform: translate(-50%, 0); }
+          from { opacity: 0; transform: translateY(100%); }
+          to   { opacity: 1; transform: translateY(0); }
         }
         .hq-consent__inner {
-          display: grid;
-          grid-template-columns: 1fr auto;
-          column-gap: 1.5rem;
-          row-gap: 0.5rem;
+          max-width: 1100px;
+          margin: 0 auto;
+          display: flex;
           align-items: center;
+          flex-wrap: wrap;
+          gap: 0.5rem 1.25rem;
         }
         .hq-consent__pretitle {
           margin: 0;
-          grid-column: 1 / -1;
+          flex-shrink: 0;
           font-family: 'Share Tech Mono', 'SF Mono', Monaco, monospace;
-          font-size: 0.6875rem;
+          font-size: 0.625rem;
           letter-spacing: 0.18em;
           text-transform: uppercase;
           color: rgba(250, 249, 246, 0.6);
@@ -108,6 +106,8 @@ export default function ConsentBanner() {
         .hq-consent__text {
           margin: 0;
           color: #faf9f6;
+          flex: 1;
+          min-width: 240px;
         }
         .hq-consent__link {
           color: inherit;
@@ -121,14 +121,14 @@ export default function ConsentBanner() {
         .hq-consent__actions {
           display: flex;
           gap: 0.5rem;
-          align-self: end;
+          flex-shrink: 0;
         }
         .hq-consent__btn {
           font-family: inherit;
-          font-size: 0.8125rem;
+          font-size: 0.75rem;
           font-weight: 500;
           letter-spacing: 0.04em;
-          padding: 0.6rem 1.1rem;
+          padding: 0.45rem 0.95rem;
           border: 1px solid #faf9f6;
           border-radius: 2px;
           cursor: pointer;
@@ -155,16 +155,10 @@ export default function ConsentBanner() {
         }
         @media (max-width: 520px) {
           .hq-consent {
-            bottom: 0.75rem;
-            width: calc(100% - 1.5rem);
-            padding: 1rem 1.125rem;
-          }
-          .hq-consent__inner {
-            grid-template-columns: 1fr;
+            padding: 0.6rem 1rem;
           }
           .hq-consent__actions {
-            justify-content: stretch;
-            margin-top: 0.25rem;
+            flex: 1;
           }
           .hq-consent__btn {
             flex: 1;
