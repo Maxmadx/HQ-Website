@@ -11,6 +11,7 @@ import AbandonedCartTile from '../../components/admin/analytics/AbandonedCartTil
 import SearchKeywords from '../../components/admin/analytics/SearchKeywords';
 import InfoTooltip from '../../components/admin/analytics/InfoTooltip';
 import GeographyMap from '../../components/admin/analytics/GeographyMap';
+import { eventsToCsv } from '../../components/admin/analytics/exportCsv';
 import {
   countBy, topN, groupByDay, bounceRate, avgTimeOnPage, formatDuration,
   avgScrollDepth, scrollDepthByPage, topJourneys, trafficSources, parseDevices,
@@ -285,6 +286,7 @@ export default function AdminAnalytics() {
   const [gscRows, setGscRows] = useState([]);
   const [gscLoading, setGscLoading] = useState(true);
   const [referralData, setReferralData] = useState({ friendBookings: [], referrers: {} });
+  const [visitorSegment, setVisitorSegment] = useState('all'); // all | new | returning
 
   // Load excluded IPs from admin config endpoint (requires auth token)
   useEffect(() => {
@@ -439,7 +441,7 @@ export default function AdminAnalytics() {
   // (tooltips, hovers) don't recompute the whole dashboard.
   const agg = useMemo(() => {
     // Filter out admin IPs and /admin pages
-    const filtered = (excludedIps.length
+    const baseFiltered = (excludedIps.length
       ? events.filter((e) => !excludedIps.includes(e.ip))
       : events
     ).filter((e) => !e.page?.startsWith('/admin'));
@@ -448,6 +450,20 @@ export default function AdminAnalytics() {
       ? prevEvents.filter((e) => !excludedIps.includes(e.ip))
       : prevEvents
     ).filter((e) => !e.page?.startsWith('/admin'));
+
+    // New vs returning: a visitor is "returning" if their visitorId also appears
+    // in the previous equal-length period. Events with no visitorId (localStorage
+    // blocked, or pre-Phase-1 data) can't be classified — they're dropped from the
+    // New/Returning views and only show under "All".
+    const prevVisitorIds = new Set(prevFiltered.map((e) => e.visitorId).filter(Boolean));
+    const filtered = visitorSegment === 'all'
+      ? baseFiltered
+      : baseFiltered.filter((e) => {
+          if (!e.visitorId) return false;
+          const isReturning = prevVisitorIds.has(e.visitorId);
+          return visitorSegment === 'returning' ? isReturning : !isReturning;
+        });
+
     const prevPageviews = prevFiltered.filter((e) => e.eventType === 'pageview');
     const prevUniqueSessions = new Set(prevFiltered.map((e) => e.sessionId)).size;
     const prevCTAs = prevFiltered.filter((e) => e.eventType === 'cta_click');
@@ -529,7 +545,7 @@ export default function AdminAnalytics() {
       formSpark, topReferrers, funnel, timeByPage, sourceDonuts, deviceDonuts,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [events, prevEvents, excludedIps, days]);
+  }, [events, prevEvents, excludedIps, days, visitorSegment]);
 
   const {
     filtered, prevPageviews, prevUniqueSessions, prevCTAs, prevForms,
@@ -539,6 +555,18 @@ export default function AdminAnalytics() {
     journeys, topCTAs, topForms, campaigns, utmSrc, pvSpark, sessSpark, ctaSpark,
     formSpark, topReferrers, funnel, timeByPage, sourceDonuts, deviceDonuts,
   } = agg;
+
+  // ─── CSV export — downloads exactly what's on screen (segment + range) ──────
+  function handleExportCsv() {
+    const csv = eventsToCsv(filtered);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `analytics-${visitorSegment}-${days}d-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   // ─── Styles ────────────────────────────────────────────────────────────────
   const grid2 = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 };
@@ -554,24 +582,57 @@ export default function AdminAnalytics() {
         <div style={{ maxWidth: 1120, margin: '0 auto', padding: '20px 28px 0' }}>
 
           {/* Header */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <h1 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#f1f5f9' }}>Analytics</h1>
-            <div style={{ display: 'flex', gap: 4 }}>
-              {[7, 14, 30, 60, 90].map((d) => (
-                <button
-                  key={d}
-                  onClick={() => setDays(d)}
-                  style={{
-                    background: days === d ? '#172554' : 'transparent',
-                    border: `1px solid ${days === d ? C.blue : C.border}`,
-                    color: days === d ? '#93c5fd' : C.muted,
-                    padding: '5px 14px', borderRadius: 6, fontSize: '0.75rem', cursor: 'pointer',
-                    fontWeight: days === d ? 600 : 400,
-                  }}
-                >
-                  {d}d
-                </button>
-              ))}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, gap: 12, flexWrap: 'wrap' }}>
+            <h1 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#f1f5f9', display: 'flex', alignItems: 'center' }}>
+              Analytics<InfoTooltip topic="visitorSegment" />
+            </h1>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+              {/* New vs returning segment */}
+              <div style={{ display: 'flex', gap: 4 }}>
+                {[['all', 'All'], ['new', 'New'], ['returning', 'Returning']].map(([seg, label]) => (
+                  <button
+                    key={seg}
+                    onClick={() => setVisitorSegment(seg)}
+                    style={{
+                      background: visitorSegment === seg ? '#172554' : 'transparent',
+                      border: `1px solid ${visitorSegment === seg ? C.blue : C.border}`,
+                      color: visitorSegment === seg ? '#93c5fd' : C.muted,
+                      padding: '5px 12px', borderRadius: 6, fontSize: '0.75rem', cursor: 'pointer',
+                      fontWeight: visitorSegment === seg ? 600 : 400,
+                    }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              {/* Date range */}
+              <div style={{ display: 'flex', gap: 4 }}>
+                {[7, 14, 30, 60, 90].map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => setDays(d)}
+                    style={{
+                      background: days === d ? '#172554' : 'transparent',
+                      border: `1px solid ${days === d ? C.blue : C.border}`,
+                      color: days === d ? '#93c5fd' : C.muted,
+                      padding: '5px 14px', borderRadius: 6, fontSize: '0.75rem', cursor: 'pointer',
+                      fontWeight: days === d ? 600 : 400,
+                    }}
+                  >
+                    {d}d
+                  </button>
+                ))}
+              </div>
+              {/* CSV export */}
+              <button
+                onClick={handleExportCsv}
+                style={{
+                  background: 'transparent', border: `1px solid ${C.border}`, color: C.muted,
+                  padding: '5px 14px', borderRadius: 6, fontSize: '0.75rem', cursor: 'pointer',
+                }}
+              >
+                Export CSV
+              </button>
             </div>
           </div>
 
@@ -663,12 +724,14 @@ export default function AdminAnalytics() {
               </Card>
 
               {/* ── Overview ───────────────────────────────────────────── */}
+              {/* Period-over-period change is hidden when a visitor segment is active —
+                  the previous period isn't segmented, so the comparison wouldn't be like-for-like. */}
               <SectionLabel>Overview</SectionLabel>
               <div style={grid4}>
-                <MetricCard label="Page Views" value={pageviews.length.toLocaleString()} sparkData={pvSpark} sparkColor={C.blue} change={pctChange(pageviews.length, prevPageviews.length)} topic="pageViews" />
-                <MetricCard label="Unique Sessions" value={uniqueSessions.toLocaleString()} sparkData={sessSpark} sparkColor={C.purple} change={pctChange(uniqueSessions, prevUniqueSessions)} topic="uniqueSessions" />
-                <MetricCard label="CTA Clicks" value={ctaClicks.length.toLocaleString()} sparkData={ctaSpark} sparkColor={C.cyan} change={pctChange(ctaClicks.length, prevCTAs.length)} />
-                <MetricCard label="Form Submits" value={formSubmits.length.toLocaleString()} sparkData={formSpark} sparkColor={C.emerald} change={pctChange(formSubmits.length, prevForms.length)} />
+                <MetricCard label="Page Views" value={pageviews.length.toLocaleString()} sparkData={pvSpark} sparkColor={C.blue} change={visitorSegment === 'all' ? pctChange(pageviews.length, prevPageviews.length) : null} topic="pageViews" />
+                <MetricCard label="Unique Sessions" value={uniqueSessions.toLocaleString()} sparkData={sessSpark} sparkColor={C.purple} change={visitorSegment === 'all' ? pctChange(uniqueSessions, prevUniqueSessions) : null} topic="uniqueSessions" />
+                <MetricCard label="CTA Clicks" value={ctaClicks.length.toLocaleString()} sparkData={ctaSpark} sparkColor={C.cyan} change={visitorSegment === 'all' ? pctChange(ctaClicks.length, prevCTAs.length) : null} />
+                <MetricCard label="Form Submits" value={formSubmits.length.toLocaleString()} sparkData={formSpark} sparkColor={C.emerald} change={visitorSegment === 'all' ? pctChange(formSubmits.length, prevForms.length) : null} />
               </div>
 
               {/* ── Engagement ─────────────────────────────────────────── */}

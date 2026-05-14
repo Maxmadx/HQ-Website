@@ -201,4 +201,10 @@ export const GLOSSARY = {
     title: 'Top Referrers',
     body: 'The customers who have successfully referred friends, ranked by how many friends booked. Names come from the original booking that owns each referral code. Use this to thank your best advocates — and to spot who might deserve a little extra.',
   },
+
+  // ─── Header controls ──────────────────────────────────────────
+  visitorSegment: {
+    title: 'New vs Returning',
+    body: 'Filters the whole dashboard to first-time or returning visitors. "Returning" means the same browser was also seen in the previous period of equal length — so on a 30-day view, someone who last visited 45 days ago still reads as "New". Visitors whose browser blocks storage can not be classified and only appear under "All". Period-over-period change is hidden while a segment is active, because the previous period is not itself segmented.',
+  },
 };
