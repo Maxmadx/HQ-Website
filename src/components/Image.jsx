@@ -22,9 +22,22 @@ function isDevMode(props) {
   return DEV_MODE;
 }
 
+// CMS media-library URLs mirror the local asset tree
+// (…/media-library/assets/images/X ↔ /assets/images/X). When the equivalent
+// local optimised asset exists, prefer it — it serves a pre-built <picture>
+// instead of round-tripping through the /api/image proxy.
+const MEDIA_LIBRARY_MARKER = '/media-library/assets/images/';
+function resolveSrc(src) {
+  if (typeof src !== 'string') return src;
+  const i = src.indexOf(MEDIA_LIBRARY_MARKER);
+  if (i === -1) return src;
+  const localPath = src.slice(i + '/media-library'.length);
+  return getManifestEntry(localPath) ? localPath : src;
+}
+
 export default function Image(props) {
   const {
-    src,
+    src: rawSrc,
     alt,
     width,
     height,
@@ -38,6 +51,8 @@ export default function Image(props) {
   // Pop the test-only overrides so we don't pass them to the DOM
   delete rest.__forceProd;
   delete rest.__forceDev;
+
+  const src = resolveSrc(rawSrc);
 
   // Dev mode: render plain <img>. Variants don't exist until npm run build.
   if (isDevMode(props)) {
@@ -63,7 +78,9 @@ export default function Image(props) {
       const fallbackFormat = formats[formats.length - 1]; // jpeg or png
       const fallbackWidth = widths.includes(1200) ? 1200 : widths[Math.floor(widths.length / 2)];
 
-      const lqipBgStyle = entry.lqip
+      // LQIP blur-up only works behind opaque images. For transparent cutouts
+      // (hasAlpha) the placeholder bleeds through and never clears, so skip it.
+      const lqipBgStyle = entry.lqip && !entry.hasAlpha
         ? { backgroundImage: `url("${entry.lqip}")`, backgroundSize: 'cover', backgroundPosition: 'center' }
         : undefined;
 
@@ -147,6 +164,19 @@ export default function Image(props) {
           decoding={priority ? undefined : 'async'}
           fetchpriority={priority ? 'high' : undefined}
           className={className}
+          onError={(e) => {
+            // If the /api/image proxy is unavailable, fall back to the raw
+            // source so the image still renders (unoptimised, but visible).
+            const img = e.currentTarget;
+            if (img.dataset.rawFallback) return;
+            img.dataset.rawFallback = '1';
+            const picture = img.parentNode;
+            if (picture && picture.tagName === 'PICTURE') {
+              picture.querySelectorAll('source').forEach((s) => s.remove());
+            }
+            img.srcset = '';
+            img.src = src;
+          }}
           {...rest}
         />
       </picture>

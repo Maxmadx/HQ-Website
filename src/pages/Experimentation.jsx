@@ -2179,7 +2179,7 @@ function Experimentation() {
   const videoLinesInView = useInView(videoLinesRef, { once: true, amount: 0.5, margin: "0px 0px -200px 0px" });
   const aboutVideoRef = useRef(null);
   const aboutVideoElRef = useRef(null);
-  const aboutVideoNearby = useInView(aboutVideoRef, { once: true, margin: "0px" });
+  const aboutVideoNearby = useInView(aboutVideoRef, { once: true, margin: "0px 0px 600px 0px" });
   const aboutVideoVisible = useInView(aboutVideoRef, { amount: 0.15 });
   const aboutVideoElVisible = useInView(aboutVideoElRef, { amount: 0.3 });
   const ytPlayerRef = useRef(null);
@@ -2190,6 +2190,7 @@ function Experimentation() {
   const [videoMuted, setVideoMuted] = useState(true);
   const [videoPaused, setVideoPaused] = useState(false);
   const [videoProgress, setVideoProgress] = useState(0);
+  const [playerReady, setPlayerReady] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(false);
   const controlsTimerRef = useRef(null);
   const [awardModal, setAwardModal] = useState(null);
@@ -2280,7 +2281,7 @@ function Experimentation() {
           playsinline: 1,
         },
         events: {
-          onReady: (e) => { e.target.playVideo(); e.target.pauseVideo(); },
+          onReady: (e) => { e.target.playVideo(); e.target.pauseVideo(); setPlayerReady(true); },
         },
       });
     };
@@ -2311,7 +2312,7 @@ function Experimentation() {
     } else {
       p.pauseVideo();
     }
-  }, [aboutVideoVisible, aboutVideoElVisible, videoPaused]);
+  }, [aboutVideoVisible, aboutVideoElVisible, videoPaused, playerReady]);
 
   // Toggle mute/unmute via player API
   useEffect(() => {
@@ -10170,11 +10171,13 @@ function Experimentation() {
           align-items: center;
           justify-content: center;
           padding: 1rem;
+          overflow: hidden;
         }
 
         .fd-sales__card-image img {
           max-width: 90%;
           max-height: 90%;
+          min-height: 0;
           object-fit: contain;
           transition: transform 0.4s ease;
         }
