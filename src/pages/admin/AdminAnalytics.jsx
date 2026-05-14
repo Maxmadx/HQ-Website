@@ -294,7 +294,7 @@ export default function AdminAnalytics() {
     if (!user) { setConfigLoaded(true); return; }
     user.getIdToken()
       .then((token) =>
-        fetch('/api/analytics/config', { headers: { Authorization: `Bearer ${token}` } })
+        fetch('/api/page-events/config', { headers: { Authorization: `Bearer ${token}` } })
       )
       .then((r) => r.json())
       .then(({ excludedIps: ips }) => setExcludedIps(Array.isArray(ips) ? ips : []))
@@ -358,7 +358,7 @@ export default function AdminAnalytics() {
       try {
         const token = await auth.currentUser?.getIdToken();
         if (!token) return;
-        const res = await fetch(`/api/analytics/referrals?days=${days}`, {
+        const res = await fetch(`/api/page-events/referrals?days=${days}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error('Failed to load referral data');

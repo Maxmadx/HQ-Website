@@ -93,10 +93,15 @@ export async function trackEvent(eventType, elementId = null, page = null, data 
       // page URL's ?ref param is something else (e.g. /booking-confirmed?ref=pi_…).
       if (data.referralRefCode !== undefined) body.referralRefCode = data.referralRefCode;
     }
-    await fetch('/api/analytics', {
+    // keepalive lets the request outlive the page — without it, page_exit
+    // events fired during tab close are cancelled by the browser and lost.
+    // The path deliberately avoids the word "analytics": ad blockers filter
+    // URLs containing /analytics, which silently dropped a biased slice of events.
+    await fetch('/api/page-events', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
+      keepalive: true,
     });
   } catch {
     // Silently swallow — analytics must never break the site

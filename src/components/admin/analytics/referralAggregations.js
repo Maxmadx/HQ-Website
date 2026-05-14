@@ -5,7 +5,7 @@
  *
  * Two data sources feed these:
  *  - page_events  (client-side Firestore query in AdminAnalytics)
- *  - /api/analytics/referrals  → { friendBookings, referrers }
+ *  - /api/page-events/referrals  → { friendBookings, referrers }
  */
 
 const CONFIRMATION_PATH = '/booking-confirmed';

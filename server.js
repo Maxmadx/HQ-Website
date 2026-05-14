@@ -530,7 +530,9 @@ app.use('/api/stripe/discovery-checkout', express.json(), stripeDiscoveryRouter)
 // ============================================
 // ANALYTICS ROUTES
 // ============================================
-app.use('/api/analytics', express.json({ limit: '16kb' }), analyticsRouter);
+// Mounted at /api/page-events (not /api/analytics) — ad blockers filter URLs
+// containing "analytics", which silently dropped a biased slice of ingest events.
+app.use('/api/page-events', express.json({ limit: '16kb' }), analyticsRouter);
 
 // ============================================
 // CARTS ROUTES

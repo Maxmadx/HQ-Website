@@ -69,7 +69,7 @@ describe('analytics', () => {
   it('trackEvent calls fetch with correct body', async () => {
     await trackEvent('cta_click', 'hero-book-btn');
     expect(fetch).toHaveBeenCalledWith(
-      '/api/analytics',
+      '/api/page-events',
       expect.objectContaining({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
