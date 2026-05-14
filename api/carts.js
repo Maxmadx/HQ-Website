@@ -8,6 +8,7 @@ const logger = require('./lib/logger.js');
 const { CartUpsertSchema } = require('./lib/cartValidation');
 const { repriceCart } = require('./lib/cartPricing');
 const { sendCartRecoveryEmail } = require('./lib/cartRecoverySend');
+const { isAdminSettableStatus } = require('./lib/cartAdminLogic');
 
 const router = express.Router();
 
@@ -109,16 +110,34 @@ router.post('/', cartLimiter, async (req, res) => {
       priced = await repriceCart({ flight: data.flight, addons: data.addons });
     }
 
+    // Category resolution + display total.
+    // Flight carts are repriced server-side above. Product and london-tour
+    // totals are DISPLAY figures derived from the client payload — the real
+    // charge is always repriced at the payment-intent endpoint, never here.
+    let category = data.category || null;
+    const products = data.products || [];
+    const londonTour = data.londonTour || null;
+    let totalP = priced.totalP;
+    if (category === 'product') {
+      totalP = products.reduce((sum, p) => sum + (p.priceP || 0) * (p.qty || 1), 0);
+    } else if (category === 'london_tour' && londonTour) {
+      totalP = londonTour.priceP || 0;
+    }
+    if (!category && priced.flight) category = 'discovery_flight';
+
     const now = admin.firestore.FieldValue.serverTimestamp();
     const baseFields = {
       sessionId: data.sessionId,
       email: resolvedEmail,
       emailSource: emailSource,
+      category,
       flight: priced.flight,
       addons: priced.addons,
+      products,
+      londonTour,
       fulfilment: data.fulfilment || null,
       shippingAddress: data.shippingAddress || null,
-      totalP: priced.totalP,
+      totalP,
       currency: 'gbp',
       utm: data.utm || { source: null, medium: null, campaign: null, term: null, content: null },
       referrer: data.referrer || null,
@@ -146,6 +165,7 @@ router.post('/', cartLimiter, async (req, res) => {
       createdAt: now,
       completedAt: null,
       abandonedAt: null,
+      contactedAt: null,
     });
 
     return res.json({ ok: true, cartId: docRef.id, email: resolvedEmail });
