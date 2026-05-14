@@ -57,4 +57,33 @@ describe('assertProductionStripeKey', () => {
       STRIPE_WEBHOOK_SECRET: undefined,
     })).toThrow(/STRIPE_WEBHOOK_SECRET/);
   });
+
+  it('returns an empty array when production keys are valid', () => {
+    expect(assertProductionStripeKey({
+      NODE_ENV: 'production',
+      STRIPE_SECRET_KEY: 'sk_live_abc',
+      STRIPE_WEBHOOK_SECRET: 'whsec_def',
+    })).toEqual([]);
+  });
+
+  it('escape hatch: returns warnings instead of throwing when ALLOW_TEST_STRIPE_IN_PROD=true', () => {
+    const warnings = assertProductionStripeKey({
+      NODE_ENV: 'production',
+      STRIPE_SECRET_KEY: 'sk_test_abc',
+      STRIPE_WEBHOOK_SECRET: 'whsec_def',
+      ALLOW_TEST_STRIPE_IN_PROD: 'true',
+    });
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toMatch(/ALLOW_TEST_STRIPE_IN_PROD override active/);
+    expect(warnings[0]).toMatch(/test mode Stripe key/);
+  });
+
+  it('escape hatch only triggers on the exact string "true"', () => {
+    expect(() => assertProductionStripeKey({
+      NODE_ENV: 'production',
+      STRIPE_SECRET_KEY: 'sk_test_abc',
+      STRIPE_WEBHOOK_SECRET: 'whsec_def',
+      ALLOW_TEST_STRIPE_IN_PROD: '1',
+    })).toThrow(/Refusing to start/);
+  });
 });

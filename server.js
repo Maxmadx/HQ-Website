@@ -22,7 +22,10 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 try {
-  assertProductionStripeKey(process.env);
+  const stripeBootWarnings = assertProductionStripeKey(process.env);
+  for (const w of stripeBootWarnings) {
+    logger.warn(w);
+  }
 } catch (err) {
   logger.error({ err }, err.message);
   process.exit(1);
