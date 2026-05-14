@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigationType, useParams } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import Seo from './components/seo/Seo';
+import ConsentBanner from './components/ConsentBanner';
 import { buildOrganization, buildWebSite, buildLocalBusiness } from './components/seo/jsonLd';
 import Layout from './layouts/Layout';
 import Home from './pages/Home';
@@ -180,6 +181,7 @@ function App() {
       <ScrollToTop />
       <PageTracker />
       <RouteTracker />
+      <ConsentBanner />
       <Routes>
         {/* Dev/test/picker routes — hard-gated behind import.meta.env.DEV */}
         {SHOW_DEV_ROUTES && (<>
