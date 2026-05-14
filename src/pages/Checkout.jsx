@@ -7,9 +7,9 @@ import DiscoveryAddons from '../components/checkout/DiscoveryAddons';
 import { computeAddonsTotal, computeLineTotal } from '../lib/discoveryAddons';
 import { useDiscoveryAddons } from '../hooks/useDiscoveryAddons';
 import { trackEvent, getSessionId } from '../lib/analytics';
-import ExitIntentModal from '../components/Checkout/ExitIntentModal';
-import useExitIntent from '../components/Checkout/useExitIntent';
-import useTabReturn from '../components/Checkout/useTabReturn';
+import ExitIntentModal from '../components/checkout/ExitIntentModal';
+import useExitIntent from '../components/checkout/useExitIntent';
+import useTabReturn from '../components/checkout/useTabReturn';
 import { upsertCart, getCartId, rehydrateCartByToken } from '../lib/cart';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
