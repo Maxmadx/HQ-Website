@@ -14,7 +14,17 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      # Live deploy is best-effort: only runs when the Firebase service account
+      # secret is configured. Without it, build + test still gate the merge.
+      # To re-enable hosting deploys, add a
+      # FIREBASE_SERVICE_ACCOUNT_HQ_WEBSITE_4ABC7 repo secret (Firebase console
+      # > Project settings > Service accounts > Generate new private key).
+      # NOTE: this workflow only deploys the static SPA to Firebase Hosting —
+      # the Cloud Run server is still deployed manually via npm run deploy:server.
       - uses: FirebaseExtended/action-hosting-deploy@v0
+        if: ${{ env.FIREBASE_SA != '' }}
+        env:
+          FIREBASE_SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_HQ_WEBSITE_4ABC7 }}
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_HQ_WEBSITE_4ABC7 }}
