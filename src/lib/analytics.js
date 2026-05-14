@@ -89,6 +89,9 @@ export async function trackEvent(eventType, elementId = null, page = null, data 
       if (data.currency !== undefined) body.currency = data.currency;
       if (data.transactionId !== undefined) body.transactionId = data.transactionId;
       if (data.itemCategory !== undefined) body.itemCategory = data.itemCategory;
+      // Explicit referral code overrides the URL-derived one — needed when the
+      // page URL's ?ref param is something else (e.g. /booking-confirmed?ref=pi_…).
+      if (data.referralRefCode !== undefined) body.referralRefCode = data.referralRefCode;
     }
     await fetch('/api/analytics', {
       method: 'POST',

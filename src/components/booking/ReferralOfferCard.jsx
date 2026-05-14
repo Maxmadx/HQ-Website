@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import ProductInfoModal from './ProductInfoModal';
+import { trackEvent } from '../../lib/analytics';
 
 const fmtGbp = (pence) => `£${(Number(pence) / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
@@ -13,7 +14,15 @@ export default function ReferralOfferCard({ booking, freeItem }) {
   const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/training/trial-lessons?ref=${booking.referralCode}`;
   const primaryImage = (freeItem.images || []).find((i) => i.isPrimary) || (freeItem.images || [])[0];
 
+  // `kind` ∈ copy | share | view_item_modal — records which share affordance was used.
+  // The page URL's ?ref param here is the payment intent, so we pass the real
+  // referral code explicitly.
+  function trackShare(kind) {
+    trackEvent('share_referral', kind, undefined, { referralRefCode: booking.referralCode });
+  }
+
   async function handleCopy() {
+    trackShare('copy');
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
@@ -22,6 +31,7 @@ export default function ReferralOfferCard({ booking, freeItem }) {
   }
 
   async function handleShare() {
+    trackShare('share');
     try {
       await navigator.share({
         title: 'HQ Aviation Discovery Flight',
@@ -29,6 +39,11 @@ export default function ReferralOfferCard({ booking, freeItem }) {
         url: shareUrl,
       });
     } catch {}
+  }
+
+  function handleViewItem() {
+    trackShare('view_item_modal');
+    setModalOpen(true);
   }
 
   return (
@@ -39,7 +54,7 @@ export default function ReferralOfferCard({ booking, freeItem }) {
 
         <button
           type="button"
-          onClick={() => setModalOpen(true)}
+          onClick={handleViewItem}
           style={S.itemRow}
           aria-label={`View details of ${freeItem.name}`}
         >

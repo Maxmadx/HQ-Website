@@ -5,6 +5,8 @@ import { db, auth } from '../../lib/firebase';
 import AreaChart from '../../components/admin/analytics/AreaChart';
 import DonutChart from '../../components/admin/analytics/DonutChart';
 import PurchaseFunnel from '../../components/admin/analytics/PurchaseFunnel';
+import ReferralFunnel from '../../components/admin/analytics/ReferralFunnel';
+import TopReferrers from '../../components/admin/analytics/TopReferrers';
 import AbandonedCartTile from '../../components/admin/analytics/AbandonedCartTile';
 import SearchKeywords from '../../components/admin/analytics/SearchKeywords';
 import InfoTooltip from '../../components/admin/analytics/InfoTooltip';
@@ -282,6 +284,7 @@ export default function AdminAnalytics() {
   const [cartsLoading, setCartsLoading] = useState(true);
   const [gscRows, setGscRows] = useState([]);
   const [gscLoading, setGscLoading] = useState(true);
+  const [referralData, setReferralData] = useState({ friendBookings: [], referrers: {} });
 
   // Load excluded IPs from admin config endpoint (requires auth token)
   useEffect(() => {
@@ -343,6 +346,32 @@ export default function AdminAnalytics() {
       }
     }
     loadGsc();
+    return () => { cancelled = true; };
+  }, [days]);
+
+  // Load referral conversions + referrer names (admin route — needs auth token)
+  useEffect(() => {
+    let cancelled = false;
+    async function loadReferrals() {
+      try {
+        const token = await auth.currentUser?.getIdToken();
+        if (!token) return;
+        const res = await fetch(`/api/analytics/referrals?days=${days}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error('Failed to load referral data');
+        const data = await res.json();
+        if (!cancelled) {
+          setReferralData({
+            friendBookings: data.friendBookings || [],
+            referrers: data.referrers || {},
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    loadReferrals();
     return () => { cancelled = true; };
   }, [days]);
 
@@ -578,6 +607,26 @@ export default function AdminAnalytics() {
                   <PurchaseFunnel
                     events={filtered}
                     itemCategory="discovery-flight"
+                    dateLabel={`Last ${days} days`}
+                  />
+                </div>
+              )}
+
+              {import.meta.env.VITE_FUNNEL_ENABLED !== 'false' && (
+                <div style={{ marginBottom: 24 }}>
+                  <ReferralFunnel
+                    pageEvents={filtered}
+                    friendBookings={referralData.friendBookings}
+                    dateLabel={`Last ${days} days`}
+                  />
+                </div>
+              )}
+
+              {import.meta.env.VITE_FUNNEL_ENABLED !== 'false' && (
+                <div style={{ marginBottom: 24 }}>
+                  <TopReferrers
+                    friendBookings={referralData.friendBookings}
+                    referrers={referralData.referrers}
                     dateLabel={`Last ${days} days`}
                   />
                 </div>

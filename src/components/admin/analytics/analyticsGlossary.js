@@ -175,4 +175,30 @@ export const GLOSSARY = {
     title: 'Top Form Submit Pages',
     body: 'The pages where visitors submit a form (contact, enquiry, alert signup). Tells you which pages are converting interest into a contactable lead. If a page gets lots of views but no submits, the form might be hidden or the page is not ready to ask for the email yet.',
   },
+
+  // ─── Referral Funnel + Top Referrers ──────────────────────────
+  referralFunnel: {
+    title: 'Referral Funnel',
+    body: 'How "refer a friend" performs end to end. It follows a flow rather than a strict narrowing funnel: a customer sees their confirmation, shares their link, their friend arrives, and the friend books. Because the first two steps are the referrer and the last two are the friend, a later step can occasionally be higher than an earlier one — that just means past referrals are still converting.',
+  },
+  referralConfirmationViewed: {
+    title: 'Confirmation Viewed',
+    body: 'Visits that reached the booking-confirmed page, where the "refer a friend" card is shown. This is the pool of customers who had the chance to share their referral link.',
+  },
+  referralShareClicked: {
+    title: 'Share Clicked',
+    body: 'Visits where the customer used a share affordance on the referral card — copying the link, opening the OS share sheet, or viewing the free-gift details. A low number here versus "Confirmation Viewed" means the share card is not compelling enough.',
+  },
+  referralFriendArrived: {
+    title: 'Friend Arrived',
+    body: 'Separate visits that landed on the site via a referral link (a ?ref= code in the URL). This is the friend clicking through — proof the share actually travelled.',
+  },
+  referralFriendBooked: {
+    title: 'Friend Booked',
+    body: 'Bookings that were paid for using a referral code. Each one is a real Discovery Flight booking attributed to a friend’s referral — and triggers the free gift for the original customer.',
+  },
+  topReferrers: {
+    title: 'Top Referrers',
+    body: 'The customers who have successfully referred friends, ranked by how many friends booked. Names come from the original booking that owns each referral code. Use this to thank your best advocates — and to spot who might deserve a little extra.',
+  },
 };

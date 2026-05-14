@@ -11,6 +11,7 @@ const router = express.Router();
 const ALLOWED_TYPES = [
   'pageview', 'cta_click', 'form_submit', 'image_view', 'scroll_depth', 'page_exit',
   'view_item', 'begin_checkout', 'add_payment_info', 'purchase',
+  'share_referral', 'upgrade_completed',
 ];
 
 // Referral codes use a visually-unambiguous alphabet (see src/lib/referralCodes.js);
@@ -80,6 +81,59 @@ router.get('/config', requireAdmin, (req, res) => {
     .map((s) => s.trim())
     .filter(Boolean);
   res.json({ excludedIps });
+});
+
+// GET /api/analytics/referrals?days=N — referral conversions + referrer names (auth required).
+// The referrer-name join needs the Admin SDK, so it lives server-side rather than
+// being done client-side in AdminAnalytics.
+router.get('/referrals', requireAdmin, async (req, res) => {
+  try {
+    const days = Math.min(Math.max(parseInt(req.query.days, 10) || 30, 1), 365);
+    const since = new Date(Date.now() - days * 86400 * 1000);
+
+    // Bookings made in range that used someone's referral code.
+    const snap = await admin.firestore()
+      .collection('bookings')
+      .where('createdAt', '>=', since)
+      .orderBy('createdAt', 'desc')
+      .get();
+
+    const friendBookings = [];
+    for (const doc of snap.docs) {
+      const b = doc.data();
+      if (!b.referredByCode) continue;
+      friendBookings.push({
+        paymentIntentId: doc.id,
+        referredByCode: b.referredByCode,
+        amountPence: b.totalAmountPence || b.amount || 0,
+        createdAt: b.createdAt && typeof b.createdAt.toMillis === 'function' ? b.createdAt.toMillis() : null,
+      });
+    }
+
+    // Join each distinct code → referral_codes doc → owner's booking for the name.
+    const referrers = {};
+    const codes = [...new Set(friendBookings.map((f) => f.referredByCode))];
+    await Promise.all(codes.map(async (code) => {
+      try {
+        const codeDoc = await admin.firestore().collection('referral_codes').doc(code).get();
+        if (!codeDoc.exists) return;
+        const cd = codeDoc.data();
+        let name = '';
+        if (cd.ownerPaymentIntentId) {
+          const ownerSnap = await admin.firestore().collection('bookings').doc(cd.ownerPaymentIntentId).get();
+          if (ownerSnap.exists) name = ownerSnap.data().customerName || '';
+        }
+        referrers[code] = { name, email: cd.ownerEmail || '' };
+      } catch {
+        // Skip a code we can't resolve — the funnel count still stands.
+      }
+    }));
+
+    res.json({ friendBookings, referrers });
+  } catch (err) {
+    logger.error({ err }, 'Analytics referrals query error');
+    res.status(500).json({ error: 'Failed to load referral data' });
+  }
 });
 
 // POST /api/analytics — ingest a tracking event
